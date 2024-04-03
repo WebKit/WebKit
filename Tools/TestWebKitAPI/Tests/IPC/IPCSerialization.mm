@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,19 @@
 
 #import "config.h"
 
-#import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCError.h"
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
 #import "test.h"
+#import <CoreVideo/CoreVideo.h>
 #import <Foundation/NSValue.h>
+#import <Security/Security.h>
+#import <WebCore/AttributedString.h>
+#import <WebCore/CVUtilities.h>
+#import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
+#import <WebCore/IOSurface.h>
 #import <limits.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
 #import <wtf/RetainPtr.h>
@@ -44,6 +49,7 @@
 #import <pal/cocoa/ContactsSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/PassKitSoftLink.h>
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 // This test makes it trivial to test round trip encoding and decoding of a particular object type.
@@ -52,6 +58,11 @@
 // To test a new ObjC type:
 // 1 - Add that type to ObjCHolderForTesting's ValueType variant
 // 2 - Run a test exercising that type
+
+@interface NSURLProtectionSpace (WebKitNSURLProtectionSpace)
+- (void)_setServerTrust:(nullable SecTrustRef)serverTrust;
+- (void)_setDistinguishedNames:(nullable NSArray<NSData *> *)distinguishedNames;
+@end
 
 class SerializationTestSender final : public IPC::MessageSender {
 public:
@@ -66,7 +77,7 @@ private:
 
 bool SerializationTestSender::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IPC::Encoder>&& encoder, CompletionHandler<void(IPC::Decoder*)>&& completionHandler) const
 {
-    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, { });
+    auto decoder = IPC::Decoder::create({ encoder->buffer(), encoder->bufferSize() }, encoder->releaseAttachments());
     ASSERT(decoder);
 
     completionHandler(decoder.get());
@@ -80,20 +91,41 @@ struct CFHolderForTesting {
     CFTypeRef valueAsCFType() const
     {
         CFTypeRef result;
-        std::visit([&](auto&& arg) {
+        WTF::switchOn(value, [&] (std::nullptr_t) {
+            result = nullptr;
+        }, [&](auto&& arg) {
             result = arg.get();
-        }, value);
+        });
         return result;
     }
 
-    typedef std::variant<
+    using ValueType = std::variant<
+        std::nullptr_t,
+        RetainPtr<CFArrayRef>,
+        RetainPtr<CFBooleanRef>,
+        RetainPtr<CFCharacterSetRef>,
+        RetainPtr<CFDataRef>,
+        RetainPtr<CFDateRef>,
+        RetainPtr<CFDictionaryRef>,
+        RetainPtr<CFNullRef>,
+        RetainPtr<CFNumberRef>,
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
-        RetainPtr<CFDataRef>,
-        RetainPtr<CFBooleanRef>,
+        RetainPtr<CVPixelBufferRef>,
         RetainPtr<CGColorRef>,
-        RetainPtr<CFDictionaryRef>
-    > ValueType;
+        RetainPtr<CGColorSpaceRef>,
+        RetainPtr<SecCertificateRef>,
+#if USE(SEC_ACCESS_CONTROL)
+        RetainPtr<SecAccessControlRef>,
+#endif
+#if HAVE(SEC_KEYCHAIN)
+        RetainPtr<SecKeychainItemRef>,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+        RetainPtr<SecAccessControlRef>,
+#endif
+        RetainPtr<SecTrustRef>
+    >;
 
     ValueType value;
 };
@@ -115,10 +147,161 @@ std::optional<CFHolderForTesting> CFHolderForTesting::decode(IPC::Decoder& decod
     } };
 }
 
+static bool cvPixelBufferRefsEqual(CVPixelBufferRef pixelBuffer1, CVPixelBufferRef pixelBuffer2)
+{
+    CVPixelBufferLockBaseAddress(pixelBuffer1, 0);
+    CVPixelBufferLockBaseAddress(pixelBuffer2, 0);
+    size_t pixelBuffer1Size = CVPixelBufferGetDataSize(pixelBuffer1);
+    size_t pixelBuffer2Size = CVPixelBufferGetDataSize(pixelBuffer2);
+    if (pixelBuffer1Size != pixelBuffer2Size)
+        return false;
+    auto base1 = CVPixelBufferGetBaseAddress(pixelBuffer1);
+    auto base2 = CVPixelBufferGetBaseAddress(pixelBuffer2);
+    bool areEqual = !memcmp(base1, base2, pixelBuffer1Size);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer1, 0);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer2, 0);
+    return areEqual;
+}
+
+static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
+{
+    // SecTrust doesn't compare equal after round-tripping through SecTrustSerialize/SecTrustDeserialize <rdar://122051396>
+    // Therefore, we compare all the attributes we can access to verify equality.
+    SecKeyRef pk1 = SecTrustCopyPublicKey(trust1);
+    SecKeyRef pk2 = SecTrustCopyPublicKey(trust2);
+    EXPECT_TRUE(pk1);
+    EXPECT_TRUE(pk2);
+    bool equal = CFEqual(pk1, pk2);
+    CFRelease(pk1);
+    CFRelease(pk2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    equal = (SecTrustGetCertificateCount(trust1) == SecTrustGetCertificateCount(trust2));
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    CFDataRef ex1 = SecTrustCopyExceptions(trust1);
+    CFDataRef ex2 = SecTrustCopyExceptions(trust2);
+    EXPECT_TRUE(ex1);
+    EXPECT_TRUE(ex2);
+    equal = CFEqual(ex1, ex2);
+    CFRelease(ex1);
+    CFRelease(ex2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    CFArrayRef array1, array2;
+    EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+#if HAVE(SECTRUST_COPYPROPERTIES)
+    array1 = SecTrustCopyProperties(trust1);
+    array2 = SecTrustCopyProperties(trust2);
+    EXPECT_TRUE(array1);
+    EXPECT_TRUE(array2);
+    equal = CFEqual(array1, array2);
+    CFRelease(array1);
+    CFRelease(array2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+#endif
+
+    Boolean bool1, bool2;
+    EXPECT_TRUE(SecTrustGetNetworkFetchAllowed(trust1, &bool1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustGetNetworkFetchAllowed(trust2, &bool2) == errSecSuccess);
+    equal = (bool1 == bool2);
+    EXPECT_TRUE(equal);
+    if (!equal)
+        return false;
+
+    SecTrustResultType result1, result2;
+    EXPECT_TRUE(SecTrustGetTrustResult(trust1, &result1) == errSecSuccess);
+    EXPECT_TRUE(SecTrustGetTrustResult(trust2, &result2) == errSecSuccess);
+    equal = (result1 == result2);
+    EXPECT_TRUE(equal);
+
+    return equal;
+}
+
+CFHolderForTesting cfHolder(CFTypeRef type)
+{
+    if (!type)
+        return { nullptr };
+    CFTypeID typeID = CFGetTypeID(type);
+    if (typeID == CFArrayGetTypeID())
+        return { (CFArrayRef)type };
+    if (typeID == CFBooleanGetTypeID())
+        return { (CFBooleanRef)type };
+    if (typeID == CFCharacterSetGetTypeID())
+        return { (CFCharacterSetRef)type };
+    if (typeID == CFDataGetTypeID())
+        return { (CFDataRef)type };
+    if (typeID == CFDateGetTypeID())
+        return { (CFDateRef)type };
+    if (typeID == CFDictionaryGetTypeID())
+        return { (CFDictionaryRef)type };
+    if (typeID == CFNullGetTypeID())
+        return { }; // FIXME: Test CFNullRef.
+    if (typeID == CFNumberGetTypeID())
+        return { (CFNumberRef)type };
+    if (typeID == CFStringGetTypeID())
+        return { (CFStringRef)type };
+    if (typeID == CFURLGetTypeID())
+        return { (CFURLRef)type };
+    if (typeID == CVPixelBufferGetTypeID())
+        return { (CVPixelBufferRef)type };
+    if (typeID == CGColorSpaceGetTypeID())
+        return { (CGColorSpaceRef)type };
+    if (typeID == CGColorGetTypeID())
+        return { (CGColorRef)type };
+    if (typeID == SecCertificateGetTypeID())
+        return { (SecCertificateRef)type };
+#if HAVE(SEC_KEYCHAIN)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (typeID == SecKeychainItemGetTypeID())
+        return { (SecKeychainItemRef)type };
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+    if (typeID == SecAccessControlGetTypeID())
+        return { (SecAccessControlRef)type };
+#endif
+    if (typeID == SecTrustGetTypeID())
+        return { (SecTrustRef)type };
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+bool arraysEqual(CFArrayRef, CFArrayRef);
+bool dictionariesEqual(CFDictionaryRef, CFDictionaryRef);
+
 inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 {
     auto aObject = a.valueAsCFType();
     auto bObject = b.valueAsCFType();
+
+    if (!aObject && !bObject)
+        return true;
 
     EXPECT_TRUE(aObject);
     EXPECT_TRUE(bObject);
@@ -128,7 +311,70 @@ inline bool operator==(const CFHolderForTesting& a, const CFHolderForTesting& b)
 
     // Sometimes the CF input and CF output fail the CFEqual call above (Such as CFDictionaries containing certain things)
     // In these cases, give the Obj-C equivalent equality check a chance.
-    return [(NSObject *)aObject isEqual: (NSObject *)bObject];
+    if ([(NSObject *)aObject isEqual: (NSObject *)bObject])
+        return true;
+
+    auto aTypeID = CFGetTypeID(aObject);
+    auto bTypeID = CFGetTypeID(bObject);
+
+    if (aTypeID == CVPixelBufferGetTypeID() && bTypeID == CVPixelBufferGetTypeID())
+        return cvPixelBufferRefsEqual((CVPixelBufferRef)aObject, (CVPixelBufferRef)bObject);
+
+    if (aTypeID == SecTrustGetTypeID() && bTypeID == SecTrustGetTypeID())
+        return secTrustRefsEqual((SecTrustRef)aObject, (SecTrustRef)bObject);
+
+    if (aTypeID == CFArrayGetTypeID() && bTypeID == CFArrayGetTypeID())
+        return arraysEqual((CFArrayRef)aObject, (CFArrayRef)bObject);
+
+    if (aTypeID == CFDictionaryGetTypeID() && bTypeID == CFDictionaryGetTypeID())
+        return dictionariesEqual((CFDictionaryRef)aObject, (CFDictionaryRef)bObject);
+
+    return false;
+}
+
+inline bool operator!=(const CFHolderForTesting& a, const CFHolderForTesting& b)
+{
+    return !(a == b);
+}
+
+bool arraysEqual(CFArrayRef a, CFArrayRef b)
+{
+    auto aCount = CFArrayGetCount(a);
+    auto bCount = CFArrayGetCount(b);
+    if (aCount != bCount)
+        return false;
+    for (CFIndex i = 0; i < aCount; i++) {
+        if (cfHolder(CFArrayGetValueAtIndex(a, i)) != cfHolder(CFArrayGetValueAtIndex(b, i)))
+            return false;
+    }
+    return true;
+}
+
+bool dictionariesEqual(CFDictionaryRef a, CFDictionaryRef b)
+{
+    auto aCount = CFDictionaryGetCount(a);
+    auto bCount = CFDictionaryGetCount(b);
+    if (aCount != bCount)
+        return false;
+
+    struct Context {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Context(bool& result, CFDictionaryRef b)
+            : result(result)
+            , b(b) { }
+        bool& result;
+        CFDictionaryRef b;
+        CFIndex keyCount { 0 };
+    };
+    bool result { true };
+    auto context = makeUnique<Context>(result, b);
+    CFDictionaryApplyFunction(a, [](CFTypeRef key, CFTypeRef value, void* voidContext) {
+        auto& context = *static_cast<Context*>(voidContext);
+        if (cfHolder(CFDictionaryGetValue(context.b, key)) != cfHolder(value))
+            context.result = false;
+        context.keyCount++;
+    }, context.get());
+    return context->keyCount == aCount;
 }
 
 struct ObjCHolderForTesting {
@@ -138,13 +384,16 @@ struct ObjCHolderForTesting {
     id valueAsID() const
     {
         id result;
-        std::visit([&](auto&& arg) {
+        WTF::switchOn(value, [&] (std::nullptr_t) {
+            result = nil;
+        }, [&](auto&& arg) {
             result = arg.get();
-        }, value);
+        });
         return result;
     }
 
     typedef std::variant<
+        std::nullptr_t,
         RetainPtr<NSDate>,
         RetainPtr<NSString>,
         RetainPtr<NSURL>,
@@ -154,6 +403,7 @@ struct ObjCHolderForTesting {
         RetainPtr<NSDictionary>,
         RetainPtr<WebCore::CocoaFont>,
         RetainPtr<NSError>,
+        RetainPtr<NSNull>,
         RetainPtr<NSLocale>,
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
@@ -165,11 +415,23 @@ struct ObjCHolderForTesting {
         RetainPtr<AVOutputContext>,
 #endif
         RetainPtr<NSPersonNameComponents>,
-#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+        RetainPtr<NSPresentationIntent>,
+        RetainPtr<NSURLProtectionSpace>,
+        RetainPtr<NSURLCredential>,
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        RetainPtr<CNContact>,
         RetainPtr<CNPhoneNumber>,
         RetainPtr<CNPostalAddress>,
+        RetainPtr<NSDateComponents>,
         RetainPtr<PKContact>,
+        RetainPtr<PKDateComponentsRange>,
+        RetainPtr<PKPaymentMerchantSession>,
+        RetainPtr<PKPaymentMethod>,
+        RetainPtr<PKPaymentToken>,
+        RetainPtr<PKShippingMethod>,
+        RetainPtr<PKPayment>,
 #endif
+        RetainPtr<NSShadow>,
         RetainPtr<NSValue>
     > ValueType;
 
@@ -193,8 +455,45 @@ std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& d
     } };
 }
 
+@interface NSDateComponents ()
+-(BOOL)oldIsEqual:(id)other;
+@end
+
+static BOOL nsDateComponentsTesting_isEqual(NSDateComponents *a, SEL, NSDateComponents *b)
+{
+    // Override the equality check of NSDateComponents objects to only look at the identifier string
+    // values for the NSCalendar and NSTimeZone objects.
+    // Instances of those objects can be configured "weirdly" at runtime and have undesirable isEqual: behaviors,
+    // but in practice for WebKit CoreIPC only the default values for each are important.
+
+    NSCalendar *aCalendar = a.calendar;
+    NSCalendar *bCalendar = b.calendar;
+    NSTimeZone *aTimeZone = a.timeZone;
+    NSTimeZone *bTimeZone = b.timeZone;
+
+    a.calendar = nil;
+    a.timeZone = nil;
+    b.calendar = nil;
+    b.timeZone = nil;
+
+    BOOL result = [a oldIsEqual:b];
+
+    if (aCalendar && result)
+        result = [aCalendar.calendarIdentifier isEqual:bCalendar.calendarIdentifier];
+
+    if (aTimeZone && result)
+        result = [aTimeZone.name isEqual:bTimeZone.name];
+
+    a.calendar = aCalendar;
+    a.timeZone = aTimeZone;
+    b.calendar = bCalendar;
+    b.timeZone = bTimeZone;
+
+    return result;
+}
+
 #if PLATFORM(MAC)
-inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
+static BOOL wkDDActionContext_isEqual(WKDDActionContext *a, SEL, WKDDActionContext *b)
 {
     if (![a.authorNameComponents isEqual:b.authorNameComponents])
         return false;
@@ -214,19 +513,91 @@ inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
 }
 #endif
 
+static bool wkNSURLProtectionSpace_isEqual(NSURLProtectionSpace *a, SEL, NSURLProtectionSpace* b)
+{
+    if (![a.host isEqual: b.host])
+        return false;
+    if (!(a.port == b.port))
+        return false;
+    if (![a.protocol isEqual:b.protocol])
+        return false;
+    if (!([a.realm isEqual:b.realm] || (!a.realm && a.realm == b.realm)))
+        return false;
+    if (![a.authenticationMethod isEqual:b.authenticationMethod])
+        return false;
+    if (!([a.distinguishedNames isEqual:b.distinguishedNames] || (!a.distinguishedNames && a.distinguishedNames == b.distinguishedNames)))
+        return false;
+    if (!((!a.serverTrust && a.serverTrust == b.serverTrust) || secTrustRefsEqual(a.serverTrust, a.serverTrust)))
+        return false;
+
+    return true;
+}
+
+static bool NSURLCredentialTesting_isEqual(NSURLCredential *a, NSURLCredential *b)
+{
+    if (a.persistence != b.persistence)
+        return false;
+    if (a.user && ![a.user isEqualToString:b.user])
+        return false;
+    if (a.password && ![a.password isEqualToString:b.password])
+        return false;
+    if (a.hasPassword != b.hasPassword)
+        return false;
+    if (a.certificates.count != b.certificates.count)
+        return false;
+    return true;
+}
+
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
+{
+    RetainPtr<WKKeyedCoder> aCoder = adoptNS([WKKeyedCoder new]);
+    RetainPtr<WKKeyedCoder> bCoder = adoptNS([WKKeyedCoder new]);
+
+    [a encodeWithCoder:aCoder.get()];
+    [b encodeWithCoder:bCoder.get()];
+
+    return [[aCoder accumulatedDictionary] isEqual:[bCoder accumulatedDictionary]];
+}
+#endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // These classes do not have isEqual: methods useful for our unit testing, so we'll swap it in ourselves.
+
+        auto oldIsEqual = class_getMethodImplementation([NSDateComponents class], @selector(isEqual:));
+        class_replaceMethod([NSDateComponents class], @selector(isEqual:), (IMP)nsDateComponentsTesting_isEqual, "v@:@");
+        class_addMethod([NSDateComponents class], @selector(oldIsEqual:), oldIsEqual, "v@:@");
+
+        auto oldIsEqual2 = class_getMethodImplementation([NSURLProtectionSpace class], @selector(isEqual:));
+        class_replaceMethod([NSURLProtectionSpace class], @selector(isEqual:), (IMP)wkNSURLProtectionSpace_isEqual, "v@:@");
+        class_addMethod([NSURLProtectionSpace class], @selector(oldIsEqual:), oldIsEqual2, "v@:@");
+
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        class_addMethod(PAL::getPKPaymentMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKPaymentTokenClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKDateComponentsRangeClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKShippingMethodClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+        class_addMethod(PAL::getPKPaymentClass(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
+#endif
+#if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+        class_addMethod(PAL::getWKDDActionContextClass(), @selector(isEqual:), (IMP)wkDDActionContext_isEqual, "v@:@");
+#endif
+    });
+
     id aObject = a.valueAsID();
     id bObject = b.valueAsID();
+
+    if (!aObject && !bObject)
+        return true;
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
 
-#if PLATFORM(MAC)
-    // DDActionContext doesn't have an isEqual: reliable for our unit testing, so do it ourselves.
-    if ([aObject isKindOfClass:PAL::getWKDDActionContextClass()] && [bObject isKindOfClass:PAL::getWKDDActionContextClass()])
-        return isEqual(aObject, bObject);
-#endif
+    if ([aObject isKindOfClass:NSURLCredential.class])
+        return NSURLCredentialTesting_isEqual(aObject, bObject);
 
     return [aObject isEqual:bObject];
 }
@@ -412,42 +783,115 @@ static RetainPtr<NSPersonNameComponents> personNameComponentsForTesting()
     return components;
 }
 
+#if HAVE(SEC_KEYCHAIN)
+static SecKeychainRef getTempKeychain()
+{
+    SecKeychainRef keychainRef = NULL;
+    uuid_t uu;
+    char pass[PATH_MAX];
+
+    uuid_generate_random(uu);
+    uuid_unparse_upper(uu, pass);
+    UInt32 passLen = (UInt32)strlen(pass);
+    NSString* path = [NSString stringWithFormat:@"%@/%s", NSTemporaryDirectory(), pass];
+
+    [NSFileManager.defaultManager removeItemAtPath:path error:NULL];
+    EXPECT_TRUE(SecKeychainCreate(path.fileSystemRepresentation, passLen, pass, false, NULL, &keychainRef) == errSecSuccess);
+    EXPECT_NOT_NULL(keychainRef);
+    EXPECT_TRUE(SecKeychainUnlock(keychainRef, passLen, pass, TRUE) == errSecSuccess);
+
+    return keychainRef;
+}
+
+static void destroyTempKeychain(SecKeychainRef keychainRef)
+{
+    if (keychainRef) {
+        SecKeychainDelete(keychainRef);
+        CFRelease(keychainRef);
+    }
+}
+#endif // HAVE(SEC_KEYCHAIN)
+
+#if USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+static RetainPtr<CNMutablePostalAddress> postalAddressForTesting()
+{
+    RetainPtr<CNMutablePostalAddress> address = adoptNS([PAL::getCNMutablePostalAddressClass() new]);
+    address.get().street = @"1 Apple Park Way";
+    address.get().subLocality = @"Birdland";
+    address.get().city = @"Cupertino";
+    address.get().subAdministrativeArea = @"Santa Clara County";
+    address.get().state = @"California";
+    address.get().postalCode = @"95014";
+    address.get().country = @"United States of America";
+    address.get().ISOCountryCode = @"US";
+    address.get().formattedAddress = @"Hello world";
+    return address;
+}
+
+static RetainPtr<PKContact> pkContactForTesting()
+{
+    RetainPtr<PKContact> contact = adoptNS([PAL::getPKContactClass() new]);
+    contact.get().name = personNameComponentsForTesting().get();
+    contact.get().emailAddress = @"admin@webkit.org";
+    contact.get().phoneNumber = [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:@"4085551234" countryCode:@"us"];
+    contact.get().postalAddress = postalAddressForTesting().get();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    contact.get().supplementarySubLocality = @"City 17";
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    return contact;
+}
+#endif // USE(PASSKIT) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
+static void runTestNS(ObjCHolderForTesting&& holderArg)
+{
+    __block bool done = false;
+    __block ObjCHolderForTesting holder = WTFMove(holderArg);
+    auto sender = SerializationTestSender { };
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
+        EXPECT_TRUE(holder == result);
+        done = true;
+    });
+
+    // The completion handler should be called synchronously, so this should be true already.
+    EXPECT_TRUE(done);
+};
+
+static void runTestCFWithExpectedResult(const CFHolderForTesting& holderArg, const CFHolderForTesting& expectedResult)
+{
+    __block bool done = false;
+    __block CFHolderForTesting holder = expectedResult;
+    auto sender = SerializationTestSender { };
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holderArg), ^(CFHolderForTesting&& result) {
+        EXPECT_TRUE(holder == result);
+        done = true;
+    });
+
+    // The completion handler should be called synchronously, so this should be true already.
+    EXPECT_TRUE(done);
+};
+
+static void runTestCF(const CFHolderForTesting& holderArg)
+{
+    runTestCFWithExpectedResult(holderArg, holderArg);
+};
+
 TEST(IPCSerialization, Basic)
 {
-    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
-        __block bool done = false;
-        __block ObjCHolderForTesting holder = WTFMove(holderArg);
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
+    // CVPixelBuffer
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB());
+    auto pixelBuffer = WebCore::createCVPixelBuffer(s1->surface());
 
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
-
-    auto runTestCF = [](CFHolderForTesting&& holderArg) {
-        __block bool done = false;
-        __block CFHolderForTesting holder = WTFMove(holderArg);
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(CFPingBackMessage(holder), ^(CFHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
-
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
+    runTestCF({ pixelBuffer->get() });
 
     // NSString/CFString
     runTestNS({ @"Hello world" });
     runTestCF({ CFSTR("Hello world") });
 
     // NSURL/CFURL
-    runTestNS({ [NSURL URLWithString:@"https://webkit.org/"] });
-    auto cfURL = adoptCF(CFURLCreateWithString(kCFAllocatorDefault, CFSTR("https://webkit.org/"), NULL));
-    runTestCF({ cfURL.get() });
+    NSURL *url = [NSURL URLWithString:@"https://webkit.org/"];
+    runTestNS({ url });
+    runTestCF({ (__bridge CFURLRef)url });
 
     // NSData/CFData
     runTestNS({ [NSData dataWithBytes:"Data test" length:strlen("Data test")] });
@@ -474,11 +918,20 @@ TEST(IPCSerialization, Basic)
     auto cgColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), testComponents));
     runTestCF({ cgColor.get() });
 
+    // CGColorSpace
+    runTestCF({ sRGBColorSpace.get() });
+    auto grayColorSpace = adoptCF(CGColorSpaceCreateDeviceGray());
+    runTestCF({ grayColorSpace.get() });
+
     auto runNumberTest = [&](NSNumber *number) {
         ObjCHolderForTesting::ValueType numberVariant;
         numberVariant.emplace<RetainPtr<NSNumber>>(number);
         runTestNS({ numberVariant });
     };
+
+    // CFCharacterSet
+    auto characterSet = adoptCF(CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline));
+    runTestCF({ characterSet.get() });
 
     // NSNumber
     runNumberTest([NSNumber numberWithChar: CHAR_MIN]);
@@ -500,7 +953,7 @@ TEST(IPCSerialization, Basic)
     runNumberTest([NSNumber numberWithUnsignedInteger: NSUIntegerMax]);
 
     // NSArray
-    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
+    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], url, [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
 
     // NSDictionary
     runTestNS({ @{ @"Dictionary": @[ @"array value", @12 ] } });
@@ -534,7 +987,7 @@ TEST(IPCSerialization, Basic)
         NSLocalizedFailureReasonErrorKey: @"Localized Failure Reason Error",
         NSUnderlyingErrorKey: error1,
         @"Key1" : @"String value",
-        @"Key2" : [NSURL URLWithString:@"https://webkit.org/"],
+        @"Key2" : url,
         @"Key3" : [NSNumber numberWithFloat: 3.14159],
         @"Key4" : @[ @"String in Array"],
         @"Key5" : @{ @"InnerKey1" : [NSNumber numberWithBool: true] },
@@ -598,28 +1051,11 @@ TEST(IPCSerialization, Basic)
     runTestNS({ phoneNumber.get() });
 
     // CNPostalAddress
-    RetainPtr<CNMutablePostalAddress> address = adoptNS([PAL::getCNMutablePostalAddressClass() new]);
-    address.get().street = @"1 Apple Park Way";
-    address.get().subLocality = @"Birdland";
-    address.get().city = @"Cupertino";
-    address.get().subAdministrativeArea = @"Santa Clara County";
-    address.get().state = @"California";
-    address.get().postalCode = @"95014";
-    address.get().country = @"United States of America";
-    address.get().ISOCountryCode = @"US";
-    address.get().formattedAddress = @"Hello world";
+    RetainPtr<CNMutablePostalAddress> address = postalAddressForTesting();
     runTestNS({ address.get() });
 
     // PKContact
-    RetainPtr<PKContact> contact = adoptNS([PAL::getPKContactClass() new]);
-    contact.get().name = components.get();
-    contact.get().emailAddress = @"admin@webkit.org";
-    contact.get().phoneNumber = phoneNumber.get();
-    contact.get().postalAddress = address.get();
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    contact.get().supplementarySubLocality = @"City 17";
-ALLOW_DEPRECATED_DECLARATIONS_END
-    runTestNS({ contact.get() });
+    runTestNS({ pkContactForTesting().get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 
 
@@ -644,6 +1080,179 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     //   - NSRect
     runValueTest([NSValue valueWithRange:NSMakeRange(1, 2)]);
     runValueTest([NSValue valueWithRect:NSMakeRect(1, 2, 79, 80)]);
+
+
+    // SecTrust -- evaluate the trust of the cert created above
+    SecTrustRef trustRef = NULL;
+    auto policy = adoptCF(SecPolicyCreateBasicX509());
+    EXPECT_TRUE(SecTrustCreateWithCertificates(cert.get(), policy.get(), &trustRef) == errSecSuccess);
+    EXPECT_NOT_NULL(trustRef);
+    auto trust = adoptCF(trustRef);
+    runTestCF({ trust.get() });
+
+    EXPECT_TRUE(SecTrustEvaluateWithError(trust.get(), NULL) == errSecSuccess);
+    runTestCF({ trust.get() });
+
+#if HAVE(SEC_ACCESS_CONTROL)
+    NSDictionary *protection = @{
+        (id)kSecUseDataProtectionKeychain : @(YES),
+        (id)kSecAttrSynchronizable : @(NO),
+        (id)kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly : @(YES),
+        (id)kSecAttrAccessibleWhenUnlocked: @(YES) };
+    SecAccessControlCreateFlags flags = (kSecAccessControlDevicePasscode | kSecAccessControlBiometryAny | kSecAccessControlOr);
+    auto accessControlRef = adoptCF(SecAccessControlCreateWithFlags(kCFAllocatorDefault, (CFTypeRef)protection, flags, NULL));
+    EXPECT_NOT_NULL(accessControlRef);
+    runTestCF({ accessControlRef.get() });
+#endif // HAVE(SEC_ACCESS_CONTROL)
+
+    // SecKeychainItem
+#if HAVE(SEC_KEYCHAIN)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // Store the certificate created above into the temp keychain
+    SecKeychainRef tempKeychain = getTempKeychain();
+    CFDataRef certData = NULL;
+    EXPECT_TRUE(SecItemExport(cert.get(), kSecFormatX509Cert, kSecItemPemArmour, nil, &certData) == errSecSuccess);
+    CFArrayRef itemsPtr = NULL;
+    EXPECT_TRUE(SecKeychainItemImport(certData, CFSTR(".pem"), NULL, NULL, 0, NULL, tempKeychain, &itemsPtr) == errSecSuccess);
+    EXPECT_NOT_NULL(itemsPtr);
+    auto items = adoptCF(itemsPtr);
+    EXPECT_GT(CFArrayGetCount(items.get()), 0);
+
+    SecKeychainItemRef keychainItemRef = (SecKeychainItemRef)CFArrayGetValueAtIndex(items.get(), 0);
+    EXPECT_NOT_NULL(keychainItemRef);
+    runTestCF({ keychainItemRef });
+
+    CFRelease(certData);
+
+    destroyTempKeychain(tempKeychain);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif // HAVE(SEC_KEYCHAIN)
+
+    NSArray *nestedArray = @[
+        @YES,
+        @(5.4),
+        NSData.data,
+        NSDate.now,
+        NSNull.null,
+        url,
+        (id)sRGBColorSpace.get(),
+        (id)cgColor.get(),
+        (id)trust.get(),
+        (id)cert.get(),
+        (id)characterSet.get(),
+#if HAVE(SEC_KEYCHAIN)
+        (id)keychainItemRef,
+#endif
+#if HAVE(SEC_ACCESS_CONTROL)
+        (id)accessControlRef.get(),
+#endif
+        @{ @"key": NSNull.null }
+    ];
+
+    runTestCFWithExpectedResult({ (__bridge CFArrayRef)@[
+        nestedArray,
+        (id)trust.get(),
+        NSUUID.UUID, // Removed when encoding because CFUUIDRef is not a recognized type in CFArrayRef or CFDictionaryRef
+        @{
+            @"should be removed before encoding" : NSUUID.UUID,
+            NSUUID.UUID : @"should also be removed before encoding"
+        }
+    ] }, { (__bridge CFArrayRef)@[
+        nestedArray,
+        (id)trust.get(),
+        @{ }
+    ] });
+
+    runTestCFWithExpectedResult({ (__bridge CFDictionaryRef) @{
+        @"key" : nestedArray,
+        @"key2" : nestedArray,
+        NSNull.null : NSData.data,
+        url : (id)trust.get(),
+        @"should be removed before encoding" : NSUUID.UUID,
+        NSUUID.UUID : @"should also be removed before encoding",
+    } }, { (__bridge CFDictionaryRef) @{
+        @"key" : nestedArray,
+        @"key2" : nestedArray,
+        NSNull.null : NSData.data,
+        url : (id)trust.get()
+    } });
+
+    // NSPresentationIntent
+    NSInteger intentID = 1;
+    NSPresentationIntent *paragraphIntent = [NSPresentationIntent paragraphIntentWithIdentity:intentID++ nestedInsideIntent:nil];
+    runTestNS({ paragraphIntent });
+
+    NSPresentationIntent *headingIntent = [NSPresentationIntent headerIntentWithIdentity:intentID++ level:1 nestedInsideIntent:nil];
+    runTestNS({ headingIntent });
+
+    NSPresentationIntent *codeBlockIntent = [NSPresentationIntent codeBlockIntentWithIdentity:intentID++ languageHint:@"Swift" nestedInsideIntent:paragraphIntent];
+    runTestNS({ codeBlockIntent });
+
+    NSPresentationIntent *thematicBreakIntent = [NSPresentationIntent thematicBreakIntentWithIdentity:intentID++ nestedInsideIntent:nil];
+    runTestNS({ thematicBreakIntent });
+
+    NSPresentationIntent *orderedListIntent = [NSPresentationIntent orderedListIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ orderedListIntent });
+
+    NSPresentationIntent *unorderedListIntent = [NSPresentationIntent unorderedListIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ unorderedListIntent });
+
+    NSPresentationIntent *listItemIntent = [NSPresentationIntent listItemIntentWithIdentity:intentID++ ordinal:1 nestedInsideIntent:orderedListIntent];
+    runTestNS({ listItemIntent });
+
+    NSPresentationIntent *blockQuoteIntent = [NSPresentationIntent blockQuoteIntentWithIdentity:intentID++ nestedInsideIntent:paragraphIntent];
+    runTestNS({ blockQuoteIntent });
+
+    NSPresentationIntent *tableIntent = [NSPresentationIntent tableIntentWithIdentity:intentID++ columnCount:2 alignments:@[@(NSPresentationIntentTableColumnAlignmentLeft), @(NSPresentationIntentTableColumnAlignmentRight)] nestedInsideIntent:unorderedListIntent];
+    runTestNS({ tableIntent });
+
+    NSPresentationIntent *tableHeaderRowIntent = [NSPresentationIntent tableHeaderRowIntentWithIdentity:intentID++ nestedInsideIntent:tableIntent];
+    runTestNS({ tableHeaderRowIntent });
+
+    NSPresentationIntent *tableRowIntent = [NSPresentationIntent tableRowIntentWithIdentity:intentID++ row:1 nestedInsideIntent:tableIntent];
+    runTestNS({ tableRowIntent });
+
+    NSPresentationIntent *tableCellIntent = [NSPresentationIntent tableCellIntentWithIdentity:intentID++ column:1 nestedInsideIntent:tableRowIntent];
+    runTestNS({ tableCellIntent });
+
+    runTestNS({ NSNull.null });
+    runTestCF({ kCFNull });
+    runTestNS({ nil });
+    runTestCF({ nullptr });
+
+    // NSURLProtectionSpace
+    RetainPtr<NSURLProtectionSpace> protectionSpace = adoptNS([[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:8000 protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic]);
+    runTestNS({ protectionSpace.get() });
+
+    RetainPtr<NSURLProtectionSpace> protectionSpace2 = adoptNS([[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:443 protocol:NSURLProtectionSpaceHTTPS realm:nil authenticationMethod:NSURLAuthenticationMethodServerTrust]);
+    NSData *distinguishedNamesData = [NSData dataWithBytes:"AAAA" length:4];
+    NSArray *distinguishedNames = @[distinguishedNamesData];
+    [protectionSpace2.get() _setServerTrust:trustRef];
+    [protectionSpace2.get() _setDistinguishedNames:distinguishedNames];
+    runTestNS({ protectionSpace2.get() });
+
+    runTestNS({ [NSURLCredential credentialForTrust:trust.get()] });
+#if HAVE(DICTIONARY_SERIALIZABLE_NSURLCREDENTIAL)
+    runTestNS({ [NSURLCredential credentialWithIdentity:identity.get() certificates:@[(id)cert.get()] persistence:NSURLCredentialPersistencePermanent] });
+    runTestNS({ [NSURLCredential credentialWithIdentity:identity.get() certificates:nil persistence:NSURLCredentialPersistenceForSession] });
+#endif
+    runTestNS({ [NSURLCredential credentialWithUser:@"user" password:@"password" persistence:NSURLCredentialPersistenceSynchronizable] });
+}
+
+TEST(IPCSerialization, NSShadow)
+{
+    auto runTestNSShadow = [&](CGSize shadowOffset, CGFloat shadowBlurRadius, PlatformColor *shadowColor) {
+        RetainPtr<NSShadow> shadow = adoptNS([[PlatformNSShadow alloc] init]);
+        [shadow setShadowOffset:shadowOffset];
+        [shadow setShadowBlurRadius:shadowBlurRadius];
+        [shadow setShadowColor:shadowColor];
+        runTestNS({ shadow.get() });
+    };
+
+    runTestNSShadow({ 5.7, 10.5 }, 0.49, nil);
+
+    RetainPtr<PlatformColor> platformColor = cocoaColor(WebCore::Color::blue);
+    runTestNSShadow({ 10.5, 5.7 }, 0.79, platformColor.get());
 }
 
 #if PLATFORM(MAC)
@@ -663,21 +1272,33 @@ static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
     return [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject];
 }
 
+@interface PKPaymentMerchantSession ()
+- (instancetype)initWithMerchantIdentifier:(NSString *)merchantIdentifier
+                 merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                     nonce:(NSString *)nonce
+                            epochTimestamp:(NSUInteger)epochTimestamp
+                                 expiresAt:(NSUInteger)expiresAt
+                               displayName:(NSString *)displayName
+                         initiativeContext:(NSString *)initiativeContext
+                                initiative:(NSString *)initiative
+                      ampEnrollmentPinning:(nullable NSData *)ampEnrollmentPinning
+            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+                              signedFields:(NSArray<NSString *> *)signedFields
+                                 signature:(NSData *)signature;
+
+- (instancetype)initWithMerchantIdentifier:(NSString *)merchantIdentifier
+                 merchantSessionIdentifier:(NSString *)merchantSessionIdentifier
+                                     nonce:(NSString *)nonce
+                            epochTimestamp:(NSUInteger)epochTimestamp
+                                 expiresAt:(NSUInteger)expiresAt
+                                    domain:(NSString *)domainName
+                               displayName:(NSString *)displayName
+            operationalAnalyticsIdentifier:(nullable NSString *)operationalAnalyticsIdentifier
+                                 signature:(NSData *)signature;
+@end
+
 TEST(IPCSerialization, SecureCoding)
 {
-    auto runTestNS = [](ObjCHolderForTesting&& holderArg) {
-        __block bool done = false;
-        __block ObjCHolderForTesting holder = WTFMove(holderArg);
-        auto sender = SerializationTestSender { };
-        sender.sendWithAsyncReplyWithoutUsingIPCConnection(ObjCPingBackMessage(holder), ^(ObjCHolderForTesting&& result) {
-            EXPECT_TRUE(holder == result);
-            done = true;
-        });
-
-        // The completion handler should be called synchronously, so this should be true already.
-        EXPECT_TRUE(done);
-    };
-
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
     auto scannerResult = fakeDataDetectorResultForTesting();
@@ -698,6 +1319,126 @@ TEST(IPCSerialization, SecureCoding)
     RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
     runTestNS({ outputContext.get() });
 #endif // USE(AVFOUNDATION)
+
+    // PKPaymentMerchantSession
+    // This initializer doesn't exercise retryNonce or domain
+    RetainPtr<PKPaymentMerchantSession> session = adoptNS([[PAL::getPKPaymentMerchantSessionClass() alloc]
+        initWithMerchantIdentifier:@"WebKit Open Source Project"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        displayName:@"WebKit"
+        initiativeContext:@"WebKit IPC Testing"
+        initiative:@"WebKit Regression Test Suite"
+        ampEnrollmentPinning:nil
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signedFields:@[ @"FirstField", @"AndTheSecond" ]
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
+
+    // This initializer adds in domain, but retryNonce is still unexercised
+    session = adoptNS([[PAL::getPKPaymentMerchantSessionClass() alloc]
+        initWithMerchantIdentifier:@"WebKit Open Source Project"
+        merchantSessionIdentifier:@"WebKitMerchantSession"
+        nonce:@"WebKitNonce"
+        epochTimestamp:1000000000
+        expiresAt:2000000000
+        domain:@"webkit.org"
+        displayName:@"WebKit"
+        operationalAnalyticsIdentifier:@"WebKitOperations42"
+        signature:[NSData new]]);
+    runTestNS({ session.get() });
+
+    RetainPtr<CNPostalAddress> address = postalAddressForTesting();
+    RetainPtr<CNLabeledValue> labeledPostalAddress = adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithLabel:@"Work" value:address.get()]);
+
+    RetainPtr<CNLabeledValue> labeledEmailAddress = adoptNS([[PAL::getCNLabeledValueClass() alloc] initWithLabel:@"WorkSPAM" value:@"spam@webkit.org"]);
+
+    RetainPtr<CNMutableContact> billingContact = adoptNS([PAL::getCNMutableContactClass() new]);
+    billingContact.get().contactType = CNContactTypePerson;
+    billingContact.get().namePrefix = @"Mrs";
+    billingContact.get().givenName = @"WebKit";
+    billingContact.get().middleName = @"von";
+    billingContact.get().familyName = @"WebKittington";
+    billingContact.get().nameSuffix = @"The Third";
+    billingContact.get().organizationName = @"WebKit";
+    billingContact.get().jobTitle = @"Web Kitten";
+    billingContact.get().note = @"The Coolest Kitten out there";
+    billingContact.get().postalAddresses = @[ labeledPostalAddress.get() ];
+    billingContact.get().emailAddresses = @[ labeledEmailAddress.get() ];
+    runTestNS({ billingContact.get() });
+
+    RetainPtr<PKPaymentMethod> paymentMethod = adoptNS([PAL::getPKPaymentMethodClass() new]);
+    paymentMethod.get().displayName = @"WebKitPay";
+    paymentMethod.get().network = @"WebKitCard";
+    paymentMethod.get().type = PKPaymentMethodTypeCredit;
+    paymentMethod.get().billingAddress = billingContact.get();
+
+    runTestNS({ paymentMethod.get() });
+
+    RetainPtr<PKPaymentToken> paymentToken = adoptNS([PAL::getPKPaymentTokenClass() new]);
+    paymentToken.get().paymentMethod = paymentMethod.get();
+    paymentToken.get().transactionIdentifier = @"WebKitTXIdentifier";
+    paymentToken.get().paymentData = [NSData new];
+    paymentToken.get().redeemURL = [NSURL URLWithString:@"https://webkit.org/"];
+    paymentToken.get().retryNonce = @"ANonce";
+
+    runTestNS({ paymentToken.get() });
+
+    RetainPtr<NSDateComponents> startComponents = adoptNS([NSDateComponents new]);
+    runTestNS({ startComponents.get() });
+
+    [startComponents setValue:1 forComponent:NSCalendarUnitEra];
+    [startComponents setValue:2 forComponent:NSCalendarUnitYear];
+    [startComponents setValue:3 forComponent:NSCalendarUnitYearForWeekOfYear];
+    [startComponents setValue:4 forComponent:NSCalendarUnitQuarter];
+    [startComponents setValue:5 forComponent:NSCalendarUnitMonth];
+    [startComponents setValue:6 forComponent:NSCalendarUnitHour];
+    [startComponents setValue:7 forComponent:NSCalendarUnitMinute];
+    [startComponents setValue:8 forComponent:NSCalendarUnitSecond];
+    [startComponents setValue:9 forComponent:NSCalendarUnitNanosecond];
+    [startComponents setValue:10 forComponent:NSCalendarUnitWeekOfYear];
+    [startComponents setValue:11 forComponent:NSCalendarUnitWeekOfMonth];
+    [startComponents setValue:12 forComponent:NSCalendarUnitWeekday];
+    [startComponents setValue:13 forComponent:NSCalendarUnitWeekdayOrdinal];
+    [startComponents setValue:14 forComponent:NSCalendarUnitDay];
+    startComponents.get().calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierBuddhist];
+    startComponents.get().timeZone = [NSTimeZone timeZoneWithName:@"Asia/Calcutta"];
+    runTestNS({ startComponents.get() });
+
+    startComponents = adoptNS([NSDateComponents new]);
+    startComponents.get().day = 1;
+    startComponents.get().month = 4;
+    startComponents.get().year = 1976;
+    startComponents.get().calendar = NSCalendar.currentCalendar;
+
+    RetainPtr<NSDateComponents> endComponents = adoptNS([NSDateComponents new]);
+    endComponents.get().day = 9;
+    endComponents.get().month = 1;
+    endComponents.get().year = 2007;
+    endComponents.get().calendar = NSCalendar.currentCalendar;
+
+    runTestNS({ endComponents.get() });
+
+    RetainPtr<PKDateComponentsRange> dateRange = adoptNS([[PAL::getPKDateComponentsRangeClass() alloc] initWithStartDateComponents:startComponents.get() endDateComponents:endComponents.get()]);
+
+    runTestNS({ dateRange.get() });
+
+    RetainPtr<PKShippingMethod> shippingMethod = adoptNS([PAL::getPKShippingMethodClass() new]);
+    shippingMethod.get().identifier = @"WebKitPostalService";
+    shippingMethod.get().detail = @"Ships in 1 to 2 bugzillas";
+    shippingMethod.get().dateComponentsRange = dateRange.get();
+
+    runTestNS({ shippingMethod.get() });
+
+    RetainPtr<PKPayment> payment = adoptNS([PAL::getPKPaymentClass() new]);
+    payment.get().token = paymentToken.get();
+    payment.get().billingContact = pkContactForTesting().get();
+    payment.get().shippingContact = pkContactForTesting().get();
+    payment.get().shippingMethod = shippingMethod.get();
+
+    runTestNS({ payment.get() });
 }
 
 #endif // PLATFORM(MAC)

@@ -87,9 +87,9 @@ public:
     TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
-    bool hasAnnotation() const { return (hasContent() || isAtomicInlineLevelBox()) && m_annotation.has_value(); };
-    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() ? std::optional { m_annotation->above } : std::nullopt; }
-    std::optional<InlineLayoutUnit> annotationBelow() const { return hasAnnotation() ? std::optional { m_annotation->below } : std::nullopt; }
+    bool hasTextEmphasis() const { return (hasContent() || isAtomicInlineLevelBox()) && m_textEmphasis.has_value(); };
+    std::optional<InlineLayoutUnit> textEmphasisAbove() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->above } : std::nullopt; }
+    std::optional<InlineLayoutUnit> textEmphasisBelow() const { return hasTextEmphasis() ? std::optional { m_textEmphasis->below } : std::nullopt; }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -137,11 +137,11 @@ private:
 
     // FIXME: Remove legacy rounding.
     void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
-    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(roundToInt(logicalHeight)); }
-    void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop >= 0 ? roundToInt(logicalTop) : -roundToInt(-logicalTop)); }
+    void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(logicalHeight); }
+    void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop); }
     void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
-    void setAscentAndDescent(AscentAndDescent ascentAndDescent) { m_ascentAndDescent = { InlineLayoutUnit(roundToInt(ascentAndDescent.ascent)), InlineLayoutUnit(roundToInt(ascentAndDescent.descent)) }; }
-    void setLayoutBounds(const AscentAndDescent& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
+    void setAscentAndDescent(AscentAndDescent ascentAndDescent) { m_ascentAndDescent = ascentAndDescent; }
+    void setLayoutBounds(const AscentAndDescent& layoutBounds) { m_layoutBounds = layoutBounds; }
     void setInlineBoxContentOffsetForTextBoxTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForTextBoxTrim = offset; }
 
     void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
@@ -174,11 +174,11 @@ private:
     };
     Style m_style;
 
-    struct Annotation {
+    struct TextEmphasis {
         InlineLayoutUnit above;
         InlineLayoutUnit below;
     };
-    std::optional<Annotation> m_annotation;
+    std::optional<TextEmphasis> m_textEmphasis;
 };
 
 inline void InlineLevelBox::setHasContent()
@@ -189,13 +189,12 @@ inline void InlineLevelBox::setHasContent()
 
 inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
-    // FIXME: Remove integral flooring when legacy line layout stops using it.
     if (isPreferredLineHeightFontMetricsBased())
         return primarymetricsOfPrimaryFont().lineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
-        return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
-    return floorf(m_style.lineHeight.value());
+        return minimumValueForLength(m_style.lineHeight, fontSize());
+    return m_style.lineHeight.value();
 }
 
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const

@@ -309,12 +309,11 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL);
     });
 
-    if (is<Document>(context)) {
-        Document& document = downcast<Document>(context);
-        RefPtr frame = document.frame();
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        RefPtr frame = document->frame();
         // FIXME: make the mixed content check equivalent to the non-document mixed content check currently in WorkerThreadableWebSocketChannel::Bridge::connect()
         // In particular we need to match the error messaging in the console and the inspector instrumentation. See WebSocketChannel::fail.
-        if (!frame || !MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, document.securityOrigin(), m_url)) {
+        if (!frame || MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, document->securityOrigin(), m_url)) {
             failAsynchronously();
             return { };
         }
@@ -480,9 +479,9 @@ void WebSocket::setBinaryType(BinaryType binaryType)
     m_binaryType = binaryType;
 }
 
-EventTargetInterface WebSocket::eventTargetInterface() const
+enum EventTargetInterfaceType WebSocket::eventTargetInterface() const
 {
-    return WebSocketEventTargetInterfaceType;
+    return EventTargetInterfaceType::WebSocket;
 }
 
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const
@@ -561,7 +560,7 @@ void WebSocket::didReceiveMessage(String&& message)
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector()) {
                 auto utf8Message = message.utf8();
-                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.span(), WebSocketFrame::OpCode::OpCodeText));
             }
         }
         ASSERT(scriptExecutionContext());
@@ -578,7 +577,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
 
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector())
-                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.data(), binaryData.size(), WebSocketFrame::OpCode::OpCodeBinary));
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.span(), WebSocketFrame::OpCode::OpCodeBinary));
         }
 
         switch (m_binaryType) {

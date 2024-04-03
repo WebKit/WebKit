@@ -91,7 +91,12 @@ struct FontDataCacheKeyHash {
 };
 
 struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
+#if USE(SKIA)
+    static constexpr bool emptyValueIsZero = false;
+#else
     static constexpr bool emptyValueIsZero = true;
+#endif
+
     static const FontPlatformData& emptyValue()
     {
         static NeverDestroyed<FontPlatformData> key(0.f, false, false);

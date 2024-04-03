@@ -22,11 +22,12 @@
 
 import logging
 import os
+import time
 
 from mock import patch
 from webkitbugspy import bugzilla, mocks as bmocks, radar, Tracker
 from webkitcorepy import OutputCapture, testing
-from webkitscmpy import local, program, mocks
+from webkitscmpy import local, program, mocks, Contributor, Commit
 from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal, Environment
 
 
@@ -39,6 +40,48 @@ class TestRevert(testing.PathTestCase):
         super(TestRevert, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+
+    @classmethod
+    def webserver(cls, approved=None, labels=None, environment=None):
+        result = mocks.remote.GitHub(labels=labels, environment=environment)
+        result.users.create('Ricky Reviewer', 'rreviewer', ['rreviewer@webkit.org'])
+        result.users.create('Tim Contributor', 'tcontributor', ['tcontributor@webkit.org'])
+        result.issues = {
+            1: dict(
+                number=1,
+                opened=True,
+                title='Unreviewed, reverting 5@main',
+                description='?',
+                creator=result.users.create(name='Tim Contributor', username='tcontributor'),
+                timestamp=1639536160,
+                assignee=None,
+                comments=[],
+            ),
+        }
+        result.pull_requests = [dict(
+            number=1,
+            state='open',
+            title='Unreviewed, reverting 5@main',
+            user=dict(login='tcontributor'),
+            body='''#### a5fe8afe9bf7d07158fcd9e9732ff02a712db2fd
+    <pre>
+    To Be Committed
+
+    Reviewed by NOBODY (OOPS!).
+    </pre>
+    ''',
+            head=dict(ref='username:eng/example'),
+            base=dict(ref='main'),
+            requested_reviews=[dict(login='rreviewer')],
+            reviews=[
+                dict(user=dict(login='rreviewer'), state='APPROVED')
+            ] if approved else [] + [
+                dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')
+            ] if approved is not None else [], _links=dict(
+                issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
+            ), draft=False,
+        )]
+        return result
 
     def test_github(self):
         with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
@@ -64,7 +107,8 @@ class TestRevert(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -75,6 +119,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',
@@ -100,20 +145,22 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-pr', '-v'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
-            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -124,6 +171,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -138,7 +186,7 @@ class TestRevert(testing.PathTestCase):
         )
 
     def test_args(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
         ) as repo, bmocks.Bugzilla(
@@ -150,14 +198,15 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--no-pr'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
-            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -173,6 +222,7 @@ class TestRevert(testing.PathTestCase):
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -228,15 +278,17 @@ index 05e8751..0bf3c85 100644
                 path=self.path,
             )
             self.assertEqual(0, result)
-            result = program.main(
-                args=('pull-request', '-v', '--no-history'),
-                path=self.path,
-            )
+            with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
+                result = program.main(
+                    args=('pull-request', '-v', '--no-history'),
+                    path=self.path,
+                )
             self.assertEqual(0, result)
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or reason for the revert: \n"
+            "This issue will track the revert and should not be the issue of the commit(s) to be reverted.\n"
+            "Enter issue URL or title of new issue (reason for the revert): \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
@@ -249,6 +301,7 @@ index 05e8751..0bf3c85 100644
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
                 'Reverted 5@main',
+                'Automatically relating issues...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',
@@ -270,5 +323,126 @@ index 05e8751..0bf3c85 100644
                 "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/Example-feature-1' to 'fork'...",
                 "Updating pull-request for 'eng/Example-feature-1'..."
+            ],
+        )
+
+    def test_pr(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)), OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--pr'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+            self.assertDictEqual(repo.modified, dict())
+            self.assertDictEqual(repo.staged, dict())
+            self.assertEqual(True, 'Unreviewed, reverting 5@main' in repo.head.message)
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                "Created the local development branch 'eng/Example-feature-1'\n"
+                "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
+                "https://github.example.com/WebKit/WebKit/pull/1\n"
+            )
+
+    def test_land_safe(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
+            approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
+            environment=Environment(
+                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+                GITHUB_EXAMPLE_COM_TOKEN='token',
+            ),
+        ) as remote, mocks.local.Svn(), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--safe'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/Example-issue-1'...",
+                'Reverted 5@main',
+                'Automatically relating issues...',
+                'Using committed changes...',
+                'Detected merging automation, using that instead of local git tooling',
+                "Rebasing 'eng/Example-issue-1' on 'main'...",
+                "Rebased 'eng/Example-issue-1' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/Example-issue-1' to 'fork'...",
+                "Creating 'eng/Example-issue-1-1' as a reference branch",
+                "Creating pull-request for 'eng/Example-issue-1'...",
+                "Adding 'merge-queue' to 'PR 2 | Unreviewed, reverting 5@main'",
+            ],
+        )
+
+    def test_land_unsafe(self):
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
+            approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue"), 'unsafe-merge-queue': dict(color='3AE653', description="Send PR to unsafe-merge-queue")},
+            environment=Environment(
+                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+                GITHUB_EXAMPLE_COM_TOKEN='token',
+            ),
+        ) as remote, mocks.local.Svn(), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
+
+            result = program.main(
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--unsafe'),
+                path=self.path,
+            )
+            self.assertEqual(0, result)
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/Example-issue-1'...",
+                'Reverted 5@main',
+                'Automatically relating issues...',
+                'Using committed changes...',
+                'Detected merging automation, using that instead of local git tooling',
+                "Rebasing 'eng/Example-issue-1' on 'main'...",
+                "Rebased 'eng/Example-issue-1' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/Example-issue-1' to 'fork'...",
+                "Creating 'eng/Example-issue-1-1' as a reference branch",
+                "Creating pull-request for 'eng/Example-issue-1'...",
+                "Adding 'unsafe-merge-queue' to 'PR 2 | Unreviewed, reverting 5@main'",
             ],
         )

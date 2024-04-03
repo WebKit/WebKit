@@ -30,9 +30,11 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WebCoreTestSupport.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
@@ -191,26 +193,6 @@ TEST(TLSVersion, NetworkSession)
     }
 }
 
-TEST(TLSVersion, NetworkSessionNSUserDefaults)
-{
-    NSString *defaultsKey = @"WebKitEnableLegacyTLS";
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:defaultsKey];
-
-    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
-    auto delegate = adoptNS([TestNavigationDelegate new]);
-    {
-        auto webView = makeWebViewWith([WKWebsiteDataStore defaultDataStore], delegate);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFailProvisionalNavigation];
-    }
-    {
-        auto webView = makeWebViewWith([WKWebsiteDataStore nonPersistentDataStore], delegate);
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
-        [delegate waitForDidFailProvisionalNavigation];
-    }
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:defaultsKey];
-}
-
 TEST(TLSVersion, ShouldAllowDeprecatedTLS)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
@@ -255,10 +237,10 @@ TEST(TLSVersion, Preconnect)
 
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
-static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate()
+static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate(RetainPtr<WKWebViewConfiguration> configuration = nullptr)
 {
     auto delegate = adoptNS([TestNavigationDelegate new]);
-    auto webView = adoptNS([WKWebView new]);
+    auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]) : adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
     [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
         EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
@@ -424,7 +406,13 @@ TEST(TLSVersion, BackForwardHasOnlySecureContent)
         { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='http://127.0.0.1:", insecureServer.port(), "/'></img>") } },
     }, HTTPServer::Protocol::Https);
 
-    auto [webView, delegate] = webViewWithNavigationDelegate();
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    for (_WKFeature *feature in WKPreferences._features) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"UpgradeMixedContentEnabled"])
+            [[configuration preferences] _setEnabled:NO forFeature:feature];
+    }
+    auto [webView, delegate] = webViewWithNavigationDelegate(configuration);
     EXPECT_FALSE([webView hasOnlySecureContent]);
 
     [webView loadRequest:secureServer.request()];

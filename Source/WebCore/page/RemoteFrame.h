@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class IntPoint;
 class RemoteDOMWindow;
 class RemoteFrameClient;
 class RemoteFrameView;
@@ -62,6 +63,14 @@ public:
     Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
+    void bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, int)>&&);
+    void updateRemoteFrameAccessibilityOffset(IntPoint);
+    void unbindRemoteAccessibilityFrames(int);
+
+    void setCustomUserAgent(const String& customUserAgent) { m_customUserAgent = customUserAgent; }
+    String customUserAgent() const final;
+    void setCustomUserAgentAsSiteSpecificQuirks(const String& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = customUserAgentAsSiteSpecificQuirks; }
+    String customUserAgentAsSiteSpecificQuirks() const final;
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener = nullptr);
@@ -69,19 +78,21 @@ private:
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
-    void broadcastFrameRemovalToOtherProcesses() final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
 
     FrameView* virtualView() const final;
     void disconnectView() final;
     DOMWindow* virtualWindow() const final;
+    FrameLoaderClient& loaderClient() final;
 
     Ref<RemoteDOMWindow> m_window;
     RefPtr<Frame> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
     Markable<LayerHostingContextIdentifier> m_layerHostingContextIdentifier;
+    String m_customUserAgent;
+    String m_customUserAgentAsSiteSpecificQuirks;
     bool m_preventsParentFromBeingComplete { true };
 };
 

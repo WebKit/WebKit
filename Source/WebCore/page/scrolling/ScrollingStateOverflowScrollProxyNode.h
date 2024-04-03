@@ -51,7 +51,7 @@ private:
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;
     OptionSet<ScrollingStateNode::Property> applicableProperties() const final;
 
-    ScrollingNodeID m_overflowScrollingNodeID { 0 };
+    ScrollingNodeID m_overflowScrollingNodeID;
 };
 
 } // namespace WebCore

@@ -51,9 +51,11 @@ typedef int64_t EncodedWasmValue;
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer, SavedFPWidth);
+JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 JSC_DECLARE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
 JSC_DECLARE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context&));
-JSC_DECLARE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance*, uint32_t functionIndex));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationWasmUnwind, void*, (Instance*));
 
@@ -100,19 +102,23 @@ JSC_DECLARE_JIT_OPERATION(operationWasmThrow, void*, (Instance*, unsigned except
 JSC_DECLARE_JIT_OPERATION(operationWasmRethrow, void*, (Instance*, EncodedJSValue thrownValue));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSException, void*, (Instance*, Wasm::ExceptionType));
+JSC_DECLARE_JIT_OPERATION(operationCrashDueToBBQStackOverflow, void, ());
+JSC_DECLARE_JIT_OPERATION(operationCrashDueToOMGStackOverflow, void, ());
 
 struct ThrownExceptionInfo {
     EncodedJSValue thrownValue;
     void* payload;
 };
 
-JSC_DECLARE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue));
+JSC_DECLARE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t value));
+JSC_DECLARE_JIT_OPERATION(operationWasmArrayNewVector, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t lane0, uint64_t lane1));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayNewElem, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t elemSegmentIndex, uint32_t arraySize, uint32_t offset));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue encValue, uint32_t index));
 JSC_DECLARE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint32_t typeIndex, EncodedJSValue encValue, uint32_t index, EncodedJSValue value));
-JSC_DECLARE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance*, uint32_t, EncodedJSValue, uint32_t, EncodedJSValue, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance*, EncodedJSValue, uint32_t, uint64_t, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (Instance*, EncodedJSValue, uint32_t, uint64_t, uint64_t, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (Instance*, EncodedJSValue, uint32_t, EncodedJSValue, uint32_t, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (Instance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
 JSC_DECLARE_JIT_OPERATION(operationWasmArrayInitData, UCPUStrictInt32, (Instance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
@@ -129,7 +135,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Thr
  * together (not enough return registers are available in the ABI and we don't
  * handle stack arguments when calling C functions), so, instead, return the
  * payload and return the thrown value via an out pointer */
-JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable32, void*, (Instance*, EncodedJSValue*));
+JSC_DECLARE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (Instance*, EncodedJSValue*));
 #endif // USE(JSVALUE64)
 
 } } // namespace JSC::Wasm

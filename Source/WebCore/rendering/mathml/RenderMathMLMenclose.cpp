@@ -213,7 +213,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
 {
     RenderMathMLRow::paint(info, paintOffset);
 
-    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().visibility() != Visibility::Visible)
+    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible)
         return;
 
     LayoutUnit thickness = ruleThickness();

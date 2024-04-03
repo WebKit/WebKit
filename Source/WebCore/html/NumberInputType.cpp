@@ -145,7 +145,7 @@ StepRange NumberInputType::createStepRange(AnyStepHandling anyStepHandling) cons
     if (stepBase.isNaN())
         stepBase = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(valueAttr), numberDefaultStepBase);
 
-    const Decimal doubleMax = Decimal::fromDouble(std::numeric_limits<double>::max());
+    const Decimal doubleMax = Decimal::doubleMax();
     const Element& element = *this->element();
 
     RangeLimitations rangeLimitations = RangeLimitations::Invalid;

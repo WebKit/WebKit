@@ -62,7 +62,7 @@ class WPEPort(GLibPort):
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
         environment['WEBKIT_NICOSIA_PAINTING_THREADS'] = '0'
-        if self.get_option('wpe-platform-api'):
+        if self.get_option('wpe_platform_api'):
             environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'BREAKPAD_MINIDUMP_DIR')
@@ -98,10 +98,6 @@ class WPEPort(GLibPort):
 
     def _port_specific_expectations_files(self, **kwargs):
         return list(map(lambda x: self._filesystem.join(self._webkit_baseline_path(x), 'TestExpectations'), reversed(self._search_paths())))
-
-    def test_expectations_file_position(self):
-        # WPE port baseline search path is wpe -> glib -> wk2 -> generic, so port test expectations file is at third to last position.
-        return 3
 
     def configuration_for_upload(self, host=None):
         configuration = super(WPEPort, self).configuration_for_upload(host=host)

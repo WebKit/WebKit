@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ArgumentCodersGLib.h"
 
-#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
@@ -43,7 +42,7 @@ void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GV
     }
 
     encoder << CString(g_variant_get_type_string(variant.get()));
-    encoder << DataReference(static_cast<const uint8_t*>(g_variant_get_data(variant.get())), g_variant_get_size(variant.get()));
+    encoder << std::span(static_cast<const uint8_t*>(g_variant_get_data(variant.get())), g_variant_get_size(variant.get()));
 }
 
 std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)
@@ -58,7 +57,7 @@ std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decode
     if (!g_variant_type_string_is_valid(variantTypeString.data()))
         return std::nullopt;
 
-    DataReference data;
+    std::span<const uint8_t> data;
     if (!decoder.decode(data))
         return std::nullopt;
 
@@ -95,14 +94,14 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRe
     GRefPtr<GByteArray> privateKey;
     GUniqueOutPtr<char> privateKeyPKCS11Uri;
     g_object_get(certificate.get(), "private-key", &privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
-    encoder << IPC::DataReference(privateKey ? privateKey->data : nullptr, privateKey ? privateKey->len : 0);
+    encoder << std::span(privateKey ? privateKey->data : nullptr, privateKey ? privateKey->len : 0);
     encoder << CString(privateKeyPKCS11Uri.get());
 #endif
 
     // Encode starting from the root certificate.
     while (!certificatesDataList.isEmpty()) {
         auto certificateData = certificatesDataList.takeLast();
-        encoder << IPC::DataReference(certificateData->data, certificateData->len);
+        encoder << std::span(certificateData->data, certificateData->len);
     }
 }
 
@@ -117,7 +116,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
         return GRefPtr<GTlsCertificate>();
 
 #if GLIB_CHECK_VERSION(2, 69, 0)
-    std::optional<IPC::DataReference> privateKeyData;
+    std::optional<std::span<const uint8_t>> privateKeyData;
     decoder >> privateKeyData;
     if (!privateKeyData)
         return std::nullopt;
@@ -137,7 +136,7 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
     GRefPtr<GTlsCertificate> certificate;
     GTlsCertificate* issuer = nullptr;
     for (uint32_t i = 0; i < *chainLength; i++) {
-        std::optional<IPC::DataReference> certificateDataReference;
+        std::optional<std::span<const uint8_t>> certificateDataReference;
         decoder >> certificateDataReference;
         if (!certificateDataReference)
             return std::nullopt;

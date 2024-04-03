@@ -349,7 +349,7 @@ static std::span<const uint8_t> uuidToSpan(const std::optional<WTF::UUID>& uuid)
         return std::span(&junk, static_cast<size_t>(0));
     }
 
-    return uuid->toSpan();
+    return uuid->span();
 }
 
 static std::optional<WTF::UUID> uuidFromSpan(std::span<const uint8_t> span)

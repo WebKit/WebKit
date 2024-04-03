@@ -11,7 +11,7 @@ layer at (0,0) size 800x110
           RenderText {#text} at (0,0) size 30x30
             text run at (0,0) width 30: "xx"
             text run at (0,15) width 30: "xx"
-          RenderInline {SPAN} at (0,0) size 75x15 [color=#00FF00]
+          RenderInline {SPAN} at (30,15) size 75x15 [color=#00FF00]
             RenderText {#text} at (90,15) size 15x15
               text run at (90,15) width 15: "x"
           RenderText {#text} at (0,30) size 75x15

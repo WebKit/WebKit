@@ -62,7 +62,7 @@ template<typename CharacterType> static constexpr bool isManifestWhitespaceOrNew
 
 template<typename CharacterType> static URL makeManifestURL(const URL& manifestURL, const CharacterType* start, const CharacterType* end)
 {
-    URL url(manifestURL, String(start, end - start));
+    URL url(manifestURL, String({ start, end }));
     url.removeFragmentIdentifier();
     return url;
 }
@@ -72,13 +72,13 @@ template<typename CharacterType> static constexpr CharacterType cacheModeIdentif
 template<typename CharacterType> static constexpr CharacterType fallbackModeIdentifier[] = { 'F', 'A', 'L', 'L', 'B', 'A', 'C', 'K' };
 template<typename CharacterType> static constexpr CharacterType networkModeIdentifier[] = { 'N', 'E', 'T', 'W', 'O', 'R', 'K' };
 
-std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const uint8_t* data, int length)
+std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, std::span<const uint8_t> data)
 {
     static constexpr auto cacheManifestMIMEType = "text/cache-manifest"_s;
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data, length);
+    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data);
 
     return readCharactersForParsing(manifestString, [&](auto buffer) -> std::optional<ApplicationCacheManifest> {
         using CharacterType = typename decltype(buffer)::CharacterType;

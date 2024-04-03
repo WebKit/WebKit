@@ -976,6 +976,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcTextureCompatibilityTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureFilterAnisotropicTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureFilterAnisotropicTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcTextureLodBasicTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcTextureLodBasicTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureRepeatModeTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcTextureRepeatModeTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcUniformBlockCase.cpp",

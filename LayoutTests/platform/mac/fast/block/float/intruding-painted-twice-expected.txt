@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 120x18
           text run at (0,0) width 120: "Rendering test for "
         RenderInline {I} at (0,0) size 756x36
-          RenderInline {A} at (0,0) size 306x18 [color=#0000EE]
+          RenderInline {A} at (119,0) size 306x18 [color=#0000EE]
             RenderText {#text} at (119,0) size 306x18
               text run at (119,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=17107"
-          RenderText {#text} at (424,0) size 756x36
+          RenderText {#text} at (0,0) size 756x36
             text run at (424,0) width 5: " "
             text run at (428,0) width 328: "REGRESSION(r29834): Article text on redhat.com"
             text run at (0,18) width 274: "magazine site appears to be painting twice"

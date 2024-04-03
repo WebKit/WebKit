@@ -110,18 +110,18 @@ void QueueImpl::writeTexture(
     const Extent3D& size)
 {
     WGPUImageCopyTexture backingDestination {
-        nullptr,
-        m_convertToBackingContext->convertToBacking(destination.texture),
-        destination.mipLevel,
-        destination.origin ? m_convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
-        m_convertToBackingContext->convertToBacking(destination.aspect),
+        .nextInChain = nullptr,
+        .texture = m_convertToBackingContext->convertToBacking(destination.texture),
+        .mipLevel = destination.mipLevel,
+        .origin = destination.origin ? m_convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
+        .aspect = m_convertToBackingContext->convertToBacking(destination.aspect),
     };
 
     WGPUTextureDataLayout backingDataLayout {
-        nullptr,
-        dataLayout.offset,
-        dataLayout.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
-        dataLayout.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
+        .nextInChain = nullptr,
+        .offset = dataLayout.offset,
+        .bytesPerRow = dataLayout.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
+        .rowsPerImage = dataLayout.rowsPerImage.value_or(WGPU_COPY_STRIDE_UNDEFINED),
     };
 
     WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);

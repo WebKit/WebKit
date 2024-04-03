@@ -36,7 +36,7 @@ from webkitcorepy import StringIO, OutputCapture
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import Reviewer, Committer, Contributor, CommitterList
 from webkitpy.common.net.web_mock import MockBrowser
-from webkitpy.common.net.bugzilla.bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag, EditUsersParser
+from webkitpy.common.net.bugzilla.bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.thirdparty.mock import Mock
 
@@ -87,13 +87,11 @@ class BugzillaTest(unittest.TestCase):
         # FIXME: These would be all better as doctests
         bugs = Bugzilla()
         self.assertIsNone(bugs.bug_url_for_bug_id(None))
-        self.assertIsNone(bugs.short_bug_url_for_bug_id(None))
         self.assertIsNone(bugs.attachment_url_for_id(None))
 
     def test_parse_bug_id(self):
         # Test that we can parse the urls we produce.
         bugs = Bugzilla()
-        self.assertEqual(12345, urls.parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
         self.assertEqual(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345)))
         self.assertEqual(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
 
@@ -214,14 +212,6 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
     %s
 </bugzilla>
 """ % (_bug_xml, _bug_xml)
-
-    def test_parse_bugs_from_xml(self):
-        bugzilla = Bugzilla()
-        bugs = bugzilla._parse_bugs_from_xml(self._sample_multi_bug_xml)
-        self.assertEqual(len(bugs), 2)
-        self.assertEqual(bugs[0].id(), self._expected_example_bug_parsing['id'])
-        bugs = bugzilla._parse_bugs_from_xml("")
-        self.assertEqual(len(bugs), 0)
 
     # This could be combined into test_bug_parsing later if desired.
     def test_attachment_parsing(self):
@@ -421,23 +411,6 @@ class BugzillaQueriesTest(unittest.TestCase):
 </html>
 """
 
-    def _assert_result_count(self, queries, html, count):
-        self.assertEqual(queries._parse_result_count(html), count)
-
-    def test_parse_result_count(self):
-        queries = BugzillaQueries(None)
-        # Pages with results, always list the count at least twice.
-        self._assert_result_count(queries, '<span class="bz_result_count">314 bugs found.</span><span class="bz_result_count">314 bugs found.</span>', 314)
-        self._assert_result_count(queries, '<span class="bz_result_count">Zarro Boogs found.</span>', 0)
-        self._assert_result_count(queries, '<span class="bz_result_count">\n \nOne bug found.</span>', 1)
-        self._assert_result_count(queries, '', 0)
-        self.assertRaises(Exception, queries._parse_result_count, ['Invalid'])
-
-    def test_request_page_parsing(self):
-        queries = BugzillaQueries(None)
-        self.assertEqual([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
-        self.assertEqual([40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page, datetime.datetime(2009, 10, 4, 11, 38, 44)))
-
     def test_quip_page_parsing(self):
         queries = BugzillaQueries(None)
         expected_quips = ["Everything should be made as simple as possible, but not simpler. - Albert Einstein", "Good artists copy. Great artists steal. - Pablo Picasso", u"\u00e7gua mole em pedra dura, tanto bate at\u008e que fura."]
@@ -446,121 +419,3 @@ class BugzillaQueriesTest(unittest.TestCase):
     def test_load_query(self):
         queries = BugzillaQueries(Mock())
         queries._load_query("request.cgi?action=queue&type=review&group=type")
-
-
-class EditUsersParserTest(unittest.TestCase):
-    _example_user_results = """
-        <div id="bugzilla-body">
-        <p>1 user found.</p>
-        <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
-          <tr bgcolor="#6666FF">
-              <th align="left">Edit user...
-              </th>
-              <th align="left">Real name
-              </th>
-              <th align="left">Account History
-              </th>
-          </tr>
-          <tr>
-              <td >
-                  <a href="editusers.cgi?action=edit&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
-                abarth&#64;webkit.org
-                  </a>
-              </td>
-              <td >
-                Adam Barth
-              </td>
-              <td >
-                  <a href="editusers.cgi?action=activity&amp;userid=1234&amp;matchvalue=login_name&amp;groupid=&amp;grouprestrict=&amp;matchtype=substr&amp;matchstr=abarth%40webkit.org">
-                View
-                  </a>
-              </td>
-          </tr>
-        </table>
-    """
-
-    _example_empty_user_results = """
-    <div id="bugzilla-body">
-    <p>0 users found.</p>
-    <table id="admin_table" border="1" cellpadding="4" cellspacing="0">
-      <tr bgcolor="#6666FF">
-          <th align="left">Edit user...
-          </th>
-          <th align="left">Real name
-          </th>
-          <th align="left">Account History
-          </th>
-      </tr>
-      <tr><td colspan="3" align="center"><i>&lt;none&gt;</i></td></tr>
-    </table>
-    """
-
-    def _assert_login_userid_pairs(self, results_page, expected_logins):
-        parser = EditUsersParser()
-        logins = parser.login_userid_pairs_from_edit_user_results(results_page)
-        self.assertEqual(logins, expected_logins)
-
-    def test_logins_from_editusers_results(self):
-        self._assert_login_userid_pairs(self._example_user_results, [("abarth@webkit.org", 1234)])
-        self._assert_login_userid_pairs(self._example_empty_user_results, [])
-
-    _example_user_page = """<table class="main"><tr>
-  <th><label for="login">Login name:</label></th>
-  <td>eric&#64;webkit.org
-  </td>
-</tr>
-<tr>
-  <th><label for="name">Real name:</label></th>
-  <td>Eric Seidel
-  </td>
-</tr>
-    <tr>
-      <th>Group access:</th>
-      <td>
-        <table class="groups">
-          <tr>
-          </tr>
-          <tr>
-            <th colspan="2">User is a member of these groups</th>
-          </tr>
-            <tr class="direct">
-              <td class="checkbox"><input type="checkbox"
-                           id="group_7"
-                           name="group_7"
-                           value="1" checked="checked" /></td>
-              <td class="groupname">
-                <label for="group_7">
-                  <strong>canconfirm:</strong>
-                  Can confirm a bug.
-                </label>
-              </td>
-            </tr>
-            <tr class="direct">
-              <td class="checkbox"><input type="checkbox"
-                           id="group_6"
-                           name="group_6"
-                           value="1" /></td>
-              <td class="groupname">
-                <label for="group_6">
-                  <strong>editbugs:</strong>
-                  Can edit all aspects of any bug.
-                /label>
-              </td>
-            </tr>
-        </table>
-      </td>
-    </tr>
-
-  <tr>
-    <th>Product responsibilities:</th>
-    <td>
-        <em>none</em>
-    </td>
-  </tr>
-</table>"""
-
-    def test_user_dict_from_edit_user_page(self):
-        parser = EditUsersParser()
-        user_dict = parser.user_dict_from_edit_user_page(self._example_user_page)
-        expected_user_dict = {u'login': u'eric@webkit.org', u'groups': set(['canconfirm']), u'name': u'Eric Seidel'}
-        self.assertEqual(expected_user_dict, user_dict)

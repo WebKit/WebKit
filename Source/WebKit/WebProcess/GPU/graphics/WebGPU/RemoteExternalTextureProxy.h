@@ -73,6 +73,8 @@ private:
     }
 
     void setLabelInternal(const String&) final;
+    void destroy() final;
+    void undestroy() final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

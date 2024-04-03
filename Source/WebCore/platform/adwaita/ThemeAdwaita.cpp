@@ -275,14 +275,14 @@ LengthBox ThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCasc
     return Theme::controlBorder(appearance, font, zoomedBox, zoomFactor);
 }
 
-void ThemeAdwaita::paint(StyleAppearance appearance, OptionSet<ControlStyle::State> states, GraphicsContext& context, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paint(StyleAppearance appearance, OptionSet<ControlStyle::State> states, GraphicsContext& context, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& usedAccentColor)
 {
     switch (appearance) {
     case StyleAppearance::Checkbox:
-        paintCheckbox(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
+        paintCheckbox(states, context, zoomedRect, useDarkAppearance, usedAccentColor);
         break;
     case StyleAppearance::Radio:
-        paintRadio(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
+        paintRadio(states, context, zoomedRect, useDarkAppearance, usedAccentColor);
         break;
     case StyleAppearance::PushButton:
     case StyleAppearance::DefaultButton:
@@ -298,7 +298,7 @@ void ThemeAdwaita::paint(StyleAppearance appearance, OptionSet<ControlStyle::Sta
     }
 }
 
-void ThemeAdwaita::paintCheckbox(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paintCheckbox(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& usedAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -323,7 +323,7 @@ void ThemeAdwaita::paintCheckbox(OptionSet<ControlStyle::State> states, Graphics
         toggleBorderHoverColor = toggleBorderHoveredColorLight;
     }
 
-    Color accentColor = effectiveAccentColor.isValid() ? effectiveAccentColor : m_accentColor;
+    Color accentColor = usedAccentColor.isValid() ? usedAccentColor : m_accentColor;
     Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
     Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 
@@ -383,7 +383,7 @@ void ThemeAdwaita::paintCheckbox(OptionSet<ControlStyle::State> states, Graphics
         graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintRadio(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paintRadio(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& usedAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     FloatRect fieldRect = zoomedRect;
@@ -407,7 +407,7 @@ void ThemeAdwaita::paintRadio(OptionSet<ControlStyle::State> states, GraphicsCon
         toggleBorderHoverColor = toggleBorderHoveredColorLight;
     }
 
-    Color accentColor = effectiveAccentColor.isValid() ? effectiveAccentColor : m_accentColor;
+    Color accentColor = usedAccentColor.isValid() ? usedAccentColor : m_accentColor;
     Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
     Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 

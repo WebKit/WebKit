@@ -147,6 +147,7 @@ my @files;
 
 my $tempdir = tempdir();
 my ($deffh, $deffile) = getTempFile();
+my ($asyncfh, $asyncfile) = getTempFile();
 
 my $startTime = time();
 
@@ -324,10 +325,13 @@ sub main {
     my @defaultHarnessFiles = (
         "$harnessDir/sta.js",
         "$harnessDir/assert.js",
+    );
+    print $deffh getHarness(\@defaultHarnessFiles);
+
+    my @asyncHarnessFiles = (
         "$harnessDir/doneprintHandle.js",
     );
-
-    print $deffh getHarness(\@defaultHarnessFiles);
+    print $asyncfh getHarness(\@asyncHarnessFiles);
 
     if (!@cliTestDirs) {
         # If not commandline test path supplied, use the root directory of all tests.
@@ -457,6 +461,7 @@ sub main {
     }
 
     close $deffh;
+    close $asyncfh;
 
     @results = sort { "$a->{path} . $a->{mode}" cmp "$b->{path} . $b->{mode}" } @results;
 
@@ -800,14 +805,15 @@ sub runTest {
         $args .=  " --exception=$type ";
     }
 
+    my $asyncHarness = '';
     if (exists $data->{flags}) {
         if (grep $_ eq 'async', @{ $data->{flags} }) {
             $args .= ' --test262-async ';
+            $asyncHarness = $asyncfile if $scenario ne 'raw';
         }
     }
 
     my $prefixFile = '';
-
     if ($scenario eq 'module') {
         $prefixFile='--module-file=';
     } elsif ($scenario eq 'strict mode') {
@@ -821,7 +827,7 @@ sub runTest {
     my $prefix = !isWindows() && $DYLD_FRAMEWORK_PATH ? qq(DYLD_FRAMEWORK_PATH=$DYLD_FRAMEWORK_PATH) : "";
     my $execTimeStart = time();
 
-    my $result = qx($prefix $JSC $args $defaultHarness $includesfile $prefixFile$filename);
+    my $result = qx($prefix $JSC $args $defaultHarness $asyncHarness $includesfile $prefixFile$filename);
     my $execTime = time() - $execTimeStart;
 
     chomp $result;

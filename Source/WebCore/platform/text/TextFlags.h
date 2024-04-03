@@ -477,16 +477,3 @@ enum class ColorGlyphType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ResolvedEmojiPolicy> {
-    using values = EnumValues<
-        WebCore::ResolvedEmojiPolicy,
-        WebCore::ResolvedEmojiPolicy::NoPreference,
-        WebCore::ResolvedEmojiPolicy::RequireText,
-        WebCore::ResolvedEmojiPolicy::RequireEmoji
-    >;
-};
-
-} // namespace WTF

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests scheduling requestIdleCallback when the browser is idle. WebKit should fire idle callbacks.<br>
+You should see idle1, idle2, and idle3 below:</p>
+<pre id="result"></pre>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+idle1 = requestIdleCallback(() => result.textContent += 'idle1\n');
+setTimeout(() => {
+  idle2 = requestIdleCallback(() => result.textContent += 'idle2\n');
+  setTimeout(() => {
+    idle3 = requestIdleCallback(() => result.textContent += 'idle3\n');
+  }, 1000);
+}, 1000);
+
+setTimeout(() => {
+    cancelIdleCallback(idle1);
+    cancelIdleCallback(idle2);
+    cancelIdleCallback(idle3);
+    result.textContent += (result.textContent.includes('idle3') ? 'PASS' : 'FAIL') + '\n';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 3000);
+
+</script>
+</body>
+</html>

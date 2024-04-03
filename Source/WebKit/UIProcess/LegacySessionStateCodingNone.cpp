@@ -27,7 +27,6 @@
 #include "LegacySessionStateCoding.h"
 
 #include "APIData.h"
-#include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "MessageNames.h"
@@ -43,12 +42,12 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     encoder << sessionState.backForwardListState;
     encoder << sessionState.renderTreeSize;
     encoder << sessionState.provisionalURL;
-    return API::Data::create(encoder.buffer(), encoder.bufferSize());
+    return API::Data::create(encoder.span());
 }
 
-bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
+bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessionState)
 {
-    auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+    auto decoder = IPC::Decoder::create(data, { });
     if (!decoder)
         return false;
 

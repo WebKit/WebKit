@@ -1244,7 +1244,7 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
     mArgumentBufferRenderStageUsages.resize(blocks.size());
     mLegalizedOffsetedUniformBuffers.resize(blocks.size());
 
-    ANGLE_TRY(legalizeUniformBufferOffsets(context, blocks));
+    ANGLE_TRY(legalizeUniformBufferOffsets(context));
 
     const gl::State &glState = context->getState();
 
@@ -1257,12 +1257,11 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
 
         if (mCurrentShaderVariants[shaderType]->translatedSrcInfo->hasUBOArgumentBuffer)
         {
-            ANGLE_TRY(
-                encodeUniformBuffersInfoArgumentBuffer(context, cmdEncoder, blocks, shaderType));
+            ANGLE_TRY(encodeUniformBuffersInfoArgumentBuffer(context, cmdEncoder, shaderType));
         }
         else
         {
-            ANGLE_TRY(bindUniformBuffersToDiscreteSlots(context, cmdEncoder, blocks, shaderType));
+            ANGLE_TRY(bindUniformBuffersToDiscreteSlots(context, cmdEncoder, shaderType));
         }
     }  // for shader types
 
@@ -1270,9 +1269,9 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
     // the buffers are being used by what shader stages.
     for (uint32_t bufferIndex = 0; bufferIndex < blocks.size(); ++bufferIndex)
     {
-        const gl::InterfaceBlock &block = blocks[bufferIndex];
+        const GLuint binding = mExecutable->getUniformBlockBinding(bufferIndex);
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
-            glState.getIndexedUniformBuffer(block.pod.binding);
+            glState.getIndexedUniformBuffer(binding);
         if (bufferBinding.get() == nullptr)
         {
             continue;
@@ -1294,17 +1293,17 @@ angle::Result ProgramExecutableMtl::updateUniformBuffers(
     return angle::Result::Continue;
 }
 
-angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(
-    ContextMtl *context,
-    const std::vector<gl::InterfaceBlock> &blocks)
+angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *context)
 {
-    const gl::State &glState = context->getState();
+    const gl::State &glState                      = context->getState();
+    const std::vector<gl::InterfaceBlock> &blocks = mExecutable->getUniformBlocks();
 
     for (uint32_t bufferIndex = 0; bufferIndex < blocks.size(); ++bufferIndex)
     {
         const gl::InterfaceBlock &block = blocks[bufferIndex];
+        const GLuint binding            = mExecutable->getUniformBlockBinding(bufferIndex);
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
-            glState.getIndexedUniformBuffer(block.pod.binding);
+            glState.getIndexedUniformBuffer(binding);
 
         if (bufferBinding.get() == nullptr)
         {
@@ -1362,18 +1361,19 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(
 angle::Result ProgramExecutableMtl::bindUniformBuffersToDiscreteSlots(
     ContextMtl *context,
     mtl::RenderCommandEncoder *cmdEncoder,
-    const std::vector<gl::InterfaceBlock> &blocks,
     gl::ShaderType shaderType)
 {
-    const gl::State &glState = context->getState();
+    const gl::State &glState                      = context->getState();
+    const std::vector<gl::InterfaceBlock> &blocks = mExecutable->getUniformBlocks();
     const mtl::TranslatedShaderInfo &shaderInfo =
         *mCurrentShaderVariants[shaderType]->translatedSrcInfo;
 
     for (uint32_t bufferIndex = 0; bufferIndex < blocks.size(); ++bufferIndex)
     {
         const gl::InterfaceBlock &block = blocks[bufferIndex];
+        const GLuint binding            = mExecutable->getUniformBlockBinding(bufferIndex);
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
-            glState.getIndexedUniformBuffer(block.pod.binding);
+            glState.getIndexedUniformBuffer(binding);
 
         if (bufferBinding.get() == nullptr || !block.activeShaders().test(shaderType))
         {
@@ -1397,10 +1397,10 @@ angle::Result ProgramExecutableMtl::bindUniformBuffersToDiscreteSlots(
 angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
     ContextMtl *context,
     mtl::RenderCommandEncoder *cmdEncoder,
-    const std::vector<gl::InterfaceBlock> &blocks,
     gl::ShaderType shaderType)
 {
-    const gl::State &glState = context->getState();
+    const gl::State &glState                      = context->getState();
+    const std::vector<gl::InterfaceBlock> &blocks = mExecutable->getUniformBlocks();
 
     ASSERT(mCurrentShaderVariants[shaderType]->translatedSrcInfo);
     const mtl::TranslatedShaderInfo &shaderInfo =
@@ -1434,8 +1434,9 @@ angle::Result ProgramExecutableMtl::encodeUniformBuffersInfoArgumentBuffer(
     for (uint32_t bufferIndex = 0; bufferIndex < blocks.size(); ++bufferIndex)
     {
         const gl::InterfaceBlock &block = blocks[bufferIndex];
+        const GLuint binding            = mExecutable->getUniformBlockBinding(bufferIndex);
         const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
-            glState.getIndexedUniformBuffer(block.pod.binding);
+            glState.getIndexedUniformBuffer(binding);
 
         if (bufferBinding.get() == nullptr || !block.activeShaders().test(shaderType))
         {

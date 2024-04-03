@@ -175,8 +175,8 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
-    if (m_options.runInCrossOriginIFrame()) {
-        WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://www.webkit.org"));
+    if (m_options.runInCrossOriginFrame()) {
+        WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
         WKRetainPtr<WKStringRef> htmlString = toWK(makeString("<iframe src=\"", m_urlString.utf8().data(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"));
         WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
     } else
@@ -272,9 +272,11 @@ void TestInvocation::dumpResults()
         if (m_pixelResult)
             dumpPixelsAndCompareWithExpected(SnapshotResultType::WebContents, m_repaintRects.get(), m_pixelResult.get());
         else if (m_pixelResultIsPending) {
-            m_gotRepaint = false;
-            WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-            TestController::singleton().runUntil(m_gotRepaint, TestController::noTimeout);
+            if (m_forceRepaint) {
+                m_gotRepaint = false;
+                WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+                TestController::singleton().runUntil(m_gotRepaint, TestController::noTimeout);
+            }
             dumpPixelsAndCompareWithExpected(SnapshotResultType::WebView, m_repaintRects.get());
         }
     }
@@ -344,9 +346,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         }
         m_repaintRects = static_cast<WKArrayRef>(value(messageBodyDictionary, "RepaintRects"));
         m_audioResult = static_cast<WKDataRef>(value(messageBodyDictionary, "AudioResult"));
+        m_forceRepaint = booleanValue(messageBodyDictionary, "ForceRepaint");
         done();
         return;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone"))
+        return postPageMessage("NotifyDone");
 
     if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
         m_textOutput.append(toWTFString(stringValue(messageBody)));
@@ -887,6 +893,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "FindStringMatches")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        auto string = stringValue(messageBodyDictionary, "String");
+        auto findOptions = static_cast<WKFindOptions>(uint64Value(messageBodyDictionary, "FindOptions"));
+        WKPageFindStringMatches(TestController::singleton().mainWebView()->page(), string, findOptions, 0);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -1296,7 +1310,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto fromHost = stringValue(messageBodyDictionary, "FromHost");
         auto toHost = stringValue(messageBodyDictionary, "ToHost");
-        TestController::singleton().setStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost);
+        auto wasFiltered = booleanValue(messageBodyDictionary, "WasFiltered");
+        TestController::singleton().setStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost, wasFiltered);
         return nullptr;
     }
 
@@ -1585,6 +1600,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetIsMediaKeySystemPermissionGranted")) {
         TestController::singleton().setIsMediaKeySystemPermissionGranted(booleanValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetRequestStorageAccessThrowsExceptionUntilReload")) {
+        TestController::singleton().setRequestStorageAccessThrowsExceptionUntilReload(booleanValue(messageBody));
         return nullptr;
     }
 

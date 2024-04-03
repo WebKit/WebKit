@@ -30,6 +30,7 @@ from webkitpy.port.config import apple_additions
 class DeviceType(object):
     FIRST_GENERATION = ' (1st generation)'
     SIZE_RE = re.compile(r'(?P<series>.+ )\((?P<size>\d\d)mm\)')
+    APPLE_VISION_PREFIX = 'Apple Vision'
 
     @classmethod
     def from_string(cls, device_string, version=None):
@@ -76,6 +77,8 @@ class DeviceType(object):
             self.software_variant = 'tvOS'
         elif self.hardware_family.lower().startswith('ipad') or self.hardware_family.lower().startswith('iphone'):
             self.software_variant = 'iOS'
+        elif self.hardware_family.lower().split(' ')[-1].startswith('vision'):
+            self.software_variant = 'visionOS'
 
     def check_consistency(self):
         if self.hardware_family is not None:
@@ -121,7 +124,8 @@ class DeviceType(object):
         size_match = cls.SIZE_RE.match(hardware_type)
         if size_match:
             return '{}- {}mm'.format(size_match.group('series'), size_match.group('size'))
-
+        if hardware_type.lower().startswith(cls.APPLE_VISION_PREFIX.lower()):
+            return hardware_type[len('Apple '):]
         return hardware_type
 
     @property

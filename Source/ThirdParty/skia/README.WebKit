@@ -1,0 +1,23 @@
+This directory contains a copy of Skia from the official repository.
+
+  - URL: https://skia.googlesource.com/skia
+  - Commit: f4f7364eb73a016f363d3d66ff3007e3a94e3f5e
+
+Changes on top of upstream Skia:
+
+  - Added files with an Epoxy GL/EGL symbol resolver.
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/skia
+  cp -ar ../path/to/skia Source/ThirdParty/
+  git checkout -- \
+      Source/ThirdParty/skia/README.WebKit \
+      Source/ThirdParty/skia/CMakeLists.txt \
+      Source/ThirdParty/skia/ext-skia-configure \
+  rm -rf Source/ThirdParty/skia/.git/
+  git add -A Source/ThirdParty/skia/
+
+Then check whether the updated sources require any changes to the CMake
+build system, and update the Skia commit identifier in this file.

@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+    <style>
+        iframe {
+            width: 300px;
+            height: 250px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function doOnFirstLoad()
+        {
+            await UIHelper.renderingUpdate();
+
+            let iframe = document.getElementsByTagName('iframe')[0];
+            if (window.internals)
+                document.getElementById('scrollingtree-before-navigate').innerText = internals.scrollingStateTreeAsText();
+            
+            iframe.contentWindow.location.href = 'resources/go-back.html';
+        }
+        
+        let sawFirstLoad = false;
+        function iframeLoaded(iframeLocation)
+        {
+            const path = iframeLocation.pathname;
+            const filename = path.substring(path.lastIndexOf('/') + 1)
+
+            if (filename === 'green_rectangle.pdf') {
+                if (!sawFirstLoad) {
+                    sawFirstLoad = true;
+                    doOnFirstLoad();
+                    return;
+                }
+                doAfterBack();
+            }
+        }
+
+        async function doAfterBack()
+        {
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                document.getElementById('scrollingtree-after-back').innerText = internals.scrollingStateTreeAsText();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+    </script>
+</head>
+<body>
+    <iframe onload="iframeLoaded(this.contentWindow.location)" src="../../../fast/images/resources/green_rectangle.pdf"></iframe>
+    <p>Before navigation:</p>
+    <pre id="scrollingtree-before-navigate"></pre>
+    <p>After back:</p>
+    <pre id="scrollingtree-after-back"></pre>
+</body>
+</html>

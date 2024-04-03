@@ -67,6 +67,11 @@ inline Element* Node::parentElement() const
     return dynamicDowncast<Element>(parentNode());
 }
 
+inline RefPtr<Element> Node::protectedParentElement() const
+{
+    return parentElement();
+}
+
 inline const Element* Element::rootElement() const
 {
     if (isConnected())
@@ -211,7 +216,7 @@ inline const AtomString& Element::getAttribute(const QualifiedName& name, const 
 
 inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* element)
 {
-    return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
+    return (element && element->isInTopLayer()) || style.pseudoElementType() == PseudoId::Backdrop;
 }
 
 inline void Element::hideNonce()

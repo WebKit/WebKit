@@ -38,6 +38,7 @@ public:
     WEBCORE_EXPORT HTMLFormElement* form() const;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
     HTMLLabelElement(const QualifiedName&, Document&);

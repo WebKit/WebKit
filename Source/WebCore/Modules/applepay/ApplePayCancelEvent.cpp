@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayCancelEvent);
 
 ApplePayCancelEvent::ApplePayCancelEvent(const AtomString& type, PaymentSessionError&& sessionError)
-    : Event { type, CanBubble::No, IsCancelable::No }
+    : Event { EventInterfaceType::ApplePayCancelEvent, type, CanBubble::No, IsCancelable::No }
     , m_sessionError { WTFMove(sessionError) }
 {
 }
@@ -44,11 +44,6 @@ ApplePayCancelEvent::ApplePayCancelEvent(const AtomString& type, PaymentSessionE
 ApplePaySessionError ApplePayCancelEvent::sessionError() const
 {
     return m_sessionError.sessionError();
-}
-
-EventInterface ApplePayCancelEvent::eventInterface() const
-{
-    return ApplePayCancelEventInterfaceType;
 }
 
 } // namespace WebCore

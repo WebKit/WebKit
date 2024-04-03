@@ -39,6 +39,7 @@ class CCallHelpers;
 namespace DFG {
 
 class Graph;
+class Plan;
 
 // Represents either a JSValue, or for JSValues that require allocation in the heap,
 // it tells you everything you'd need to know in order to allocate it.
@@ -112,7 +113,7 @@ public:
     
     uintptr_t switchLookupValue(SwitchKind) const;
 
-    void emit(CCallHelpers&, JSValueRegs) const;
+    void emit(CCallHelpers&, JSValueRegs, Plan&) const;
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

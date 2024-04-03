@@ -39,7 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawInstancedBaseVertexBaseInstance);
 WebGLDrawInstancedBaseVertexBaseInstance::WebGLDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLDrawInstancedBaseVertexBaseInstance)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
 }
 
 WebGLDrawInstancedBaseVertexBaseInstance::~WebGLDrawInstancedBaseVertexBaseInstance() = default;
@@ -66,7 +66,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawArraysInstancedBaseInstanceWE
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
-        context.graphicsContextGL()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
+        context.protectedGraphicsContextGL()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
     }
 
     context.markContextChangedAndNotifyCanvasObserver();
@@ -89,7 +89,7 @@ void WebGLDrawInstancedBaseVertexBaseInstance::drawElementsInstancedBaseVertexBa
     {
         ScopedInspectorShaderProgramHighlight scopedHighlight { context };
 
-        context.graphicsContextGL()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
+        context.protectedGraphicsContextGL()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, offset, instanceCount, baseVertex, baseInstance);
     }
 
     context.markContextChangedAndNotifyCanvasObserver();

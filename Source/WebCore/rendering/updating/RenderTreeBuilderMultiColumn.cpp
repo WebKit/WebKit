@@ -300,7 +300,7 @@ void RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted(RenderMultiCo
             // where it would otherwise occur (if it weren't a spanner) to becoming a sibling of the
             // column sets.
             ASSERT(!flow.spannerMap().get(placeholder->spanner()));
-            flow.spannerMap().add(placeholder->spanner(), placeholder);
+            flow.spannerMap().add(*placeholder->spanner(), placeholder);
             ASSERT(!placeholder->firstChild()); // There should be no children here, but if there are, we ought to skip them.
         } else
             descendant = processPossibleSpannerDescendant(flow, subtreeRoot, *descendant);

@@ -296,7 +296,6 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     GrammarDetail grammarDetail;
 
     String misspelledWord;
-    std::optional<SimpleRange> misspelledWordRange;
     String badGrammarPhrase;
     
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
@@ -612,7 +611,7 @@ bool platformDrivenTextCheckerEnabled()
 
 bool platformOrClientDrivenTextCheckerEnabled()
 {
-#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     if (!AXObjectCache::shouldSpellCheck())
         return true;
 #endif

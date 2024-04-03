@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,9 @@
 #include "Connection.h"
 #include "MediaOverridesForTesting.h"
 #include "MessageReceiverMap.h"
-#include "SharedMemory.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
@@ -89,14 +89,6 @@ public:
 #endif
 
     void updateMediaConfiguration(bool forceUpdate);
-
-#if ENABLE(VP9)
-    void enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder);
-
-    bool isVP8DecoderEnabled() const { return m_enableVP8Decoder; }
-    bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
-    bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
-#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void createVisibilityPropagationContextForPage(WebPage&);
@@ -160,11 +152,6 @@ private:
 #endif
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RefPtr<RemoteAudioSourceProviderManager> m_audioSourceProviderManager;
-#endif
-#if ENABLE(VP9)
-    bool m_enableVP8Decoder { false };
-    bool m_enableVP9Decoder { false };
-    bool m_enableVP9SWDecoder { false };
 #endif
 
 #if PLATFORM(COCOA)

@@ -1375,12 +1375,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 String HTMLTokenizer::bufferedCharacters() const
 {
     // FIXME: Add an assert about m_state.
-    StringBuilder characters;
-    characters.reserveCapacity(numberOfBufferedCharacters());
-    characters.append('<');
-    characters.append('/');
-    characters.appendCharacters(m_temporaryBuffer.data(), m_temporaryBuffer.size());
-    return characters.toString();
+    return makeString("</"_s, m_temporaryBuffer);
 }
 
 void HTMLTokenizer::updateStateFor(const AtomString& tagName)

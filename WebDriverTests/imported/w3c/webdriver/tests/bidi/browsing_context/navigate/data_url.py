@@ -7,11 +7,11 @@ from . import navigate_and_assert
 pytestmark = pytest.mark.asyncio
 
 
-def dataURL(doc, mime_type="text/html", charset="utf-8", isBase64=False):
+def dataURL(doc, mime_type="text/html", charset="utf-8", is_base64=False):
     encoding = ""
     if charset:
         encoding = f"charset={charset}"
-    elif isBase64:
+    elif is_base64:
         encoding = "base64"
 
     return f"data:{mime_type};{encoding},{quote(doc)}"
@@ -31,7 +31,7 @@ IMG_RED_PIXEL = dataURL(
     None,
     True,
 )
-PAGE = "/webdriver/tests/bidi/browsing_context/navigate/support/empty.html"
+PAGE = "/webdriver/tests/bidi/browsing_context/support/empty.html"
 TEXT_BAR = dataURL("bar", "text/plain")
 TEXT_FOO = dataURL("foo", "text/plain")
 

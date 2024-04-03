@@ -58,12 +58,12 @@ PASS el-article
 PASS el-blockquote
 PASS el-button
 PASS el-code
-FAIL el-dd assert_equals: <dd data-testname="el-dd" data-expectedrole="definition" class="ex">x</dd> expected "definition" but got ""
+PASS el-dd
 PASS el-del
-FAIL el-details assert_equals: <details data-testname="el-details" data-expectedrole="group" class="ex"><summary>x</summary>x</details> expected "group" but got ""
+PASS el-details
 FAIL el-dfn assert_equals: <dfn data-testname="el-dfn" data-expectedrole="term" class="ex">x</dfn> expected "term" but got "definition"
-FAIL el-dt assert_equals: <dt data-testname="el-dt" data-expectedrole="term" class="ex">x</dt> expected "term" but got ""
-FAIL el-em assert_equals: <em data-testname="el-em" data-expectedrole="emphasis" class="ex">x</em> expected "emphasis" but got ""
+PASS el-dt
+PASS el-em
 PASS el-fieldset
 PASS el-figure
 PASS el-form
@@ -73,7 +73,7 @@ PASS el-h3
 PASS el-h4
 PASS el-h5
 PASS el-h6
-FAIL el-hgroup assert_equals: <hgroup data-testname="el-hgroup" data-expectedrole="group" class="ex"><h1>x</h1></hgroup> expected "group" but got ""
+PASS el-hgroup
 PASS el-hr
 PASS el-img
 PASS el-input-button
@@ -96,14 +96,14 @@ PASS el-menu
 PASS el-meter
 PASS el-nav
 PASS el-ol
-FAIL el-option assert_equals: <option data-testname="el-option" data-expectedrole="option" class="ex">x</option> expected "option" but got ""
+PASS el-option
 PASS el-output
 PASS el-p
 PASS el-progress
-FAIL el-s assert_equals: <s data-testname="el-s" data-expectedrole="deletion" class="ex">x</s> expected "deletion" but got ""
+PASS el-s
 PASS el-search
 FAIL el-select-listbox assert_equals: <select data-testname="el-select-listbox" size="2" data-expectedrole="listbox" class="ex"><option>b1</option><option>b2</option></select> expected "listbox" but got "button"
-FAIL el-strong assert_equals: <strong data-testname="el-strong" data-expectedrole="strong" class="ex">x</strong> expected "strong" but got ""
+PASS el-strong
 PASS el-sub
 PASS el-sup
 PASS el-time

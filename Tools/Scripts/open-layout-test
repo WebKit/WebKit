@@ -35,6 +35,7 @@ from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
 from webkitpy.layout_tests.servers.run_webkit_httpd import run_server as run_webkit_httpd
 from webkitpy.layout_tests.servers.run_webkit_httpd import parse_args as parse_httpd_args
+from webkitpy.port import DriverInput
 
 def parse_args(args):
     description = """Open a layout test using the default browser. Script will make sure to start a server if test needs it."""
@@ -59,12 +60,13 @@ def main(argv, stdout, stderr):
     test_name = paths[0]
 
     needs_server = False
-    if driver.is_http_test(test_name) and not port.is_http_server_running():
+    driver_input = DriverInput(test_name, 1000, None, None)
+    if driver.is_http_test(driver_input) and not port.is_http_server_running():
         needs_server = not port.is_http_server_running()
     elif driver.is_web_platform_test(test_name) or driver.is_webkit_specific_web_platform_test(test_name):
         needs_server = not port.is_wpt_server_running()
 
-    test_url = driver.test_to_uri(test_name)
+    test_url = driver.test_to_uri(driver_input)
     if not needs_server:
         print("Opening %s" % test_url)
         subprocess.Popen(['open', test_url])

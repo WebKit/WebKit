@@ -47,7 +47,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
 LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
-    : RenderElement(type, element, WTFMove(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy)
+    : RenderElement(type, element, WTFMove(style), { }, typeFlags | SVGModelObjectFlag::IsLegacy | SVGModelObjectFlag::UsesBoundaryCaching)
 {
     ASSERT(isLegacyRenderSVGModelObject());
     ASSERT(!isRenderSVGModelObject());
@@ -129,7 +129,7 @@ void LegacyRenderSVGModelObject::willBeDestroyed()
 void LegacyRenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifference::Layout) {
-        setNeedsBoundariesUpdate();
+        invalidateCachedBoundaries();
         if (style().affectsTransform() || (oldStyle && oldStyle->affectsTransform()))
             setNeedsTransformUpdate();
     }
@@ -147,7 +147,7 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
 {
     ASSERT(element);
 
-    SVGElement* stopAtElement = SVGLocatable::nearestViewportElement(element);
+    RefPtr stopAtElement = SVGLocatable::nearestViewportElement(element);
     ASSERT(stopAtElement);
 
     AffineTransform localTransform;
@@ -157,7 +157,7 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
         localTransform = currentElement->renderer()->localToParentTransform();
         transform = localTransform.multiply(transform);
         // For getCTM() computation, stop at the nearest viewport element
-        if (currentElement == stopAtElement)
+        if (currentElement == stopAtElement.get())
             break;
 
         current = current->parentOrShadowHostNode();
@@ -193,32 +193,37 @@ void LegacyRenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads
     
 bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, const FloatRect& rect)
 {
-    if (!renderer || renderer->style().effectivePointerEvents() == PointerEvents::None)
+    if (!renderer || renderer->style().usedPointerEvents() == PointerEvents::None)
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    getElementCTM(svgElement, ctm);
+    RefPtr svgElement = downcast<SVGElement>(renderer->element());
+    getElementCTM(svgElement.get(), ctm);
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->checkedRenderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
 {
-    if (!renderer || renderer->style().effectivePointerEvents() == PointerEvents::None)
+    if (!renderer || renderer->style().usedPointerEvents() == PointerEvents::None)
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    getElementCTM(svgElement, ctm);
+    RefPtr svgElement = downcast<SVGElement>(renderer->element());
+    getElementCTM(svgElement.get(), ctm);
     ASSERT(svgElement->renderer());
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
-    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+    return rect.contains(ctm.mapRect(svgElement->checkedRenderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
+}
+
+Ref<SVGElement> LegacyRenderSVGModelObject::protectedElement() const
+{
+    return element();
 }
 
 } // namespace WebCore

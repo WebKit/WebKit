@@ -223,11 +223,11 @@ TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
-        "IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'FrameID', value: IPC.frameID}]);"
-        "alert('hi')</script>"];
+        "try{IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100, [{type: 'FrameID', value: IPC.frameID}]);}catch(e){alert(e.message)}"
+        "</script>"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "hi");
+    EXPECT_STREQ([alertMessage UTF8String], "Failed to successfully deserialize the message");
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -463,29 +463,50 @@ TEST(IPCTestingAPI, CanInterceptFindString)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPage_FindString.name); messages.length"].UTF8String, "1");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages = messages.filter((message) => message.name == IPC.messages.WebPage_FindString.name); messages.length"].UTF8String, "2");
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[0].description"].UTF8String, "WebPage_FindString");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args = messages[0].arguments; args.length"].intValue, 3);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].type"].UTF8String, "String");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[0].value"].UTF8String, "hello");
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[1].type"].UTF8String, "uint16_t");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1].value"].intValue, 0x11);
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[1].isOptionSet"].boolValue, YES);
-    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"args[2].type"].UTF8String, "uint32_t");
-    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"args[2].value"].intValue, 1);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"messages[1].description"].UTF8String, "WebPage_FindString");
+
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs = messages[0].arguments; firstMessageArgs.length"].intValue, 3);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[0].type"].UTF8String, "String");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[0].value"].UTF8String, "hello");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].type"].UTF8String, "uint16_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].value"].intValue, 0x811);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[1].isOptionSet"].boolValue, YES);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[2].type"].UTF8String, "uint32_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"firstMessageArgs[2].value"].intValue, 1);
+
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs = messages[1].arguments; secondMessageArgs.length"].intValue, 3);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[0].type"].UTF8String, "String");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[0].value"].UTF8String, "hello");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].type"].UTF8String, "uint16_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].value"].intValue, 0x11);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[1].isOptionSet"].boolValue, YES);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[2].type"].UTF8String, "uint32_t");
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"secondMessageArgs[2].value"].intValue, 1);
+
     EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[0].syncRequestID)"].UTF8String, "undefined");
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"typeof(messages[1].syncRequestID)"].UTF8String, "undefined");
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[0].destinationID"].intValue,
+        [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
+    EXPECT_EQ([webView stringByEvaluatingJavaScript:@"messages[1].destinationID"].intValue,
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-static NSSet<NSString *> *splitTypeFromList(NSString *input, bool firstTypeOnly)
+static NSSet<NSString *> *splitTypeFromList(NSString *container, NSString *list)
 {
+    bool firstTypeOnly = [container isEqualToString:@"std::span"]
+        || [container isEqualToString:@"Vector"]
+        || [container isEqualToString:@"std::array"]
+        || [container isEqualToString:@"HashSet"];
+    bool firstTwoTypesOnly = [container isEqualToString:@"HashMap"];
+
     NSMutableSet *set = NSMutableSet.set;
     size_t nestedTypeDepth { 0 };
     bool atComma { false };
     size_t previousTypeEnd { 0 };
-    for (size_t i = 0; i < input.length; i++) {
-        auto c = [input characterAtIndex:i];
+    for (size_t i = 0; i < list.length; i++) {
+        auto c = [list characterAtIndex:i];
         if (c == '<')
             nestedTypeDepth++;
         if (c == '>')
@@ -495,14 +516,16 @@ static NSSet<NSString *> *splitTypeFromList(NSString *input, bool firstTypeOnly)
             continue;
         }
         if (c == ' ' && !nestedTypeDepth && atComma) {
-            [set addObject:[input substringWithRange:NSMakeRange(previousTypeEnd, i - 1 - previousTypeEnd)]];
+            [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, i - 1 - previousTypeEnd)]];
             if (firstTypeOnly)
+                return set;
+            if ([set count] == 2 && firstTwoTypesOnly)
                 return set;
             previousTypeEnd = i + 1;
         }
         atComma = false;
     }
-    [set addObject:[input substringWithRange:NSMakeRange(previousTypeEnd, input.length - previousTypeEnd)]];
+    [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, list.length - previousTypeEnd)]];
     return set;
 }
 
@@ -514,29 +537,41 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
         NSArray<NSString *> *containerTypes = @[
             @"Expected",
             @"HashMap",
+            @"MemoryCompactRobinHoodHashMap",
+            @"MemoryCompactLookupOnlyRobinHoodHashSet",
             @"std::pair",
             @"IPC::ArrayReferenceTuple",
-            @"IPC::ArrayReference",
+            @"std::span",
+            @"std::array",
+            @"std::tuple",
             @"std::variant",
             @"std::unique_ptr",
+            @"UniqueRef",
             @"Vector",
             @"HashSet",
             @"Ref",
             @"RefPtr",
             @"std::optional",
             @"OptionSet",
+            @"OptionalTuple",
+            @"KeyValuePair",
+            @"Markable",
             @"RetainPtr",
+            @"HashCountedSet",
+            @"IPC::CoreIPCRetainPtr",
             @"WebCore::RectEdges"
         ];
         for (NSString *container in containerTypes) {
             if ([input hasPrefix:[container stringByAppendingString:@"<"]]
                 && [input hasSuffix:@">"]) {
                 NSString *containedTypes = [input substringWithRange:NSMakeRange(container.length + 1, input.length - container.length - 2)];
-                for (NSString *type : extractTypesFromContainers(splitTypeFromList(containedTypes, [container isEqualToString:@"IPC::ArrayReference"])))
+                for (NSString *type : extractTypesFromContainers(splitTypeFromList(container, containedTypes)))
                     [outputSet addObject:type];
                 foundContainer = YES;
             }
         }
+        if ([input hasPrefix:@"const "])
+            input = [input substringWithRange:NSMakeRange(6, input.length - 6)];
         if (!foundContainer)
             [outputSet addObject:input];
     }
@@ -558,14 +593,20 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"type": @"bool"
     }];
     EXPECT_TRUE([typeInfo[@"WebCore::CacheQueryOptions"] isEqualToArray:expectedArray]);
+
     NSDictionary *expectedDictionary = @{
         @"isOptionSet" : @1,
         @"size" : @1,
         @"validValues" : @[@1, @2]
     };
-
     NSDictionary *enumInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedEnumInfo"];
     EXPECT_TRUE([enumInfo[@"WebKit::WebsiteDataFetchOption"] isEqualToDictionary:expectedDictionary]);
+    NSDictionary *expectedMouseEventButtonDictionary = @{
+        @"isOptionSet" : @NO,
+        @"size" : @1,
+        @"validValues" : @[@1, @2, @254]
+    };
+    EXPECT_TRUE([enumInfo[@"WebKit::WebMouseEventButton"] isEqualToDictionary:expectedMouseEventButtonDictionary]);
 
     NSArray *objectIdentifiers = [webView objectByEvaluatingJavaScript:@"IPC.objectIdentifiers"];
     EXPECT_TRUE([objectIdentifiers containsObject:@"WebCore::PageIdentifier"]);
@@ -601,8 +642,51 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     for (NSString *objectIdentifier in objectIdentifiers)
         [typesHavingDescriptions addObject:objectIdentifier];
 
-    [typesNeedingDescriptions minusSet:typesHavingDescriptions];
+    NSSet *fundamentalTypes = [NSSet setWithArray:@[
+        @"char",
+        @"short",
+        @"float",
+        @"bool",
+        @"NSUInteger",
+        @"NSInteger",
+        @"size_t",
+        @"std::nullptr_t",
+        @"uint32_t",
+        @"int32_t",
+        @"uint8_t",
+        @"UInt32",
+        @"long",
+        @"unsigned",
+        @"unsigned long long",
+        @"unsigned long",
+        @"unsigned char",
+        @"unsigned short",
+        @"void",
+        @"double",
+        @"uint16_t",
+        @"int64_t",
+        @"pid_t",
+        @"CGFloat",
+        @"String",
+        @"uint32_t",
+        @"int16_t",
+        @"uint64_t",
+        @"int",
+        @"long long",
+        @"GCGLint",
+        @"GCGLenum",
+    ]];
 
+    [typesNeedingDescriptions minusSet:typesHavingDescriptions];
+    [typesNeedingDescriptions minusSet:fundamentalTypes];
+    EXPECT_LT(typesNeedingDescriptions.count, 70u); // FIXME: This should eventually be 0.
+
+    for (NSString *type in typesNeedingDescriptions) {
+        // These are the last two types in the WebKit namespace with non-generated serializers.
+        if ([type isEqualToString:@"WebKit::RemoteObjectInvocation"] || [type isEqualToString:@"WebKit::ObjCObjectGraph"])
+            continue;
+        EXPECT_FALSE([type containsString:@"WebKit"]);
+    }
 }
 
 #endif

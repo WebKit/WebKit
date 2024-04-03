@@ -211,6 +211,9 @@ using namespace WebKit;
     sqlite3_close_v2(_handle);
     _handle = nullptr;
 
+    if (result == SQLITE_CANTOPEN && !(flags & SQLITE_OPEN_CREATE))
+        return NO;
+
     if (error)
         *error = [[self class] _errorWith_WKSQLiteErrorCode:result userInfo:nil];
 

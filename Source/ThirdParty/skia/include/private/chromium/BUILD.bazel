@@ -1,0 +1,68 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# This group is mapped to //gn/gpu.gni:skia_shared_gpu_sources.
+skia_filegroup(
+    name = "shared_private_hdrs",
+    srcs = [
+        "Slug.h",
+    ],
+)
+
+# This group is mapped to //gn/gpu.gni:skia_gpu_chromium_public.
+skia_filegroup(
+    name = "ganesh_private_hdrs",
+    srcs = [
+        "GrDeferredDisplayList.h",
+        "GrDeferredDisplayListRecorder.h",
+        "GrPromiseImageTexture.h",
+        "GrSurfaceCharacterization.h",
+        "SkImageChromium.h",
+    ],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+# This group is mapped to //gn/gpu.gni:skia_gpu_vk_chromium.
+skia_filegroup(
+    name = "vk_ganesh_hdrs",
+    srcs = [
+        "GrVkSecondaryCBDrawContext.h",
+    ],
+)
+
+# This group is mapped to //gn/core.gni:skia_discardable_memory_chromium.
+skia_filegroup(
+    name = "discardable_memory_hdrs",
+    srcs = [
+        "SkDiscardableMemory.h",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkChromeRemoteGlyphCache.h",
+        ":discardable_memory_hdrs",
+        ":shared_private_hdrs",
+    ] + select({
+        "//src/gpu:has_ganesh_backend": [":ganesh_private_hdrs"],
+        "//conditions:default": [],
+    }) + select({
+        "//src/gpu:vulkan_ganesh": [":vk_ganesh_hdrs"],
+        "//conditions:default": [],
+    }),
+    visibility = ["//include/private:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_hdrs",
+    srcs = [
+        "SkChromeRemoteGlyphCache.h",
+        "SkDiscardableMemory.h",
+        "Slug.h",
+    ],
+    visibility = ["//src/core:__pkg__"],
+)

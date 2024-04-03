@@ -42,6 +42,11 @@ dictionary ScrollToOptions {
     boolean unconstrained = false;
 };
 
+dictionary TextExtractionOptions {
+    boolean clipToBounds = false;
+    boolean includeRects = false;
+};
+
 interface UIScriptController {
 
     undefined doAsyncTask(object callback); // Used to test the harness.
@@ -51,6 +56,7 @@ interface UIScriptController {
     undefined doAfterNextStablePresentationUpdate(object callback);
     undefined ensurePositionInformationIsUpToDateAt(long x, long y, object callback);
     undefined doAfterVisibleContentRectUpdate(object callback);
+    undefined doAfterNextVisibleContentRectAndStablePresentationUpdate(object callback);
 
     undefined doAfterDoubleTapDelay(object callback);
 
@@ -291,6 +297,10 @@ interface UIScriptController {
 
     undefined setScrollViewKeyboardAvoidanceEnabled(boolean enabled);
 
+    undefined beginInteractiveObscuredInsetsChange();
+    undefined endInteractiveObscuredInsetsChange();
+    undefined setObscuredInsets(double top, double right, double bottom, double left);
+
     undefined becomeFirstResponder();
     undefined resignFirstResponder();
     readonly attribute boolean isPresentingModally;
@@ -349,7 +359,7 @@ interface UIScriptController {
 
     object propertiesOfLayerWithID(unsigned long long layerID);
     
-    DOMString scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, boolean isVertical);
+    DOMString scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, boolean isVertical);
 
     undefined retrieveSpeakSelectionContent(object callback);
     readonly attribute DOMString accessibilitySpeakSelectionContent;
@@ -406,4 +416,9 @@ interface UIScriptController {
 
     undefined setInlinePrediction(DOMString completion);
     undefined acceptInlinePrediction();
+
+    undefined requestTextExtraction(object callback, TextExtractionOptions options);
+
+    undefined requestRenderedTextForFrontmostTarget(long x, long y, object callback);
+    undefined adjustVisibilityForFrontmostTarget(long x, long y, object callback);
 };

@@ -43,6 +43,8 @@ class OrdinalNumber;
 class PrintStream;
 class SHA1;
 class Seconds;
+class SerialFunctionDispatcher;
+class RefCountedSerialFunctionDispatcher;
 class String;
 class StringBuilder;
 class StringImpl;
@@ -61,6 +63,12 @@ struct MainThreadAccessTraits;
 struct ObjectIdentifierMainThreadAccessTraits;
 struct ObjectIdentifierThreadSafeAccessTraits;
 
+namespace JSONImpl {
+class Array;
+class Object;
+template<typename> class ArrayOf;
+}
+
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 struct VectorBufferMalloc;
 #else
@@ -78,6 +86,7 @@ template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename T, typename Traits = typename T::MarkableTraits> class Markable;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
+template<typename> class OSObjectPtr;
 template<typename, typename> class ObjectIdentifierGeneric;
 template<typename T> using ObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierMainThreadAccessTraits>;
 template<typename T> using AtomicObjectIdentifier = ObjectIdentifierGeneric<T, ObjectIdentifierThreadSafeAccessTraits>;
@@ -87,7 +96,7 @@ template<typename T, size_t = alignof(T)> class PackedAlignedPtr;
 template<typename> struct RawPtrTraits;
 template<typename T, typename = RawPtrTraits<T>> class CheckedRef;
 template<typename T, typename = RawPtrTraits<T>> class CheckedPtr;
-template<typename T, typename = RawPtrTraits<T>> class Ref;
+template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class Ref;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
 template<typename> class RetainPtr;
 template<typename> class ScopedLambda;
@@ -126,7 +135,11 @@ template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTra
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
 using GenericPromise = NativePromise<void, void>;
 using GenericNonExclusivePromise = NativePromise<void, void, 1>;
-template<typename T> class NativePromiseRequest;
+class NativePromiseRequest;
+}
+
+namespace JSON {
+using namespace WTF::JSONImpl;
 }
 
 namespace std {
@@ -163,6 +176,7 @@ using WTF::MonotonicTime;
 using WTF::NativePromise;
 using WTF::NativePromiseRequest;
 using WTF::NeverDestroyed;
+using WTF::OSObjectPtr;
 using WTF::ObjectIdentifier;
 using WTF::ObjectIdentifierGeneric;
 using WTF::OptionSet;
@@ -171,10 +185,12 @@ using WTF::PrintStream;
 using WTF::RawPtrTraits;
 using WTF::RawValueTraits;
 using WTF::Ref;
+using WTF::RefCountedSerialFunctionDispatcher;
 using WTF::RefPtr;
 using WTF::RetainPtr;
 using WTF::SHA1;
 using WTF::ScopedLambda;
+using WTF::SerialFunctionDispatcher;
 using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;

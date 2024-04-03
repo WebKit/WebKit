@@ -28,7 +28,7 @@
 
 #if USE(GLIB)
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -137,7 +137,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::Platfor
     return { adoptGRef(g_bytes_new_with_free_func(map, size, reinterpret_cast<GDestroyNotify>(deleteMapWrapper), wrapper)), fd };
 }
 
-RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
 {
     if (isNull() || !isMap())
         return nullptr;
@@ -145,7 +145,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     int fd = FileSystem::posixFileDescriptor(m_fileDescriptor);
     gsize length;
     const auto* data = g_bytes_get_data(m_buffer.get(), &length);
-    return SharedMemory::wrapMap(const_cast<void*>(data), length, fd);
+    return WebCore::SharedMemory::wrapMap(const_cast<void*>(data), length, fd);
 }
 
 } // namespace NetworkCache

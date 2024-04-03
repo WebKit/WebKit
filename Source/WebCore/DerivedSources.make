@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2024 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -198,6 +198,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUVertexState.idl \
     $(WebCore)/Modules/WebGPU/GPUVertexStepMode.idl \
     $(WebCore)/Modules/WebGPU/NavigatorGPU.idl \
+    $(WebCore)/Modules/WebGPU/WGSLLanguageFeatures.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeDetector.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeDetectorOptions.idl \
     $(WebCore)/Modules/ShapeDetection/BarcodeFormat.idl \
@@ -220,6 +221,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayDateComponents.idl \
     $(WebCore)/Modules/applepay/ApplePayDateComponentsRange.idl \
     $(WebCore)/Modules/applepay/ApplePayDeferredPaymentRequest.idl \
+    $(WebCore)/Modules/applepay/ApplePayDisbursementPaymentRequest.idl \
     $(WebCore)/Modules/applepay/ApplePayDetailsUpdateBase.idl \
     $(WebCore)/Modules/applepay/ApplePayError.idl \
     $(WebCore)/Modules/applepay/ApplePayErrorCode.idl \
@@ -371,6 +373,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
     $(WebCore)/Modules/highlight/HighlightRegistry.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
+    $(WebCore)/Modules/identity/DigitalCredential.idl \
+    $(WebCore)/Modules/identity/DigitalCredentialRequestOptions.idl \
+    $(WebCore)/Modules/identity/IdentityRequestProvider.idl \
+    $(WebCore)/Modules/identity/IdentityCredentialProtocol.idl \
+    $(WebCore)/Modules/identity/Navigator+Identity.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
@@ -412,6 +419,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasource/ManagedMediaSource.idl \
     $(WebCore)/Modules/mediasource/ManagedSourceBuffer.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
+    $(WebCore)/Modules/mediasource/MediaSourceHandle.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediasource/TextTrack+MediaSource.idl \
@@ -445,6 +453,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/MediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
+    $(WebCore)/Modules/mediastream/MediaStreamTrackProcessor.idl \
     $(WebCore)/Modules/mediastream/MediaTrackCapabilities.idl \
     $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
@@ -723,7 +732,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/AuthenticatorResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorTransport.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredential.idl \
-    $(WebCore)/Modules/webauthn/PublicKeyCredentialClientCapabilities.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
@@ -937,6 +945,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSRule.idl \
     $(WebCore)/css/CSSRuleList.idl \
     $(WebCore)/css/CSSScopeRule.idl \
+    $(WebCore)/css/CSSStartingStyleRule.idl \
     $(WebCore)/css/CSSStyleDeclaration.idl \
     $(WebCore)/css/CSSStyleRule.idl \
     $(WebCore)/css/CSSStyleSheet.idl \
@@ -1026,6 +1035,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
+    $(WebCore)/dom/CreateHTMLCallback.idl \
+    $(WebCore)/dom/CreateScriptCallback.idl \
+    $(WebCore)/dom/CreateScriptURLCallback.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
     $(WebCore)/dom/CustomStateSet.idl \
@@ -1118,6 +1130,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/PageTransitionEvent.idl \
     $(WebCore)/dom/ParentNode.idl \
     $(WebCore)/dom/PointerEvent.idl \
+    $(WebCore)/dom/PointerLockOptions.idl \
     $(WebCore)/dom/PopStateEvent.idl \
     $(WebCore)/dom/ProcessingInstruction.idl \
     $(WebCore)/dom/ProgressEvent.idl \
@@ -1145,6 +1158,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/TextEvent.idl \
     $(WebCore)/dom/ToggleEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
+    $(WebCore)/dom/TrustedHTML.idl \
+    $(WebCore)/dom/TrustedScript.idl \
+    $(WebCore)/dom/TrustedScriptURL.idl \
+    $(WebCore)/dom/TrustedTypePolicy.idl \
+    $(WebCore)/dom/TrustedTypePolicyFactory.idl \
+    $(WebCore)/dom/TrustedTypePolicyOptions.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/ValidityStateFlags.idl \
@@ -1152,6 +1171,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ViewTransitionUpdateCallback.idl \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/WheelEvent.idl \
+    $(WebCore)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl \
     $(WebCore)/dom/XMLDocument.idl \
     $(WebCore)/fileapi/Blob.idl \
     $(WebCore)/fileapi/BlobCallback.idl \
@@ -1296,7 +1316,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/CanvasTextDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasTransform.idl \
     $(WebCore)/html/canvas/CanvasUserInterface.idl \
-    $(WebCore)/html/canvas/EXTBlendFuncExtended.idl \
     $(WebCore)/html/canvas/EXTBlendMinMax.idl \
     $(WebCore)/html/canvas/EXTClipControl.idl \
     $(WebCore)/html/canvas/EXTColorBufferFloat.idl \
@@ -1339,6 +1358,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/PredefinedColorSpace.idl \
     $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
     $(WebCore)/html/canvas/WebGLActiveInfo.idl \
+    $(WebCore)/html/canvas/WebGLBlendFuncExtended.idl \
     $(WebCore)/html/canvas/WebGLBuffer.idl \
     $(WebCore)/html/canvas/WebGLClipCullDistance.idl \
     $(WebCore)/html/canvas/WebGLColorBufferFloat.idl \
@@ -1401,6 +1421,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/inspector/InspectorAuditDOMObject.idl \
     $(WebCore)/inspector/InspectorAuditResourcesObject.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
+    $(WebCore)/inspector/RTCLogsCallback.idl \
     $(WebCore)/loader/COEPInheritenceViolationReportBody.idl \
     $(WebCore)/loader/CORPViolationReportBody.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
@@ -1503,7 +1524,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/svg/Document+SVG.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAngle.idl \
-    $(WebCore)/svg/SVGAnimateColorElement.idl \
     $(WebCore)/svg/SVGAnimateElement.idl \
     $(WebCore)/svg/SVGAnimateMotionElement.idl \
     $(WebCore)/svg/SVGAnimateTransformElement.idl \
@@ -2015,7 +2035,6 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/plugIns.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
-    $(WebCore)/css/ruby.css \
     $(WebCore)/css/svg.css \
     $(WebCore)/css/viewTransitions.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \

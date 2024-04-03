@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/util.js"></script>
+</head>
+<body>
+<iframe id="iframe" src="http://localhost:8000/resourceLoadStatistics/resources/managed-domains-cookieEnabled-iframe.html" onload="runTest()"></iframe>
+<script>
+    description("Tests that navigator.cookieEnabled returns correct value when managed domains are added.");
+    jsTestIsAsync = true;
+    var iframeElement = document.getElementById("iframe");
+    var currentStep = 1;
+
+    function messageReceived(event) {
+        debug("Step " + currentStep + ": " + event.data);
+        ++currentStep;
+        runTest();
+    }
+
+    function enableFeatures(enabled, callback) {
+        setEnableFeature(enabled, () => {
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(enabled, callback);
+        });
+    }
+
+    function runTest() {
+        switch(currentStep) {
+        case 1:
+            setEnableFeature(true, () => {
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                    iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+                });
+            });
+            break;
+        case 2:
+            testRunner.setManagedDomains([ "http://127.0.0.1:8000" ], () => {
+                iframeElement.contentWindow.postMessage("getCookieEnabled", "*");
+            });
+            break;
+        case 3:
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+                setEnableFeature(false, finishJSTest);
+            });
+        }
+    }
+
+    addEventListener("message", messageReceived);
+</script>
+</body>
+</html>

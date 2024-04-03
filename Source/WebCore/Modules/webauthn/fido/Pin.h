@@ -67,6 +67,7 @@ enum class RequestKey : uint8_t {
     kPinAuth = 4,
     kNewPinEnc = 5,
     kPinHashEnc = 6,
+    kPinUvAuthParam = 7,
 };
 
 // ResponseKey enumerates the keys in the top-level CBOR map for all PIN
@@ -131,6 +132,22 @@ private:
     explicit KeyAgreementResponse(Ref<WebCore::CryptoKeyEC>&&);
 };
 
+struct SetPinRequest {
+public:
+    WEBCORE_EXPORT const WebCore::CryptoKeyAES& sharedKey() const;
+    WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(const String& newPin, const WebCore::CryptoKeyEC&);
+
+    friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
+
+private:
+    Ref<WebCore::CryptoKeyAES> m_sharedKey;
+    mutable cbor::CBORValue::MapValue m_coseKey;
+    Vector<uint8_t> m_newPinEnc;
+    Vector<uint8_t> m_pinUvAuthParam;
+
+    SetPinRequest(Ref<WebCore::CryptoKeyAES>&& sharedKey, cbor::CBORValue::MapValue&& coseKey, Vector<uint8_t>&& m_newPinEnc, Vector<uint8_t>&& m_pinUvAuthParam);
+};
+
 // TokenRequest requests a pin-token from an authenticator. These tokens can be
 // used to show user-verification in other operations, e.g. when getting an
 // assertion.
@@ -177,6 +194,7 @@ private:
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const RetriesRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&);
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const TokenRequest&);
+WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
 } // namespace pin
 } // namespace fido

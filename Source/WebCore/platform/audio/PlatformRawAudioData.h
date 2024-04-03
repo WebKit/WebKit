@@ -30,7 +30,7 @@ enum class AudioSampleFormat;
 class PlatformRawAudioData : public ThreadSafeRefCounted<PlatformRawAudioData> {
 public:
     virtual ~PlatformRawAudioData() = default;
-    static RefPtr<PlatformRawAudioData> create(std::span<const uint8_t>&&, AudioSampleFormat, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels);
+    static RefPtr<PlatformRawAudioData> create(std::span<const uint8_t>, AudioSampleFormat, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels);
 
     virtual AudioSampleFormat format() const = 0;
     virtual size_t sampleRate() const = 0;

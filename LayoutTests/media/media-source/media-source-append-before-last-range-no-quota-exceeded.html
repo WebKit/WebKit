@@ -61,7 +61,7 @@
         testExpected('video.currentTime', 120, '==');
 
         // This should allow bufering up to 175 (empirically tested).
-        internals.settings.setMaximumSourceBufferSize(4000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 4000);
 
         // Append data from 120..176. The SourceBuffer will be filled after 175, so the last iteration should throw QuotaExceededError.
         exception = await appendPtsRange(120, 176);

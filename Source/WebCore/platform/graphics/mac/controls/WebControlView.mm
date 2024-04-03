@@ -151,7 +151,7 @@ static NSRect _clipBounds;
 {
     // Dark mode controls don't have borders, just a semi-transparent background of shadows.
     // In the dark mode case we can't disable borders, or we will not paint anything for the control.
-    NSAppearanceName appearance = [self.controlView.effectiveAppearance bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
+    NSAppearanceName appearance = [[NSAppearance currentDrawingAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     if ([appearance isEqualToString:NSAppearanceNameDarkAqua])
         return defaultOptions;
 

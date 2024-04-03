@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGResourceGradient.h"
 #include "SVGGradientElement.h"
 
@@ -37,5 +36,3 @@ inline SVGGradientElement& RenderSVGResourceGradient::gradientElement() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

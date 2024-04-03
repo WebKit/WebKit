@@ -34,6 +34,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
+#include <pal/cf/CoreTextSoftLink.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 
 namespace WebCore {
@@ -60,7 +61,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return platformData;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+static RetainPtr<CFDataRef> extractFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
@@ -88,16 +89,55 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
 
     // Retain the extracted font contents, so the GPU process doesn't have to extract it a second time later.
     // This is a power optimization.
-    auto extractedData = adoptCF(FPFontCopySFNTData(font));
+    return adoptCF(FPFontCopySFNTData(font));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
+{
+    RetainPtr extractedData = extractFontCustomPlatformData(buffer, itemInCollection);
     if (!extractedData) {
         // Something is wrong with the font.
         return nullptr;
     }
-    auto fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(extractedData.get()));
-    auto protectedBuffer = SharedBuffer::create(extractedData.get());
 
-    FontPlatformData::CreationData creationData = { WTFMove(protectedBuffer), itemInCollection };
+    RetainPtr fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(extractedData.get()));
+    Ref bufferRef = SharedBuffer::create(extractedData.get());
+
+    FontPlatformData::CreationData creationData = { WTFMove(bufferRef), itemInCollection };
     return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer& buffer, const String& itemInCollection)
+{
+    if (!PAL::canLoad_CoreText_CTFontManagerCreateMemorySafeFontDescriptorFromData())
+        return nullptr;
+
+    RetainPtr extractedData = extractFontCustomPlatformData(buffer, itemInCollection);
+    if (!extractedData) {
+        // Something is wrong with the font.
+        return nullptr;
+    }
+
+    RetainPtr fontDescriptor = adoptCF(PAL::softLinkCoreTextCTFontManagerCreateMemorySafeFontDescriptorFromData(extractedData.get()));
+    Ref bufferRef = SharedBuffer::create(extractedData.get());
+
+    FontPlatformData::CreationData creationData = { WTFMove(bufferRef), itemInCollection };
+    return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
+}
+
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data)
+{
+    auto buffer = SharedBuffer::create(WTFMove(data.fontFaceData));
+    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(buffer, data.itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+    fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;
+    return fontCustomPlatformData.releaseNonNull();
+}
+
+FontCustomPlatformSerializedData FontCustomPlatformData::serializedData() const
+{
+    return FontCustomPlatformSerializedData { { creationData.fontFaceData->span() }, creationData.itemInCollection, m_renderingResourceIdentifier };
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

@@ -86,7 +86,7 @@ private:
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return mockCamera() ? CaptureDevice::DeviceType::Camera : CaptureDevice::DeviceType::Screen; }
     bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
-    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) final;
+    void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) override;
     void setFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&) final;
 
     bool isMockSource() const final { return true; }
@@ -111,6 +111,9 @@ private:
     bool mockScreen() const { return mockDisplayType(CaptureDevice::DeviceType::Screen); }
     bool mockWindow() const { return mockDisplayType(CaptureDevice::DeviceType::Window); }
     bool mockDisplayType(CaptureDevice::DeviceType) const;
+
+    void startApplyingConstraints() final;
+    void endApplyingConstraints() final;
 
     class DrawingState {
     public:
@@ -167,6 +170,7 @@ private:
     Lock m_imageBufferLock;
     std::optional<PhotoCapabilities> m_photoCapabilities;
     std::optional<PhotoSettings> m_photoSettings;
+    bool m_beingConfigured { false };
 };
 
 } // namespace WebCore

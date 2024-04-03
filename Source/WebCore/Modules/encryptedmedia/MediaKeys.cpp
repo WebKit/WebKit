@@ -128,7 +128,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     }
 
     // 3. Let certificate be a copy of the contents of the serverCertificate parameter.
-    auto certificate = SharedBuffer::create(serverCertificate.data(), serverCertificate.length());
+    auto certificate = SharedBuffer::create(serverCertificate.span());
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
@@ -184,6 +184,11 @@ void MediaKeys::unrequestedInitializationDataReceived(const String& initDataType
 {
     for (auto& cdmClient : m_cdmClients)
         cdmClient.cdmClientUnrequestedInitializationDataReceived(initDataType, initData.copyRef());
+}
+
+Ref<CDMInstance> MediaKeys::protectedCDMInstance() const
+{
+    return m_instance;
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -28,8 +28,8 @@
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices;
 #if PLATFORM(MAC)
-    WebKit::SandboxExtension::Handle microphoneSandboxExtensionHandle;
-    WebKit::SandboxExtension::Handle launchServicesExtensionHandle;
+    WebKit::SandboxExtensionHandle microphoneSandboxExtensionHandle;
+    WebKit::SandboxExtensionHandle launchServicesExtensionHandle;
 #endif
 #endif
 
@@ -40,19 +40,20 @@
     ProcessID parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
-    WebKit::SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
-    WebKit::SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle containerCachesDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle containerTemporaryDirectoryExtensionHandle;
+    String containerCachesDirectory;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
-    Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> compilerServiceExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> dynamicIOKitExtensionHandles;
 #endif
 
-    std::optional<WebKit::SandboxExtension::Handle> mobileGestaltExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> mobileGestaltExtensionHandle;
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    Vector<WebKit::SandboxExtension::Handle> gpuToolsExtensionHandles;
+    Vector<WebKit::SandboxExtensionHandle> gpuToolsExtensionHandles;
 #endif
 
     String applicationVisibleName;

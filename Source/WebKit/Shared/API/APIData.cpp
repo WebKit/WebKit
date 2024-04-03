@@ -26,13 +26,6 @@
 #include "config.h"
 #include "APIData.h"
 
-#include "DataReference.h"
-
 namespace API {
-
-Ref<Data> Data::create(const IPC::DataReference& data)
-{
-    return create(data.data(), data.size());
-}
 
 } // namespace API

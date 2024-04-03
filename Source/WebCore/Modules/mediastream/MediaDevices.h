@@ -114,7 +114,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final { return MediaDevicesEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaDevices; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

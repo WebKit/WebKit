@@ -41,6 +41,8 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "Namespace.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
 #include "RegisterAllocator.h"
@@ -107,10 +109,9 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationIsValid) \
     v(operationIsWindowInactive) \
     v(operationMatchesFullscreenPseudoClass) \
-    v(operationMatchesFullScreenDocumentPseudoClass) \
-    v(operationMatchesFullScreenAncestorPseudoClass) \
-    v(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass) \
-    v(operationMatchesFullScreenControlsHiddenPseudoClass) \
+    v(operationMatchesFullscreenDocumentPseudoClass) \
+    v(operationMatchesAnimatingFullscreenTransitionPseudoClass) \
+    v(operationMatchesInWindowFullScreenPseudoClass) \
     v(operationMatchesPictureInPicturePseudoClass) \
     v(operationMatchesFutureCuePseudoClass) \
     v(operationMatchesPastCuePseudoClass) \
@@ -223,9 +224,6 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, 
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPlaceholderShown, bool, (const Element*));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element*, SelectorChecker::CheckingContext*));
-#if CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationModuloHelper, int, (int dividend, int divisor));
-#endif
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeAllAnimatedSVGAttribute, void, (SVGElement&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationEqualIgnoringASCIICaseNonNull, bool, (const StringImpl*, const StringImpl*));
@@ -257,10 +255,11 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDir, bool,
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
 #if ENABLE(FULLSCREEN_API)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenControlsHiddenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element&));
+#if ENABLE(VIDEO)
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element&));
+#endif
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPictureInPicturePseudoClass, bool, (const Element&));
@@ -712,14 +711,14 @@ static FunctionType addNthChildType(const CSSSelector& selector, SelectorContext
             globalFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
 
         SelectorFragmentList* selectorFragments = nullptr;
-        for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+        for (const auto& subselector : *selectorList) {
             if (!selectorFragments) {
                 nthChildOfSelectorInfo.selectorList.append(SelectorFragmentList());
                 selectorFragments = &nthChildOfSelectorInfo.selectorList.last();
             }
 
             VisitedMode ignoreVisitedMode = VisitedMode::None;
-            FunctionType functionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+            FunctionType functionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
             ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
             switch (functionType) {
             case FunctionType::SimpleSelectorChecker:
@@ -901,29 +900,26 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesFullscreenPseudoClass, bool, (const Ele
     return matchesFullscreenPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element& element))
+JSC_DEFINE_JIT_OPERATION(operationMatchesFullscreenDocumentPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesFullScreenDocumentPseudoClass);
-    return matchesFullScreenDocumentPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesFullscreenDocumentPseudoClass);
+    return matchesFullscreenDocumentPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element& element))
+JSC_DEFINE_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesFullScreenAncestorPseudoClass);
-    return matchesFullScreenAncestorPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesAnimatingFullscreenTransitionPseudoClass);
+    return matchesAnimatingFullscreenTransitionPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element& element))
+#if ENABLE(VIDEO)
+JSC_DEFINE_JIT_OPERATION(operationMatchesInWindowFullScreenPseudoClass, bool, (const Element& element))
 {
-    COUNT_SELECTOR_OPERATION(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass);
-    return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
+    COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullScreenPseudoClass);
+    return matchesInWindowFullScreenPseudoClass(element);
 }
+#endif
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenControlsHiddenPseudoClass, bool, (const Element& element))
-{
-    COUNT_SELECTOR_OPERATION(operationMatchesFullScreenControlsHiddenPseudoClass);
-    return matchesFullScreenControlsHiddenPseudoClass(element);
-}
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -1081,9 +1077,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::FocusWithin:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusWithinPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitFullPageMedia:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsMediaDocument));
-        return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::InRange:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsInRange));
         return FunctionType::SimpleSelectorChecker;
@@ -1119,19 +1112,17 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Fullscreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullscreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitFullScreenDocument:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));
+    case CSSSelector::PseudoClass::InternalFullscreenDocument:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullscreenDocumentPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitFullScreenAncestor:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAncestorPseudoClass));
+    case CSSSelector::PseudoClass::InternalAnimatingFullscreenTransition:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesAnimatingFullscreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass));
+#if ENABLE(VIDEO)
+    case CSSSelector::PseudoClass::InternalInWindowFullScreen:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesInWindowFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-
-    case CSSSelector::PseudoClass::WebKitFullScreenControlsHidden:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenControlsHiddenPseudoClass));
-        return FunctionType::SimpleSelectorChecker;
+#endif
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -1178,6 +1169,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClass::InternalHTMLDocument:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesHtmlDocumentPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClass::InternalMediaDocument:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsMediaDocument));
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClass::PopoverOpen:
@@ -1274,14 +1269,14 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             SelectorFragmentList* selectorFragments = nullptr;
-            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+            for (const auto& subselector : *selectorList) {
                 if (!selectorFragments) {
                     fragment.notFilters.append(SelectorFragmentList());
                     selectorFragments = &fragment.notFilters.last();
                 }
 
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+                FunctionType localFunctionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
@@ -1325,16 +1320,17 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         {
             SelectorList matchesList;
             const CSSSelectorList* selectorList = selector.selectorList();
+            ASSERT(selectorList);
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             SelectorFragmentList* selectorFragments = nullptr;
-            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+            for (const auto& subselector : *selectorList) {
                 if (!selectorFragments) {
                     matchesList.append(SelectorFragmentList());
                     selectorFragments = &matchesList.last();
                 }
 
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
+                FunctionType localFunctionType = constructFragments(&subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this fragment never matches against the element, don't insert it to matchesList.
@@ -1783,7 +1779,7 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::MacroAssemb
 #if CSS_SELECTOR_JIT_DEBUGGING
     codeRef = linkBuffer.finalizeCodeWithDisassembly(JSC::CSSSelectorPtrTag, "CSS Selector JIT for \"%s\"", m_originalSelector->selectorText().utf8().data());
 #else
-    codeRef = FINALIZE_CODE(linkBuffer, JSC::CSSSelectorPtrTag, "CSS Selector JIT");
+    codeRef = FINALIZE_CODE(linkBuffer, JSC::CSSSelectorPtrTag, nullptr, "CSS Selector JIT");
 #endif
 
     if (m_functionType == FunctionType::SimpleSelectorChecker || m_functionType == FunctionType::CannotMatchAnything)
@@ -2206,21 +2202,10 @@ void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, uns
 
 inline void SelectorCodeGenerator::pushMacroAssemblerRegisters()
 {
-#if CPU(ARM_THUMB2)
-    // r6 is tempRegister in RegisterAllocator.h and addressTempRegister in MacroAssemblerARMv7.h and must be preserved by the callee.
-    Vector<JSC::MacroAssembler::RegisterID, 1> macroAssemblerRegisters({ JSC::ARMRegisters::r6 });
-    m_macroAssemblerRegistersStackReferences = m_stackAllocator.push(macroAssemblerRegisters);
-#endif
 }
 
-inline void SelectorCodeGenerator::popMacroAssemblerRegisters(StackAllocator& stackAllocator)
+inline void SelectorCodeGenerator::popMacroAssemblerRegisters(StackAllocator&)
 {
-#if CPU(ARM_THUMB2)
-    Vector<JSC::MacroAssembler::RegisterID, 1> macroAssemblerRegisters({ JSC::ARMRegisters::r6 });
-    stackAllocator.pop(m_macroAssemblerRegistersStackReferences, macroAssemblerRegisters);
-#else
-    UNUSED_PARAM(stackAllocator);
-#endif
 }
 
 inline bool SelectorCodeGenerator::generatePrologue()
@@ -2229,11 +2214,6 @@ inline bool SelectorCodeGenerator::generatePrologue()
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
     prologueRegisters.append(JSC::ARM64Registers::lr);
     prologueRegisters.append(JSC::ARM64Registers::fp);
-    m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
-    return true;
-#elif CPU(ARM_THUMB2)
-    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegisters;
-    prologueRegisters.append(JSC::ARMRegisters::lr);
     m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
     return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
@@ -2250,9 +2230,6 @@ inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocat
 #if CPU(ARM64)
     Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters({ JSC::ARM64Registers::lr, JSC::ARM64Registers::fp });
     stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
-#elif CPU(ARM_THUMB2)
-    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister({ JSC::ARMRegisters::lr });
-    stackAllocator.pop(m_prologueStackReferences, prologueRegister);
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
     Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister({ callFrameRegister });
     stackAllocator.pop(m_prologueStackReferences, prologueRegister);
@@ -2660,6 +2637,9 @@ inline void SelectorCodeGenerator::generateWalkToPreviousAdjacentElement(Assembl
 {
     Assembler::Label loopStart = m_assembler.label();
     m_assembler.loadPtr(Assembler::Address(workRegister, Node::previousSiblingMemoryOffset()), workRegister);
+    LocalRegister previousNodePointerMask(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImmPtr(Node::previousSiblingPointerMask()), previousNodePointerMask);
+    m_assembler.andPtr(previousNodePointerMask, workRegister);
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, workRegister));
     DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, workRegister).linkTo(loopStart, &m_assembler);
 }
@@ -2750,15 +2730,6 @@ JSC_DEFINE_JIT_OPERATION(operationAddStyleRelationFunction, void, (SelectorCheck
     COUNT_SELECTOR_OPERATION(operationAddStyleRelationFunction);
     checkingContext->styleRelations.append({ *element, { }, 1 });
 }
-
-#if CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
-// FIXME: This could be implemented in assembly to avoid a function call, and we know the divisor at jit-compile time.
-JSC_DEFINE_JIT_OPERATION(operationModuloHelper, int, (int dividend, int divisor))
-{
-    COUNT_SELECTOR_OPERATION(operationModuloHelper);
-    return dividend % divisor;
-}
-#endif
 
 void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID checkingContext, Assembler::RegisterID element, Style::Relation::Type relationType, std::optional<Assembler::RegisterID> value)
 {
@@ -2904,7 +2875,7 @@ void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverI
 Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition condition, Assembler::RegisterID inputDividend, int divisor)
 {
     RELEASE_ASSERT(divisor);
-#if CPU(ARM64) || CPU(APPLE_ARMV7S)
+#if CPU(ARM64)
     LocalRegister divisorRegister(m_registerAllocator);
     m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
 
@@ -2912,13 +2883,6 @@ Assembler::Jump SelectorCodeGenerator::modulo(Assembler::ResultCondition conditi
     m_assembler.m_assembler.sdiv<32>(resultRegister, inputDividend, divisorRegister);
     m_assembler.mul32(divisorRegister, resultRegister);
     return m_assembler.branchSub32(condition, inputDividend, resultRegister, resultRegister);
-#elif CPU(ARM_THUMB2) && !CPU(APPLE_ARMV7S)
-    LocalRegisterWithPreference divisorRegister(m_registerAllocator, JSC::GPRInfo::argumentGPR1);
-    m_assembler.move(Assembler::TrustedImm32(divisor), divisorRegister);
-    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
-    functionCall.setFunctionAddress(operationModuloHelper);
-    functionCall.setTwoArguments(inputDividend, divisorRegister);
-    return functionCall.callAndBranchOnBooleanReturnValue(condition);
 #elif CPU(X86_64)
     // idiv takes RAX + an arbitrary register, and return RAX + RDX. Most of this code is about doing
     // an efficient allocation of those registers. If a register is already in use and is not the inputDividend,
@@ -3389,11 +3353,13 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
 
             const AtomStringImpl* namespaceURI = attributeSelector.attribute().namespaceURI().impl();
             if (namespaceURI) {
-                LocalRegister namespaceToMatch(m_registerAllocator);
-                m_assembler.move(Assembler::TrustedImmPtr(namespaceURI), namespaceToMatch);
-                successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), namespaceToMatch));
+                if (attributeSelector.attribute().nodeNamespace() != Namespace::Unknown) {
+                    static_assert(sizeof(Namespace) == sizeof(uint8_t));
+                    successCases.append(m_assembler.branch8(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), Assembler::TrustedImm32(static_cast<uint8_t>(attributeSelector.attribute().nodeNamespace()))));
+                } else
+                    successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceURIMemoryOffset()), Assembler::TrustedImmPtr(namespaceURI)));
             } else
-                successCases.append(m_assembler.branchTestPtr(Assembler::Zero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset())));
+                successCases.append(m_assembler.branchTestPtr(Assembler::Zero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceURIMemoryOffset())));
             nameDoesNotMatch.link(&m_assembler);
         } else
             successCases.append(m_assembler.branchPtr(Assembler::Equal, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch));
@@ -4051,9 +4017,12 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
 
         if (selectorLocalName == lowercaseLocalName) {
             // Generate localName == element->localName().
-            LocalRegister constantRegister(m_registerAllocator);
-            m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
-            failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+            if (nameToMatch.nodeName() == NodeName::Unknown)
+                failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), Assembler::TrustedImmPtr(selectorLocalName.impl())));
+            else {
+                static_assert(sizeof(NodeName) == sizeof(uint16_t));
+                failureCases.append(m_assembler.branch16(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::nodeNameMemoryOffset()), Assembler::TrustedImm32(static_cast<uint16_t>(nameToMatch.nodeName()))));
+            }
         } else {
             Assembler::JumpList isHTMLFailureCases;
             generateElementAndDocumentIsHTML(isHTMLFailureCases);
@@ -4073,18 +4042,20 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     const AtomString& selectorNamespaceURI = nameToMatch.namespaceURI();
     if (selectorNamespaceURI != starAtom()) {
         // Generate namespaceURI == element->namespaceURI().
-        LocalRegister constantRegister(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImmPtr(selectorNamespaceURI.impl()), constantRegister);
-        failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), constantRegister));
+        if (!selectorNamespaceURI.impl())
+            failureCases.append(m_assembler.branchTestPtr(Assembler::NonZero, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceURIMemoryOffset())));
+        else if (nameToMatch.nodeNamespace() != Namespace::Unknown) {
+            static_assert(sizeof(Namespace) == sizeof(uint8_t));
+            failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), Assembler::TrustedImm32(static_cast<uint8_t>(nameToMatch.nodeNamespace()))));
+        } else
+            failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceURIMemoryOffset()), Assembler::TrustedImmPtr(selectorNamespaceURI.impl())));
     }
 }
 
 void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomString& idToMatch)
 {
     // Compare the pointers of the AtomStringImpl from idForStyleResolution with the reference idToMatch.
-    LocalRegister idToMatchRegister(m_registerAllocator);
-    m_assembler.move(Assembler::TrustedImmPtr(idToMatch.impl()), idToMatchRegister);
-    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), idToMatchRegister));
+    failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), Assembler::TrustedImmPtr(idToMatch.impl())));
 }
 
 void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomStringImpl*, 8>& classNames)
@@ -4180,10 +4151,7 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
 
         LocalRegister elementRareData(m_registerAllocator);
         m_assembler.loadPtr(Assembler::Address(previousSibling, Node::rareDataMemoryOffset()), elementRareData);
-
-        LocalRegister rareDataPointerMask(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImmPtr(Node::rareDataPointerMask()), rareDataPointerMask);
-        m_assembler.andPtr(rareDataPointerMask, elementRareData);
+        m_assembler.andPtr(Assembler::TrustedImmPtr(Node::rareDataPointerMask()), elementRareData);
 
         noCachedChildIndexCases.append(m_assembler.branchTestPtr(Assembler::Zero, elementRareData));
         {

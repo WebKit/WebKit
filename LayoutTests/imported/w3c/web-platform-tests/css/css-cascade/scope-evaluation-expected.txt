@@ -21,4 +21,5 @@ PASS :scope indirect adjacent sibling
 PASS Relative selector inside @scope
 PASS :scope in two different compounds
 PASS Scope root with :has()
+PASS Any scope limit makes the element out of scope
 

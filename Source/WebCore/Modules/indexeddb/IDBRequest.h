@@ -148,7 +148,7 @@ private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
-    EventTargetInterface eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const override;
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;

@@ -30,7 +30,6 @@
 #include "APIDownloadClient.h"
 #include "APIFrameInfo.h"
 #include "AuthenticationChallengeProxy.h"
-#include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "FrameInfoData.h"
 #include "NetworkProcessMessages.h"
@@ -68,17 +67,17 @@ DownloadProxy::~DownloadProxy()
         m_didStartCallback(nullptr);
 }
 
-static RefPtr<API::Data> createData(const IPC::DataReference& data)
+static RefPtr<API::Data> createData(std::span<const uint8_t> data)
 {
     if (data.empty())
         return nullptr;
-    return API::Data::create(data.data(), data.size());
+    return API::Data::create(data);
 }
 
 void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandler)
 {
     if (m_dataStore) {
-        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (std::span<const uint8_t> resumeData) mutable {
             m_legacyResumeData = createData(resumeData);
             completionHandler(m_legacyResumeData.get());
             m_downloadProxyMap.downloadFinished(*this);
@@ -155,6 +154,8 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
 
 void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&& completionHandler)
 {
+    RELEASE_LOG_INFO_IF(!response.expectedContentLength(), Network, "DownloadProxy::decideDestinationWithSuggestedFilename expectedContentLength is null");
+
     // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
     // should override the suggested filename from the download attribute.
     if (response.isAttachmentWithFilename() || (suggestedFilename.isEmpty() && m_suggestedFilename.isEmpty()))
@@ -216,7 +217,7 @@ void DownloadProxy::didFinish()
     m_downloadProxyMap.downloadFinished(*this);
 }
 
-void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference& resumeData)
+void DownloadProxy::didFail(const ResourceError& error, std::span<const uint8_t> resumeData)
 {
     m_legacyResumeData = createData(resumeData);
 

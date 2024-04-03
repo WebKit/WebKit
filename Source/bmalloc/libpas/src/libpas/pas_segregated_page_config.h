@@ -26,6 +26,7 @@
 #ifndef PAS_SEGREGATED_HEAP_CONFIG_H
 #define PAS_SEGREGATED_HEAP_CONFIG_H
 
+#include "pas_allocation_mode.h"
 #include "pas_allocation_result.h"
 #include "pas_bitvector.h"
 #include "pas_config.h"
@@ -87,7 +88,7 @@ typedef void (*pas_segregated_page_config_dealloc_func)(pas_thread_local_cache* 
 
 typedef pas_allocation_result
 (*pas_segregated_page_config_specialized_local_allocator_try_allocate_in_primordial_partial_view)(
-    pas_local_allocator* allocator);
+    pas_local_allocator* allocator, pas_allocation_mode allocation_mode);
 typedef bool
 (*pas_segregated_page_config_specialized_local_allocator_start_allocating_in_primordial_partial_view)(
     pas_local_allocator* allocator, pas_segregated_partial_view* partial,
@@ -198,7 +199,7 @@ PAS_API extern bool pas_medium_segregated_page_config_variant_is_enabled_overrid
 #define PAS_SEGREGATED_PAGE_CONFIG_TLC_SPECIALIZATION_DECLARATIONS(lower_case_page_config_name) \
     PAS_API pas_allocation_result \
     lower_case_page_config_name ## _specialized_local_allocator_try_allocate_in_primordial_partial_view( \
-        pas_local_allocator* allocator); \
+        pas_local_allocator* allocator, pas_allocation_mode allocation_mode); \
     PAS_API bool lower_case_page_config_name ## _specialized_local_allocator_start_allocating_in_primordial_partial_view( \
         pas_local_allocator* allocator, \
         pas_segregated_partial_view* partial, \

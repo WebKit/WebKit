@@ -150,6 +150,7 @@ class Button extends LayoutItem
 
     handleEvent(event)
     {
+        event.stopPropagation();
         if (event.target === this._imageSource) {
             if (event.type === "load")
                 this._imageSourceDidLoad();

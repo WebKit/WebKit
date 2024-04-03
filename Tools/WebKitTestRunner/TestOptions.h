@@ -64,7 +64,7 @@ public:
     bool isAppInitiated() const { return boolTestRunnerFeatureValue("isAppInitiated"); }
     bool advancedPrivacyProtectionsEnabled() const { return boolTestRunnerFeatureValue("advancedPrivacyProtectionsEnabled"); }
     bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
-    bool runInCrossOriginIFrame() const { return boolTestRunnerFeatureValue("runInCrossOriginIFrame"); }
+    bool runInCrossOriginFrame() const { return boolTestRunnerFeatureValue("runInCrossOriginFrame"); }
     bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
     bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
@@ -89,6 +89,8 @@ public:
     double deviceScaleFactor() const { return doubleTestRunnerFeatureValue("deviceScaleFactor"); }
     double viewHeight() const { return doubleTestRunnerFeatureValue("viewHeight"); }
     double viewWidth() const { return doubleTestRunnerFeatureValue("viewWidth"); }
+    uint16_t insecureUpgradePort() const { return uint16TestRunnerFeatureValue("insecureUpgradePort"); };
+    uint16_t secureUpgradePort() const { return uint16TestRunnerFeatureValue("secureUpgradePort"); };
     std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes"); }
     std::string applicationBundleIdentifier() const { return stringTestRunnerFeatureValue("applicationBundleIdentifier"); }
     std::string applicationManifest() const { return stringTestRunnerFeatureValue("applicationManifest"); }
@@ -117,6 +119,7 @@ private:
     bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue) const;
     bool boolTestRunnerFeatureValue(std::string key) const;
     double doubleTestRunnerFeatureValue(std::string key) const;
+    uint16_t uint16TestRunnerFeatureValue(std::string key) const;
     std::string stringTestRunnerFeatureValue(std::string key) const;
     std::vector<std::string> stringVectorTestRunnerFeatureValue(std::string key) const;
 

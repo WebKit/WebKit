@@ -2,7 +2,8 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,27 +31,28 @@ namespace WebCore {
     
 WTF_MAKE_ISO_ALLOCATED_IMPL(UIEvent);
 
-UIEvent::UIEvent()
-    : m_detail(0)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface)
+    : Event(eventInterface)
+    , m_detail(0)
 {
 }
 
-UIEvent::UIEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
-    : Event(eventType, canBubble, isCancelable, isComposed)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& viewArg, int detailArg)
+    : Event(eventInterface, eventType, canBubble, isCancelable, isComposed)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
-    : Event(eventType, canBubble, isCancelable, isComposed, timestamp, isTrusted)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&& viewArg, int detailArg, IsTrusted isTrusted)
+    : Event(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, isTrusted)
     , m_view(WTFMove(viewArg))
     , m_detail(detailArg)
 {
 }
 
-UIEvent::UIEvent(const AtomString& eventType, const UIEventInit& initializer, IsTrusted isTrusted)
-    : Event(eventType, initializer, isTrusted)
+UIEvent::UIEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const UIEventInit& initializer, IsTrusted isTrusted)
+    : Event(eventInterface, eventType, initializer, isTrusted)
     , m_view(initializer.view.get())
     , m_detail(initializer.detail)
 {
@@ -74,11 +76,6 @@ bool UIEvent::isUIEvent() const
     return true;
 }
 
-EventInterface UIEvent::eventInterface() const
-{
-    return UIEventInterfaceType;
-}
-
 int UIEvent::layerX()
 {
     return 0;
@@ -99,7 +96,7 @@ int UIEvent::pageY() const
     return 0;
 }
 
-int UIEvent::which() const
+unsigned UIEvent::which() const
 {
     return 0;
 }

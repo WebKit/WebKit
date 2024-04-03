@@ -44,7 +44,8 @@
     function checkShadow()
     {
         var container = document.getElementById('container');
-        var shadow = window.getComputedStyle(container).getPropertyCSSValue('text-shadow');
+        var shadow = window.getComputedStyle(container).textShadow;
+        shadow = shadow.replace(/rgb([^)]*)/g, "color").split(",");
         
         var result = document.getElementById('result');
         if (shadow.length == 5)

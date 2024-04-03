@@ -222,6 +222,10 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             WriteParamValueReplay<ParamType::TGLDEBUGPROCKHR>(os, call,
                                                               param.value.GLDEBUGPROCKHRVal);
             break;
+        case ParamType::TGLMTLRasterizationRateMapANGLE:
+            WriteParamValueReplay<ParamType::TGLMTLRasterizationRateMapANGLE>(
+                os, call, param.value.GLMTLRasterizationRateMapANGLEVal);
+            break;
         case ParamType::TGLbitfield:
             WriteParamValueReplay<ParamType::TGLbitfield>(os, call, param.value.GLbitfieldVal);
             break;
@@ -768,6 +772,8 @@ const char *ParamTypeToString(ParamType paramType)
             return "GLDEBUGPROC";
         case ParamType::TGLDEBUGPROCKHR:
             return "GLDEBUGPROCKHR";
+        case ParamType::TGLMTLRasterizationRateMapANGLE:
+            return "GLMTLRasterizationRateMapANGLE";
         case ParamType::TGLbitfield:
             return "GLbitfield";
         case ParamType::TGLboolean:

@@ -197,28 +197,30 @@ void JSLock::unlock(intptr_t unlockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 }
 
 void JSLock::willReleaseLock()
-{   
-    RefPtr<VM> vm = m_vm;
-    if (vm) {
-        static bool useLegacyDrain = false;
+{
+    {
+        RefPtr protectedVM { m_vm };
+        if (protectedVM) {
+            static bool useLegacyDrain = false;
 #if PLATFORM(COCOA)
-        static std::once_flag once;
-        std::call_once(once, [] {
-            useLegacyDrain = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
-        });
+            static std::once_flag once;
+            std::call_once(once, [] {
+                useLegacyDrain = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
+            });
 #endif
 
-        if (!m_lockDropDepth || useLegacyDrain)
-            vm->drainMicrotasks();
+            if (!m_lockDropDepth || useLegacyDrain)
+                protectedVM->drainMicrotasks();
 
-        if (!vm->topCallFrame)
-            vm->clearLastException();
+            if (!protectedVM->topCallFrame)
+                protectedVM->clearLastException();
 
-        vm->heap.releaseDelayedReleasedObjects();
-        vm->setStackPointerAtVMEntry(nullptr);
-        
-        if (m_shouldReleaseHeapAccess)
-            vm->heap.releaseAccess();
+            protectedVM->heap.releaseDelayedReleasedObjects();
+            protectedVM->setStackPointerAtVMEntry(nullptr);
+
+            if (m_shouldReleaseHeapAccess)
+                protectedVM->heap.releaseAccess();
+        }
     }
 
     if (m_entryAtomStringTable) {

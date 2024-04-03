@@ -2294,7 +2294,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                                     interaction.type = KeyboardInteractionType::KeyRelease;
                             }
                         } else
-                            interaction.text = String(&key, 1);
+                            interaction.text = span(key);
                         interactions.append(WTFMove(interaction));
                     }
 

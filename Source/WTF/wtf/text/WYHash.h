@@ -73,9 +73,9 @@ public:
     WYHash() = default;
 
     template<typename T, typename Converter = DefaultConverter>
-    ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned characterCount)
+    ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(std::span<const T> data)
     {
-        return StringHasher::avoidZero(computeHashImpl<T, Converter>(data, characterCount) & StringHasher::maskHash);
+        return StringHasher::avoidZero(computeHashImpl<T, Converter>(data) & StringHasher::maskHash);
     }
 
 private:
@@ -284,7 +284,7 @@ private:
     }
 
     template<typename T, typename Reader>
-    ALWAYS_INLINE static constexpr unsigned hash(const T* p, const unsigned characterCount)
+    ALWAYS_INLINE static constexpr unsigned hash(std::span<const T> p)
     {
         auto wyr3 = Reader::wyr3;
         auto wyr4 = Reader::wyr4;
@@ -297,38 +297,39 @@ private:
 
         uint64_t a = 0;
         uint64_t b = 0;
-        const uint64_t byteCount = static_cast<uint64_t>(characterCount) << 1;
+        const uint64_t byteCount = static_cast<uint64_t>(p.size()) << 1;
         uint64_t seed = initSeed();
 
-        if (LIKELY(characterCount <= 8)) {
-            if (LIKELY(characterCount >= 2)) {
+        if (LIKELY(p.size() <= 8)) {
+            if (LIKELY(p.size() >= 2)) {
                 const uint64_t offset = ((byteCount >> 3) << 2) >> 1;
-                a = (wyr4(p) << 32) | wyr4(p + offset);
-                p += characterCount - 2;
-                b = (wyr4(p) << 32) | wyr4(p - offset);
-            } else if (LIKELY(characterCount > 0)) {
-                a = wyr3(p);
+                a = (wyr4(p.data()) << 32) | wyr4(p.data() + offset);
+                auto* p2 = p.data() + p.size() - 2;
+                b = (wyr4(p2) << 32) | wyr4(p2 - offset);
+            } else if (LIKELY(p.size() > 0)) {
+                a = wyr3(p.data());
                 b = 0;
             } else {
                 a = 0;
                 b = 0;
             }
         } else {
-            unsigned i = characterCount;
-            handleGreaterThan8CharactersCase(p, i, wyr8, seed, seed, seed);
-            a = wyr8(p + i - 8);
-            b = wyr8(p + i - 4);
+            unsigned i = p.size();
+            auto* p2 = p.data();
+            handleGreaterThan8CharactersCase(p2, i, wyr8, seed, seed, seed);
+            a = wyr8(p2 + i - 8);
+            b = wyr8(p2 + i - 4);
         }
         return handleEndCase(a, b, seed, byteCount);
     }
 
     template<typename T, typename Converter = DefaultConverter>
-    static constexpr unsigned computeHashImpl(const T* characters, unsigned characterCount)
+    static constexpr unsigned computeHashImpl(std::span<const T> characters)
     {
         if constexpr (sizeof(T) == 2)
-            return hash<T, Reader16Bit<T, Converter>>(characters, characterCount);
+            return hash<T, Reader16Bit<T, Converter>>(characters);
         else
-            return hash<T, Reader8Bit<T, Converter>>(characters, characterCount);
+            return hash<T, Reader8Bit<T, Converter>>(characters);
     }
 };
 

@@ -48,7 +48,6 @@ struct _WPEViewPrivate {
     GRefPtr<WPEDisplay> display;
     int width;
     int height;
-    bool inResize;
     gdouble scale { 1 };
     WPEViewState state;
 #if USE(LIBDRM)
@@ -82,6 +81,8 @@ enum {
     PROP_WIDTH,
     PROP_HEIGHT,
     PROP_SCALE,
+    PROP_STATE,
+    PROP_MONITOR,
 
     N_PROPERTIES
 };
@@ -91,6 +92,7 @@ static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 enum {
     RESIZED,
     BUFFER_RENDERED,
+    BUFFER_RELEASED,
     EVENT,
     FOCUS_IN,
     FOCUS_OUT,
@@ -109,15 +111,6 @@ static void wpeViewSetProperty(GObject* object, guint propId, const GValue* valu
     switch (propId) {
     case PROP_DISPLAY:
         view->priv->display = WPE_DISPLAY(g_value_get_object(value));
-        break;
-    case PROP_WIDTH:
-        wpe_view_set_width(view, g_value_get_int(value));
-        break;
-    case PROP_HEIGHT:
-        wpe_view_set_height(view, g_value_get_int(value));
-        break;
-    case PROP_SCALE:
-        wpe_view_set_scale(view, g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -140,6 +133,12 @@ static void wpeViewGetProperty(GObject* object, guint propId, GValue* value, GPa
         break;
     case PROP_SCALE:
         g_value_set_double(value, wpe_view_get_scale(view));
+        break;
+    case PROP_STATE:
+        g_value_set_flags(value, wpe_view_get_state(view));
+        break;
+    case PROP_MONITOR:
+        g_value_set_object(value, wpe_view_get_monitor(view));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -192,26 +191,26 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
     /**
      * WPEView:width:
      *
-     * The view width
+     * The view width in logical coordinates
      */
     sObjProperties[PROP_WIDTH] =
         g_param_spec_int(
             "width",
             nullptr, nullptr,
             0, G_MAXINT, 0,
-            WEBKIT_PARAM_READWRITE);
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WPEView:height:
      *
-     * The view height
+     * The view height in logical coordinates
      */
     sObjProperties[PROP_HEIGHT] =
         g_param_spec_int(
             "height",
             nullptr, nullptr,
             0, G_MAXINT, 0,
-            WEBKIT_PARAM_READWRITE);
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WPEView:scale:
@@ -223,7 +222,32 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             "scale",
             nullptr, nullptr,
             1., G_MAXDOUBLE, 1.,
-            WEBKIT_PARAM_READWRITE);
+            WEBKIT_PARAM_READABLE);
+
+    /**
+     * WPEView:state:
+     *
+     * The view state
+     */
+    sObjProperties[PROP_STATE] =
+        g_param_spec_flags(
+            "flags",
+            nullptr, nullptr,
+            WPE_TYPE_VIEW_STATE,
+            WPE_VIEW_STATE_NONE,
+            WEBKIT_PARAM_READABLE);
+
+    /**
+     * WPEView:monitor:
+     *
+     * The current #WPEMonitor of the view.
+     */
+    sObjProperties[PROP_MONITOR] =
+        g_param_spec_object(
+            "monitor",
+            nullptr, nullptr,
+            WPE_TYPE_MONITOR,
+            WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
@@ -250,6 +274,23 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
      */
     signals[BUFFER_RENDERED] = g_signal_new(
         "buffer-rendered",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1,
+        WPE_TYPE_BUFFER);
+
+    /**
+     * WPEView::buffer-released:
+     * @view: a #WPEView
+     * @buffer: a #WPEBuffer
+     *
+     * Emitted to notify that the buffer is no longer used by the view
+     * and can be destroyed or reused.
+     */
+    signals[BUFFER_RELEASED] = g_signal_new(
+        "buffer-released",
         G_TYPE_FROM_CLASS(viewClass),
         G_SIGNAL_RUN_LAST,
         0, nullptr, nullptr,
@@ -371,11 +412,11 @@ WPEDisplay* wpe_view_get_display(WPEView* view)
  * wpe_view_get_width:
  * @view: a #WPEView
  *
- * Get the @view width
+ * Get the @view width in logical coordinates
  *
  * Returns: the view width
  */
-int wpe_view_get_width(WPEView *view)
+int wpe_view_get_width(WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), 0);
 
@@ -386,11 +427,11 @@ int wpe_view_get_width(WPEView *view)
  * wpe_view_get_height:
  * @view: a #WPEView
  *
- * Get the @view height
+ * Get the @view height in logical coordinates
  *
  * Returns: the view height
  */
-int wpe_view_get_height(WPEView *view)
+int wpe_view_get_height(WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), 0);
 
@@ -398,59 +439,42 @@ int wpe_view_get_height(WPEView *view)
 }
 
 /**
- * wpe_view_set_width:
- * @view: a #WPEView
- * @width: width to set
- *
- * Set the @view width
- */
-void wpe_view_set_width(WPEView *view, int width)
-{
-    g_return_if_fail(WPE_IS_VIEW(view));
-
-    auto* priv = view->priv;
-    if (priv->width == width)
-        return;
-
-    priv->width = width;
-    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_WIDTH]);
-    if (!priv->inResize)
-        g_signal_emit(view, signals[RESIZED], 0);
-}
-
-/**
- * wpe_view_set_height:
- * @view: a #WPEView
- * @height: height to set
- *
- * Set the @view height
- */
-void wpe_view_set_height(WPEView *view, int height)
-{
-    g_return_if_fail(WPE_IS_VIEW(view));
-
-    auto* priv = view->priv;
-    if (priv->height == height)
-        return;
-
-    priv->height = height;
-    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_HEIGHT]);
-    if (!priv->inResize)
-        g_signal_emit(view, signals[RESIZED], 0);
-}
-
-/**
  * wpe_view_resize:
  * @view: a #WPEView
- * @width: width to set
- * @height: height to set
+ * @width: width in logical coordinates
+ * @height: height in logical coordinates
  *
- * Resize the @view.
+ * Request that the @view is resized at @width x @height.
  *
- * Note that this method will emit #WPEView::resized only once even if both
- * width and height changed.
+ * Signal #WPEView::resized will be emitted when the resize is performed.
+ *
+ * Returns: %TRUE if resizing is supported and given dimensions are
+ *    different than current size, otherwise %FALSE
  */
-void wpe_view_resize(WPEView *view, int width, int height)
+gboolean wpe_view_resize(WPEView* view, int width, int height)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* priv = view->priv;
+    if (priv->width == width && priv->height == height)
+        return FALSE;
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->resize ? viewClass->resize(view, width, height) : FALSE;
+}
+
+/**
+ * wpe_view_resized:
+ * @view: a #WPEView
+ * @width: width in logical coordinates
+ * @height: height in logical coordinates
+ *
+ * Update @view size and emit #WPEView::resized if size changed.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
+ */
+void wpe_view_resized(WPEView* view, int width, int height)
 {
     g_return_if_fail(WPE_IS_VIEW(view));
 
@@ -458,9 +482,17 @@ void wpe_view_resize(WPEView *view, int width, int height)
     if (priv->width == width && priv->height == height)
         return;
 
-    SetForScope inResize(priv->inResize, true);
-    wpe_view_set_width(view, width);
-    wpe_view_set_height(view, height);
+    g_object_freeze_notify(G_OBJECT(view));
+    if (priv->width != width) {
+        priv->width = width;
+        g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_WIDTH]);
+    }
+    if (priv->height != height) {
+        priv->height = height;
+        g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_HEIGHT]);
+    }
+    g_object_thaw_notify(G_OBJECT(view));
+
     g_signal_emit(view, signals[RESIZED], 0);
 }
 
@@ -480,13 +512,16 @@ gdouble wpe_view_get_scale(WPEView* view)
 }
 
 /**
- * wpe_view_set_scale:
+ * wpe_view_scale_changed:
  * @view: a #WPEView
- * @scale: the scale to set
+ * @scale: the new scale
  *
- * Set the @view scale
+ * Update the @view scale.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
  */
-void wpe_view_set_scale(WPEView* view, gdouble scale)
+void wpe_view_scale_changed(WPEView* view, gdouble scale)
 {
     g_return_if_fail(WPE_IS_VIEW(view));
     g_return_if_fail(scale > 0);
@@ -553,13 +588,16 @@ WPEViewState wpe_view_get_state(WPEView* view)
 }
 
 /**
- * wpe_view_set_state:
+ * wpe_view_state_changed:
  * @view: a #WPEView
  * @state: a set of #WPEViewState
  *
- * Set the current state of @view
+ * Update the current state of @view and emit @WPEView::state-changed if changed.
+ *
+ * This function should only be called by #WPEView derived classes
+ * in platform implementations.
  */
-void wpe_view_set_state(WPEView* view, WPEViewState state)
+void wpe_view_state_changed(WPEView* view, WPEViewState state)
 {
     g_return_if_fail(WPE_IS_VIEW(view));
 
@@ -568,7 +606,24 @@ void wpe_view_set_state(WPEView* view, WPEViewState state)
 
     auto previousState = view->priv->state;
     view->priv->state = state;
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_STATE]);
     g_signal_emit(view, signals[STATE_CHANGED], 0, previousState);
+}
+
+/**
+ * wpe_view_get_monitor:
+ * @view: a #WPEView
+ *
+ * Get current #WPEMonitor of @view
+ *
+ * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ */
+WPEMonitor* wpe_view_get_monitor(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->get_monitor ? viewClass->get_monitor(view) : nullptr;
 }
 
 /**
@@ -608,6 +663,44 @@ gboolean wpe_view_unfullscreen(WPEView* view)
 }
 
 /**
+ * wpe_view_maximize:
+ * @view: a #WPEView
+ *
+ * Request that the @view is maximized. If the view is already maximized this function
+ * does nothing.
+ *
+ * To track the state see #WPEView::state-changed
+ *
+ * Returns: %TRUE if maximize is supported, otherwise %FALSE
+ */
+gboolean wpe_view_maximize(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->set_maximized ? viewClass->set_maximized(view, TRUE) : FALSE;
+}
+
+/**
+ * wpe_view_unmaximize:
+ * @view: a #WPEView
+ *
+ * Request that the @view is unmaximized. If the view is not maximized this function
+ * does nothing.
+ *
+ * To track the state see #WPEView::state-changed
+ *
+ * Returns: %TRUE if maximize is supported, otherwise %FALSE
+ */
+gboolean wpe_view_unmaximize(WPEView* view)
+{
+    g_return_val_if_fail(WPE_IS_VIEW(view), FALSE);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    return viewClass->set_maximized ? viewClass->set_maximized(view, FALSE) : FALSE;
+}
+
+/**
  * wpe_view_render_buffer:
  * @view: a #WPEView
  * @buffer: a #WPEBuffer to render
@@ -615,7 +708,7 @@ gboolean wpe_view_unfullscreen(WPEView* view)
  *
  * Render the given @buffer into @view.
  * If this function returns %TRUE you must call wpe_view_buffer_rendered() when the buffer
- * is rendered.
+ * is rendered and wpe_view_buffer_released() when it's no longer used by the view.
  *
  * Returns: %TRUE if buffer will be rendered, or %FALSE otherwise
  */
@@ -641,6 +734,22 @@ void wpe_view_buffer_rendered(WPEView* view, WPEBuffer* buffer)
     g_return_if_fail(WPE_IS_BUFFER(buffer));
 
     g_signal_emit(view, signals[BUFFER_RENDERED], 0, buffer);
+}
+
+/**
+ * wpe_view_buffer_released:
+ * @view: a #WPEView
+ * @buffer: a #WPEBuffer
+ *
+ * Emit #WPEView::buffer-released signal to notify that @buffer is no longer used and
+ * can be destroyed or reused.
+ */
+void wpe_view_buffer_released(WPEView* view, WPEBuffer* buffer)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+    g_return_if_fail(WPE_IS_BUFFER(buffer));
+
+    g_signal_emit(view, signals[BUFFER_RELEASED], 0, buffer);
 }
 
 /**
@@ -764,4 +873,24 @@ GList* wpe_view_get_preferred_dma_buf_formats(WPEView* view)
         return viewClass->get_preferred_dma_buf_formats(view);
 
     return wpe_display_get_preferred_dma_buf_formats(view->priv->display.get());
+}
+
+/**
+ * wpe_view_set_opaque_rectangles:
+ * @view: a #WPEView
+ * @rects: (nullable) (array length=n_rects): opaque rectangles in view-local coordinates
+ * @n_rects: the total number of elements in @rects
+ *
+ * Set the rectangles of @view that contain opaque content.
+ * This is an optimization hint that is automatically set by WebKit when the
+ * web view background color is opaque.
+ */
+void wpe_view_set_opaque_rectangles(WPEView* view, WPERectangle* rects, guint rectsCount)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+    g_return_if_fail(!rects || rectsCount > 0);
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (viewClass->set_opaque_rectangles)
+        viewClass->set_opaque_rectangles(view, rects, rectsCount);
 }

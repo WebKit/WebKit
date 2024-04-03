@@ -158,12 +158,12 @@ void JSTestReportExtraMemoryCost::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestReportExtraMemoryCostConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestReportExtraMemoryCostPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestReportExtraMemoryCost::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestReportExtraMemoryCost::getConstructor(vm, prototype->globalObject()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestReportExtraMemoryCost::subspaceForImpl(JSC::VM& vm)
@@ -214,7 +214,7 @@ void JSTestReportExtraMemoryCostOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     auto* jsTestReportExtraMemoryCost = static_cast<JSTestReportExtraMemoryCost*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestReportExtraMemoryCost->wrapped(), jsTestReportExtraMemoryCost);
+    uncacheWrapper(world, jsTestReportExtraMemoryCost->protectedWrapped().ptr(), jsTestReportExtraMemoryCost);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

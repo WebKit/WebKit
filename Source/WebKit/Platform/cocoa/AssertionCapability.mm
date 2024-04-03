@@ -28,7 +28,12 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#import "Logging.h"
+#import <BrowserEngineKit/BrowserEngineKit.h>
+
+#if USE(LEGACY_EXTENSIONKIT_SPI)
 #import "ExtensionKitSoftLink.h"
+#endif
 
 namespace WebKit {
 
@@ -39,17 +44,18 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     , m_willInvalidateBlock { makeBlockPtr(WTFMove(willInvalidateFunction)) }
     , m_didInvalidateBlock { makeBlockPtr(WTFMove(didInvalidateFunction)) }
 {
-}
-
-RetainPtr<_SECapability> AssertionCapability::platformCapability() const
-{
-#if USE(EXTENSIONKIT)
-    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:willInvalidate:didInvalidate:)])
-        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-    if ([get_SECapabilityClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
-        return [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
+    RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().data());
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+    _SECapability* capability = [get_SECapabilityClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:m_environmentIdentifier willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
+    setPlatformCapability(capability);
+#else
+    if (m_name == "Suspended"_s)
+        setPlatformCapability([BEProcessCapability suspended]);
+    else if (m_name == "Background"_s)
+        setPlatformCapability([BEProcessCapability background]);
+    else if (m_name == "Foreground"_s)
+        setPlatformCapability([BEProcessCapability foreground]);
 #endif
-    return nil;
 }
 
 } // namespace WebKit

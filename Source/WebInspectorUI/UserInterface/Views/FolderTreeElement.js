@@ -25,11 +25,37 @@
 
 WI.FolderTreeElement = class FolderTreeElement extends WI.GeneralTreeElement
 {
-    constructor(title, representedObject)
+    constructor(title, representedObject, options = {})
     {
         const classNames = [WI.FolderTreeElement.FolderIconStyleClassName];
         const subtitle = null;
         super(classNames, title, subtitle, representedObject, {hasChildren: true});
+
+        if (options.id) {
+            let settingName = `folder-tree-element-${options.id}-expanded`;
+            this._expandedSetting = new WI.Setting(settingName, false);
+
+            if (this._expandedSetting.value)
+                this.expand();
+        }
+    }
+
+    // Public
+
+    collapse()
+    {
+        super.collapse();
+
+        if (this._expandedSetting)
+            this._expandedSetting.value = this.expanded;
+    }
+
+    expand()
+    {
+        super.expand();
+
+        if (this._expandedSetting)
+            this._expandedSetting.value = this.expanded;
     }
 };
 

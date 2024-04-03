@@ -33,6 +33,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "RTCDTMFSender.h"

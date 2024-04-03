@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
-#include "SharedMemory.h"
 #include "WebKitError.h"
 #include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
@@ -30,6 +29,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SharedMemory.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -261,12 +261,12 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
     gtk_print_unix_dialog_set_manual_capabilities(printDialog, static_cast<GtkPrintCapabilities>(GTK_PRINT_CAPABILITY_NUMBER_UP
-                                                                                                 | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT
-                                                                                                 | GTK_PRINT_CAPABILITY_PAGE_SET
-                                                                                                 | GTK_PRINT_CAPABILITY_REVERSE
-                                                                                                 | GTK_PRINT_CAPABILITY_COPIES
-                                                                                                 | GTK_PRINT_CAPABILITY_COLLATE
-                                                                                                 | GTK_PRINT_CAPABILITY_SCALE));
+        | GTK_PRINT_CAPABILITY_NUMBER_UP_LAYOUT | GTK_PRINT_CAPABILITY_PAGE_SET | GTK_PRINT_CAPABILITY_REVERSE
+        | GTK_PRINT_CAPABILITY_COPIES | GTK_PRINT_CAPABILITY_COLLATE | GTK_PRINT_CAPABILITY_SCALE
+#if USE(SKIA)
+        | GTK_PRINT_CAPABILITY_GENERATE_PDF
+#endif
+        ));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
     // Make sure the initial settings of the GtkPrintUnixDialog is a valid
@@ -361,7 +361,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
 
     PrintInfo printInfo(priv->printJob.get(), printOperation->priv->printMode);
     auto& page = webkitWebViewGetPage(printOperation->priv->webView.get());
-    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
+    page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<WebCore::SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
         if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)

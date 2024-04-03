@@ -1,0 +1,11 @@
+
+PASS Test main context receipt of postMessage'd MediaSourceHandle from DedicatedWorker MediaSource
+PASS Test main-thread has MediaSourceHandle defined
+PASS Test main-thread MediaSource does not have handle getter
+PASS MediaSource in DedicatedWorker context must have true-valued canConstructInDedicatedWorker if Window context had it
+PASS MediaSource prototype in DedicatedWorker context must have 'handle', and worker must have MediaSourceHandle
+PASS MediaSource construction succeeds with initial closed readyState in DedicatedWorker
+PASS mediaSource.handle in DedicatedWorker returns a MediaSourceHandle
+PASS mediaSource.handle observes SameObject property correctly
+PASS Attempt to set MediaSource handle property should fail to change it, since it is readonly
+

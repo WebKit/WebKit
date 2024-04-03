@@ -209,8 +209,8 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
     constexpr UChar ellipsis = 0x2026;
 
     auto font = systemFont();
-    float lineHeight = font.metricsOfPrimaryFont().floatHeight();
-    float lineDescent = font.metricsOfPrimaryFont().floatDescent();
+    float lineHeight = font.metricsOfPrimaryFont().height();
+    float lineDescent = font.metricsOfPrimaryFont().descent();
 
     Vector<ComputedContentRun> computedContentRuns;
 
@@ -375,7 +375,7 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
 FloatSize InspectorOverlayLabel::expectedSize(const Vector<Content>& contents, Arrow::Direction direction)
 {
     auto font = systemFont();
-    float lineHeight = font.metricsOfPrimaryFont().floatHeight();
+    float lineHeight = font.metricsOfPrimaryFont().height();
 
     float longestLineWidth = 0;
     int currentLine = 0;

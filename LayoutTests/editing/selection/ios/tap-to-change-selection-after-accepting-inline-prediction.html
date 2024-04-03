@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,14 +42,21 @@ addEventListener("load", async () => {
 
     await UIHelper.activateAndWaitForInputSessionAt(10, 10);
 
-    for (let character of [..."I want to c"])
-        await UIHelper.typeCharacter(character);
+    for (let character of [..."i want to c"]) {
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.typeCharacter(character);
+            await UIHelper.ensurePresentationUpdate();
+        }, document.body, "keyup");
+        await UIHelper.delayFor(100);
+    }
 
     await UIHelper.setInlinePrediction("elebrate");
     await UIHelper.ensurePresentationUpdate();
 
     await UIHelper.acceptInlinePrediction();
     await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.waitForCondition(() => document.body.textContent.includes("I want to celebrate"));
 
     await UIHelper.activateElement(document.getElementById("target"));
     await shouldBecomeEqual("targetContainsCaretSelection()", "true");

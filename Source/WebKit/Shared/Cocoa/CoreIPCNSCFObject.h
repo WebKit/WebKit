@@ -39,6 +39,11 @@ class CoreIPCCFType;
 class CoreIPCCNPhoneNumber;
 class CoreIPCCNPostalAddress;
 class CoreIPCPKContact;
+class CoreIPCPKPayment;
+class CoreIPCPKPaymentToken;
+class CoreIPCPKShippingMethod;
+class CoreIPCPKDateComponentsRange;
+class CoreIPCPKPaymentMethod;
 #endif
 class CoreIPCColor;
 #if ENABLE(DATA_DETECTION)
@@ -46,63 +51,51 @@ class CoreIPCDDScannerResult;
 #endif
 class CoreIPCData;
 class CoreIPCDate;
+class CoreIPCDateComponents;
 class CoreIPCDictionary;
 class CoreIPCError;
 class CoreIPCFont;
 class CoreIPCLocale;
+class CoreIPCNSShadow;
 class CoreIPCNSValue;
 class CoreIPCNumber;
+class CoreIPCNull;
 class CoreIPCSecureCoding;
 class CoreIPCString;
 class CoreIPCURL;
+class CoreIPNSCURLProtectionSpace;
 
 using ObjectValue = std::variant<
     std::nullptr_t,
-#if USE(AVFOUNDATION)
-    CoreIPCAVOutputContext,
-#endif
     CoreIPCArray,
     CoreIPCCFType,
-#if USE(PASSKIT)
-    CoreIPCCNPhoneNumber,
-    CoreIPCCNPostalAddress,
-    CoreIPCPKContact,
-#endif
     CoreIPCColor,
-#if ENABLE(DATA_DETECTION)
-#if PLATFORM(MAC)
-    CoreIPCDDActionContext,
-#endif
-    CoreIPCDDScannerResult,
-#endif
     CoreIPCData,
     CoreIPCDate,
     CoreIPCDictionary,
     CoreIPCError,
     CoreIPCFont,
     CoreIPCLocale,
+    CoreIPCNSShadow,
     CoreIPCNSValue,
     CoreIPCNumber,
-    CoreIPCPersonNameComponents,
+    CoreIPCNull,
     CoreIPCSecureCoding,
     CoreIPCString,
     CoreIPCURL
 >;
 
 class CoreIPCNSCFObject {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCNSCFObject(id);
+    CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
 
     RetainPtr<id> toID() const;
 
     static bool valueIsAllowed(IPC::Decoder&, ObjectValue&);
 
+    const UniqueRef<ObjectValue>& value() const { return m_value; }
 private:
-    friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;
-
-    CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
-
     UniqueRef<ObjectValue> m_value;
 };
 

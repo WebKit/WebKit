@@ -29,12 +29,12 @@
 #if ENABLE(GAMEPAD)
 
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
 #include "GamepadProvider.h"
 #include "LocalDOMWindow.h"
 #include "Navigator.h"
+#include "PermissionsPolicy.h"
 #include "PlatformGamepad.h"
 
 namespace WebCore {
@@ -50,9 +50,9 @@ NavigatorGamepad::~NavigatorGamepad()
     GamepadManager::singleton().unregisterNavigator(*this);
 }
 
-const char* NavigatorGamepad::supplementName()
+ASCIILiteral NavigatorGamepad::supplementName()
 {
-    return "NavigatorGamepad";
+    return "NavigatorGamepad"_s;
 }
 
 NavigatorGamepad* NavigatorGamepad::from(Navigator& navigator)
@@ -83,15 +83,7 @@ ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Naviga
         return { emptyGamepads.get() };
     }
 
-    if (!document->isSecureContext()) {
-        static std::once_flag onceFlag;
-        std::call_once(onceFlag, [document] {
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Navigator.getGamepads() will be removed from insecure contexts in a future release"_s);
-        });
-
-    }
-
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Gamepad, *document, LogFeaturePolicyFailure::Yes))
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Gamepad, *document, LogPermissionsPolicyFailure::Yes))
         return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)"_s };
 
     return NavigatorGamepad::from(navigator)->gamepads();

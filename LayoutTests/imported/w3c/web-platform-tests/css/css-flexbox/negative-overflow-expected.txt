@@ -3,12 +3,7 @@ PASS .flexbox 1
 PASS .flexbox 2
 PASS .flexbox 3
 PASS .flexbox 4
-FAIL .flexbox 5 assert_equals:
-<div class="flexbox wrap-reverse" data-expected-scroll-height="200">
-    <div></div>
-    <div></div>
-</div>
-scrollHeight expected 200 but got 50
+PASS .flexbox 5
 PASS .flexbox 6
 PASS .flexbox 7
 PASS .flexbox 8
@@ -19,5 +14,5 @@ FAIL .flexbox 11 assert_equals:
     <div></div>
     <div></div>
 </div>
-scrollHeight expected 215 but got 65
+scrollHeight expected 215 but got 210
 

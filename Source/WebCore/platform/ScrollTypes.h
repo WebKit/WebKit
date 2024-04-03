@@ -27,7 +27,9 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "ProcessQualified.h"
 #include "RectEdges.h"
+#include "ScrollingNodeID.h"
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
@@ -309,7 +311,7 @@ enum class ScrollClamping : bool {
     Clamped
 };
 
-enum ScrollBehaviorForFixedElements : bool {
+enum class ScrollBehaviorForFixedElements : bool {
     StickToDocumentBounds,
     StickToViewportBounds
 };
@@ -345,7 +347,6 @@ enum class ScrollSnapPointSelectionMethod : uint8_t {
 
 using ScrollbarControlState = unsigned;
 using ScrollbarControlPartMask = unsigned;
-using ScrollingNodeID = uint64_t;
 
 struct ScrollPositionChangeOptions {
     ScrollType type;

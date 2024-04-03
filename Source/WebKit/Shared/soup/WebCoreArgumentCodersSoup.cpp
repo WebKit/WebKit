@@ -29,7 +29,6 @@
 #include "WebCoreArgumentCoders.h"
 
 #include "ArgumentCodersGLib.h"
-#include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -43,45 +42,6 @@
 
 namespace IPC {
 using namespace WebCore;
-
-void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
-{
-    encoder << resourceError.domain();
-    encoder << resourceError.errorCode();
-    encoder << resourceError.failingURL().string();
-    encoder << resourceError.localizedDescription();
-
-    encoder << CertificateInfo(resourceError);
-}
-
-bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
-{
-    String domain;
-    if (!decoder.decode(domain))
-        return false;
-
-    int errorCode;
-    if (!decoder.decode(errorCode))
-        return false;
-
-    String failingURL;
-    if (!decoder.decode(failingURL))
-        return false;
-
-    String localizedDescription;
-    if (!decoder.decode(localizedDescription))
-        return false;
-
-    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription);
-
-    CertificateInfo certificateInfo;
-    if (!decoder.decode(certificateInfo))
-        return false;
-
-    resourceError.setCertificate(certificateInfo.certificate().get());
-    resourceError.setTLSErrors(certificateInfo.tlsErrors());
-    return true;
-}
 
 void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const SoupNetworkProxySettings& settings)
 {
@@ -137,40 +97,5 @@ bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetwo
 
     return !settings.isEmpty();
 }
-
-void ArgumentCoder<Credential>::encodePlatformData(Encoder& encoder, const Credential& credential)
-{
-    GRefPtr<GTlsCertificate> certificate = credential.certificate();
-    encoder << certificate;
-    encoder << credential.persistence();
-}
-
-bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential& credential)
-{
-    std::optional<GRefPtr<GTlsCertificate>> certificate;
-    decoder >> certificate;
-    if (!certificate)
-        return false;
-
-    CredentialPersistence persistence;
-    if (!decoder.decode(persistence))
-        return false;
-
-    credential = Credential(certificate->get(), persistence);
-    return true;
-}
-
-#if ENABLE(VIDEO)
-void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const SerializedPlatformDataCueValue& value)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, SerializedPlatformDataCueValue::PlatformType platformType)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-#endif
 
 }

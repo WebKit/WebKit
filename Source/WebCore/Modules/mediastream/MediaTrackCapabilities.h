@@ -52,6 +52,7 @@ struct MediaTrackCapabilities {
     std::optional<Vector<String>> whiteBalanceMode;
     std::optional<DoubleRange> zoom;
     std::optional<bool> torch;
+    std::optional<Vector<bool>> backgroundBlur;
 };
 
 MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&, const String& groupId);

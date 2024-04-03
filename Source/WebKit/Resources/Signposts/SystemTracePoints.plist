@@ -490,6 +490,42 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>WebXR layer start frame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5049</string>
+                 <key>CodeEnd</key>
+                 <string>5050</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>WebXR layer end frame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5051</string>
+                 <key>CodeEnd</key>
+                 <string>5052</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>WebXR frame render callbacks</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5053</string>
+                 <key>CodeEnd</key>
+                 <string>5054</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>
@@ -810,6 +846,42 @@
                  <string>14005</string>
                  <key>CodeEnd</key>
                  <string>14006</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>WebXR Compositor wait for frame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14007</string>
+                 <key>CodeEnd</key>
+                 <string>14008</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>WebXR Compositor start submission for frame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14009</string>
+                 <key>CodeEnd</key>
+                 <string>14010</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>WebXR Compositor end submission for frame</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>14011</string>
+                 <key>CodeEnd</key>
+                 <string>14012</string>
              </dict>
              <dict>
                  <key>Name</key>

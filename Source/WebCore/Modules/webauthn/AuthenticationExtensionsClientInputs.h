@@ -28,6 +28,8 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "BufferSource.h"
+#include <wtf/KeyValuePair.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,9 +41,20 @@ struct AuthenticationExtensionsClientInputs {
         std::optional<BufferSource> write;
     };
 
+    struct PRFValues {
+        BufferSource first;
+        std::optional<BufferSource> second;
+    };
+
+    struct PRFInputs {
+        std::optional<AuthenticationExtensionsClientInputs::PRFValues> eval;
+        std::optional<Vector<KeyValuePair<String, AuthenticationExtensionsClientInputs::PRFValues>>> evalByCredential;
+    };
+
     String appid;
     bool credProps; // Not serialized but probably should be. Don't re-introduce rdar://101057340 though.
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
+    std::optional<AuthenticationExtensionsClientInputs::PRFInputs> prf;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(std::span<const uint8_t>);

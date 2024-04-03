@@ -101,9 +101,8 @@ FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& view
     };
 
     for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (is<ScrollingStateOverflowScrollProxyNode>(*ancestor)) {
-            auto& overflowProxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(*ancestor);
-            auto overflowNode = scrollingStateTree().stateNodeForID(overflowProxyNode.overflowScrollingNode());
+        if (auto* overflowProxyNode = dynamicDowncast<ScrollingStateOverflowScrollProxyNode>(*ancestor)) {
+            auto overflowNode = scrollingStateTree().stateNodeForID(overflowProxyNode->overflowScrollingNode());
             if (!overflowNode)
                 break;
 
@@ -113,8 +112,8 @@ FloatPoint ScrollingStateStickyNode::computeLayerPosition(const LayoutRect& view
         if (is<ScrollingStateScrollingNode>(*ancestor))
             return computeLayerPositionForScrollingNode(*ancestor);
 
-        if (is<ScrollingStateStickyNode>(*ancestor))
-            offsetFromStickyAncestors += downcast<ScrollingStateStickyNode>(*ancestor).scrollDeltaSinceLastCommit(viewportRect);
+        if (auto* stickyNode = dynamicDowncast<ScrollingStateStickyNode>(*ancestor))
+            offsetFromStickyAncestors += stickyNode->scrollDeltaSinceLastCommit(viewportRect);
 
         if (is<ScrollingStateFixedNode>(*ancestor)) {
             // FIXME: Do we need scrolling tree nodes at all for nested cases?

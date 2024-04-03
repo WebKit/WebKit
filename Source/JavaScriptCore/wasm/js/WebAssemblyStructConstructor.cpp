@@ -34,19 +34,12 @@
 #include "JSWebAssemblyStruct.h"
 #include "WebAssemblyStructPrototype.h"
 
-#include "WebAssemblyStructConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyStructConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyStruct, nullptr, CREATE_METHOD_TABLE(WebAssemblyStructConstructor) };
+const ClassInfo WebAssemblyStructConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyStructConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyStruct);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyStruct);
-
-/* Source for WebAssemblyStructConstructor.lut.h
- @begin constructorTableWebAssemblyStruct
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyStruct, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

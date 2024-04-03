@@ -102,7 +102,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         return;
 
     // 2. Let video be the media element or other playback mechanism.
-    auto* video = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    RefPtr video = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
     if (!video)
         return;
 
@@ -156,7 +156,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        RefPtr<TextTrackCue> cue = cueInterval.data();
+        RefPtr cue = cueInterval.data();
         return !cue->track()
             || !cue->track()->isRendered()
             || cue->track()->mode() == TextTrack::Mode::Disabled
@@ -256,7 +256,7 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
     m_fontSize = lroundf(100 * fontScale);
 
     for (auto& activeCue : m_mediaElement->currentlyActiveCues()) {
-        RefPtr<TextTrackCue> cue = activeCue.data();
+        RefPtr cue = activeCue.data();
         if (cue->isRenderable())
             cue->setFontSize(m_fontSize, m_fontSizeIsImportant);
     }
@@ -275,9 +275,9 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
     // FIXME: Since it is possible to have more than one text track enabled, the following code may not find the correct language.
     // The default UI only allows a user to enable one track at a time, so it should be OK for now, but we should consider doing
     // this differently, see <https://bugs.webkit.org/show_bug.cgi?id=169875>.
-    if (auto* tracks = m_mediaElement->textTracks()) {
+    if (RefPtr tracks = m_mediaElement->textTracks()) {
         for (unsigned i = 0; i < tracks->length(); ++i) {
-            auto track = tracks->item(i);
+            RefPtr track = tracks->item(i);
             if (track && track->mode() == TextTrack::Mode::Showing) {
                 language = track->validBCP47Language();
                 break;

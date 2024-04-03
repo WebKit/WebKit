@@ -101,6 +101,7 @@ public:
     CSSParserToken(CSSParserTokenType, BlockType = NotBlock);
     CSSParserToken(CSSParserTokenType, StringView, BlockType = NotBlock);
 
+    explicit CSSParserToken(unsigned whitespaceCount); // WhitespaceToken
     CSSParserToken(CSSParserTokenType, UChar); // for DelimiterToken
     CSSParserToken(double, NumericValueType, NumericSign, StringView originalText); // for NumberToken
 
@@ -132,15 +133,23 @@ public:
     CSSValueID functionId() const;
 
     bool hasStringBacking() const;
+    bool tryUseStringLiteralBacking();
+    bool isBackedByStringLiteral() const { return m_isBackedByStringLiteral; }
 
     CSSPropertyID parseAsCSSPropertyID() const;
 
-    void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
+    enum class SerializationMode : bool {
+        Normal,
+        // "Specified values of custom properties must be serialized exactly as specified by the author.
+        // Simplifications that might occur in other properties, such as dropping comments, normalizing whitespace,
+        // reserializing numeric tokens from their value, etc., must not occur."
+        // https://drafts.csswg.org/css-variables-2/#serializing-custom-props
+        CustomProperty
+    };
+    void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr, SerializationMode = SerializationMode::Normal) const;
 
     template<typename CharacterType>
     void updateCharacters(const CharacterType* characters, unsigned length);
-
-    CSSParserToken copyWithUpdatedString(StringView) const;
 
 private:
     void initValueFromStringView(StringView string)
@@ -148,25 +157,30 @@ private:
         m_valueLength = string.length();
         m_valueIs8Bit = string.is8Bit();
         m_valueDataCharRaw = string.rawCharacters();
+        m_isBackedByStringLiteral = false;
     }
-    unsigned m_type : 6; // CSSParserTokenType
-    unsigned m_blockType : 2; // BlockType
-    unsigned m_numericValueType : 1; // NumericValueType
-    unsigned m_numericSign : 2; // NumericSign
-    unsigned m_unit : 7; // CSSUnitType
-    unsigned m_nonUnitPrefixLength : 4; // Only for DimensionType, only needs to be long enough for UnicodeRange parsing.
+    CSSValueID identOrFunctionId() const;
+
+    unsigned m_type : 6 { 0 }; // CSSParserTokenType
+    unsigned m_blockType : 2 { 0 }; // BlockType
+    unsigned m_numericValueType : 1 { 0 }; // NumericValueType
+    unsigned m_numericSign : 2 { 0 }; // NumericSign
+    unsigned m_unit : 7 { 0 }; // CSSUnitType
+    unsigned m_nonUnitPrefixLength : 4 { 0 }; // Only for DimensionType, only needs to be long enough for UnicodeRange parsing.
 
     // m_value... is an unpacked StringView so that we can pack it
     // tightly with the rest of this object for a smaller object size.
-    bool m_valueIs8Bit : 1;
-    unsigned m_valueLength;
-    const void* m_valueDataCharRaw; // Either LChar* or UChar*.
+    bool m_valueIs8Bit : 1 { false };
+    bool m_isBackedByStringLiteral : 1 { false };
+    unsigned m_valueLength { 0 };
+    const void* m_valueDataCharRaw { nullptr }; // Either LChar* or UChar*.
 
     union {
         UChar m_delimiter;
         HashTokenType m_hashTokenType;
         double m_numericValue;
         mutable int m_id;
+        unsigned m_whitespaceCount;
     };
 };
 

@@ -35,6 +35,7 @@ header: "WebFindOptions.h"
     DetermineMatchIndex,
     NoIndexChange,
     AtWordEnds,
+    DoNotSetSelection,
 };
 
 enum class WebKit::FindDecorationStyle : uint8_t {

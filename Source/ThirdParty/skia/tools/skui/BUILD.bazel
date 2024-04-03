@@ -1,0 +1,16 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_cc_library(
+    name = "skui",
+    srcs = ["//src/base:SkBitmaskEnum.h"],
+    hdrs = [
+        "InputState.h",
+        "Key.h",
+        "ModifierKey.h",
+    ],
+    visibility = ["//:__subpackages__"],
+)

@@ -26,11 +26,21 @@
 #pragma once
 
 #include "PrintInfo.h"
-#include <WebCore/RefPtrCairo.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+
+#if USE(CAIRO)
+#include <WebCore/RefPtrCairo.h>
+#elif USE(SKIA)
+#include <skia/core/SkCanvas.h>
+#include <skia/core/SkDocument.h>
+#include <skia/core/SkPicture.h>
+#include <skia/core/SkPictureRecorder.h>
+#include <skia/core/SkStream.h>
+#endif
 
 typedef struct _GtkPrintSettings GtkPrintSettings;
 typedef struct _GtkPageSetup GtkPageSetup;
@@ -52,9 +62,15 @@ public:
     void startPrint(WebCore::PrintContext*, CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceError&&)>&&);
 
 private:
+#if USE(CAIRO)
     void startPage(cairo_t*);
     void endPage(cairo_t*);
     void endPrint(cairo_t*);
+#elif USE(SKIA)
+    void startPage(SkPictureRecorder&);
+    void endPage(SkPictureRecorder&);
+    void endPrint();
+#endif
 
     struct PrintPagesData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -91,7 +107,11 @@ private:
     int pageCount() const;
     bool currentPageIsFirstPageOfSheet() const;
     bool currentPageIsLastPageOfSheet() const;
+#if USE(CAIRO)
     void print(cairo_surface_t*, double xDPI, double yDPI);
+#elif USE(SKIA)
+    void print(double xDPI, double yDPI);
+#endif
     void renderPage(int pageNumber);
     void rotatePageIfNeeded();
     void getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns);
@@ -106,10 +126,16 @@ private:
     PrintInfo::PrintMode m_printMode { PrintInfo::PrintMode::Async };
     WebCore::PrintContext* m_printContext { nullptr };
     CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceError&&)> m_completionHandler;
-    RefPtr<cairo_t> m_cairoContext;
-    WebCore::SharedBufferBuilder m_buffer;
     double m_xDPI { 1 };
     double m_yDPI { 1 };
+
+#if USE(CAIRO)
+    WebCore::SharedBufferBuilder m_buffer;
+    RefPtr<cairo_t> m_cairoContext;
+#elif USE(SKIA)
+    Vector<sk_sp<SkPicture>> m_pages;
+    SkCanvas* m_pageCanvas { nullptr };
+#endif
 
     unsigned m_printPagesIdleId { 0 };
     size_t m_numberOfPagesToPrint { 0 };

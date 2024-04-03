@@ -9,7 +9,7 @@ layer at (0,0) size 785x600
             RenderText {#text} at (0,0) size 715x36
               text run at (0,0) width 715: "This text shouldn't autosize. Usually this appears to be a designer's fault, when the new text is added, but"
               text run at (0,18) width 584: "block height is not changed. Or an overflow was made intentionally for some purpose."
-          RenderText {#text} at (583,18) size 712x54
+          RenderText {#text} at (0,18) size 712x54
             text run at (583,18) width 129: " Lorem ipsum dolor"
             text run at (0,36) width 674: "sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna"
             text run at (0,54) width 140: "aliquam erat volutpat."
@@ -24,7 +24,7 @@ layer at (0,0) size 785x600
             RenderInline {B} at (0,0) size 108x18
               RenderText {#text} at (0,0) size 108x18
                 text run at (0,0) width 108: "Still should not."
-            RenderText {#text} at (107,0) size 638x36
+            RenderText {#text} at (0,0) size 638x36
               text run at (107,0) width 531: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh"
               text run at (0,18) width 415: "euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
           RenderBlock {P} at (12,64) size 681x72
@@ -38,7 +38,7 @@ layer at (0,0) size 785x600
               RenderInline {B} at (0,0) size 108x18
                 RenderText {#text} at (0,0) size 108x18
                   text run at (0,0) width 108: "Still should not."
-              RenderText {#text} at (107,0) size 606x36
+              RenderText {#text} at (0,0) size 606x36
                 text run at (107,0) width 499: " Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy"
                 text run at (0,18) width 447: "nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
             RenderBlock {P} at (12,64) size 637x72
@@ -54,7 +54,7 @@ layer at (0,0) size 785x600
                     text run at (0,0) width 542: "This text should autoresize. Sometimes content is"
                     text run at (0,31) width 541: "being put in fixed-height (by a mistake) blocks to"
                     text run at (0,62) width 199: "apply some styles."
-                RenderText {#text} at (198,62) size 576x124
+                RenderText {#text} at (0,62) size 576x124
                   text run at (198,62) width 303: " Lorem ipsum dolor sit amet,"
                   text run at (0,93) width 554: "consectetuer adipiscing elit, sed diam nonummy nibh"
                   text run at (0,124) width 576: "euismod tincidunt ut laoreet dolore magna aliquam erat"
@@ -74,7 +74,7 @@ layer at (0,0) size 785x600
                   RenderInline {B} at (0,0) size 166x31
                     RenderText {#text} at (0,0) size 166x31
                       text run at (0,0) width 166: "Should as well."
-                  RenderText {#text} at (165,0) size 502x124
+                  RenderText {#text} at (0,0) size 502x124
                     text run at (165,0) width 303: " Lorem ipsum dolor sit amet,"
                     text run at (0,31) width 502: "consectetuer adipiscing elit, sed diam nonummy"
                     text run at (0,62) width 493: "nibh euismod tincidunt ut laoreet dolore magna"

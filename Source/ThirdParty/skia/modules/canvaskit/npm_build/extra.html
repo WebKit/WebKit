@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<title>CanvasKit Extra features (Skia via Web Assembly)</title>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  canvas {
+    border: 1px dashed #AAA;
+  }
+  #sk_legos,#sk_drinks,#sk_party,#sk_onboarding, #sk_animated_gif {
+      width: 300px;
+      height: 300px;
+  }
+
+</style>
+
+<h2> Skottie </h2>
+<canvas id=sk_legos width=300 height=300></canvas>
+<canvas id=sk_drinks width=500 height=500></canvas>
+<canvas id=sk_party width=500 height=500></canvas>
+<canvas id=sk_onboarding width=500 height=500></canvas>
+<canvas id=sk_animated_gif width=500 height=500
+        title='This is an animated gif being animated in Skottie'></canvas>
+
+<h2> RT Shader </h2>
+<canvas id=rtshader width=300 height=300></canvas>
+<canvas id=rtshader2 width=300 height=300></canvas>
+
+<h2> Paragraph </h2>
+<canvas id=para1 width=600 height=600></canvas>
+<canvas id=para2 width=600 height=600 tabindex='-1'></canvas>
+<canvas id=para3 width=600 height=600 tabindex='-1'></canvas>
+``
+<h2> CanvasKit can serialize/deserialize .skp files</h2>
+<canvas id=skp width=500 height=500></canvas>
+
+<h2> 3D perspective transformations </h2>
+<canvas id=glyphgame width=500 height=500></canvas>
+
+<h2> Support for extended color spaces </h2>
+<a href="chrome://flags/#force-color-profile">Force P3 profile</a>
+<canvas id=colorsupport width=300 height=300></canvas>
+
+<script type="text/javascript" src="/build/canvaskit.js"></script>
+
+<script type="text/javascript" src="textapi_utils.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+
+  var CanvasKit = null;
+  var cdn = 'https://storage.googleapis.com/skia-cdn/misc/';
+
+  const ckLoaded = CanvasKitInit({locateFile: (file) => '/build/'+file});
+
+  const loadLegoJSON = fetch(cdn + 'lego_loader.json').then((response) => response.text());
+  const loadDrinksJSON = fetch(cdn + 'drinks.json').then((response) => response.text());
+  const loadConfettiJSON = fetch(cdn + 'confetti.json').then((response) => response.text());
+  const loadOnboardingJSON = fetch(cdn + 'onboarding.json').then((response) => response.text());
+  const loadMultiframeJSON = fetch(cdn + 'skottie_sample_multiframe.json').then((response) => response.text());
+
+  const loadFlightGif = fetch(cdn + 'flightAnim.gif').then((response) => response.arrayBuffer());
+  const loadFont = fetch(cdn + 'Roboto-Regular.ttf').then((response) => response.arrayBuffer());
+  const loadDog = fetch(cdn + 'dog.jpg').then((response) => response.arrayBuffer());
+  const loadMandrill = fetch(cdn + 'mandrill_256.png').then((response) => response.arrayBuffer());
+  const loadBrickTex = fetch(cdn + 'brickwork-texture.jpg').then((response) => response.arrayBuffer());
+  const loadBrickBump = fetch(cdn + 'brickwork_normal-map.jpg').then((response) => response.arrayBuffer());
+
+  // Examples which only require canvaskit
+  ckLoaded.then((CK) => {
+    CanvasKit = CK;
+    RTShaderAPI1(CanvasKit);
+    ColorSupport(CanvasKit);
+    SkpExample(CanvasKit);
+  });
+
+  // Examples requiring external resources.
+  // Set bounds to fix the 4:3 resolution of the legos
+  Promise.all([ckLoaded, loadLegoJSON]).then(([ck, jsonstr]) => {
+    SkottieExample(ck, 'sk_legos', jsonstr, [-50, 0, 350, 300]);
+  });
+  // Re-size to fit
+  let fullBounds = [0, 0, 500, 500];
+  Promise.all([ckLoaded, loadDrinksJSON]).then(([ck, jsonstr]) => {
+    SkottieExample(ck, 'sk_drinks', jsonstr, fullBounds);
+  });
+  Promise.all([ckLoaded, loadConfettiJSON]).then(([ck, jsonstr]) => {
+    SkottieExample(ck, 'sk_party', jsonstr, fullBounds);
+  });
+  Promise.all([ckLoaded, loadOnboardingJSON]).then(([ck, jsonstr]) => {
+    SkottieExample(ck, 'sk_onboarding', jsonstr, fullBounds);
+  });
+  Promise.all([ckLoaded, loadMultiframeJSON, loadFlightGif]).then(([ck, jsonstr, gif]) => {
+    SkottieExample(ck, 'sk_animated_gif', jsonstr, fullBounds, {'image_0.png': gif});
+  });
+
+  Promise.all([ckLoaded, loadFont]).then((results) => {
+    ParagraphAPI1(...results);
+    ParagraphAPI2(...results);
+    ParagraphAPI3(...results);
+    GlyphGame(...results)
+  });
+
+  const rectLeft = 0;
+  const rectTop = 1;
+  const rectRight = 2;
+  const rectBottom = 3;
+
+  function SkottieExample(CanvasKit, id, jsonStr, bounds, assets) {
+    if (!CanvasKit || !jsonStr) {
+      return;
+    }
+    const animation = CanvasKit.MakeManagedAnimation(jsonStr, assets);
+    const duration = animation.duration() * 1000;
+    const size = animation.size();
+    let c = document.getElementById(id);
+    bounds = bounds || CanvasKit.LTRBRect(0, 0, size.w, size.h);
+
+    // Basic managed animation test.
+    if (id === 'sk_drinks') {
+      animation.setColor('BACKGROUND_FILL', CanvasKit.Color(0, 163, 199, 1.0));
+    }
+
+    const surface = CanvasKit.MakeCanvasSurface(id);
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    let firstFrame = Date.now();
+
+    function drawFrame(canvas) {
+      let seek = ((Date.now() - firstFrame) / duration) % 1.0;
+      let damage = animation.seek(seek);
+
+      if (damage[rectRight] > damage[rectLeft] && damage[rectBottom] > damage[rectTop]) {
+        canvas.clear(CanvasKit.WHITE);
+        animation.render(canvas, bounds);
+      }
+      surface.requestAnimationFrame(drawFrame);
+    }
+    surface.requestAnimationFrame(drawFrame);
+
+    return surface;
+  }
+
+  function ParagraphAPI1(CanvasKit, fontData) {
+    if (!CanvasKit || !fontData) {
+      return;
+    }
+
+    const surface = CanvasKit.MakeCanvasSurface('para1');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    const canvas = surface.getCanvas();
+    const fontMgr = CanvasKit.FontMgr.FromData([fontData]);
+
+    const paraStyle = new CanvasKit.ParagraphStyle({
+        textStyle: {
+            color: CanvasKit.BLACK,
+            fontFamilies: ['Roboto'],
+            fontSize: 50,
+        },
+        textAlign: CanvasKit.TextAlign.Left,
+        maxLines: 5,
+    });
+
+    const builder = CanvasKit.ParagraphBuilder.Make(paraStyle, fontMgr);
+    builder.addText('The quick brown fox ate a hamburgerfons and got sick.');
+    const paragraph = builder.build();
+
+    let wrapTo = 0;
+
+    let X = 100;
+    let Y = 100;
+
+    const fontPaint = new CanvasKit.Paint();
+    fontPaint.setStyle(CanvasKit.PaintStyle.Fill);
+    fontPaint.setAntiAlias(true);
+
+    function drawFrame(canvas) {
+      canvas.clear(CanvasKit.WHITE);
+      wrapTo = 350 + 150 * Math.sin(Date.now() / 2000);
+      paragraph.layout(wrapTo);
+      canvas.drawParagraph(paragraph, 0, 0);
+
+      canvas.drawLine(wrapTo, 0, wrapTo, 400, fontPaint);
+
+      surface.requestAnimationFrame(drawFrame);
+    }
+    surface.requestAnimationFrame(drawFrame);
+
+    let interact = (e) => {
+      X = e.offsetX*2; // multiply by 2 because the canvas is 300 css pixels wide,
+      Y = e.offsetY*2; // but the canvas itself is 600px wide
+    };
+
+    document.getElementById('para1').addEventListener('pointermove', interact);
+    return surface;
+  }
+
+  function ParagraphAPI2(CanvasKit, fontData) {
+      if (!CanvasKit || !fontData) {
+        return;
+      }
+
+      const surface = CanvasKit.MakeCanvasSurface('para2');
+      if (!surface) {
+        console.error('Could not make surface');
+        return;
+      }
+
+      const mouse = MakeMouse();
+      const cursor = MakeCursor(CanvasKit);
+      const canvas = surface.getCanvas();
+
+      const text0 = "In a hole in the ground there lived a hobbit. Not a nasty, dirty, " +
+                    "wet hole full of worms and oozy smells. This was a hobbit-hole and " +
+                    "that means good food, a warm hearth, and all the comforts of home.";
+      const LOC_X = 20,
+            LOC_Y = 20;
+
+      const bgPaint = new CanvasKit.Paint();
+      bgPaint.setColor([0.965, 0.965, 0.965, 1]);
+
+      const editor = MakeEditor(text0, {typeface:null, size:24}, cursor, 400);
+
+      editor.applyStyleToRange({size:100}, 0, 1);
+      editor.applyStyleToRange({italic:true}, 38, 38+6);
+      editor.applyStyleToRange({color:[1,0,0,1]}, 5, 5+4);
+
+      editor.setXY(LOC_X, LOC_Y);
+
+      function drawFrame(canvas) {
+        const lines = editor.getLines();
+
+        canvas.clear(CanvasKit.WHITE);
+
+        if (mouse.isActive()) {
+            const pos = mouse.getPos(-LOC_X, -LOC_Y);
+            const a = lines_pos_to_index(lines, pos[0], pos[1]);
+            const b = lines_pos_to_index(lines, pos[2], pos[3]);
+            if (a == b) {
+                editor.setIndex(a);
+            } else {
+                editor.setIndices(a, b);
+            }
+        }
+
+        canvas.drawRect(editor.bounds(), bgPaint);
+        editor.draw(canvas);
+
+        surface.requestAnimationFrame(drawFrame);
+      }
+      surface.requestAnimationFrame(drawFrame);
+
+      function interact(e) {
+        const type = e.type;
+        if (type === 'pointerup') {
+            mouse.setUp(e.offsetX, e.offsetY);
+        } else if (type === 'pointermove') {
+            mouse.setMove(e.offsetX, e.offsetY);
+        } else if (type === 'pointerdown') {
+            mouse.setDown(e.offsetX, e.offsetY);
+        }
+      };
+
+      function keyhandler(e) {
+          switch (e.key) {
+              case 'ArrowLeft':  editor.moveDX(-1); return;
+              case 'ArrowRight': editor.moveDX(1); return;
+              case 'ArrowUp':
+                e.preventDefault();
+                editor.moveDY(-1);
+                return;
+              case 'ArrowDown':
+                e.preventDefault();
+                editor.moveDY(1);
+                return;
+              case 'Backspace':
+                editor.deleteSelection();
+                return;
+              case 'Shift':
+                return;
+            }
+            if (e.ctrlKey) {
+                switch (e.key) {
+                    case 'r': editor.applyStyleToSelection({color:[1,0,0,1]}); return;
+                    case 'g': editor.applyStyleToSelection({color:[0,0.6,0,1]}); return;
+                    case 'u': editor.applyStyleToSelection({color:[0,0,1,1]}); return;
+                    case 'k': editor.applyStyleToSelection({color:[0,0,0,1]}); return;
+
+                    case 'i': editor.applyStyleToSelection({italic:'toggle'}); return;
+                    case 'b': editor.applyStyleToSelection({bold:'toggle'}); return;
+                    case 'l': editor.applyStyleToSelection({underline:'toggle'}); return;
+
+                    case ']': editor.applyStyleToSelection({size_add:1}); return;
+                    case '[': editor.applyStyleToSelection({size_add:-1}); return;
+                }
+            }
+            if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault(); // at least needed for 'space'
+                editor.insert(e.key);
+            }
+      }
+
+      document.getElementById('para2').addEventListener('pointermove', interact);
+      document.getElementById('para2').addEventListener('pointerdown', interact);
+      document.getElementById('para2').addEventListener('pointerup', interact);
+      document.getElementById('para2').addEventListener('keydown', keyhandler);
+      return surface;
+    }
+
+  function ParagraphAPI3(CanvasKit, fontData) {
+    if (!CanvasKit || !fontData) {
+      return;
+    }
+
+    const surface = CanvasKit.MakeCanvasSurface('para3');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    const fontMgr = CanvasKit.FontMgr.FromData([fontData]);
+
+    const paraStyle = new CanvasKit.ParagraphStyle({
+        textStyle: {
+            color: CanvasKit.BLACK,
+            fontFamilies: ['Roboto'],
+            fontSize: 50,
+        },
+        textAlign: CanvasKit.TextAlign.Left,
+        maxLines: 5,
+    });
+
+    const builder = CanvasKit.ParagraphBuilder.Make(paraStyle, fontMgr);
+    builder.addText('The quick brown fox ate a hamburgerfons and got sick.');
+
+    // The code below works for English-only text assuming
+    // that each character is a glyph (cluster), spaces are breaks between words,
+    // new lines are breaks between lines and the entire text is LTR.
+
+    // In case the paragraph text was constructed in a set of calls we need the text
+        const text = builder.getText();
+
+        // Pass the entire text as one word. It's only used for the method
+        // getWords
+        const mallocedWords = CanvasKit.Malloc(Uint32Array, 2);
+        mallocedWords.toTypedArray().set([0, text.length]);
+
+        // Pass each character as a separate grapheme
+        const mallocedGraphemes = CanvasKit.Malloc(Uint32Array, text.length + 1);
+        const graphemesArr = mallocedGraphemes.toTypedArray();
+        for (let i = 0; i <= text.length; i++) {
+            graphemesArr[i] = i;
+        }
+
+        // Pass each space as a "soft" break and each new line as a "hard" break.
+        const SOFT = 0;
+        const HARD = 1;
+        const lineBreaks = [0, SOFT];
+        for (let i = 0; i < text.length; ++i) {
+          if (text[i] === ' ') {
+              lineBreaks.push(i + 1, SOFT);
+          }
+          if (text[i] === '\n') {
+              lineBreaks.push(i + 1, HARD);
+          }
+        }
+        lineBreaks.push(text.length, SOFT);
+        const mallocedLineBreaks = CanvasKit.Malloc(Uint32Array, lineBreaks.length);
+        mallocedLineBreaks.toTypedArray().set(lineBreaks);
+
+        builder.setWordsUtf16(mallocedWords);
+        builder.setGraphemeBreaksUtf16(mallocedGraphemes);
+        builder.setLineBreaksUtf16(mallocedLineBreaks);
+        const paragraph = builder.build();
+
+        paragraph.layout(600);
+
+    let wrapTo = 0;
+
+    let X = 100;
+    let Y = 100;
+
+    const fontPaint = new CanvasKit.Paint();
+    fontPaint.setStyle(CanvasKit.PaintStyle.Fill);
+    fontPaint.setAntiAlias(true);
+
+    function drawFrame(canvas) {
+      canvas.clear(CanvasKit.WHITE);
+      wrapTo = 350 + 150 * Math.sin(Date.now() / 2000);
+      paragraph.layout(wrapTo);
+      canvas.drawParagraph(paragraph, 0, 0);
+
+      canvas.drawLine(wrapTo, 0, wrapTo, 400, fontPaint);
+
+      surface.requestAnimationFrame(drawFrame);
+    }
+    surface.requestAnimationFrame(drawFrame);
+
+    let interact = (e) => {
+      X = e.offsetX*2; // multiply by 2 because the canvas is 300 css pixels wide,
+      Y = e.offsetY*2; // but the canvas itself is 600px wide
+    };
+
+    document.getElementById('para1').addEventListener('pointermove', interact);
+
+    return surface;
+  }
+
+  function RTShaderAPI1(CanvasKit) {
+    if (!CanvasKit) {
+      return;
+    }
+
+    const surface = CanvasKit.MakeCanvasSurface('rtshader');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    const canvas = surface.getCanvas();
+
+    const effect = CanvasKit.RuntimeEffect.Make(spiralSkSL);
+    const shader = effect.makeShader([
+      0.5,
+      150, 150,
+      0, 1, 0, 1,
+      1, 0, 0, 1]);
+    const paint = new CanvasKit.Paint();
+    paint.setShader(shader);
+    canvas.drawRect(CanvasKit.LTRBRect(0, 0, 300, 300), paint);
+
+    surface.flush();
+    shader.delete();
+    paint.delete();
+    effect.delete();
+  }
+
+  // RTShader2 demo
+  Promise.all([ckLoaded, loadDog, loadMandrill]).then((values) => {
+    const [CanvasKit, dogData, mandrillData] = values;
+    const dogImg = CanvasKit.MakeImageFromEncoded(dogData);
+    if (!dogImg) {
+      console.error('could not decode dog');
+      return;
+    }
+    const mandrillImg = CanvasKit.MakeImageFromEncoded(mandrillData);
+    if (!mandrillImg) {
+      console.error('could not decode mandrill');
+      return;
+    }
+    const quadrantSize = 150;
+
+    const dogShader = dogImg.makeShaderCubic(
+        CanvasKit.TileMode.Clamp, CanvasKit.TileMode.Clamp,
+        1/3, 1/3,
+        CanvasKit.Matrix.scaled(quadrantSize/dogImg.width(),
+        quadrantSize/dogImg.height()));
+    const mandrillShader = mandrillImg.makeShaderCubic(
+        CanvasKit.TileMode.Clamp, CanvasKit.TileMode.Clamp,
+        1/3, 1/3,
+        CanvasKit.Matrix.scaled(
+            quadrantSize/mandrillImg.width(),
+            quadrantSize/mandrillImg.height()));
+
+    const surface = CanvasKit.MakeCanvasSurface('rtshader2');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    const prog = `
+      uniform shader before_map;
+      uniform shader after_map;
+      uniform shader threshold_map;
+
+      uniform float cutoff;
+      uniform float slope;
+
+      float smooth_cutoff(float x) {
+          x = x * slope + (0.5 - slope * cutoff);
+          return clamp(x, 0, 1);
+      }
+
+      half4 main(float2 xy) {
+          half4 before = before_map.eval(xy);
+          half4 after = after_map.eval(xy);
+
+          float m = smooth_cutoff(threshold_map.eval(xy).r);
+          return mix(before, after, half(m));
+      }`;
+
+    const canvas = surface.getCanvas();
+
+    const thresholdEffect = CanvasKit.RuntimeEffect.Make(prog);
+    const spiralEffect = CanvasKit.RuntimeEffect.Make(spiralSkSL);
+
+    const draw = (x, y, shader) => {
+      const paint = new CanvasKit.Paint();
+      paint.setShader(shader);
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.drawRect(CanvasKit.LTRBRect(0, 0, quadrantSize, quadrantSize), paint);
+      canvas.restore();
+      paint.delete();
+    };
+
+    const offscreenSurface = CanvasKit.MakeSurface(quadrantSize, quadrantSize);
+    const getBlurrySpiralShader = (rad_scale) => {
+      const oCanvas = offscreenSurface.getCanvas();
+
+      const spiralShader = spiralEffect.makeShader([
+      rad_scale,
+      quadrantSize/2, quadrantSize/2,
+      1, 1, 1, 1,
+      0, 0, 0, 1]);
+
+      const blur = CanvasKit.ImageFilter.MakeBlur(0.1, 0.1, CanvasKit.TileMode.Clamp, null);
+
+      const paint = new CanvasKit.Paint();
+      paint.setShader(spiralShader);
+      paint.setImageFilter(blur);
+      oCanvas.drawRect(CanvasKit.LTRBRect(0, 0, quadrantSize, quadrantSize), paint);
+
+      paint.delete();
+      blur.delete();
+      spiralShader.delete();
+      return offscreenSurface.makeImageSnapshot()
+                             .makeShaderCubic(CanvasKit.TileMode.Clamp, CanvasKit.TileMode.Clamp,
+                             1/3, 1/3);
+
+    };
+
+    const drawFrame = () => {
+      surface.requestAnimationFrame(drawFrame);
+      const thresholdShader = getBlurrySpiralShader(Math.sin(Date.now() / 5000) / 2);
+
+      const blendShader = thresholdEffect.makeShaderWithChildren(
+        [0.5, 10],
+        [dogShader, mandrillShader, thresholdShader]);
+      draw(0, 0, blendShader);
+      draw(quadrantSize, 0, thresholdShader);
+      draw(0, quadrantSize, dogShader);
+      draw(quadrantSize, quadrantSize, mandrillShader);
+
+      blendShader.delete();
+    };
+
+    surface.requestAnimationFrame(drawFrame);
+  });
+
+  function SkpExample(CanvasKit) {
+    if (!CanvasKit) {
+      return;
+    }
+
+    const surface = CanvasKit.MakeSWCanvasSurface('skp');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+
+    const paint = new CanvasKit.Paint();
+    paint.setColor(CanvasKit.RED);
+
+    const textPaint = new CanvasKit.Paint();
+    const textFont = new CanvasKit.Font(CanvasKit.Typeface.GetDefault(), 20);
+    const pr = new CanvasKit.PictureRecorder();
+    const skpCanvas = pr.beginRecording(CanvasKit.LTRBRect(0, 0, 200, 200));
+    skpCanvas.drawRect(CanvasKit.LTRBRect(10, 10, 50, 50), paint);
+    skpCanvas.drawText('If you see this, CanvasKit loaded!!', 5, 100, textPaint, textFont);
+
+    const pic = pr.finishRecordingAsPicture();
+    const skpData = pic.serialize();
+
+    paint.delete();
+    pr.delete();
+
+    const deserialized = CanvasKit.MakePicture(skpData);
+
+    function drawFrame(canvas) {
+      if (deserialized) {
+        canvas.drawPicture(deserialized);
+      } else {
+        canvas.drawText('SKP did not deserialize', 5, 100, textPaint, textFont);
+      }
+    }
+    surface.drawOnce(drawFrame);
+    textPaint.delete();
+    textFont.delete();
+  }
+
+  // Shows a hidden message by rotating all the characters in a kind of way that makes you
+  // search with your mouse.
+  function GlyphGame(canvas, robotoData) {
+    const surface = CanvasKit.MakeCanvasSurface('glyphgame');
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+    const sizeX = document.getElementById('glyphgame').width;
+    const sizeY = document.getElementById('glyphgame').height;
+    const halfDim = Math.min(sizeX, sizeY) / 2;
+    const margin = 50;
+    const marginTop = 25;
+    let rotX = 0; //  expected to be updated in interact()
+    let rotY = 0;
+    let pointer = [500, 450];
+    const radPerPixel = 0.005; // radians of subject rotation per pixel distance moved by mouse.
+
+    const camAngle = Math.PI / 12;
+    const cam = {
+      'eye'  : [0, 0, 1 / Math.tan(camAngle/2) - 1],
+      'coa'  : [0, 0, 0],
+      'up'   : [0, 1, 0],
+      'near' : 0.02,
+      'far'  : 4,
+      'angle': camAngle,
+    };
+
+    let lastImage = null;
+
+    const fontMgr = CanvasKit.FontMgr.FromData([robotoData]);
+
+    const paraStyle = new CanvasKit.ParagraphStyle({
+        textStyle: {
+            color: CanvasKit.Color(105, 56, 16), // brown
+            fontFamilies: ['Roboto'],
+            fontSize: 28,
+        },
+        textAlign: CanvasKit.TextAlign.Left,
+    });
+    const hStyle = CanvasKit.RectHeightStyle.Max;
+    const wStyle = CanvasKit.RectWidthStyle.Tight;
+
+    const quotes = [
+      'Some activities superficially familiar to you are merely stupid and should be avoided for your safety, although they are not illegal as such. These include: giving your bank account details to the son of the Nigerian Minister of Finance; buying title to bridges, skyscrapers, spacecraft, planets, or other real assets; murder; selling your identity; and entering into financial contracts with entities running Economics 2.0 or higher.',
+      // Charles Stross - Accelerando
+      'If only there were evil people somewhere insidiously committing evil deeds, and it were necessary only to separate them from the rest of us and destroy them. But the line dividing good and evil cuts through the heart of every human being. And who is willing to destroy a piece of his own heart?',
+      // Aleksandr Solzhenitsyn - The Gulag Archipelago
+      'There is one metaphor of which the moderns are very fond; they are always saying, “You can’t put the clock back.” The simple and obvious answer is “You can.” A clock, being a piece of human construction, can be restored by the human finger to any figure or hour. In the same way society, being a piece of human construction, can be reconstructed upon any plan that has ever existed.',
+      // G. K. Chesterton - What's Wrong With The World?
+    ];
+
+    // pick one at random
+    const text = quotes[Math.floor(Math.random()*3)];
+    const builder = CanvasKit.ParagraphBuilder.Make(paraStyle, fontMgr);
+    builder.addText(text);
+    const paragraph = builder.build();
+    const font = new CanvasKit.Font(CanvasKit.Typeface.GetDefault(), 18);
+    // wrap the text to a given width.
+    paragraph.layout(sizeX - margin*2);
+
+    // to rotate every glyph individually, calculate the bounding rect of each one,
+    // construct an array of rects and paragraphs that would draw each glyph individually.
+    const letters = Array(text.length);
+    for (let i = 0; i < text.length; i++) {
+      const r = paragraph.getRectsForRange(i, i+1, hStyle, wStyle)[0];
+      // The character is drawn with drawParagraph so we can pass the paraStyle,
+      // and have our character be the exact size and shape the paragraph expected
+      // when it wrapped the text. canvas.drawText wouldn't cut it.
+      const tmpbuilder = CanvasKit.ParagraphBuilder.Make(paraStyle, fontMgr);
+      tmpbuilder.addText(text[i]);
+      const para = tmpbuilder.build();
+      para.layout(100);
+      letters[i] = {
+        'r': r,
+        'para': para,
+      };
+    }
+
+    function drawFrame(canvas) {
+      // persistence of vision effect is done by drawing the past frame as an image,
+      // then covering with semitransparent background color.
+      if (lastImage) {
+        canvas.drawImage(lastImage, 0, 0, null);
+        canvas.drawColor(CanvasKit.Color(171, 244, 255, 0.1)); // sky blue, almost transparent
+      } else {
+        canvas.clear(CanvasKit.Color(171, 244, 255)); // sky blue, opaque
+      }
+      canvas.save();
+      // Set up 3D view enviroment
+      canvas.concat(CanvasKit.M44.setupCamera(
+        CanvasKit.LTRBRect(0, 0, sizeX, sizeY), halfDim, cam));
+
+      // Rotate the whole paragraph as a unit.
+      const paraRotPoint = [halfDim, halfDim, 1];
+      canvas.concat(CanvasKit.M44.multiply(
+        CanvasKit.M44.translated(paraRotPoint),
+        CanvasKit.M44.rotated([0,1,0], rotX),
+        CanvasKit.M44.rotated([1,0,0], rotY * 0.2),
+        CanvasKit.M44.translated(CanvasKit.Vector.mulScalar(paraRotPoint, -1)),
+      ));
+
+      // Rotate every glyph in the paragraph individually.
+      let i = 0;
+      for (const letter of letters) {
+        canvas.save();
+        let r = letter['r'];
+        // rotate about the center of the glyph's rect.
+        rotationPoint = [
+          margin + r[rectLeft] + (r[rectRight] - r[rectLeft]) / 2,
+          marginTop + r[rectTop] + (r[rectBottom] - r[rectTop]) / 2,
+          0
+        ];
+        distanceFromPointer = CanvasKit.Vector.dist(pointer, rotationPoint.slice(0, 2));
+        // Rotate more around the Y-axis depending on the glyph's distance from the pointer.
+        canvas.concat(CanvasKit.M44.multiply(
+          CanvasKit.M44.translated(rotationPoint),
+          // note that I'm rotating around the x axis first, undoing some of the rotation done to the whole
+          // paragraph above, where x came second. If I rotated y first, a lot of letters would end up
+          // upside down, which is a bit too hard to unscramble.
+          CanvasKit.M44.rotated([1,0,0], rotY * -0.6),
+          CanvasKit.M44.rotated([0,1,0], distanceFromPointer * -0.035),
+          CanvasKit.M44.translated(CanvasKit.Vector.mulScalar(rotationPoint, -1)),
+        ));
+        canvas.drawParagraph(letter['para'], margin + r[rectLeft], marginTop + r[rectTop]);
+        i++;
+        canvas.restore();
+      }
+      canvas.restore();
+      lastImage = surface.makeImageSnapshot();
+    }
+
+    function interact(e) {
+      pointer = [e.offsetX, e.offsetY]
+      rotX = (pointer[0] - halfDim) * radPerPixel;
+      rotY = (pointer[1] - halfDim) * radPerPixel * -1;
+      surface.requestAnimationFrame(drawFrame);
+    };
+
+    document.getElementById('glyphgame').addEventListener('pointermove', interact);
+    surface.requestAnimationFrame(drawFrame);
+  }
+
+  function ColorSupport(CanvasKit) {
+    const surface = CanvasKit.MakeCanvasSurface('colorsupport', CanvasKit.ColorSpace.ADOBE_RGB);
+    if (!surface) {
+      console.error('Could not make surface');
+      return;
+    }
+    const canvas = surface.getCanvas();
+
+    // If the surface is correctly initialized with a higher bit depth color type,
+    // And chrome is compositing it into a buffer with the P3 color space,
+    // then the inner round rect should be distinct and less saturated than the full red background.
+    // Even if the monitor it is viewed on cannot accurately represent that color space.
+
+    let red = CanvasKit.Color4f(1, 0, 0, 1);
+    let paint = new CanvasKit.Paint();
+    paint.setColor(red, CanvasKit.ColorSpace.ADOBE_RGB);
+    canvas.drawPaint(paint);
+    paint.setColor(red, CanvasKit.ColorSpace.DISPLAY_P3);
+    canvas.drawRRect(CanvasKit.RRectXY([50, 50, 250, 250], 30, 30), paint);
+    paint.setColor(red, CanvasKit.ColorSpace.SRGB);
+    canvas.drawRRect(CanvasKit.RRectXY([100, 100, 200, 200], 30, 30), paint);
+
+    surface.flush();
+    surface.delete();
+  }
+</script>

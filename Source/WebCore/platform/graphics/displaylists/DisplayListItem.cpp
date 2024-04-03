@@ -28,6 +28,7 @@
 
 #include "DisplayListItems.h"
 #include "DisplayListResourceHeap.h"
+#include "FilterResults.h"
 #include "GraphicsContext.h"
 #include <wtf/text/TextStream.h>
 
@@ -48,6 +49,19 @@ bool isValid(const Item& item)
             return true;
         }
     });
+}
+
+template<class T>
+inline static std::optional<RenderingResourceIdentifier> applyFilteredImageBufferItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item)
+{
+    RELEASE_ASSERT(item.sourceImageIdentifier().has_value());
+    auto resourceIdentifier = item.sourceImageIdentifier().value();
+    if (auto* sourceImage = resourceHeap.getImageBuffer(resourceIdentifier)) {
+        FilterResults results;
+        item.apply(context, sourceImage, results);
+        return std::nullopt;
+    }
+    return resourceIdentifier;
 }
 
 template<class T>
@@ -154,6 +168,10 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
             return { };
         }, [&](const DrawDisplayListItems& item) -> ApplyItemResult {
             item.apply(context, resourceHeap);
+            return { };
+        }, [&](const DrawFilteredImageBuffer& item) -> ApplyItemResult {
+            if (auto missingCachedResourceIdentifier = applyFilteredImageBufferItem(context, resourceHeap, item))
+                return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
             return { };
         }, [&](const DrawImageBuffer& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyImageBufferItem(context, resourceHeap, item))

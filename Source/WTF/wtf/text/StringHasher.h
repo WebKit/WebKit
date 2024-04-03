@@ -58,7 +58,7 @@ public:
     StringHasher() = default;
 
     template<typename T, typename Converter = DefaultConverter>
-    static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned characterCount);
+    static unsigned computeHashAndMaskTop8Bits(std::span<const T> data);
 
     template<typename T, unsigned characterCount>
     static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount]);
@@ -108,7 +108,7 @@ private:
         return 0x80000000 >> flagCount;
     }
 
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
     bool m_pendingHashValue { false };
     unsigned m_numberOfProcessedCharacters { 0 };
     uint64_t m_seed { 0 };

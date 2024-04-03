@@ -40,7 +40,7 @@ public:
     LaunchServicesDatabaseObserver(NetworkProcess&);
     virtual ~LaunchServicesDatabaseObserver();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
 private:
     void startObserving(OSObjectPtr<xpc_connection_t>);

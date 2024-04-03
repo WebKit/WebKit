@@ -28,8 +28,8 @@
 #if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
-#include "SharedMemory.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {

@@ -26,6 +26,7 @@
 
 #if PLATFORM(COCOA)
 #include "CoreIPCTypes.h"
+#include <wtf/cocoa/VectorCocoa.h>
 
 #if USE(AVFOUNDATION)
 OBJC_CLASS AVOutputContext;
@@ -42,66 +43,86 @@ class CoreIPCAVOutputContext {
 public:
     CoreIPCAVOutputContext(AVOutputContext *);
     CoreIPCAVOutputContext(const RetainPtr<AVOutputContext>& object)
-        : CoreIPCAVOutputContext(object.get())
-    {
-    }
+        : CoreIPCAVOutputContext(object.get()) { }
 
-    static bool isValidDictionary(CoreIPCDictionary&);
     RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCAVOutputContext, void>;
 
-    CoreIPCAVOutputContext(CoreIPCDictionary&& propertyList)
-        : m_propertyList(WTFMove(propertyList))
-    {
-    }
+    CoreIPCAVOutputContext(
+        RetainPtr<NSString>&&,
+        RetainPtr<NSString>&&
+    );
 
-    CoreIPCDictionary m_propertyList;
+    RetainPtr<NSString> m_AVOutputContextSerializationKeyContextID;
+    RetainPtr<NSString> m_AVOutputContextSerializationKeyContextType;
 };
 #endif
+
 class CoreIPCNSSomeFoundationType {
 public:
     CoreIPCNSSomeFoundationType(NSSomeFoundationType *);
     CoreIPCNSSomeFoundationType(const RetainPtr<NSSomeFoundationType>& object)
-        : CoreIPCNSSomeFoundationType(object.get())
-    {
-    }
+        : CoreIPCNSSomeFoundationType(object.get()) { }
 
-    static bool isValidDictionary(CoreIPCDictionary&);
     RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSSomeFoundationType, void>;
 
-    CoreIPCNSSomeFoundationType(CoreIPCDictionary&& propertyList)
-        : m_propertyList(WTFMove(propertyList))
-    {
-    }
+    CoreIPCNSSomeFoundationType(
+        RetainPtr<NSString>&&,
+        RetainPtr<NSNumber>&&,
+        RetainPtr<NSNumber>&&,
+        RetainPtr<NSArray>&&,
+        RetainPtr<NSArray>&&,
+        RetainPtr<NSDictionary>&&,
+        RetainPtr<NSDictionary>&&
+    );
 
-    CoreIPCDictionary m_propertyList;
+    RetainPtr<NSString> m_StringKey;
+    RetainPtr<NSNumber> m_NumberKey;
+    RetainPtr<NSNumber> m_OptionalNumberKey;
+    RetainPtr<NSArray> m_ArrayKey;
+    RetainPtr<NSArray> m_OptionalArrayKey;
+    RetainPtr<NSDictionary> m_DictionaryKey;
+    RetainPtr<NSDictionary> m_OptionalDictionaryKey;
 };
+
 #if ENABLE(DATA_DETECTION)
 class CoreIPCDDScannerResult {
 public:
     CoreIPCDDScannerResult(DDScannerResult *);
     CoreIPCDDScannerResult(const RetainPtr<DDScannerResult>& object)
-        : CoreIPCDDScannerResult(object.get())
-    {
-    }
+        : CoreIPCDDScannerResult(object.get()) { }
 
-    static bool isValidDictionary(CoreIPCDictionary&);
     RetainPtr<id> toID() const;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCDDScannerResult, void>;
 
-    CoreIPCDDScannerResult(CoreIPCDictionary&& propertyList)
-        : m_propertyList(WTFMove(propertyList))
-    {
-    }
+    CoreIPCDDScannerResult(
+        RetainPtr<NSString>&&,
+        RetainPtr<NSNumber>&&,
+        RetainPtr<NSNumber>&&,
+        Vector<RetainPtr<DDScannerResult>>&&,
+        std::optional<Vector<RetainPtr<DDScannerResult>>>&&,
+        Vector<std::pair<String, RetainPtr<Number>>>&&,
+        std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>&&,
+        Vector<RetainPtr<NSData>>&&,
+        Vector<RetainPtr<SecTrustRef>>&&
+    );
 
-    CoreIPCDictionary m_propertyList;
+    RetainPtr<NSString> m_StringKey;
+    RetainPtr<NSNumber> m_NumberKey;
+    RetainPtr<NSNumber> m_OptionalNumberKey;
+    Vector<RetainPtr<DDScannerResult>> m_ArrayKey;
+    std::optional<Vector<RetainPtr<DDScannerResult>>> m_OptionalArrayKey;
+    Vector<std::pair<String, RetainPtr<Number>>> m_DictionaryKey;
+    std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>> m_OptionalDictionaryKey;
+    Vector<RetainPtr<NSData>> m_DataArrayKey;
+    Vector<RetainPtr<SecTrustRef>> m_SecTrustArrayKey;
 };
 #endif
 

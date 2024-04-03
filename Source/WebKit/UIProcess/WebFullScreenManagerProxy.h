@@ -27,7 +27,10 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#include "FullScreenMediaDetails.h"
 #include "MessageReceiver.h"
+#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -76,7 +79,11 @@ public:
     bool isFullScreen();
     bool blocksReturnToFullscreenFromPictureInPicture() const;
 #if PLATFORM(VISION)
-    bool isVideoElement() const;
+    bool isVideoElement() const { return m_isVideoElement; }
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isImageElement() const { return m_imageBuffer; }
+    void prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&&) const;
+#endif // QUICKLOOK_FULLSCREEN
 #endif
     void close();
 
@@ -87,8 +94,7 @@ public:
         ExitingFullscreen,
     };
     FullscreenState fullscreenState() const { return m_fullscreenState; }
-
-    void willEnterFullScreen();
+    void willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
@@ -99,14 +105,13 @@ public:
     void restoreScrollPosition();
     void setFullscreenInsets(const WebCore::FloatBoxExtent&);
     void setFullscreenAutoHideDuration(Seconds);
-    void setFullscreenControlsHidden(bool);
     void closeWithCallback(CompletionHandler<void()>&&);
     bool lockFullscreenOrientation(WebCore::ScreenOrientationType);
     void unlockFullscreenOrientation();
 
 private:
     void supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&&);
-    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, WebCore::FloatSize videoDimensions);
+    void enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&&);
     void exitFullScreen();
     void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
     void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
@@ -128,6 +133,10 @@ private:
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if PLATFORM(VISION)
     bool m_isVideoElement { false };
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    String m_imageMIMEType;
+    RefPtr<WebCore::SharedBuffer> m_imageBuffer;
+#endif // QUICKLOOK_FULLSCREEN
 #endif
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
 

@@ -12,12 +12,12 @@ namespace rx
 std::vector<std::shared_ptr<LinkSubTask>> LinkTask::link(
     const gl::ProgramLinkedResources &resources,
     const gl::ProgramMergedVaryings &mergedVaryings,
-    bool *areSubTasksOptionalOut)
+    bool *canSubTasksRunPostLinkOut)
 {
     UNREACHABLE();
     return {};
 }
-std::vector<std::shared_ptr<LinkSubTask>> LinkTask::load(bool *areSubTasksOptionalOut)
+std::vector<std::shared_ptr<LinkSubTask>> LinkTask::load(bool *canSubTasksRunPostLinkOut)
 {
     UNREACHABLE();
     return {};

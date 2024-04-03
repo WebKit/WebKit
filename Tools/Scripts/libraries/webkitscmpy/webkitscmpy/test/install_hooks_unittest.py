@@ -94,6 +94,13 @@ class TestInstallHooks(testing.PathTestCase):
                 'example.org:project/project-security': 1,
             }, program.InstallHooks._security_levels(local.Git(self.path)))
 
+    def test_version_re(self):
+        self.assertEqual(program.InstallHooks.VERSION_RE.match("VERSION = '1.2.3'").group('number'), '1.2.3')
+        self.assertEqual(program.InstallHooks.VERSION_RE.match("VERSION='1.2.3'").group('number'), '1.2.3')
+        self.assertEqual(program.InstallHooks.VERSION_RE.match('VERSION = "1.2.3"').group('number'), '1.2.3')
+
+        self.assertEqual(program.InstallHooks.VERSION_RE.match('import os'), None)
+
     def test_install_hook(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
             self.write_hook(os.path.join(self.path, 'hooks', 'pre-commit'))

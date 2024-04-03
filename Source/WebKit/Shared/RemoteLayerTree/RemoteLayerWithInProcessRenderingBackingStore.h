@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RemoteLayerBackingStore.h"
+#include <WebCore/DynamicContentScalingResourceCache.h>
 
 namespace WebKit {
 
@@ -34,14 +35,15 @@ public:
     using RemoteLayerBackingStore::RemoteLayerBackingStore;
 
     bool isRemoteLayerWithInProcessRenderingBackingStore() const final { return true; }
+    ProcessModel processModel() const final { return ProcessModel::InProcess; }
 
-    void prepareToDisplay();
+    void prepareToDisplay() final;
     void createContextAndPaintContents() final;
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType) final;
 
     void clearBackingStore() final;
 
-    bool setBufferVolatile(BufferType);
+    bool setBufferVolatile(BufferType, bool forcePurge = false);
 
     std::optional<ImageBufferBackendHandle> frontBufferHandle() const final;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -52,13 +54,17 @@ public:
     void dump(WTF::TextStream&) const final;
 
 private:
-    RefPtr<WebCore::ImageBuffer> allocateBuffer() const;
+    RefPtr<WebCore::ImageBuffer> allocateBuffer();
     SwapBuffersDisplayRequirement prepareBuffers();
     WebCore::SetNonVolatileResult swapToValidFrontBuffer();
 
     void ensureFrontBuffer();
     bool hasFrontBuffer() const final;
     bool frontBufferMayBeVolatile() const final;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WebCore::DynamicContentScalingResourceCache ensureDynamicContentScalingResourceCache();
+#endif
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
@@ -73,7 +79,7 @@ private:
     };
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
-    bool setBufferVolatile(Buffer&);
+    bool setBufferVolatile(Buffer&, bool forcePurge = false);
 
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
     WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
@@ -81,6 +87,10 @@ private:
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WebCore::DynamicContentScalingResourceCache m_dynamicContentScalingResourceCache;
+#endif
 };
 
 } // namespace WebKit

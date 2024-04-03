@@ -142,6 +142,8 @@ public:
     void deleteCode();
 
 #if ENABLE(REGEXP_TRACING)
+    constexpr static unsigned SameLineFormatedRegExpnWidth = 74;
+    static void printTraceHeader();
     void printTraceData();
 #endif
 

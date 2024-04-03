@@ -44,7 +44,7 @@ Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& in
 
 InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
     const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
-    : UIEvent(eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTFMove(view), detail)
+    : UIEvent(EventInterfaceType::InputEvent, eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)
     , m_dataTransfer(dataTransfer)
@@ -54,7 +54,7 @@ InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsC
 }
 
 InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
-    : UIEvent(eventType, initializer)
+    : UIEvent(EventInterfaceType::InputEvent, eventType, initializer)
     , m_inputType(initializer.inputType)
     , m_data(initializer.data)
     , m_isInputMethodComposing(initializer.isComposing)

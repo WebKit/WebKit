@@ -20,8 +20,8 @@ layer at (0,0) size 800x158
           text run at (218,54) width 239: "manages to rise to the top of the page."
           text run at (218,72) width 262: "This behavior is present in Firefox, Safari"
           text run at (218,90) width 75: "and Opera. "
-        RenderInline {a} at (0,0) size 254x35 [color=#0000EE]
-          RenderInline {strong} at (0,0) size 254x35
-            RenderText {#text} at (292,90) size 254x35
+        RenderInline {a} at (218,90) size 254x35 [color=#0000EE]
+          RenderInline {strong} at (218,90) size 254x35
+            RenderText {#text} at (218,90) size 254x35
               text run at (292,90) width 180: "Click here for a real world"
               text run at (218,108) width 136: "example of this bug."

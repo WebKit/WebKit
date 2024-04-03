@@ -1,10 +1,10 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import {
-  getGPU,
-  setDefaultRequestAdapterOptions,
-} from '../../../common/util/navigator_gpu.js';
-import { assert, objectEquals, iterRange } from '../../../common/util/util.js';
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/import { getGPU, setDefaultRequestAdapterOptions } from '../../../common/util/navigator_gpu.js';import { assert, objectEquals, iterRange } from '../../../common/util/util.js';
+// Should be WorkerGlobalScope, but importing lib "webworker" conflicts with lib "dom".
+
+
+
 async function basicTest() {
   const adapter = await getGPU(null).requestAdapter();
   assert(adapter !== null, 'Failed to get adapter.');
@@ -25,27 +25,27 @@ async function basicTest() {
               @builtin(global_invocation_id) id: vec3<u32>) {
             buffer.data[id.x] = id.x + ${kOffset}u;
           }
-        `,
+        `
       }),
-      entryPoint: 'main',
-    },
+      entryPoint: 'main'
+    }
   });
 
   const kNumElements = 64;
   const kBufferSize = kNumElements * 4;
   const buffer = device.createBuffer({
     size: kBufferSize,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
   });
 
   const resultBuffer = device.createBuffer({
     size: kBufferSize,
-    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
+    usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
   });
 
   const bindGroup = device.createBindGroup({
     layout: pipeline.getBindGroupLayout(0),
-    entries: [{ binding: 0, resource: { buffer } }],
+    entries: [{ binding: 0, resource: { buffer } }]
   });
 
   const encoder = device.createCommandEncoder();
@@ -60,7 +60,7 @@ async function basicTest() {
 
   device.queue.submit([encoder.finish()]);
 
-  const expected = new Uint32Array([...iterRange(kNumElements, x => x + kOffset)]);
+  const expected = new Uint32Array([...iterRange(kNumElements, (x) => x + kOffset)]);
 
   await resultBuffer.mapAsync(GPUMapMode.READ);
   const actual = new Uint32Array(resultBuffer.getMappedRange());
@@ -72,8 +72,9 @@ async function basicTest() {
   device.destroy();
 }
 
-self.onmessage = async ev => {
-  const defaultRequestAdapterOptions = ev.data.defaultRequestAdapterOptions;
+async function reportTestResults(ev) {
+  const defaultRequestAdapterOptions =
+  ev.data.defaultRequestAdapterOptions;
   setDefaultRequestAdapterOptions(defaultRequestAdapterOptions);
 
   let error = undefined;
@@ -82,5 +83,17 @@ self.onmessage = async ev => {
   } catch (err) {
     error = err.toString();
   }
-  self.postMessage({ error });
+  this.postMessage({ error });
+}
+
+self.onmessage = (ev) => {
+  void reportTestResults.call(ev.source || self, ev);
+};
+
+self.onconnect = (event) => {
+  const port = event.ports[0];
+
+  port.onmessage = (ev) => {
+    void reportTestResults.call(port, ev);
+  };
 };

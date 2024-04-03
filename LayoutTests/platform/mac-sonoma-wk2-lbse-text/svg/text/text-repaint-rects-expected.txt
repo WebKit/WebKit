@@ -6,7 +6,7 @@ layer at (0,0) size 800x155
       RenderBlock {p} at (0,0) size 784x123
         RenderText {#text} at (0,33) size 225x18
           text run at (0,33) width 225: "The alphabet A through M is here: "
-        RenderText {#text} at (724,33) size 778x90
+        RenderText {#text} at (0,33) size 778x90
           text run at (724,33) width 5: " "
           text run at (728,33) width 50: "this test"
           text run at (0,51) width 771: "case is specially constructed so that when the view is sized to 800x600 (the default for DumpRenderTree) the text wraps"

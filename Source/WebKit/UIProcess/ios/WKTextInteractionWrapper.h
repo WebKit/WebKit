@@ -28,7 +28,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 
 @class WKContentView;
 
@@ -42,9 +43,8 @@
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOverflow;
-- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKSEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKSESelectionFlags)flags;
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouch)touch withFlags:(WKSESelectionFlags)flags;
+- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKBEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKBESelectionFlags)flags;
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKBESelectionTouchPhase)touch withFlags:(WKBESelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;

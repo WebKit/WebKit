@@ -63,8 +63,8 @@ class ShouldBuildTest(unittest.TestCase):
         (["Source/WebCore/bridge/objc/objc_class.mm"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
         (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
-        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebCore/rendering/RenderThemeIOS.mm", "Source/WebCore/rendering/RenderThemeIOS.h"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
+        (["Source/WebCore/rendering/mac/RenderThemeMac.mm", "Source/WebCore/rendering/mac/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
+        (["Source/WebCore/rendering/ios/RenderThemeIOS.mm", "Source/WebCore/rendering/ios/RenderThemeIOS.h"], ["ios-17", "ios-simulator-17", "tvos-17", "tvos-simulator-17", "watchos-10", "watchos-simulator-10"]),
         (["Tools/CISupport/build-webkit-org/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 

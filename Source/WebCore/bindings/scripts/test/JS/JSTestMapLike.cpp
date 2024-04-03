@@ -180,12 +180,12 @@ void JSTestMapLike::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestMapLikePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestMapLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestMapLike::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestMapLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestMapLike& thisObject)
@@ -385,7 +385,7 @@ void JSTestMapLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 {
     auto* jsTestMapLike = static_cast<JSTestMapLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestMapLike->wrapped(), jsTestMapLike);
+    uncacheWrapper(world, jsTestMapLike->protectedWrapped().ptr(), jsTestMapLike);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

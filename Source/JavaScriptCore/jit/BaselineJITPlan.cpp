@@ -37,25 +37,34 @@ BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock, BytecodeIndex loopOSREntr
     JIT::doMainThreadPreparationBeforeCompile(codeBlock->vm());
 }
 
-auto BaselineJITPlan::compileInThreadImpl() -> CompilationPath
+auto BaselineJITPlan::compileInThreadImpl(JITCompilationEffort effort) -> CompilationPath
 {
-    JIT jit(*m_vm, m_codeBlock, m_loopOSREntryBytecodeIndex);
-    auto [ linkBuffer, jitCode ] = jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
-    m_linkBuffer = WTFMove(linkBuffer);
+    JIT jit(*m_vm, *this, m_codeBlock, m_loopOSREntryBytecodeIndex);
+    auto jitCode = jit.compileAndLinkWithoutFinalizing(effort);
     m_jitCode = WTFMove(jitCode);
     return BaselinePath;
 }
 
+auto BaselineJITPlan::compileInThreadImpl() -> CompilationPath
+{
+    return compileInThreadImpl(JITCompilationCanFail);
+}
+
+auto BaselineJITPlan::compileSync(JITCompilationEffort effort) -> CompilationPath
+{
+    return compileInThreadImpl(effort);
+}
+
 size_t BaselineJITPlan::codeSize() const
 {
-    if (m_linkBuffer)
-        return m_linkBuffer->size();
+    if (m_jitCode)
+        return m_jitCode->size();
     return 0;
 }
 
 CompilationResult BaselineJITPlan::finalize()
 {
-    CompilationResult result = JIT::finalizeOnMainThread(m_codeBlock, *m_linkBuffer, m_jitCode);
+    CompilationResult result = JIT::finalizeOnMainThread(m_codeBlock, *this, m_jitCode);
     switch (result) {
     case CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));

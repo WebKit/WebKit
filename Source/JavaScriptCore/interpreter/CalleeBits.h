@@ -56,6 +56,64 @@ public:
         return *this;
     }
 
+#if USE(JSVALUE32_64)
+    static EncodedJSValue encodeNullCallee()
+    {
+        return JSValue::encode(jsNull());
+    }
+
+    static EncodedJSValue encodeJSCallee(const JSCell* cell)
+    {
+        if (!cell)
+            return encodeNullCallee();
+        return JSValue::encode(JSValue(cell));
+    }
+
+    static EncodedJSValue encodeBoxedNativeCallee(void* boxedCallee)
+    {
+        if (!boxedCallee)
+            return encodeNullCallee();
+        EncodedValueDescriptor ret;
+        ret.asBits.tag = JSValue::NativeCalleeTag;
+        ret.asBits.payload = reinterpret_cast<intptr_t>(boxedCallee);
+        return bitwise_cast<EncodedJSValue>(ret);
+    }
+
+#elif USE(JSVALUE64)
+    static EncodedJSValue encodeNullCallee()
+    {
+        return reinterpret_cast<EncodedJSValue>(nullptr);
+    }
+
+    static EncodedJSValue encodeJSCallee(const JSCell* cell)
+    {
+        if (!cell)
+            return encodeNullCallee();
+        return reinterpret_cast<EncodedJSValue>(cell);
+    }
+
+    static EncodedJSValue encodeBoxedNativeCallee(void* boxedCallee)
+    {
+        return reinterpret_cast<EncodedJSValue>(boxedCallee);
+    }
+#else
+#error "Unsupported configuration"
+#endif
+
+    static EncodedJSValue encodeNativeCallee(NativeCallee* callee)
+    {
+        if (!callee)
+            return encodeNullCallee();
+        return encodeBoxedNativeCallee(boxNativeCallee(callee));
+    }
+
+    static void* boxNativeCalleeIfExists(NativeCallee* callee)
+    {
+        if (callee)
+            return boxNativeCallee(callee);
+        return nullptr;
+    }
+
     static void* boxNativeCallee(NativeCallee* callee)
     {
 #if USE(JSVALUE64)

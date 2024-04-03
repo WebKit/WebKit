@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(KHRParallelShaderCompile);
 KHRParallelShaderCompile::KHRParallelShaderCompile(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::KHRParallelShaderCompile)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_KHR_parallel_shader_compile"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_KHR_parallel_shader_compile"_s);
 }
 
 KHRParallelShaderCompile::~KHRParallelShaderCompile() = default;

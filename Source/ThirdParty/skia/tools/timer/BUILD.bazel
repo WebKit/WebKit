@@ -1,0 +1,32 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_cc_library(
+    name = "legacy_timer",
+    srcs = [
+        "TimeUtils.h",
+        "Timer.cpp",
+    ],
+    hdrs = ["Timer.h"],
+    visibility = ["//:__subpackages__"],
+    deps = ["//:skia_internal"],
+)
+
+skia_cc_library(
+    name = "timer",
+    srcs = [
+        "Timer.cpp",
+    ],
+    hdrs = [
+        "TimeUtils.h",
+        "Timer.h",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//:core",
+        "//src/base",
+    ],
+)

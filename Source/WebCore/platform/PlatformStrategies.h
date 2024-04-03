@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <mutex>
+
 namespace WebCore {
 
 class BlobRegistry;
@@ -53,8 +55,9 @@ public:
 
     MediaStrategy& mediaStrategy()
     {
-        if (!m_mediaStrategy)
+        std::call_once(m_onceKeyForMediaStrategies, [&] {
             m_mediaStrategy = createMediaStrategy();
+        });
         return *m_mediaStrategy;
     }
 
@@ -89,6 +92,7 @@ private:
 
     LoaderStrategy* m_loaderStrategy { };
     PasteboardStrategy* m_pasteboardStrategy { };
+    std::once_flag m_onceKeyForMediaStrategies;
     MediaStrategy* m_mediaStrategy { };
     BlobRegistry* m_blobRegistry { };
 

@@ -129,13 +129,13 @@ void Grid::clampAreaToSubgridIfNeeded(GridArea& area)
 
 GridArea Grid::gridItemArea(const RenderBox& item) const
 {
-    ASSERT(m_gridItemArea.contains(&item));
-    return m_gridItemArea.get(&item);
+    ASSERT(m_gridItemArea.contains(item));
+    return m_gridItemArea.get(item);
 }
 
 void Grid::setGridItemArea(const RenderBox& item, GridArea area)
 {
-    m_gridItemArea.set(&item, area);
+    m_gridItemArea.set(item, area);
 }
 
 void Grid::setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns)
@@ -318,17 +318,18 @@ std::optional<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan,
 GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer)
 {
     ASSERT(subgrid.isSubgridInParentDirection(outer.direction()));
-    GridSpan fixedSpan = downcast<RenderGrid>(subgrid.parent())->gridSpanForChild(subgrid, outer.direction());
+    CheckedPtr parent = downcast<RenderGrid>(subgrid.parent());
+    auto fixedSpan = parent->gridSpanForChild(subgrid, outer.direction());
 
     // Translate the current row/column indices into the coordinate
     // space of the subgrid.
     unsigned fixedIndex = (outer.direction() == GridTrackSizingDirection::ForColumns) ? outer.m_columnIndex : outer.m_rowIndex;
     fixedIndex -= fixedSpan.startLine();
 
-    GridTrackSizingDirection innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*downcast<RenderGrid>(subgrid.parent()), subgrid, outer.direction());
+    auto innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*parent, subgrid, outer.direction());
     ASSERT(subgrid.isSubgrid(innerDirection));
 
-    if (GridLayoutFunctions::isSubgridReversedDirection(*downcast<RenderGrid>(subgrid.parent()), outer.direction(), subgrid)) {
+    if (GridLayoutFunctions::isSubgridReversedDirection(*parent, outer.direction(), subgrid)) {
         unsigned fixedMax = subgrid.currentGrid().numTracks(innerDirection);
         fixedIndex = fixedMax - fixedIndex - 1;
     }

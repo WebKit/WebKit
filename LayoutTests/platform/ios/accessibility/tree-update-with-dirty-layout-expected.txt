@@ -1,0 +1,24 @@
+This test ensures we don't make incorrect updates to the accessibility tree due to dirty layout.
+
+
+{Button}
+
+{StaticText AXLabel: Paragraph one}
+
+{StaticText AXLabel: Paragraph two}
+
+{StaticText AXLabel: Paragraph three}
+
+{StaticText AXLabel: Paragraph four}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button one
+Paragraph one
+
+Paragraph two
+
+Paragraph three
+
+Paragraph four

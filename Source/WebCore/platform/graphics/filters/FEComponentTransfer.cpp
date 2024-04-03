@@ -152,22 +152,22 @@ bool FEComponentTransfer::setTableValues(ComponentTransferChannel channel, Vecto
 static TextStream& operator<<(TextStream& ts, ComponentTransferType type)
 {
     switch (type) {
-    case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
         ts << "UNKNOWN";
         break;
-    case FECOMPONENTTRANSFER_TYPE_IDENTITY:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
         ts << "IDENTITY";
         break;
-    case FECOMPONENTTRANSFER_TYPE_TABLE:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
         ts << "TABLE";
         break;
-    case FECOMPONENTTRANSFER_TYPE_DISCRETE:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
         ts << "DISCRETE";
         break;
-    case FECOMPONENTTRANSFER_TYPE_LINEAR:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
         ts << "LINEAR";
         break;
-    case FECOMPONENTTRANSFER_TYPE_GAMMA:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
         ts << "GAMMA";
         break;
     }
@@ -179,20 +179,20 @@ static TextStream& operator<<(TextStream& ts, const ComponentTransferFunction& f
     ts << "type=\"" << function.type;
 
     switch (function.type) {
-    case FECOMPONENTTRANSFER_TYPE_UNKNOWN:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_UNKNOWN:
         break;
-    case FECOMPONENTTRANSFER_TYPE_IDENTITY:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY:
         break;
-    case FECOMPONENTTRANSFER_TYPE_TABLE:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
         ts << " " << function.tableValues;
         break;
-    case FECOMPONENTTRANSFER_TYPE_DISCRETE:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
         ts << " " << function.tableValues;
         break;
-    case FECOMPONENTTRANSFER_TYPE_LINEAR:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_LINEAR:
         ts << "\" slope=\"" << function.slope << "\" intercept=\"" << function.intercept << "\"";
         break;
-    case FECOMPONENTTRANSFER_TYPE_GAMMA:
+    case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_GAMMA:
         ts << "\" amplitude=\"" << function.amplitude << "\" exponent=\"" << function.exponent << "\" offset=\"" << function.offset << "\"";
         break;
     }

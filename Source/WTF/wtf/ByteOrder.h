@@ -34,13 +34,16 @@
 #include <arpa/inet.h>
 #endif
 
-#if OS(WINDOWS)
-
 namespace WTF {
-inline uint32_t wswap32(uint32_t x) { return ((x & 0xffff0000) >> 16) | ((x & 0x0000ffff) << 16); }
-inline uint32_t bswap32(uint32_t x) { return ((x & 0xff000000) >> 24) | ((x & 0x00ff0000) >> 8) | ((x & 0x0000ff00) << 8) | ((x & 0x000000ff) << 24); }
-inline uint16_t bswap16(uint16_t x) { return ((x & 0xff00) >> 8) | ((x & 0x00ff) << 8); }
+
+inline uint32_t wordSwap32(uint32_t x) { return ((x & 0xffff0000) >> 16) | ((x & 0x0000ffff) << 16); }
+inline uint64_t byteSwap64(uint64_t x) { return ((x & 0xff00000000000000ULL) >> 56) | ((x & 0x00ff000000000000ULL) >> 40) | ((x & 0x0000ff0000000000ULL) >> 24) | ((x & 0x000000ff00000000ULL) >> 8) | ((x & 0x00000000ff000000ULL) << 8) | ((x & 0x0000000000ff0000ULL) << 24) | ((x & 0x000000000000ff00ULL) << 40) | ((x & 0x00000000000000ffULL) << 56); }
+inline uint32_t byteSwap32(uint32_t x) { return ((x & 0xff000000) >> 24) | ((x & 0x00ff0000) >> 8) | ((x & 0x0000ff00) << 8) | ((x & 0x000000ff) << 24); }
+inline uint16_t byteSwap16(uint16_t x) { return ((x & 0xff00) >> 8) | ((x & 0x00ff) << 8); }
+
 } // namespace WTF
+
+#if OS(WINDOWS)
 
 #if CPU(BIG_ENDIAN)
 inline uint16_t ntohs(uint16_t x) { return x; }
@@ -50,13 +53,13 @@ inline uint32_t htonl(uint32_t x) { return x; }
 #elif CPU(MIDDLE_ENDIAN)
 inline uint16_t ntohs(uint16_t x) { return x; }
 inline uint16_t htons(uint16_t x) { return x; }
-inline uint32_t ntohl(uint32_t x) { return WTF::wswap32(x); }
-inline uint32_t htonl(uint32_t x) { return WTF::wswap32(x); }
+inline uint32_t ntohl(uint32_t x) { return WTF::wordSwap32(x); }
+inline uint32_t htonl(uint32_t x) { return WTF::wordSwap32(x); }
 #else
-inline uint16_t ntohs(uint16_t x) { return WTF::bswap16(x); }
-inline uint16_t htons(uint16_t x) { return WTF::bswap16(x); }
-inline uint32_t ntohl(uint32_t x) { return WTF::bswap32(x); }
-inline uint32_t htonl(uint32_t x) { return WTF::bswap32(x); }
+inline uint16_t ntohs(uint16_t x) { return WTF::byteSwap16(x); }
+inline uint16_t htons(uint16_t x) { return WTF::byteSwap16(x); }
+inline uint32_t ntohl(uint32_t x) { return WTF::byteSwap32(x); }
+inline uint32_t htonl(uint32_t x) { return WTF::byteSwap32(x); }
 #endif
 
 #endif // OS(WINDOWS)

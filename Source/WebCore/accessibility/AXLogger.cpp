@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AXLogger.h"
 
+#include "AXTextRun.h"
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedObject.h"
 #endif
@@ -54,7 +55,8 @@ bool AXLogger::shouldLog()
     // Add strings to the Vector below to just log from instances whose m_methodName includes any of the strings.
     // For instance, if you want to just log from the wrapper and the AXIsolatedTree class:
     // static NeverDestroyed nameFilter = Vector<String> { "WebAccessibilityObjectWrapper"_s, "AXIsolatedTree"_s };
-    static NeverDestroyed nameFilter = Vector<String> { };
+    // The default string "log nothing", prevents any output. An empty Vector or an empty string in the Vector will log everything.
+    static NeverDestroyed nameFilter = Vector<String> { "log nothing"_s };
 
     if (!nameFilter->isEmpty()) {
         auto it = std::find_if(nameFilter->begin(), nameFilter->end(), [this] (const auto& name) {
@@ -411,6 +413,12 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
     return stream;
 }
 
+TextStream& operator<<(TextStream& stream, AccessibilityText text)
+{
+    stream << text.textSource << ": " << text.text;
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AccessibilityTextSource source)
 {
     switch (source) {
@@ -516,8 +524,8 @@ TextStream& operator<<(TextStream& stream, AXRelationType relationType)
     case AXRelationType::HeaderFor:
         stream << "HeaderFor";
         break;
-    case AXRelationType::LabelledBy:
-        stream << "LabelledBy";
+    case AXRelationType::LabeledBy:
+        stream << "LabeledBy";
         break;
     case AXRelationType::LabelFor:
         stream << "LabelFor";
@@ -533,273 +541,42 @@ TextStream& operator<<(TextStream& stream, AXRelationType relationType)
     return stream;
 }
 
+TextStream& operator<<(WTF::TextStream& stream, const TextUnderElementMode& mode)
+{
+    String childrenInclusion;
+    switch (mode.childrenInclusion) {
+    case TextUnderElementMode::Children::SkipIgnoredChildren:
+        childrenInclusion = "SkipIgnoredChildren"_s;
+        break;
+    case TextUnderElementMode::Children::IncludeAllChildren:
+        childrenInclusion = "IncludeAllChildren"_s;
+        break;
+    case TextUnderElementMode::Children::IncludeNameFromContentsChildren:
+        childrenInclusion = "IncludeNameFromContentsChildren"_s;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    stream << childrenInclusion << ", includeFocusableContent: " << mode.includeFocusableContent;
+    // Only log the non-default value of false to avoid noise.
+    if (!mode.considerHiddenState)
+        stream << ", considerHiddenState: 0";
+    if (mode.ignoredChildNode)
+        stream << ", ignoredChildNode: " << mode.ignoredChildNode;
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notification)
 {
     switch (notification) {
-    case AXObjectCache::AXNotification::AXAccessKeyChanged:
-        stream << "AXAccessKeyChanged";
-        break;
-    case AXObjectCache::AXNotification::AXActiveDescendantChanged:
-        stream << "AXActiveDescendantChanged";
-        break;
-    case AXObjectCache::AXNotification::AXAnnouncementRequested:
-        stream << "AXAnnouncement";
-        break;
-    case AXObjectCache::AXNotification::AXAutocorrectionOccured:
-        stream << "AXAutocorrectionOccured";
-        break;
-    case AXObjectCache::AXNotification::AXAutofillTypeChanged:
-        stream << "AXAutofillTypeChanged";
-        break;
-    case AXObjectCache::AXNotification::AXCellSlotsChanged:
-        stream << "AXCellSlotsChanged";
-        break;
-    case AXObjectCache::AXNotification::AXCheckedStateChanged:
-        stream << "AXCheckedStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXChildrenChanged:
-        stream << "AXChildrenChanged";
-        break;
-    case AXObjectCache::AXNotification::AXColumnCountChanged:
-        stream << "AXColumnCountChanged";
-        break;
-    case AXObjectCache::AXNotification::AXColumnIndexChanged:
-        stream << "AXColumnIndexChanged";
-        break;
-    case AXObjectCache::AXNotification::AXColumnSpanChanged:
-        stream << "AXColumnSpanChanged";
-        break;
-    case AXObjectCache::AXNotification::AXContentEditableAttributeChanged:
-        stream << "AXContentEditableAttributeChanged";
-        break;
-    case AXObjectCache::AXNotification::AXControlledObjectsChanged:
-        stream << "AXControlledObjectsChanged";
-        break;
-    case AXObjectCache::AXNotification::AXCurrentStateChanged:
-        stream << "AXCurrentStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXDisabledStateChanged:
-        stream << "AXDisabledStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXDescribedByChanged:
-        stream << "AXDescribedByChanged";
-        break;
-    case AXObjectCache::AXNotification::AXDropEffectChanged:
-        stream << "AXDropEffectChanged";
-        break;
-    case AXObjectCache::AXNotification::AXExtendedDescriptionChanged:
-        stream << "AXExtendedDescriptionChanged";
-        break;
-    case AXObjectCache::AXNotification::AXFlowToChanged:
-        stream << "AXFlowToChanged";
-        break;
-    case AXObjectCache::AXNotification::AXFocusableStateChanged:
-        stream << "AXFocusableStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXFocusedUIElementChanged:
-        stream << "AXFocusedUIElementChanged";
-        break;
-    case AXObjectCache::AXNotification::AXFrameLoadComplete:
-        stream << "AXFrameLoadComplete";
-        break;
-    case AXObjectCache::AXNotification::AXGrabbedStateChanged:
-        stream << "AXGrabbedStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXHasPopupChanged:
-        stream << "AXHasPopupChanged";
-        break;
-    case AXObjectCache::AXNotification::AXIdAttributeChanged:
-        stream << "AXIdAttributeChanged";
-        break;
-    case AXObjectCache::AXNotification::AXImageOverlayChanged:
-        stream << "AXImageOverlayChanged";
-        break;
-    case AXObjectCache::AXNotification::AXIsAtomicChanged:
-        stream << "AXIsAtomicChanged";
-        break;
-    case AXObjectCache::AXNotification::AXKeyShortcutsChanged:
-        stream << "AXKeyShortcutsChanged";
-        break;
-    case AXObjectCache::AXNotification::AXLanguageChanged:
-        stream << "AXLanguageChanged";
-        break;
-    case AXObjectCache::AXNotification::AXLayoutComplete:
-        stream << "AXLayoutComplete";
-        break;
-    case AXObjectCache::AXNotification::AXLevelChanged:
-        stream << "AXLevelChanged";
-        break;
-    case AXObjectCache::AXNotification::AXLoadComplete:
-        stream << "AXLoadComplete";
-        break;
-    case AXObjectCache::AXNotification::AXPlaceholderChanged:
-        stream << "AXPlaceholderChanged";
-        break;
-    case AXObjectCache::AXNotification::AXMaximumValueChanged:
-        stream << "AXMaximumValueChanged";
-        break;
-    case AXObjectCache::AXNotification::AXMinimumValueChanged:
-        stream << "AXMinimumValueChanged";
-        break;
-    case AXObjectCache::AXNotification::AXMultiSelectableStateChanged:
-        stream << "AXMultiSelectableStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXNameChanged:
-        stream << "AXNameChanged";
-        break;
-    case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
-        stream << "AXNewDocumentLoadComplete";
-        break;
-    case AXObjectCache::AXNotification::AXOrientationChanged:
-        stream << "AXOrientationChanged";
-        break;
-    case AXObjectCache::AXNotification::AXPageScrolled:
-        stream << "AXPageScrolled";
-        break;
-    case AXObjectCache::AXNotification::AXPopoverTargetChanged:
-        stream << "AXPopoverTargetChanged";
-        break;
-    case AXObjectCache::AXNotification::AXPositionInSetChanged:
-        stream << "AXPositionInSetChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRoleChanged:
-        stream << "AXRoleChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRoleDescriptionChanged:
-        stream << "AXRoleDescriptionChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRowIndexChanged:
-        stream << "AXRowIndexChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRowSpanChanged:
-        stream << "AXRowSpanChanged";
-        break;
-    case AXObjectCache::AXNotification::AXCellScopeChanged:
-        stream << "AXCellScopeChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
-        stream << "AXSelectedChildrenChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSelectedCellsChanged:
-        stream << "AXSelectedCellsChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSelectedStateChanged:
-        stream << "AXSelectedStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSelectedTextChanged:
-        stream << "AXSelectedTextChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSetSizeChanged:
-        stream << "AXSetSizeChanged";
-        break;
-    case AXObjectCache::AXNotification::AXTableHeadersChanged:
-        stream << "AXTableHeadersChanged";
-        break;
-    case AXObjectCache::AXNotification::AXURLChanged:
-        stream << "AXURLChanged";
-        break;
-    case AXObjectCache::AXNotification::AXValueChanged:
-        stream << "AXValueChanged";
-        break;
-    case AXObjectCache::AXNotification::AXVisibilityChanged:
-        stream << "AXVisibilityChanged";
-        break;
-    case AXObjectCache::AXNotification::AXScrolledToAnchor:
-        stream << "AXScrolledToAnchor";
-        break;
-    case AXObjectCache::AXNotification::AXLabelCreated:
-        stream << "AXLabelCreated";
-        break;
-    case AXObjectCache::AXNotification::AXLiveRegionCreated:
-        stream << "AXLiveRegionCreated";
-        break;
-    case AXObjectCache::AXNotification::AXLiveRegionChanged:
-        stream << "AXLiveRegionChanged";
-        break;
-    case AXObjectCache::AXNotification::AXLiveRegionRelevantChanged:
-        stream << "AXLiveRegionRelevantChanged";
-        break;
-    case AXObjectCache::AXNotification::AXLiveRegionStatusChanged:
-        stream << "AXLiveRegionStatusChanged";
-        break;
-    case AXObjectCache::AXNotification::AXMenuListItemSelected:
-        stream << "AXMenuListItemSelected";
-        break;
-    case AXObjectCache::AXNotification::AXMenuListValueChanged:
-        stream << "AXMenuListValueChanged";
-        break;
-    case AXObjectCache::AXNotification::AXMenuClosed:
-        stream << "AXMenuClosed";
-        break;
-    case AXObjectCache::AXNotification::AXMenuOpened:
-        stream << "AXMenuOpened";
-        break;
-    case AXObjectCache::AXNotification::AXRowCountChanged:
-        stream << "AXRowCountChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRowCollapsed:
-        stream << "AXRowCollapsed";
-        break;
-    case AXObjectCache::AXNotification::AXRowExpanded:
-        stream << "AXRowExpanded";
-        break;
-    case AXObjectCache::AXNotification::AXExpandedChanged:
-        stream << "AXExpandedChanged";
-        break;
-    case AXObjectCache::AXNotification::AXInvalidStatusChanged:
-        stream << "AXInvalidStatusChanged";
-        break;
-    case AXObjectCache::AXNotification::AXPressDidSucceed:
-        stream << "AXPressDidSucceed";
-        break;
-    case AXObjectCache::AXNotification::AXPressDidFail:
-        stream << "AXPressDidFail";
-        break;
-    case AXObjectCache::AXNotification::AXPressedStateChanged:
-        stream << "AXPressedStateChanged";
-        break;
-    case AXObjectCache::AXNotification::AXReadOnlyStatusChanged:
-        stream << "AXReadOnlyStatusChanged";
-        break;
-    case AXObjectCache::AXNotification::AXRequiredStatusChanged:
-        stream << "AXRequiredStatusChanged";
-        break;
-    case AXObjectCache::AXNotification::AXSortDirectionChanged:
-        stream << "AXSortDirectionChanged";
-        break;
-    case AXObjectCache::AXNotification::AXTextChanged:
-        stream << "AXTextChanged";
-        break;
-    case AXObjectCache::AXNotification::AXTextCompositionChanged:
-        stream << "AXTextCompositionChanged";
-        break;
-    case AXObjectCache::AXNotification::AXTextSecurityChanged:
-        stream << "AXTextSecurityChanged";
-        break;
-    case AXObjectCache::AXNotification::AXElementBusyChanged:
-        stream << "AXElementBusyChanged";
-        break;
-    case AXObjectCache::AXNotification::AXDraggingStarted:
-        stream << "AXDraggingStarted";
-        break;
-    case AXObjectCache::AXNotification::AXDraggingEnded:
-        stream << "AXDraggingEnded";
-        break;
-    case AXObjectCache::AXNotification::AXDraggingEnteredDropZone:
-        stream << "AXDraggingEnteredDropZone";
-        break;
-    case AXObjectCache::AXNotification::AXDraggingDropped:
-        stream << "AXDraggingDropped";
-        break;
-    case AXObjectCache::AXNotification::AXDraggingExitedDropZone:
-        stream << "AXDraggingExitedDropZone";
-        break;
-    case AXObjectCache::AXNotification::AXTextCompositionBegan:
-        stream << "AXTextCompositionBegan";
-        break;
-    case AXObjectCache::AXNotification::AXTextCompositionEnded:
-        stream << "AXTextCompositionEnded";
-        break;
+#define WEBCORE_LOG_AXNOTIFICATION(name) \
+    case AXObjectCache::AXNotification::AX##name: \
+        stream << "AX" #name; \
+        break;
+    WEBCORE_AXNOTIFICATION_KEYS(WEBCORE_LOG_AXNOTIFICATION)
+#undef WEBCORE_LOG_AXNOTIFICATION
     }
 
     return stream;
@@ -860,6 +637,20 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
     return stream;
 }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+static void streamTextRuns(TextStream& stream, const AXTextRuns& runs)
+{
+    StringBuilder result;
+    for (size_t i = 0; i < runs.size(); i++) {
+        result.append(makeString(runs[i].lineIndex, ":|", runs[i].text, "|(len: ", runs[i].text.length(), ")"));
+        if (i != runs.size() - 1)
+            result.append(", ");
+    }
+
+    stream.dumpProperty("textRuns", result);
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
 void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const OptionSet<AXStreamOptions>& options)
 {
     if (options & AXStreamOptions::ObjectID)
@@ -868,13 +659,17 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role", object.roleValue());
 
+    if (auto* axObject = dynamicDowncast<AccessibilityObject>(object); axObject && axObject->renderer())
+        stream.dumpProperty("renderName", axObject->renderer()->renderName());
+
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
-        stream.dumpProperty("parentObject", parent ? parent->objectID() : AXID());
+        stream.dumpProperty("parentID", parent ? parent->objectID() : AXID());
     }
 
-    if (options & AXStreamOptions::IdentifierAttribute)
-        stream.dumpProperty("identifierAttribute", object.identifierAttribute());
+    auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();
+    if (!id.isEmpty())
+        stream.dumpProperty("identifier", WTFMove(id));
 
     if (options & AXStreamOptions::OuterHTML) {
         auto role = object.roleValue();
@@ -888,6 +683,18 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
         if (objectWithInterestingHTML)
             stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML().left(150));
     }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (options & AXStreamOptions::TextRuns) {
+        if (auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(&object)) {
+            if (auto* runs = isolatedObject->textRuns(); runs && runs->size())
+                streamTextRuns(stream, *runs);
+        } else if (auto* liveObject = dynamicDowncast<AccessibilityObject>(&object)) {
+            if (auto runs = const_cast<AccessibilityObject*>(liveObject)->textRuns(); runs.size())
+                streamTextRuns(stream, runs);
+        }
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     if (options & AXStreamOptions::DisplayContents) {
         if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())

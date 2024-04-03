@@ -49,7 +49,9 @@
 #import "TimeRanges.h"
 #import "VideoMediaSampleRenderer.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
+#import "WebAVSampleBufferListener.h"
 #import "WebCoreDecompressionSession.h"
+#import "WebSampleBufferVideoRendering.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <QuartzCore/CALayer.h>
@@ -64,7 +66,7 @@
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
-#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/CString.h>
 
 #pragma mark - Soft Linking
@@ -78,240 +80,6 @@
 @interface AVSampleBufferAudioRenderer (WebCoreSampleBufferKeySession) <AVContentKeyRecipient>
 @end
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-// FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-@interface AVSampleBufferDisplayLayer (Staging_113656776)
-@property (nonatomic, readonly, getter=isReadyForDisplay) BOOL readyForDisplay;
-@end
-#endif
-
-static NSString * const errorKeyPath = @"error";
-static NSString * const outputObscuredDueToInsufficientExternalProtectionKeyPath = @"outputObscuredDueToInsufficientExternalProtection";
-
-static void* errorContext = &errorContext;
-static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputObscuredDueToInsufficientExternalProtectionContext;
-
-@interface WebAVSampleBufferListener : NSObject {
-    ThreadSafeWeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
-    Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-}
-
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithParent:(WebCore::SourceBufferPrivateAVFObjC&)parent NS_DESIGNATED_INITIALIZER;
-- (void)invalidate;
-- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer;
-- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer;
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-@end
-
-@implementation WebAVSampleBufferListener
-
-- (instancetype)initWithParent:(WebCore::SourceBufferPrivateAVFObjC&)parent
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _parent = parent;
-    return self;
-}
-
-- (void)dealloc
-{
-    [self invalidate];
-    [super dealloc];
-}
-
-- (void)invalidate
-{
-    ASSERT(isMainThread());
-
-    _parent = nullptr;
-
-    for (auto& layer : _layers) {
-        [layer removeObserver:self forKeyPath:errorKeyPath];
-        [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
-    }
-    _layers.clear();
-
-    for (auto& renderer : _renderers)
-        [renderer removeObserver:self forKeyPath:errorKeyPath];
-    _renderers.clear();
-
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-- (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer
-{
-    ASSERT(isMainThread());
-    ASSERT(!_layers.contains(layer));
-
-    _layers.append(layer);
-    [layer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
-    [layer addObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath options:NSKeyValueObservingOptionNew context:outputObscuredDueToInsufficientExternalProtectionContext];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerFailedToDecode:) name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerRequiresFlushToResumeDecodingChanged:) name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(layerReadyForDisplayChanged:) name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
-#endif
-}
-
-- (void)stopObservingLayer:(AVSampleBufferDisplayLayer *)layer
-{
-    ASSERT(isMainThread());
-    ASSERT(_layers.contains(layer));
-
-    [layer removeObserver:self forKeyPath:errorKeyPath];
-    [layer removeObserver:self forKeyPath:outputObscuredDueToInsufficientExternalProtectionKeyPath];
-    _layers.remove(_layers.find(layer));
-
-    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerFailedToDecodeNotification object:layer];
-    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerRequiresFlushToResumeDecodingDidChangeNotification object:layer];
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-    // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-    if (PAL::canLoad_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification())
-        [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification object:layer];
-#endif
-}
-
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-- (void)beginObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-{
-    ASSERT(isMainThread());
-    ASSERT(!_renderers.contains(renderer));
-
-    _renderers.append(renderer);
-    [renderer addObserver:self forKeyPath:errorKeyPath options:NSKeyValueObservingOptionNew context:errorContext];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(audioRendererWasAutomaticallyFlushed:) name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
-}
-
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-- (void)stopObservingRenderer:(AVSampleBufferAudioRenderer *)renderer
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-{
-    ASSERT(isMainThread());
-    ASSERT(_renderers.contains(renderer));
-
-    [renderer removeObserver:self forKeyPath:errorKeyPath];
-    [NSNotificationCenter.defaultCenter removeObserver:self name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
-
-    _renderers.remove(_renderers.find(renderer));
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
-{
-    if (context == errorContext) {
-        RetainPtr error = dynamic_objc_cast<NSError>([change valueForKey:NSKeyValueChangeNewKey]);
-        if (!error)
-            return;
-
-        if ([object isKindOfClass:PAL::getAVSampleBufferDisplayLayerClass()]) {
-            RetainPtr layer = (AVSampleBufferDisplayLayer *)object;
-
-            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
-                ASSERT(_layers.contains(layer.get()));
-                if (auto parent = _parent.get())
-                    parent->layerDidReceiveError(layer.get(), error.get());
-            });
-            return;
-        }
-
-        if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-            RetainPtr renderer = (AVSampleBufferAudioRenderer *)object;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-
-            ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), error = WTFMove(error)] {
-                ASSERT(_renderers.contains(renderer.get()));
-                if (auto parent = _parent.get())
-                    parent->rendererDidReceiveError(renderer.get(), error.get());
-            });
-            return;
-        }
-
-        ASSERT_NOT_REACHED_WITH_MESSAGE("Unexpected kind of object while observing errorContext");
-        return;
-    }
-
-    if (context == outputObscuredDueToInsufficientExternalProtectionContext) {
-        RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(object, PAL::getAVSampleBufferDisplayLayerClass());
-        BOOL isObscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue];
-
-        ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isObscured] {
-            ASSERT(_layers.contains(layer.get()));
-            if (auto parent = _parent.get())
-                parent->outputObscuredDueToInsufficientExternalProtectionChanged(isObscured);
-        });
-        return;
-    }
-
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-}
-
-- (void)layerFailedToDecode:(NSNotification *)notification
-{
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
-    RetainPtr error = dynamic_objc_cast<NSError>([notification.userInfo valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
-
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), error = WTFMove(error)] {
-        if (!_layers.contains(layer.get()))
-            return;
-        if (auto parent = _parent.get())
-            parent->layerDidReceiveError(layer.get(), error.get());
-    });
-}
-
-- (void)layerRequiresFlushToResumeDecodingChanged:(NSNotification *)notification
-{
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
-    BOOL requiresFlush = [layer requiresFlushToResumeDecoding];
-
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), requiresFlush] {
-        if (!_layers.contains(layer.get()))
-            return;
-        if (auto parent = _parent.get())
-            parent->layerRequiresFlushToResumeDecodingChanged(layer.get(), requiresFlush);
-    });
-}
-
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-- (void)layerReadyForDisplayChanged:(NSNotification *)notification
-{
-    RetainPtr layer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(notification.object, PAL::getAVSampleBufferDisplayLayerClass());
-    BOOL isReadyForDisplay = [layer isReadyForDisplay];
-
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTFMove(layer), isReadyForDisplay] {
-        if (!_layers.contains(layer.get()))
-            return;
-        if (auto parent = _parent.get())
-            parent->layerReadyForDisplayChanged(layer.get(), isReadyForDisplay);
-    });
-}
-#endif
-
-- (void)audioRendererWasAutomaticallyFlushed:(NSNotification *)notification
-{
-    RetainPtr renderer = dynamic_objc_cast<AVSampleBufferAudioRenderer>(notification.object, PAL::getAVSampleBufferAudioRendererClass());
-    CMTime flushTime = [[notification.userInfo valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
-
-    ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTFMove(renderer), flushTime] {
-        if (!_renderers.contains(renderer.get()))
-            return;
-        if (auto parent = _parent.get())
-            parent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
-    });
-}
-
-@end
 
 namespace WebCore {
 
@@ -335,7 +103,12 @@ static bool sampleBufferRenderersSupportKeySession()
 
 static inline bool supportsAttachContentKey()
 {
-    return processIsExtension();
+    static bool supportsAttachContentKey;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        supportsAttachContentKey = WTF::processHasEntitlement("com.apple.developer.web-browser-engine.rendering"_s) || WTF::processHasEntitlement("com.apple.private.coremedia.allow-fps-attachment"_s);
+    });
+    return supportsAttachContentKey;
 }
 
 static inline bool shouldAddContentKeyRecipients()
@@ -351,11 +124,14 @@ Ref<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourcePr
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC& parent, Ref<SourceBufferParser>&& parser)
     : SourceBufferPrivate(parent)
     , m_parser(WTFMove(parser))
-    , m_listener(adoptNS([[WebAVSampleBufferListener alloc] initWithParent:*this]))
+    , m_listener(WebAVSampleBufferListener::create(*this))
     , m_appendQueue(WorkQueue::create("SourceBufferPrivateAVFObjC data parser queue"))
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { keyStatusesChanged(); }))
-    , m_streamDataParser(is<SourceBufferParserAVFObjC>(m_parser) ? downcast<SourceBufferParserAVFObjC>(m_parser)->streamDataParser() : nil)
+    , m_keyStatusesChangedObserver(makeUniqueRef<Observer<void()>>([this] { tryToEnqueueBlockedSamples(); }))
+    , m_streamDataParser([&] {
+        auto* sourceBufferParser = dynamicDowncast<SourceBufferParserAVFObjC>(m_parser.get());
+        return sourceBufferParser ? sourceBufferParser->streamDataParser() : nil;
+    }())
 #endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(parent.logger())
@@ -376,6 +152,7 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     destroyStreamDataParser();
     destroyRenderers();
     clearTracks();
+    m_listener->invalidate();
 
     abort();
 }
@@ -531,6 +308,13 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(*m_initData);
+    AtomString initDataType = CDMPrivateFairPlayStreaming::sinfName();
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+    if (!keyIDs) {
+        keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsMpts(*m_initData);
+        initDataType = CDMPrivateFairPlayStreaming::mptsName();
+    }
+#endif
     if (!keyIDs)
         return;
 
@@ -552,7 +336,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    player->initializationDataEncountered("sinf"_s, m_initData->tryCreateArrayBuffer());
+    player->initializationDataEncountered(initDataType, m_initData->tryCreateArrayBuffer());
     player->needsVideoLayerChanged();
 
     m_waitingForKey = true;
@@ -717,8 +501,8 @@ void SourceBufferPrivateAVFObjC::destroyStreamDataParser()
 
 void SourceBufferPrivateAVFObjC::destroyRenderers()
 {
-    if (m_videoLayer)
-        setVideoLayer(nullptr);
+    if (m_videoRenderer)
+        setVideoRenderer(nullptr);
 
     if (m_decompressionSession)
         setDecompressionSession(nullptr);
@@ -729,16 +513,13 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
             player->removeAudioRenderer(renderer.get());
         [renderer flush];
         [renderer stopRequestingMediaData];
-        [m_listener stopObservingRenderer:renderer.get()];
+        m_listener->stopObservingAudioRenderer(renderer.get());
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && shouldAddContentKeyRecipients())
             [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
 #endif
     }
-
-    [m_listener invalidate];
-    m_listener = nullptr;
 
     m_audioRenderers.clear();
 }
@@ -846,7 +627,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                     protectedThis->didBecomeReadyForMoreSamples(trackID);
             }];
             m_audioRenderers.try_emplace(trackID, renderer);
-            [m_listener beginObservingRenderer:renderer.get()];
+            m_listener->beginObservingAudioRenderer(renderer.get());
         } else
             renderer = it->second;
 
@@ -881,7 +662,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(LegacyCDMSession* session)
                 if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_session && protectedThis->m_hdcpError) {
 
                     bool ignored = false;
-                    protectedThis->m_session->layerDidReceiveError(nullptr, protectedThis->m_hdcpError.get(), ignored);
+                    protectedThis->m_session->videoRendererDidReceiveError(nullptr, protectedThis->m_hdcpError.get(), ignored);
                 }
             });
         }
@@ -900,22 +681,28 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_cdmInstance && shouldAddContentKeyRecipients()) {
-        if (m_videoLayer)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoLayer->displayLayer()];
+    if (m_cdmInstance) {
+        if (shouldAddContentKeyRecipients()) {
+            if (m_videoRenderer)
+                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoRenderer->displayLayer()];
 
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
+            for (auto& pair : m_audioRenderers)
+                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
+        }
+        m_cdmInstance->removeKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
     }
 
     m_cdmInstance = fpsInstance;
 
-    if (m_cdmInstance && shouldAddContentKeyRecipients()) {
-        if (m_videoLayer)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoLayer->displayLayer()];
+    if (m_cdmInstance) {
+        if (shouldAddContentKeyRecipients()) {
+            if (m_videoRenderer)
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoRenderer->displayLayer()];
 
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
+            for (auto& pair : m_audioRenderers)
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
+        }
+        m_cdmInstance->addKeyStatusesChangedObserver(*m_keyStatusesChangedObserver);
     }
 
     attemptToDecrypt();
@@ -943,6 +730,8 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
         m_hasSessionSemaphore = nullptr;
     }
     m_waitingForKey = false;
+
+    tryToEnqueueBlockedSamples();
 #endif
 }
 #endif // (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -974,6 +763,8 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
     if (!requiresFlush())
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
 #if PLATFORM(IOS_FAMILY)
     m_displayLayerWasInterrupted = false;
 #endif
@@ -986,8 +777,8 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
     // In addition, we need to enqueue a sync sample (IDR video frame) first.
     if (m_decompressionSession)
         m_decompressionSession->stopRequestingMediaData();
-    if (m_videoLayer)
-        m_videoLayer->stopRequestingMediaData();
+    if (m_videoRenderer)
+        m_videoRenderer->stopRequestingMediaData();
 
     if (m_enabledVideoTrackID)
         reenqueSamples(*m_enabledVideoTrackID);
@@ -1005,12 +796,12 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
     m_errorClients.remove(m_errorClients.find(client));
 }
 
-void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *layer, NSError *error)
+void SourceBufferPrivateAVFObjC::videoRendererDidReceiveError(WebSampleBufferVideoRendering *renderer, NSError *error)
 {
     ERROR_LOG(LOGIDENTIFIER, error);
 
 #if PLATFORM(IOS_FAMILY)
-    if ([layer status] == AVQueuedSampleBufferRenderingStatusFailed && [[error domain] isEqualToString:@"AVFoundationErrorDomain"] && [error code] == AVErrorOperationInterrupted) {
+    if (renderer.status == AVQueuedSampleBufferRenderingStatusFailed && [error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorOperationInterrupted) {
         m_displayLayerWasInterrupted = true;
         return;
     }
@@ -1020,7 +811,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
     bool anyIgnored = false;
     for (auto& client : m_errorClients) {
         bool shouldIgnore = false;
-        client->layerDidReceiveError(layer, error, shouldIgnore);
+        client->videoRendererDidReceiveError(renderer, error, shouldIgnore);
         anyIgnored |= shouldIgnore;
     }
     if (anyIgnored)
@@ -1032,7 +823,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
         client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
-void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
+void SourceBufferPrivateAVFObjC::audioRendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
 {
     auto mediaTime = PAL::toMediaTime(time);
     ERROR_LOG(LOGIDENTIFIER, mediaTime);
@@ -1064,11 +855,11 @@ void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtecti
     ERROR_LOG(LOGIDENTIFIER, obscured);
 
     RetainPtr error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
-    layerDidReceiveError(m_videoLayer ? m_videoLayer->displayLayer() : nil, error.get());
+    videoRendererDidReceiveError(m_videoRenderer ? m_videoRenderer->renderer() : nil, error.get());
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
+void SourceBufferPrivateAVFObjC::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     ERROR_LOG(LOGIDENTIFIER, error);
@@ -1080,25 +871,25 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool anyIgnored = false;
     for (auto& client : m_errorClients) {
         bool shouldIgnore = false;
-        client->rendererDidReceiveError(renderer, error, shouldIgnore);
+        client->audioRendererDidReceiveError(renderer, error, shouldIgnore);
         anyIgnored |= shouldIgnore;
     }
     if (anyIgnored)
         return;
 }
 
-void SourceBufferPrivateAVFObjC::layerRequiresFlushToResumeDecodingChanged(AVSampleBufferDisplayLayer *layer, bool requiresFlush)
+void SourceBufferPrivateAVFObjC::videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *renderer, bool requiresFlush)
 {
-    if ((m_videoLayer && layer != m_videoLayer->displayLayer()) || m_layerRequiresFlush == requiresFlush)
+    if ((m_videoRenderer && renderer != m_videoRenderer->renderer()) || m_layerRequiresFlush == requiresFlush)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, requiresFlush);
     m_layerRequiresFlush = requiresFlush;
 }
 
-void SourceBufferPrivateAVFObjC::layerReadyForDisplayChanged(AVSampleBufferDisplayLayer *layer, bool isReadyForDisplay)
+void SourceBufferPrivateAVFObjC::videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *renderer, bool isReadyForDisplay)
 {
-    if (!m_videoLayer || layer != m_videoLayer->displayLayer() || !isReadyForDisplay)
+    if (!m_videoRenderer || renderer != m_videoRenderer->renderer() || !isReadyForDisplay)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -1119,8 +910,8 @@ void SourceBufferPrivateAVFObjC::flush(TrackID trackID)
 void SourceBufferPrivateAVFObjC::flushVideo()
 {
     DEBUG_LOG(LOGIDENTIFIER);
-    if (m_videoLayer)
-        m_videoLayer->flush();
+    if (m_videoRenderer)
+        m_videoRenderer->flush();
 
     if (m_decompressionSession) {
         m_decompressionSession->flush();
@@ -1160,7 +951,7 @@ bool SourceBufferPrivateAVFObjC::trackIsBlocked(TrackID trackID) const
 }
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-void SourceBufferPrivateAVFObjC::keyStatusesChanged()
+void SourceBufferPrivateAVFObjC::tryToEnqueueBlockedSamples()
 {
     while (!m_blockedSamples.isEmpty()) {
         auto& firstPair = m_blockedSamples.first();
@@ -1187,11 +978,11 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(TrackID trackID, const MediaSa
         return true;
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
-    if (!m_cdmInstance)
+    if (!m_cdmInstance && !m_session)
         return false;
 
     // DecompressionSessions doesn't support encrypted media.
-    if (isEnabledVideoTrackID(trackID) && !m_videoLayer)
+    if (isEnabledVideoTrackID(trackID) && !m_videoRenderer)
         return false;
 
     // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.
@@ -1200,10 +991,16 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(TrackID trackID, const MediaSa
 
     // if sample's set of keyIDs does not match the current set of keyIDs, consult with the CDM
     // to determine if the keyIDs are usable; if so, update the current set of keyIDs and enqueue sample.
-    if (m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
+    if (m_cdmInstance && m_cdmInstance->isAnyKeyUsable(sample.keyIDs())) {
         m_currentTrackIDs.try_emplace(trackID, sample.keyIDs());
         return true;
     }
+
+    if (m_session && m_session->isAnyKeyUsable(sample.keyIDs())) {
+        m_currentTrackIDs.try_emplace(trackID, sample.keyIDs());
+        return true;
+    }
+
     return false;
 #else
     return true;
@@ -1268,7 +1065,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
         if (m_decompressionSession)
             m_decompressionSession->enqueueSample(platformSample.sample.cmSampleBuffer);
 
-        if (!m_videoLayer)
+        if (!m_videoRenderer)
             return;
 
         enqueueSampleBuffer(sample.get());
@@ -1297,14 +1094,20 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
 void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
 {
     attachContentKeyToSampleIfNeeded(sample);
-    AVSampleBufferDisplayLayer* displayLayer = nil;
-    if (m_videoLayer) {
-        m_videoLayer->enqueueSample(sample.platformSample().sample.cmSampleBuffer, !sample.isNonDisplaying());
-        displayLayer = m_videoLayer->displayLayer();
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-        // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-        if ([displayLayer respondsToSelector:@selector(isReadyForDisplay)])
+    WebSampleBufferVideoRendering *renderer = nil;
+    if (m_videoRenderer) {
+        m_videoRenderer->enqueueSample(sample.platformSample().sample.cmSampleBuffer, !sample.isNonDisplaying());
+
+        // Enqueuing a sample for display my synchronously fire an error, which can cause m_videoRenderer to become null.
+        if (!m_videoRenderer)
             return;
+        renderer = m_videoRenderer->renderer();
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
+        if (AVSampleBufferDisplayLayer *displayLayer = m_videoRenderer->displayLayer()) {
+            // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
+            if ([displayLayer respondsToSelector:@selector(isReadyForDisplay)])
+                return;
+        }
 #endif
     }
     RefPtr player = this->player();
@@ -1313,28 +1116,31 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
 
     DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
 
-    [displayLayer prerollDecodeWithCompletionHandler:[this, weakThis = ThreadSafeWeakPtr { *this }, logSiteIdentifier = LOGIDENTIFIER] (BOOL success) mutable {
+    [renderer prerollDecodeWithCompletionHandler:[this, weakThis = ThreadSafeWeakPtr { *this }, logSiteIdentifier = LOGIDENTIFIER] (BOOL success) mutable {
         callOnMainThread([this, weakThis = WTFMove(weakThis), logSiteIdentifier, success] () {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
 
-            if (!success || !m_videoLayer) {
+            if (!success || !m_videoRenderer) {
                 ERROR_LOG(logSiteIdentifier, "prerollDecodeWithCompletionHandler failed");
                 return;
             }
 
-            layerReadyForDisplayChanged(m_videoLayer->displayLayer(), true);
+            videoRendererReadyForDisplayChanged(m_videoRenderer->renderer(), true);
         });
     }];
 }
 
 void SourceBufferPrivateAVFObjC::attachContentKeyToSampleIfNeeded(const MediaSampleAVFObjC& sample)
 {
-    if (!m_cdmInstance || !sampleBufferRenderersSupportKeySession() || !supportsAttachContentKey())
+    if (!sampleBufferRenderersSupportKeySession() || !supportsAttachContentKey())
         return;
 
-    m_cdmInstance->attachContentKeyToSample(sample);
+    if (m_cdmInstance)
+        m_cdmInstance->attachContentKeyToSample(sample);
+    else if (m_session)
+        m_session->attachContentKeyToSample(sample);
 }
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackID)
@@ -1346,7 +1152,7 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackID)
         if (m_decompressionSession)
             return m_decompressionSession->isReadyForMoreMediaData();
 
-        return m_videoLayer && m_videoLayer->isReadyForMoreMediaData();
+        return m_videoRenderer && m_videoRenderer->isReadyForMoreMediaData();
     }
 
     if (auto it = m_audioRenderers.find(trackID); it != m_audioRenderers.end())
@@ -1392,8 +1198,8 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(TrackID trackID)
     if (isEnabledVideoTrackID(trackID)) {
         if (m_decompressionSession)
             m_decompressionSession->stopRequestingMediaData();
-        if (m_videoLayer)
-            m_videoLayer->stopRequestingMediaData();
+        if (m_videoRenderer)
+            m_videoRenderer->stopRequestingMediaData();
     } else if (auto it = m_audioRenderers.find(trackID); it != m_audioRenderers.end())
         [it->second stopRequestingMediaData];
     else
@@ -1407,6 +1213,9 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(TrackID trackID)
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID trackID)
 {
+    if (requiresFlush())
+        return;
+
     if (isEnabledVideoTrackID(trackID)) {
         if (m_decompressionSession) {
             m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
@@ -1414,8 +1223,8 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID tra
                     protectedThis->didBecomeReadyForMoreSamples(trackID);
             });
         }
-        if (m_videoLayer) {
-            m_videoLayer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
+        if (m_videoRenderer) {
+            m_videoRenderer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
                 if (RefPtr protectedThis = weakThis.get())
                     protectedThis->didBecomeReadyForMoreSamples(trackID);
             });
@@ -1437,15 +1246,15 @@ bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(TrackID t
 void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(TrackID trackID, const MediaTime& presentationTime)
 {
     ASSERT(canSetMinimumUpcomingPresentationTime(trackID));
-    if (canSetMinimumUpcomingPresentationTime(trackID) && m_videoLayer)
-        m_videoLayer->expectMinimumUpcomingSampleBufferPresentationTime(presentationTime);
+    if (canSetMinimumUpcomingPresentationTime(trackID) && m_videoRenderer)
+        m_videoRenderer->expectMinimumUpcomingSampleBufferPresentationTime(presentationTime);
 }
 
 void SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime(TrackID trackID)
 {
     ASSERT(canSetMinimumUpcomingPresentationTime(trackID));
-    if (canSetMinimumUpcomingPresentationTime(trackID) && m_videoLayer)
-        m_videoLayer->resetUpcomingSampleBufferPresentationTimeExpectations();
+    if (canSetMinimumUpcomingPresentationTime(trackID) && m_videoRenderer)
+        m_videoRenderer->resetUpcomingSampleBufferPresentationTimeExpectations();
 }
 
 bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
@@ -1463,37 +1272,38 @@ bool SourceBufferPrivateAVFObjC::isSeeking() const
     return m_seeking;
 }
 
-void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
+void SourceBufferPrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering *renderer)
 {
-    if (m_videoLayer && layer == m_videoLayer->displayLayer())
+    if (m_videoRenderer && renderer == m_videoRenderer->renderer())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "!!layer = ", !!layer);
-    ASSERT(!layer || !m_decompressionSession || hasSelectedVideo());
+    ALWAYS_LOG(LOGIDENTIFIER, "!!renderer = ", !!renderer);
+    ASSERT(!renderer || !m_decompressionSession || hasSelectedVideo());
 
-    if (m_videoLayer) {
-        m_videoLayer->flush();
-        m_videoLayer->stopRequestingMediaData();
-        [m_listener stopObservingLayer:m_videoLayer->displayLayer()];
+    if (m_videoRenderer) {
+        m_videoRenderer->flush();
+        m_videoRenderer->stopRequestingMediaData();
+        m_listener->stopObservingVideoRenderer(m_videoRenderer->renderer());
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && shouldAddContentKeyRecipients())
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoLayer->displayLayer()];
+            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoRenderer->displayLayer()];
 #endif
-        m_videoLayer = nullptr;
+        m_videoRenderer = nullptr;
     }
 
-    if (layer) {
-        m_videoLayer = VideoMediaSampleRenderer::create(layer);
+    if (renderer) {
+        m_videoRenderer = VideoMediaSampleRenderer::create(renderer);
+        m_videoRenderer->setResourceOwner(m_resourceOwner);
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
         if (m_cdmInstance && shouldAddContentKeyRecipients())
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:layer];
+            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoRenderer->displayLayer()];
 #endif
-        m_videoLayer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }] {
+        m_videoRenderer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)
                 protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
         });
-        [m_listener beginObservingLayer:layer];
+        m_listener->beginObservingVideoRenderer(renderer);
         if (m_enabledVideoTrackID)
             reenqueSamples(*m_enabledVideoTrackID);
     }
@@ -1532,8 +1342,8 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
 
 RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
 {
-    if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
-        return mediaSource->player();
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return static_cast<MediaPlayerPrivateMediaSourceAVFObjC*>(mediaSource->player().get());
     return nullptr;
 }
 

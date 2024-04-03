@@ -49,7 +49,14 @@ WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const W
 
 bool WebExtensionControllerConfiguration::operator==(const WebExtensionControllerConfiguration& other) const
 {
-    return this == &other || (m_identifier == other.m_identifier && m_storageDirectory == other.m_storageDirectory && m_webViewConfiguration == other.m_webViewConfiguration);
+    return this == &other || (m_identifier == other.m_identifier && m_storageDirectory == other.m_storageDirectory && m_webViewConfiguration == other.m_webViewConfiguration && m_defaultWebsiteDataStore == other.m_defaultWebsiteDataStore);
+}
+
+WebsiteDataStore& WebExtensionControllerConfiguration::defaultWebsiteDataStore() const
+{
+    if (m_defaultWebsiteDataStore)
+        return *m_defaultWebsiteDataStore;
+    return WebsiteDataStore::defaultDataStore();
 }
 
 } // namespace WebKit

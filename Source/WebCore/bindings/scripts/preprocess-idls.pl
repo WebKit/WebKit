@@ -490,7 +490,7 @@ sub GenerateConstructorAttributes
     my $globalContext = shift;
 
     # FIXME: Rather than being ConditionalForWorker=FOO, we need a syntax like ConditionalForContext=(Worker:FOO).
-    if ($extendedAttributes->{"ConditionalForWorker"} && $globalContext eq "Worker") {
+    if ($extendedAttributes->{"ConditionalForWorker"} && ($globalContext eq "Worker" || $globalContext eq "DedicatedWorker" )) {
       my $conditionalForWorker = $extendedAttributes->{"ConditionalForWorker"};
       my $existingConditional = $extendedAttributes->{"Conditional"};
       if ($existingConditional) {

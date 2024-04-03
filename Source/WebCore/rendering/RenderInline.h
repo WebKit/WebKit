@@ -60,7 +60,6 @@ public:
 
     WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
-    LayoutRect linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer*) const;
 
     LegacyInlineFlowBox* createAndAppendInlineFlowBox();
 
@@ -112,8 +111,8 @@ private:
 
     LayoutUnit offsetLeft() const final;
     LayoutUnit offsetTop() const final;
-    LayoutUnit offsetWidth() const final;
-    LayoutUnit offsetHeight() const final;
+    LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
+    LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:
@@ -128,7 +127,7 @@ protected:
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
 
 private:
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) final;
+    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
 
     LayoutRect frameRectForStickyPositioning() const final { return linesBoundingBox(); }
 

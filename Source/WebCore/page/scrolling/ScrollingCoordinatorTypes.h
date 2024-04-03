@@ -162,7 +162,7 @@ enum class ScrollUpdateType : uint8_t {
 };
 
 struct ScrollUpdate {
-    ScrollingNodeID nodeID { 0 };
+    ScrollingNodeID nodeID;
     FloatPoint scrollPosition;
     std::optional<FloatPoint> layoutViewportOrigin;
     ScrollUpdateType updateType { ScrollUpdateType::PositionUpdate };

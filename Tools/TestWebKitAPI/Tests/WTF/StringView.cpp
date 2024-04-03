@@ -167,10 +167,10 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(heloView.codePoints(), {'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(heloView.codeUnits(), {'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(heloView.graphemeClusters(), {
-        StringView(heloView.characters8(), 1),
-        StringView(heloView.characters8() + 1, 1),
-        StringView(heloView.characters8() + 2, 1),
-        StringView(heloView.characters8() + 3, 1)}));
+        StringView(heloView.span8().subspan(0, 1)),
+        StringView(heloView.span8().subspan(1, 1)),
+        StringView(heloView.span8().subspan(2, 1)),
+        StringView(heloView.span8().subspan(3, 1)) }));
 
     StringBuilder b;
     build(b, {0xD800, 0xDD55}); // Surrogates for unicode code point U+10155
@@ -186,33 +186,33 @@ TEST(WTF, StringViewIterators)
     build(b, {0xD800, 0xD801}); // Two leading surrogates
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 0xD801}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 0xD801}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.characters16(), 1), StringView(b.characters16() + 1, 1)}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<UChar>().subspan(0, 1)), StringView(b.span<UChar>().subspan(1, 1)) }));
 
     build(b, {0xDD55}); // Trailing surrogate only
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xDD55}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xDD55}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.toString()) }));
 
     build(b, {0xD800, 'h'}); // Leading surrogate followed by non-surrogate
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0xD800, 'h'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0xD800, 'h'}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.characters16(), 1), StringView(b.characters16() + 1, 1)}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.span<UChar>().subspan(0, 1)), StringView(b.span<UChar>().subspan(1, 1)) }));
 
     build(b, {0x0306}); // "COMBINING BREVE"
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306}));
-    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {StringView(b.toString())}));
+    EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), { StringView(b.toString()) }));
 
     build(b, {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}); // Mix of single code unit and multi code unit code points
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x0306, 0x10155, 'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x0306, 0xD800, 0xDD55, 'h', 'e', 'l', 'o'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.characters16(), 1),
-        StringView(b.characters16() + 1, 2),
-        StringView(b.characters16() + 3, 1),
-        StringView(b.characters16() + 4, 1),
-        StringView(b.characters16() + 5, 1),
-        StringView(b.characters16() + 6, 1)}));
+        StringView(b.span<UChar>().subspan(0, 1)),
+        StringView(b.span<UChar>().subspan(1, 2)),
+        StringView(b.span<UChar>().subspan(3, 1)),
+        StringView(b.span<UChar>().subspan(4, 1)),
+        StringView(b.span<UChar>().subspan(5, 1)),
+        StringView(b.span<UChar>().subspan(6, 1)) }));
 
     build(b, {'e', 0x0301}); // "COMBINING ACUTE"
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301}));
@@ -223,16 +223,16 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {'e', 0x0301, 0x0306, 'a'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {'e', 0x0301, 0x0306, 'a'}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.characters16(), 3),
-        StringView(b.characters16() + 3, 1),
+        StringView(b.span<UChar>().subspan(0, 3)),
+        StringView(b.span<UChar>().subspan(3, 1)),
         }));
 
     build(b, {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}); // Korean combining Jamo
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codePoints(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).codeUnits(), {0x1112, 0x116f, 0x11b6, 0x1107, 0x1161, 0x11B8}));
     EXPECT_TRUE(compareLoopIterations(StringView(b.toString()).graphemeClusters(), {
-        StringView(b.characters16(), 3),
-        StringView(b.characters16() + 3, 3)}));
+        StringView(b.span<UChar>().subspan(0, 3)),
+        StringView(b.span<UChar>().subspan(3, 3)) }));
 }
 
 static Vector<String> vectorFromSplitResult(const StringView::SplitResult& substrings)
@@ -323,7 +323,7 @@ TEST(WTF, StringViewEqualBasic)
     EXPECT_FALSE(a == "Hello World!!"_s);
 
     auto test = "Hell\0";
-    a = StringView { (const LChar*)test, 5 };
+    a = StringView { std::span { (const LChar*)test, 5 } };
     EXPECT_FALSE(a == "Hell\0"_s);
     EXPECT_FALSE(a == "Hell"_s);
 
@@ -338,7 +338,8 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> b = StringImpl::create("ABCDEFG"_s);
     RefPtr<StringImpl> c = StringImpl::create("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
-    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
+    constexpr size_t zeroLength = 0; // LLVM bug workaround.
+    RefPtr<StringImpl> empty = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
     RefPtr<StringImpl> shorter = StringImpl::create("abcdef"_s);
     RefPtr<StringImpl> different = StringImpl::create("abcrefg"_s);
 
@@ -383,8 +384,9 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
+    constexpr size_t zeroLength = 0; // LLVM bug workaround.
+    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
+    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>(""), zeroLength });
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
@@ -393,10 +395,10 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"), 7);
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"), 7);
-    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"), 7);
-    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"), 7);
+    RefPtr<StringImpl> a = StringImpl::create(std::span { reinterpret_cast<const LChar*>("aBcéeFG"), 7 });
+    RefPtr<StringImpl> b = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCÉEFG"), 7 });
+    RefPtr<StringImpl> c = StringImpl::create(std::span { reinterpret_cast<const LChar*>("ABCéEFG"), 7 });
+    RefPtr<StringImpl> d = StringImpl::create(std::span { reinterpret_cast<const LChar*>("abcéefg"), 7 });
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     StringView stringViewC(*c.get());
@@ -893,13 +895,13 @@ TEST(WTF, StringView8Bit)
     EXPECT_TRUE(StringView().is8Bit());
     EXPECT_TRUE(emptyStringView().is8Bit());
 
-    LChar* lcharPtr = nullptr;
-    UChar* ucharPtr = nullptr;
-    EXPECT_TRUE(StringView(lcharPtr, 0).is8Bit());
-    EXPECT_FALSE(StringView(ucharPtr, 0).is8Bit());
+    std::span<const LChar> lcharSpan;
+    std::span<const UChar> ucharSpan;
+    EXPECT_TRUE(StringView(lcharSpan).is8Bit());
+    EXPECT_FALSE(StringView(ucharSpan).is8Bit());
 
-    EXPECT_TRUE(StringView(String(lcharPtr, 0)).is8Bit());
-    EXPECT_TRUE(StringView(String(ucharPtr, 0)).is8Bit());
+    EXPECT_TRUE(StringView(String(lcharSpan)).is8Bit());
+    EXPECT_TRUE(StringView(String(ucharSpan)).is8Bit());
 
     EXPECT_TRUE(StringView(String().impl()).is8Bit());
     EXPECT_TRUE(StringView(emptyString().impl()).is8Bit());
@@ -981,7 +983,8 @@ TEST(WTF, StringViewContainsOnlyASCII)
     EXPECT_TRUE(StringView(String("Cocoa"_s)).containsOnlyASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
-    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).containsOnlyASCII());
+    constexpr size_t zeroLength = 0;
+    EXPECT_TRUE(StringView(String({ bitwise_cast<const UChar*>(u"Hello"), zeroLength })).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)

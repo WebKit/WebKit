@@ -1,0 +1,70 @@
+void functionLeft() {
+    float x = functionLeft * 2;
+}
+
+void functionRight() {
+    float x = 2 * functionRight;
+}
+
+void functionBoth() {
+    float x = functionBoth * functionBoth;
+}
+
+struct S {
+    float x;
+} s;
+
+void structLeft() {
+    float x = s * 2;
+}
+
+void structRight() {
+    float x = 2 * s;
+}
+
+void structBoth() {
+    float x = s * s;
+}
+
+uniform shader shad;
+
+void shaderLeft() {
+    float x = shad * 2;
+}
+
+void shaderRight() {
+    float x = 2 * shad;
+}
+
+void shaderBoth() {
+    float x = shad * shad;
+}
+
+int array[1];
+
+void arrayLeft() {
+    float x = array * 2;
+}
+
+void arrayRight() {
+    float x = 2 * array;
+}
+
+void arrayBoth() {
+    float x = array * array;
+}
+
+/*%%*
+type mismatch: '*' cannot operate on '<INVALID>', 'int'
+type mismatch: '*' cannot operate on 'int', '<INVALID>'
+type mismatch: '*' cannot operate on '<INVALID>', '<INVALID>'
+type mismatch: '*' cannot operate on 'S', 'int'
+type mismatch: '*' cannot operate on 'int', 'S'
+type mismatch: '*' cannot operate on 'S', 'S'
+type mismatch: '*' cannot operate on 'shader', 'int'
+type mismatch: '*' cannot operate on 'int', 'shader'
+type mismatch: '*' cannot operate on 'shader', 'shader'
+type mismatch: '*' cannot operate on 'int[1]', 'int'
+type mismatch: '*' cannot operate on 'int', 'int[1]'
+type mismatch: '*' cannot operate on 'int[1]', 'int[1]'
+*%%*/

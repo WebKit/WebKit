@@ -31,7 +31,6 @@
 #include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaScene.h>
-#include <WebCore/TextureMapperBackingStore.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
 
@@ -116,10 +115,8 @@ void updateBackingStore(TextureMapperLayer& layer,
         backingStore.createTile(tile.tileID, tile.scale);
     for (auto& tile : update.tilesToRemove)
         backingStore.removeTile(tile.tileID);
-    for (auto& tile : update.tilesToUpdate) {
-        backingStore.updateTile(tile.tileID, tile.updateInfo.updateRect,
-            tile.tileRect, tile.updateInfo.buffer.copyRef(), { 0, 0 });
-    }
+    for (auto& tile : update.tilesToUpdate)
+        backingStore.updateTile(tile.tileID, tile.updateRect, tile.tileRect, tile.buffer.copyRef(), { });
 }
 
 void updateImageBacking(TextureMapperLayer& layer,
@@ -322,11 +319,16 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setPreserves3D(layerState.flags.preserves3D);
                         }
 
-                        if (layerState.delta.repaintCounterChanged)
-                            layer.setRepaintCounter(layerState.repaintCounter.visible, layerState.repaintCounter.count);
+                        if (layerState.delta.repaintCounterChanged) {
+                            layer.setShowRepaintCounter(layerState.repaintCounter.visible);
+                            layer.setRepaintCount(layerState.repaintCounter.count);
+                        }
 
-                        if (layerState.delta.debugBorderChanged)
-                            layer.setDebugVisuals(layerState.debugBorder.visible, layerState.debugBorder.color, layerState.debugBorder.width);
+                        if (layerState.delta.debugBorderChanged) {
+                            layer.setShowDebugBorder(layerState.debugBorder.visible);
+                            layer.setDebugBorderColor(layerState.debugBorder.color);
+                            layer.setDebugBorderWidth(layerState.debugBorder.width);
+                        }
 
                         if (layerState.backingStore) {
                             layersByBacking.backingStore.append(

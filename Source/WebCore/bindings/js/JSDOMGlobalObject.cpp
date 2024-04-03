@@ -30,6 +30,7 @@
 #include "DOMConstructors.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FetchResponse.h"
 #include "FrameDestructionObserverInlines.h"
 #include "InternalWritableStream.h"
@@ -234,7 +235,7 @@ JSC_DEFINE_HOST_FUNCTION(addAbortAlgorithmToSignal, (JSGlobalObject* globalObjec
     auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
     Ref<AbortAlgorithm> abortAlgorithm = JSAbortAlgorithm::create(callFrame->uncheckedArgument(1).getObject(), jsDOMGlobalObject);
 
-    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(abortSignal->wrapped(), WTFMove(abortAlgorithm));
+    auto algorithmIdentifier = AbortSignal::addAbortAlgorithmToSignal(abortSignal->protectedWrapped().get(), WTFMove(abortAlgorithm));
     return JSValue::encode(JSC::jsNumber(algorithmIdentifier));
 }
 
@@ -247,7 +248,7 @@ JSC_DEFINE_HOST_FUNCTION(removeAbortAlgorithmFromSignal, (JSGlobalObject*, CallF
     if (UNLIKELY(!abortSignal))
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
-    AbortSignal::removeAbortAlgorithmFromSignal(abortSignal->wrapped(), callFrame->uncheckedArgument(1).asUInt32());
+    AbortSignal::removeAbortAlgorithmFromSignal(abortSignal->protectedWrapped().get(), callFrame->uncheckedArgument(1).asUInt32());
     return JSValue::encode(JSC::jsUndefined());
 }
 
@@ -270,7 +271,7 @@ JSC_DEFINE_HOST_FUNCTION(signalAbort, (JSGlobalObject*, CallFrame* callFrame))
 
     auto* abortSignal = jsDynamicCast<JSAbortSignal*>(callFrame->uncheckedArgument(0));
     if (UNLIKELY(abortSignal))
-        abortSignal->wrapped().signalAbort(callFrame->uncheckedArgument(1));
+        abortSignal->protectedWrapped()->signalAbort(callFrame->uncheckedArgument(1));
     return JSValue::encode(JSC::jsUndefined());
 }
 
@@ -557,7 +558,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
             }
 
             if (auto* chunk = result.returnValue())
-                compiler->addBytes(chunk->data(), chunk->size());
+                compiler->addBytes(*chunk);
             else
                 compiler->finalize(globalObject);
         });
@@ -568,7 +569,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     WTF::switchOn(body, [&](Ref<FormData>&) {
         RELEASE_ASSERT_NOT_REACHED();
     }, [&](Ref<SharedBuffer>& buffer) {
-        compiler->addBytes(buffer->data(), buffer->size());
+        compiler->addBytes(buffer->span());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {
         compiler->finalize(globalObject);

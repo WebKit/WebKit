@@ -80,7 +80,7 @@ class GDBCrashLogGenerator(object):
                 time.sleep(1)
 
             try:
-                info = self._executive.run_command(coredumpctl + ['info', "--since=" + time.strftime("%a %Y-%m-%d %H:%M:%S %Z", time.localtime(self.newer_than))],
+                info = self._executive.run_command(coredumpctl + ['info', '--since=@%f' % self.newer_than],
                     return_stderr=True)
             except (ScriptError, OSError):
                 continue

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 namespace WebCore {
 
 void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType)
@@ -45,5 +43,3 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY)

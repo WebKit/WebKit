@@ -1,4 +1,4 @@
-# Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -49,6 +49,13 @@ def noisyOutputHandler
     }
 end
 
+def getFailCondition(plan)
+    # jsc shell's expected crashes are configured to return with an error > 130.
+    # So, if we're expecting a crash and the exitCode is less or equal to 130, the test
+    # is not exiting due to an expected crash, and it should be considered a test failure.
+    plan.expectCrash ? "-le 130" : "-ne 0"
+end
+
 def getAndTestExitCode(plan, condition)
     <<-EOF
     if test "$exitCode" #{condition}
@@ -60,7 +67,7 @@ end
 def simpleErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    (echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
@@ -74,7 +81,7 @@ end
 def expectedFailErrorHandler
     Proc.new {
         | outp, plan |
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
@@ -91,7 +98,7 @@ def noisyErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
@@ -108,7 +115,7 @@ def diffErrorHandler(expectedFilename)
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
         diffFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".diff")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
@@ -136,7 +143,7 @@ def mozillaErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
@@ -157,7 +164,7 @@ def mozillaFailErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "elif grep -i -q failed! #{outputFilename}"
@@ -177,7 +184,7 @@ def mozillaExit3ErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    if [ \"$exitCode\" -eq 3 ]"
         outp.puts "    then"
@@ -206,7 +213,7 @@ def chakraPassFailErrorHandler
         | outp, plan |
         outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
 
-        outp.puts getAndTestExitCode(plan, "-ne 0")
+        outp.puts getAndTestExitCode(plan, getFailCondition(plan))
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: $exitCode) | " + redirectAndPrefixCommand(plan.name)
         outp.puts "    " + plan.failCommand

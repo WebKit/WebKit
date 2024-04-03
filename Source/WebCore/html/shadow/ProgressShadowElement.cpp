@@ -51,13 +51,13 @@ ProgressShadowElement::ProgressShadowElement(Document& document)
 
 HTMLProgressElement* ProgressShadowElement::progressElement() const
 {
-    return checkedDowncast<HTMLProgressElement>(shadowHost());
+    return downcast<HTMLProgressElement>(shadowHost());
 }
 
 bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style().hasEffectiveAppearance() && HTMLDivElement::rendererIsNeeded(style);
+    return progressRenderer && !progressRenderer->style().hasUsedAppearance() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 ProgressInnerElement::ProgressInnerElement(Document& document)
@@ -72,8 +72,8 @@ RenderPtr<RenderElement> ProgressInnerElement::createElementRenderer(RenderStyle
 
 bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)
 {
-    RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style().hasEffectiveAppearance() && HTMLDivElement::rendererIsNeeded(style);    
+    auto* progressRenderer = progressElement()->renderer();
+    return progressRenderer && !progressRenderer->style().hasUsedAppearance() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 ProgressBarElement::ProgressBarElement(Document& document)

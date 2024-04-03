@@ -86,7 +86,7 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
 {
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
-        zoomFactor = style->effectiveZoom();
+        zoomFactor = style->usedZoom();
         auto* frame = document.frame();
         if (frame && style->textZoom() != TextZoom::Reset)
             zoomFactor *= frame->textZoomFactor();
@@ -199,16 +199,16 @@ float adjustedFontSize(float size, const FontSizeAdjust& sizeAdjust, const FontM
     // https://github.com/w3c/csswg-drafts/issues/6384
     switch (sizeAdjust.metric) {
     case FontSizeAdjust::Metric::CapHeight:
-        return metrics.hasCapHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.floatCapHeight()) : size;
+        return metrics.capHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.capHeight()) : size;
     case FontSizeAdjust::Metric::ChWidth:
         return metrics.zeroWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.zeroWidth()) : size;
     // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
     case FontSizeAdjust::Metric::IcWidth:
     case FontSizeAdjust::Metric::IcHeight:
-        return metrics.ideogramWidth() > 0 ? adjustedFontSize(size, *sizeAdjust.value, metrics.ideogramWidth()) : size;
+        return metrics.ideogramWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.ideogramWidth()) : size;
     case FontSizeAdjust::Metric::ExHeight:
     default:
-        return metrics.hasXHeight() ? adjustedFontSize(size, *sizeAdjust.value, metrics.xHeight()) : size;
+        return metrics.xHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.xHeight()) : size;
     }
 
     ASSERT_NOT_REACHED();

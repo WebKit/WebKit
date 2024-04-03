@@ -29,9 +29,9 @@
 
 #include "IPCEvent.h"
 #include "ScopedRenderingResourcesRequest.h"
-#include "ShareableBitmap.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/ShareableBitmap.h>
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 #include <WebCore/DynamicContentScalingDisplayList.h>
@@ -62,11 +62,12 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     // Messages
-    void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&&);
-    void getPixelBufferWithNewMemory(SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntRect, CompletionHandler<void()>&&);
-    void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
-    void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
-    void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    // This is using location and size as opposed to rect because invalid rect object gets restricted by IPC rect object decoder and triggers timeout in WebContent process.
+    void getPixelBuffer(WebCore::PixelBufferFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&&);
+    void getPixelBufferWithNewMemory(WebCore::SharedMemory::Handle&&, WebCore::PixelBufferFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&&);
+    void putPixelBuffer(Ref<WebCore::PixelBuffer>, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat);
+    void getShareableBitmap(WebCore::PreserveResolution, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
     void flushContext();

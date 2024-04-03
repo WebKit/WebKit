@@ -22,7 +22,6 @@
 
 #include "FontMetrics.h"
 #include "HitTestResult.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
 #include "LocalFrame.h"
@@ -46,7 +45,7 @@ struct SameSizeAsLegacyInlineBox {
     void* a[3];
     SingleThreadWeakPtr<RenderObject> r;
     FloatPoint b;
-    float c[2];
+    float c[1];
     unsigned d : 23;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     unsigned s;
@@ -134,19 +133,14 @@ float LegacyInlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
 
-    if (is<LegacyRootInlineBox>(*this) && downcast<LegacyRootInlineBox>(*this).isForTrailingFloats())
-        return 0;
-
     const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isRenderTextOrLineBreak())
-        return lineStyle.metricsOfPrimaryFont().height();
-    if (is<RenderBox>(renderer()) && parent())
-        return isHorizontal() ? downcast<RenderBox>(renderer()).height() : downcast<RenderBox>(renderer()).width();
+        return lineStyle.metricsOfPrimaryFont().intHeight();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
     const FontMetrics& fontMetrics = lineStyle.metricsOfPrimaryFont();
-    float result = fontMetrics.height();
+    float result = fontMetrics.intHeight();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();
     return result;
@@ -182,12 +176,6 @@ void LegacyInlineBox::dirtyLineBoxes()
 void LegacyInlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);
-
-    if (renderer().isOutOfFlowPositioned())
-        return;
-
-    if (renderer().isReplacedOrInlineBlock())
-        downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
 const LegacyRootInlineBox& LegacyInlineBox::root() const
@@ -250,26 +238,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 
 RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
-    ASSERT(!is<LegacyEllipsisBox>(*this));
     return renderer().selectionState();
-}
-
-bool LegacyInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
-{
-    // Non-replaced elements can always accommodate an ellipsis.
-    if (!renderer().isReplacedOrInlineBlock())
-        return true;
-    
-    IntRect boxRect(left(), 0, m_logicalWidth, 10);
-    IntRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 10);
-    return !(boxRect.intersects(ellipsisRect));
-}
-
-float LegacyInlineBox::placeEllipsisBox(bool, float, float, float, float& truncatedWidth, bool&)
-{
-    // Use -1 to mean "we didn't set the position."
-    truncatedWidth += logicalWidth();
-    return -1;
 }
 
 void LegacyInlineBox::clearKnownToHaveNoOverflow()

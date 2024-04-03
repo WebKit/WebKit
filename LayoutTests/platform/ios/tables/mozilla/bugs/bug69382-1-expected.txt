@@ -24,20 +24,20 @@ layer at (0,0) size 800x600
                   text run at (2,2) width 32: "Date"
             RenderTableRow {TR} at (0,28) size 782x44
               RenderTableCell {TD} at (2,54) size 20x24 [border: (1px inset #808080)] [r=1 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: " 1 "
               RenderTableCell {TD} at (24,54) size 74x24 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: "**"
               RenderTableCell {TD} at (99,28) size 531x44 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 486x39
                   text run at (2,2) width 486: "UNIX and Windows 2000 integration toolkit : a complete guide for systems"
                   text run at (2,22) width 182: "administrators / Rawn Shah."
               RenderTableCell {TD} at (631,38) size 110x24 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 82x19
+                RenderText {#text} at (2,12) size 82x19
                   text run at (2,2) width 82: "Shah, Rawn."
               RenderTableCell {TD} at (742,38) size 37x24 [border: (1px inset #808080)] [r=1 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+                RenderText {#text} at (2,12) size 32x19
                   text run at (2,2) width 32: "2000"
             RenderTableRow {TR} at (0,74) size 782x30
               RenderTableCell {TD} at (99,74) size 682x30 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=4]
@@ -49,20 +49,20 @@ layer at (0,0) size 800x600
                           text run at (1,1) width 172: "Title has multiple holdings"
             RenderTableRow {TR} at (0,106) size 782x44
               RenderTableCell {TD} at (2,132) size 20x24 [border: (1px inset #808080)] [r=3 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: " 2 "
               RenderTableCell {TD} at (24,132) size 74x24 [border: (1px inset #808080)] [r=3 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: "**"
               RenderTableCell {TD} at (99,116) size 531x24 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 258x19
+                RenderText {#text} at (2,12) size 258x19
                   text run at (2,2) width 258: "Learning Red Hat Linux / Bill McCarty."
               RenderTableCell {TD} at (631,106) size 110x44 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 92x39
                   text run at (2,2) width 92: "McCarty, Bill,"
                   text run at (2,22) width 38: "1953-"
               RenderTableCell {TD} at (742,116) size 37x24 [border: (1px inset #808080)] [r=3 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+                RenderText {#text} at (2,12) size 32x19
                   text run at (2,2) width 32: "1999"
             RenderTableRow {TR} at (0,152) size 782x30
               RenderTableCell {TD} at (99,152) size 682x30 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=4]
@@ -74,20 +74,20 @@ layer at (0,0) size 800x600
                           text run at (1,1) width 172: "Title has multiple holdings"
             RenderTableRow {TR} at (0,184) size 782x44
               RenderTableCell {TD} at (2,210) size 20x24 [border: (1px inset #808080)] [r=5 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: " 3 "
               RenderTableCell {TD} at (24,210) size 74x24 [border: (1px inset #808080)] [r=5 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,28) size 16x19
                   text run at (2,2) width 16: "**"
               RenderTableCell {TD} at (99,194) size 531x24 [border: (1px inset #808080)] [r=5 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 286x19
+                RenderText {#text} at (2,12) size 286x19
                   text run at (2,2) width 286: "Learning Debian GNU/Linux / Bill Mccarty."
               RenderTableCell {TD} at (631,184) size 110x44 [border: (1px inset #808080)] [r=5 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 92x39
                   text run at (2,2) width 92: "McCarty, Bill,"
                   text run at (2,22) width 38: "1953-"
               RenderTableCell {TD} at (742,194) size 37x24 [border: (1px inset #808080)] [r=5 c=4 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 32x19
+                RenderText {#text} at (2,12) size 32x19
                   text run at (2,2) width 32: "1999"
             RenderTableRow {TR} at (0,230) size 782x30
               RenderTableCell {TD} at (99,230) size 682x30 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=4]
@@ -99,10 +99,10 @@ layer at (0,0) size 800x600
                           text run at (1,1) width 172: "Title has multiple holdings"
             RenderTableRow {TR} at (0,262) size 782x24
               RenderTableCell {TD} at (2,278) size 20x24 [border: (1px inset #808080)] [r=7 c=0 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,18) size 16x19
                   text run at (2,2) width 16: " 4 "
               RenderTableCell {TD} at (24,278) size 74x24 [border: (1px inset #808080)] [r=7 c=1 rs=2 cs=1]
-                RenderText {#text} at (2,2) size 16x19
+                RenderText {#text} at (2,18) size 16x19
                   text run at (2,2) width 16: "**"
               RenderTableCell {TD} at (99,262) size 531x24 [border: (1px inset #808080)] [r=7 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 398x19

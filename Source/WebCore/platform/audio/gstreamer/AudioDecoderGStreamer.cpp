@@ -256,16 +256,17 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto& stream, const GRefPtr<GstBuffer>& outputBuffer) {
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto&, GRefPtr<GstSample>&& outputSample) {
         if (!weakThis)
             return;
         if (m_isClosed)
             return;
 
-        if (GST_BUFFER_FLAG_IS_SET(outputBuffer.get(), GST_BUFFER_FLAG_DECODE_ONLY))
+        auto outputBuffer = gst_sample_get_buffer(outputSample.get());
+        if (GST_BUFFER_FLAG_IS_SET(outputBuffer, GST_BUFFER_FLAG_DECODE_ONLY))
             return;
 
-        if (!gst_buffer_n_memory(outputBuffer.get()))
+        if (!gst_buffer_n_memory(outputBuffer))
             return;
 
         static std::once_flag onceFlag;
@@ -273,13 +274,9 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
             m_harness->dumpGraph("audio-decoder");
         });
 
-        GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer.get())));
+        GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer)));
 
-        const GstSegment* segment = nullptr;
-        if (auto segmentEvent = adoptGRef(gst_pad_get_sticky_event(stream.pad().get(), GST_EVENT_SEGMENT, 0)))
-            gst_event_parse_segment(segmentEvent.get(), &segment);
-        auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), stream.outputCaps().get(), segment, nullptr));
-        auto data = PlatformRawAudioDataGStreamer::create(WTFMove(sample));
+        auto data = PlatformRawAudioDataGStreamer::create(WTFMove(outputSample));
         m_postTaskCallback([weakThis = WeakPtr { *this }, this, data = WTFMove(data)]() mutable {
             if (!weakThis)
                 return;
@@ -330,7 +327,7 @@ void GStreamerInternalAudioDecoder::decode(std::span<const uint8_t> frameData, b
             return;
 
         if (result)
-            m_harness->processOutputBuffers();
+            m_harness->processOutputSamples();
         else
             m_outputCallback(makeUnexpected("Decode error"_s));
 

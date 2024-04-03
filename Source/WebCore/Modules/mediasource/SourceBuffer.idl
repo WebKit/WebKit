@@ -38,10 +38,12 @@
     JSGenerateToNativeObject,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=MediaSourceEnabled,
     ExportMacro=WEBCORE_EXPORT,
     GenerateAddOpaqueRoot,
-    Exposed=Window,
+    EnabledForContext,
+    Exposed=(Window,DedicatedWorker),
     ReportExtraMemoryCost
 ] interface SourceBuffer : EventTarget {
     attribute AppendMode mode;

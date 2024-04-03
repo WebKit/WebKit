@@ -8,8 +8,10 @@
 #include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 
 #include "common/string_utils.h"
+#include "libANGLE/Context.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Uniform.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
@@ -475,4 +477,50 @@ void ProgramExecutableGL::getUniformuiv(const gl::Context *context,
     mFunctions->getUniformuiv(mProgramID, uniLoc(location), params);
 }
 
+void ProgramExecutableGL::setUniformBlockBinding(GLuint uniformBlockIndex,
+                                                 GLuint uniformBlockBinding)
+{
+    // Lazy init
+    if (mUniformBlockRealLocationMap.empty())
+    {
+        mUniformBlockRealLocationMap.reserve(mExecutable->getUniformBlocks().size());
+        for (const gl::InterfaceBlock &uniformBlock : mExecutable->getUniformBlocks())
+        {
+            const std::string &mappedNameWithIndex = uniformBlock.mappedNameWithArrayIndex();
+            GLuint blockIndex =
+                mFunctions->getUniformBlockIndex(mProgramID, mappedNameWithIndex.c_str());
+            mUniformBlockRealLocationMap.push_back(blockIndex);
+        }
+    }
+
+    const GLuint realBlockIndex = mUniformBlockRealLocationMap[uniformBlockIndex];
+    if (realBlockIndex != GL_INVALID_INDEX)
+    {
+        mFunctions->uniformBlockBinding(mProgramID, realBlockIndex, uniformBlockBinding);
+    }
+}
+
+void ProgramExecutableGL::reapplyUBOBindings()
+{
+    const std::vector<gl::InterfaceBlock> &blocks = mExecutable->getUniformBlocks();
+    for (size_t blockIndex = 0; blockIndex < blocks.size(); ++blockIndex)
+    {
+        if (blocks[blockIndex].activeShaders().any())
+        {
+            const GLuint index = static_cast<GLuint>(blockIndex);
+            setUniformBlockBinding(index, mExecutable->getUniformBlockBinding(index));
+        }
+    }
+}
+
+void ProgramExecutableGL::syncUniformBlockBindings()
+{
+    for (size_t uniformBlockIndex : mDirtyUniformBlockBindings)
+    {
+        const GLuint index = static_cast<GLuint>(uniformBlockIndex);
+        setUniformBlockBinding(index, mExecutable->getUniformBlockBinding(index));
+    }
+
+    mDirtyUniformBlockBindings.reset();
+}
 }  // namespace rx

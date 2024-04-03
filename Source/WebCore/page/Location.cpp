@@ -29,7 +29,7 @@
 #include "config.h"
 #include "Location.h"
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalDOMWindowProperty.h"
@@ -252,7 +252,7 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!activeWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+    if (!activeWindow.document()->canNavigate(frame.get(), completedURL))
         return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
@@ -270,22 +270,22 @@ void Location::reload(LocalDOMWindow& activeWindow)
     ASSERT(localFrame->document());
     ASSERT(localFrame->document()->domWindow());
 
-    auto& activeDocument = *activeWindow.document();
-    auto& targetDocument = *localFrame->document();
+    Ref activeDocument = *activeWindow.document();
+    Ref targetDocument = *localFrame->document();
 
     // FIXME: It's not clear this cross-origin security check is valuable.
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
-    if (!activeDocument.securityOrigin().isSameOriginDomain(targetDocument.securityOrigin())) {
-        auto& targetWindow = *targetDocument.domWindow();
-        targetWindow.printErrorMessage(targetWindow.crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
+    if (!activeDocument->protectedSecurityOrigin()->isSameOriginDomain(targetDocument->protectedSecurityOrigin())) {
+        Ref targetWindow = *targetDocument->domWindow();
+        targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
         return;
     }
 
-    if (targetDocument.url().protocolIsJavaScript())
+    if (targetDocument->url().protocolIsJavaScript())
         return;
 
-    localFrame->navigationScheduler().scheduleRefresh(activeDocument);
+    localFrame->checkedNavigationScheduler()->scheduleRefresh(activeDocument);
 }
 
 ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& urlString)
@@ -293,7 +293,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     RefPtr frame = this->frame();
     ASSERT(frame);
 
-    auto* firstFrame = firstWindow.frame();
+    RefPtr firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
         return { };
 
@@ -302,7 +302,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
 
-    if (!incumbentWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+    if (!incumbentWindow.document()->canNavigate(frame.get(), completedURL))
         return Exception { ExceptionCode::SecurityError };
 
     ASSERT(frame->window());

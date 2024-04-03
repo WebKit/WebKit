@@ -56,6 +56,15 @@ public:
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }
 
+    struct PlatformData {
+        GRefPtr<GTlsCertificate> certificate;
+        CredentialPersistence persistence;
+    };
+
+    using IPCData = std::variant<NonPlatformData, PlatformData>;
+    WEBCORE_EXPORT static Credential fromIPCData(IPCData&&);
+    WEBCORE_EXPORT IPCData ipcData() const;
+
 private:
     GRefPtr<GTlsCertificate> m_certificate;
 };

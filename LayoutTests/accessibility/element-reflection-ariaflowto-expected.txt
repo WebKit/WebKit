@@ -1,8 +1,5 @@
 Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElements'
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 PASS: axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
 PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2) === true
 PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true

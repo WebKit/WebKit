@@ -41,13 +41,13 @@
 
 namespace WTF {
 
-template<typename CharacterType> inline bool isLatin1(CharacterType character)
+template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {
     using UnsignedCharacterType = typename std::make_unsigned<CharacterType>::type;
     return static_cast<UnsignedCharacterType>(character) <= static_cast<UnsignedCharacterType>(0xFF);
 }
 
-template<> ALWAYS_INLINE bool isLatin1(LChar)
+template<> ALWAYS_INLINE constexpr bool isLatin1(LChar)
 {
     return true;
 }
@@ -344,13 +344,36 @@ ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
         }
         return true;
     }
-    // Otherwise, we just do a naive loop.
-#endif
+    if (length >= 4) {
+        auto read4 = [](const LChar* p) ALWAYS_INLINE_LAMBDA {
+            // Copy 32 bits and expand to 64 bits.
+            uint32_t v32 = unalignedLoad<uint32_t>(p);
+            uint64_t v64 = static_cast<uint64_t>(v32);
+            v64 = (v64 | (v64 << 16)) & 0x0000ffff0000ffffULL;
+            return static_cast<uint64_t>((v64 | (v64 << 8)) & 0x00ff00ff00ff00ffULL);
+        };
+
+        return static_cast<unsigned>(read4(a) == unalignedLoad<uint64_t>(b)) & static_cast<unsigned>(read4(a + (length % 4)) == unalignedLoad<uint64_t>(b + (length % 4)));
+    }
+    if (length >= 2) {
+        auto read2 = [](const LChar* p) ALWAYS_INLINE_LAMBDA {
+            // Copy 16 bits and expand to 32 bits.
+            uint16_t v16 = unalignedLoad<uint16_t>(p);
+            uint32_t v32 = static_cast<uint32_t>(v16);
+            return static_cast<uint32_t>((v32 | (v32 << 8)) & 0x00ff00ffUL);
+        };
+        return static_cast<unsigned>(read2(a) == unalignedLoad<uint32_t>(b)) & static_cast<unsigned>(read2(a + (length % 2)) == unalignedLoad<uint32_t>(b + (length % 2)));
+    }
+    if (length == 1)
+        return *a == *b;
+    return true;
+#else
     for (unsigned i = 0; i < length; ++i) {
         if (a[i] != b[i])
             return false;
     }
     return true;
+#endif
 }
 
 ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { return equal(b, a, length); }
@@ -1110,8 +1133,132 @@ inline void copyElements(uint8_t* __restrict destination, const uint64_t* __rest
         *destination++ = *source++;
 }
 
+inline void copyElements(UChar* __restrict destination, const LChar* __restrict source, size_t length)
+{
+    copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+}
+
+inline void copyElements(LChar* __restrict destination, const UChar* __restrict source, size_t length)
+{
+    copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+}
+
+inline std::span<const LChar> span(const LChar& character)
+{
+    return { &character, 1 };
+}
+
+inline std::span<const UChar> span(const UChar& character)
+{
+    return { &character, 1 };
+}
+
+inline std::span<const LChar> span8(const char* string)
+{
+    return { reinterpret_cast<const LChar*>(string), string ? strlen(string) : 0 };
+}
+
+inline std::span<const char> span(const char* string)
+{
+    return { string, string ? strlen(string) : 0 };
+}
+
+#if CPU(ARM64)
+
+ALWAYS_INLINE uint8x16_t loadBulk(const uint8_t* ptr)
+{
+    return vld1q_u8(ptr);
+}
+
+ALWAYS_INLINE uint16x8_t loadBulk(const uint16_t* ptr)
+{
+    return vld1q_u16(ptr);
+}
+
+ALWAYS_INLINE uint8x16_t mergeBulk(uint8x16_t accumulated, uint8x16_t input)
+{
+    return vorrq_u8(accumulated, input);
+}
+
+ALWAYS_INLINE uint16x8_t mergeBulk(uint16x8_t accumulated, uint16x8_t input)
+{
+    return vorrq_u16(accumulated, input);
+}
+
+ALWAYS_INLINE bool isNonZeroBulk(uint8x16_t accumulated)
+{
+    return vmaxvq_u8(accumulated);
+}
+
+ALWAYS_INLINE bool isNonZeroBulk(uint16x8_t accumulated)
+{
+    return vmaxvq_u16(accumulated);
+}
+
+template<LChar character, LChar... characters>
+ALWAYS_INLINE uint8x16_t compareBulk(uint8x16_t input)
+{
+    auto result = vceqq_u8(input, vmovq_n_u8(character));
+    if constexpr (!sizeof...(characters))
+        return result;
+    else
+        return mergeBulk(result, compareBulk<characters...>(input));
+}
+
+template<UChar character, UChar... characters>
+ALWAYS_INLINE uint16x8_t compareBulk(uint16x8_t input)
+{
+    auto result = vceqq_u16(input, vmovq_n_u16(character));
+    if constexpr (!sizeof...(characters))
+        return result;
+    else
+        return mergeBulk(result, compareBulk<characters...>(input));
+}
+
+#endif
+
+template<typename CharacterType, CharacterType... characters>
+ALWAYS_INLINE bool compareEach(CharacterType input)
+{
+    // Use | intentionally to reduce branches.
+    return (... | (input == characters));
+}
+
+template<typename CharacterType, CharacterType... characters>
+ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
+{
+    auto* data = span.data();
+    size_t length = span.size();
+
+#if CPU(ARM64)
+    constexpr size_t stride = 16 / sizeof(CharacterType);
+    using UnsignedType = std::make_unsigned_t<CharacterType>;
+    using BulkType = decltype(loadBulk(static_cast<const UnsignedType*>(nullptr)));
+    if (length >= stride) {
+        size_t index = 0;
+        BulkType accumulated { };
+        for (; index + (stride - 1) < length; index += stride)
+            accumulated = mergeBulk(accumulated, compareBulk<characters...>(loadBulk(bitwise_cast<const UnsignedType*>(data + index))));
+
+        if (index < length)
+            accumulated = mergeBulk(accumulated, compareBulk<characters...>(loadBulk(bitwise_cast<const UnsignedType*>(data + length - stride))));
+
+        return isNonZeroBulk(accumulated);
+    }
+#endif
+
+    for (const auto* end = data + length; data != end; ++data) {
+        if (compareEach<CharacterType, characters...>(*data))
+            return true;
+    }
+    return false;
+}
+
 }
 
 using WTF::equalIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::isLatin1;
+using WTF::span;
+using WTF::span8;
+using WTF::charactersContain;

@@ -115,9 +115,9 @@ commit_position = '0'
 
 if git_dir_exists:
     try:
-        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
-        commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
-        commit_position = get_commit_position(cwd)
+        commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd) or commit_id
+        commit_date = grab_output('git show -s --format=%ci HEAD', cwd) or commit_date
+        commit_position = get_commit_position(cwd) or commit_position
     except:
         pass
 

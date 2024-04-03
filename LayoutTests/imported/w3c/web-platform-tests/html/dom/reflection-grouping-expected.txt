@@ -315,10 +315,12 @@ PASS p.tabIndex: setAttribute() to "\f7"
 PASS p.tabIndex: setAttribute() to " 7"
 PASS p.tabIndex: setAttribute() to "\n7"
 PASS p.tabIndex: setAttribute() to "\r7"
+PASS p.tabIndex: setAttribute() to "7\v"
 PASS p.tabIndex: setAttribute() to 1.5
 PASS p.tabIndex: setAttribute() to "5%"
 PASS p.tabIndex: setAttribute() to "+100"
 PASS p.tabIndex: setAttribute() to object "2"
+PASS p.tabIndex: setAttribute() to object "3"
 PASS p.tabIndex: IDL set to -36
 PASS p.tabIndex: IDL set to -1
 PASS p.tabIndex: IDL set to 0
@@ -677,10 +679,12 @@ PASS hr.tabIndex: setAttribute() to "\f7"
 PASS hr.tabIndex: setAttribute() to " 7"
 PASS hr.tabIndex: setAttribute() to "\n7"
 PASS hr.tabIndex: setAttribute() to "\r7"
+PASS hr.tabIndex: setAttribute() to "7\v"
 PASS hr.tabIndex: setAttribute() to 1.5
 PASS hr.tabIndex: setAttribute() to "5%"
 PASS hr.tabIndex: setAttribute() to "+100"
 PASS hr.tabIndex: setAttribute() to object "2"
+PASS hr.tabIndex: setAttribute() to object "3"
 PASS hr.tabIndex: IDL set to -36
 PASS hr.tabIndex: IDL set to -1
 PASS hr.tabIndex: IDL set to 0
@@ -1192,10 +1196,12 @@ PASS pre.tabIndex: setAttribute() to "\f7"
 PASS pre.tabIndex: setAttribute() to " 7"
 PASS pre.tabIndex: setAttribute() to "\n7"
 PASS pre.tabIndex: setAttribute() to "\r7"
+PASS pre.tabIndex: setAttribute() to "7\v"
 PASS pre.tabIndex: setAttribute() to 1.5
 PASS pre.tabIndex: setAttribute() to "5%"
 PASS pre.tabIndex: setAttribute() to "+100"
 PASS pre.tabIndex: setAttribute() to object "2"
+PASS pre.tabIndex: setAttribute() to object "3"
 PASS pre.tabIndex: IDL set to -36
 PASS pre.tabIndex: IDL set to -1
 PASS pre.tabIndex: IDL set to 0
@@ -1215,6 +1221,8 @@ PASS pre.width: setAttribute() to -2147483649
 PASS pre.width: setAttribute() to 4294967295
 PASS pre.width: setAttribute() to 4294967296
 PASS pre.width: setAttribute() to ""
+PASS pre.width: setAttribute() to "-"
+PASS pre.width: setAttribute() to "+"
 PASS pre.width: setAttribute() to "-1"
 PASS pre.width: setAttribute() to "-0"
 PASS pre.width: setAttribute() to "0"
@@ -1245,6 +1253,12 @@ PASS pre.width: setAttribute() to " 7"
 PASS pre.width: setAttribute() to " 7"
 PASS pre.width: setAttribute() to " 7"
 PASS pre.width: setAttribute() to "　7"
+PASS pre.width: setAttribute() to "\t\v7"
+PASS pre.width: setAttribute() to "\n\v7"
+PASS pre.width: setAttribute() to "\f\v7"
+PASS pre.width: setAttribute() to "\r\v7"
+PASS pre.width: setAttribute() to " \v7"
+PASS pre.width: setAttribute() to "7\v"
 PASS pre.width: setAttribute() to undefined
 PASS pre.width: setAttribute() to 1.5
 PASS pre.width: setAttribute() to "5%"
@@ -1579,10 +1593,12 @@ PASS blockquote.tabIndex: setAttribute() to "\f7"
 PASS blockquote.tabIndex: setAttribute() to " 7"
 PASS blockquote.tabIndex: setAttribute() to "\n7"
 PASS blockquote.tabIndex: setAttribute() to "\r7"
+PASS blockquote.tabIndex: setAttribute() to "7\v"
 PASS blockquote.tabIndex: setAttribute() to 1.5
 PASS blockquote.tabIndex: setAttribute() to "5%"
 PASS blockquote.tabIndex: setAttribute() to "+100"
 PASS blockquote.tabIndex: setAttribute() to object "2"
+PASS blockquote.tabIndex: setAttribute() to object "3"
 PASS blockquote.tabIndex: IDL set to -36
 PASS blockquote.tabIndex: IDL set to -1
 PASS blockquote.tabIndex: IDL set to 0
@@ -1947,10 +1963,12 @@ PASS ol.tabIndex: setAttribute() to "\f7"
 PASS ol.tabIndex: setAttribute() to " 7"
 PASS ol.tabIndex: setAttribute() to "\n7"
 PASS ol.tabIndex: setAttribute() to "\r7"
+PASS ol.tabIndex: setAttribute() to "7\v"
 PASS ol.tabIndex: setAttribute() to 1.5
 PASS ol.tabIndex: setAttribute() to "5%"
 PASS ol.tabIndex: setAttribute() to "+100"
 PASS ol.tabIndex: setAttribute() to object "2"
+PASS ol.tabIndex: setAttribute() to object "3"
 PASS ol.tabIndex: IDL set to -36
 PASS ol.tabIndex: IDL set to -1
 PASS ol.tabIndex: IDL set to 0
@@ -2009,6 +2027,8 @@ PASS ol.start: setAttribute() to -2147483649
 PASS ol.start: setAttribute() to 4294967295
 PASS ol.start: setAttribute() to 4294967296
 PASS ol.start: setAttribute() to ""
+PASS ol.start: setAttribute() to "-"
+PASS ol.start: setAttribute() to "+"
 PASS ol.start: setAttribute() to "-1"
 PASS ol.start: setAttribute() to "-0"
 PASS ol.start: setAttribute() to "0"
@@ -2039,6 +2059,12 @@ PASS ol.start: setAttribute() to " 7"
 PASS ol.start: setAttribute() to " 7"
 PASS ol.start: setAttribute() to " 7"
 PASS ol.start: setAttribute() to "　7"
+PASS ol.start: setAttribute() to "\t\v7"
+PASS ol.start: setAttribute() to "\n\v7"
+PASS ol.start: setAttribute() to "\f\v7"
+PASS ol.start: setAttribute() to "\r\v7"
+PASS ol.start: setAttribute() to " \v7"
+PASS ol.start: setAttribute() to "7\v"
 PASS ol.start: setAttribute() to undefined
 PASS ol.start: setAttribute() to 1.5
 PASS ol.start: setAttribute() to "5%"
@@ -2450,10 +2476,12 @@ PASS ul.tabIndex: setAttribute() to "\f7"
 PASS ul.tabIndex: setAttribute() to " 7"
 PASS ul.tabIndex: setAttribute() to "\n7"
 PASS ul.tabIndex: setAttribute() to "\r7"
+PASS ul.tabIndex: setAttribute() to "7\v"
 PASS ul.tabIndex: setAttribute() to 1.5
 PASS ul.tabIndex: setAttribute() to "5%"
 PASS ul.tabIndex: setAttribute() to "+100"
 PASS ul.tabIndex: setAttribute() to object "2"
+PASS ul.tabIndex: setAttribute() to object "3"
 PASS ul.tabIndex: IDL set to -36
 PASS ul.tabIndex: IDL set to -1
 PASS ul.tabIndex: IDL set to 0
@@ -2851,10 +2879,12 @@ PASS li.tabIndex: setAttribute() to "\f7"
 PASS li.tabIndex: setAttribute() to " 7"
 PASS li.tabIndex: setAttribute() to "\n7"
 PASS li.tabIndex: setAttribute() to "\r7"
+PASS li.tabIndex: setAttribute() to "7\v"
 PASS li.tabIndex: setAttribute() to 1.5
 PASS li.tabIndex: setAttribute() to "5%"
 PASS li.tabIndex: setAttribute() to "+100"
 PASS li.tabIndex: setAttribute() to object "2"
+PASS li.tabIndex: setAttribute() to object "3"
 PASS li.tabIndex: IDL set to -36
 PASS li.tabIndex: IDL set to -1
 PASS li.tabIndex: IDL set to 0
@@ -2874,6 +2904,8 @@ PASS li.value: setAttribute() to -2147483649
 PASS li.value: setAttribute() to 4294967295
 PASS li.value: setAttribute() to 4294967296
 PASS li.value: setAttribute() to ""
+PASS li.value: setAttribute() to "-"
+PASS li.value: setAttribute() to "+"
 PASS li.value: setAttribute() to "-1"
 PASS li.value: setAttribute() to "-0"
 PASS li.value: setAttribute() to "0"
@@ -2904,6 +2936,12 @@ PASS li.value: setAttribute() to " 7"
 PASS li.value: setAttribute() to " 7"
 PASS li.value: setAttribute() to " 7"
 PASS li.value: setAttribute() to "　7"
+PASS li.value: setAttribute() to "\t\v7"
+PASS li.value: setAttribute() to "\n\v7"
+PASS li.value: setAttribute() to "\f\v7"
+PASS li.value: setAttribute() to "\r\v7"
+PASS li.value: setAttribute() to " \v7"
+PASS li.value: setAttribute() to "7\v"
 PASS li.value: setAttribute() to undefined
 PASS li.value: setAttribute() to 1.5
 PASS li.value: setAttribute() to "5%"
@@ -3276,10 +3314,12 @@ PASS dl.tabIndex: setAttribute() to "\f7"
 PASS dl.tabIndex: setAttribute() to " 7"
 PASS dl.tabIndex: setAttribute() to "\n7"
 PASS dl.tabIndex: setAttribute() to "\r7"
+PASS dl.tabIndex: setAttribute() to "7\v"
 PASS dl.tabIndex: setAttribute() to 1.5
 PASS dl.tabIndex: setAttribute() to "5%"
 PASS dl.tabIndex: setAttribute() to "+100"
 PASS dl.tabIndex: setAttribute() to object "2"
+PASS dl.tabIndex: setAttribute() to object "3"
 PASS dl.tabIndex: IDL set to -36
 PASS dl.tabIndex: IDL set to -1
 PASS dl.tabIndex: IDL set to 0
@@ -3639,10 +3679,12 @@ PASS dt.tabIndex: setAttribute() to "\f7"
 PASS dt.tabIndex: setAttribute() to " 7"
 PASS dt.tabIndex: setAttribute() to "\n7"
 PASS dt.tabIndex: setAttribute() to "\r7"
+PASS dt.tabIndex: setAttribute() to "7\v"
 PASS dt.tabIndex: setAttribute() to 1.5
 PASS dt.tabIndex: setAttribute() to "5%"
 PASS dt.tabIndex: setAttribute() to "+100"
 PASS dt.tabIndex: setAttribute() to object "2"
+PASS dt.tabIndex: setAttribute() to object "3"
 PASS dt.tabIndex: IDL set to -36
 PASS dt.tabIndex: IDL set to -1
 PASS dt.tabIndex: IDL set to 0
@@ -3963,10 +4005,12 @@ PASS dd.tabIndex: setAttribute() to "\f7"
 PASS dd.tabIndex: setAttribute() to " 7"
 PASS dd.tabIndex: setAttribute() to "\n7"
 PASS dd.tabIndex: setAttribute() to "\r7"
+PASS dd.tabIndex: setAttribute() to "7\v"
 PASS dd.tabIndex: setAttribute() to 1.5
 PASS dd.tabIndex: setAttribute() to "5%"
 PASS dd.tabIndex: setAttribute() to "+100"
 PASS dd.tabIndex: setAttribute() to object "2"
+PASS dd.tabIndex: setAttribute() to object "3"
 PASS dd.tabIndex: IDL set to -36
 PASS dd.tabIndex: IDL set to -1
 PASS dd.tabIndex: IDL set to 0
@@ -4287,10 +4331,12 @@ PASS figure.tabIndex: setAttribute() to "\f7"
 PASS figure.tabIndex: setAttribute() to " 7"
 PASS figure.tabIndex: setAttribute() to "\n7"
 PASS figure.tabIndex: setAttribute() to "\r7"
+PASS figure.tabIndex: setAttribute() to "7\v"
 PASS figure.tabIndex: setAttribute() to 1.5
 PASS figure.tabIndex: setAttribute() to "5%"
 PASS figure.tabIndex: setAttribute() to "+100"
 PASS figure.tabIndex: setAttribute() to object "2"
+PASS figure.tabIndex: setAttribute() to object "3"
 PASS figure.tabIndex: IDL set to -36
 PASS figure.tabIndex: IDL set to -1
 PASS figure.tabIndex: IDL set to 0
@@ -4611,10 +4657,12 @@ PASS figcaption.tabIndex: setAttribute() to "\f7"
 PASS figcaption.tabIndex: setAttribute() to " 7"
 PASS figcaption.tabIndex: setAttribute() to "\n7"
 PASS figcaption.tabIndex: setAttribute() to "\r7"
+PASS figcaption.tabIndex: setAttribute() to "7\v"
 PASS figcaption.tabIndex: setAttribute() to 1.5
 PASS figcaption.tabIndex: setAttribute() to "5%"
 PASS figcaption.tabIndex: setAttribute() to "+100"
 PASS figcaption.tabIndex: setAttribute() to object "2"
+PASS figcaption.tabIndex: setAttribute() to object "3"
 PASS figcaption.tabIndex: IDL set to -36
 PASS figcaption.tabIndex: IDL set to -1
 PASS figcaption.tabIndex: IDL set to 0
@@ -4935,10 +4983,12 @@ PASS main.tabIndex: setAttribute() to "\f7"
 PASS main.tabIndex: setAttribute() to " 7"
 PASS main.tabIndex: setAttribute() to "\n7"
 PASS main.tabIndex: setAttribute() to "\r7"
+PASS main.tabIndex: setAttribute() to "7\v"
 PASS main.tabIndex: setAttribute() to 1.5
 PASS main.tabIndex: setAttribute() to "5%"
 PASS main.tabIndex: setAttribute() to "+100"
 PASS main.tabIndex: setAttribute() to object "2"
+PASS main.tabIndex: setAttribute() to object "3"
 PASS main.tabIndex: IDL set to -36
 PASS main.tabIndex: IDL set to -1
 PASS main.tabIndex: IDL set to 0
@@ -5259,10 +5309,12 @@ PASS div.tabIndex: setAttribute() to "\f7"
 PASS div.tabIndex: setAttribute() to " 7"
 PASS div.tabIndex: setAttribute() to "\n7"
 PASS div.tabIndex: setAttribute() to "\r7"
+PASS div.tabIndex: setAttribute() to "7\v"
 PASS div.tabIndex: setAttribute() to 1.5
 PASS div.tabIndex: setAttribute() to "5%"
 PASS div.tabIndex: setAttribute() to "+100"
 PASS div.tabIndex: setAttribute() to object "2"
+PASS div.tabIndex: setAttribute() to object "3"
 PASS div.tabIndex: IDL set to -36
 PASS div.tabIndex: IDL set to -1
 PASS div.tabIndex: IDL set to 0

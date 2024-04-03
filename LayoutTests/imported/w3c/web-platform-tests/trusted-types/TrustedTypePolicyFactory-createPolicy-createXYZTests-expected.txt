@@ -1,0 +1,30 @@
+
+PASS html = identity function
+PASS html = null
+PASS html = string + global string
+PASS html = identity function, global string changed
+PASS html = callback that throws
+PASS html = this bound to an object
+PASS html = this without bind
+PASS html - calling undefined callback throws
+PASS createHTML defined - calling undefined callbacks throws
+PASS script = identity function
+PASS script = null
+PASS script = string + global string
+PASS script = identity function, global string changed
+PASS script = callback that throws
+PASS script = this bound to an object
+PASS script = this without bind
+PASS script - calling undefined callback throws
+PASS createScript defined - calling undefined callbacks throws
+PASS script_url = identity function
+PASS script_url = null
+PASS script_url = string + global string
+PASS script_url = identity function, global string changed
+PASS script_url = callback that throws
+PASS script_url = this bound to an object
+PASS script_url = this without bind
+PASS script_url - calling undefined callback throws
+PASS createScriptURL defined - calling undefined callbacks throws
+PASS Arbitrary number of arguments
+

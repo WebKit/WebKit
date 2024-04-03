@@ -37,6 +37,7 @@ typedef struct CGContext* CGContextRef;
 namespace WebCore {
 
 class GraphicsContext;
+class Path;
 class PathStream;
 
 class PathCG final : public PathImpl {
@@ -57,6 +58,7 @@ public:
     void add(PathBezierCurveTo) final;
     void add(PathArcTo) final;
     void add(PathArc) final;
+    void add(PathClosedArc) final;
     void add(PathEllipse) final;
     void add(PathEllipseInRect) final;
     void add(PathRect) final;
@@ -77,8 +79,6 @@ private:
     PathCG(RetainPtr<CGMutablePathRef>&&);
 
     PlatformPathPtr ensureMutablePlatformPath();
-
-    void applySegments(const PathSegmentApplier&) const final;
 
     bool isEmpty() const final;
 

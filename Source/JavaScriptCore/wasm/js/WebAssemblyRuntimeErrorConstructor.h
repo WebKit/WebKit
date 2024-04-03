@@ -37,7 +37,7 @@ class WebAssemblyRuntimeErrorPrototype;
 class WebAssemblyRuntimeErrorConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyRuntimeErrorConstructor* create(VM&, Structure*, WebAssemblyRuntimeErrorPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

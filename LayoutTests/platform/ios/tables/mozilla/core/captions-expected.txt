@@ -5,7 +5,7 @@ layer at (0,0) size 800x1130
     RenderBody {BODY} at (8,8) size 784x1114
       RenderTable {TABLE} at (0,0) size 784x604 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 784x20
-          RenderInline {NOBR} at (0,0) size 624x19
+          RenderInline {NOBR} at (80,0) size 624x19
             RenderText {#text} at (80,0) size 624x19
               text run at (80,0) width 361: "caption is considered part of % width, not so in Nav4.6, "
               text run at (440,0) width 264: "caption is not considered part of %height"
@@ -13,7 +13,7 @@ layer at (0,0) size 800x1130
         RenderTableSection {TBODY} at (1,21) size 782x582
           RenderTableRow {TR} at (0,2) size 782x578
             RenderTableCell {TD} at (2,270) size 778x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 33x19
+              RenderText {#text} at (11,279) size 33x19
                 text run at (11,11) width 33: "FOO"
       RenderBlock (anonymous) at (0,604) size 784x20
         RenderBR {BR} at (0,0) size 0x19

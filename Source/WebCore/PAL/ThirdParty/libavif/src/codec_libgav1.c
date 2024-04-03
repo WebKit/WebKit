@@ -1,4 +1,4 @@
-// Copyright 2020 Google LLC. All rights reserved.
+// Copyright 2020 Google LLC
 // SPDX-License-Identifier: BSD-2-Clause
 
 #include "avif/internal.h"
@@ -117,9 +117,6 @@ static avifBool gav1CodecGetNextImage(struct avifCodec * codec,
         image->transferCharacteristics = (avifTransferCharacteristics)gav1Image->transfer_characteristics;
         image->matrixCoefficients = (avifMatrixCoefficients)gav1Image->matrix_coefficients;
 
-        avifPixelFormatInfo formatInfo;
-        avifGetPixelFormatInfo(yuvFormat, &formatInfo);
-
         // Steal the pointers from the decoder's image directly
         avifImageFreePlanes(image, AVIF_PLANES_YUV);
         int yuvPlaneCount = (yuvFormat == AVIF_PIXEL_FORMAT_YUV400) ? 1 : 3;
@@ -160,11 +157,18 @@ const char * avifCodecVersionGav1(void)
 avifCodec * avifCodecCreateGav1(void)
 {
     avifCodec * codec = (avifCodec *)avifAlloc(sizeof(avifCodec));
+    if (codec == NULL) {
+        return NULL;
+    }
     memset(codec, 0, sizeof(struct avifCodec));
     codec->getNextImage = gav1CodecGetNextImage;
     codec->destroyInternal = gav1CodecDestroyInternal;
 
     codec->internal = (struct avifCodecInternal *)avifAlloc(sizeof(struct avifCodecInternal));
+    if (codec->internal == NULL) {
+        avifFree(codec);
+        return NULL;
+    }
     memset(codec->internal, 0, sizeof(struct avifCodecInternal));
     Libgav1DecoderSettingsInitDefault(&codec->internal->gav1Settings);
     return codec;

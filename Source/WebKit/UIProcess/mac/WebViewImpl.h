@@ -31,11 +31,11 @@
 #include "EditorState.h"
 #include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
-#include "ShareableBitmap.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebKit/WKDragDestinationAction.h>
@@ -282,6 +282,7 @@ public:
     void windowDidDeminiaturize();
     void windowDidMove();
     void windowDidResize();
+    void windowWillBeginSheet();
     void windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor);
     void windowDidChangeScreen();
     void windowDidChangeLayerHosting();
@@ -448,7 +449,7 @@ public:
     void setIgnoresMouseDraggedEvents(bool);
     bool ignoresMouseDraggedEvents() const { return m_ignoresMouseDraggedEvents; }
 
-    void setAccessibilityWebProcessToken(NSData *);
+    void setAccessibilityWebProcessToken(NSData *, WebCore::FrameIdentifier, pid_t);
     void accessibilityRegisterUIProcessTokens();
     void updateRemoteAccessibilityRegistration(bool registerProcess);
     id accessibilityFocusedUIElement();
@@ -513,7 +514,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     void startWindowDrag();
 
-    void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&& image);
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *uti, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
     void setPromisedDataForImage(WebCore::Image&, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
@@ -590,6 +591,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void characterIndexForPoint(NSPoint, void(^)(NSUInteger));
     void typingAttributesWithCompletionHandler(void(^)(NSDictionary<NSString *, id> *));
 
+    bool isContentRichlyEditable() const;
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    void insertMultiRepresentationHEIC(NSData *);
+#endif
+
     void mouseMoved(NSEvent *);
     void mouseDown(NSEvent *);
     void mouseUp(NSEvent *);
@@ -607,8 +614,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
-    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void computeHasVisualSearchResults(const URL& imageURL, WebCore::ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -639,10 +646,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     bool isPictureInPictureActive();
     void togglePictureInPicture();
+    bool isInWindowFullscreenActive() const;
+    void toggleInWindowFullscreen();
     void updateMediaPlaybackControlsManager();
 
     AVTouchBarScrubber *mediaPlaybackControlsView() const;
 #endif
+    void nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSString *, NSString *));
+
     NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 
@@ -681,6 +692,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    bool canHandleSwapCharacters() const;
+    void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView);
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionCoordinatorProxyPrivate* mediaSessionCoordinatorForTesting() { return m_coordinatorForTesting.get(); }
     void setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate*);
@@ -694,12 +710,28 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void didFinishPresentation(WKRevealItemPresenter *);
 #endif
 
-    void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect);
+    void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullscreen();
 
 #if HAVE(INLINE_PREDICTIONS)
     void setInlinePredictionsEnabled(bool enabled) { m_inlinePredictionsEnabled = enabled; }
     bool inlinePredictionsEnabled() const { return m_inlinePredictionsEnabled; }
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void willBeginTextReplacementSession(const WTF::UUID&, WebUnifiedTextReplacementType, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&&);
+
+    void didBeginTextReplacementSession(const WTF::UUID&, const Vector<WebUnifiedTextReplacementContextData>&);
+
+    void textReplacementSessionDidReceiveReplacements(const WTF::UUID&, const Vector<WebTextReplacementData>&, const WebUnifiedTextReplacementContextData&, bool finished);
+
+    void textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID&, WebTextReplacementDataState, const WebTextReplacementData&, const WebUnifiedTextReplacementContextData&);
+
+    void didEndTextReplacementSession(const WTF::UUID&, bool accepted);
+
+    void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&);
+
+    void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementDataEditAction);
 #endif
 
 private:
@@ -797,6 +829,8 @@ private:
 #endif
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
+
+    Ref<WebPageProxy> protectedPage() const;
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
     std::unique_ptr<PageClient> m_pageClient;
@@ -896,6 +930,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool m_allowsMagnification { false };
 
     RetainPtr<NSAccessibilityRemoteUIElement> m_remoteAccessibilityChild;
+    RetainPtr<NSMutableDictionary> m_remoteAccessibilityFrameCache;
 
     RefPtr<WebCore::Image> m_promisedImage;
     String m_promisedFilename;

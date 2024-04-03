@@ -47,9 +47,6 @@ public:
 private:
     CookieChangeEvent(const AtomString& type, CookieChangeEventInit&&, IsTrusted);
 
-    // Event
-    EventInterface eventInterface() const final;
-
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;
 };

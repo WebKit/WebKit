@@ -32,19 +32,12 @@
 #include "JSWebAssemblyLinkError.h"
 #include "WebAssemblyLinkErrorPrototype.h"
 
-#include "WebAssemblyLinkErrorConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyLinkErrorConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorConstructor) };
+const ClassInfo WebAssemblyLinkErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyLinkError);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyLinkError);
-
-/* Source for WebAssemblyLinkErrorConstructor.lut.h
- @begin constructorTableWebAssemblyLinkError
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyLinkError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

@@ -55,13 +55,13 @@ class MediaStream final
     , private LoggerHelper
 #endif
     , public RefCounted<MediaStream> {
-    WTF_MAKE_ISO_ALLOCATED(MediaStream);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(MediaStream, WEBCORE_EXPORT);
 public:
     static Ref<MediaStream> create(Document&);
     static Ref<MediaStream> create(Document&, MediaStream&);
     static Ref<MediaStream> create(Document&, const Vector<RefPtr<MediaStreamTrack>>&);
     static Ref<MediaStream> create(Document&, Ref<MediaStreamPrivate>&&);
-    virtual ~MediaStream();
+    WEBCORE_EXPORT virtual ~MediaStream();
 
     String id() const { return m_private->id(); }
 
@@ -88,12 +88,13 @@ public:
     template<typename Function> bool hasMatchingTrack(Function&& function) const { return anyOf(m_trackMap.values(), std::forward<Function>(function)); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
+    Ref<MediaStreamPrivate> protectedPrivateStream();
 
     void startProducingData();
     void stopProducingData();
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaStream; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<MediaStream>::ref;

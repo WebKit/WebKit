@@ -32,13 +32,17 @@
 
 #import "APIPageConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
+#import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionControllerConfiguration.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
 static NSString * const persistentCodingKey = @"persistent";
 static NSString * const temporaryCodingKey = @"temporary";
 static NSString * const temporaryDirectoryCodingKey = @"temporaryDirectory";
 static NSString * const identifierCodingKey = @"identifier";
 static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
+static NSString * const defaultWebsiteDataStoreCodingKey = @"defaultWebsiteDataStore";
+#endif
 
 @implementation _WKWebExtensionControllerConfiguration
 
@@ -48,6 +52,8 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionControllerConfiguration, WebExtensionControllerConfiguration, _webExtensionControllerConfiguration);
 
 + (instancetype)defaultConfiguration
 {
@@ -81,6 +87,7 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
     [coder encodeObject:self.identifier forKey:identifierCodingKey];
     [coder encodeBool:self.persistent forKey:persistentCodingKey];
     [coder encodeObject:self.webViewConfiguration forKey:webViewConfigurationCodingKey];
+    [coder encodeObject:self.defaultWebsiteDataStore forKey:defaultWebsiteDataStoreCodingKey];
 
     if (!self._temporary)
         return;
@@ -108,6 +115,9 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
         // Remake the directories if needed, since they might have been cleaned up since this was last used.
         FileSystem::makeAllDirectories(temporaryDirectory);
 
+        self.webViewConfiguration = [coder decodeObjectOfClass:WKWebViewConfiguration.class forKey:webViewConfigurationCodingKey];
+        self.defaultWebsiteDataStore = [coder decodeObjectOfClass:WKWebsiteDataStore.class forKey:defaultWebsiteDataStoreCodingKey];
+
         return self;
     }
 
@@ -120,6 +130,7 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
         API::Object::constructInWrapper<WebKit::WebExtensionControllerConfiguration>(self, persistent ? IsPersistent::Yes : IsPersistent::No);
 
     self.webViewConfiguration = [coder decodeObjectOfClass:WKWebViewConfiguration.class forKey:webViewConfigurationCodingKey];
+    self.defaultWebsiteDataStore = [coder decodeObjectOfClass:WKWebsiteDataStore.class forKey:defaultWebsiteDataStoreCodingKey];
 
     return self;
 }
@@ -127,13 +138,6 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 - (id)copyWithZone:(NSZone *)zone
 {
     return _webExtensionControllerConfiguration->copy()->wrapper();
-}
-
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionControllerConfiguration->~WebExtensionControllerConfiguration();
 }
 
 - (BOOL)isEqual:(id)object
@@ -175,6 +179,16 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
     _webExtensionControllerConfiguration->setWebViewConfiguration(configuration);
 }
 
+- (WKWebsiteDataStore *)defaultWebsiteDataStore
+{
+    return wrapper(_webExtensionControllerConfiguration->defaultWebsiteDataStore());
+}
+
+- (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+{
+    _webExtensionControllerConfiguration->setDefaultWebsiteDataStore(dataStore ? dataStore->_websiteDataStore.get() : nullptr);
+}
+
 - (BOOL)_isTemporary
 {
     return _webExtensionControllerConfiguration->storageIsTemporary();
@@ -185,6 +199,11 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
     if (auto& directory = _webExtensionControllerConfiguration->storageDirectory(); !directory.isEmpty())
         return directory;
     return nil;
+}
+
+- (void)_setStorageDirectoryPath:(NSString *)path
+{
+    _webExtensionControllerConfiguration->setStorageDirectory(path);
 }
 
 #pragma mark WKObject protocol implementation
@@ -254,6 +273,15 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 {
 }
 
+- (WKWebsiteDataStore *)defaultWebsiteDataStore
+{
+    return nil;
+}
+
+- (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore
+{
+}
+
 - (BOOL)_isTemporary
 {
     return NO;
@@ -262,6 +290,10 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 - (NSString *)_storageDirectoryPath
 {
     return nil;
+}
+
+- (void)_setStorageDirectoryPath:(NSString *)path
+{
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

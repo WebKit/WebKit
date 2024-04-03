@@ -14,7 +14,7 @@ layer at (28,46) size 622x98
     RenderBlock {P} at (11,35) size 600x28
       RenderText {#text} at (0,0) size 135x28
         text run at (0,0) width 135: "Lorem ipsum "
-      RenderInline {SPAN} at (0,0) size 388x28
+      RenderInline {SPAN} at (134,0) size 388x28
         RenderText {#text} at (134,0) size 388x28
           text run at (134,0) width 388: "dolor sit amet, consectetur adipisicing"
       RenderText {#text} at (521,0) size 43x28

@@ -43,7 +43,4 @@ enum ScrollSetting { "" /* none */, "up" };
     attribute double viewportAnchorX;
     attribute double viewportAnchorY;
     attribute ScrollSetting scroll;
-    
-    // FIXME: non-standard?
-    readonly attribute TextTrack track;
 };

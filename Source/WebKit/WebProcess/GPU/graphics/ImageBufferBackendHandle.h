@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ShareableBitmap.h"
+#include <WebCore/ShareableBitmap.h>
 #include <variant>
 #include <wtf/MachSendRight.h>
 
@@ -36,7 +36,7 @@
 namespace WebKit {
 
 using ImageBufferBackendHandle = std::variant<
-    ShareableBitmap::Handle
+    WebCore::ShareableBitmap::Handle
 #if PLATFORM(COCOA) // FIXME: This is really about IOSurface.
     , MachSendRight
 #endif

@@ -57,7 +57,7 @@ fn main()
     // CHECK: function\d\(\)
     _ = g();
 
-    // CHECK: function\d\(global\d, global\d\)
+    // CHECK: function\d\(global\d, \(\d+\)\)
     _ = h();
 
     // CHECK: function\d\(global\d\)

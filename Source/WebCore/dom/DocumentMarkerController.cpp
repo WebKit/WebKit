@@ -43,9 +43,10 @@
 namespace WebCore {
 
 constexpr Seconds markerFadeAnimationDuration = 200_ms;
-constexpr double markerFadeAnimationFrameRate = 30;
 
-inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::Type> types)
+constexpr double markerAnimationFrameRate = 30;
+
+inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarker::Type> types) const
 {
     return m_possiblyExistingMarkerTypes.containsAny(types);
 }
@@ -53,6 +54,7 @@ inline bool DocumentMarkerController::possiblyHasMarkers(OptionSet<DocumentMarke
 DocumentMarkerController::DocumentMarkerController(Document& document)
     : m_document(document)
     , m_fadeAnimationTimer(*this, &DocumentMarkerController::fadeAnimationTimerFired)
+    , m_unifiedTextReplacementAnimationTimer(*this, &DocumentMarkerController::unifiedTextReplacementAnimationTimerFired)
 {
 }
 
@@ -63,6 +65,7 @@ void DocumentMarkerController::detach()
     m_markers.clear();
     m_possiblyExistingMarkerTypes = { };
     m_fadeAnimationTimer.stop();
+    m_unifiedTextReplacementAnimationTimer.stop();
 }
 
 auto DocumentMarkerController::collectTextRanges(const SimpleRange& range) -> Vector<TextRange>
@@ -239,20 +242,29 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
 
 static bool shouldInsertAsSeparateMarker(const DocumentMarker& marker)
 {
+    switch (marker.type()) {
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-    if (marker.type() == DocumentMarker::Type::PlatformTextChecking)
+    case DocumentMarker::Type::PlatformTextChecking:
         return true;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (marker.type() == DocumentMarker::Type::DictationPhraseWithAlternatives || marker.type() == DocumentMarker::Type::DictationResult)
+    case DocumentMarker::Type::DictationPhraseWithAlternatives:
+    case DocumentMarker::Type::DictationResult:
         return true;
 #endif
 
-    if (marker.type() == DocumentMarker::Type::DraggedContent)
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    case DocumentMarker::Type::UnifiedTextReplacement:
+        return true;
+#endif
+
+    case DocumentMarker::Type::DraggedContent:
         return is<RenderReplaced>(std::get<RefPtr<Node>>(marker.data())->renderer());
 
-    return false;
+    default:
+        return false;
+    }
 }
 
 // Markers are stored in order sorted by their start offset.
@@ -323,6 +335,13 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
 
     if (CheckedPtr renderer = node.renderer())
         renderer->repaint();
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (newMarker.type() == DocumentMarker::Type::UnifiedTextReplacement) {
+        if (!m_unifiedTextReplacementAnimationTimer.isActive())
+            m_unifiedTextReplacementAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
+    }
+#endif
 
     invalidateRectsForMarkersInNode(node);
 }
@@ -451,7 +470,7 @@ WeakPtr<DocumentMarker> DocumentMarkerController::markerContainingPoint(const La
     return nullptr;
 }
 
-Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::Type> types)
+Vector<WeakPtr<RenderedDocumentMarker>> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::Type> types) const
 {
     if (!possiblyHasMarkers(types))
         return { };
@@ -555,6 +574,11 @@ void DocumentMarkerController::removeMarkers(OptionSet<DocumentMarker::Type> typ
     for (auto& node : copyToVector(m_markers.keys()))
         removedMarkerTypes = removedMarkerTypes & removeMarkersFromList(m_markers.find(node), types, filter);
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (removedMarkerTypes.contains(DocumentMarker::Type::UnifiedTextReplacement))
+        m_unifiedTextReplacementAnimationTimer.stop();
+#endif
+
     m_possiblyExistingMarkerTypes.remove(removedMarkerTypes);
 }
 
@@ -644,13 +668,19 @@ void DocumentMarkerController::shiftMarkers(Node& node, unsigned startOffset, in
         // FIXME: No obvious reason this should be iOS-specific. Remove the #if at some point.
         auto targetStartOffset = clampTo<unsigned>(static_cast<int>(marker.startOffset()) + delta);
         auto targetEndOffset = clampTo<unsigned>(static_cast<int>(marker.endOffset()) + delta);
-        if (targetStartOffset >= node.length() || targetEndOffset <= 0) {
-            list->remove(i);
-            continue;
-        }
 #endif
 
         if (marker.startOffset() >= startOffset) {
+            // There is no need to adjust or remove the marker if it's before the start of the
+            // text being removed.
+
+#if PLATFORM(IOS_FAMILY)
+            if (targetStartOffset >= node.length() || targetEndOffset <= 0) {
+                list->remove(i);
+                continue;
+            }
+#endif
+
             ASSERT((int)marker.startOffset() + delta >= 0);
             marker.shiftOffsets(delta);
             didShiftMarker = true;
@@ -693,7 +723,18 @@ void DocumentMarkerController::dismissMarkers(OptionSet<DocumentMarker::Type> ty
     });
 
     if (requiresAnimation && !m_fadeAnimationTimer.isActive())
-        m_fadeAnimationTimer.startRepeating(1_s / markerFadeAnimationFrameRate);
+        m_fadeAnimationTimer.startRepeating(1_s / markerAnimationFrameRate);
+}
+
+void DocumentMarkerController::unifiedTextReplacementAnimationTimerFired()
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    forEachOfTypes({ DocumentMarker::Type::UnifiedTextReplacement }, [](Node& node, RenderedDocumentMarker&) {
+        if (CheckedPtr renderer = node.renderer())
+            renderer->repaint();
+        return false;
+    });
+#endif
 }
 
 void DocumentMarkerController::fadeAnimationTimerFired()
@@ -785,7 +826,7 @@ void DocumentMarkerController::showMarkers() const
     for (auto& nodeMarkers : m_markers) {
         fprintf(stderr, "%p", nodeMarkers.key.ptr());
         for (auto& marker : *nodeMarkers.value)
-            fprintf(stderr, " %hu:[%d:%d]", enumToUnderlyingType(marker.type()), marker.startOffset(), marker.endOffset());
+            fprintf(stderr, " %u:[%d:%d]", enumToUnderlyingType(marker.type()), marker.startOffset(), marker.endOffset());
         fputc('\n', stderr);
     }
 }

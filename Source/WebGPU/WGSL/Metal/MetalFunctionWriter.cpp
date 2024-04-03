@@ -47,9 +47,11 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(CallGraph& callGraph, StringBuilder& stringBuilder)
+    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
         : m_stringBuilder(stringBuilder)
-        , m_callGraph(callGraph)
+        , m_shaderModule(shaderModule)
+        , m_prepareResult(prepareResult)
+        , m_constantValues(constantValues)
     {
     }
 
@@ -129,13 +131,17 @@ private:
     void visitStatements(AST::Statement::List&);
 
     StringBuilder& m_stringBuilder;
-    CallGraph& m_callGraph;
+    ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
+    AST::Function* m_currentFunction { nullptr };
     unsigned m_functionConstantIndex { 0 };
-    std::optional<AST::Continuing> m_continuing;
+    AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
+    PrepareResult& m_prepareResult;
+    const HashMap<String, ConstantValue>& m_constantValues;
+    HashMap<String, ConstantValue> m_overrides;
 };
 
 static const char* serializeAddressSpace(AddressSpace addressSpace)
@@ -159,26 +165,28 @@ void FunctionDefinitionWriter::write()
 {
     emitNecessaryHelpers();
 
-    for (auto& declaration : m_callGraph.ast().declarations()) {
-        if (is<AST::Structure>(declaration))
-            visit(downcast<AST::Structure>(declaration));
-        else if (is<AST::Variable>(declaration))
-            visitGlobal(downcast<AST::Variable>(declaration));
+    for (auto& declaration : m_shaderModule.declarations()) {
+        if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
+            visit(*structure);
+        else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
+            visitGlobal(*variable);
     }
 
-    for (auto& declaration : m_callGraph.ast().declarations()) {
-        if (is<AST::Structure>(declaration))
-            generatePackingHelpers(downcast<AST::Structure>(declaration));
+    for (auto& declaration : m_shaderModule.declarations()) {
+        if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
+            generatePackingHelpers(*structure);
     }
 
-    for (auto& entryPoint : m_callGraph.entrypoints())
-        visit(entryPoint.function);
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        if (m_prepareResult.entryPoints.contains(entryPoint.originalName))
+            visit(entryPoint.function);
+    }
 }
 
 void FunctionDefinitionWriter::emitNecessaryHelpers()
 {
-    if (m_callGraph.ast().usesExternalTextures()) {
-        m_callGraph.ast().clearUsesExternalTextures();
+    if (m_shaderModule.usesExternalTextures()) {
+        m_shaderModule.clearUsesExternalTextures();
         m_stringBuilder.append("struct texture_external {\n");
         {
             IndentationScope scope(m_indent);
@@ -192,8 +200,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append("};\n\n");
     }
 
-    if (m_callGraph.ast().usesPackArray()) {
-        m_callGraph.ast().clearUsesPackArray();
+    if (m_shaderModule.usesPackArray()) {
+        m_shaderModule.clearUsesPackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
         m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -210,8 +218,8 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesUnpackArray()) {
-        m_callGraph.ast().clearUsesUnpackArray();
+    if (m_shaderModule.usesUnpackArray()) {
+        m_shaderModule.clearUsesUnpackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
         m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -228,7 +236,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesWorkgroupUniformLoad()) {
+    if (m_shaderModule.usesWorkgroupUniformLoad()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -242,7 +250,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesDivision()) {
+    if (m_shaderModule.usesDivision()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslDiv(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -259,7 +267,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesModulo()) {
+    if (m_shaderModule.usesModulo()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n");
         m_stringBuilder.append(m_indent, "V __wgslMod(T lhs, U rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -277,7 +285,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
 
-    if (m_callGraph.ast().usesFrexp()) {
+    if (m_shaderModule.usesFrexp()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
         m_stringBuilder.append(m_indent, "struct __frexp_result {\n");
         {
@@ -299,7 +307,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesModf()) {
+    if (m_shaderModule.usesModf()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
         m_stringBuilder.append(m_indent, "struct __modf_result {\n");
         {
@@ -321,13 +329,13 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
-    if (m_callGraph.ast().usesAtomicCompareExchange()) {
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
+    if (m_shaderModule.usesAtomicCompareExchange()) {
+        m_stringBuilder.append(m_indent, "template<typename T, typename U = bool>\n");
         m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "T old_value;\n");
-            m_stringBuilder.append(m_indent, "bool exchanged;\n");
+            m_stringBuilder.append(m_indent, "U exchanged;\n");
         }
         m_stringBuilder.append(m_indent, "};\n\n");
 
@@ -335,12 +343,13 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
-            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed) }; \\\n");
+            m_stringBuilder.append(m_indent, "bool exchanged = atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed); \\\n");
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, exchanged }; \\\n");
             m_stringBuilder.append(m_indent, "})\n");
         }
     }
 
-    if (m_callGraph.ast().usesDot()) {
+    if (m_shaderModule.usesDot()) {
         m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n");
         m_stringBuilder.append(m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -354,7 +363,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesDot4I8Packed()) {
+    if (m_shaderModule.usesDot4I8Packed()) {
         m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
@@ -366,7 +375,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesDot4U8Packed()) {
+    if (m_shaderModule.usesDot4U8Packed()) {
         m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
@@ -378,7 +387,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesFirstLeadingBit()) {
+    if (m_shaderModule.usesFirstLeadingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslFirstLeadingBit(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -392,7 +401,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesFirstTrailingBit()) {
+    if (m_shaderModule.usesFirstTrailingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslFirstTrailingBit(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
@@ -403,37 +412,28 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesSign()) {
+    if (m_shaderModule.usesSign()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
         m_stringBuilder.append(m_indent, "T __wgslSign(T e)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e < 0), T(0), e == 0);\n");
+            m_stringBuilder.append(m_indent, "return select(select(T(-1), T(1), e > 0), T(0), e == 0);\n");
         }
         m_stringBuilder.append(m_indent, "}\n");
     }
 
-    if (m_callGraph.ast().usesPackedStructs()) {
-        m_callGraph.ast().clearUsesPackedStructs();
-
+    if (m_shaderModule.usesExtractBits()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __pack(T unpacked)\n");
+        m_stringBuilder.append(m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n");
         m_stringBuilder.append(m_indent, "{\n");
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return unpacked;\n");
+            m_stringBuilder.append(m_indent, "auto o = min(offset, 32u);\n");
+            m_stringBuilder.append(m_indent, "auto c = min(count, 32u - o);\n");
+            m_stringBuilder.append(m_indent, "return extract_bits(e, o, c);\n");
         }
-        m_stringBuilder.append(m_indent, "}\n\n");
-
-        m_stringBuilder.append(m_indent, "template<typename T>\n");
-        m_stringBuilder.append(m_indent, "T __unpack(T packed)\n");
-        m_stringBuilder.append(m_indent, "{\n");
-        {
-            IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "return packed;\n");
-        }
-        m_stringBuilder.append(m_indent, "}\n\n");
+        m_stringBuilder.append(m_indent, "}\n");
     }
 }
 
@@ -442,7 +442,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
     if (!m_visitedFunctions.add(&functionDefinition).isNewEntry)
         return;
 
-    for (auto& callee : m_callGraph.callees(functionDefinition))
+    for (auto& callee : m_shaderModule.callGraph().callees(functionDefinition))
         visit(*callee.target);
 
     // FIXME: visit return attributes
@@ -475,12 +475,16 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
         }
         first = false;
     }
+
     // Clear the flag set while serializing StageAttribute
     m_entryPointStage = std::nullopt;
 
+    m_currentFunction = &functionDefinition;
     m_stringBuilder.append(")\n");
     checkErrorAndVisit(functionDefinition.body());
     m_stringBuilder.append("\n\n");
+
+    m_currentFunction = nullptr;
 }
 
 void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
@@ -560,7 +564,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
 void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
 {
-    if (structure.role() != AST::StructureRole::PackedResource)
+    if (structure.role() != AST::StructureRole::PackedResource || !structure.inferredType()->isConstructible())
         return;
 
     const String& packedName = structure.name();
@@ -573,7 +577,10 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, packedName, " packed;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
+            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+                m_stringBuilder.append(m_indent, "packed.", name, " = __pack(unpacked.", name, ");\n");
+            else
+                m_stringBuilder.append(m_indent, "packed.", name, " = unpacked.", name, ";\n");
         }
         m_stringBuilder.append(m_indent, "return packed;\n");
     }
@@ -586,7 +593,10 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n");
         for (auto& member : structure.members()) {
             auto& name = member.name();
-            m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
+            if (member.type().inferredType()->packing() == Packing::PackedStruct)
+                m_stringBuilder.append(m_indent, "unpacked.", name, " = __unpack(packed.", name, ");\n");
+            else
+                m_stringBuilder.append(m_indent, "unpacked.", name, " = packed.", name, ";\n");
         }
         m_stringBuilder.append(m_indent, "return unpacked;\n");
     }
@@ -643,9 +653,19 @@ void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
     if (variable.flavor() != AST::VariableFlavor::Override)
         return;
 
-    m_stringBuilder.append("constant ");
-    serializeVariable(variable);
-    m_stringBuilder.append(" [[function_constant(", m_functionConstantIndex++, ")]];\n");
+    String entryName = variable.originalName();
+    if (variable.id())
+        entryName = String::number(*variable.id());
+    auto it = m_constantValues.find(entryName);
+    if (it != m_constantValues.end()) {
+        m_overrides.add(variable.name(), it->value);
+        return;
+    }
+    auto* initializer = variable.maybeInitializer();
+    if (!initializer)
+        return;
+    if (auto& maybeConstant = initializer->constantValue())
+        m_overrides.add(variable.name(), *maybeConstant);
 }
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
@@ -768,8 +788,8 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
     unsigned bufferIndex = group.group().constantValue()->integerValue();
     if (m_entryPointStage.has_value() && *m_entryPointStage == ShaderStage::Vertex) {
-        ASSERT(m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
-        auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
+        ASSERT(m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage > 0);
+        auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage - 1;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
     }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
@@ -912,7 +932,14 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Array& array) {
             m_stringBuilder.append("array<");
             visit(array.element);
-            m_stringBuilder.append(", ", array.size.value_or(1), ">");
+            m_stringBuilder.append(", ");
+            WTF::switchOn(array.size,
+                [&](unsigned size) { m_stringBuilder.append(size); },
+                [&](std::monostate) { m_stringBuilder.append(1); },
+                [&](AST::Expression* size) {
+                    visit(*size);
+                });
+            m_stringBuilder.append(">");
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
@@ -990,7 +1017,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
                 break;
             }
             m_stringBuilder.append(base, "<");
-            visit(shaderTypeForTexelFormat(texture.format, m_callGraph.ast().types()));
+            visit(shaderTypeForTexelFormat(texture.format, m_shaderModule.types()));
             m_stringBuilder.append(", access::", mode, ">");
         },
         [&](const TextureDepth& texture) {
@@ -1036,7 +1063,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append("*");
         },
         [&](const Atomic& atomic) {
-            if (atomic.element == m_callGraph.ast().types().i32Type())
+            if (atomic.element == m_shaderModule.types().i32Type())
                 m_stringBuilder.append("atomic_int");
             else
                 m_stringBuilder.append("atomic_uint");
@@ -1085,17 +1112,12 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expressi
         return;
     }
 
-    switch (expression.kind()) {
-    case AST::NodeKind::CallExpression:
-        visit(type, downcast<AST::CallExpression>(expression));
-        break;
-    case AST::NodeKind::IdentityExpression:
-        visit(type, downcast<AST::IdentityExpression>(expression).expression());
-        break;
-    default:
+    if (auto* call = dynamicDowncast<AST::CallExpression>(expression))
+        visit(type, *call);
+    else if (auto* identity = dynamicDowncast<AST::IdentityExpression>(expression))
+        visit(type, identity->expression());
+    else
         AST::Visitor::visit(expression);
-        break;
-    }
 }
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
@@ -1552,6 +1574,11 @@ static void emitStorageBarrier(FunctionDefinitionWriter* writer, AST::CallExpres
     writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_device)");
 }
 
+static void emitTextureBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
+{
+    writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_texture)");
+}
+
 static void emitWorkgroupBarrier(FunctionDefinitionWriter* writer, AST::CallExpression&)
 {
     writer->stringBuilder().append("threadgroup_barrier(mem_flags::mem_threadgroup)");
@@ -1627,10 +1654,9 @@ static void emitAtomicExchange(FunctionDefinitionWriter* writer, AST::CallExpres
     atomicFunction("atomic_exchange_explicit", writer, call);
 }
 
-static void emitArrayLength(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+[[noreturn]] static void emitArrayLength(FunctionDefinitionWriter*, AST::CallExpression&)
 {
-    writer->visit(call.arguments()[0]);
-    writer->stringBuilder().append(".size()");
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static void emitDistance(FunctionDefinitionWriter* writer, AST::CallExpression& call)
@@ -1765,9 +1791,8 @@ static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression
 
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
-    if (is<AST::ElaboratedTypeExpression>(call.target())) {
-        auto& base = downcast<AST::ElaboratedTypeExpression>(call.target()).base();
-        if (base == "bitcast"_s) {
+    if (auto* target = dynamicDowncast<AST::ElaboratedTypeExpression>(call.target())) {
+        if (target->base() == "bitcast"_s) {
             emitBitcast(this, call);
             return;
         }
@@ -1798,7 +1823,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         return;
     }
 
-    if (is<AST::IdentifierExpression>(call.target())) {
+    if (auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
             { "__dynamicOffset", emitDynamicOffset },
             { "arrayLength", emitArrayLength },
@@ -1823,6 +1848,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "quantizeToF16", emitQuantizeToF16 },
             { "radians", emitRadians },
             { "storageBarrier", emitStorageBarrier },
+            { "textureBarrier", emitTextureBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureGather", emitTextureGather },
             { "textureGatherCompare", emitTextureGatherCompare },
@@ -1845,7 +1871,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
-        const auto& targetName = downcast<AST::IdentifierExpression>(call.target()).identifier().id();
+        const auto& targetName = target->identifier().id();
         if (auto mappedBuiltin = builtins.get(targetName)) {
             mappedBuiltin(this, call);
             return;
@@ -1865,7 +1891,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "dpdy", "dfdy"_s },
             { "dpdyCoarse", "dfdy"_s },
             { "dpdyFine", "dfdy"_s },
-            { "extractBits", "extract_bits"_s },
+            { "extractBits", "__wgslExtractBits"_s },
             { "faceForward", "faceforward"_s },
             { "firstLeadingBit", "__wgslFirstLeadingBit"_s },
             { "firstTrailingBit", "__wgslFirstTrailingBit"_s },
@@ -1880,6 +1906,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "pack4x8snorm", "pack_float_to_snorm4x8"_s },
             { "pack4x8unorm", "pack_float_to_unorm4x8"_s },
             { "reverseBits", "reverse_bits"_s },
+            { "round", "rint"_s },
             { "sign", "__wgslSign"_s },
             { "unpack2x16snorm", "unpack_snorm2x16_to_float"_s },
             { "unpack2x16unorm", "unpack_unorm2x16_to_float"_s },
@@ -2040,6 +2067,13 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
+    auto it = m_overrides.find(identifier.identifier());
+    if (UNLIKELY(it != m_overrides.end())) {
+        m_stringBuilder.append("(");
+        serializeConstant(identifier.inferredType(), it->value);
+        m_stringBuilder.append(")");
+        return;
+    }
     m_stringBuilder.append(identifier.identifier());
 }
 
@@ -2201,12 +2235,48 @@ void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
     m_stringBuilder.append(")");
 }
 
+static std::optional<std::pair<String, String>> fragDepthIdentifierForFunction(AST::Function* function)
+{
+    if (!function || function->stage() != ShaderStage::Fragment)
+        return std::nullopt;
+
+    if (auto expression = function->maybeReturnType()) {
+        if (auto* inferredType = expression->inferredType()) {
+            auto& type = *inferredType;
+            auto* returnStruct = std::get_if<WGSL::Types::Struct>(&type);
+            if (!returnStruct)
+                return std::nullopt;
+
+            for (auto& member : returnStruct->structure.members()) {
+                if (member.builtin() == WGSL::Builtin::FragDepth)
+                    return std::make_pair(returnStruct->structure.name(), member.name());
+                for (auto& attribute : member.attributes()) {
+                    auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute);
+                    if (builtinAttribute && builtinAttribute->builtin() == WGSL::Builtin::FragDepth)
+                        return std::make_pair(returnStruct->structure.name(), member.name());
+                }
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
-    m_stringBuilder.append("return");
+    auto fragDepthIdentifier = fragDepthIdentifierForFunction(m_currentFunction);
+    if (fragDepthIdentifier)
+        m_stringBuilder.append(fragDepthIdentifier->first, " __wgslFragmentReturnResult = ");
+    else
+        m_stringBuilder.append("return");
     if (statement.maybeExpression()) {
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());
+    }
+
+    if (fragDepthIdentifier) {
+        m_stringBuilder.append(";\n__wgslFragmentReturnResult.", fragDepthIdentifier->second, " = clamp(__wgslFragmentReturnResult.", fragDepthIdentifier->second, ", as_type<float>(__DynamicOffsets[0]), as_type<float>(__DynamicOffsets[1]));\n");
+        m_stringBuilder.append("return __wgslFragmentReturnResult");
     }
 }
 
@@ -2234,7 +2304,7 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
     m_stringBuilder.append("while (true) {\n");
     {
         auto& continuing = statement.continuing();
-        SetForScope continuingScope(m_continuing, continuing);
+        SetForScope continuingScope(m_continuing, continuing.has_value() ? &*continuing : nullptr);
 
         IndentationScope scope(m_indent);
         visitStatements(statement.body());
@@ -2249,6 +2319,9 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
 {
+    // Do not emit the same continuing for continue statements within the continuing block
+    SetForScope continuingScope(m_continuing, nullptr);
+
     m_stringBuilder.append("{\n");
     {
         IndentationScope scope(m_indent);
@@ -2310,7 +2383,7 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
 {
-    if (m_continuing.has_value()) {
+    if (m_continuing) {
         visit(*m_continuing);
         m_stringBuilder.append(m_indent);
     }
@@ -2407,9 +2480,15 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
             }
             m_stringBuilder.append(")");
         },
-        [&](const Struct&) {
-            // Not supported yet
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Struct& structType) {
+            auto& constantStruct = std::get<ConstantStruct>(value);
+            m_stringBuilder.append(structType.structure.name(), " { ");
+            for (auto& member : structType.structure.members()) {
+                m_stringBuilder.append(".", member.name(), " = ");
+                serializeConstant(structType.fields.get(member.originalName()), constantStruct.fields.get(member.originalName()));
+                m_stringBuilder.append(", ");
+            }
+            m_stringBuilder.append(" }");
         },
         [&](const PrimitiveStruct& primitiveStruct) {
             auto& constantStruct = std::get<ConstantStruct>(value);
@@ -2463,9 +2542,9 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         });
 }
 
-void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)
+void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(callGraph, stringBuilder);
+    FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues);
     functionDefinitionWriter.write();
 }
 

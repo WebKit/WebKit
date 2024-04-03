@@ -30,7 +30,7 @@ namespace WebCore {
 
 Ref<DecomposedGlyphs> DecomposedGlyphs::create(const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return adoptRef(*new DecomposedGlyphs({ { glyphs, count }, { advances, count }, localAnchor, mode }, renderingResourceIdentifier));
+    return adoptRef(*new DecomposedGlyphs({ Vector(std::span { glyphs, count }), Vector(std::span { advances, count }), localAnchor, mode }, renderingResourceIdentifier));
 }
 
 Ref<DecomposedGlyphs> DecomposedGlyphs::create(PositionedGlyphs&& positionedGlyphs, RenderingResourceIdentifier renderingResourceIdentifier)

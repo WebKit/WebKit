@@ -35,7 +35,6 @@
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
 #include "Database.h"
-#include "DeclarativeAnimation.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "Event.h"
@@ -49,6 +48,7 @@
 #include "ResourceLoader.h"
 #include "ResourceLoaderIdentifier.h"
 #include "StorageArea.h"
+#include "StyleOriginatedAnimation.h"
 #include "WebAnimation.h"
 #include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>

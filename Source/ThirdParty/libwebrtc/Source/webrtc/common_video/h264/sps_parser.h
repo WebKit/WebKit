@@ -30,6 +30,10 @@ class SpsParser {
     SpsState(const SpsState&);
     ~SpsState();
 
+#if WEBRTC_WEBKIT_BUILD
+    uint32_t pic_width_in_mbs_minus1 = 0;
+    uint32_t pic_height_in_map_units_minus1 = 0;
+#endif
     uint32_t width = 0;
     uint32_t height = 0;
     uint32_t delta_pic_order_always_zero_flag = 0;

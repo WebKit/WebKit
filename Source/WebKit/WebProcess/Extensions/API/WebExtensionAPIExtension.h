@@ -38,7 +38,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPIExtension : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIExtension, extension);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIExtension, extension, extension);
 
 public:
     enum class ViewType : uint8_t {
@@ -47,9 +47,9 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
-    bool isInIncognitoContext(WebPage*);
+    bool isInIncognitoContext(WebPage&);
     void isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&&);
     void isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&&);
 

@@ -87,8 +87,6 @@ from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
 
-CHANGESET_NOT_AVAILABLE = 'Not Available'
-
 _log = logging.getLogger(__name__)
 
 
@@ -395,6 +393,8 @@ class TestImporter(object):
                     total_tests += 1
                     test_basename = self.filesystem.basename(test_info['test'])
 
+                    ref_files = []
+
                     # Add the ref file, following WebKit style.
                     # FIXME: Ideally we'd support reading the metadata
                     # directly rather than relying  on a naming convention.
@@ -404,13 +404,15 @@ class TestImporter(object):
                         ref_file = self.filesystem.splitext(test_basename)[0] + '-expected'
                         ref_file += self.filesystem.splitext(test_info['match_reference'])[1]
                         copy_list.append({'src': test_info['match_reference'], 'dest': ref_file, 'reference_support_info': test_info['match_reference_support_info']})
+                        ref_files.append({'src': self.filesystem.split(test_info['match_reference'])[1], 'dest': self.filesystem.split(ref_file)[1]})
 
                     if 'mismatch_reference' in test_info.keys():
                         ref_file = self.filesystem.splitext(test_basename)[0] + '-expected-mismatch'
                         ref_file += self.filesystem.splitext(test_info['mismatch_reference'])[1]
                         copy_list.append({'src': test_info['mismatch_reference'], 'dest': ref_file, 'reference_support_info': test_info['mismatch_reference_support_info']})
+                        ref_files.append({'src': self.filesystem.split(test_info['mismatch_reference'])[1], 'dest': self.filesystem.split(ref_file)[1]})
 
-                    copy_list.append({'src': test_info['test'], 'dest': filename})
+                    copy_list.append({'src': test_info['test'], 'dest': filename, 'reference_file_renames': ref_files})
 
                 elif 'jstest' in test_info.keys():
                     jstests += 1
@@ -568,6 +570,11 @@ class TestImporter(object):
                 else:
                     reference_support_info = None
 
+                if 'reference_file_renames' in file_to_copy.keys() and file_to_copy['reference_file_renames'] != {}:
+                    reference_file_renames = file_to_copy['reference_file_renames']
+                else:
+                    reference_file_renames = []
+
                 if not(self.filesystem.exists(self.filesystem.dirname(new_filepath))):
                     self.filesystem.maybe_make_directory(self.filesystem.dirname(new_filepath))
 
@@ -587,7 +594,7 @@ class TestImporter(object):
                                         and ('html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]) or 'javascript' in str(mimetype[0])):
                     _log.info("Rewriting: %s" % new_filepath)
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, reference_file_renames=reference_file_renames, host=self.host, webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)

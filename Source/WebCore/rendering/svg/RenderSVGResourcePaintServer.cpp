@@ -20,7 +20,6 @@
 #include "config.h"
 #include "RenderSVGResourcePaintServer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,4 +36,3 @@ RenderSVGResourcePaintServer::~RenderSVGResourcePaintServer() = default;
 
 }
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

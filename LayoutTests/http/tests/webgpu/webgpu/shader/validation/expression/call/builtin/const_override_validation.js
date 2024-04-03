@@ -1,20 +1,50 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import { assert, unreachable } from '../../../../../../common/util/util.js';
-import { kValue } from '../../../../../util/constants.js';
-import {
-  TypeF16,
-  elementType,
-  elementsOf,
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/import { assert, unreachable } from '../../../../../../common/util/util.js';import { kValue } from '../../../../../util/constants.js';import {
+  Type,
+
+  elementTypeOf,
   isAbstractType,
-} from '../../../../../util/conversion.js';
-import { fullF16Range, fullF32Range, fullF64Range, linearRange } from '../../../../../util/math.js';
+  scalarElementsOf,
+  scalarTypeOf } from
+'../../../../../util/conversion.js';
+import {
+  scalarF16Range,
+  scalarF32Range,
+  scalarF64Range,
+  linearRange,
+  linearRangeBigInt } from
+'../../../../../util/math.js';
 
-/// A linear sweep between -2 to 2
-export const kMinusTwoToTwo = linearRange(-2, 2, 10);
 
-/// An array of values ranging from -3π to 3π, with a focus on multiples of π
-export const kMinus3PiTo3Pi = [
+/** @returns a function that can select between ranges depending on type */
+export function rangeForType(
+number_range,
+bigint_range)
+{
+  return (type) => {
+    switch (scalarTypeOf(type).kind) {
+      case 'abstract-float':
+      case 'f32':
+      case 'f16':
+        return number_range;
+      case 'abstract-int':
+        return bigint_range;
+    }
+    unreachable(`Received unexpected type '${type}'`);
+  };
+}
+
+/* @returns a linear sweep between -2 to 2 for type */
+
+export const minusTwoToTwoRangeForType = rangeForType(
+  linearRange(-2, 2, 10),
+  [-2n, -1n, 0n, 1n, 2n]
+);
+
+/* @returns array of values ranging from -3π to 3π, with a focus on multiples of π */
+export const minusThreePiToThreePiRangeForType = rangeForType(
+  [
   -3 * Math.PI,
   -2.999 * Math.PI,
 
@@ -63,13 +93,19 @@ export const kMinus3PiTo3Pi = [
   2.501 * Math.PI,
 
   2.999 * Math.PI,
-  3 * Math.PI,
-];
+  3 * Math.PI],
 
-/// A minimal array of values ranging from -3π to 3π, with a focus on multiples
-/// of π. Used when multiple parameters are being passed in, so the number of
-/// cases becomes the square or more of this list.
-export const kSparseMinus3PiTo3Pi = [
+  [-2n, -1n, 0n, 1n, 2n]
+);
+
+/**
+ * @returns a minimal array of values ranging from -3π to 3π, with a focus on
+ * multiples of π.
+ *
+ * Used when multiple parameters are being passed in, so the number of cases
+ * becomes the square or more of this list. */
+export const sparseMinusThreePiToThreePiRangeForType = rangeForType(
+  [
   -3 * Math.PI,
   -2.5 * Math.PI,
   -2.0 * Math.PI,
@@ -82,17 +118,21 @@ export const kSparseMinus3PiTo3Pi = [
   1.5 * Math.PI,
   2.0 * Math.PI,
   2.5 * Math.PI,
-  3 * Math.PI,
-];
+  3 * Math.PI],
+
+  [-2n, -1n, 0n, 1n, 2n]
+);
 
 /// The evaluation stages to test
 export const kConstantAndOverrideStages = ['constant', 'override'];
 
+
+
 /**
- * @returns true if evaluation stage @p stage supports expressions of type @p.
+ * @returns true if evaluation stage `stage` supports expressions of type @p.
  */
 export function stageSupportsType(stage, type) {
-  if (stage === 'override' && isAbstractType(elementType(type))) {
+  if (stage === 'override' && isAbstractType(elementTypeOf(type))) {
     // Abstract numerics are concretized before being used in an override expression.
     return false;
   }
@@ -100,7 +140,7 @@ export function stageSupportsType(stage, type) {
 }
 
 /**
- * Runs a validation test to check that evaluation of @p builtin either evaluates with or without
+ * Runs a validation test to check that evaluation of `builtin` either evaluates with or without
  * error at shader creation time or pipeline creation time.
  * @param t the ShaderValidationTest
  * @param builtin the name of the builtin
@@ -108,79 +148,85 @@ export function stageSupportsType(stage, type) {
  * @param args the arguments to pass to the builtin
  * @param stage the evaluation stage
  */
-export function validateConstOrOverrideBuiltinEval(t, builtin, expectedResult, args, stage) {
-  const elTys = args.map(arg => elementType(arg.type));
-  const enables = elTys.some(ty => ty === TypeF16) ? 'enable f16;' : '';
+export function validateConstOrOverrideBuiltinEval(
+t,
+builtin,
+expectedResult,
+args,
+stage)
+{
+  const elTys = args.map((arg) => elementTypeOf(arg.type));
+  const enables = elTys.some((ty) => ty === Type.f16) ? 'enable f16;' : '';
 
   switch (stage) {
-    case 'constant': {
-      t.expectCompileResult(
-        expectedResult,
-        `${enables}
-const v = ${builtin}(${args.map(arg => arg.wgsl()).join(', ')});`
-      );
-
-      break;
-    }
-    case 'override': {
-      assert(!elTys.some(ty => isAbstractType(ty)));
-      const constants = {};
-      const overrideDecls = [];
-      const callArgs = [];
-      let numOverrides = 0;
-      for (const arg of args) {
-        const argOverrides = [];
-        for (const el of elementsOf(arg)) {
-          const name = `o${numOverrides++}`;
-          overrideDecls.push(`override ${name} : ${el.type};`);
-          argOverrides.push(name);
-          constants[name] = Number(el.value);
-        }
-        callArgs.push(`${arg.type}(${argOverrides.join(', ')})`);
+    case 'constant':{
+        t.expectCompileResult(
+          expectedResult,
+          `${enables}
+const v = ${builtin}(${args.map((arg) => arg.wgsl()).join(', ')});`
+        );
+        break;
       }
-      t.expectPipelineResult({
-        expectedResult,
-        code: `${enables}
+    case 'override':{
+        assert(!elTys.some((ty) => isAbstractType(ty)));
+        const constants = {};
+        const overrideDecls = [];
+        const callArgs = [];
+        let numOverrides = 0;
+        for (const arg of args) {
+          const argOverrides = [];
+          for (const el of scalarElementsOf(arg)) {
+            const name = `o${numOverrides++}`;
+            overrideDecls.push(`override ${name} : ${el.type};`);
+            argOverrides.push(name);
+            constants[name] = Number(el.value);
+          }
+          callArgs.push(`${arg.type}(${argOverrides.join(', ')})`);
+        }
+        t.expectPipelineResult({
+          expectedResult,
+          code: `${enables}
 ${overrideDecls.join('\n')}
 var<private> v = ${builtin}(${callArgs.join(', ')});`,
-        constants,
-        reference: ['v'],
-      });
-      break;
-    }
+          constants,
+          reference: ['v']
+        });
+        break;
+      }
   }
 }
 
-/** @returns a sweep of the representable values for element type of @p type */
+/** @returns a sweep of the representable values for element type of `type` */
 export function fullRangeForType(type, count) {
   if (count === undefined) {
     count = 25;
   }
-  switch (elementType(type)?.kind) {
+  switch (scalarTypeOf(type)?.kind) {
     case 'abstract-float':
-      return fullF64Range({
-        pos_sub: Math.ceil((count * 1) / 5),
-        pos_norm: Math.ceil((count * 4) / 5),
+      return scalarF64Range({
+        pos_sub: Math.ceil(count * 1 / 5),
+        pos_norm: Math.ceil(count * 4 / 5)
       });
     case 'f32':
-      return fullF32Range({
-        pos_sub: Math.ceil((count * 1) / 5),
-        pos_norm: Math.ceil((count * 4) / 5),
+      return scalarF32Range({
+        pos_sub: Math.ceil(count * 1 / 5),
+        pos_norm: Math.ceil(count * 4 / 5)
       });
     case 'f16':
-      return fullF16Range({
-        pos_sub: Math.ceil((count * 1) / 5),
-        pos_norm: Math.ceil((count * 4) / 5),
+      return scalarF16Range({
+        pos_sub: Math.ceil(count * 1 / 5),
+        pos_norm: Math.ceil(count * 4 / 5)
       });
     case 'i32':
-      return linearRange(kValue.i32.negative.min, kValue.i32.positive.max, count).map(f =>
-        Math.floor(f)
+      return linearRange(kValue.i32.negative.min, kValue.i32.positive.max, count).map((f) =>
+      Math.floor(f)
       );
-
     case 'u32':
-      return linearRange(0, kValue.u32.max, count).map(f => Math.floor(f));
+      return linearRange(0, kValue.u32.max, count).map((f) => Math.floor(f));
+    case 'abstract-int':
+      // Returned values are already ints, so don't need to be floored.
+      return linearRangeBigInt(kValue.i64.negative.min, kValue.i64.positive.max, count);
   }
-
   unreachable();
 }
 

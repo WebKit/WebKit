@@ -41,13 +41,14 @@ namespace WebGPU {
 
 class Adapter;
 class Device;
+class Instance;
 class Texture;
 class TextureView;
 
 class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, public RefCounted<PresentationContext> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&);
+    static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&, const Instance&);
     static Ref<PresentationContext> createInvalid()
     {
         return adoptRef(*new PresentationContext());
@@ -61,7 +62,7 @@ public:
     virtual void unconfigure();
 
     virtual void present();
-    virtual Texture* getCurrentTexture(); // FIXME: This should return a Texture&.
+    virtual Texture* getCurrentTexture();
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
 
     virtual bool isPresentationContextIOSurface() const { return false; }

@@ -47,7 +47,8 @@ received. After the JSON rules are parsed, the result will be stored in `SharedP
 key-value pair, with the key being the package name and the value being the driver selection choice.
 The JSON parsing code is in `AngleRuleHelper`.
 
-`TODO(b/314409902): Set settings global variables when the either intent is received.`
+After parsing, the rules are converted to global settings variables and applied to the system. This
+is done in `Receiver`.
 
 The UI logic is mainly in `MainFragment`, and the `GlobalSettings` is merely for manipulating
 settings global variables and updating `SharedPreferences`. When a user changes the driver choice

@@ -183,7 +183,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:dt
+AXPlatformAttributes: computed-role:term, tag:dt
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -202,7 +202,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:dd
+AXPlatformAttributes: computed-role:definition, tag:dd
 ------------
 AXRole: AXDescriptionTerm
 AXParent: AXDescriptionList
@@ -221,7 +221,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:dt
+AXPlatformAttributes: computed-role:term, tag:dt
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -240,7 +240,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:dd
+AXPlatformAttributes: computed-role:definition, tag:dd
 ------------
 AXRole: AXDescriptionValue
 AXParent: AXDescriptionList
@@ -259,7 +259,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: tag:dd
+AXPlatformAttributes: computed-role:definition, tag:dd
 ------------
 
 

@@ -128,6 +128,13 @@ const PathMoveTo* Path::asSingleMoveTo() const
     return nullptr;
 }
 
+const PathArc* Path::asSingleArc() const
+{
+    if (auto segment = asSingle())
+        return std::get_if<PathArc>(&segment->data());
+    return nullptr;
+}
+
 void Path::addLineTo(const FloatPoint& point)
 {
     if (isEmpty())
@@ -269,7 +276,10 @@ void Path::closeSubpath()
     if (isEmpty() || isClosed())
         return;
 
-    ensureImpl().add(PathCloseSubpath { });
+    if (auto arc = asSingleArc())
+        m_data = PathSegment(PathClosedArc { *arc });
+    else
+        ensureImpl().add(PathCloseSubpath { });
 }
 
 void Path::addPath(const Path& path, const AffineTransform& transform)
@@ -367,6 +377,19 @@ std::optional<PathArc> Path::singleArc() const
     return std::nullopt;
 }
 
+std::optional<PathClosedArc> Path::singleClosedArc() const
+{
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathClosedArc>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleClosedArc();
+
+    return std::nullopt;
+}
+
 std::optional<PathDataQuadCurve> Path::singleQuadCurve() const
 {
     if (auto segment = asSingle()) {
@@ -450,6 +473,9 @@ float Path::length() const
 
 bool Path::isClosed() const
 {
+    if (auto segment = asSingle())
+        return segment->closesSubpath();
+
     if (auto impl = asImpl())
         return impl->isClosed();
 

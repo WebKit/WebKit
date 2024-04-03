@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -49,6 +47,7 @@ Ref<AccessibilityController> AccessibilityController::create()
 
 AccessibilityController::AccessibilityController()
 {
+    platformInitialize();
 }
 
 AccessibilityController::~AccessibilityController()
@@ -73,6 +72,11 @@ void AccessibilityController::setIsolatedTreeMode(bool flag)
 void AccessibilityController::setForceDeferredSpellChecking(bool shouldForce)
 {
     WKAccessibilitySetForceDeferredSpellChecking(shouldForce);
+}
+
+void AccessibilityController::setForceInitialFrameCaching(bool shouldForce)
+{
+    WKAccessibilitySetForceInitialFrameCaching(shouldForce);
 }
 
 void AccessibilityController::makeWindowObject(JSContextRef context)
@@ -171,6 +175,12 @@ void AccessibilityController::announce(JSStringRef message)
     WKAccessibilityAnnounce(page, toWK(message).get());
 }
 
+#if !PLATFORM(MAC)
+void AccessibilityController::platformInitialize()
+{
+}
+#endif
+
 #if PLATFORM(COCOA)
 
 // AXThread implementation
@@ -268,5 +278,3 @@ void AXThread::threadRunLoopSourceCallback()
 #endif // PLATFORM(COCOA)
 
 } // namespace WTR
-#endif // ENABLE(ACCESSIBILITY)
-

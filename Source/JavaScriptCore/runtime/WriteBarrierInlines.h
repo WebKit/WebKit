@@ -57,7 +57,7 @@ inline void WriteBarrierBase<T, Traits>::setEarlyValue(VM& vm, const JSCell* own
 inline void WriteBarrierBase<Unknown, RawValueTraits<Unknown>>::set(VM& vm, const JSCell* owner, JSValue value)
 {
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
-    m_value = JSValue::encode(value);
+    updateEncodedJSValueConcurrent(m_value, JSValue::encode(value));
     vm.writeBarrier(owner, value);
 }
 

@@ -2,8 +2,8 @@
 
 import os
 import plistlib
-from distutils.spawn import find_executable
-from distutils.version import LooseVersion
+from packaging.version import Version
+from shutil import which
 
 import psutil
 
@@ -50,9 +50,9 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, **kwargs
     if kwargs["binary"] is not None:
         raise ValueError("Safari doesn't support setting executable location")
 
-    V = LooseVersion
     browser_bundle_version = run_info_data["browser_bundle_version"]
-    if browser_bundle_version is not None and V(browser_bundle_version[2:]) >= V("613.1.7.1"):
+    if (browser_bundle_version is not None and
+        Version(browser_bundle_version[2:]) >= Version("613.1.7.1")):
         logger.debug("using acceptInsecureCerts=True")
         executor_kwargs["capabilities"]["acceptInsecureCerts"] = True
     else:
@@ -69,7 +69,7 @@ def env_options():
     return {}
 
 
-def run_info_extras(**kwargs):
+def run_info_extras(logger, **kwargs):
     webdriver_binary = kwargs["webdriver_binary"]
     rv = {}
 
@@ -161,7 +161,7 @@ class SafariBrowser(WebDriverBrowser):
                          env=env)
 
         if "/" not in webdriver_binary:
-            wd_path = find_executable(webdriver_binary)
+            wd_path = which(webdriver_binary)
         else:
             wd_path = webdriver_binary
         self.safari_path = self._find_safari_executable(wd_path)
@@ -193,15 +193,26 @@ class SafariBrowser(WebDriverBrowser):
         if self.kill_safari:
             self.logger.debug("Going to stop Safari")
             for proc in psutil.process_iter(attrs=["exe"]):
-                if (proc.info["exe"] is not None and
-                    os.path.samefile(proc.info["exe"], self.safari_path)):
-                    self.logger.debug("Stopping Safari %s" % proc.pid)
+                if proc.info["exe"] is None:
+                    continue
+
+                try:
+                    if not os.path.samefile(proc.info["exe"], self.safari_path):
+                        continue
+                except OSError:
+                    continue
+
+                self.logger.debug("Stopping Safari %s" % proc.pid)
+                try:
+                    proc.terminate()
                     try:
-                        proc.terminate()
-                        try:
-                            proc.wait(10)
-                        except psutil.TimeoutExpired:
-                            proc.kill()
-                            proc.wait(10)
-                    except psutil.NoSuchProcess:
-                        pass
+                        proc.wait(10)
+                    except psutil.TimeoutExpired:
+                        proc.kill()
+                        proc.wait(10)
+                except psutil.NoSuchProcess:
+                    pass
+                except Exception:
+                    # Safari is a singleton, so treat failure here as a critical error.
+                    self.logger.critical("Failed to stop Safari")
+                    raise

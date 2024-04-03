@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 384x192
+  RenderSVGRoot {svg} at (0,0) size 384x192
+layer at (0,0) size 384x192
+  RenderSVGViewportContainer at (0,0) size 384x192
+layer at (0,0) size 4x3
+  RenderSVGResourceMarker {marker} at (0,0) size 4x3
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 0.38x0.28 clip at (0,0) size 0.38x0.28
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+layer at (10,10) size 3980x1980 backgroundClip at (0,0) size 384x192 clip at (0,0) size 384x192
+  RenderSVGRect {rect} at (10,10) size 3980x1980 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [x=10.00] [y=10.00] [width=3980.00] [height=1980.00]

@@ -61,8 +61,6 @@ public:
     }
     ~FetchEvent();
 
-    EventInterface eventInterface() const final { return FetchEventInterfaceType; }
-
     ExceptionOr<void> respondWith(Ref<DOMPromise>&&);
 
     using ResponseCallback = CompletionHandler<void(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&)>;

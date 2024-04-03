@@ -45,9 +45,9 @@ LocalDOMWindowSpeechSynthesis::LocalDOMWindowSpeechSynthesis(LocalDOMWindow* win
 
 LocalDOMWindowSpeechSynthesis::~LocalDOMWindowSpeechSynthesis() = default;
 
-const char* LocalDOMWindowSpeechSynthesis::supplementName()
+ASCIILiteral LocalDOMWindowSpeechSynthesis::supplementName()
 {
-    return "LocalDOMWindowSpeechSynthesis";
+    return "LocalDOMWindowSpeechSynthesis"_s;
 }
 
 // static

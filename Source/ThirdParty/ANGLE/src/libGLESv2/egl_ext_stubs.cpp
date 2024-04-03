@@ -119,9 +119,10 @@ EGLSurface CreatePlatformWindowSurfaceEXT(Thread *thread,
     // In X11, eglCreatePlatformWindowSurfaceEXT expects the native_window argument to be a pointer
     // to a Window while the EGLNativeWindowType for X11 is its actual value.
     // https://www.khronos.org/registry/EGL/extensions/KHR/EGL_KHR_platform_x11.txt
-    void *actualNativeWindow         = display->getImplementation()->isX11()
-                                           ? *reinterpret_cast<void **>(native_window)
-                                           : native_window;
+    void *actualNativeWindow =
+        display->getImplementation()->getWindowSystem() == angle::NativeWindowSystem::X11
+            ? *reinterpret_cast<void **>(native_window)
+            : native_window;
     EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(actualNativeWindow);
 
     ANGLE_EGL_TRY_RETURN(

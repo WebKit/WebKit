@@ -64,7 +64,11 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebXRBoundedReferenceSpace)
     static bool isType(const WebCore::WebXRReferenceSpace& element) { return element.isBoundedReferenceSpace(); }
-    static bool isType(const WebCore::WebXRSpace& element) { return is<WebCore::WebXRReferenceSpace>(element) && isType(downcast<WebCore::WebXRReferenceSpace>(element)); }
+    static bool isType(const WebCore::WebXRSpace& element)
+    {
+        auto* referenceSpace = dynamicDowncast<WebCore::WebXRReferenceSpace>(element);
+        return referenceSpace && isType(*referenceSpace);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEBXR)

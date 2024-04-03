@@ -536,11 +536,11 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
 
     // Note that the packed |blockName3| might (or might not) be optimized out.
     GLint activeUniforms;
-    glGetProgramiv(program.get(), GL_ACTIVE_UNIFORMS, &activeUniforms);
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &activeUniforms);
     EXPECT_GE(activeUniforms, 11);
 
     GLint activeUniformBlocks;
-    glGetProgramiv(program.get(), GL_ACTIVE_UNIFORM_BLOCKS, &activeUniformBlocks);
+    glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &activeUniformBlocks);
     EXPECT_GE(activeUniformBlocks, 3);
 
     GLint maxLength, size;
@@ -548,14 +548,14 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     GLsizei length;
     GLuint index;
     const GLchar *uniformNames[1];
-    glGetProgramiv(program.get(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength);
+    glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength);
     std::vector<GLchar> strBuffer(maxLength + 1, 0);
 
     uniformNames[0] = "s0.a";
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     EXPECT_EQ(1, size);
     EXPECT_EQ("s0.a", std::string(&strBuffer[0]));
 
@@ -563,7 +563,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(4, size);
     EXPECT_EQ("s0.b[0]", std::string(&strBuffer[0]));
@@ -572,7 +572,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("v0", std::string(&strBuffer[0]));
@@ -581,7 +581,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("s1[0].a", std::string(&strBuffer[0]));
@@ -590,7 +590,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(4, size);
     EXPECT_EQ("s1[0].b[0]", std::string(&strBuffer[0]));
@@ -599,7 +599,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("s1[1].a", std::string(&strBuffer[0]));
@@ -608,7 +608,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(4, size);
     EXPECT_EQ("s1[1].b[0]", std::string(&strBuffer[0]));
@@ -617,7 +617,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("u0", std::string(&strBuffer[0]));
@@ -626,7 +626,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("blockName1.f1", std::string(&strBuffer[0]));
@@ -635,7 +635,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("blockName1.b1", std::string(&strBuffer[0]));
@@ -644,7 +644,7 @@ TEST_P(UniformBufferTest, ActiveUniformNumberAndName)
     glGetUniformIndices(program, 1, uniformNames, &index);
     EXPECT_NE(GL_INVALID_INDEX, index);
     ASSERT_GL_NO_ERROR();
-    glGetActiveUniform(program.get(), index, maxLength, &length, &size, &type, &strBuffer[0]);
+    glGetActiveUniform(program, index, maxLength, &length, &size, &type, &strBuffer[0]);
     ASSERT_GL_NO_ERROR();
     EXPECT_EQ(1, size);
     EXPECT_EQ("f2", std::string(&strBuffer[0]));
@@ -892,12 +892,12 @@ TEST_P(UniformBufferTest31, UniformBufferBindings)
     first[2] = 30.f / 255.f;
     first[3] = 40.f / 255.f;
 
-    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer.get());
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
     glBufferData(GL_UNIFORM_BUFFER, vec4Size, v.data(), GL_STATIC_DRAW);
 
     EXPECT_GL_NO_ERROR();
 
-    glBindBufferBase(GL_UNIFORM_BUFFER, 2, uniformBuffer.get());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 2, uniformBuffer);
     drawQuad(program, "position", 0.5f);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_EQ(px, py, 10, 20, 30, 40);
@@ -909,7 +909,7 @@ TEST_P(UniformBufferTest31, UniformBufferBindings)
 
     // Try to bind the buffer to another binding point
     glUniformBlockBinding(program, uniformBufferIndex, 5);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 5, uniformBuffer.get());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 5, uniformBuffer);
     drawQuad(program, "position", 0.5f);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_EQ(px, py, 10, 20, 30, 40);
@@ -948,15 +948,15 @@ TEST_P(UniformBufferTest31, ConsecutiveBindingsForBlockArray)
     first[2] = 30.f / 255.f;
     first[3] = 40.f / 255.f;
 
-    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffers[0].get());
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffers[0]);
     glBufferData(GL_UNIFORM_BUFFER, vec4Size, v.data(), GL_STATIC_DRAW);
     EXPECT_GL_NO_ERROR();
-    glBindBufferBase(GL_UNIFORM_BUFFER, 2, uniformBuffers[0].get());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 2, uniformBuffers[0]);
     ASSERT_GL_NO_ERROR();
-    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffers[1].get());
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffers[1]);
     glBufferData(GL_UNIFORM_BUFFER, vec4Size, v.data(), GL_STATIC_DRAW);
     EXPECT_GL_NO_ERROR();
-    glBindBufferBase(GL_UNIFORM_BUFFER, 3, uniformBuffers[1].get());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 3, uniformBuffers[1]);
 
     drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
@@ -1161,7 +1161,7 @@ TEST_P(UniformBufferTest, BlockContainingArrayOfStructs)
 
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1221,7 +1221,7 @@ TEST_P(UniformBufferTest, BlockArrayContainingArrayOfStructs)
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, uniformBuffer2);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
     glUniformBlockBinding(program, uniformBuffer2Index, 1);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1269,7 +1269,7 @@ TEST_P(UniformBufferTest, BlockContainingArrayOfStructsContainingArrays)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1318,7 +1318,7 @@ TEST_P(UniformBufferTest, BlockContainingNestedStructs)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1359,7 +1359,7 @@ TEST_P(UniformBufferTest, UniformBlockReservedOpenGLName)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1392,7 +1392,7 @@ TEST_P(UniformBufferTest, UniformBlockInstanceReservedOpenGLName)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1451,7 +1451,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockInstanceWithNestedStructsContainingV
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
@@ -1537,7 +1537,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifier)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 64, 128, 32), 5);
 }
@@ -1585,7 +1585,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithPerMemberRowMajorQualifier)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 64, 128, 32), 5);
 }
@@ -1632,7 +1632,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithPerMemberColumnMajorQualifier)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 192, 128, 96), 5);
 }
@@ -1684,7 +1684,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithRowMajorQualifierOnStruct)
     glBufferData(GL_UNIFORM_BUFFER, kDataSize, v.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, mUniformBuffer);
     glUniformBlockBinding(program, uniformBufferIndex, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 64, 128, 32), 5);
 }
@@ -2016,7 +2016,7 @@ TEST_P(UniformBufferTest, Std140UniformBlockWithDynamicallyIndexedRowMajorArray)
     GLint indexLoc = glGetUniformLocation(program, "u_zero");
     glUseProgram(program);
     glUniform1i(indexLoc, 0);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 255, 0, 255), 5);
 }
@@ -2087,7 +2087,7 @@ TEST_P(UniformBufferTest, ManyBlocks)
     }
 
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
 
     // Modify buffer[1]
     glBindBuffer(GL_UNIFORM_BUFFER, buffers[1]);
@@ -2100,7 +2100,7 @@ TEST_P(UniformBufferTest, ManyBlocks)
     glBufferData(GL_UNIFORM_BUFFER, v.size(), v.data(), GL_STATIC_DRAW);
 
     glViewport(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
 
     // First draw
     EXPECT_PIXEL_NEAR(0, 0, 78, 78, 78, 255, 2);
@@ -2329,17 +2329,17 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsStruct)
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 16, 0, 4, 4, 1.0f, 0.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -2381,17 +2381,17 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsStructAndInstanced)
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 16, 0, 4, 4, 1.0f, 0.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -2449,19 +2449,19 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsStructAndInstancedAr
 
     setArrayValues(floatData1, 0, arraySize, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::cyan, GLColor::cyan, GLColor::cyan, GLColor::cyan);
 
     glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
     setArrayValues(floatData0, 0, arraySize, 16, 0, 4, 4, 1.0f, 0.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData0.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::yellow, GLColor::yellow, GLColor::yellow, GLColor::yellow);
 
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer1);
     setArrayValues(floatData1, arraySize / 4, arraySize / 2, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::yellow, GLColor::magenta, GLColor::yellow, GLColor::yellow);
 }
 
@@ -2510,7 +2510,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructMat4AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 4, 4, 0.0f, 0.5f, 0.0f, 0.5f, 16,
@@ -2518,7 +2518,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructMat4AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 4, 4, 0.5f, 0.0f,
@@ -2526,7 +2526,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructMat4AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -2572,7 +2572,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec2AndVec3
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::white, GLColor::white, GLColor::white, GLColor::white);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 1, 2, 1.0f, 0.0f, 0.0f, 0.0f, 4,
@@ -2580,7 +2580,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec2AndVec3
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::red, GLColor::red, GLColor::red);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 1, 2, 0.0f, 0.0f,
@@ -2588,7 +2588,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec2AndVec3
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::blue, GLColor::red, GLColor::red);
 }
 
@@ -2634,7 +2634,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::white, GLColor::white, GLColor::white, GLColor::white);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 1, 1, 1.0f, 0.0f, 0.0f, 0.0f, 4,
@@ -2642,7 +2642,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::red, GLColor::red, GLColor::red);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 1, 1, 0.0f, 0.0f,
@@ -2650,7 +2650,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::blue, GLColor::red, GLColor::red);
 }
 
@@ -2695,7 +2695,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec3AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::white, GLColor::white, GLColor::white, GLColor::white);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 1, 3, 0.0f, 0.0f, 1.0f, 0.0f, 3,
@@ -2703,7 +2703,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec3AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::red, GLColor::red, GLColor::red);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 1, 3, 0.0f, 1.0f,
@@ -2711,7 +2711,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec3AndFloa
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::blue, GLColor::red, GLColor::red);
 }
 
@@ -2769,7 +2769,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, TwoUniformBlocksInSameProgram)
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount2 * sizeof(GLfloat), &floatData[0]);
     glBufferSubData(GL_UNIFORM_BUFFER, blockSize2, floatCount1 * sizeof(GLfloat),
                     &floatData[floatCount2]);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize2, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 0.0f);
@@ -2778,7 +2778,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, TwoUniformBlocksInSameProgram)
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount2 * sizeof(GLfloat), &floatData[0]);
     glBufferSubData(GL_UNIFORM_BUFFER, blockSize2 + floatCount1 * sizeof(GLfloat) / 4,
                     floatCount1 * sizeof(GLfloat) / 4, &floatData[floatCount2 + floatCount1 / 4]);
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::cyan, GLColor::yellow, GLColor::cyan, GLColor::cyan);
 }
 
@@ -2849,19 +2849,19 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, TwoUniformBlocksInDiffProgram)
 
     setArrayValues(floatData, 0, arraySize1, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), &floatData[0]);
-    drawQuad(program1.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program1, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize2, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount2 * sizeof(GLfloat), &floatData[0]);
-    drawQuad(program2.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program2, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize2, arraySize2 + arraySize1 / 2, 16, 0, 4, 4, 0.0f, 1.0f,
                    0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, floatCount2 * sizeof(GLfloat),
                     (floatCount1 / 2 - floatCount2) * sizeof(GLfloat), &floatData[0]);
-    drawQuad(program1.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program1, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::blue, GLColor::blue);
 }
 
@@ -2921,14 +2921,14 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, SharedSameBufferWithOtherOne)
 
     glBufferSubData(GL_UNIFORM_BUFFER, alignment, floatCount * sizeof(GLfloat), floatData.data());
     glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::magenta, GLColor::magenta, GLColor::magenta, GLColor::magenta);
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 0.5f, 0.0f, 0.5f);
     setArrayValues(floatData1, 0, 1, 4, 0, 1, 4, 0.0f, 0.5f, 0.0f, 0.5f);
     glBufferSubData(GL_UNIFORM_BUFFER, alignment, floatCount * sizeof(GLfloat), floatData.data());
     glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 }
 
@@ -2997,17 +2997,17 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrix)
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 16, 0, 4, 4, 1.0f, 0.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -3064,19 +3064,19 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndInstanced)
 
     setArrayValues(floatData1, 0, arraySize, 16, 0, 4, 4, 0.0f, 1.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::cyan, GLColor::cyan, GLColor::cyan, GLColor::cyan);
 
     glBindBuffer(GL_UNIFORM_BUFFER, mUniformBuffer);
     setArrayValues(floatData0, 0, arraySize, 16, 0, 4, 4, 1.0f, 0.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData0.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::yellow, GLColor::yellow, GLColor::yellow, GLColor::yellow);
 
     glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer1);
     setArrayValues(floatData1, arraySize / 4, arraySize / 2, 16, 0, 4, 4, 0.0f, 0.0f, 1.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData1.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::yellow, GLColor::magenta, GLColor::yellow, GLColor::yellow);
 }
 
@@ -3122,19 +3122,19 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMatrixAndRowMajorQua
     setArrayValues(floatData, 0, arraySize, 16, 0, 2, 4, 0.0f, 0.0f, 0.0f, 0.0f, 8, 2, 4, 1.0f,
                    1.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, 16, 4, 1, 4, 1.0f, 1.0f, 1.0f, 1.0f, 8, 1, 4, 0.0f,
                    0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 16, 0, 1, 4, 1.0f, 1.0f, 1.0f, 1.0f, 4,
                    1, 4, 0.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -3173,12 +3173,12 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsVec4)
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 4, 1.0f, 0.0f, 1.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::magenta, GLColor::magenta, GLColor::magenta, GLColor::magenta);
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 4, 1.0f, 1.0f, 0.0f, 1.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::yellow, GLColor::yellow, GLColor::yellow, GLColor::yellow);
 }
 
@@ -3217,17 +3217,17 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsVec3)
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 3, 0.0f, 0.0f, 1.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 3, 0.0f, 1.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 4, 0, 1, 3, 1.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -3266,17 +3266,17 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsVec2)
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 2, 1.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::magenta, GLColor::magenta, GLColor::magenta, GLColor::magenta);
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 2, 0.0f, 1.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 4, 0, 1, 2, 1.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::magenta, GLColor::green, GLColor::green);
 }
 
@@ -3316,12 +3316,12 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsFloat)
 
     setArrayValues(floatData, 0, arraySize, 4, 0, 1, 1, 1.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::red, GLColor::red, GLColor::red);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, 4, 0, 1, 1, 0.0f, 0.0f, 0.0f, 0.0f);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, floatCount * sizeof(GLfloat), floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::black, GLColor::red, GLColor::red);
 }
 
@@ -3370,7 +3370,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndMat
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::blue, GLColor::blue, GLColor::blue, GLColor::blue);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 1, 1, 2.0f, 0.0f, 0.0f, 0.0f, 4,
@@ -3378,7 +3378,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndMat
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::green, GLColor::green, GLColor::green);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 1, 1, 2.0f, 0.0f,
@@ -3386,7 +3386,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndMat
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::green, GLColor::red, GLColor::green, GLColor::green);
 }
 
@@ -3431,7 +3431,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::white, GLColor::white, GLColor::white, GLColor::white);
 
     setArrayValues(floatData, 0, arraySize, strideofFloatCount, 0, 1, 1, 1.0f, 0.0f, 0.0f, 0.0f, 4,
@@ -3439,7 +3439,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::red, GLColor::red, GLColor::red);
 
     setArrayValues(floatData, arraySize / 4, arraySize / 2, strideofFloatCount, 0, 1, 1, 0.0f, 0.0f,
@@ -3447,7 +3447,7 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
     glBufferSubData(GL_UNIFORM_BUFFER, 0,
                     std::min(static_cast<size_t>(blockSize), floatCount * sizeof(GLfloat)),
                     floatData.data());
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     checkResults(GLColor::red, GLColor::blue, GLColor::red, GLColor::red);
 }
 
@@ -3792,7 +3792,7 @@ TEST_P(WebGL2UniformBufferTest, LargeArrayOfStructs)
     ANGLE_GL_PROGRAM(program, vs.c_str(), kFragmentShader);
     // Add a draw call for the sake of the Vulkan backend that currently really builds shaders at
     // draw time.
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest);

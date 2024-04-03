@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 213x18
           text run at (0,0) width 213: "This tests for regressions against "
         RenderInline {I} at (0,0) size 747x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (212,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (212,0) size 354x18
               text run at (212,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8081"
-          RenderText {#text} at (565,0) size 747x36
+          RenderText {#text} at (0,0) size 747x36
             text run at (565,0) width 5: " "
             text run at (569,0) width 178: "REGRESSION: Drop-down"
             text run at (0,18) width 130: "menu has gap at top"

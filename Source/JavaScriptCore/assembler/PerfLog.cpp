@@ -29,6 +29,7 @@
 
 #if ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))
 
+#include "Options.h"
 #include <array>
 #include <fcntl.h>
 #include <mutex>
@@ -41,6 +42,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
@@ -155,16 +157,21 @@ static inline uint32_t getCurrentThreadID()
 PerfLog::PerfLog()
 {
     {
-        std::array<char, 1024> filename;
-        snprintf(filename.data(), filename.size() - 1, "jit-%d.dump", getCurrentProcessID());
-        filename[filename.size() - 1] = '\0';
-        m_fd = open(filename.data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
+        StringPrintStream filename;
+        if (auto* optionalDirectory = Options::jitDumpDirectory())
+            filename.print(optionalDirectory);
+        else
+            filename.print("/tmp");
+        filename.print("/jit-", getCurrentProcessID(), ".dump");
+        m_fd = open(filename.toCString().data(), O_CREAT | O_TRUNC | O_RDWR, 0666);
         RELEASE_ASSERT(m_fd != -1);
 
+#if OS(LINUX)
         // Linux perf command records this mmap operation in perf.data as a metadata to the JIT perf annotations.
         // We do not use this mmap-ed memory region actually.
         m_marker = mmap(nullptr, pageSize(), PROT_READ | PROT_EXEC, MAP_PRIVATE, m_fd, 0);
         RELEASE_ASSERT(m_marker != MAP_FAILED);
+#endif
 
         m_file = fdopen(m_fd, "wb");
         RELEASE_ASSERT(m_file);
@@ -175,17 +182,16 @@ PerfLog::PerfLog()
     header.pid = getCurrentProcessID();
 
     Locker locker { m_lock };
-    write(&header, sizeof(JITDump::FileHeader));
-    flush();
+    write(locker, &header, sizeof(JITDump::FileHeader));
 }
 
-void PerfLog::write(const void* data, size_t size)
+void PerfLog::write(const AbstractLocker&, const void* data, size_t size)
 {
     size_t result = fwrite(data, 1, size, m_file);
     RELEASE_ASSERT(result == size);
 }
 
-void PerfLog::flush()
+void PerfLog::flush(const AbstractLocker&)
 {
     fflush(m_file);
 }
@@ -210,12 +216,18 @@ void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
     record.codeSize = size;
     record.codeIndex = logger.m_codeIndex++;
 
-    logger.write(&record, sizeof(JITDump::CodeLoadRecord));
-    logger.write(name.data(), name.length() + 1);
-    logger.write(executableAddress, size);
-    logger.flush();
+    logger.write(locker, &record, sizeof(JITDump::CodeLoadRecord));
+    logger.write(locker, name.data(), name.length() + 1);
+    logger.write(locker, executableAddress, size);
 
     dataLogLnIf(PerfLogInternal::verbose, name, " [", record.codeIndex, "] ", RawPointer(executableAddress), "-", RawPointer(executableAddress + size), " ", size);
+}
+
+void PerfLog::flush()
+{
+    PerfLog& logger = singleton();
+    Locker locker { logger.m_lock };
+    logger.flush(locker);
 }
 
 } // namespace JSC

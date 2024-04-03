@@ -33,6 +33,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -47,7 +48,7 @@ struct AudioTrackPrivateRemoteConfiguration;
 
 class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
-    , private WebCore::AudioTrackPrivateClient {
+    , public WebCore::AudioTrackPrivateClient {
 public:
     static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
@@ -80,11 +81,12 @@ private:
     AudioTrackPrivateRemoteConfiguration configuration();
     void configurationChanged();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_enabled { false };
+    size_t m_clientId { 0 };
 };
 
 } // namespace WebKit

@@ -69,7 +69,7 @@ bool CSSVariableReferenceValue::equals(const CSSVariableReferenceValue& other) c
 String CSSVariableReferenceValue::customCSSText() const
 {
     if (m_stringValue.isNull())
-        m_stringValue = m_data->tokenRange().serialize();
+        m_stringValue = m_data->serialize();
     return m_stringValue;
 }
 

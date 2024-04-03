@@ -197,6 +197,8 @@ void GStreamerCapturer::setupPipeline()
     m_capsfilter = makeElement("capsfilter");
     m_sink = makeElement("appsink");
 
+    gst_util_set_object_arg(G_OBJECT(m_capsfilter.get()), "caps-change-mode", "delayed");
+
     gst_app_sink_set_emit_signals(GST_APP_SINK(m_sink.get()), TRUE);
     g_object_set(m_sink.get(), "enable-last-sample", FALSE, nullptr);
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);

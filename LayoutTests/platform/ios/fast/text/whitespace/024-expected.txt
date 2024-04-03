@@ -25,6 +25,7 @@ layer at (0,0) size 800x1172
       RenderBlock {PRE} at (0,152) size 784x15
         RenderText {#text} at (0,0) size 367x14
           text run at (0,0) width 367: "    <SPAN CLASS=dow> D  M  T  W  J  F  S</SPAN>"
+          text run at (366,0) width 1: " "
       RenderBlock {H2} at (0,186) size 784x31
         RenderText {#text} at (0,1) size 109x28
           text run at (0,1) width 109: "Example 1"

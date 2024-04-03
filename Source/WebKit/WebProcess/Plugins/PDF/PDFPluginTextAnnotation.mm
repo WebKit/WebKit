@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginTextAnnotation.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFLayerControllerSPI.h"
@@ -68,9 +68,9 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
     return String();
 }
 
-Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
-    return adoptRef(*new PDFPluginTextAnnotation(annotation, pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginTextAnnotation(annotation, plugin));
 }
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
@@ -99,10 +99,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     styledElement.setInlineStyleProperty(CSSPropertyFontFamily, textAnnotation.font.familyName);
     styledElement.setInlineStyleProperty(CSSPropertyTextAlign, cssAlignmentValueForNSTextAlignment(textAnnotation.alignment));
 
-    if (isMultiline)
-        downcast<HTMLTextAreaElement>(styledElement).setValue(textAnnotation.stringValue);
-    else
-        downcast<HTMLInputElement>(styledElement).setValue(textAnnotation.stringValue);
+    downcast<HTMLTextFormControlElement>(styledElement).setValue(textAnnotation.stringValue);
 
     return element;
 }
@@ -112,7 +109,7 @@ void PDFPluginTextAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * pdfLayerController().contentScaleFactor, CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, textAnnotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginTextAnnotation::commit()
@@ -126,19 +123,22 @@ String PDFPluginTextAnnotation::value() const
     return downcast<HTMLTextFormControlElement>(element())->value();
 }
 
+void PDFPluginTextAnnotation::setValue(const String& value)
+{
+    downcast<HTMLTextFormControlElement>(element())->setValue(value);
+}
+
 bool PDFPluginTextAnnotation::handleEvent(Event& event)
 {
     if (PDFPluginAnnotation::handleEvent(event))
         return true;
 
-    if (event.isKeyboardEvent() && event.type() == eventNames().keydownEvent) {
-        auto& keyboardEvent = downcast<KeyboardEvent>(event);
-
-        if (keyboardEvent.keyIdentifier() == "U+0009"_s) {
-            if (keyboardEvent.ctrlKey() || keyboardEvent.metaKey() || keyboardEvent.altGraphKey())
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keydownEvent) {
+        if (keyboardEvent->keyIdentifier() == "U+0009"_s) {
+            if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey())
                 return false;
 
-            if (keyboardEvent.shiftKey())
+            if (keyboardEvent->shiftKey())
                 plugin()->focusPreviousAnnotation();
             else
                 plugin()->focusNextAnnotation();
@@ -153,4 +153,4 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

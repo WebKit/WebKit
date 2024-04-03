@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-resume-after-stall</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var endBuffered;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+        const playingPromise = waitFor(video, 'playing', true);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await Promise.all([ waitFor(video, 'loadedmetadata'), waitFor(sourceBuffer, 'update') ]);
+        run('video.play()');
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('video.buffered.length', 1);
+        await playingPromise;
+        await Promise.all([ waitFor(video, 'waiting') ]);
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+        const endedPromise = waitFor(video, 'ended');
+        endBuffered = video.buffered.end(0);
+        run('source.endOfStream()');
+        await Promise.all([ waitFor(source, 'sourceended'), endedPromise ]);
+        // Following call to endOfStream() buffered range was extended to the last
+        // known sample and playback resumed to the end.
+        testExpected('video.buffered.end(0) > endBuffered', true);
+        testExpected('video.buffered.end(0) == video.duration', true);
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

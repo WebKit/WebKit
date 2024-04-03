@@ -48,10 +48,6 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderReplaced.h"
-#include "RenderRuby.h"
-#include "RenderRubyBase.h"
-#include "RenderRubyRun.h"
-#include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
@@ -256,21 +252,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyBlock, *child, beforeChild));
-        return;
-    }
-
-    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyInline, *child, beforeChild));
-        return;
-    }
-
-    if (auto* run = dynamicDowncast<RenderRubyRun>(parent)) {
-        rubyBuilder().attach(*run, WTFMove(child), beforeChild);
-        return;
-    }
-
     if (auto* button = dynamicDowncast<RenderButton>(parent)) {
         formControlsBuilder().attach(*button, WTFMove(child), beforeChild);
         return;
@@ -280,13 +261,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         formControlsBuilder().attach(*menuList, WTFMove(child), beforeChild);
         return;
     }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* container = dynamicDowncast<RenderSVGContainer>(parent)) {
-        svgBuilder().attach(*container, WTFMove(child), beforeChild);
-        return;
-    }
-#endif
 
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
         svgBuilder().attach(*container, WTFMove(child), beforeChild);
@@ -298,12 +272,10 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent)) {
         svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
         return;
     }
-#endif
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent)) {
         svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
@@ -372,15 +344,6 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
-    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent))
-        return rubyBuilder().detach(*rubyInline, child);
-
-    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent))
-        return rubyBuilder().detach(*rubyBlock, child);
-
-    if (auto* run = dynamicDowncast<RenderRubyRun>(parent))
-        return rubyBuilder().detach(*run, child);
-
     if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
         return formControlsBuilder().detach(*menuList, child);
 
@@ -396,18 +359,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
     if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent))
         return svgBuilder().detach(*svgInline, child);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGContainer>(parent))
-        return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
-#endif
-
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent))
         return svgBuilder().detach(*container, child);
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent))
-        return svgBuilder().detach(*svgRoot, child);
-#endif
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
         return svgBuilder().detach(*svgRoot, child);
@@ -853,7 +806,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
-        return renderer.isAnonymous() && !is<RenderRubyBase>(renderer) && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
+        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow() && !renderer.isRenderSVGViewportContainer();
     };
 
     auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {
@@ -921,12 +874,10 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer)) {
         svgBuilder().updateAfterDescendants(*svgRoot);
         return; // A RenderSVGRoot cannot be a RenderBlock, RenderListItem or RenderBlockFlow: early return.
     }
-#endif
 
     // Do not early return here in any case. For example, RenderListItem derives
     // from RenderBlockFlow and indirectly from RenderBlock thus fulfilling all
@@ -974,11 +925,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     }
 
     // If we have a line box wrapper, delete it.
-    if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
-        box->deleteLineBoxWrapper();
-    else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(child))
-        lineBreak->deleteInlineBoxWrapper();
-    else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
         textRenderer->removeAndDestroyTextBoxes();
 
     if (!parent.renderTreeBeingDestroyed()) {
@@ -1031,7 +978,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
     if (auto* textRenderer = dynamicDowncast<RenderText>(child)) {
         auto& style = parent.style();
         // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
-        if (style.visibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts())
+        if (style.usedVisibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts())
             m_view.frameView().incrementVisuallyNonEmptyCharacterCount(textRenderer->text());
         return;
     }

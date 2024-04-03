@@ -159,12 +159,12 @@ void JSTestStringifierOperationImplementedAs::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationImplementedAsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestStringifierOperationImplementedAsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestStringifierOperationImplementedAs::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestStringifierOperationImplementedAs::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototypeFunction_identifierBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestStringifierOperationImplementedAs>::ClassParameter castedThis)
@@ -228,7 +228,7 @@ void JSTestStringifierOperationImplementedAsOwner::finalize(JSC::Handle<JSC::Unk
 {
     auto* jsTestStringifierOperationImplementedAs = static_cast<JSTestStringifierOperationImplementedAs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestStringifierOperationImplementedAs->wrapped(), jsTestStringifierOperationImplementedAs);
+    uncacheWrapper(world, jsTestStringifierOperationImplementedAs->protectedWrapped().ptr(), jsTestStringifierOperationImplementedAs);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

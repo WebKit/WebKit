@@ -51,13 +51,15 @@ public:
 
     WEBCORE_EXPORT IntSize size() const;
     bool hasAlpha() const;
-    Color singlePixelSolidColor() const;
+    std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
 
-    WEBCORE_EXPORT void replaceContents(PlatformImagePtr);
+    WEBCORE_EXPORT void replaceBackend(UniqueRef<NativeImageBackend>);
+    NativeImageBackend& backend() { return m_backend.get(); }
+    const NativeImageBackend& backend() const { return m_backend.get(); }
 protected:
     NativeImage(UniqueRef<NativeImageBackend>, RenderingResourceIdentifier);
 
@@ -68,24 +70,25 @@ protected:
 
 class NativeImageBackend {
 public:
+    WEBCORE_EXPORT NativeImageBackend();
     WEBCORE_EXPORT virtual ~NativeImageBackend();
     virtual const PlatformImagePtr& platformImage() const = 0;
     virtual IntSize size() const = 0;
     virtual bool hasAlpha() const = 0;
     virtual DestinationColorSpace colorSpace() const = 0;
+    WEBCORE_EXPORT virtual bool isRemoteNativeImageBackendProxy() const;
 };
 
 class PlatformImageNativeImageBackend final : public NativeImageBackend {
 public:
+    WEBCORE_EXPORT PlatformImageNativeImageBackend(PlatformImagePtr);
     WEBCORE_EXPORT ~PlatformImageNativeImageBackend() final;
     WEBCORE_EXPORT const PlatformImagePtr& platformImage() const final;
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT bool hasAlpha() const final;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const final;
 private:
-    PlatformImageNativeImageBackend(PlatformImagePtr);
     PlatformImagePtr m_platformImage;
-    friend class NativeImage;
 };
 
 } // namespace WebCore

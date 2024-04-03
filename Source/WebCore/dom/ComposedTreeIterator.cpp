@@ -180,7 +180,7 @@ void ComposedTreeIterator::traverseNextLeavingContext()
 {
     while (context().iterator == context().end && m_contextStack.size() > 1) {
         m_contextStack.removeLast();
-        if (is<HTMLSlotElement>(current()) && advanceInSlot(1))
+        if (auto* slot = dynamicDowncast<HTMLSlotElement>(current()); slot && advanceInSlot(1, *slot))
             return;
         if (context().iterator == context().end)
             return;
@@ -188,11 +188,11 @@ void ComposedTreeIterator::traverseNextLeavingContext()
     }
 }
 
-bool ComposedTreeIterator::advanceInSlot(int direction)
+bool ComposedTreeIterator::advanceInSlot(int direction, const HTMLSlotElement& slot)
 {
     ASSERT(context().slotNodeIndex != notFound);
 
-    auto& assignedNodes = *downcast<HTMLSlotElement>(current()).assignedNodes();
+    auto& assignedNodes = *slot.assignedNodes();
     // It is fine to underflow this.
     context().slotNodeIndex += direction;
     if (context().slotNodeIndex >= assignedNodes.size())
@@ -212,7 +212,7 @@ void ComposedTreeIterator::traverseSiblingInSlot(int direction)
 
     m_contextStack.removeLast();
 
-    if (!advanceInSlot(direction))
+    if (!advanceInSlot(direction, downcast<HTMLSlotElement>(current())))
         *this = { };
 }
 

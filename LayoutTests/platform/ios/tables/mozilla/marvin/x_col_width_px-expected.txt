@@ -17,5 +17,5 @@ layer at (0,0) size 800x110
                 text run at (2,2) width 173: "This column should have a"
                 text run at (2,22) width 124: "width of 200 pixels"
             RenderTableCell {td} at (204,12) size 400x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 301x19
+              RenderText {#text} at (2,12) size 301x19
                 text run at (2,2) width 301: "This column should have a width of 400 pixels"

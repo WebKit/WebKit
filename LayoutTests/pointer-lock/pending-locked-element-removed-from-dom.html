@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target"></div>
+</div>
+<script>
+    description("Test removing an element with a pending pointer lock cancels the lock.")
+    window.jsTestIsAsync = true;
+    window.internals.settings.setPointerLockOptionsEnabled(true);
+
+    targetDiv = document.getElementById("target");
+
+    todo = [
+        function () {
+            // doNextStepWithUserGesture() has the side effect on the TestRunner that any 
+            // normally asynchronous operations such as requestPointerLock are actually completed synchronously.
+            // (see UseFullySynchronousModeForTesting)
+            //
+            // For this test, we don't want that, we want the normal behavior we might have in the browser
+            // where there is a pending lock period between requestPointerLock and when the pointer is
+            // actually locked.
+            //
+            // Use setTimeout to turn the event loop while still maintaining user interaction to let
+            // requestPointerLock be allowed, but have it run asynchronously.
+            window.setTimeout(async () => {
+                const promise = targetDiv.requestPointerLock();
+                targetDiv.remove();
+                try {
+                    await promise;
+                    // depending on the implementation, requestPointerLock may be satisfied synchronously (WK1).
+                    // This is OK, but now at this point the pointer should be unlocked.
+                } catch (error) {
+                    // If an error does arise due to async pending pointer lock, it should be WrongDocumentError 
+                    // because the element lost its document that needed to be active and focused.
+                    if (error.name != "WrongDocumentError")
+                        testFailed(`Promise rejected with unexpected error ${error}`);
+                }
+                shouldBeNull("document.pointerLockElement");
+                finishJSTest();
+            }, 0);
+        }
+    ];
+    doNextStepWithUserGesture();
+</script>
+<script src="../http/tests/resources/js-test-post.js"></script>
+</body>
+</html>

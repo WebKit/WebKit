@@ -32,6 +32,7 @@
 #import <WebCore/ArchiveResource.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
+#import <wtf/cf/VectorCF.h>
 
 namespace API {
 using namespace WebCore;
@@ -47,7 +48,7 @@ Ref<WebArchiveResource> WebArchiveResource::create(RefPtr<ArchiveResource>&& arc
 }
 
 WebArchiveResource::WebArchiveResource(API::Data* data, const String& url, const String& MIMEType, const String& textEncoding)
-    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->bytes(), data->size()), WTF::URL { url }, MIMEType, textEncoding, String()))
+    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->span()), WTF::URL { url }, MIMEType, textEncoding, String()))
 {
 }
 
@@ -60,7 +61,7 @@ WebArchiveResource::~WebArchiveResource()
 {
 }
 
-static void releaseWebArchiveResourceData(unsigned char*, const void* data)
+static void releaseWebArchiveResourceData(uint8_t*, const void* data)
 {
     // Balanced by CFRetain in WebArchiveResource::data().
     CFRelease(data);
@@ -73,7 +74,7 @@ Ref<API::Data> WebArchiveResource::data()
     // Balanced by CFRelease in releaseWebArchiveResourceData.
     CFRetain(cfData.get());
 
-    return API::Data::createWithoutCopying(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), releaseWebArchiveResourceData, cfData.get());
+    return API::Data::createWithoutCopying(span(cfData.get()), releaseWebArchiveResourceData, cfData.get());
 }
 
 String WebArchiveResource::URL()

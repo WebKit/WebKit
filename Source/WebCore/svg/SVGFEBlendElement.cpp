@@ -56,14 +56,14 @@ void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::modeAttr: {
         BlendMode mode = BlendMode::Normal;
         if (parseBlendMode(newValue, mode))
-            m_mode->setBaseValInternal<BlendMode>(mode);
+        Ref { m_mode }->setBaseValInternal<BlendMode>(mode);
         break;
     }
     case AttributeNames::inAttr:
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::in2Attr:
-        m_in2->setBaseValInternal(newValue);
+        Ref { m_in2 }->setBaseValInternal(newValue);
         break;
     default:
         break;

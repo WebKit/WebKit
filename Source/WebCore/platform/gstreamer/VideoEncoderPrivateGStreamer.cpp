@@ -116,10 +116,12 @@ enum EncoderId {
     OpenH264,
     OmxH264,
     VaapiH264,
+    VaapiH264LP,
     VaapiH265,
     Vp8,
     Vp9,
-    Av1
+    Av1,
+    VaapiAv1
 };
 
 class Encoders {
@@ -390,7 +392,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         }
     }
 
-    priv->codecString = codecString;
+    priv->codecString = codecString.isolatedCopy();
     encoderDefinition->setupEncoder(self);
 
     encoderDefinition->setBitrateMode(priv->encoder.get(), priv->bitrateMode);
@@ -577,7 +579,7 @@ static void videoEncoderConstructed(GObject* encoder)
             if (gst_structure_has_name(structure, "encoder-bitrate-change-request")) {
                 uint32_t bitrate;
                 gst_structure_get_uint(structure, "bitrate", &bitrate);
-                g_object_set(parent, "target-bitrate", bitrate, nullptr);
+                g_object_set(parent, "bitrate", bitrate, nullptr);
                 return TRUE;
             }
         }
@@ -586,6 +588,36 @@ static void videoEncoderConstructed(GObject* encoder)
     gst_element_add_pad(GST_ELEMENT_CAST(self), sinkPad);
 
     gst_element_add_pad(GST_ELEMENT_CAST(self), webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr));
+}
+
+static void setupVaEncoder(WebKitVideoEncoder* self)
+{
+    g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+}
+
+static void setVaBitrateMode(GstElement* encoder, BitrateMode mode)
+{
+    switch (mode) {
+    case CONSTANT_BITRATE_MODE:
+        gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cbr");
+        break;
+    case VARIABLE_BITRATE_MODE:
+        gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "vbr");
+        break;
+    };
+}
+
+static void setVaLatencyMode(GstElement* encoder, LatencyMode mode)
+{
+    switch (mode) {
+    case REALTIME_LATENCY_MODE:
+        g_object_set(encoder, "target-usage", 1, nullptr);
+        break;
+    case QUALITY_LATENCY_MODE:
+        g_object_set(encoder, "target-usage", 7, nullptr);
+        gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
+        break;
+    };
 }
 
 static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
@@ -655,9 +687,9 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                         pixelFormat = "Y444";
                 } else if (g_str_has_prefix(profileString, "high-4:2:2")) {
                     if (supports10BitsLittleEndian)
-                        pixelFormat = "Y422_10LE";
+                        pixelFormat = "I422_10LE";
                     else if (supports10BitsBigEndian)
-                        pixelFormat = "Y422_10BE";
+                        pixelFormat = "I422_10BE";
                     else
                         pixelFormat = "Y42B";
                 } else if (g_str_has_prefix(profileString, "high-10")) {
@@ -791,70 +823,19 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
             };
         });
 
-    Encoders::registerEncoder(VaapiH264, "vah264lpenc", "h264parse", "video/x-h264", nullptr,
-        [](WebKitVideoEncoder* self) {
-            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement*, BitrateMode) {
+    Encoders::registerEncoder(VaapiH264LP, "vah264lpenc", "h264parse", "video/x-h264", nullptr, setupVaEncoder,
+        "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement*, BitrateMode) {
             // Not supported.
-        }, [](GstElement* encoder, LatencyMode mode) {
-            switch (mode) {
-            case REALTIME_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 1, nullptr);
-                break;
-            case QUALITY_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 7, nullptr);
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
-                break;
-            };
-        });
+        }, setVaLatencyMode);
 
     Encoders::registerEncoder(VaapiH264, "vah264enc", "h264parse", "video/x-h264", nullptr,
-        [](WebKitVideoEncoder* self) {
-            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
-            switch (mode) {
-            case CONSTANT_BITRATE_MODE:
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cbr");
-                break;
-            case VARIABLE_BITRATE_MODE:
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "vbr");
-                break;
-            };
-        }, [](GstElement* encoder, LatencyMode mode) {
-            switch (mode) {
-            case REALTIME_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 1, nullptr);
-                break;
-            case QUALITY_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 7, nullptr);
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
-                break;
-            };
-        });
+        setupVaEncoder, "bitrate", setBitrateKbitPerSec, "key-int-max", setVaBitrateMode, setVaLatencyMode);
 
     Encoders::registerEncoder(VaapiH265, "vah265enc", "h265parse", "video/x-h265", nullptr,
-        [](WebKitVideoEncoder* self) {
-            g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
-        }, "bitrate", setBitrateKbitPerSec, "key-int-max", [](GstElement* encoder, BitrateMode mode) {
-            switch (mode) {
-            case CONSTANT_BITRATE_MODE:
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cbr");
-                break;
-            case VARIABLE_BITRATE_MODE:
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "vbr");
-                break;
-            };
-        }, [](GstElement* encoder, LatencyMode mode) {
-            switch (mode) {
-            case REALTIME_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 1, nullptr);
-                break;
-            case QUALITY_LATENCY_MODE:
-                g_object_set(encoder, "target-usage", 7, nullptr);
-                gst_util_set_object_arg(G_OBJECT(encoder), "rate-control", "cqp");
-                break;
-            };
-        });
+        setupVaEncoder, "bitrate", setBitrateKbitPerSec, "key-int-max", setVaBitrateMode, setVaLatencyMode);
+
+    Encoders::registerEncoder(VaapiAv1, "vaav1enc", "av1parse", "video/x-av1", nullptr,
+        [](auto) { }, "bitrate", setBitrateKbitPerSec, "key-int-max", setVaBitrateMode, setVaLatencyMode);
 
     if (webkitGstCheckVersion(1, 22, 0)) {
         Encoders::registerEncoder(Av1, "av1enc", "av1parse", "video/x-av1", nullptr,
@@ -918,7 +899,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                         supports12BitsBigEndian = true;
                 }
 
-                StringView profile { profileString, static_cast<unsigned>(strlen(profileString)) };
+                StringView profile { std::span { profileString, strlen(profileString) } };
                 auto is12Bits = profile.findIgnoringASCIICase("-12"_s) != notFound;
                 auto is10Bits = profile.findIgnoringASCIICase("-10"_s) != notFound;
                 auto isY444 = profile.findIgnoringASCIICase("-444"_s) != notFound;
@@ -934,9 +915,9 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                             pixelFormat = "Y444";
                     } else if (isY422) {
                         if (supports12BitsLittleEndian)
-                            pixelFormat = "Y422_12LE";
+                            pixelFormat = "I422_12LE";
                         else if (supports12BitsBigEndian)
-                            pixelFormat = "Y422_12BE";
+                            pixelFormat = "I422_12BE";
                         else
                             pixelFormat = "Y42B";
                     }

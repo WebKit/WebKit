@@ -200,7 +200,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
 #endif
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
-    auto nsImage = image->snapshotNSImage();
+    auto nsImage = image->adapter().snapshotNSImage();
     if (!nsImage)
         return nullptr;
     BEGIN_BLOCK_OBJC_EXCEPTIONS

@@ -1,0 +1,26 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+RUN(video.disableRemotePlayback = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(loadedmetadata)
+EVENT(update)
+RUN(video.play())
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+EXPECTED (video.buffered.length == '1') OK
+EVENT(waiting)
+EXPECTED (video.currentTime == video.buffered.end(0) == 'true') OK
+RUN(source.endOfStream())
+EVENT(sourceended)
+EVENT(ended)
+EXPECTED (video.buffered.end(0) > endBuffered == 'true') OK
+EXPECTED (video.buffered.end(0) == video.duration == 'true') OK
+EXPECTED (video.currentTime == video.buffered.end(0) == 'true') OK
+END OF TEST
+

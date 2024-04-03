@@ -89,16 +89,16 @@ DefaultVideoPosterURL:
     WebCore:
       default: '{ }'
 
-DownloadableBinaryFontAllowedTypes:
+DownloadableBinaryFontTrustedTypes:
   comment: >-
     FIXME: This should really be disabled by default as it makes platforms that don't support the
     feature download files they can't use by. Leaving enabled for now to not change existing behavior.
   type: uint32_t
-  refinedType: DownloadableBinaryFontAllowedTypes
+  refinedType: DownloadableBinaryFontTrustedTypes
   defaultValue:
     WebCore:
-      PLATFORM(WATCHOS): DownloadableBinaryFontAllowedTypes::None
-      default: DownloadableBinaryFontAllowedTypes::Any
+      PLATFORM(WATCHOS): DownloadableBinaryFontTrustedTypes::None
+      default: DownloadableBinaryFontTrustedTypes::Any
 
 EditingBehaviorType:
   type: uint32_t
@@ -305,6 +305,7 @@ MinimumAccelerated2DContextArea:
   type: uint64_t
   defaultValue:
     WebCore:
+      USE(SKIA): 128 * 129
       default: 0
 
 NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:

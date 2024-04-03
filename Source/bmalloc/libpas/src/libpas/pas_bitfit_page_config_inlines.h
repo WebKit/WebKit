@@ -38,10 +38,11 @@ PAS_BEGIN_EXTERN_C;
         pas_bitfit_allocator* allocator, \
         pas_local_allocator* local_allocator, \
         size_t size, \
-        size_t alignment) \
+        size_t alignment, \
+        pas_allocation_mode allocation_mode) \
     { \
         return pas_bitfit_allocator_try_allocate( \
-            allocator, local_allocator, size, alignment, (page_config_value)); \
+            allocator, local_allocator, size, alignment, allocation_mode, (page_config_value)); \
     } \
     \
     void lower_case_page_config_name ## _specialized_page_deallocate_with_page( \

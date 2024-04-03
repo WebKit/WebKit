@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@
 
 namespace JSC {
 
+class CallLinkInfo;
+
 class ErrorInstance : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
@@ -52,14 +54,21 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static ErrorInstance* create(JSGlobalObject* globalObject, VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
+    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, JSValue cause, SourceAppender appender = nullptr, RuntimeType type = TypeNothing, ErrorType errorType = ErrorType::Error, bool useCurrentFrame = true)
     {
         ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
-        instance->finishCreation(vm, globalObject, message, cause, appender, type, useCurrentFrame);
+        instance->finishCreation(vm, message, cause, appender, type, useCurrentFrame);
         return instance;
     }
 
-    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, unsigned line, unsigned column, String&& sourceURL, String&& stackString);
+    static ErrorInstance* create(VM& vm, Structure* structure, const String& message, JSValue cause, ErrorType errorType, JSCell* owner, CallLinkInfo* callLinkInfo)
+    {
+        ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
+        instance->finishCreation(vm, message, cause, owner, callLinkInfo);
+        return instance;
+    }
+
+    JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, LineColumn, String&& sourceURL, String&& stackString);
     static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
 
     JS_EXPORT_PRIVATE void captureStackTrace(VM &vm, JSC::JSGlobalObject* globalObject, size_t framesToSkip = 0, bool append = false);
@@ -111,8 +120,9 @@ public:
 protected:
     explicit ErrorInstance(VM&, Structure*, ErrorType);
 
-    void finishCreation(VM&, JSGlobalObject*, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
-    void finishCreation(VM&, String&& message, unsigned line, unsigned column, String&& sourceURL, String&& stackString);
+    void finishCreation(VM&, const String& message, JSValue cause, SourceAppender = nullptr, RuntimeType = TypeNothing, bool useCurrentFrame = true);
+    void finishCreation(VM&, const String& message, JSValue cause, JSCell* owner, CallLinkInfo*);
+    void finishCreation(VM&, String&& message, LineColumn, String&& sourceURL, String&& stackString);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
@@ -124,8 +134,7 @@ protected:
 
     SourceAppender m_sourceAppender { nullptr };
     std::unique_ptr<Vector<StackFrame>> m_stackTrace;
-    unsigned m_line;
-    unsigned m_column;
+    LineColumn m_lineColumn;
     String m_sourceURL;
     String m_stackString;
     RuntimeType m_runtimeTypeForCause { TypeNothing };
@@ -138,5 +147,7 @@ protected:
     bool m_catchableFromWasm : 1;
 #endif
 };
+
+String appendSourceToErrorMessage(CodeBlock*, BytecodeIndex, const String&, RuntimeType, ErrorInstance::SourceAppender);
 
 } // namespace JSC

@@ -67,6 +67,17 @@ PlaybackSessionModel* PlaybackSessionInterfaceMac::playbackSessionModel() const
     return m_playbackSessionModel.get();
 }
 
+bool PlaybackSessionInterfaceMac::isInWindowFullscreenActive() const
+{
+    return m_playbackSessionModel && m_playbackSessionModel->isInWindowFullscreenActive();
+}
+
+void PlaybackSessionInterfaceMac::toggleInWindowFullscreen()
+{
+    if (m_playbackSessionModel)
+        m_playbackSessionModel->toggleInWindowFullscreen();
+}
+
 void PlaybackSessionInterfaceMac::durationChanged(double duration)
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -247,6 +258,8 @@ void PlaybackSessionInterfaceMac::setPlayBackControlsManager(WebPlaybackControls
     manager.playing = m_playbackSessionModel->isPlaying();
     [manager setAudioMediaSelectionOptions:m_playbackSessionModel->audioMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->audioMediaSelectedIndex())];
     [manager setLegibleMediaSelectionOptions:m_playbackSessionModel->legibleMediaSelectionOptions() withSelectedIndex:static_cast<NSUInteger>(m_playbackSessionModel->legibleMediaSelectedIndex())];
+
+    updatePlaybackControlsManagerCanTogglePictureInPicture();
 }
 
 void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerCanTogglePictureInPicture()

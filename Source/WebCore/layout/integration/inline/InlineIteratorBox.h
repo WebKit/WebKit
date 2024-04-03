@@ -27,7 +27,6 @@
 
 #include "InlineIteratorBoxLegacyPath.h"
 #include "InlineIteratorBoxModernPath.h"
-#include "LegacyInlineElementBox.h"
 #include <variant>
 
 namespace WebCore {

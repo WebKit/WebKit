@@ -1910,7 +1910,7 @@ AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForMarkers(A
 AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXStartTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
+    id textMarker = [m_element accessibilityAttributeValue:@"_AXStartTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
     return AccessibilityTextMarker(textMarker);
     END_AX_OBJC_EXCEPTIONS
     
@@ -1920,7 +1920,7 @@ AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForTextMarkerRang
 AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange* range)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id textMarker = [m_element accessibilityAttributeValue:@"AXEndTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
+    id textMarker = [m_element accessibilityAttributeValue:@"_AXEndTextMarkerForTextMarkerRange" forParameter:range->platformTextMarkerRange()];
     return AccessibilityTextMarker(textMarker);
     END_AX_OBJC_EXCEPTIONS
     

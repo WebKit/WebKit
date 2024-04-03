@@ -55,6 +55,7 @@ class FontSelectionValue;
 class GapLength;
 class GridPosition;
 class GridTrackSize;
+class HitTestRequest;
 class IntPoint;
 class IntSize;
 class LayoutRect;
@@ -139,6 +140,7 @@ enum class CursorVisibility : bool;
 enum class DisplayType : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint8_t;
+enum class FieldSizing : bool;
 enum class FillAttachment : uint8_t;
 enum class FillBox : uint8_t;
 enum class FillSizeType : uint8_t;
@@ -146,6 +148,7 @@ enum class FlexDirection : uint8_t;
 enum class FlexWrap : uint8_t;
 enum class Float : uint8_t;
 enum class FontOrientation : bool;
+enum class GridTrackSizingDirection : uint8_t;
 enum class HangingPunctuation : uint8_t;
 enum class Hyphens : uint8_t;
 enum class ImageRendering : uint8_t;
@@ -274,13 +277,14 @@ using LayoutBoxExtent = RectEdges<LayoutUnit>;
 
 namespace Style {
 class CustomPropertyRegistry;
+struct PseudoElementIdentifier;
 struct ScopedName;
 }
 
 constexpr auto PublicPseudoIDBits = 16;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
-constexpr auto StyleTypeBits = 5;
+constexpr auto PseudoElementTypeBits = 5;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 struct PseudoStyleCache {
@@ -342,10 +346,12 @@ public:
     StyleSelfAlignmentData resolvedJustifySelf(const RenderStyle* parentStyle, ItemPosition normalValueBehaviour) const;
     StyleContentAlignmentData resolvedJustifyContent(const StyleContentAlignmentData& normalValueBehaviour) const;
 
-    PseudoId styleType() const { return static_cast<PseudoId>(m_nonInheritedFlags.styleType); }
-    void setStyleType(PseudoId styleType) { m_nonInheritedFlags.styleType = static_cast<unsigned>(styleType); }
+    PseudoId pseudoElementType() const { return static_cast<PseudoId>(m_nonInheritedFlags.pseudoElementType); }
+    void setPseudoElementType(PseudoId pseudoElementType) { m_nonInheritedFlags.pseudoElementType = static_cast<unsigned>(pseudoElementType); }
+    const AtomString& pseudoElementNameArgument() const;
+    void setPseudoElementNameArgument(const AtomString&);
 
-    RenderStyle* getCachedPseudoStyle(PseudoId) const;
+    RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
@@ -353,6 +359,7 @@ public:
     inline const StyleCustomPropertyData& inheritedCustomProperties() const;
     inline const StyleCustomPropertyData& nonInheritedCustomProperties() const;
     const CSSCustomPropertyValue* customPropertyValue(const AtomString&) const;
+    bool customPropertyValueEqual(const RenderStyle&, const AtomString&) const;
 
     void deduplicateCustomProperties(const RenderStyle&);
     void setCustomPropertyValue(Ref<const CSSCustomPropertyValue>&&, bool isInherited);
@@ -381,7 +388,7 @@ public:
     inline bool hasAnyLocalBackground() const;
 
     inline bool hasAppearance() const;
-    inline bool hasEffectiveAppearance() const;
+    inline bool hasUsedAppearance() const;
 
     inline bool hasBackground() const;
     
@@ -402,6 +409,9 @@ public:
     inline bool hasPseudoStyle(PseudoId) const;
     inline void setHasPseudoStyles(PseudoIdSet);
     bool hasUniquePseudoStyle() const;
+
+    inline bool hasDisplayAffectedByAnimations() const;
+    inline void setHasDisplayAffectedByAnimations();
 
     // attribute getter methods
 
@@ -510,6 +520,8 @@ public:
     inline OverscrollBehavior overscrollBehaviorY() const;
     
     Visibility visibility() const { return static_cast<Visibility>(m_inheritedFlags.visibility); }
+    inline Visibility usedVisibility() const;
+
     VerticalAlign verticalAlign() const;
     const Length& verticalAlignLength() const;
 
@@ -525,6 +537,8 @@ public:
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
     static UsedClear usedClear(const RenderObject&);
     TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
+
+    FieldSizing fieldSizing() const;
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const;
@@ -570,7 +584,7 @@ public:
     TextAutospace textAutospace() const;
 
     inline float zoom() const;
-    inline float effectiveZoom() const;
+    inline float usedZoom() const;
     
     inline TextZoom textZoom() const;
 
@@ -580,8 +594,8 @@ public:
 
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT const Length& lineHeight() const;
-    WEBCORE_EXPORT int computedLineHeight() const;
-    int computeLineHeight(const Length&) const;
+    WEBCORE_EXPORT float computedLineHeight() const;
+    float computeLineHeight(const Length&) const;
 
     WhiteSpace whiteSpace() const;
     inline bool autoWrap() const;
@@ -692,7 +706,7 @@ public:
     inline float opacity() const;
     inline bool hasOpacity() const;
     inline StyleAppearance appearance() const;
-    inline StyleAppearance effectiveAppearance() const;
+    inline StyleAppearance usedAppearance() const;
     inline AspectRatioType aspectRatioType() const;
     inline double aspectRatioWidth() const;
     inline double aspectRatioHeight() const;
@@ -702,7 +716,7 @@ public:
     inline BoxSizing boxSizingForAspectRatio() const;
     inline bool hasAspectRatio() const;
     inline OptionSet<Containment> contain() const;
-    inline OptionSet<Containment> effectiveContainment() const;
+    inline OptionSet<Containment> usedContain() const;
     inline bool containsLayout() const;
     inline bool containsSize() const;
     inline bool containsInlineSize() const;
@@ -715,7 +729,12 @@ public:
 
     inline ContentVisibility contentVisibility() const;
 
-    inline std::optional<ContentVisibility> skippedContentReason() const;
+    // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
+    // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
+    // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.
+    inline ContentVisibility usedContentVisibility() const;
+    // Returns true for skipped content roots and skipped content itself.
+    inline bool hasSkippedContent() const;
 
     inline ContainIntrinsicSizeType containIntrinsicWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
@@ -758,6 +777,7 @@ public:
 
     inline const Vector<GridTrackSize>& gridColumnTrackSizes() const;
     inline const Vector<GridTrackSize>& gridRowTrackSizes() const;
+    inline const Vector<GridTrackSize>& gridTrackSizes(GridTrackSizingDirection) const;
     inline const GridTrackList& gridColumnList() const;
     inline const GridTrackList& gridRowList() const;
     inline const Vector<GridTrackSize>& gridAutoRepeatColumns() const;
@@ -814,10 +834,10 @@ public:
     inline int marqueeLoopCount() const;
     inline MarqueeBehavior marqueeBehavior() const;
     inline MarqueeDirection marqueeDirection() const;
-    inline UserModify effectiveUserModify() const;
+    inline UserModify usedUserModify() const;
     inline UserModify userModify() const;
     inline UserDrag userDrag() const;
-    WEBCORE_EXPORT UserSelect effectiveUserSelect() const;
+    WEBCORE_EXPORT UserSelect usedUserSelect() const;
     inline UserSelect userSelect() const;
     inline TextOverflow textOverflow() const;
     inline WordBreak wordBreak() const;
@@ -929,7 +949,7 @@ public:
     inline LineAlign lineAlign() const;
 
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
-    inline PointerEvents effectivePointerEvents() const;
+    inline PointerEvents usedPointerEvents() const;
 
     inline const Vector<Ref<ScrollTimeline>>& scrollTimelines() const;
     inline const Vector<ScrollAxis>& scrollTimelineAxes() const;
@@ -982,7 +1002,7 @@ public:
 
     inline OptionSet<TouchAction> touchActions() const;
     // 'touch-action' behavior depends on values in ancestors. We use an additional inherited property to implement that.
-    inline OptionSet<TouchAction> effectiveTouchActions() const;
+    inline OptionSet<TouchAction> usedTouchActions() const;
     inline OptionSet<EventListenerRegionType> eventListenerRegionTypes() const;
 
     inline bool effectiveInert() const;
@@ -1004,8 +1024,8 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
-    Color effectiveScrollbarThumbColor() const;
-    Color effectiveScrollbarTrackColor() const;
+    Color usedScrollbarThumbColor() const;
+    Color usedScrollbarTrackColor() const;
     inline std::optional<ScrollbarColor> scrollbarColor() const;
     inline const StyleColor& scrollbarThumbColor() const;
     inline const StyleColor& scrollbarTrackColor() const;
@@ -1064,6 +1084,9 @@ public:
 
     inline void setBlendMode(BlendMode);
     inline bool isInSubtreeWithBlendMode() const;
+
+    inline void setIsInVisibilityAdjustmentSubtree();
+    inline bool isInVisibilityAdjustmentSubtree() const;
 
     inline void setIsolation(Isolation);
 
@@ -1209,6 +1232,8 @@ public:
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
     void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
 
+    void setFieldSizing(FieldSizing);
+
     WEBCORE_EXPORT bool setFontDescription(FontCascadeDescription&&);
 
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
@@ -1239,8 +1264,7 @@ public:
     inline void setHasExplicitlySetDirection();
     void setLineHeight(Length&&);
     bool setZoom(float);
-    void setZoomWithoutReturnValue(float f) { setZoom(f); }
-    inline bool setEffectiveZoom(float);
+    inline bool setUsedZoom(float);
     inline void setTextZoom(TextZoom);
 
     void setTextIndentLine(TextIndentLine);
@@ -1308,7 +1332,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setSkippedContentReason(ContentVisibility);
+    inline void setUsedContentVisibility(ContentVisibility);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);
@@ -1374,7 +1398,7 @@ public:
     inline void setHasAutoAccentColor();
     inline void setOpacity(float);
     inline void setAppearance(StyleAppearance);
-    inline void setEffectiveAppearance(StyleAppearance);
+    inline void setUsedAppearance(StyleAppearance);
     inline void setBoxAlign(BoxAlignment);
     void setBoxDirection(BoxDirection d) { m_inheritedFlags.boxDirection = static_cast<unsigned>(d); }
     inline void setBoxFlex(float);
@@ -1530,7 +1554,7 @@ public:
     inline void setInitialLetter(const IntSize&);
     
     inline void setTouchActions(OptionSet<TouchAction>);
-    inline void setEffectiveTouchActions(OptionSet<TouchAction>);
+    inline void setUsedTouchActions(OptionSet<TouchAction>);
     inline void setEventListenerRegionTypes(OptionSet<EventListenerRegionType>);
 
     inline void setEffectiveInert(bool);
@@ -1618,7 +1642,7 @@ public:
     inline bool hasExplicitlySetStrokeColor() const;
     static inline StyleColor initialStrokeColor();
     Color computedStrokeColor() const;
-    inline CSSPropertyID effectiveStrokeColorProperty() const;
+    inline CSSPropertyID usedStrokeColorProperty() const;
 
     inline float strokeMiterLimit() const;
     inline void setStrokeMiterLimit(float);
@@ -1692,7 +1716,7 @@ public:
     inline PathOperation* clipPath() const;
     static PathOperation* initialClipPath() { return nullptr; }
 
-    inline bool hasEffectiveContentNone() const;
+    inline bool hasUsedContentNone() const;
     inline bool hasContent() const;
     inline const ContentData* contentData() const;
     void setContent(std::unique_ptr<ContentData>, bool add);
@@ -1724,7 +1748,6 @@ public:
     const AtomString& hyphenString() const;
 
     bool inheritedEqual(const RenderStyle&) const;
-    bool inheritedCustomPropertiesEqual(const RenderStyle&) const;
     bool fastPathInheritedEqual(const RenderStyle&) const;
     bool nonFastPathInheritedEqual(const RenderStyle&) const;
 
@@ -1985,6 +2008,8 @@ public:
 
     static constexpr TouchAction initialTouchActions();
 
+    static FieldSizing initialFieldSizing();
+
     static inline Length initialScrollMargin();
     static inline Length initialScrollPadding();
 
@@ -2124,7 +2149,7 @@ public:
     inline const StyleColor& floodColor() const;
     inline const StyleColor& lightingColor() const;
 
-    Color effectiveAccentColor() const;
+    Color usedAccentColor() const;
     inline const StyleColor& accentColor() const;
     inline bool hasAutoAccentColor() const;
 
@@ -2197,7 +2222,7 @@ private:
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned styleType : StyleTypeBits; // PseudoId
+        unsigned pseudoElementType : PseudoElementTypeBits; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().
@@ -2304,5 +2329,7 @@ inline bool generatesBox(const RenderStyle&);
 inline bool isNonVisibleOverflow(Overflow);
 
 inline bool isSkippedContentRoot(const RenderStyle&, const Element*);
+
+inline bool isVisibleToHitTesting(const RenderStyle&, const HitTestRequest&);
 
 } // namespace WebCore

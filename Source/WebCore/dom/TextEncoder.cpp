@@ -28,6 +28,7 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <wtf/Algorithms.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ String TextEncoder::encoding() const
 RefPtr<Uint8Array> TextEncoder::encode(String&& input) const
 {
     auto result = input.tryGetUTF8([&](std::span<const char> span) -> RefPtr<Uint8Array> {
-        return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(span.data()), span.size());
+        return Uint8Array::tryCreate(spanReinterpretCast<const uint8_t>(span));
     });
     if (result)
         return result.value();

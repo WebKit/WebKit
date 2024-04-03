@@ -94,8 +94,9 @@ using namespace WebCore;
 bool isSmallLayerBacking(const ImageBufferParameters& parameters)
 {
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
+    auto checkedArea = ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area<RecordOverflow>();
     return (parameters.purpose == RenderingPurpose::LayerBacking || parameters.purpose == RenderingPurpose::BitmapOnlyLayerBacking)
-        && ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area() <= maxSmallLayerBackingArea
+        && !checkedArea.hasOverflowed() && checkedArea <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
 }
 
@@ -149,6 +150,7 @@ void RemoteRenderingBackend::workQueueUninitialize()
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.clear();
     m_remoteImageBuffers.clear();
+    m_remoteImageBufferSets.clear();
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     m_remoteResourceCache.releaseAllResources();
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
@@ -262,25 +264,29 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferIdentifier)
+RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const ImageBufferCreationContext& creationContext, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
 
-    ImageBufferCreationContext creationContext;
-    creationContext.resourceOwner = m_resourceOwner;
+    ASSERT(!creationContext.resourceOwner);
 #if HAVE(IOSURFACE)
-    creationContext.surfacePool = &ioSurfacePool();
+    ASSERT(!creationContext.surfacePool);
+#endif
+    ImageBufferCreationContext adjustedCreationContext = creationContext;
+    adjustedCreationContext.resourceOwner = m_resourceOwner;
+#if HAVE(IOSURFACE)
+    adjustedCreationContext.surfacePool = &ioSurfacePool();
 #endif
 
     RefPtr<ImageBuffer> imageBuffer;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM))
-        imageBuffer = allocateImageBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, imageBufferIdentifier);
+        imageBuffer = allocateImageBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, adjustedCreationContext, imageBufferIdentifier);
 #endif
 
     if (!imageBuffer)
-        imageBuffer = allocateImageBufferInternal<ImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, imageBufferIdentifier);
+        imageBuffer = allocateImageBufferInternal<ImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, adjustedCreationContext, imageBufferIdentifier);
 
     return imageBuffer;
 }
@@ -289,7 +295,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferIdentifier)
 {
     assertIsCurrent(workQueue());
-    RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, imageBufferIdentifier);
+    RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { }, imageBufferIdentifier);
 
     if (imageBuffer)
         didCreateImageBuffer(imageBuffer.releaseNonNull());
@@ -341,7 +347,7 @@ void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, 
     m_remoteResourceCache.cacheNativeImage(image.releaseNonNull());
 }
 
-void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, FontPlatformData::Attributes platformData, std::optional<RenderingResourceIdentifier> fontCustomPlatformDataIdentifier)
+void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, FontPlatformDataAttributes platformData, std::optional<RenderingResourceIdentifier> fontCustomPlatformDataIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -410,11 +416,27 @@ void RemoteRenderingBackend::flush(IPC::Semaphore&& semaphore)
 #endif
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&&)>&& completionHandler)
+void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)
 {
     assertIsCurrent(workQueue());
 
-    Vector<ImageBufferSetPrepareBufferForDisplayOutputData> outputData;
+    for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
+        RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
+        MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
+        SwapBuffersDisplayRequirement displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
+        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], displayRequirement);
+        MESSAGE_CHECK(displayRequirement != SwapBuffersDisplayRequirement::NeedsFullDisplay, "Can't asynchronously require full display for a buffer set"_s);
+
+        if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
+            remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
+    }
+}
+
+void RemoteRenderingBackend::prepareImageBufferSetsForDisplaySync(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<SwapBuffersDisplayRequirement>&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+
+    Vector<SwapBuffersDisplayRequirement> outputData;
     outputData.resizeToFit(swapBuffersInput.size());
 
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
@@ -433,12 +455,13 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBuffer
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created"_s);
 
-        remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
+        if (outputData[i] != SwapBuffersDisplayRequirement::NeedsNoDisplay)
+            remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
     }
 }
 #endif
 
-void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>& identifiers)
+void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>& identifiers, bool forcePurge)
 {
     assertIsCurrent(workQueue());
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
@@ -452,7 +475,7 @@ void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestI
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being marked volatile before being created"_s);
 
         OptionSet<BufferInSetType> volatileBuffers;
-        if (!remoteImageBufferSet->makeBuffersVolatile(identifier.second, volatileBuffers))
+        if (!remoteImageBufferSet->makeBuffersVolatile(identifier.second, volatileBuffers, forcePurge))
             allSucceeded = false;
 
         if (!volatileBuffers.isEmpty())

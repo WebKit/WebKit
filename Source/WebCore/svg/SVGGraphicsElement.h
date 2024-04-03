@@ -68,10 +68,11 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
 
     const SVGTransformList& transform() const { return m_transform->currentValue(); }
+    Ref<const SVGTransformList> protectedTransform() const;
     SVGAnimatedTransformList& transformAnimated() { return m_transform; }
 
 protected:
-    SVGGraphicsElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&);
+    SVGGraphicsElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;

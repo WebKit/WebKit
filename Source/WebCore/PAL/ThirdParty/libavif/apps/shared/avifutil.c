@@ -42,7 +42,12 @@ static void printClapFraction(const char * name, int32_t n, int32_t d)
     }
 }
 
-static void avifImageDumpInternal(const avifImage * avif, uint32_t gridCols, uint32_t gridRows, avifBool alphaPresent, avifProgressiveState progressiveState)
+static void avifImageDumpInternal(const avifImage * avif,
+                                  uint32_t gridCols,
+                                  uint32_t gridRows,
+                                  avifBool alphaPresent,
+                                  avifBool gainMapPresent,
+                                  avifProgressiveState progressiveState)
 {
     uint32_t width = avif->width;
     uint32_t height = avif->height;
@@ -64,17 +69,17 @@ static void avifImageDumpInternal(const avifImage * avif, uint32_t gridCols, uin
     printf(" * Matrix Coeffs. : %u\n", avif->matrixCoefficients);
 
     if (avif->icc.size != 0) {
-        printf(" * ICC Profile    : Present (" AVIF_FMT_ZU " bytes)\n", avif->icc.size);
+        printf(" * ICC Profile    : Present (%" AVIF_FMT_ZU " bytes)\n", avif->icc.size);
     } else {
         printf(" * ICC Profile    : Absent\n");
     }
     if (avif->xmp.size != 0) {
-        printf(" * XMP Metadata   : Present (" AVIF_FMT_ZU " bytes)\n", avif->xmp.size);
+        printf(" * XMP Metadata   : Present (%" AVIF_FMT_ZU " bytes)\n", avif->xmp.size);
     } else {
         printf(" * XMP Metadata   : Absent\n");
     }
     if (avif->exif.size != 0) {
-        printf(" * Exif Metadata  : Present (" AVIF_FMT_ZU " bytes)\n", avif->exif.size);
+        printf(" * Exif Metadata  : Present (%" AVIF_FMT_ZU " bytes)\n", avif->exif.size);
     } else {
         printf(" * Exif Metadata  : Absent\n");
     }
@@ -117,21 +122,77 @@ static void avifImageDumpInternal(const avifImage * avif, uint32_t gridCols, uin
             printf("    * irot (Rotation)      : %u\n", avif->irot.angle);
         }
         if (avif->transformFlags & AVIF_TRANSFORM_IMIR) {
-            printf("    * imir (Mirror)        : Mode %u (%s)\n", avif->imir.mode, (avif->imir.mode == 0) ? "top-to-bottom" : "left-to-right");
+            printf("    * imir (Mirror)        : %u (%s)\n", avif->imir.axis, (avif->imir.axis == 0) ? "top-to-bottom" : "left-to-right");
         }
     }
     printf(" * Progressive    : %s\n", avifProgressiveStateToString(progressiveState));
+    if (avif->clli.maxCLL > 0 || avif->clli.maxPALL > 0) {
+        printf(" * CLLI           : %hu, %hu\n", avif->clli.maxCLL, avif->clli.maxPALL);
+    }
+
+#if defined(AVIF_ENABLE_EXPERIMENTAL_GAIN_MAP)
+    printf(" * Gain map       : ");
+    avifImage * gainMapImage = avif->gainMap ? avif->gainMap->image : NULL;
+    if (gainMapImage != NULL) {
+        printf("%ux%u pixels, %u bit, %s, %s Range, Matrix Coeffs. %u, Base Image is %s\n",
+               gainMapImage->width,
+               gainMapImage->height,
+               gainMapImage->depth,
+               avifPixelFormatToString(gainMapImage->yuvFormat),
+               (gainMapImage->yuvRange == AVIF_RANGE_FULL) ? "Full" : "Limited",
+               gainMapImage->matrixCoefficients,
+               (avif->gainMap->metadata.baseHdrHeadroomN == 0) ? "SDR" : "HDR");
+        printf(" * Alternate image:\n");
+        printf("    * Color Primaries: %u\n", avif->gainMap->altColorPrimaries);
+        printf("    * Transfer Char. : %u\n", avif->gainMap->altTransferCharacteristics);
+        printf("    * Matrix Coeffs. : %u\n", avif->gainMap->altMatrixCoefficients);
+        if (avif->gainMap->altICC.size != 0) {
+            printf("    * ICC Profile    : Present (%" AVIF_FMT_ZU " bytes)\n", avif->gainMap->altICC.size);
+        } else {
+            printf("    * ICC Profile    : Absent\n");
+        }
+        if (avif->gainMap->altDepth) {
+            printf("    * Bit Depth      : %u\n", avif->gainMap->altDepth);
+        }
+        if (avif->gainMap->altPlaneCount) {
+            printf("    * Planes         : %u\n", avif->gainMap->altPlaneCount);
+        }
+        if (gainMapImage->clli.maxCLL > 0 || gainMapImage->clli.maxPALL > 0) {
+            printf("    * CLLI           : %hu, %hu\n", gainMapImage->clli.maxCLL, gainMapImage->clli.maxPALL);
+        }
+        printf("\n");
+    } else if (gainMapPresent) {
+        printf("Present (but ignored)\n");
+    } else {
+        printf("Absent\n");
+    }
+#else
+    (void)gainMapPresent;
+#endif // AVIF_ENABLE_EXPERIMENTAL_GAIN_MAP
 }
 
-void avifImageDump(const avifImage * avif, uint32_t gridCols, uint32_t gridRows, avifProgressiveState progressiveState)
+void avifImageDump(const avifImage * avif, uint32_t gridCols, uint32_t gridRows, avifBool gainMapPresent, avifProgressiveState progressiveState)
 {
     const avifBool alphaPresent = avif->alphaPlane && (avif->alphaRowBytes > 0);
-    avifImageDumpInternal(avif, gridCols, gridRows, alphaPresent, progressiveState);
+    avifImageDumpInternal(avif, gridCols, gridRows, alphaPresent, gainMapPresent, progressiveState);
 }
 
 void avifContainerDump(const avifDecoder * decoder)
 {
-    avifImageDumpInternal(decoder->image, 0, 0, decoder->alphaPresent, decoder->progressiveState);
+    avifBool gainMapPresent = AVIF_FALSE;
+#if defined(AVIF_ENABLE_EXPERIMENTAL_GAIN_MAP)
+    gainMapPresent = decoder->gainMapPresent;
+#endif
+    avifImageDumpInternal(decoder->image, 0, 0, decoder->alphaPresent, gainMapPresent, decoder->progressiveState);
+    if ((decoder->progressiveState == AVIF_PROGRESSIVE_STATE_UNAVAILABLE) && (decoder->imageCount > 1)) {
+        if (decoder->repetitionCount == AVIF_REPETITION_COUNT_INFINITE) {
+            printf(" * Repeat Count   : Infinite\n");
+        } else if (decoder->repetitionCount == AVIF_REPETITION_COUNT_UNKNOWN) {
+            printf(" * Repeat Count   : Unknown\n");
+        } else {
+            printf(" * Repeat Count   : %d\n", decoder->repetitionCount);
+        }
+    }
 }
 
 void avifPrintVersions(void)
@@ -160,39 +221,8 @@ avifAppFileFormat avifGuessFileFormat(const char * filename)
         fclose(f);
 
         if (bytesRead > 0) {
-            avifROData header;
-            header.data = headerBuffer;
-            header.size = bytesRead;
-
-            if (avifPeekCompatibleFileType(&header)) {
-                return AVIF_APP_FILE_FORMAT_AVIF;
-            }
-
-            static const uint8_t signatureJPEG[2] = { 0xFF, 0xD8 };
-            static const uint8_t signaturePNG[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-            static const uint8_t signatureY4M[9] = { 0x59, 0x55, 0x56, 0x34, 0x4D, 0x50, 0x45, 0x47, 0x32 }; // "YUV4MPEG2"
-            struct avifHeaderSignature
-            {
-                avifAppFileFormat format;
-                const uint8_t * magic;
-                size_t magicSize;
-            } signatures[] = { { AVIF_APP_FILE_FORMAT_JPEG, signatureJPEG, sizeof(signatureJPEG) },
-                               { AVIF_APP_FILE_FORMAT_PNG, signaturePNG, sizeof(signaturePNG) },
-                               { AVIF_APP_FILE_FORMAT_Y4M, signatureY4M, sizeof(signatureY4M) } };
-            const size_t signaturesCount = sizeof(signatures) / sizeof(signatures[0]);
-
-            for (size_t signatureIndex = 0; signatureIndex < signaturesCount; ++signatureIndex) {
-                struct avifHeaderSignature * signature = &signatures[signatureIndex];
-                if (header.size < signature->magicSize) {
-                    continue;
-                }
-                if (!memcmp(header.data, signature->magic, signature->magicSize)) {
-                    return signature->format;
-                }
-            }
-
-            // If none of these signatures match, bail out here. Guessing by extension won't help.
-            return AVIF_APP_FILE_FORMAT_UNKNOWN;
+            // If the file could be read, use the first bytes to guess the file format.
+            return avifGuessBufferFileFormat(headerBuffer, bytesRead);
         }
     }
 
@@ -227,13 +257,56 @@ avifAppFileFormat avifGuessFileFormat(const char * filename)
     return AVIF_APP_FILE_FORMAT_UNKNOWN;
 }
 
+avifAppFileFormat avifGuessBufferFileFormat(const uint8_t * data, size_t size)
+{
+    if (size == 0) {
+        return AVIF_APP_FILE_FORMAT_UNKNOWN;
+    }
+
+    avifROData header;
+    header.data = data;
+    header.size = size;
+
+    if (avifPeekCompatibleFileType(&header)) {
+        return AVIF_APP_FILE_FORMAT_AVIF;
+    }
+
+    static const uint8_t signatureJPEG[2] = { 0xFF, 0xD8 };
+    static const uint8_t signaturePNG[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+    static const uint8_t signatureY4M[9] = { 0x59, 0x55, 0x56, 0x34, 0x4D, 0x50, 0x45, 0x47, 0x32 }; // "YUV4MPEG2"
+    struct avifHeaderSignature
+    {
+        avifAppFileFormat format;
+        const uint8_t * magic;
+        size_t magicSize;
+    } signatures[] = { { AVIF_APP_FILE_FORMAT_JPEG, signatureJPEG, sizeof(signatureJPEG) },
+                       { AVIF_APP_FILE_FORMAT_PNG, signaturePNG, sizeof(signaturePNG) },
+                       { AVIF_APP_FILE_FORMAT_Y4M, signatureY4M, sizeof(signatureY4M) } };
+    const size_t signaturesCount = sizeof(signatures) / sizeof(signatures[0]);
+
+    for (size_t signatureIndex = 0; signatureIndex < signaturesCount; ++signatureIndex) {
+        const struct avifHeaderSignature * const signature = &signatures[signatureIndex];
+        if (header.size < signature->magicSize) {
+            continue;
+        }
+        if (!memcmp(header.data, signature->magic, signature->magicSize)) {
+            return signature->format;
+        }
+    }
+
+    return AVIF_APP_FILE_FORMAT_UNKNOWN;
+}
+
 avifAppFileFormat avifReadImage(const char * filename,
                                 avifPixelFormat requestedFormat,
                                 int requestedDepth,
                                 avifChromaDownsampling chromaDownsampling,
-                                avifBool ignoreICC,
+                                avifBool ignoreColorProfile,
                                 avifBool ignoreExif,
                                 avifBool ignoreXMP,
+                                avifBool allowChangingCicp,
+                                avifBool ignoreGainMap,
+                                uint32_t imageSizeLimit,
                                 avifImage * image,
                                 uint32_t * outDepth,
                                 avifAppSourceTiming * sourceTiming,
@@ -241,21 +314,31 @@ avifAppFileFormat avifReadImage(const char * filename,
 {
     const avifAppFileFormat format = avifGuessFileFormat(filename);
     if (format == AVIF_APP_FILE_FORMAT_Y4M) {
-        if (!y4mRead(filename, image, sourceTiming, frameIter)) {
+        if (!y4mRead(filename, imageSizeLimit, image, sourceTiming, frameIter)) {
             return AVIF_APP_FILE_FORMAT_UNKNOWN;
         }
         if (outDepth) {
             *outDepth = image->depth;
         }
     } else if (format == AVIF_APP_FILE_FORMAT_JPEG) {
-        if (!avifJPEGRead(filename, image, requestedFormat, requestedDepth, chromaDownsampling, ignoreICC, ignoreExif, ignoreXMP)) {
+        if (!avifJPEGRead(filename, image, requestedFormat, requestedDepth, chromaDownsampling, ignoreColorProfile, ignoreExif, ignoreXMP, ignoreGainMap, imageSizeLimit)) {
             return AVIF_APP_FILE_FORMAT_UNKNOWN;
         }
         if (outDepth) {
             *outDepth = 8;
         }
     } else if (format == AVIF_APP_FILE_FORMAT_PNG) {
-        if (!avifPNGRead(filename, image, requestedFormat, requestedDepth, chromaDownsampling, ignoreICC, ignoreExif, ignoreXMP, outDepth)) {
+        if (!avifPNGRead(filename,
+                         image,
+                         requestedFormat,
+                         requestedDepth,
+                         chromaDownsampling,
+                         ignoreColorProfile,
+                         ignoreExif,
+                         ignoreXMP,
+                         allowChangingCicp,
+                         imageSizeLimit,
+                         outDepth)) {
             return AVIF_APP_FILE_FORMAT_UNKNOWN;
         }
     } else {
@@ -263,6 +346,22 @@ avifAppFileFormat avifReadImage(const char * filename,
         return AVIF_APP_FILE_FORMAT_UNKNOWN;
     }
     return format;
+}
+
+void avifImageFixXMP(avifImage * image)
+{
+    // Zero bytes are forbidden in UTF-8 XML: https://en.wikipedia.org/wiki/Valid_characters_in_XML
+    // Keeping zero bytes in XMP may lead to issues at encoding or decoding.
+    // For example, the PNG specification forbids null characters in XMP. See avifPNGWrite().
+    // The XMP Specification Part 3 says "When XMP is encoded as UTF-8,
+    // there are no zero bytes in the XMP packet" for GIF.
+
+    // Consider a single trailing null character following a non-null character
+    // as a programming error. Leave other null characters as is.
+    // See the discussion at https://github.com/AOMediaCodec/libavif/issues/1333.
+    if (image->xmp.size >= 2 && image->xmp.data[image->xmp.size - 1] == '\0' && image->xmp.data[image->xmp.size - 2] != '\0') {
+        --image->xmp.size;
+    }
 }
 
 void avifDumpDiagnostics(const avifDiagnostics * diag)

@@ -21,10 +21,10 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 611x26
             text run at (0,27) width 611: "A scenario I thought of based on my experiences with this bug:"
-          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
+          RenderInline {A} at (0,54) size 260x26 [color=#0000EE]
             RenderText {#text} at (0,54) size 260x26
               text run at (0,54) width 260: "<rdar://problem/4045521>"
-          RenderText {#text} at (259,54) size 744x53
+          RenderText {#text} at (0,54) size 744x53
             text run at (259,54) width 485: " Hitting return key with full line selected does not"
             text run at (0,81) width 254: "add blank line as it should"
         RenderBlock {DIV} at (14,138) size 756x216

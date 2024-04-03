@@ -35,7 +35,6 @@ namespace WebCore {
 
 class LineBreaker;
 class RenderMultiColumnFlow;
-class RenderRubyRun;
 
 namespace LayoutIntegration {
 class LineLayout;
@@ -149,6 +148,7 @@ public:
         
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
+        LayoutUnit m_alignContentShift; // Caches negative shifts for overflow calculation.
 
         SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
@@ -237,9 +237,9 @@ public:
     void trimBlockEndChildrenMargins();
 
     void setStaticInlinePositionForChild(RenderBox& child, LayoutUnit blockOffset, LayoutUnit inlinePosition);
-    void updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop, IndentTextOrNot shouldIndentText);
+    void updateStaticInlinePositionForChild(RenderBox& child, LayoutUnit logicalTop);
 
-    LayoutUnit startAlignedOffsetForLine(LayoutUnit position, IndentTextOrNot);
+    LayoutUnit staticInlinePositionForOriginalDisplayInline(LayoutUnit logicalTop);
 
     LayoutUnit collapseMargins(RenderBox& child, MarginInfo&);
     LayoutUnit collapseMarginsWithChildInfo(RenderBox* child, RenderObject* prevSibling, MarginInfo&);
@@ -274,8 +274,8 @@ public:
 
     void deleteLines() override;
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) override;
-    Position positionForPoint(const LayoutPoint&) override;
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+    Position positionForPoint(const LayoutPoint&, HitTestSource) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const;
 
@@ -346,9 +346,6 @@ public:
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
     int lineCount() const;
-
-    void setHasMarkupTruncation(bool b) { setRenderBlockFlowHasMarkupTruncation(b); }
-    bool hasMarkupTruncation() const { return renderBlockFlowHasMarkupTruncation(); }
 
     bool containsNonZeroBidiLevel() const;
 
@@ -444,8 +441,7 @@ protected:
     LayoutUnit computedColumnWidth() const;
     unsigned computedColumnCount() const;
     
-    bool isTopLayoutOverflowAllowed() const override;
-    bool isLeftLayoutOverflowAllowed() const override;
+    LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
     virtual void computeColumnCountAndWidth();
 
@@ -485,8 +481,8 @@ private:
     LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
     LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit logicalHeight) const override;
 
-    LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const;
-    LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const;
+    LayoutUnit logicalRightOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
+    LayoutUnit logicalLeftOffsetForPositioningFloat(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining) const;
     
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;
@@ -509,12 +505,8 @@ private:
     GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
     
-    VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, const RenderFragmentContainer*) override;
+    VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents, HitTestSource, const RenderFragmentContainer*) override;
     void addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) const override;
-
-public:
-    virtual std::optional<TextAlignMode> overrideTextAlignmentForLine(bool /* endsWithSoftBreak */) const { return { }; }
-    virtual void adjustInlineDirectionLineBounds(int /* expansionOpportunityCount */, float& /* logicalLeft */, float& /* logicalWidth */) const { }
 
 private:
     bool hasLineLayout() const;
@@ -542,9 +534,6 @@ private:
     std::optional<LayoutUnit> selfCollapsingMarginBeforeWithClear(RenderObject* candidate);
 
 public:
-    // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
-    void adjustLinePositionForPagination(LegacyRootInlineBox*, LayoutUnit& deltaOffset);
-
     struct LinePaginationAdjustment {
         LayoutUnit strut { 0_lu };
         bool isFirstAfterPageBreak { false };

@@ -5,7 +5,7 @@ layer at (0,0) size 800x232
     RenderBody {body} at (8,8) size 784x216
       RenderTable {table} at (0,0) size 81x216
         RenderBlock {caption} at (0,0) size 81x72
-          RenderText {#text} at (19,0) size 81x71
+          RenderText {#text} at (0,0) size 81x71
             text run at (19,0) width 43: "PASS:"
             text run at (0,18) width 81: "Dynamically"
             text run at (21,36) width 39: "added"

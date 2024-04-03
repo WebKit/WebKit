@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
@@ -60,7 +59,7 @@ class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC:
 public:
     explicit LegacyCustomProtocolManager(NetworkProcess&);
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     void registerScheme(const String&);
     void unregisterScheme(const String&);
@@ -88,7 +87,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
-    void didLoadData(LegacyCustomProtocolID, const IPC::DataReference&);
+    void didLoadData(LegacyCustomProtocolID, std::span<const uint8_t>);
     void didReceiveResponse(LegacyCustomProtocolID, const WebCore::ResourceResponse&, CacheStoragePolicy);
     void didFinishLoading(LegacyCustomProtocolID);
     void wasRedirectedToRequest(LegacyCustomProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);

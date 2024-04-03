@@ -26,8 +26,8 @@
                 await testExpectedEventually("window.internals.shadowRoot(video).querySelector('rt')", null, "!=", 1000);
                 rubyBase = window.internals.shadowRoot(video).querySelector('ruby');
                 rubyText = window.internals.shadowRoot(video).querySelector('rt');
-                await testExpected("rubyText.offsetTop < rubyBase.offsetTop", true);
-                await testExpected("rubyBase.offsetTop == (rubyText.offsetTop + rubyText.offsetHeight)", true);
+                testExpected("rubyText.getBoundingClientRect().top < rubyBase.getBoundingClientRect().top", true);
+                testExpected("rubyBase.getBoundingClientRect().top == rubyText.getBoundingClientRect().bottom", true);
                 endTest();
             }
         </script>

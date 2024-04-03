@@ -28,4 +28,6 @@ webkit_platform_headers: "CoreIPCNumber.h"
      WebKit::CoreIPCNumber::NumberHolder get()
 }
 
+using WebKit::CoreIPCNumber::NumberHolder = std::variant<char, unsigned char, short, unsigned short, int, unsigned, long, unsigned long, long long, unsigned long long, float, double>
+
 #endif // USE(CF)

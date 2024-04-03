@@ -15,11 +15,20 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-vert-rl-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-vert-rl-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline-vert-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/inline-table-inline-block-baseline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-grid-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-inline-block-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-table-cell-001.html

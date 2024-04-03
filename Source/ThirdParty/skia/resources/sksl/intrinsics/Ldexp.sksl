@@ -1,0 +1,1 @@
+uniform float a; int b; void main() { sk_FragColor.x = half(ldexp(a, b)); }

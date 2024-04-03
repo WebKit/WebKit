@@ -30,9 +30,8 @@ layer at (0,0) size 785x781
         RenderText {#text} at (225,0) size 5x17
           text run at (225,0) width 5: ":"
       RenderBlock {PRE} at (0,104) size 39x30 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 39x30
-          text run at (0,0) width 24: "foo"
-          text run at (24,0) width 15: "      "
+        RenderText {#text} at (0,0) size 71x30
+          text run at (0,0) width 71: "foo      "
           text run at (0,15) width 24: "bar"
       RenderBlock {P} at (0,150) size 769x18
         RenderText {#text} at (0,0) size 35x17
@@ -50,10 +49,9 @@ layer at (0,0) size 785x781
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
       RenderBlock {PRE} at (0,242) size 39x45 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 39x15
-          text run at (0,0) width 24: "foo"
-          text run at (24,0) width 15: "    "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 56x15
+          text run at (0,0) width 56: "foo    "
+        RenderBR {BR} at (55,0) size 1x15
         RenderText {#text} at (0,15) size 24x30
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
@@ -70,21 +68,21 @@ layer at (0,0) size 785x781
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
       RenderBlock {PRE} at (0,416) size 39x45 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 48x45
-          text run at (0,0) width 32: "foo "
-          text run at (31,0) width 17: "  "
+        RenderText {#text} at (0,0) size 40x45
+          text run at (0,0) width 40: "foo  "
+          text run at (39,0) width 1: " "
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
       RenderBlock {PRE} at (0,474) size 39x45 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 56x45
-          text run at (0,0) width 32: "foo "
-          text run at (31,0) width 25: "   "
+        RenderText {#text} at (0,0) size 48x45
+          text run at (0,0) width 48: "foo   "
+          text run at (47,0) width 1: " "
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
       RenderBlock {PRE} at (0,532) size 39x45 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 64x45
-          text run at (0,0) width 32: "foo "
-          text run at (31,0) width 33: "    "
+        RenderText {#text} at (0,0) size 56x45
+          text run at (0,0) width 56: "foo    "
+          text run at (55,0) width 1: " "
           text run at (0,15) width 24: "   "
           text run at (0,30) width 24: "bar"
       RenderBlock {P} at (0,593) size 769x18
@@ -105,8 +103,7 @@ layer at (0,0) size 785x781
           text run at (0,45) width 24: "bar"
       RenderBlock {PRE} at (0,700) size 39x60 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 32x60
-          text run at (0,0) width 24: "foo"
-          text run at (24,0) width 8: " "
+          text run at (0,0) width 32: "foo "
           text run at (0,15) width 24: "baz"
           text run at (24,15) width 0: " "
           text run at (0,30) width 24: "   "

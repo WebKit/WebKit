@@ -49,6 +49,7 @@
 #include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
+#include "compiler/translator/tree_ops/SeparateStructFromFunctionDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
@@ -584,9 +585,9 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     mEarlyFragmentTestsSpecified = parseContext.isEarlyFragmentTestsSpecified();
 
-    mHasDiscard = parseContext.hasDiscard();
-
-    mEnablesPerSampleShading = parseContext.isSampleQualifierSpecified();
+    mMetadataFlags[MetadataFlags::HasDiscard] = parseContext.hasDiscard();
+    mMetadataFlags[MetadataFlags::EnablesPerSampleShading] =
+        parseContext.isSampleQualifierSpecified();
 
     mComputeShaderLocalSizeDeclared = parseContext.isComputeShaderLocalSizeDeclared();
     mComputeShaderLocalSize         = parseContext.getComputeShaderLocalSize();
@@ -608,6 +609,13 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
         mGeometryShaderOutputPrimitiveType = parseContext.getGeometryShaderOutputPrimitiveType();
         mGeometryShaderMaxVertices         = parseContext.getGeometryShaderMaxVertices();
         mGeometryShaderInvocations         = parseContext.getGeometryShaderInvocations();
+
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderInputPrimitiveType] =
+            mGeometryShaderInputPrimitiveType != EptUndefined;
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderOutputPrimitiveType] =
+            mGeometryShaderOutputPrimitiveType != EptUndefined;
+        mMetadataFlags[MetadataFlags::HasValidGeometryShaderMaxVertices] =
+            mGeometryShaderMaxVertices >= 0;
     }
     if (mShaderType == GL_TESS_CONTROL_SHADER_EXT)
     {
@@ -622,6 +630,15 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
         mTessEvaluationShaderInputOrderingType =
             parseContext.getTessEvaluationShaderInputOrderingType();
         mTessEvaluationShaderInputPointType = parseContext.getTessEvaluationShaderInputPointType();
+
+        mMetadataFlags[MetadataFlags::HasValidTessGenMode] =
+            mTessEvaluationShaderInputPrimitiveType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenSpacing] =
+            mTessEvaluationShaderInputVertexSpacingType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenVertexOrder] =
+            mTessEvaluationShaderInputOrderingType != EtetUndefined;
+        mMetadataFlags[MetadataFlags::HasValidTessGenPointMode] =
+            mTessEvaluationShaderInputPointType != EtetUndefined;
     }
 }
 
@@ -788,6 +805,25 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // Folding should only be able to generate warnings.
     ASSERT(mDiagnostics.numErrors() == 0);
 
+    // gl_ClipDistance and gl_CullDistance built-in arrays have unique semantics.
+    // They are pre-declared as unsized and must be sized by the shader either
+    // redeclaring them or indexing them only with integral constant expressions.
+    // The translator treats them as having the maximum allowed size and this pass
+    // detects the actual sizes resizing the variables if needed.
+    if (parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance))
+    {
+        bool isClipDistanceUsed = false;
+        if (!ValidateClipCullDistance(this, root, &mDiagnostics,
+                                      mResources.MaxCombinedClipAndCullDistances,
+                                      &mClipDistanceSize, &mCullDistanceSize, &isClipDistanceUsed))
+        {
+            return false;
+        }
+        mMetadataFlags[MetadataFlags::HasClipDistance] = isClipDistanceUsed;
+    }
+
     // Validate no barrier() after return before prunning it in |PruneNoOps()| below.
     if (mShaderType == GL_TESS_CONTROL_SHADER && !ValidateBarrierFunctionCall(root, &mDiagnostics))
     {
@@ -815,7 +851,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     bool highPrecisionSupported        = isHighPrecisionSupported();
     bool enableNonConstantInitializers = IsExtensionEnabled(
         mExtensionBehavior, TExtension::EXT_shader_non_constant_global_initializers);
-    // forceDeferGlobalInitializers is needed for MSL
+    // forceDeferNonConstGlobalInitializers is needed for MSL
     // to convert a non-const global. For example:
     //
     //    int someGlobal = 123;
@@ -826,13 +862,18 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     //    void main() {
     //        someGlobal = 123;
     //
-    // This is because MSL doesn't allow statically initialized globals.
-    bool forceDeferGlobalInitializers = getOutputType() == SH_MSL_METAL_OUTPUT;
+    // This is because MSL doesn't allow statically initialized non-const globals.
+    bool forceDeferNonConstGlobalInitializers = getOutputType() == SH_MSL_METAL_OUTPUT;
 
     if (enableNonConstantInitializers &&
         !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
-                                 highPrecisionSupported, forceDeferGlobalInitializers,
+                                 highPrecisionSupported, forceDeferNonConstGlobalInitializers,
                                  &mSymbolTable))
+    {
+        return false;
+    }
+
+    if (!SeparateStructFromFunctionDeclarations(this, root, &getSymbolTable()))
     {
         return false;
     }
@@ -888,24 +929,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
                          IsWebGLBasedSpec(mShaderSpec), &mDiagnostics))
     {
         return false;
-    }
-
-    if (parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
-        parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
-        parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance))
-    {
-        if (!ValidateClipCullDistance(
-                root, &mDiagnostics, mResources.MaxCullDistances,
-                mResources.MaxCombinedClipAndCullDistances, &mClipDistanceSize, &mCullDistanceSize,
-                &mClipDistanceRedeclared, &mCullDistanceRedeclared, &mClipDistanceUsed))
-        {
-            return false;
-        }
-
-        if (!resizeClipAndCullDistanceBuiltins(root))
-        {
-            return false;
-        }
     }
 
     // Clamping uniform array bounds needs to happen after validateLimitations pass.
@@ -1013,7 +1036,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
     // Note that separate declarations need to be run before other AST transformations that
     // generate new statements from expressions.
-    if (!SeparateDeclarations(this, root, &getSymbolTable()))
+    if (!SeparateDeclarations(*this, *root))
     {
         return false;
     }
@@ -1157,7 +1180,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // be optimized out
     if (!enableNonConstantInitializers &&
         !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
-                                 highPrecisionSupported, forceDeferGlobalInitializers,
+                                 highPrecisionSupported, forceDeferNonConstGlobalInitializers,
                                  &mSymbolTable))
     {
         return false;
@@ -1222,39 +1245,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         {
             return false;
         }
-    }
-
-    return true;
-}
-
-bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
-{
-    auto resizeVariable = [this, root](const ImmutableString &name, uint32_t size, uint32_t maxSize) {
-        // Skip if the variable is not used or implicitly has the maximum size
-        if (size == 0 || size == maxSize)
-            return true;
-        ASSERT(size < maxSize);
-        const TVariable *builtInVar =
-            static_cast<const TVariable *>(mSymbolTable.findBuiltIn(name, getShaderVersion()));
-        TType *resizedType = new TType(builtInVar->getType());
-        resizedType->setArraySize(0, size);
-
-        TVariable *resizedVar =
-            new TVariable(&mSymbolTable, name, resizedType, SymbolType::BuiltIn);
-
-        return ReplaceVariable(this, root, builtInVar, resizedVar);
-    };
-
-    if (!mClipDistanceRedeclared && !resizeVariable(ImmutableString("gl_ClipDistance"),
-                                                    mClipDistanceSize, mResources.MaxClipDistances))
-    {
-        return false;
-    }
-
-    if (!mCullDistanceRedeclared && !resizeVariable(ImmutableString("gl_CullDistance"),
-                                                    mCullDistanceSize, mResources.MaxCullDistances))
-    {
-        return false;
     }
 
     return true;
@@ -1525,6 +1515,9 @@ void TCompiler::clearResults()
     mInfoSink.debug.erase();
     mDiagnostics.resetErrorCount();
 
+    mMetadataFlags.reset();
+    mSpecConstUsageBits.reset();
+
     mAttributes.clear();
     mOutputVariables.clear();
     mUniforms.clear();
@@ -1539,11 +1532,8 @@ void TCompiler::clearResults()
 
     mNumViews = -1;
 
-    mClipDistanceSize       = 0;
-    mCullDistanceSize       = 0;
-    mClipDistanceRedeclared = false;
-    mCullDistanceRedeclared = false;
-    mClipDistanceUsed       = false;
+    mClipDistanceSize = 0;
+    mCullDistanceSize = 0;
 
     mGeometryShaderInputPrimitiveType  = EptUndefined;
     mGeometryShaderOutputPrimitiveType = EptUndefined;

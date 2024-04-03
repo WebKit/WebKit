@@ -219,6 +219,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/RuntimeApplicationChecksCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
+    platform/cocoa/SharedMemoryCocoa.cpp
     platform/cocoa/SystemBattery.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
@@ -243,6 +244,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
     platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
+    platform/graphics/avfoundation/WebAVSampleBufferListener.mm
 
     platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
@@ -367,7 +369,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
     platform/mac/PowerObserverMac.cpp
-    platform/mac/PublicSuffixMac.mm
     platform/mac/RevealUtilities.mm
     platform/mac/ScrollAnimatorMac.mm
     platform/mac/ScrollingEffectsController.mm
@@ -430,9 +431,11 @@ list(APPEND WebCore_SOURCES
     platform/text/mac/TextBoundaries.mm
     platform/text/mac/TextCheckingMac.mm
 
-    rendering/RenderThemeCocoa.mm
-    rendering/RenderThemeMac.mm
     rendering/TextAutoSizing.cpp
+
+    rendering/cocoa/RenderThemeCocoa.mm
+
+    rendering/mac/RenderThemeMac.mm
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
@@ -600,6 +603,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/PlaybackSessionModel.h
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/PowerSourceNotifier.h
+    platform/cocoa/PublicSuffixCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.h
     platform/cocoa/SharedVideoFrameInfo.h
     platform/cocoa/SystemBattery.h
@@ -752,6 +756,10 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/mac/FormDataStreamMac.h
     platform/network/mac/UTIUtilities.h
     platform/network/mac/WebCoreURLResponse.h
+
+    rendering/cocoa/RenderThemeCocoa.h
+
+    rendering/ios/RenderThemeIOS.h
 
     testing/MockWebAuthenticationConfiguration.h
 

@@ -63,8 +63,8 @@ inline const Box* firstChild(U& object)
 
 inline const Box* firstChild(const Box& box)
 {
-    if (is<ElementBox>(box))
-        return downcast<ElementBox>(box).firstChild();
+    if (auto* elementBox = dynamicDowncast<ElementBox>(box))
+        return elementBox->firstChild();
     return nullptr;
 }
 

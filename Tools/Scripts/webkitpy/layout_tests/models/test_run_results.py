@@ -237,6 +237,8 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
     results = {}
     results['version'] = 4
 
+    device_type_list = list(expectations_by_type.keys())
+
     tbe = initial_results.tests_by_expectation
     tbt = initial_results.tests_by_timeline
     results['fixable'] = len(tbt[test_expectations.NOW] - tbe[test_expectations.PASS])
@@ -390,9 +392,16 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
     results['date'] = datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
     results['port_name'] = port_obj.name()
     results['test_configuration'] = dict(port_obj.test_configuration().items())
+
+    # These use the first device type, because we've long ago merged the results for all
+    # the device types we ran.
     results['baseline_search_path'] = [
         port_obj.host.filesystem.relpath(p, port_obj.layout_tests_dir())
-        for p in port_obj.baseline_search_path()
+        for p in port_obj.baseline_search_path(device_type=device_type_list[0])
+    ]
+    results['expectations_files'] = [
+        port_obj.host.filesystem.relpath(p, port_obj.layout_tests_dir())
+        for p in port_obj.expectations_files(device_type=device_type_list[0])
     ]
 
     try:

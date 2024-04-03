@@ -75,7 +75,7 @@ inline bool RenderElement::shouldApplyAnyContainment() const
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsInlineSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
 }
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
@@ -85,7 +85,7 @@ inline bool RenderElement::shouldApplyLayoutContainment() const
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !(isRenderRubyText() || style().display() == DisplayType::RubyAnnotation) && (!isTablePart() || isRenderBlockFlow());
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderBlockFlow());
 }
 
 inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
@@ -100,18 +100,18 @@ inline bool RenderElement::shouldApplyPaintContainment() const
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return isSkippedContentRoot() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
 }
 
 // FIXME: try to avoid duplication with isSkippedContentRoot.
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !(isRenderRubyText() || style().display() == DisplayType::RubyAnnotation) && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
@@ -121,9 +121,10 @@ inline bool RenderElement::shouldApplyStyleContainment() const
 
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
 {
-    return style().visibility() == Visibility::Visible
+    auto visibility = !request || request->userTriggered() ? style().usedVisibility() : style().visibility();
+    return visibility == Visibility::Visible
         && !isSkippedContent()
-        && ((request && request->ignoreCSSPointerEventsProperty()) || style().effectivePointerEvents() != PointerEvents::None);
+        && ((request && request->ignoreCSSPointerEventsProperty()) || style().usedPointerEvents() != PointerEvents::None);
 }
 
 inline int adjustForAbsoluteZoom(int value, const RenderElement& renderer)

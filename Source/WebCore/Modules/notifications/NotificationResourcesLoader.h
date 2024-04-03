@@ -61,6 +61,8 @@ private:
 
         void cancel();
 
+        bool finished() const { return m_finished; }
+
     private:
         // ThreadableLoaderClient API.
         void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
@@ -68,6 +70,7 @@ private:
         void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) final;
         void didFail(const ResourceError&) final;
 
+        bool m_finished { false };
         SharedBufferBuilder m_buffer;
         RefPtr<BitmapImage> m_image;
         RefPtr<ThreadableLoader> m_loader;
@@ -77,6 +80,7 @@ private:
     void didFinishLoadingResource(ResourceLoader*);
 
     Notification& m_notification;
+    bool m_stopped { false };
     CompletionHandler<void(RefPtr<NotificationResources>&&)> m_completionHandler;
     HashSet<std::unique_ptr<ResourceLoader>> m_loaders;
     RefPtr<NotificationResources> m_resources;

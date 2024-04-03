@@ -32,6 +32,7 @@
 #include "ElementRuleCollector.h"
 #include "EventRegion.h"
 #include "FloatRoundedRect.h"
+#include "GlyphDisplayListCache.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
@@ -39,7 +40,6 @@
 #include "InlineIteratorTextBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineTextBoxStyle.h"
-#include "LegacyEllipsisBox.h"
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -48,8 +48,6 @@
 #include "RenderElementInlines.h"
 #include "RenderHighlight.h"
 #include "RenderLineBreak.h"
-#include "RenderRubyRun.h"
-#include "RenderRubyText.h"
 #include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -61,7 +59,6 @@
 #include "TextBoxSelectableRange.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
-#include "TextPainter.h"
 #include <stdio.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -74,7 +71,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
 struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     void* pointers[2];
     unsigned variables[2];
-    unsigned short variables2;
 };
 
 static_assert(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), "LegacyInlineTextBox should stay small");
@@ -86,17 +82,12 @@ LegacyInlineTextBox::~LegacyInlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
-    TextPainter::removeGlyphDisplayList(*this);
+    if (isInGlyphDisplayListCache())
+        removeBoxFromGlyphDisplayListCache(*this);
 }
 
 bool LegacyInlineTextBox::hasTextContent() const
 {
-    if (m_len > 1)
-        return true;
-    if (auto* combinedText = this->combinedText()) {
-        ASSERT(m_len == 1);
-        return !combinedText->combinedStringForRendering().isEmpty();
-    }
     return m_len;
 }
 
@@ -164,7 +155,7 @@ RenderObject::HighlightState LegacyInlineTextBox::selectionState() const
 
 const FontCascade& LegacyInlineTextBox::lineFont() const
 {
-    return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
+    return lineStyle().fontCascade();
 }
 
 LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal)
@@ -234,75 +225,6 @@ void LegacyInlineTextBox::attachLine()
     renderer().attachTextBox(*this);
 }
 
-float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
-{
-    if (foundBox) {
-        m_truncation = 0;
-        return -1;
-    }
-
-    // For LTR this is the left edge of the box, for RTL, the right edge in parent coordinates.
-    float ellipsisX = flowIsLTR ? visibleRightEdge - ellipsisWidth : visibleLeftEdge + ellipsisWidth;
-    
-    // Criteria for full truncation:
-    // LTR: the left edge of the ellipsis is to the left of our text run.
-    // RTL: the right edge of the ellipsis is to the right of our text run.
-    bool ltrFullTruncation = flowIsLTR && ellipsisX <= left();
-    bool rtlFullTruncation = !flowIsLTR && ellipsisX >= left() + logicalWidth();
-    if (ltrFullTruncation || rtlFullTruncation) {
-        // Too far. Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
-        m_truncation = 0;
-        foundBox = true;
-        return -1;
-    }
-
-    bool ltrEllipsisWithinBox = flowIsLTR && (ellipsisX < right());
-    bool rtlEllipsisWithinBox = !flowIsLTR && (ellipsisX > left());
-    if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
-        foundBox = true;
-
-        // The inline box may have different directionality than it's parent. Since truncation
-        // behavior depends both on both the parent and the inline block's directionality, we
-        // must keep track of these separately.
-        bool ltr = isLeftToRightDirection();
-        if (ltr != flowIsLTR) {
-            // Width in pixels of the visible portion of the box, excluding the ellipsis.
-            int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
-            ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
-        }
-
-        auto textBox = InlineIterator::textBoxFor(this);
-        auto offset = lineFont().offsetForPosition(textBox->textRun(InlineIterator::TextRunMode::Editing), ellipsisX - textBox->logicalLeftIgnoringInlineDirection(), false);
-        if (!offset) {
-            // No characters should be rendered. Set ourselves to full truncation and place the ellipsis at the min of our start
-            // and the ellipsis edge.
-            m_truncation = 0;
-            truncatedWidth += ellipsisWidth;
-            return flowIsLTR ? std::min(ellipsisX, x()) : std::max(ellipsisX, right() - ellipsisWidth);
-        }
-
-        // Set the truncation index on the text run.
-        m_truncation = offset;
-
-        // If we got here that means that we were only partially truncated and we need to return the pixel offset at which
-        // to place the ellipsis.
-        float widthOfVisibleText = renderer().width(m_start, offset, textPos(), isFirstLine());
-
-        // The ellipsis needs to be placed just after the last visible character.
-        // Where "after" is defined by the flow directionality, not the inline
-        // box directionality.
-        // e.g. In the case of an LTR inline box truncated in an RTL flow then we can
-        // have a situation such as |Hello| -> |...He|
-        truncatedWidth += widthOfVisibleText + ellipsisWidth;
-        if (flowIsLTR)
-            return left() + widthOfVisibleText;
-
-        return right() - widthOfVisibleText - ellipsisWidth;
-    }
-    truncatedWidth += logicalWidth();
-    return -1;
-}
-
 bool LegacyInlineTextBox::isLineBreak() const
 {
     return renderer().style().preserveNewline() && len() == 1 && renderer().text()[start()] == '\n';
@@ -317,25 +239,12 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     if (isLineBreak())
         return false;
 
-    if (m_truncation && !*m_truncation)
-        return false;
-
     FloatRect rect(locationIncludingFlipping(), size());
-    // Make sure truncated text is ignored while hittesting.
-    if (m_truncation) {
-        LayoutUnit widthOfVisibleText { renderer().width(m_start, *m_truncation, textPos(), isFirstLine()) };
-
-        if (isHorizontal())
-            renderer().style().isLeftToRightDirection() ? rect.setWidth(widthOfVisibleText) : rect.shiftXEdgeTo(right() - widthOfVisibleText);
-        else
-            rect.setHeight(widthOfVisibleText);
-    }
-
     rect.moveBy(accumulatedOffset);
 
     if (locationInContainer.intersects(rect)) {
         renderer().updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
-        if (result.addNodeToListBasedTestResult(renderer().nodeForHitTest(), request, locationInContainer, rect) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(renderer().protectedNodeForHitTest().get(), request, locationInContainer, rect) == HitTestProgress::Stop)
             return true;
     }
     return false;
@@ -343,8 +252,8 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
 
 void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
-    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
-        || (m_truncation && !*m_truncation) || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
+    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().usedVisibility() != Visibility::Visible
+        || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
         return;
 
     ASSERT(paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines);
@@ -366,23 +275,13 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
 {
-    // Fix up the offset if we are combined text or have a hyphen because we manage these embellishments.
+    // Fix up the offset if we are combined text because we manage these embellishments.
     // That is, they are not reflected in renderer().text(). We treat combined text as a single unit.
-    // We also treat the last codepoint in this box and the hyphen as a single unit.
-    auto additionalLengthAtEnd = [&] {
-        if (auto* combinedText = this->combinedText())
-            return combinedText->combinedStringForRendering().length() - m_len;
-        if (hasHyphen())
-            return lineStyle().hyphenString().length();
-        return 0u;
-    }();
-
     return {
         m_start,
         m_len,
-        additionalLengthAtEnd,
-        isLineBreak(),
-        m_truncation
+        0u,
+        isLineBreak()
     };
 }
 
@@ -415,59 +314,21 @@ float LegacyInlineTextBox::textPos() const
     return logicalLeft() - root().logicalLeft();
 }
 
-TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
+TextRun LegacyInlineTextBox::createTextRun() const
 {
     const auto& style = lineStyle();
-    TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
+    TextRun textRun { text(), textPos(), 0, ExpansionBehavior::forbidAll(), direction(), style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
 }
 
-String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
+String LegacyInlineTextBox::text() const
 {
-    String result;
-    if (auto* combinedText = this->combinedText()) {
-        if (ignoreCombinedText)
-            result = renderer().text().substring(m_start, m_len);
-        else
-            result = combinedText->combinedStringForRendering();
-    } else if (hasHyphen()) {
-        if (ignoreHyphen)
-            result = renderer().text().substring(m_start, m_len);
-        else
-            result = makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
-    } else
-        result = renderer().text().substring(m_start, m_len);
+    String result = renderer().text().substring(m_start, m_len);
 
     // This works because this replacement doesn't affect string indices. We're replacing a single Unicode code unit with another Unicode code unit.
     // How convenient.
     return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTFMove(result));
-}
-
-const RenderCombineText* LegacyInlineTextBox::combinedText() const
-{
-    return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
-}
-
-ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
-{
-    ExpansionBehavior behavior;
-
-    if (forceLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Force;
-    else if (canHaveLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Allow;
-    else
-        behavior.left = ExpansionBehavior::Behavior::Forbid;
-
-    if (forceRightExpansion())
-        behavior.right = ExpansionBehavior::Behavior::Force;
-    else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        behavior.right = ExpansionBehavior::Behavior::Allow;
-    else
-        behavior.right = ExpansionBehavior::Behavior::Forbid;
-
-    return behavior;
 }
 
 #if ENABLE(TREE_DEBUGGING)

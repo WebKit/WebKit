@@ -32,19 +32,12 @@
 #include "JSWebAssemblyArray.h"
 #include "WebAssemblyArrayPrototype.h"
 
-#include "WebAssemblyArrayConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyArrayConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyArray, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayConstructor) };
+const ClassInfo WebAssemblyArrayConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyArray);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyArray);
-
-/* Source for WebAssemblyArrayConstructor.lut.h
- @begin constructorTableWebAssemblyArray
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyArray, (JSGlobalObject* globalObject, CallFrame*))
 {

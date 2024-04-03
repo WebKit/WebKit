@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 216x17
           text run at (0,0) width 216: "This tests for a drag select crasher."
       RenderBlock {DIV} at (0,34) size 784x24
-        RenderInline {SPAN} at (0,0) size 64x17
+        RenderInline {SPAN} at (0,3) size 64x17
           RenderText {#text} at (0,3) size 64x17
             text run at (0,3) width 64: "Start here."
         RenderText {#text} at (64,3) size 4x17

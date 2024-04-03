@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        .layer {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            transform: translate3d(0, 0, 0);
+        }
+        #first {
+            background-color: red;
+        }
+        #second {
+            left: 200px;
+            background-color: red;
+        }
+        #repaint {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+        async function doTest()
+        {
+            await UIHelper.renderingUpdate();
+
+            // Make the front buffer of 'first' contain green, and the back red.
+            document.getElementById('first').style.backgroundColor = "green";
+            await UIHelper.renderingUpdate();
+
+            // Make 'first' volatile and trigger a paint by mutating an unrelated layer.
+            window.internals.markFrontBufferVolatile(document.getElementById('first'));
+            document.getElementById('second').style.backgroundColor = "green";
+
+            await UIHelper.renderingUpdate();
+
+            // Do a partial repaint on 'first', such that we re-use the existing
+            // red buffer and make it all green (by copying from the old front, plus
+            // repainting the new subset).
+            document.getElementById('repaint').style.backgroundColor = "green";
+
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="layer" id="first">A<div id="repaint"></div></div>
+    <div class="layer" id="second">B</div>
+</body>
+</html>

@@ -130,8 +130,6 @@ void webkit_dom_wheel_event_init_wheel_event(WebKitDOMWheelEvent* self, glong wh
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_WHEEL_EVENT(self));
     g_return_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(view));
-    WebCore::WheelEvent* item = WebKit::core(self);
-    item->initWebKitWheelEvent(wheelDeltaX, wheelDeltaY, WebKit::toWindowProxy(view), screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey);
 }
 
 glong webkit_dom_wheel_event_get_wheel_delta_x(WebKitDOMWheelEvent* self)

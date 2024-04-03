@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -426,10 +426,13 @@ void RealtimeVideoCaptureSource::setSizeFrameRateAndZoom(std::optional<int> widt
 
     m_currentPreset = match->encodingPreset;
     auto newSize = match->encodingPreset->size();
+
+    startApplyingConstraints();
     setFrameRateAndZoomWithPreset(match->requestedFrameRate, match->requestedZoom, WTFMove(match->encodingPreset));
     setSize(newSize);
     setFrameRate(match->requestedFrameRate);
     setZoom(match->requestedZoom);
+    endApplyingConstraints();
 }
 
 auto RealtimeVideoCaptureSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>
@@ -489,8 +492,10 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
 
         m_currentPreset = newPresetForPhoto->encodingPreset;
         auto newSize = newPresetForPhoto->encodingPreset->size();
+        startApplyingConstraints();
         setFrameRateAndZoomWithPreset(newPresetForPhoto->requestedFrameRate, newPresetForPhoto->requestedZoom, WTFMove(newPresetForPhoto->encodingPreset));
         setSize(newSize);
+        endApplyingConstraints();
     }
 
     return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
@@ -500,15 +505,16 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
         if (configurationToRestore) {
             m_currentPreset = configurationToRestore->encodingPreset;
             auto newSize = configurationToRestore->encodingPreset->size();
+            startApplyingConstraints();
             setFrameRateAndZoomWithPreset(configurationToRestore->requestedFrameRate, configurationToRestore->requestedZoom, WTFMove(configurationToRestore->encodingPreset));
             setSize(newSize);
+            endApplyingConstraints();
+
             if (m_mutedForPhotoCapture) {
                 m_mutedForPhotoCapture = false;
                 setMuted(false);
             }
         }
-
-        // FIXME: Resize image if preset size doesn't match requested size.
 
         return TakePhotoNativePromise::createAndSettle(WTFMove(result));
     });

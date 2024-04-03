@@ -42,6 +42,7 @@ ClonedArguments::ClonedArguments(VM& vm, Structure* structure, Butterfly* butter
 
 ClonedArguments* ClonedArguments::createEmpty(VM& vm, Structure* structure, JSFunction* callee, unsigned length, Butterfly* butterfly)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned vectorLength = length;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return nullptr;
@@ -57,8 +58,10 @@ ClonedArguments* ClonedArguments::createEmpty(VM& vm, Structure* structure, JSFu
             indexingHeader.setVectorLength(vectorLength);
             indexingHeader.setPublicLength(length);
             butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
-            if (!butterfly)
+            if (UNLIKELY(!butterfly)) {
+                throwOutOfMemoryError(structure->globalObject(), scope);
                 return nullptr;
+            }
         }
 
         for (unsigned i = length; i < vectorLength; ++i)
@@ -91,7 +94,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
         // NB. Some clients might expect that the global object of of this object is the global object
         // of the callee. We don't do this for now, but maybe we should.
         ClonedArguments* result = ClonedArguments::createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
-        ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+        ASSERT(!result || !result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
         return result;
     };
     
@@ -105,12 +108,16 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
                 length = inlineCallFrame->argumentCountIncludingThis;
             length--;
             result = createEmptyWithAssert(globalObject, callee, length);
+            if (!result)
+                return result;
 
             for (unsigned i = length; i--;)
                 result->putDirectIndex(globalObject, i, inlineCallFrame->m_argumentsWithFixup[i + 1].recover(targetFrame));
         } else {
             length = targetFrame->argumentCount();
             result = createEmptyWithAssert(globalObject, callee, length);
+            if (!result)
+                return result;
 
             for (unsigned i = length; i--;)
                 result->putDirectIndex(globalObject, i, targetFrame->uncheckedArgument(i));
@@ -120,6 +127,8 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
         
     case ArgumentsMode::FakeValues: {
         result = createEmptyWithAssert(globalObject, callee, 0);
+        if (!result)
+            return result;
         break;
     } }
 
@@ -131,7 +140,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
 ClonedArguments* ClonedArguments::createWithMachineFrame(JSGlobalObject* globalObject, CallFrame* targetFrame, ArgumentsMode mode)
 {
     ClonedArguments* result = createWithInlineFrame(globalObject, targetFrame, nullptr, mode);
-    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+    ASSERT(!result || !result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -139,6 +148,8 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     ClonedArguments* result = createEmpty(vm, structure, callee, length, butterfly);
+    if (!result)
+        return result;
     
     for (unsigned i = length; i--;)
         result->putDirectIndex(globalObject, i, argumentStart[i].jsValue());

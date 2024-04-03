@@ -33,6 +33,7 @@
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
+#include <wtf/cocoa/SpanCocoa.h>
 OBJC_CLASS NSData;
 #endif
 
@@ -78,15 +79,15 @@ private:
     VariantType m_variant;
 };
 
-inline BufferSource toBufferSource(const uint8_t* data, size_t length)
+inline BufferSource toBufferSource(std::span<const uint8_t> data)
 {
-    return BufferSource(JSC::ArrayBuffer::tryCreate(data, length));
+    return BufferSource(JSC::ArrayBuffer::tryCreate(data));
 }
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 inline BufferSource toBufferSource(NSData *data)
 {
-    return BufferSource(JSC::ArrayBuffer::tryCreate(static_cast<const uint8_t*>(data.bytes), data.length));
+    return BufferSource(JSC::ArrayBuffer::tryCreate(span(data)));
 }
 
 inline RetainPtr<NSData> toNSData(const BufferSource& data)

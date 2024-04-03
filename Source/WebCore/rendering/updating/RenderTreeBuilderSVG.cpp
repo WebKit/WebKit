@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,15 +53,6 @@ void RenderTreeBuilder::SVG::attach(LegacyRenderSVGRoot& parent, RenderPtr<Rende
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void RenderTreeBuilder::SVG::attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(childToAdd);
-}
-#endif
-
 void RenderTreeBuilder::SVG::attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
@@ -72,28 +64,27 @@ void RenderTreeBuilder::SVG::attach(RenderSVGInline& parent, RenderPtr<RenderObj
 {
     auto& childToAdd = *child;
     m_builder.inlineBuilder().attach(parent, WTFMove(child), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(childToAdd);
+
+    if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
+        SVGResourcesCache::clientWasAddedToTree(childToAdd);
 
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent))
         textAncestor->subtreeChildWasAdded(&childToAdd);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderTreeBuilder::SVG::attach(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto& childToAdd = *child;
     m_builder.attachToRenderElement(findOrCreateParentForChild(parent), WTFMove(child), beforeChild);
-
-    SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
-#endif
 
 void RenderTreeBuilder::SVG::attach(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
     m_builder.blockFlowBuilder().attach(parent, WTFMove(child), beforeChild);
 
-    SVGResourcesCache::clientWasAddedToTree(childToAdd);
+    if (!childToAdd.document().settings().layerBasedSVGEngineEnabled())
+        SVGResourcesCache::clientWasAddedToTree(childToAdd);
+
     parent.subtreeChildWasAdded(&childToAdd);
 }
 
@@ -105,7 +96,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGRoot& pare
 
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGText& parent, RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    if (!child.document().settings().layerBasedSVGEngineEnabled())
+        SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     parent.subtreeChildWillBeRemoved(&child, affectedAttributes);
@@ -116,7 +108,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGText& parent, Re
 
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGInline& parent, RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    if (!child.document().settings().layerBasedSVGEngineEnabled())
+        SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(parent);
     if (!textAncestor)
@@ -129,29 +122,12 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGInline& parent, 
     return takenChild;
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGContainer& parent, RenderObject& child)
-{
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return m_builder.detachFromRenderElement(parent, child);
-}
-#endif
-
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGContainer& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
     return m_builder.detachFromRenderElement(parent, child);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGRoot& parent, RenderObject& child)
-{
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return m_builder.detachFromRenderElement(parent, child);
-}
-#endif
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 RenderSVGViewportContainer& RenderTreeBuilder::SVG::findOrCreateParentForChild(RenderSVGRoot& parent)
 {
     if (auto* viewportContainer = parent.viewportContainer())
@@ -185,6 +161,5 @@ void RenderTreeBuilder::SVG::updateAfterDescendants(RenderSVGRoot& svgRoot)
         return;
     createViewportContainer(svgRoot);
 }
-#endif
 
 }

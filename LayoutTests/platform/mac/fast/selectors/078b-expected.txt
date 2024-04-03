@@ -39,7 +39,7 @@ layer at (0,0) size 800x134
       RenderBlock {P} at (0,92) size 784x18
         RenderText {#text} at (0,0) size 33x18
           text run at (0,0) width 33: "This "
-        RenderInline {SPAN} at (0,0) size 112x18
+        RenderInline {SPAN} at (32,0) size 112x18
           RenderText {#text} at (32,0) size 112x18
             text run at (32,0) width 112: "paragraph should"
         RenderText {#text} at (143,0) size 82x18

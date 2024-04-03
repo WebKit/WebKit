@@ -89,6 +89,12 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
         m_scrollerPair->verticalScroller().setEnabled(scrollbarEnabledState.verticalScrollbarIsEnabled);
     }
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarLayoutDirection)) {
+        auto scrollbarLayoutDirection = scrollingStateNode.scrollbarLayoutDirection();
+        m_scrollerPair->horizontalScroller().setScrollbarLayoutDirection(scrollbarLayoutDirection);
+        m_scrollerPair->verticalScroller().setScrollbarLayoutDirection(scrollbarLayoutDirection);
+    }
+
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {
         if (scrollingStateNode.mouseIsOverContentArea())
             m_scrollerPair->mouseEnteredContentArea();
@@ -277,7 +283,7 @@ RectEdges<bool> ScrollingTreeScrollingNodeDelegateMac::edgePinnedState() const
 bool ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide(BoxSide side) const
 {
     if (scrollingNode().isRootNode())
-        return scrollingTree().mainFrameCanRubberBandOnSide(side);
+        return scrollingTree().clientAllowsMainFrameRubberBandingOnSide(side);
 
     switch (side) {
     case BoxSide::Top:

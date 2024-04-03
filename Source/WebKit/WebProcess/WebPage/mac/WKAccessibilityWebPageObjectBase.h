@@ -45,6 +45,8 @@ class AXCoreObject;
     WebCore::IntSize m_size WTF_GUARDED_BY_LOCK(m_cacheLock);
     ThreadSafeWeakPtr<WebCore::AXCoreObject> m_isolatedTreeRoot;
 #endif
+
+    WebCore::IntPoint m_remoteFrameOffset;
     RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
 }
@@ -56,9 +58,11 @@ class AXCoreObject;
 - (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root;
 #endif
 - (void)setRemoteParent:(id)parent;
+- (void)setRemoteFrameOffset:(WebCore::IntPoint)offset;
 - (void)setHasMainFramePlugin:(bool)hasPlugin;
 
 - (id)accessibilityRootObjectWrapper;
 - (id)accessibilityFocusedUIElement;
+- (WebCore::IntPoint)accessibilityRemoteFrameOffset;
 
 @end

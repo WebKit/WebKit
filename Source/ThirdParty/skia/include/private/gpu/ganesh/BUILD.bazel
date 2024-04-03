@@ -1,0 +1,25 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# In own group for mapping to //gn/gpu.gni:skia_direct3d_sources.
+skia_filegroup(
+    name = "d3d_private_hdrs",
+    srcs = ["GrD3DTypesMinimal.h"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "GrContext_Base.h",
+        "GrImageContext.h",
+        "GrTextureGenerator.h",
+        "GrTypesPriv.h",
+    ],
+    visibility = [
+        "//include/private/gpu:__pkg__",
+        "//src/gpu/ganesh:__pkg__",
+    ],
+)

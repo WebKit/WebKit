@@ -115,6 +115,7 @@ class ValidateAST : public TIntermTraverser
 
     // For validateStructUsage:
     std::vector<std::map<ImmutableString, const TFieldListCollection *>> mStructsAndBlocksByName;
+    std::set<const TFunction *> mStructUsageProcessedFunctions;
     bool mStructUsageFailed = false;
 
     // For validateExpressionTypes:
@@ -936,9 +937,12 @@ void ValidateAST::visitFunctionPrototype(TIntermFunctionPrototype *node)
 
     if (mOptions.validateStructUsage)
     {
-        if (returnType.isStructSpecifier())
+        bool needsProcessing =
+            mStructUsageProcessedFunctions.find(function) == mStructUsageProcessedFunctions.end();
+        if (needsProcessing && returnType.isStructSpecifier())
         {
             visitStructOrInterfaceBlockDeclaration(returnType, node->getLine());
+            mStructUsageProcessedFunctions.insert(function);
         }
         else
         {
@@ -995,7 +999,6 @@ void ValidateAST::visitFunctionPrototype(TIntermFunctionPrototype *node)
 bool ValidateAST::visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node)
 {
     visitNode(visit, node);
-    scope(visit);
 
     if (mOptions.validateVariableReferences && visit == PreVisit)
     {

@@ -1,0 +1,76 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 364x54
+  RenderSVGTransformableContainer {g} at (0,0) size 363.02x53.39
+layer at (127.28,35.52) size 226x17
+  RenderSVGText {text} at (127,35) size 226x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 226x18
+      chunk 1 (middle anchor) text run 1 at (127.29,50.00) startOffset 0 endOffset 31 width 225.41: "feSpotLight's limitingConeAngle"
+layer at (0,0) size 364x32
+  RenderSVGTransformableContainer {g} at (0,0) size 363.02x31.92
+layer at (70,21.84) size 294x11
+  RenderSVGTransformableContainer {g} at (70,21.84) size 293.02x10.08
+layer at (70,21.84) size 10x10
+  RenderSVGText {text} at (0,0) size 11x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 11x11
+      chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 2 width 10.01: "30"
+layer at (165,21.84) size 10x10
+  RenderSVGText {text} at (95,0) size 11x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 11x11
+      chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 2 width 10.01: "20"
+layer at (260,21.84) size 67x10
+  RenderSVGText {text} at (190,0) size 67x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 67x11
+      chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 16 width 66.53: "Animated (0..50)"
+layer at (355,21.84) size 5x10
+  RenderSVGText {text} at (285,0) size 6x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 6x11
+      chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 1 width 5.01: "5"
+layer at (70,21.84) size 294x11
+  RenderSVGTransformableContainer {g} at (0,0) size 293.02x10.08
+layer at (70,21.84) size 13x10
+  RenderSVGText {text} at (0,0) size 14x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 14x11
+      chunk 1 text run 1 at (70.00,30.00) startOffset 0 endOffset 3 width 13.01: "-30"
+layer at (165,21.84) size 13x10
+  RenderSVGText {text} at (95,0) size 14x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 14x11
+      chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 3 width 13.01: "-20"
+layer at (260,21.84) size 70x10
+  RenderSVGText {text} at (190,0) size 70x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x11
+      chunk 1 text run 1 at (260.00,30.00) startOffset 0 endOffset 17 width 69.53: "Animated (0..-50)"
+layer at (355,21.84) size 8x10
+  RenderSVGText {text} at (285,0) size 9x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 9x11
+      chunk 1 text run 1 at (355.00,30.00) startOffset 0 endOffset 2 width 8.00: "-5"
+layer at (0,0) size 50x30
+  RenderSVGTransformableContainer {g} at (0,0) size 50x30
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include <WebCore/STUNMessageParsing.h>
@@ -53,7 +52,7 @@ public:
 
     void close();
     void setOption(int option, int value);
-    void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&);
+    void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&);
     void setListeningPort(int);
 
     class ConnectionStateTracker : public ThreadSafeRefCounted<ConnectionStateTracker> {
@@ -128,9 +127,9 @@ void NetworkRTCUDPSocketCocoa::setOption(int option, int value)
     m_connections->setOption(option, value);
 }
 
-void NetworkRTCUDPSocketCocoa::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
+void NetworkRTCUDPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
 {
-    m_connections->sendTo(data, size, address, options);
+    m_connections->sendTo(data, address, options);
 }
 
 static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t connection)
@@ -365,14 +364,14 @@ void NetworkRTCUDPSocketCocoaConnections::setupNWConnection(nw_connection_t nwCo
     }).get());
 
     processUDPData(nwConnection, Ref  { connectionStateTracker }, 0, [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port()](auto* message, auto size) mutable {
-        IPC::DataReference data(message, size);
+        std::span data(message, size);
         connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
     });
 
     nw_connection_start(nwConnection);
 }
 
-void NetworkRTCUDPSocketCocoaConnections::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress& remoteAddress, const rtc::PacketOptions& options)
+void NetworkRTCUDPSocketCocoaConnections::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress& remoteAddress, const rtc::PacketOptions& options)
 {
     bool isInCorrectValue = (remoteAddress == HashTraits<rtc::SocketAddress>::emptyValue()) || HashTraits<rtc::SocketAddress>::isDeletedValue(remoteAddress);
     ASSERT(!isInCorrectValue);
@@ -387,7 +386,7 @@ void NetworkRTCUDPSocketCocoaConnections::sendTo(const uint8_t* data, size_t siz
         }).iterator->value.first.get();
     }
 
-    auto value = adoptNS(dispatch_data_create(data, size, nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
+    RetainPtr value = adoptNS(dispatch_data_create(data.data(), data.size(), nullptr, DISPATCH_DATA_DESTRUCTOR_DEFAULT));
     nw_connection_send(nwConnection, value.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, makeBlockPtr([identifier = m_identifier, connection = m_connection.copyRef(), options](_Nullable nw_error_t error) {
         RELEASE_LOG_ERROR_IF(error, WebRTC, "NetworkRTCUDPSocketCocoaConnections::sendTo failed with error %d", error ? nw_error_get_error_code(error) : 0);
         connection->send(Messages::LibWebRTCNetwork::SignalSentPacket { identifier, options.packet_id, rtc::TimeMillis() }, 0);

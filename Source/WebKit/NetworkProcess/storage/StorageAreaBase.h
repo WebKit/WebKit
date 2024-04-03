@@ -30,6 +30,7 @@
 #include "StorageAreaImplIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
 #include <WebCore/ClientOrigin.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -44,7 +45,7 @@ enum class StorageError : uint8_t {
     QuotaExceeded,
 };
 
-class StorageAreaBase : public CanMakeWeakPtr<StorageAreaBase> {
+class StorageAreaBase : public CanMakeWeakPtr<StorageAreaBase>, public Identified<StorageAreaIdentifier> {
     WTF_MAKE_NONCOPYABLE(StorageAreaBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -58,7 +59,6 @@ public:
     virtual bool isEmpty() = 0;
     virtual void clear() = 0;
 
-    StorageAreaIdentifier identifier() const { return m_identifier; }
     WebCore::ClientOrigin origin() const { return m_origin; }
     unsigned quota() const { return m_quota; }
     void addListener(IPC::Connection::UniqueID, StorageAreaMapIdentifier);
@@ -76,7 +76,6 @@ protected:
     void dispatchEvents(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
 private:
-    StorageAreaIdentifier m_identifier;
     unsigned m_quota;
     WebCore::ClientOrigin m_origin;
     HashMap<IPC::Connection::UniqueID, StorageAreaMapIdentifier> m_listeners;

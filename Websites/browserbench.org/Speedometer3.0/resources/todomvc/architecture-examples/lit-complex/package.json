@@ -1,0 +1,17 @@
+{
+    "name": "lit-complex",
+    "private": true,
+    "engines": {
+        "node": ">=18.13.0",
+        "npm": ">=8.19.3"
+    },
+    "scripts": {
+        "build": "node scripts/build.js",
+        "serve": "http-server ./dist -p 8000 -c-1 --cors"
+    },
+    "devDependencies": {
+        "big-dom-generator": "file:../../big-dom-generator",
+        "http-server": "^14.1.1",
+        "todomvc-lit": "file:../lit"
+    }
+}

@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (293,0) width 458: "Inside an empty editable region, a new paragraph is added, then a list is"
           text run at (0,18) width 55: "created. "
           text run at (54,18) width 130: "The caret should be "
-        RenderInline {B} at (0,0) size 41x18
+        RenderInline {B} at (183,18) size 41x18
           RenderText {#text} at (183,18) size 41x18
             text run at (183,18) width 41: "inside"
         RenderText {#text} at (223,18) size 129x18

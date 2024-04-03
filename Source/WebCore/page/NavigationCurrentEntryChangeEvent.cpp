@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationCurrentEntryChangeEvent);
 
 NavigationCurrentEntryChangeEvent::NavigationCurrentEntryChangeEvent(const AtomString& type, const NavigationCurrentEntryChangeEvent::Init& init)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::NavigationCurrentEntryChangeEvent, type, CanBubble::No, IsCancelable::No)
     , m_navigationType(init.navigationType)
     , m_from(init.from)
 {
@@ -42,11 +42,6 @@ NavigationCurrentEntryChangeEvent::NavigationCurrentEntryChangeEvent(const AtomS
 Ref<NavigationCurrentEntryChangeEvent> NavigationCurrentEntryChangeEvent::create(const AtomString& type, const NavigationCurrentEntryChangeEvent::Init& init)
 {
     return adoptRef(*new NavigationCurrentEntryChangeEvent(type, init));
-}
-
-EventInterface NavigationCurrentEntryChangeEvent::eventInterface() const
-{
-    return NavigationCurrentEntryChangeEventInterfaceType;
 }
 
 } // namespace WebCore

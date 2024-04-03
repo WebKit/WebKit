@@ -36,6 +36,10 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
@@ -113,7 +117,7 @@ public:
 
     RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
 
-    size_t memoryCost() final
+    size_t memoryCost() const final
     {
         return m_info.memoryCost;
     }

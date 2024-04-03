@@ -4022,6 +4022,76 @@ TEST_P(MultisampledRenderToTextureES3Test, ClearThenMaskedClearFramebufferTest)
     ASSERT_GL_NO_ERROR();
 }
 
+// Make sure mid render pass clear works correctly.
+TEST_P(MultisampledRenderToTextureES3Test, RenderToTextureMidRenderPassDepthClear)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+
+    constexpr GLsizei kSize = 6;
+
+    // Create multisampled framebuffer to draw into, with both color and depth attachments.
+    GLTexture colorMS;
+    glBindTexture(GL_TEXTURE_2D, colorMS);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLRenderbuffer depthStencilMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilMS);
+    glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                         colorMS, 0, 4);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencilMS);
+    ASSERT_GL_NO_ERROR();
+
+    // Set up texture for copy operation that breaks the render pass
+    GLTexture copyTex;
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    // First render pass: draw and then break the render pass so that we have initial data in the
+    // depth buffer 0.75f
+    glViewport(0, 0, kSize, kSize);
+    glClearColor(0, 0, 0, 0.0f);
+    glClearDepthf(0.0);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    // depthValue = 1/2 * 0.5f + 1/2 = 0.75f
+    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    // Second render pass: set depth test to always pass and then draw. ANGLE may optimize to not
+    // load depth value. Depth buffer should still be 0.75f with color buffer being green.
+    glDepthMask(GL_FALSE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 1.0f);
+
+    // Now do mid-renderPass clear to 0.4f
+    glDepthMask(GL_TRUE);
+    glClearDepthf(0.4f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Draw blue with depth value 0.5f. This should pass depth test (0.5f>=0.4f) and we see blue.
+    // If mid-RenderPass clear not working properly, depthBuffer should still have 0.75 and depth
+    // test will fail and you see Green.
+    glDepthFunc(GL_GEQUAL);
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    // depthValue = 1/2 * 0.0f + 1/2 = 0.5f
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.0f);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
 class MultisampledRenderToTextureWithAdvancedBlendTest : public MultisampledRenderToTextureES3Test
 {
   protected:

@@ -27,8 +27,9 @@
 #include "ResourceRequestBase.h"
 
 #include "HTTPHeaderNames.h"
+#include "HTTPStatusCodes.h"
 #include "Logging.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -100,6 +101,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
     setUseAdvancedPrivacyProtections(other.useAdvancedPrivacyProtections());
     setDidFilterLinkDecoration(other.didFilterLinkDecoration());
+    setIsPrivateTokenUsageByThirdPartyAllowed(other.isPrivateTokenUsageByThirdPartyAllowed());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -137,9 +139,9 @@ static bool shouldUseGet(const ResourceRequestBase& request, const ResourceRespo
 {
     if (equalLettersIgnoringASCIICase(request.httpMethod(), "get"_s) || equalLettersIgnoringASCIICase(request.httpMethod(), "head"_s))
         return false;
-    if (redirectResponse.httpStatusCode() == 301 || redirectResponse.httpStatusCode() == 302)
+    if (redirectResponse.httpStatusCode() == httpStatus301MovedPermanently || redirectResponse.httpStatusCode() == httpStatus302Found)
         return equalLettersIgnoringASCIICase(request.httpMethod(), "post"_s);
-    return redirectResponse.httpStatusCode() == 303;
+    return redirectResponse.httpStatusCode() == httpStatus303SeeOther;
 }
 
 // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch Step 11
@@ -416,7 +418,7 @@ void ResourceRequestBase::setExistingHTTPReferrerToOriginString()
     if (!hasHTTPReferrer())
         return;
 
-    setHTTPHeaderField(HTTPHeaderName::Referer, SecurityPolicy::referrerToOriginString(httpReferrer()));
+    setHTTPHeaderField(HTTPHeaderName::Referer, SecurityPolicy::referrerToOriginString(URL { httpReferrer() }));
 }
     
 void ResourceRequestBase::clearHTTPReferrer()
@@ -672,6 +674,11 @@ void ResourceRequestBase::setDidFilterLinkDecoration(bool didFilterLinkDecoratio
     m_requestData.m_didFilterLinkDecoration = didFilterLinkDecoration;
 }
 
+void ResourceRequestBase::setIsPrivateTokenUsageByThirdPartyAllowed(bool isPrivateTokenUsageByThirdPartyAllowed)
+{
+    m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed = isPrivateTokenUsageByThirdPartyAllowed;
+}
+
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())
@@ -820,20 +827,12 @@ void ResourceRequestBase::setCachePartition(const String& cachePartition)
 
 String ResourceRequestBase::partitionName(const String& domain)
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (domain.isNull())
         return emptyString();
-    String highLevel = topPrivatelyControlledDomain(domain);
+    auto highLevel = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
     if (highLevel.isNull())
         return emptyString();
     return highLevel;
-#else
-    UNUSED_PARAM(domain);
-#if ENABLE(CACHE_PARTITIONING)
-#error Cache partitioning requires PUBLIC_SUFFIX_LIST
-#endif
-    return emptyString();
-#endif
 }
 
 bool ResourceRequestBase::isThirdParty() const

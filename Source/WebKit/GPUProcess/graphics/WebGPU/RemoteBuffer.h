@@ -35,6 +35,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
@@ -54,9 +55,9 @@ class ObjectHeap;
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBuffer> create(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteBuffer> create(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, bool mappedAtCreation, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTFMove(streamConnection), mappedAtCreation, identifier));
     }
 
     virtual ~RemoteBuffer();
@@ -66,7 +67,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBuffer(WebCore::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteBuffer(WebCore::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, bool mappedAtCreation, WebGPUIdentifier);
 
     RemoteBuffer(const RemoteBuffer&) = delete;
     RemoteBuffer(RemoteBuffer&&) = delete;
@@ -87,7 +88,7 @@ private:
     void setLabel(String&&);
 
     Ref<WebCore::WebGPU::Buffer> m_backing;
-    WebGPU::ObjectHeap& m_objectHeap;
+    WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     bool m_isMapped { false };

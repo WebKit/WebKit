@@ -28,13 +28,20 @@
 
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class URL;
+}
+
 namespace WebCore {
 
 class ContentType {
 public:
     WEBCORE_EXPORT explicit ContentType(String&& type);
     WEBCORE_EXPORT explicit ContentType(const String& type);
+    WEBCORE_EXPORT ContentType(const String& type, bool); // Use by the IPC serializer.
     ContentType() = default;
+
+    WEBCORE_EXPORT static ContentType fromURL(const WTF::URL&);
 
     WEBCORE_EXPORT static const String& codecsParameter();
     static const String& profilesParameter();
@@ -46,10 +53,15 @@ public:
     const String& raw() const { return m_type; }
     bool isEmpty() const { return m_type.isEmpty(); }
 
+    bool typeWasInferredFromExtension() const { return m_typeWasInferredFromExtension; }
+
     WEBCORE_EXPORT String toJSONString() const;
+    bool operator==(const ContentType& other) const { return raw() == other.raw(); }
+    bool operator!=(const ContentType& other) const { return !(*this == other); }
 
 private:
     String m_type;
+    bool m_typeWasInferredFromExtension { false };
 };
 
 } // namespace WebCore

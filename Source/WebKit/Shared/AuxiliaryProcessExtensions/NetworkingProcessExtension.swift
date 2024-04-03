@@ -23,30 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ServiceExtensions
-@_spi(Private) import ServiceExtensions
-
-@objc
-@_spi(Private)
-open class Grant: WKGrant {
-    let inner : _Capability.Grant
-
-    init(inner: _Capability.Grant) {
-        self.inner = inner
-    }
-
-    deinit {
-        do {
-            try invalidate()
-        } catch {
-            NSLog("Failed to invalidate grant")
-        }
-    }
-
-    open func invalidate() throws {
-        try self.inner.invalidate()
-    }
-}
+import BrowserEngineKit
 
 @main
 class NetworkingProcessExtension : WKProcessExtension {
@@ -56,23 +33,14 @@ class NetworkingProcessExtension : WKProcessExtension {
     }
 }
 
-extension NetworkingProcessExtension : NetworkingServiceExtension {
+extension NetworkingProcessExtension : NetworkingExtension {
     func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
     }
 
-    override func grant(_ domain: String, name: String) -> Any {
-        do {
-            let grant = try self._request(capabilities: _Capability.assertion(domain: domain, name: name, environmentIdentifier: nil, willInvalidate: nil, didInvalidate: nil))
-            return Grant(inner: grant)
-        } catch {
-            return WKGrant()
-        }
-    }
-
     override func lockdownSandbox(_ version: String) {
-        if let lockdownVersion = _LockdownVersion(rawValue: version) {
-            self._lockdown(version: lockdownVersion)
+        if (version == "1.0") {
+            self.applyRestrictedSandbox(revision: RestrictedSandboxRevision.revision1)
         }
     }
 

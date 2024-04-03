@@ -145,9 +145,7 @@ Settings::Values Settings::Values::isolatedCopy() const
     };
 }
 
-Settings::~Settings()
-{
-}
+Settings::~Settings() = default;
 
 void Settings::disableUnstableFeaturesForModernWebKit()
 {

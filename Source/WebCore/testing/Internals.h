@@ -195,10 +195,13 @@ public:
 
     ExceptionOr<String> elementRenderTreeAsText(Element&);
     bool hasPausedImageAnimations(Element&);
+    void markFrontBufferVolatile(Element&);
 
     bool isFullyActive(Document&);
     bool isPaintingFrequently(Element&);
     void incrementFrequentPaintCounter(Element&);
+    void purgeFrontBuffer(Element&);
+    void purgeBackBuffer(Element&);
 
     String address(Node&);
     bool nodeNeedsStyleRecalc(Node&);
@@ -240,6 +243,7 @@ public:
     unsigned imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);
+    AtomString imageLastDecodingOptions(HTMLImageElement&);
     unsigned imageCachedSubimageCreateCount(HTMLImageElement&);
     unsigned remoteImagesCountForTesting() const;
     void setAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
@@ -316,6 +320,11 @@ public:
 
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
     ExceptionOr<bool> isCaretBlinkingSuspended();
+    ExceptionOr<bool> isCaretBlinkingSuspended(Document&);
+
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    void setPrefersNonBlinkingCursor(bool);
+#endif
 
     Ref<DOMRect> boundingBox(Element&);
 
@@ -370,8 +379,8 @@ public:
     ExceptionOr<void> invalidateControlTints();
 
     RefPtr<Range> rangeFromLocationAndLength(Element& scope, unsigned rangeLocation, unsigned rangeLength);
-    unsigned locationFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
-    unsigned lengthFromRange(Element& scope, const Range&, const Vector<String>& behaviors = { });
+    unsigned locationFromRange(Element& scope, const Range&);
+    unsigned lengthFromRange(Element& scope, const Range&);
     String rangeAsText(const Range&);
     String rangeAsTextUsingBackwardsTextIterator(const Range&);
     Ref<Range> subrange(Range&, unsigned rangeLocation, unsigned rangeLength);
@@ -382,7 +391,7 @@ public:
         String text;
         RefPtr<Range> range;
     };
-    Vector<TextIteratorState> statesOfTextIterator(const Range&, const Vector<String>& behaviors = { });
+    Vector<TextIteratorState> statesOfTextIterator(const Range&);
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
@@ -401,6 +410,7 @@ public:
 
     ExceptionOr<unsigned> wheelEventHandlerCount();
     ExceptionOr<unsigned> touchEventHandlerCount();
+    ExceptionOr<unsigned> scrollableAreaWidth(Node&);
 
     ExceptionOr<Ref<DOMRectList>> touchEventRectsForEvent(const String&);
     ExceptionOr<Ref<DOMRectList>> passiveTouchEventListenerRects();
@@ -424,6 +434,9 @@ public:
     bool hasAutocorrectedMarker(int from, int length);
     bool hasDictationAlternativesMarker(int from, int length);
     bool hasCorrectionIndicatorMarker(int from, int length);
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    bool hasUnifiedTextReplacementMarker(int from, int length);
+#endif
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);
     void setAutomaticLinkDetectionEnabled(bool);
@@ -478,7 +491,7 @@ public:
     ExceptionOr<uint64_t> layerIDForElement(Element&);
     ExceptionOr<String> repaintRectsAsText() const;
         
-    ExceptionOr<uint64_t> scrollingNodeIDForNode(Node*);
+    ExceptionOr<Vector<uint64_t>> scrollingNodeIDForNode(Node*);
 
     enum {
         // Values need to be kept in sync with Internals.idl.
@@ -607,7 +620,6 @@ public:
     };
     void setFullscreenInsets(FullscreenInsets);
     void setFullscreenAutoHideDuration(double);
-    void setFullscreenControlsHidden(bool);
 
 #if ENABLE(VIDEO)
     bool isChangingPresentationMode(HTMLVideoElement&) const;
@@ -673,6 +685,7 @@ public:
 
     String toolTipFromElement(Element&) const;
 
+    void forceAXObjectCacheUpdate() const;
     void forceReload(bool endToEnd);
     void reloadExpiredOnly();
 
@@ -714,9 +727,9 @@ public:
     void applyRotationForOutgoingVideoSources(RTCPeerConnection&);
     void setWebRTCH265Support(bool);
     void setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Profile2);
-    void setWebRTCVP9VTBSupport(bool);
-    bool isSupportingVP9VTB() const;
-    void isVP9VTBDeccoderUsed(RTCPeerConnection&, DOMPromiseDeferred<IDLBoolean>&&);
+    void disableWebRTCHardwareVP9();
+    bool isSupportingVP9HardwareDecoder() const;
+    void isVP9HardwareDecoderUsed(RTCPeerConnection&, DOMPromiseDeferred<IDLBoolean>&&);
 
     void setSFrameCounter(RTCRtpSFrameTransform&, const String&);
     uint64_t sframeCounter(const RTCRtpSFrameTransform&);
@@ -748,6 +761,8 @@ public:
     double elementEffectivePlaybackRate(const HTMLMediaElement&);
 
     ExceptionOr<void> setOverridePreferredDynamicRangeMode(HTMLMediaElement&, const String&);
+
+    void enableGStreamerHolePunching(HTMLVideoElement&);
 #endif
 
     ExceptionOr<void> setIsPlayingToBluetoothOverride(std::optional<bool>);
@@ -776,6 +791,7 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
+    void setMaximumSourceBufferSize(SourceBuffer&, uint64_t, DOMPromiseDeferred<void>&&);
     using BufferedSamplesPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
     void bufferedSamplesForTrackId(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
     void enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
@@ -799,6 +815,7 @@ public:
     bool elementIsBlockingDisplaySleep(const HTMLMediaElement&) const;
     bool isPlayerVisibleInViewport(const HTMLMediaElement&) const;
     bool isPlayerMuted(const HTMLMediaElement&) const;
+    bool isPlayerPaused(const HTMLMediaElement&) const;
     void beginAudioSessionInterruption();
     void endAudioSessionInterruption();
     void clearAudioSessionInterruptionFlag();
@@ -874,8 +891,8 @@ public:
     bool isProcessingUserGesture();
     double lastHandledUserGestureTimestamp();
 
-    void withUserGesture(RefPtr<VoidCallback>&&);
-    void withoutUserGesture(RefPtr<VoidCallback>&&);
+    void withUserGesture(Ref<VoidCallback>&&);
+    void withoutUserGesture(Ref<VoidCallback>&&);
 
     bool userIsInteracting();
 
@@ -957,6 +974,7 @@ public:
     bool shouldAudioTrackPlay(const AudioTrack&);
 #endif
 
+    bool isHardwareVP9DecoderExpected();
 
 #if USE(AUDIO_SESSION)
     using AudioSessionCategory = WebCore::AudioSessionCategory;
@@ -998,6 +1016,8 @@ public:
     double preferredAudioBufferSize() const;
     double currentAudioBufferSize() const;
     bool audioSessionActive() const;
+
+    void setHistoryTotalStateObjectPayloadLimitOverride(uint32_t);
 
     void storeRegistrationsOnDisk(DOMPromiseDeferred<void>&&);
     void sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&&);
@@ -1068,16 +1088,16 @@ public:
     bool hasActiveDataDetectorHighlight() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(Element&, RefPtr<VoidCallback>&&);
+    void requestTextRecognition(Element&, Ref<VoidCallback>&&);
     RefPtr<Element> textRecognitionCandidate() const;
 #endif
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
-    void postTask(RefPtr<VoidCallback>&&);
-    ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, RefPtr<VoidCallback>&&);
-    ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, RefPtr<VoidCallback>&&);
+    void postTask(Ref<VoidCallback>&&);
+    ExceptionOr<void> queueTask(ScriptExecutionContext&, const String& source, Ref<VoidCallback>&&);
+    ExceptionOr<void> queueTaskToQueueMicrotask(Document&, const String& source, Ref<VoidCallback>&&);
     ExceptionOr<bool> hasSameEventLoopAs(WindowProxy&);
 
     void markContextAsInsecure();
@@ -1162,6 +1182,7 @@ public:
     String ongoingLoadsDescriptions() const;
 
     void reloadWithoutContentExtensions();
+    void disableContentExtensionsChecks();
 
     void setUseSystemAppearance(bool);
 
@@ -1366,7 +1387,7 @@ public:
     ExceptionOr<Vector<String>> platformSupportedCommands() const;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, Ref<StringCallback>&&);
     ExceptionOr<void> setMockMediaSessionCoordinatorCommandsShouldFail(bool);
 #endif
 
@@ -1422,6 +1443,19 @@ public:
     bool readyToRetrieveComputedRoleOrLabel(Element&) const;
     String getComputedLabel(Element&) const;
     String getComputedRole(Element&) const;
+
+    bool hasScopeBreakingHasSelectors() const;
+
+
+    struct PDFAnnotationRect {
+        float x;
+        float y;
+        float width;
+        float height;
+    };
+
+    Vector<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element& pluginElement) const;
+    void registerPDFTest(Ref<VoidCallback>&&, Element&);
 
 private:
     explicit Internals(Document&);

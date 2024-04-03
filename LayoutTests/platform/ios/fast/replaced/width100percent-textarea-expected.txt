@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (17,1) size 15x36 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (33,1) size 15x36 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (49,8) size 734x22 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,8) size 4x19
                 text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,58) size 784x40
         RenderBR {BR} at (0,0) size 0x19
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (17,1) size 15x36 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (33,1) size 15x36 [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (49,8) size 734x22 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
+              RenderText {#text} at (1,8) size 4x19
                 text run at (1,1) width 4: " "
 layer at (10,30) size 13x34 clip at (0,0) size 0x0 scrollWidth 12 scrollHeight 46
   RenderTextControl {TEXTAREA} at (1,1) size 13x34 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -57,11 +57,11 @@ layer at (10,108) size 13x34 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 
         text run at (0,0) width 7: "o"
         text run at (0,14) width 7: "n"
         text run at (0,28) width 7: "e"
-        text run at (0,42) width 0: " "
+        text run at (0,42) width 4: " "
         text run at (0,56) width 5: "t"
         text run at (0,70) width 9: "w"
         text run at (0,84) width 7: "o"
-        text run at (0,98) width 0: " "
+        text run at (0,98) width 4: " "
         text run at (0,112) width 5: "t"
         text run at (0,126) width 7: "h"
         text run at (0,140) width 5: "r"

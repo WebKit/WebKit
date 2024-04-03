@@ -45,7 +45,8 @@ class AsyncTaskWorker {
         var worker = this._makeWorkerEventuallyAvailable();
         if (worker)
             callback(worker);
-        this._queue.push(callback);
+        else
+            this._queue.push(callback);
     }
 
     static _makeWorkerEventuallyAvailable()
@@ -60,6 +61,8 @@ class AsyncTaskWorker {
 
         if (this._latestStartTime > Date.now() - 50) {
             setTimeout(function () {
+                if (!AsyncTaskWorker._queue.length)
+                    return;
                 var worker = AsyncTaskWorker._findAvailableWorker();
                 if (worker)
                     AsyncTaskWorker._queue.pop()(worker);

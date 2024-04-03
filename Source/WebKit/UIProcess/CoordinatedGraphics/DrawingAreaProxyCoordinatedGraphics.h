@@ -32,7 +32,7 @@
 #include <wtf/RunLoop.h>
 
 #if !PLATFORM(WPE)
-typedef struct _cairo cairo_t;
+#include "BackingStore.h"
 #endif
 
 namespace WebCore {
@@ -41,15 +41,13 @@ class Region;
 
 namespace WebKit {
 
-class BackingStore;
-
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
     DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
 #if !PLATFORM(WPE)
-    void paint(cairo_t*, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
+    void paint(PlatformPaintContextPtr, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }

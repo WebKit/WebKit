@@ -20,6 +20,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+enum class WebCore::LockHistory : bool;
+enum class WebCore::LockBackForwardList : bool;
+
 struct WebKit::NavigationActionData {
     WebCore::NavigationType navigationType;
     OptionSet<WebKit::WebEventModifier> modifiers;
@@ -29,7 +32,7 @@ struct WebKit::NavigationActionData {
     std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
-    WTF::String downloadAttribute;
+    String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
     bool isRequestFromClientOrUserInput;
@@ -43,7 +46,7 @@ struct WebKit::NavigationActionData {
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
     WebCore::LockHistory lockHistory;
     WebCore::LockBackForwardList lockBackForwardList;
-    WTF::String clientRedirectSourceForHistory;
+    String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags;
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
@@ -51,4 +54,10 @@ struct WebKit::NavigationActionData {
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif
+    WebKit::FrameInfoData originatingFrameInfoData;
+    std::optional<WebKit::WebPageProxyIdentifier> originatingPageID;
+    WebKit::FrameInfoData frameInfo;
+    uint64_t navigationID;
+    WebCore::ResourceRequest originalRequest;
+    [EncodeRequestBody] WebCore::ResourceRequest request;
 };

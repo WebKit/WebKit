@@ -33,7 +33,7 @@
 namespace WebKit {
 
 struct MediaDescriptionInfo {
-    MediaDescriptionInfo(const AtomString& codec, bool isVideo, bool isAudio, bool isText)
+    MediaDescriptionInfo(const String& codec, bool isVideo, bool isAudio, bool isText)
         : m_codec(codec)
         , m_isVideo(isVideo)
         , m_isAudio(isAudio)
@@ -42,14 +42,14 @@ struct MediaDescriptionInfo {
     }
 
     MediaDescriptionInfo(const WebCore::MediaDescription& description)
-        : m_codec(description.codec())
+        : m_codec(description.codec().toString())
         , m_isVideo(description.isVideo())
         , m_isAudio(description.isAudio())
         , m_isText(description.isText())
     {
     }
 
-    AtomString m_codec;
+    String m_codec;
     bool m_isVideo { false };
     bool m_isAudio { false };
     bool m_isText { false };

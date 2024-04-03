@@ -1,0 +1,23 @@
+
+PASS System color Canvas works
+PASS System color CanvasText works
+FAIL System color LinkText works assert_not_equals: LinkText should react to color-scheme got disallowed value "rgb(0, 0, 238)"
+FAIL System color VisitedText works assert_not_equals: VisitedText should react to color-scheme got disallowed value "rgb(85, 26, 139)"
+PASS System color ActiveText works
+FAIL System color ButtonFace works assert_not_equals: ButtonFace should react to color-scheme got disallowed value "rgb(192, 192, 192)"
+PASS System color ButtonText works
+PASS System color ButtonBorder works
+PASS System color Field works
+PASS System color FieldText works
+FAIL System color Highlight works assert_not_equals: Highlight should react to color-scheme got disallowed value "rgb(52, 132, 228)"
+PASS System color HighlightText works
+FAIL System color SelectedItem works assert_not_equals: SelectedItem should react to color-scheme got disallowed value "rgb(192, 192, 192)"
+PASS System color SelectedItemText works
+PASS System color Mark works
+PASS System color MarkText works
+PASS System color GrayText works
+PASS System color AccentColor works
+PASS System color AccentColorText works
+PASS System color AppWorkspace works
+PASS System color Scrollbar works
+

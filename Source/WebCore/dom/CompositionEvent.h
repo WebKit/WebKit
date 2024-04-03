@@ -58,8 +58,6 @@ public:
 
     String data() const { return m_data; }
 
-    EventInterface eventInterface() const override;
-
 private:
     CompositionEvent();
     CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&&, const String&);

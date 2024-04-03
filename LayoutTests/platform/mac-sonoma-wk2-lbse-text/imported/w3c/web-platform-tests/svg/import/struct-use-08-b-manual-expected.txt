@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-41.47,0) size 388x265 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-41.47,0) size 387.03x264.14
+layer at (-33.30,0) size 187x144 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (8.17,0) size 186.59x143.23
+layer at (0,0) size 121x120
+  RenderSVGRect {rect} at (33.30,0) size 120x120 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+layer at (-33.30,127.41) size 187x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,127) size 187x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 187x16
+      chunk 1 (middle anchor) text run 1 at (-33.28,140.00) startOffset 0 endOffset 31 width 186.57: "'use' referencing 'svg' element"
+layer at (-41.47,0) size 203x144 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 202.94x143.23
+layer at (0,0) size 121x120
+  RenderSVGRect {rect} at (41.47,0) size 120x120 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+layer at (-41.47,127.41) size 203x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,127) size 203x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 203x16
+      chunk 1 (middle anchor) text run 1 at (-41.46,140.00) startOffset 0 endOffset 33 width 202.91: "'use' referencing 'image' element"
+layer at (134.44,243.13) size 211x21
+  RenderSVGText {text} at (175,243) size 213x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 212x21
+      chunk 1 (middle anchor) text run 1 at (134.45,260.00) startOffset 0 endOffset 28 width 211.10: "This text should be visible."
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,-0.41) size 478x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,-0.41) size 478x23.02
+layer at (1,1) size 478x21
+  RenderSVGRect {rect} at (0,1.41) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.11,-0.41) size 68x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x23
+      chunk 1 (middle anchor) text run 1 at (206.12,18.00) startOffset 0 endOffset 5 width 67.76: "DRAFT"

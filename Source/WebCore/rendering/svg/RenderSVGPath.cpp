@@ -8,7 +8,7 @@
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
- * Copyright (C) 2020, 2021, 2022, 2023 Igalia S.L.
+ * Copyright (C) 2020, 2021, 2022, 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,15 +29,17 @@
 #include "config.h"
 #include "RenderSVGPath.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Gradient.h"
-#include "LegacyRenderSVGResourceMarker.h"
 #include "ReferencedSVGResources.h"
+#include "RenderLayer.h"
+#include "RenderSVGResourceMarkerInlines.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGMarkerElement.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -59,7 +61,7 @@ void RenderSVGPath::updateShapeFromElement()
     m_fillBoundingBox = ensurePath().boundingRect();
     m_strokeBoundingBox = std::nullopt;
     m_approximateStrokeBoundingBox = std::nullopt;
-    processMarkerPositions();
+    updateMarkerPositions();
     updateZeroLengthSubpaths();
 
     ASSERT(hasPath());
@@ -185,7 +187,7 @@ void RenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) const
     }
 }
 
-static inline LegacyRenderSVGResourceMarker* markerForType(SVGMarkerType type, LegacyRenderSVGResourceMarker* markerStart, LegacyRenderSVGResourceMarker* markerMid, LegacyRenderSVGResourceMarker* markerEnd)
+static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderSVGResourceMarker* markerStart, RenderSVGResourceMarker* markerMid, RenderSVGResourceMarker* markerEnd)
 {
     switch (type) {
     case StartMarker:
@@ -202,58 +204,38 @@ static inline LegacyRenderSVGResourceMarker* markerForType(SVGMarkerType type, L
 
 bool RenderSVGPath::shouldGenerateMarkerPositions() const
 {
-    const auto& svgStyle = style().svgStyle();
-    if (!svgStyle.hasMarkers())
-        return false;
-
-    if (!graphicsElement().supportsMarkers())
-        return false;
-
-    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
-        return true;
-
-    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
-        return true;
-
-    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
-        return true;
-
+    if (style().svgStyle().hasMarkers() && graphicsElement().supportsMarkers())
+        return svgMarkerStartResourceFromStyle() || svgMarkerMidResourceFromStyle() || svgMarkerEndResourceFromStyle();
     return false;
 }
 
-void RenderSVGPath::drawMarkers(PaintInfo&)
+void RenderSVGPath::drawMarkers(PaintInfo& paintInfo)
 {
     if (m_markerPositions.isEmpty())
         return;
 
-    const auto& svgStyle = style().svgStyle();
-    LegacyRenderSVGResourceMarker* markerStart = nullptr;
-    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
-        markerStart = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerStartElement->renderer());
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    LegacyRenderSVGResourceMarker* markerMid = nullptr;
-    if (RefPtr markerMidElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
-        markerMid = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerMidElement->renderer());
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return;
 
-    LegacyRenderSVGResourceMarker* markerEnd = nullptr;
-    if (RefPtr markerEndElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
-        markerEnd = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerEndElement->renderer());
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
+    auto* markerStart = svgMarkerStartResourceFromStyle();
+    auto* markerMid = svgMarkerMidResourceFromStyle();
+    auto* markerEnd = svgMarkerEndResourceFromStyle();
     if (!markerStart && !markerMid && !markerEnd)
         return;
 
     float strokeWidth = this->strokeWidth();
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
-            UNUSED_PARAM(marker);
-            UNUSED_PARAM(strokeWidth);
+    for (auto& markerPosition : m_markerPositions) {
+        if (auto* marker = markerForType(markerPosition.type, markerStart, markerMid, markerEnd); marker && marker->hasLayer()) {
+            auto& context = paintInfo.context();
+            GraphicsContextStateSaver stateSaver(context);
 
-            // FIXME: [LBSE] Upstream RenderLayer changes
-            // ASSERT(marker->hasLayer());
-            // GraphicsContextStateSaver stateSaver(paintInfo.context());
-            // auto contentTransform = marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth);
-            // marker->layer()->paintSVGResourceLayer(paintInfo.context(), LayoutRect::infiniteRect(), contentTransform);
+            auto contentTransform = marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth);
+            marker->layer()->paintSVGResourceLayer(context, contentTransform);
         }
     }
 }
@@ -261,38 +243,32 @@ void RenderSVGPath::drawMarkers(PaintInfo&)
 FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions& options) const
 {
     if (m_markerPositions.isEmpty())
-        return FloatRect();
+        return { };
 
-    const auto& svgStyle = style().svgStyle();
-    LegacyRenderSVGResourceMarker* markerStart = nullptr;
-    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
-        markerStart = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerStartElement->renderer());
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    LegacyRenderSVGResourceMarker* markerMid = nullptr;
-    if (RefPtr markerMidElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
-        markerMid = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerMidElement->renderer());
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return { };
 
-    LegacyRenderSVGResourceMarker* markerEnd = nullptr;
-    if (RefPtr markerEndElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
-        markerEnd = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerEndElement->renderer());
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
+    auto* markerStart = svgMarkerStartResourceFromStyle();
+    auto* markerMid = svgMarkerMidResourceFromStyle();
+    auto* markerEnd = svgMarkerEndResourceFromStyle();
     if (!markerStart && !markerMid && !markerEnd)
-        return FloatRect();
+        return { };
 
     FloatRect boundaries;
-    unsigned size = m_markerPositions.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
-            // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
-            // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-            auto repaintRectCalculation = options.contains(SVGBoundingBoxComputation::DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
-            boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-        }
+    for (auto& markerPosition : m_markerPositions) {
+        if (auto* marker = markerForType(markerPosition.type, markerStart, markerMid, markerEnd))
+            boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth())));
     }
+
     return boundaries;
 }
 
-void RenderSVGPath::processMarkerPositions()
+void RenderSVGPath::updateMarkerPositions()
 {
     m_markerPositions.clear();
 
@@ -300,12 +276,9 @@ void RenderSVGPath::processMarkerPositions()
         return;
 
     ASSERT(hasPath());
+    auto* markerStart = svgMarkerStartResourceFromStyle();
 
-    bool markerReverseStart = false;
-    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), style().svgStyle().markerStartResource()))
-        markerReverseStart = markerStartElement->orientType() == SVGMarkerOrientAutoStartReverse;
-
-    SVGMarkerData markerData(m_markerPositions, markerReverseStart);
+    SVGMarkerData markerData(m_markerPositions, markerStart ? markerStart->hasReverseStart() : false);
     path().applyElements([&markerData](const PathElement& pathElement) {
         SVGMarkerData::updateFromPathElement(markerData, pathElement);
     });
@@ -320,5 +293,3 @@ bool RenderSVGPath::isRenderingDisabled() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

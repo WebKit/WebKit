@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (59,1) size 1x28
           RenderText {#text} at (0,31) size 162x28
             text run at (0,31) width 162: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
+          RenderInline {A} at (161,31) size 257x28 [color=#0000EE]
             RenderText {#text} at (161,31) size 257x28
               text run at (161,31) width 257: "<rdar://problem/3977962>"
-          RenderText {#text} at (417,31) size 742x58
+          RenderText {#text} at (0,31) size 742x58
             text run at (417,31) width 325: " font loses bold style after pasting"
             text run at (0,61) width 380: "next to existing text and pressing return"
         RenderBlock {DIV} at (14,120) size 756x120
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,1) size 32x28
                 text run at (0,1) width 32: "foo"
             RenderBlock {DIV} at (0,30) size 756x30
-              RenderInline {B} at (0,0) size 36x28
+              RenderInline {B} at (0,1) size 36x28
                 RenderText {#text} at (0,1) size 36x28
                   text run at (0,1) width 36: "bar"
       RenderBlock {DIV} at (0,278) size 784x64
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,1) size 32x28
               text run at (0,1) width 32: "foo"
           RenderBlock {DIV} at (2,32) size 780x30
-            RenderInline {B} at (0,0) size 36x28
+            RenderInline {B} at (0,1) size 36x28
               RenderText {#text} at (0,1) size 36x28
                 text run at (0,1) width 36: "bar"
 caret: position 0 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

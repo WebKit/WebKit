@@ -347,7 +347,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     double pressure = [event type] == NSEventTypePressure ? event.pressure : lastPressureEvent.pressure;
     double force = pressure + stage;
 
-    return WebMouseEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
+    auto unadjustedMovementDelta = WebCore::unadjustedMovementForEvent(event);
+
+    return WebMouseEvent({ type, modifiers, timestamp, WTF::UUID::createVersion4() }, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, force, WebMouseEventSyntheticClickType::NoTap, eventNumber, menuTypeForEvent, GestureWasCancelled::No, unadjustedMovementDelta);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)

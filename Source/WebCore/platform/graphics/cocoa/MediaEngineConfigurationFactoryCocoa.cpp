@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "AV1Utilities.h"
 #include "AV1UtilitiesCocoa.h"
 #include "HEVCUtilitiesCocoa.h"
 #include "MediaCapabilitiesDecodingInfo.h"

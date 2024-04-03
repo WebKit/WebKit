@@ -33,8 +33,9 @@ public:
     using Base = JSDOMWrapper<TestObj>;
     static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
     {
-        JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm())) JSTestObj(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(vm)) JSTestObj(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -234,6 +235,8 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
 template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::ConditionalDictionaryC>(JSC::JSGlobalObject&, JSC::JSValue);
 
 #endif
+
+template<> TestObj::PromisePair convertDictionary<TestObj::PromisePair>(JSC::JSGlobalObject&, JSC::JSValue);
 
 
 } // namespace WebCore

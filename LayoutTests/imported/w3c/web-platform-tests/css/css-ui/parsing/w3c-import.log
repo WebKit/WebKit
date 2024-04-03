@@ -23,6 +23,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/cursor-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/field-sizing-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/parsing/outline-color-valid-mandatory.html

@@ -1,5 +1,6 @@
-//@ crashOK!
+//@ mustCrash!
 //@ skip if $hostOS == "windows"
+//@ runDefault
 
 $vm.crash();
 

@@ -62,6 +62,8 @@ class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
         mTraceFunctions->SetBinaryDataDir(dataDir);
     }
 
+    void setDebugOutputDir(const char *dataDir) { mDebugOutputDir = dataDir; }
+
     void replayFrame(uint32_t frameIndex) { mTraceFunctions->ReplayFrame(frameIndex); }
 
     void setupReplay() { mTraceFunctions->SetupReplay(); }
@@ -109,6 +111,7 @@ class TraceLibrary : angle::NonCopyable, angle::TraceCallbacks
     std::unique_ptr<Library> mTraceLibrary;
     std::vector<uint8_t> mBinaryData;
     std::string mBinaryDataDir;
+    std::string mDebugOutputDir;
     angle::TraceInfo mTraceInfo;
     angle::TraceFunctions *mTraceFunctions = nullptr;
 };

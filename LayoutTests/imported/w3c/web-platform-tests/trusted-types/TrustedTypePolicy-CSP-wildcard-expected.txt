@@ -1,0 +1,3 @@
+
+PASS CSP supports wildcards.
+

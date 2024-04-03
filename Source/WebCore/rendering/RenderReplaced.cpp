@@ -101,8 +101,8 @@ void RenderReplaced::willBeDestroyed()
 void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
-    auto previousEffectiveZoom = oldStyle ? oldStyle->effectiveZoom() : RenderStyle::initialZoom();
-    if (previousEffectiveZoom != style().effectiveZoom())
+    auto previousUsedZoom = oldStyle ? oldStyle->usedZoom() : RenderStyle::initialZoom();
+    if (previousUsedZoom != style().usedZoom())
         intrinsicSizeChanged();
 }
 
@@ -134,8 +134,8 @@ void RenderReplaced::layout()
 
 void RenderReplaced::intrinsicSizeChanged()
 {
-    int scaledWidth = static_cast<int>(cDefaultWidth * style().effectiveZoom());
-    int scaledHeight = static_cast<int>(cDefaultHeight * style().effectiveZoom());
+    int scaledWidth = static_cast<int>(cDefaultWidth * style().usedZoom());
+    int scaledHeight = static_cast<int>(cDefaultHeight * style().usedZoom());
     m_intrinsicSize = IntSize(scaledWidth, scaledHeight);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -187,7 +187,7 @@ Color RenderReplaced::calculateHighlightColor() const
                     if (!isHighlighted(state, renderHighlight))
                         continue;
 
-                    if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
+                    if (auto highlightStyle = getCachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
                         return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
                 }
             }
@@ -221,7 +221,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot())
+            paintReplaced(paintInfo, adjustedPaintOffset);
+        else if (visibleToHitTesting()) {
+#else
         if (visibleToHitTesting()) {
+#endif
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
             paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style());
@@ -240,7 +246,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (element() && element()->parentOrShadowHostElement()) {
         auto* parentContainer = element()->parentOrShadowHostElement();
         ASSERT(parentContainer);
-        if (draggedContentContainsReplacedElement(document().markers().markersFor(*parentContainer, DocumentMarker::Type::DraggedContent), *element())) {
+        if (CheckedPtr markers = document().markersIfExists(); markers && draggedContentContainsReplacedElement(markers->markersFor(*parentContainer, DocumentMarker::Type::DraggedContent), *element())) {
             savedGraphicsContext.save();
             paintInfo.context().setAlpha(0.25);
         }
@@ -331,7 +337,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
-    if (style().visibility() != Visibility::Visible)
+    if (style().usedVisibility() != Visibility::Visible)
         return false;
     
     LayoutRect paintRect(visualOverflowRect());
@@ -340,14 +346,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     // Early exit if the element touches the edges.
     LayoutUnit top = paintRect.y();
     LayoutUnit bottom = paintRect.maxY();
-    if (isSelected() && m_inlineBoxWrapper) {
-        const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
-        LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
-        LayoutUnit selBottom = paintOffset.y() + selTop + rootBox.selectionHeight();
-        top = std::min(selTop, top);
-        bottom = std::max(selBottom, bottom);
-    }
-    
+
     LayoutRect localRepaintRect = paintInfo.rect;
     if (paintRect.x() >= localRepaintRect.maxX() || paintRect.maxX() <= localRepaintRect.x())
         return false;
@@ -422,10 +421,10 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
             intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioWidth(), style().aspectRatioHeight());
 
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
-        intrinsicSize.scale(style().effectiveZoom());
+        intrinsicSize.scale(style().usedZoom());
 
-        if (is<RenderImage>(*this))
-            intrinsicSize.scale(downcast<RenderImage>(*this).imageDevicePixelRatio());
+        if (auto* image = dynamicDowncast<RenderImage>(*this))
+            intrinsicSize.scale(image->imageDevicePixelRatio());
 
         // Update our intrinsic size to match what the content renderer has computed, so that when we
         // constrain the size below, the correct intrinsic size will be obtained for comparison against
@@ -733,7 +732,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
+VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
 {
     auto [top, bottom] = [&]() -> std::pair<float, float> {
         if (auto run = InlineIterator::boxFor(*this)) {
@@ -759,7 +758,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const
         return createVisiblePosition(1, Affinity::Downstream);
     }
 
-    return RenderBox::positionForPoint(point, fragment);
+    return RenderBox::positionForPoint(point, source, fragment);
 }
 
 LayoutRect RenderReplaced::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
@@ -780,15 +779,7 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     if (checkWhetherSelected && !isSelected())
         return LayoutRect();
 
-    if (!m_inlineBoxWrapper)
-        // We're a block-level replaced element.  Just return our own dimensions.
-        return LayoutRect(LayoutPoint(), size());
-    
-    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
-    if (rootBox.blockFlow().style().isHorizontalWritingMode())
-        return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
-    return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
+    return LayoutRect(LayoutPoint(), size());
 }
 
 bool RenderReplaced::isSelected() const

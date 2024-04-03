@@ -21,7 +21,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -39,6 +38,7 @@ public:
     virtual ~RenderSVGForeignObject();
 
     SVGForeignObjectElement& foreignObjectElement() const;
+    Ref<SVGForeignObjectElement> protectedForeignObjectElement() const;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
 
@@ -72,5 +72,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGForeignObject, isRenderSVGForeignObject())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

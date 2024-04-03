@@ -52,9 +52,9 @@ constexpr unsigned maxShorthandsForLonghand = 4; // FIXME: Generate this from CS
 
 Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 {
-    if (auto* immutableProperties = dynamicDowncast<ImmutableStyleProperties>(*this))
-        return const_cast<ImmutableStyleProperties&>(*immutableProperties);
-    return downcast<MutableStyleProperties>(*this).immutableCopy();
+    if (m_isMutable)
+        return uncheckedDowncast<MutableStyleProperties>(*this).immutableDeduplicatedCopy();
+    return const_cast<ImmutableStyleProperties&>(uncheckedDowncast<ImmutableStyleProperties>(*this));
 }
 
 String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
@@ -250,7 +250,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyColumns:
     case CSSPropertyContainer:
     case CSSPropertyFontSynthesis:
-    case CSSPropertyGap:
     case CSSPropertyGridArea:
     case CSSPropertyGridColumn:
     case CSSPropertyGridRow:
@@ -345,6 +344,24 @@ bool StyleProperties::traverseSubresources(const Function<bool(const CachedResou
     for (auto property : *this) {
         if (property.value()->traverseSubresources(handler))
             return true;
+    }
+    return false;
+}
+
+bool StyleProperties::mayDependOnBaseURL() const
+{
+    bool result = false;
+    Function<IterationStatus(CSSValue&)> func = [&](CSSValue& value) -> IterationStatus {
+        if (value.mayDependOnBaseURL()) {
+            result = true;
+            return IterationStatus::Done;
+        }
+        return value.visitChildren(func);
+    };
+
+    for (auto property : *this) {
+        if (func(*property.value()) == IterationStatus::Done)
+            return result;
     }
     return false;
 }

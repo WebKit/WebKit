@@ -22,7 +22,7 @@
 
 struct WebKit::PlatformCAAnimationRemoteProperties {
     String keyPath;
-    WebCore::PlatformCAAnimation::AnimationType animationType;
+    WebCore::PlatformCAAnimationType animationType;
 
     CFTimeInterval beginTime;
     double duration;
@@ -30,8 +30,8 @@ struct WebKit::PlatformCAAnimationRemoteProperties {
     float repeatCount;
     float speed;
 
-    WebCore::PlatformCAAnimation::FillModeType fillMode;
-    WebCore::PlatformCAAnimation::ValueFunctionType valueFunction;
+    WebCore::PlatformCAAnimationFillModeType fillMode;
+    WebCore::PlatformCAAnimationValueFunctionType valueFunction;
     RefPtr<WebCore::TimingFunction> timingFunction;
 
     bool autoReverses;
@@ -46,3 +46,5 @@ struct WebKit::PlatformCAAnimationRemoteProperties {
 
     Vector<WebKit::PlatformCAAnimationRemoteProperties> animations;
 };
+
+using WebKit::PlatformCAAnimationRemoteProperties::KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>

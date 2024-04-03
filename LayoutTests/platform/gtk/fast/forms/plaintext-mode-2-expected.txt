@@ -10,15 +10,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,24) size 784x18
         RenderText {#text} at (0,0) size 32x17
           text run at (0,0) width 32: "This "
-        RenderInline {B} at (0,0) size 66x17
+        RenderInline {B} at (32,0) size 66x17
           RenderText {#text} at (32,0) size 43x17
             text run at (32,0) width 43: "styled "
-          RenderInline {I} at (0,0) size 23x17
+          RenderInline {I} at (75,0) size 23x17
             RenderText {#text} at (75,0) size 23x17
               text run at (75,0) width 23: "text"
         RenderText {#text} at (98,0) size 35x17
           text run at (98,0) width 35: ", and "
-        RenderInline {A} at (0,0) size 24x17 [color=#0000EE]
+        RenderInline {A} at (133,0) size 24x17 [color=#0000EE]
           RenderText {#text} at (133,0) size 24x17
             text run at (133,0) width 24: "link"
         RenderText {#text} at (157,0) size 403x17

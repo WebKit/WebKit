@@ -99,7 +99,9 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatFuncFormat, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* numberFormat = jsCast<IntlNumberFormat*>(callFrame->thisValue());
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(callFrame->thisValue());
+    if (UNLIKELY(!numberFormat))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not a NumberFormat"_s));
 
     auto value = toIntlMathematicalValue(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
@@ -132,7 +134,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, nf, { }, 1, jsEmptyString(vm));
         RETURN_IF_EXCEPTION(scope, { });
-        boundFormat->reifyLazyPropertyIfNeeded(vm, globalObject, vm.propertyNames->name);
+        boundFormat->reifyLazyPropertyIfNeeded<>(vm, globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });
         boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         // d. Set nf.[[boundFormat]] to bf.

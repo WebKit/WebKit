@@ -63,7 +63,10 @@ std::optional<FrameData::LayerData> OpenXRLayerProjection::startFrame()
     if (!texture)
         return std::nullopt;
 
-    return FrameData::LayerData { *texture };
+    return FrameData::LayerData {
+        .framebufferSize = m_swapchain->size(),
+        .opaqueTexture = *texture
+    };
 }
 
 XrCompositionLayerBaseHeader* OpenXRLayerProjection::endFrame(const Device::Layer& layer, XrSpace space, const Vector<XrView>& frameViews)

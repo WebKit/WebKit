@@ -34,6 +34,7 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <details class="testcase" id="details"></details>
     AXRole: AXGroup
+    computedRoleString: group
     AXSubrole: AXDetails
 
 <summary class="testcase" id="summary"></summary>
@@ -55,10 +56,12 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <dt class="testcase" id="dt"></dt>
     AXRole: AXGroup
+    computedRoleString: term
     AXSubrole: AXTerm
 
 <dd class="testcase" id="dd"></dd>
     AXRole: AXGroup
+    computedRoleString: definition
     AXSubrole: AXDescription
 
 <legend class="testcase" id="legend"></legend>

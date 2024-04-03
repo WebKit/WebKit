@@ -175,6 +175,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
 
     setBlobRegistryTopOriginPartitioningEnabled(parameters.isBlobRegistryTopOriginPartitioningEnabled);
+    setShouldSendPrivateTokenIPCForTesting(parameters.shouldSendPrivateTokenIPCForTesting);
 
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     m_serviceWorkerInfo = ServiceWorkerInfo {
@@ -222,18 +223,21 @@ void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void(
     privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
 }
 
-void NetworkSession::setTrackingPreventionEnabled(bool enable)
+void NetworkSession::setTrackingPreventionEnabled(bool enabled)
 {
     ASSERT(!m_isInvalidated);
+    bool isCurrentlyEnabled = !!m_resourceLoadStatistics;
+    if (isCurrentlyEnabled == enabled)
+        return;
+
+    RELEASE_LOG(Storage, "%p - NetworkSession::setTrackingPreventionEnabled: sessionID=%" PRIu64 ", enabled=%d", this, m_sessionID.toUInt64(), enabled);
+
     if (auto* storageSession = networkStorageSession())
-        storageSession->setTrackingPreventionEnabled(enable);
-    if (!enable) {
+        storageSession->setTrackingPreventionEnabled(enabled);
+    if (!enabled) {
         destroyResourceLoadStatistics([] { });
         return;
     }
-
-    if (m_resourceLoadStatistics)
-        return;
 
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
     if (!m_sessionID.isEphemeral())
@@ -263,11 +267,6 @@ bool NetworkSession::isTrackingPreventionEnabled() const
 void NetworkSession::notifyResourceLoadStatisticsProcessed()
 {
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsProcessed(), 0);
-}
-
-void NetworkSession::logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
-{
-    m_networkProcess->parentProcessConnection()->send(Messages::WebPageProxy::LogDiagnosticMessageWithValueFromWebProcess(message, description, value, significantFigures, shouldSample), 0);
 }
 
 void NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
@@ -493,6 +492,11 @@ void NetworkSession::setBlobRegistryTopOriginPartitioningEnabled(bool enabled)
     m_blobRegistry.setPartitioningEnabled(enabled);
 }
 
+void NetworkSession::setShouldSendPrivateTokenIPCForTesting(bool enabled)
+{
+    m_shouldSendPrivateTokenIPCForTesting = enabled;
+}
+
 void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
 {
     privateClickMeasurement().allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
@@ -623,7 +627,7 @@ void NetworkSession::removeNavigationPreloaderTask(ServiceWorkerFetchTask& task)
 
 ServiceWorkerFetchTask* NetworkSession::navigationPreloaderTaskFromFetchIdentifier(FetchIdentifier identifier)
 {
-    return m_navigationPreloaders.get(identifier).get();
+    return m_navigationPreloaders.get(identifier);
 }
 
 WebSWOriginStore* NetworkSession::swOriginStore() const
@@ -654,7 +658,7 @@ SWServer& NetworkSession::ensureSWServer()
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(m_sessionID.isEphemeral() || !path.isEmpty());
         auto inspectable = m_inspectionForServiceWorkersAllowed ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No;
-        m_swServer = makeUnique<SWServer>(*this, makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), inspectable);
+        m_swServer = SWServer::create(*this, makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), inspectable);
     }
     return *m_swServer;
 }

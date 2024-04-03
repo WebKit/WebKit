@@ -1,11 +1,14 @@
 add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
 
 include(platform/Adwaita.cmake)
-include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/OpenSSL.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+endif ()
 
 if (USE_DAWN)
     include(platform/Dawn.cmake)
@@ -17,7 +20,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
-    "${WEBCORE_DIR}/platform/graphics/wc"
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/network/win"
@@ -35,7 +37,6 @@ list(APPEND WebCore_SOURCES
 
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
-    page/win/FrameCairoWin.cpp
     page/win/FrameWin.cpp
     page/win/ResourceUsageOverlayWin.cpp
     page/win/ResourceUsageThreadWin.cpp
@@ -54,6 +55,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/angle/PlatformDisplayANGLE.cpp
 
     platform/graphics/egl/GLContext.cpp
+    platform/graphics/egl/GLContextWrapper.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
@@ -65,23 +67,19 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCustomPlatformDataWin.cpp
     platform/graphics/win/FontDescriptionWin.cpp
-    platform/graphics/win/FontPlatformDataCairoWin.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/FullScreenWindow.cpp
-    platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp
-    platform/graphics/win/GraphicsContextCairoWin.cpp
+    platform/graphics/win/GlyphPageTreeNodeWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
-    platform/graphics/win/ImageCairoWin.cpp
-    platform/graphics/win/ImageWin.cpp
+    platform/graphics/win/ImageAdapterWin.cpp
     platform/graphics/win/IntPointWin.cpp
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp
     platform/graphics/win/PlatformDisplayWin.cpp
-    platform/graphics/win/SimpleFontDataCairoWin.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
     platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
@@ -97,7 +95,6 @@ list(APPEND WebCore_SOURCES
     platform/win/ClipboardUtilitiesWin.cpp
     platform/win/CursorWin.cpp
     platform/win/DragDataWin.cpp
-    platform/win/DragImageCairoWin.cpp
     platform/win/DragImageWin.cpp
     platform/win/GDIUtilities.cpp
     platform/win/KeyEventWin.cpp
@@ -108,6 +105,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/SearchPopupMenuDB.cpp
+    platform/win/SharedMemoryWin.cpp
     platform/win/SystemInfo.cpp
     platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp
@@ -154,6 +152,10 @@ list(APPEND WebCore_LIBRARIES
     usp10
 )
 
+list(APPEND WebCoreTestSupport_LIBRARIES
+    shlwapi
+)
+
 set(iconFiles
     Resources/missingImage.png
     Resources/missingImage@2x.png
@@ -198,6 +200,19 @@ if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
     list(APPEND WebCore_PRIVATE_LIBRARIES MediaFoundation)
 endif ()
 
+if (USE_CAIRO)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/win/cairo/FontCacheWinCairo.cpp
+        platform/graphics/win/cairo/FontCustomPlatformDataWinCairo.cpp
+        platform/graphics/win/cairo/FontPlatformDataWinCairo.cpp
+        platform/graphics/win/cairo/GraphicsContextWinCairo.cpp
+        platform/graphics/win/cairo/ImageAdapterWinCairo.cpp
+        platform/graphics/win/cairo/MediaPlayerPrivateMediaFoundationCairo.cpp
+
+        platform/win/cairo/DragImageWinCairo.cpp
+    )
+endif ()
+
 if (USE_WOFF2)
     # The WOFF2 libraries don't compile as DLLs on Windows, so add in
     # the additional libraries WOFF2::dec requires
@@ -206,8 +221,3 @@ if (USE_WOFF2)
         WOFF2::common
     )
 endif ()
-
-list(APPEND WebCoreTestSupport_LIBRARIES
-    Cairo::Cairo
-    shlwapi
-)

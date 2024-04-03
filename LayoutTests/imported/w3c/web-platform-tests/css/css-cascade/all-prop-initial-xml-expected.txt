@@ -117,6 +117,7 @@ PASS direction
 PASS display
 PASS dominant-baseline
 PASS empty-cells
+PASS field-sizing
 PASS fill
 PASS fill-opacity
 PASS fill-rule

@@ -39,5 +39,8 @@ struct WebKit::AccessibilityPreferences {
 #endif
     bool imageAnimationEnabled;
     bool enhanceTextLegibilityOverall;
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    bool prefersNonBlinkingCursor;
+#endif
 };
 

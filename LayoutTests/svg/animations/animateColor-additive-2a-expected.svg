@@ -2,7 +2,7 @@
 <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
 <rect x="0" y="0" width="500" height="300" fill="#fff" />
 
-<g fill="#080" stroke="#080" stroke-width="10" transform="translate(-30)">
+<g fill="#080" stroke="#FF0" stroke-width="10" transform="translate(-30)">
     <circle cx="80" cy="50" r="35" stroke="none"/>
     <circle cx="80" cy="50" r="20"/>
     <circle cx="80" cy="120" r="35" stroke="none"/>
@@ -13,7 +13,7 @@
     <circle cx="80" cy="260" r="20"/>
 </g>
 
-<g fill="#080" stroke="#080" stroke-width="10" transform="translate(170)">
+<g fill="#080" stroke="#FF0" stroke-width="10" transform="translate(170)">
     <circle cx="80" cy="50" r="35" stroke="none"/>
     <circle cx="80" cy="50" r="20"/>
     <circle cx="80" cy="120" r="35" stroke="none"/>
@@ -25,7 +25,7 @@
 </g>
 
 
-<g fill="#080" stroke="#080" stroke-width="10" transform="translate(370)">
+<g fill="#080" stroke="#FF0" stroke-width="10" transform="translate(370)">
     <circle cx="80" cy="50" r="35" stroke="none"/>
     <circle cx="80" cy="50" r="20"/>
     <circle cx="80" cy="120" r="35" stroke="none"/>

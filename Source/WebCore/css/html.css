@@ -159,7 +159,7 @@ dialog::backdrop {
 
 /* media elements */
 
-body:-webkit-full-page-media {
+body:-internal-media-document {
     background-color: rgb(38, 38, 38);
 }
 
@@ -756,7 +756,6 @@ input::-internal-loading-auto-fill-button {
 }
 
 input::-webkit-caps-lock-indicator {
-    appearance: auto;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"><path fill="black" fill-opacity="0.4" d="M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12"/></svg>');
     max-width: 17px;
     align-self: stretch;
@@ -808,7 +807,7 @@ textarea {
     padding-block: 2px;
 #endif
     flex-direction: column;
-    resize: auto;
+    resize: -internal-textarea-auto;
     cursor: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -1333,7 +1332,7 @@ nobr {
 }
 
 /* Read-only text fields do not show a focus ring but do still receive focus */
-html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe:focus, object:focus {
+html:focus, body:focus, input[readonly]:focus, embed:focus, iframe:focus, object:focus {
     outline: none;
 }
 
@@ -1363,24 +1362,30 @@ area:any-link {
 }
 
 /* HTML5 ruby elements */
-
-ruby, rt {
-    text-indent: 0; /* blocks used for ruby rendering should not trigger this */
+/* Note that text-tracks.css contains a subset of this ruby styling for WebVTT elements. It should be kept in sync. */
+ruby {
+    display: ruby;
 }
 
-rt {
+ruby, rt {
+    text-indent: 0;
+}
+
+ruby > rt {
+    display: ruby-text;
+    font-size: -webkit-ruby-text;
+    text-align: start;
     line-height: normal;
     text-emphasis: none;
 }
 
-ruby > rt {
-    display: block;
-    font-size: -webkit-ruby-text;
-    text-align: start;
-}
-
 ruby > rp {
     display: none;
+}
+
+/* Avoid wrapping children of implicit ruby bases. We don't support <rb> or <rbc>, avoid giving them any behaviors. */
+ruby > :not(rb, rbc, ruby) {
+    white-space: nowrap;
 }
 
 /* other elements */
@@ -1427,7 +1432,7 @@ slot {
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-applet, embed, object, img {
+embed, object, img {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 :any-link img {

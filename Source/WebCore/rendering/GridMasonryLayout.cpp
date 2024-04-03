@@ -58,7 +58,8 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForColumns);
     m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForRows);
 
-    // 2.4 Masonry Layout Algorithm
+    // 2.3 Masonry Layout Algorithm
+    // https://drafts.csswg.org/css-grid-3/#masonry-layout-algorithm
     
     // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
     m_autoFlowNextCursor = 0;
@@ -223,7 +224,7 @@ void GridMasonryLayout::updateRunningPositions(const RenderBox& child, const Gri
 void GridMasonryLayout::updateItemOffset(const RenderBox& child, LayoutUnit offset)
 {
     // We set() and not add() to update the value if the child is already inserted
-    m_itemOffsets.set(&child, offset);
+    m_itemOffsets.set(child, offset);
 }
 
 GridSpan GridMasonryLayout::gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const
@@ -261,7 +262,7 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
 
 LayoutUnit GridMasonryLayout::offsetForChild(const RenderBox& child) const
 {
-    const auto& offsetIter = m_itemOffsets.find(&child);
+    const auto& offsetIter = m_itemOffsets.find(child);
     if (offsetIter == m_itemOffsets.end())
         return 0_lu;
     return offsetIter->value;

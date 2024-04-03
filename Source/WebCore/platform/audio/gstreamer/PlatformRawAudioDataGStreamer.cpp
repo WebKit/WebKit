@@ -77,7 +77,7 @@ static std::pair<GstAudioFormat, GstAudioLayout> convertAudioSampleFormatToGStre
     return { GST_AUDIO_FORMAT_UNKNOWN, GST_AUDIO_LAYOUT_INTERLEAVED };
 }
 
-RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t>&& sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
+RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t> sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
 {
     ensureAudioDataDebugCategoryInitialized();
     auto [gstFormat, layout] = convertAudioSampleFormatToGStreamerFormat(format);
@@ -89,8 +89,7 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     GST_TRACE("Creating raw audio wrapper with caps %" GST_PTR_FORMAT, caps.get());
 
-    Vector<uint8_t> dataStorage { sourceData.data(), sourceData.size() };
-    auto data = SharedBuffer::create(WTFMove(dataStorage));
+    Ref data = SharedBuffer::create(Vector<uint8_t>(sourceData));
     gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->data()));
     auto bufferLength = data->size();
     auto buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferLength, 0, bufferLength, reinterpret_cast<gpointer>(&data.leakRef()), [](gpointer data) {
@@ -222,7 +221,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 
     GUniquePtr<GstAudioInfo> sourceInfo(gst_audio_info_copy(self.info()));
     GUniquePtr<char> key(gst_info_strdup_printf("%" GST_PTR_FORMAT ";%" GST_PTR_FORMAT, gst_sample_get_caps(self.sample()), outputCaps.get()));
-    auto converter = getAudioConvertedForFormat(StringView { key.get(), static_cast<unsigned>(strlen(key.get())) }, *sourceInfo.get(), destinationInfo);
+    auto converter = getAudioConvertedForFormat(StringView { std::span { key.get(), strlen(key.get()) } }, *sourceInfo.get(), destinationInfo);
 
     auto inFrames = gst_buffer_get_size(gst_sample_get_buffer(self.sample())) / GST_AUDIO_INFO_BPF(sourceInfo.get());
     auto outFrames = gst_audio_converter_get_out_frames(converter, inFrames);

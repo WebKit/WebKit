@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 34x17
               text run at (0,0) width 34: "Sum!"
             RenderBR {BR} at (34,0) size 0x17
-            RenderInline {SPAN} at (0,0) size 38x17
+            RenderInline {SPAN} at (0,18) size 38x17
               RenderText {#text} at (0,18) size 38x17
                 text run at (0,18) width 38: "Thing"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {BLOCKQUOTE} of child 4 {DIV} of body

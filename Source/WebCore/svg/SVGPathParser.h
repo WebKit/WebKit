@@ -55,8 +55,8 @@ private:
     bool parseCurveToQuadraticSmoothSegment();
     bool parseArcToSegment();
 
-    SVGPathSource& m_source;
-    SVGPathConsumer& m_consumer;
+    SingleThreadWeakRef<SVGPathSource> m_source;
+    SingleThreadWeakRef<SVGPathConsumer> m_consumer;
     FloatPoint m_controlPoint;
     FloatPoint m_currentPoint;
     FloatPoint m_subPathPoint;

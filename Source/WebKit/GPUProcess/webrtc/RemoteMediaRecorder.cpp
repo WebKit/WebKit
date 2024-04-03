@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaRecorder.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcess.h"
@@ -37,7 +37,7 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&m_gpuConnectionToWebProcess.connection()))
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (connection ? &connection->connection() : nullptr))
 
 namespace WebKit {
 using namespace WebCore;
@@ -67,6 +67,7 @@ RemoteMediaRecorder::~RemoteMediaRecorder()
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_recordAudio);
     m_audioBufferList = nullptr;
     m_ringBuffer = ConsumerSharedCARingBuffer::map(description, WTFMove(handle));
@@ -78,6 +79,7 @@ void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer:
 
 void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(m_ringBuffer);
     MESSAGE_CHECK(m_audioBufferList);
     MESSAGE_CHECK(m_description && WebAudioBufferList::isSupportedDescription(*m_description, numberOfFrames));
@@ -94,12 +96,12 @@ void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFram
         m_writer->appendVideoFrame(*frame);
 }
 
-void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&& completionHandler)
+void RemoteMediaRecorder::fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&& completionHandler)
 {
     m_writer->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
         auto buffer = data ? data->makeContiguous() : RefPtr<WebCore::SharedBuffer>();
         auto* pointer = buffer ? buffer->data() : nullptr;
-        completionHandler(IPC::DataReference { pointer, data ? data->size() : 0 }, timeCode);
+        completionHandler(std::span { pointer, data ? data->size() : 0 }, timeCode);
     });
 }
 
@@ -135,4 +137,4 @@ void RemoteMediaRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handl
 
 #undef MESSAGE_CHECK
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)

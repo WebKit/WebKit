@@ -1,9 +1,9 @@
 list(APPEND WebCore_SOURCES
-    crypto/openssl/CryptoAlgorithmAES_CBCOpenSSL.cpp
-    crypto/openssl/CryptoAlgorithmAES_CFBOpenSSL.cpp
-    crypto/openssl/CryptoAlgorithmAES_CTROpenSSL.cpp
-    crypto/openssl/CryptoAlgorithmAES_GCMOpenSSL.cpp
-    crypto/openssl/CryptoAlgorithmAES_KWOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmAESCBCOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmAESCFBOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmAESCTROpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmAESGCMOpenSSL.cpp
+    crypto/openssl/CryptoAlgorithmAESKWOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmECDHOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmECDSAOpenSSL.cpp
     crypto/openssl/CryptoAlgorithmHKDFOpenSSL.cpp

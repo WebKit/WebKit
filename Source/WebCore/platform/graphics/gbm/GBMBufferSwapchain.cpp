@@ -79,7 +79,7 @@ static inline bool isBufferFormatSupported(const DMABufFormat& format)
 
 RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDescription& description)
 {
-    auto* device = GBMDevice::singleton().device();
+    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
     if (!device) {
         WTFLogAlways("Failed to get GBM buffer from swap chain: no GBM device found");
         return nullptr;

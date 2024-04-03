@@ -84,6 +84,31 @@ enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
     NeedsNoDisplay
 };
 
+headers: "RemoteLayerBackingStore.h"
+enum class WebKit::LayerContentsType : uint8_t {
+  IOSurface
+  CAMachPort
+  CachedIOSurface
+};
+
+header: "RemoteLayerBackingStore.h"
+[Nested] enum class WebKit::RemoteLayerBackingStore::Type : bool;
+
+[CustomEncoder, CustomHeader, LegacyPopulateFromEmptyConstructor, Nested] class WebKit::RemoteLayerBackingStoreProperties {
+    bool m_isOpaque;
+    WebKit::RemoteLayerBackingStore::Type m_type;
+    std::optional<WebKit::ImageBufferBackendHandle> m_bufferHandle;
+    std::optional<WebKit::RemoteImageBufferSetIdentifier> m_bufferSet;
+    std::optional<WebKit::BufferAndBackendInfo> m_frontBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> m_backBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> m_secondaryBackBufferInfo;
+    std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
+    std::optional<WebCore::IntRect> m_paintedRect;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebKit::ImageBufferBackendHandle> m_displayListBufferHandle;
+#endif
+};
+
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
     WebCore::PlatformLayerIdentifier m_rootLayerID;
@@ -163,7 +188,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties {
     WebCore::PlatformLayerIdentifier layerID;
-    WebCore::PlatformCALayer::LayerType type;
+    WebCore::PlatformCALayerLayerType type;
     std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
 #if ENABLE(MODEL_ELEMENT)
     std::variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, WebCore::LayerHostingContextIdentifier> additionalData;
@@ -174,7 +199,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 };
 
 [Nested] struct WebKit::LayerProperties::AnimationChanges {
-    Vector<std::pair<String, WebKit::PlatformCAAnimationRemote::Properties>> addedAnimations;
+    Vector<std::pair<String, WebKit::PlatformCAAnimationRemoteProperties>> addedAnimations;
     HashSet<String> keysOfAnimationsToRemove;
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Vector<Ref<WebCore::AcceleratedEffect>> effects;
@@ -218,8 +243,8 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::BackgroundColorChanged] WebCore::Color backgroundColor;
     [OptionalTupleBit=WebKit::LayerChange::BorderColorChanged] WebCore::Color borderColor;
     [OptionalTupleBit=WebKit::LayerChange::CustomAppearanceChanged] WebCore::GraphicsLayer::CustomAppearance customAppearance;
-    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayer::FilterType minificationFilter;
-    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayer::FilterType magnificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MinificationFilterChanged] WebCore::PlatformCALayerFilterType minificationFilter;
+    [OptionalTupleBit=WebKit::LayerChange::MagnificationFilterChanged] WebCore::PlatformCALayerFilterType magnificationFilter;
     [OptionalTupleBit=WebKit::LayerChange::BlendModeChanged] WebCore::BlendMode blendMode;
     [OptionalTupleBit=WebKit::LayerChange::WindRuleChanged] WebCore::WindRule windRule;
     [OptionalTupleBit=WebKit::LayerChange::VideoGravityChanged] WebCore::MediaPlayerVideoGravity videoGravity;
@@ -235,7 +260,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::BackdropRootChanged] bool backdropRoot;
     [OptionalTupleBit=WebKit::LayerChange::EventRegionChanged] WebCore::EventRegion eventRegion;
 #if ENABLE(SCROLLING_THREAD)
-    [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] WebCore::ScrollingNodeID scrollingNodeID;
+    [OptionalTupleBit=WebKit::LayerChange::ScrollingNodeIDChanged] Markable<WebCore::ScrollingNodeID> scrollingNodeID;
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     [OptionalTupleBit=WebKit::LayerChange::SeparatedChanged] bool isSeparated;
@@ -248,3 +273,5 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
 #endif
 };
+
+using WebKit::LayerHostingContextID = uint32_t;

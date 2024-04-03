@@ -48,7 +48,7 @@ RemoteComputePassEncoder::~RemoteComputePassEncoder() = default;
 
 void RemoteComputePassEncoder::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteComputePassEncoder::stopListeningForIPC()
@@ -58,7 +58,7 @@ void RemoteComputePassEncoder::stopListeningForIPC()
 
 void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
 {
-    auto convertedComputePipeline = m_objectHeap.convertComputePipelineFromBacking(computePipeline);
+    auto convertedComputePipeline = m_objectHeap->convertComputePipelineFromBacking(computePipeline);
     ASSERT(convertedComputePipeline);
     if (!convertedComputePipeline)
         return;
@@ -73,7 +73,7 @@ void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX,
 
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
-    auto convertedIndirectBuffer = m_objectHeap.convertBufferFromBacking(indirectBuffer);
+    auto convertedIndirectBuffer = m_objectHeap->convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
@@ -89,7 +89,7 @@ void RemoteComputePassEncoder::end()
 void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
     std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& offsets)
 {
-    auto convertedBindGroup = m_objectHeap.convertBindGroupFromBacking(bindGroup);
+    auto convertedBindGroup = m_objectHeap->convertBindGroupFromBacking(bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;

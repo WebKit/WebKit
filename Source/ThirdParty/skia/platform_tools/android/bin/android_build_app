@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+#
+# Copyright 2017 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+
+parser = argparse.ArgumentParser(description='builds skia android apps')
+parser.add_argument('-C', '--output_dir', help='ninja out dir')
+parser.add_argument('--no-daemon', default=False, action='store_true', help='disable gradle daemon')
+parser.add_argument('app_name')
+
+args = parser.parse_args()
+
+target_cpu = "arm64"
+android_buildtype = "debug"
+
+if args.output_dir == None:
+  sys.exit("unknown out directory")
+
+args_gn_path = os.path.join(args.output_dir, "args.gn")
+if os.path.exists(args_gn_path):
+  for line in open(args_gn_path):
+    m = re.match('target_cpu *= *"(.*)"', line.strip())
+    if m:
+      target_cpu = m.group(1)
+
+# build the apk using gradle
+cmd = ['./apps/gradlew',
+       ':' + args.app_name + ':assemble' + target_cpu + android_buildtype,
+       '-papps/' + args.app_name,
+       '-P' + target_cpu + '.out.dir=' + os.path.abspath(args.output_dir)]
+if not args.no_daemon:
+  cmd += ['--daemon']
+try:
+  subprocess.check_call(cmd, cwd=os.path.join(os.path.dirname(__file__), ".."))
+except subprocess.CalledProcessError as error:
+  print(error)
+  sys.exit("gradle build failed")
+
+# copy apk back into the main out directory
+current_dir = os.path.dirname(__file__)
+apk_src = os.path.join(current_dir, "..", "apps", args.app_name, "build", "outputs", "apk",
+                       target_cpu, android_buildtype,
+                       args.app_name + "-"  + target_cpu + "-"  + android_buildtype + ".apk")
+apk_dst = os.path.join(args.output_dir, args.app_name + ".apk")
+shutil.copyfile(apk_src, apk_dst)

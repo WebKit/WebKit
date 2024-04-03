@@ -83,7 +83,7 @@ public:
 
     virtual AffineTransform baseTransform() const;
 
-    void makeRenderingResultsAvailable();
+    void makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
 
     size_t memoryCost() const;
     size_t externalMemoryCost() const;
@@ -100,7 +100,7 @@ public:
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
     bool hasObserver(CanvasObserver&) const;
-    void notifyObserversCanvasChanged(const std::optional<FloatRect>&);
+    void notifyObserversCanvasChanged(const FloatRect&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.
     void addDisplayBufferObserver(CanvasDisplayBufferObserver&);
@@ -113,6 +113,7 @@ public:
     virtual GraphicsContext* drawingContext() const;
     virtual GraphicsContext* existingDrawingContext() const;
 
+    // !rect means caller knows the full canvas is invalidated previously.
     void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
     virtual void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
 
@@ -149,11 +150,14 @@ protected:
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     String lastFillText() const { return m_lastFillText; }
+    void addCanvasNeedingPreparationForDisplayOrFlush();
+    void removeCanvasNeedingPreparationForDisplayOrFlush();
 
 private:
     bool shouldInjectNoiseBeforeReadback() const;
     virtual void createImageBuffer() const { }
     bool shouldAccelerate(uint64_t area) const;
+
 
     mutable IntSize m_size;
     mutable Lock m_imageBufferAssignmentLock;
@@ -164,7 +168,7 @@ private:
     String m_lastFillText;
 
     CanvasNoiseInjection m_canvasNoiseInjection;
-    Markable<NoiseInjectionHashSalt, IntegralMarkableTraits<NoiseInjectionHashSalt>> m_canvasNoiseHashSalt;
+    Markable<NoiseInjectionHashSalt, IntegralMarkableTraits<NoiseInjectionHashSalt, std::numeric_limits<int64_t>::max()>> m_canvasNoiseHashSalt;
     bool m_originClean { true };
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };

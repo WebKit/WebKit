@@ -23,10 +23,14 @@
 headers: "StreamConnectionEncoder.h"
 
 #if ENABLE(GPU_PROCESS)
+
 header: "WebGPUOrigin3D.h"
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::WebGPU::Origin3DDict {
     WebCore::WebGPU::IntegerCoordinate x
     WebCore::WebGPU::IntegerCoordinate y
     WebCore::WebGPU::IntegerCoordinate z
 }
+
+using WebKit::WebGPU::Origin3D = std::variant<Vector<WebCore::WebGPU::IntegerCoordinate>, WebKit::WebGPU::Origin3DDict>;
+
 #endif

@@ -74,7 +74,7 @@ private:
     void screenOrientationDidChange(ScreenOrientationType) final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return ScreenOrientationEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ScreenOrientation; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }

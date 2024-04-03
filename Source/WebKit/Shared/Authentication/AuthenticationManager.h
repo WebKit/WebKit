@@ -70,7 +70,7 @@ public:
     explicit AuthenticationManager(NetworkProcess&);
     ~AuthenticationManager();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const WebCore::SecurityOriginData* , const WebCore::AuthenticationChallenge&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);

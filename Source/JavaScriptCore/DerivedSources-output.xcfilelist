@@ -85,8 +85,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimePrototype.l
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZoneConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZonePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmB3IRGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmLLIntGeneratorInlines.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOMGIRGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOps.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyArrayConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WebAssemblyArrayPrototype.lut.h

@@ -49,7 +49,7 @@ PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surfac
 
 PresentationContextImpl::~PresentationContextImpl() = default;
 
-void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
+bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     m_swapChain = nullptr;
 
@@ -63,9 +63,13 @@ void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         m_width,
         m_height,
         WGPUPresentMode_Immediate,
+        canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
+            return convertToBackingContext.convertToBacking(colorFormat);
+        })
     };
 
     m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing.get(), &backingDescriptor));
+    return true;
 }
 
 void PresentationContextImpl::unconfigure()
@@ -88,8 +92,10 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
         return nullptr; // FIXME: This should return an invalid texture instead.
 
     if (!m_currentTexture) {
-        ASSERT(m_swapChain);
-        m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { wgpuSwapChainGetCurrentTexture(m_swapChain.get()) }, m_format, TextureDimension::_2d, m_convertToBackingContext);
+        auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get());
+        if (!texturePtr)
+            return nullptr;
+        m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, m_format, TextureDimension::_2d, m_convertToBackingContext);
     }
 
     return m_currentTexture;
@@ -97,7 +103,8 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
 
 void PresentationContextImpl::present()
 {
-    wgpuSwapChainPresent(m_swapChain.get());
+    if (auto* surface = m_swapChain.get())
+        wgpuSwapChainPresent(surface);
     m_currentTexture = nullptr;
 }
 

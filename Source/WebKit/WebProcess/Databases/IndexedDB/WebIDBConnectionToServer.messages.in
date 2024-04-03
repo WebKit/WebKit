@@ -40,9 +40,9 @@ messages -> WebIDBConnectionToServer {
     DidOpenCursor(WebKit::WebIDBResult result)
     DidIterateCursor(WebKit::WebIDBResult result)
 
-    FireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
+    FireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
     DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
-    DidCloseFromServer(uint64_t databaseConnectionIdentifier, WebCore::IDBError error) final;
+    DidCloseFromServer(WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, WebCore::IDBError error) final;
     NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
 
     DidGetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion> databases)

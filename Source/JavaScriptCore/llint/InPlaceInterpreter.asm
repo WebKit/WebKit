@@ -65,8 +65,16 @@
 #################################
 
 # PC = t4
-const MC = t5  # Metadata counter (index into metadata)
-const PL = t6  # Pointer to locals (index into locals)
+if X86_64 or ARM64 or ARM64E or RISCV64
+    const MC = t5  # Metadata counter (index into metadata)
+    const PL = t6  # Pointer to locals (index into locals)
+elsif ARMv7
+    const MC = t6
+    const PL = t7
+else
+    const MC = invalidGPR
+    const PL = invalidGPR
+end
 const PM = metadataTable
 
 if ARM64 or ARM64E
@@ -85,15 +93,13 @@ const SlotSize = constexpr (sizeof(Register))
 const LocalSize = SlotSize
 const StackValueSize = 16
 
+const wasmInstance = csr0
 if X86_64 or ARM64 or ARM64E or RISCV64
-    const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4
-elsif ARMv7
-    const wasmInstance = csr0
+else
     const memoryBase = invalidGPR
     const boundsCheckingSize = invalidGPR
-else
 end
 
 const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
@@ -116,7 +122,11 @@ macro saveIPIntRegisters()
         storep PB, -0x8[cfr]
         storep PM, -0x10[cfr]
         storep wasmInstance, -0x18[cfr]
+    elsif ARMv7
+        store2ia PM, PB, -8[cfr]
+        storep wasmInstance, -16[cfr]
     else
+        error
     end
 end
 
@@ -128,7 +138,11 @@ macro restoreIPIntRegisters()
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], PM
         loadp -0x18[cfr], wasmInstance
+    elsif ARMv7
+        load2ia -8[cfr], PM, PB
+        loadp -16[cfr], wasmInstance
     else
+        error
     end
     addp IPIntCalleeSaveSpaceStackAligned, sp
 end
@@ -149,26 +163,26 @@ end
 # Tail-call dispatch
 
 macro advancePC(amount)
-    addq amount, PC
+    addp amount, PC
 end
 
 macro advancePCByReg(amount)
-    addq amount, PC
+    addp amount, PC
 end
 
 macro advanceMC(amount)
-    addq amount, MC
+    addp amount, MC
 end
 
 macro advanceMCByReg(amount)
-    addq amount, MC
+    addp amount, MC
 end
 
 macro nextIPIntInstruction()
     # Consistency check
     # move MC, t0
-    # andq 7, t0
-    # bqeq t0, 0, .fine
+    # andp 7, t0
+    # bpeq t0, 0, .fine
     # break
 # .fine:
     loadb [PB, PC, 1], t0
@@ -182,6 +196,11 @@ elsif X86_64
     leap (_ipint_unreachable), t1
     addq t1, t0
     emit "jmp *(%eax)"
+elsif ARMv7
+    lshiftp 8, t0
+    leap (_ipint_unreachable + 1), t1
+    addp t1, t0
+    emit "bx r0"
 else
     break
 end
@@ -193,8 +212,10 @@ end
 macro pushQuad(reg)
     if ARM64 or ARM64E
         push reg, reg
-    else
+    elsif X86_64
         push reg
+    else
+        break
     end
 end
 
@@ -205,35 +226,43 @@ end
 macro popQuad(reg, scratch)
     if ARM64 or ARM64E
         pop reg, scratch
-    else
+    elsif X86_64
         pop reg
+    else
+        break
     end
 end
 
 macro pushVectorReg0()
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
-    else
+    elsif X86_64
         emit "sub $16, %esp"
         emit "movdqu %xmm0, (%esp)"
+    else
+        break
     end
 end
 
 macro pushVectorReg1()
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
-    else
+    elsif X86_64
         emit "sub $16, %esp"
         emit "movdqu %xmm1, (%esp)"
+    else
+        break
     end
 end
 
 macro pushVectorReg2()
     if ARM64 or ARM64E
         emit "str q2, [sp, #-16]!"
-    else
+    elsif X86_64
         emit "sub $16, %esp"
         emit "movdqu %xmm2, (%esp)"
+    else
+        break
     end
 end
 
@@ -243,6 +272,8 @@ macro popVectorReg0()
     elsif X86_64
         emit "movdqu (%esp), %xmm0"
         emit "add $16, %esp"
+    else
+        break
     end
 end
 
@@ -252,6 +283,8 @@ macro popVectorReg1()
     elsif X86_64
         emit "movdqu (%esp), %xmm1"
         emit "add $16, %esp"
+    else
+        break
     end
 end
 
@@ -261,6 +294,8 @@ macro popVectorReg2()
     elsif X86_64
         emit "movdqu (%esp), %xmm2"
         emit "add $16, %esp"
+    else
+        break
     end
 end
 
@@ -268,18 +303,22 @@ end
 macro pushFPR()
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
-    else
+    elsif X86_64
         emit "sub $16, %esp"
         emit "movdqu %xmm0, (%esp)"
+    else
+        break
     end
 end
 
 macro pushFPR1()
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
-    else
+    elsif X86_64
         emit "sub $16, %esp"
         emit "movdqu %xmm1, (%esp)"
+    else
+        break
     end
 end
 
@@ -293,6 +332,8 @@ macro popFPR()
     elsif X86_64
         emit "movdqu (%esp), %xmm0"
         emit "add $16, %esp"
+    else
+        break
     end
 end
 
@@ -302,6 +343,8 @@ macro popFPR1()
     elsif X86_64
         emit "movdqu (%esp), %xmm1"
         emit "add $16, %esp"
+    else
+        break
     end
 end
 
@@ -368,6 +411,9 @@ if ARM64 or ARM64E
 elsif X86_64
     # fill with int 3 instructions
     emit ".balign 256, 0xcc"
+elsif ARMv7
+    # fill with udf instructions
+    emit ".balignw 256, 0xde00"
 end
 end
 
@@ -378,8 +424,12 @@ macro instructionLabel(instrname)
     _ipint%instrname%_validate:
 end
 
-macro unimplementedInstruction(instrname)
+macro slowPathLabel(instrname)
     alignment()
+    _ipint%instrname%_slow_path:
+end
+
+macro unimplementedInstruction(instrname)
     instructionLabel(instrname)
     break
 end
@@ -394,12 +444,12 @@ end
 macro ipintReloadMemory()
     if ARM64 or ARM64E
         loadpairq Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
-    else
+    elsif X86_64
         loadp Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase
         loadp Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, t2, t3)
+        cagedPrimitiveMayBeNull(memoryBase, t2)
     end
 end
 
@@ -438,11 +488,6 @@ end
 # Exception handling
 
 macro ipintException(exception)
-    # move PL, sp
-    # loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], PM
-    # mulq SlotSize, PM
-    # addq PM, sp
-    # restoreCallerPCAndCFR()
     storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + PayloadOffset[cfr]
     jmp _wasm_throw_from_slow_path_trampoline
 end
@@ -450,7 +495,7 @@ end
 # OSR
 
 macro ipintPrologueOSR(increment)
-if JIT
+if JIT and not ARMv7
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -531,7 +576,7 @@ end
 end
 
 macro ipintLoopOSR(increment)
-if JIT
+if JIT and not ARMv7
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -561,7 +606,7 @@ end
 end
 
 macro ipintEpilogueOSR(increment)
-if JIT
+if JIT and not ARMv7
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
@@ -609,28 +654,34 @@ macro argumINTAlign()
     emit ".balign 64"
 end
 
-macro argumINTDispatch()
-    loadb [PM], csr0
-    addq 1, PM
-    lshiftq 6, csr0
-if ARM64 or ARM64E
-    pcrtoaddr _argumINT_a0, csr4
-    addq csr0, csr4
-    emit "br x23"
-elsif X86_64
-    leap (_argumINT_a0), csr4
-    addq csr0, csr4
-    emit "jmp *(%r13)"
-end
+macro checkStackOverflow(callee, scratch)
+    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
+    lshiftp 4, scratch
+    subp cfr, scratch, scratch
+
+    bpa scratch, cfr, .stackOverflow
+    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
+
+.stackOverflow:
+    ipintException(StackOverflow)
+
+.stackHeightOK:
 end
 
-global _ipint_entry
-_ipint_entry:
-if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
-    preserveCallerPCAndCFR()
-    saveIPIntRegisters()
-    storep wasmInstance, CodeBlock[cfr]
-    getIPIntCallee()
+if ARM64 or ARM64E or X86_64
+
+# PM = location in argumINT bytecode
+# csr0 = tmp
+# csr1 = dst
+# csr2 = src
+# csr3 = end
+# csr4 = for dispatch
+
+const argumINTDest = csr1
+const argumINTSrc = csr2
+    
+macro ipintEntry()
+    checkStackOverflow(ws0, csr3)
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E
@@ -648,29 +699,109 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
 
     push csr0, csr1, csr2, csr3
 
-    # PM = location in argumINT bytecode
-    # csr0 = tmp
-    # csr1 = dst
-    # csr2 = src
-    # csr3 = end
-    # csr4 = for dispatch
-
-const argumINTDest = csr1
-const argumINTSrc = csr2
     move csr4, argumINTDest
     leap FirstArgumentOffset[cfr], argumINTSrc
 
     argumINTDispatch()
+end
 
-.ipint_entry_end_local:
+macro argumINTDispatch()
+    loadb [PM], csr0
+    addq 1, PM
+    lshiftq 6, csr0
+if ARM64 or ARM64E
+    pcrtoaddr _argumINT_a0, csr4
+    addq csr0, csr4
+    emit "br x23"
+elsif X86_64
+    leap (_argumINT_a0), csr4
+    addq csr0, csr4
+    emit "jmp *(%r13)"
+else
+    break
+end
+end
+
+macro argumINTEnd()
     # zero out remaining locals
     bqeq argumINTDest, csr3, .ipint_entry_finish_zero
     storeq 0, [argumINTDest]
     addq 8, argumINTDest
+end
+
+macro argumINTFinish()
+    pop csr3, csr2, csr1, csr0
+end
+
+elsif ARMv7
+
+# PM = location in argumINT bytecode
+# csr1 = tmp
+# t4 = dst
+# t5 = src
+# t6 = end
+# t7 = for dispatch
+
+const argumINTDest = t4
+const argumINTSrc = t5
+
+macro ipintEntry()
+    checkStackOverflow(ws0, t6)
+
+    # Allocate space for locals and rethrow values
+    load2ia Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t7, t6
+    addp t6, t7
+    mulp LocalSize, t7
+    move sp, t6
+    subp t7, sp
+    move sp, t7
+    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
+
+    push csr1, t4, t5
+
+    move t7, argumINTDest
+    leap FirstArgumentOffset[cfr], argumINTSrc
+
+    argumINTDispatch()
+end
+
+macro argumINTDispatch()
+    loadb [PM], csr1
+    addp 1, PM
+    lshiftp 6, csr1
+    leap (_argumINT_a0 + 1), t7
+    addp csr1, t7
+    emit "bx r9"
+end
+
+macro argumINTEnd()
+    # zero out remaining locals
+    bpeq argumINTDest, t6, .ipint_entry_finish_zero
+    break
+end
+
+macro argumINTFinish()
+    pop t5, t4, csr1
+end
+
+end # elsif ARMv7
+
+global _ipint_entry
+_ipint_entry:
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
+    preserveCallerPCAndCFR()
+    saveIPIntRegisters()
+    storep wasmInstance, CodeBlock[cfr]
+    getIPIntCallee()
+
+    ipintEntry()
+
+.ipint_entry_end_local:
+    argumINTEnd()
 
     jmp .ipint_entry_end_local
 .ipint_entry_finish_zero:
-    pop csr3, csr2, csr1, csr0
+    argumINTFinish()
 
     loadp CodeBlock[cfr], wasmInstance
     # OSR Check
@@ -714,6 +845,8 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     saveIPIntRegisters()
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
+
+    checkStackOverflow(ws0, csr3)
 
     # Allocate space for locals and rethrow values
     if ARM64 or ARM64E
@@ -773,7 +906,7 @@ const argumINTSrc = csr2
 
     nextIPIntInstruction()
 else
-    ret
+    break
 end
 
 macro ipintCatchCommon()
@@ -828,6 +961,8 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintReloadMemory()
     advanceMC(4)
     nextIPIntInstruction()
+else
+    break
 end
 
 global _ipint_catch_all_entry
@@ -843,6 +978,8 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     ipintReloadMemory()
     advanceMC(4)
     nextIPIntInstruction()
+else
+    break
 end
 
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
@@ -1152,74 +1289,38 @@ reservedOpcode(0x1f)
 
 instructionLabel(_local_get)
     # local.get
-    loadb [PM, MC], t1
-    bineq t1, 0, .ipint_local_get_longpath
-
     loadb 1[PB, PC], t0
-    # Index into locals
-    loadq [PL, t0, LocalSize], t0
-    # Push to stack
-    pushQuad(t0)
     advancePC(2)
-    advanceMC(1)
-    nextIPIntInstruction()
-
-.ipint_local_get_longpath:
-    # Load pre-computed index from metadata
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_get_slow_path
+.ipint_local_get_post_decode:
     # Index into locals
     loadq [PL, t0, LocalSize], t0
     # Push to stack
     pushQuad(t0)
-
-    advancePCByReg(t1)
-    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_set)
     # local.set
-    # Pop from stack
-    loadb [PM, MC], t1
-    popQuad(t2, t3)
-
-    bineq t1, 0, .ipint_local_set_longpath
-
     loadb 1[PB, PC], t0
-    # Store to locals
-    storeq t2, [PL, t0, LocalSize]
     advancePC(2)
-    advanceMC(1)
-    nextIPIntInstruction()
-
-.ipint_local_set_longpath:
-    # Load pre-computed index from metadata
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_set_slow_path
+.ipint_local_set_post_decode:
+    # Pop from stack
+    popQuad(t2, t3)
     # Store to locals
     storeq t2, [PL, t0, LocalSize]
-
-    advancePCByReg(t1)
-    advanceMC(5)
     nextIPIntInstruction()
 
 instructionLabel(_local_tee)
     # local.tee
-    loadb [PM, MC], t1
-    loadq [sp], t2
-    bineq t1, 0, .ipint_local_tee_longpath
-
     loadb 1[PB, PC], t0
-    storeq t2, [PL, t0, LocalSize]
-
     advancePC(2)
-    advanceMC(2)
-    nextIPIntInstruction()
-
-.ipint_local_tee_longpath:
-    loadi 1[PM, MC], t0
+    bbaeq t0, 128, _ipint_local_tee_slow_path
+.ipint_local_tee_post_decode:
+    # Load from stack
+    loadq [sp], t2
+    # Store to locals
     storeq t2, [PL, t0, LocalSize]
-
-    advancePCByReg(t1)
-    advanceMC(10)
     nextIPIntInstruction()
 
 instructionLabel(_global_get)
@@ -5593,9 +5694,37 @@ instructionLabel(_i64_atomic_rmw32_cmpxchg_u)
         pushInt64(expected)
     end)
 
-    ##################################
-    ## "Out of line" logic for call ##
-    ##################################
+#######################################
+## ULEB128 decoding logic for locals ##
+#######################################
+
+macro decodeULEB128(exitLabel, result)
+    # result should already be the first byte.
+    andq 0x7f, result
+    move 7, t2 # t1 holds the shift.
+.loop:
+    loadb [PB, PC], t3
+    andq t3, 0x7f, t1
+    lshiftq t2, t1
+    orq t1, result
+    addq 7, t2
+    advancePC(1)
+    bbaeq t3, 128, .loop
+    jmp exitLabel
+end
+
+slowPathLabel(_local_get)
+    decodeULEB128(.ipint_local_get_post_decode, t0)
+
+slowPathLabel(_local_set)
+    decodeULEB128(.ipint_local_set_post_decode, t0)
+
+slowPathLabel(_local_tee)
+    decodeULEB128(.ipint_local_tee_post_decode, t0)
+
+##################################
+## "Out of line" logic for call ##
+##################################
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro mintAlign()
@@ -6092,7 +6221,384 @@ argumINTAlign()
 _argumINT_end:
     jmp .ipint_entry_end_local
 
-# Put all operations before this `else`, or else 32-bit architectures will fail to build.
+elsif ARMv7
+# Put all ARMv7 instructions after this `elsif` or other architecturs will fail to build.
+
+# For 32-bit architectures: make sure that the assertions can still find the labels
+unimplementedInstruction(_unreachable)
+unimplementedInstruction(_nop)
+unimplementedInstruction(_block)
+unimplementedInstruction(_loop)
+unimplementedInstruction(_if)
+unimplementedInstruction(_else)
+unimplementedInstruction(_try)
+unimplementedInstruction(_catch)
+unimplementedInstruction(_throw)
+unimplementedInstruction(_rethrow)
+reservedOpcode(0x0a)
+
+# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
+macro uintAlign()
+    emit ".balign 64"
+end
+
+macro uintDispatch()
+    loadb [PM], t6
+    addp 1, PM
+    bilt t6, 5, .safe
+    break
+.safe:
+    lshiftp 6, t6
+    leap (_uint_r0 + 1), t7
+    addp t6, t7
+    # t7 = r9
+    emit "bx r9"
+end
+
+instructionLabel(_end)
+    #loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+    loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
+    subp 1, t0
+    bpeq PC, t0, .ipint_end_ret
+    advancePC(1)
+    nextIPIntInstruction()
+.ipint_end_ret:
+    ipintEpilogueOSR(10)
+    addp MC, PM
+    uintDispatch()
+
+unimplementedInstruction(_br)
+unimplementedInstruction(_br_if)
+unimplementedInstruction(_br_table)
+unimplementedInstruction(_return)
+unimplementedInstruction(_call)
+unimplementedInstruction(_call_indirect)
+reservedOpcode(0x12)
+reservedOpcode(0x13)
+reservedOpcode(0x14)
+reservedOpcode(0x15)
+reservedOpcode(0x16)
+reservedOpcode(0x17)
+unimplementedInstruction(_delegate)
+unimplementedInstruction(_catch_all)
+unimplementedInstruction(_drop)
+unimplementedInstruction(_select)
+unimplementedInstruction(_select_t)
+reservedOpcode(0x1d)
+reservedOpcode(0x1e)
+reservedOpcode(0x1f)
+unimplementedInstruction(_local_get)
+unimplementedInstruction(_local_set)
+unimplementedInstruction(_local_tee)
+unimplementedInstruction(_global_get)
+unimplementedInstruction(_global_set)
+unimplementedInstruction(_table_get)
+unimplementedInstruction(_table_set)
+reservedOpcode(0x27)
+unimplementedInstruction(_i32_load_mem)
+unimplementedInstruction(_i64_load_mem)
+unimplementedInstruction(_f32_load_mem)
+unimplementedInstruction(_f64_load_mem)
+unimplementedInstruction(_i32_load8s_mem)
+unimplementedInstruction(_i32_load8u_mem)
+unimplementedInstruction(_i32_load16s_mem)
+unimplementedInstruction(_i32_load16u_mem)
+unimplementedInstruction(_i64_load8s_mem)
+unimplementedInstruction(_i64_load8u_mem)
+unimplementedInstruction(_i64_load16s_mem)
+unimplementedInstruction(_i64_load16u_mem)
+unimplementedInstruction(_i64_load32s_mem)
+unimplementedInstruction(_i64_load32u_mem)
+unimplementedInstruction(_i32_store_mem)
+unimplementedInstruction(_i64_store_mem)
+unimplementedInstruction(_f32_store_mem)
+unimplementedInstruction(_f64_store_mem)
+unimplementedInstruction(_i32_store8_mem)
+unimplementedInstruction(_i32_store16_mem)
+unimplementedInstruction(_i64_store8_mem)
+unimplementedInstruction(_i64_store16_mem)
+unimplementedInstruction(_i64_store32_mem)
+unimplementedInstruction(_memory_size)
+unimplementedInstruction(_memory_grow)
+unimplementedInstruction(_i32_const)
+unimplementedInstruction(_i64_const)
+unimplementedInstruction(_f32_const)
+unimplementedInstruction(_f64_const)
+unimplementedInstruction(_i32_eqz)
+unimplementedInstruction(_i32_eq)
+unimplementedInstruction(_i32_ne)
+unimplementedInstruction(_i32_lt_s)
+unimplementedInstruction(_i32_lt_u)
+unimplementedInstruction(_i32_gt_s)
+unimplementedInstruction(_i32_gt_u)
+unimplementedInstruction(_i32_le_s)
+unimplementedInstruction(_i32_le_u)
+unimplementedInstruction(_i32_ge_s)
+unimplementedInstruction(_i32_ge_u)
+unimplementedInstruction(_i64_eqz)
+unimplementedInstruction(_i64_eq)
+unimplementedInstruction(_i64_ne)
+unimplementedInstruction(_i64_lt_s)
+unimplementedInstruction(_i64_lt_u)
+unimplementedInstruction(_i64_gt_s)
+unimplementedInstruction(_i64_gt_u)
+unimplementedInstruction(_i64_le_s)
+unimplementedInstruction(_i64_le_u)
+unimplementedInstruction(_i64_ge_s)
+unimplementedInstruction(_i64_ge_u)
+unimplementedInstruction(_f32_eq)
+unimplementedInstruction(_f32_ne)
+unimplementedInstruction(_f32_lt)
+unimplementedInstruction(_f32_gt)
+unimplementedInstruction(_f32_le)
+unimplementedInstruction(_f32_ge)
+unimplementedInstruction(_f64_eq)
+unimplementedInstruction(_f64_ne)
+unimplementedInstruction(_f64_lt)
+unimplementedInstruction(_f64_gt)
+unimplementedInstruction(_f64_le)
+unimplementedInstruction(_f64_ge)
+unimplementedInstruction(_i32_clz)
+unimplementedInstruction(_i32_ctz)
+unimplementedInstruction(_i32_popcnt)
+unimplementedInstruction(_i32_add)
+unimplementedInstruction(_i32_sub)
+unimplementedInstruction(_i32_mul)
+unimplementedInstruction(_i32_div_s)
+unimplementedInstruction(_i32_div_u)
+unimplementedInstruction(_i32_rem_s)
+unimplementedInstruction(_i32_rem_u)
+unimplementedInstruction(_i32_and)
+unimplementedInstruction(_i32_or)
+unimplementedInstruction(_i32_xor)
+unimplementedInstruction(_i32_shl)
+unimplementedInstruction(_i32_shr_s)
+unimplementedInstruction(_i32_shr_u)
+unimplementedInstruction(_i32_rotl)
+unimplementedInstruction(_i32_rotr)
+unimplementedInstruction(_i64_clz)
+unimplementedInstruction(_i64_ctz)
+unimplementedInstruction(_i64_popcnt)
+unimplementedInstruction(_i64_add)
+unimplementedInstruction(_i64_sub)
+unimplementedInstruction(_i64_mul)
+unimplementedInstruction(_i64_div_s)
+unimplementedInstruction(_i64_div_u)
+unimplementedInstruction(_i64_rem_s)
+unimplementedInstruction(_i64_rem_u)
+unimplementedInstruction(_i64_and)
+unimplementedInstruction(_i64_or)
+unimplementedInstruction(_i64_xor)
+unimplementedInstruction(_i64_shl)
+unimplementedInstruction(_i64_shr_s)
+unimplementedInstruction(_i64_shr_u)
+unimplementedInstruction(_i64_rotl)
+unimplementedInstruction(_i64_rotr)
+unimplementedInstruction(_f32_abs)
+unimplementedInstruction(_f32_neg)
+unimplementedInstruction(_f32_ceil)
+unimplementedInstruction(_f32_floor)
+unimplementedInstruction(_f32_trunc)
+unimplementedInstruction(_f32_nearest)
+unimplementedInstruction(_f32_sqrt)
+unimplementedInstruction(_f32_add)
+unimplementedInstruction(_f32_sub)
+unimplementedInstruction(_f32_mul)
+unimplementedInstruction(_f32_div)
+unimplementedInstruction(_f32_min)
+unimplementedInstruction(_f32_max)
+unimplementedInstruction(_f32_copysign)
+unimplementedInstruction(_f64_abs)
+unimplementedInstruction(_f64_neg)
+unimplementedInstruction(_f64_ceil)
+unimplementedInstruction(_f64_floor)
+unimplementedInstruction(_f64_trunc)
+unimplementedInstruction(_f64_nearest)
+unimplementedInstruction(_f64_sqrt)
+unimplementedInstruction(_f64_add)
+unimplementedInstruction(_f64_sub)
+unimplementedInstruction(_f64_mul)
+unimplementedInstruction(_f64_div)
+unimplementedInstruction(_f64_min)
+unimplementedInstruction(_f64_max)
+unimplementedInstruction(_f64_copysign)
+unimplementedInstruction(_i32_wrap_i64)
+unimplementedInstruction(_i32_trunc_f32_s)
+unimplementedInstruction(_i32_trunc_f32_u)
+unimplementedInstruction(_i32_trunc_f64_s)
+unimplementedInstruction(_i32_trunc_f64_u)
+unimplementedInstruction(_i64_extend_i32_s)
+unimplementedInstruction(_i64_extend_i32_u)
+unimplementedInstruction(_i64_trunc_f32_s)
+unimplementedInstruction(_i64_trunc_f32_u)
+unimplementedInstruction(_i64_trunc_f64_s)
+unimplementedInstruction(_i64_trunc_f64_u)
+unimplementedInstruction(_f32_convert_i32_s)
+unimplementedInstruction(_f32_convert_i32_u)
+unimplementedInstruction(_f32_convert_i64_s)
+unimplementedInstruction(_f32_convert_i64_u)
+unimplementedInstruction(_f32_demote_f64)
+unimplementedInstruction(_f64_convert_i32_s)
+unimplementedInstruction(_f64_convert_i32_u)
+unimplementedInstruction(_f64_convert_i64_s)
+unimplementedInstruction(_f64_convert_i64_u)
+unimplementedInstruction(_f64_promote_f32)
+unimplementedInstruction(_i32_reinterpret_f32)
+unimplementedInstruction(_i64_reinterpret_f64)
+unimplementedInstruction(_f32_reinterpret_i32)
+unimplementedInstruction(_f64_reinterpret_i64)
+unimplementedInstruction(_i32_extend8_s)
+unimplementedInstruction(_i32_extend16_s)
+unimplementedInstruction(_i64_extend8_s)
+unimplementedInstruction(_i64_extend16_s)
+unimplementedInstruction(_i64_extend32_s)
+reservedOpcode(0xc5)
+reservedOpcode(0xc6)
+reservedOpcode(0xc7)
+reservedOpcode(0xc8)
+reservedOpcode(0xc9)
+reservedOpcode(0xca)
+reservedOpcode(0xcb)
+reservedOpcode(0xcc)
+reservedOpcode(0xcd)
+reservedOpcode(0xce)
+reservedOpcode(0xcf)
+unimplementedInstruction(_ref_null_t)
+unimplementedInstruction(_ref_is_null)
+unimplementedInstruction(_ref_func)
+reservedOpcode(0xd3)
+reservedOpcode(0xd4)
+reservedOpcode(0xd5)
+reservedOpcode(0xd6)
+reservedOpcode(0xd7)
+reservedOpcode(0xd8)
+reservedOpcode(0xd9)
+reservedOpcode(0xda)
+reservedOpcode(0xdb)
+reservedOpcode(0xdc)
+reservedOpcode(0xdd)
+reservedOpcode(0xde)
+reservedOpcode(0xdf)
+reservedOpcode(0xe0)
+reservedOpcode(0xe1)
+reservedOpcode(0xe2)
+reservedOpcode(0xe3)
+reservedOpcode(0xe4)
+reservedOpcode(0xe5)
+reservedOpcode(0xe6)
+reservedOpcode(0xe7)
+reservedOpcode(0xe8)
+reservedOpcode(0xe9)
+reservedOpcode(0xea)
+reservedOpcode(0xeb)
+reservedOpcode(0xec)
+reservedOpcode(0xed)
+reservedOpcode(0xee)
+reservedOpcode(0xef)
+reservedOpcode(0xf0)
+reservedOpcode(0xf1)
+reservedOpcode(0xf2)
+reservedOpcode(0xf3)
+reservedOpcode(0xf4)
+reservedOpcode(0xf5)
+reservedOpcode(0xf6)
+reservedOpcode(0xf7)
+reservedOpcode(0xf8)
+reservedOpcode(0xf9)
+reservedOpcode(0xfa)
+reservedOpcode(0xfb)
+unimplementedInstruction(_fc_block)
+unimplementedInstruction(_simd)
+unimplementedInstruction(_atomic)
+reservedOpcode(0xff)
+
+uintAlign()
+_uint_r0:
+    break
+
+uintAlign()
+_uint_r1:
+    break
+
+uintAlign()
+_uint_fr1:
+    break
+
+uintAlign()
+_uint_stack:
+    break
+
+uintAlign()
+_uint_ret:
+    jmp .ipint_exit
+
+# PM = location in argumINT bytecode
+# t5 = tmp
+# t6 = dst
+# t7 = src
+# cfr
+# r12 = for dispatch
+
+# const argumINTDest = t6
+# const argumINTSrc = t7
+
+argumINTAlign()
+_argumINT_a0:
+    break
+
+argumINTAlign()
+_argumINT_a1:
+    break
+
+argumINTAlign()
+_argumINT_a2:
+    break
+
+argumINTAlign()
+_argumINT_a3:
+    break
+
+argumINTAlign()
+_argumINT_a4:
+    break
+
+argumINTAlign()
+_argumINT_a5:
+    break
+
+argumINTAlign()
+_argumINT_a6:
+    break
+
+argumINTAlign()
+_argumINT_a7:
+    break
+
+argumINTAlign()
+_argumINT_fa0:
+    break
+
+argumINTAlign()
+_argumINT_fa1:
+    break
+
+argumINTAlign()
+_argumINT_fa2:
+    break
+
+argumINTAlign()
+_argumINT_fa3:
+    break
+
+argumINTAlign()
+_argumINT_stack:
+    break
+
+argumINTAlign()
+_argumINT_end:
+    jmp .ipint_entry_end_local
+
+# Put all operations before this `else`, or else unimplemented architectures will fail to build.
 else
 # For 32-bit architectures: make sure that the assertions can still find the labels
 unimplementedInstruction(_unreachable)

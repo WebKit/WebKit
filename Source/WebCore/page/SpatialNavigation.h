@@ -111,15 +111,14 @@ struct FocusCandidate {
     explicit FocusCandidate(HTMLAreaElement* area, FocusDirection);
     bool isNull() const { return !visibleNode; }
     bool inScrollableContainer() const { return visibleNode && enclosingScrollableBox; }
-    bool isFrameOwnerElement() const { return visibleNode && visibleNode->isFrameOwnerElement(); }
     Document* document() const { return visibleNode ? &visibleNode->document() : 0; }
 
     // We handle differently visibleNode and FocusableNode to properly handle the areas of imagemaps,
     // where visibleNode would represent the image element and focusableNode would represent the area element.
     // In all other cases, visibleNode and focusableNode are one and the same.
-    Node* visibleNode;
-    Node* focusableNode;
-    Node* enclosingScrollableBox;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> visibleNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> focusableNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> enclosingScrollableBox;
     long long distance;
     RectsAlignment alignment;
     LayoutRect rect;

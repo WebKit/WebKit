@@ -253,7 +253,7 @@ TEST_P(SRGBTextureTest, SRGBDecodeTextureParameter)
     GLColor srgbColor   = kNonlinearColor;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
                  getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
@@ -284,7 +284,7 @@ TEST_P(SRGBTextureTest, SRGBOverrideTextureParameter)
     GLenum internalFormat = getClientMajorVersion() >= 3 ? GL_RGBA8 : GL_RGBA;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  &linearColor);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
@@ -339,7 +339,7 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
     for (GLenum format : possibleFormats)
     {
         GLTexture tex;
-        glBindTexture(GL_TEXTURE_2D, tex.get());
+        glBindTexture(GL_TEXTURE_2D, tex);
         glTexStorage2D(GL_TEXTURE_2D, 1, format, 4, 4);
         GLenum error = glGetError();
         if (error == GL_INVALID_ENUM)
@@ -377,14 +377,14 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterWithSampler)
     GLenum internalFormat = getClientMajorVersion() >= 3 ? GL_RGBA8 : GL_RGBA;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  &linearColor);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
     ASSERT_GL_NO_ERROR();
 
     GLSampler sampler;
-    glBindSampler(0, sampler.get());
+    glBindSampler(0, sampler);
 
     glUseProgram(mProgram);
     glUniform1i(mTextureLocation, 0);
@@ -418,7 +418,7 @@ TEST_P(SRGBTextureTestES3, SRGBOverrideTextureParameterNoop)
     GLColor srgbColor   = kNonlinearColor;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
                  getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
@@ -447,14 +447,14 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameter)
     GLColor srgbColor   = kNonlinearColor;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
                  getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     ASSERT_GL_NO_ERROR();
 
     GLSampler sampler;
-    glBindSampler(0, sampler.get());
-    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
+    glBindSampler(0, sampler);
+    glSamplerParameteri(sampler, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
 
     glUseProgram(mProgram);
     glUniform1i(mTextureLocation, 0);
@@ -464,7 +464,7 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameter)
 
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 
-    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glSamplerParameteri(sampler, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
     drawQuad(mProgram, "position", 0.5f);
 
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
@@ -480,13 +480,13 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameterToggle)
     GLColor srgbColor   = kNonlinearColor;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
                  getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
     ASSERT_GL_NO_ERROR();
 
     GLSampler sampler;
-    glBindSampler(0, sampler.get());
+    glBindSampler(0, sampler);
 
     glUseProgram(mProgram);
     glUniform1i(mTextureLocation, 0);
@@ -498,7 +498,7 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeSamplerParameterToggle)
         GLint decode                  = ((i & 1) == 0) ? GL_DECODE_EXT : GL_SKIP_DECODE_EXT;
         angle::GLColor &expectedColor = ((i & 1) == 0) ? srgbColor : linearColor;
 
-        glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, decode);
+        glSamplerParameteri(sampler, GL_TEXTURE_SRGB_DECODE_EXT, decode);
         drawQuad(mProgram, "position", 0.5f);
         EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColor, 1.0);
     }
@@ -513,14 +513,14 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeTextureAndSamplerParameter)
     GLColor srgbColor   = kNonlinearColor;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, getSRGBA8TextureInternalFormat(), 1, 1, 0,
                  getSRGBA8TextureFormat(), GL_UNSIGNED_BYTE, &linearColor);
 
     ASSERT_GL_NO_ERROR();
 
     GLSampler sampler;
-    glBindSampler(0, sampler.get());
+    glBindSampler(0, sampler);
 
     glUseProgram(mProgram);
     glUniform1i(mTextureLocation, 0);
@@ -528,13 +528,13 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeTextureAndSamplerParameter)
     glDisable(GL_DEPTH_TEST);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
-    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
+    glSamplerParameteri(sampler, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
     drawQuad(mProgram, "position", 0.5f);
 
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SRGB_DECODE_EXT, GL_DECODE_EXT);
-    glSamplerParameteri(sampler.get(), GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
+    glSamplerParameteri(sampler, GL_TEXTURE_SRGB_DECODE_EXT, GL_SKIP_DECODE_EXT);
     drawQuad(mProgram, "position", 0.5f);
 
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
@@ -551,7 +551,7 @@ TEST_P(SRGBTextureTestES3, SRGBDecodeOverridePriority)
     GLenum internalFormat = getClientMajorVersion() >= 3 ? GL_RGBA8 : GL_RGBA;
 
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  &linearColor);
     ASSERT_GL_NO_ERROR();
@@ -589,7 +589,7 @@ TEST_P(SRGBTextureTestES3, GenerateMipmaps)
         std::fill(redBuf.begin(), redBuf.end(), GLColor::red);
 
         GLTexture tex;
-        glBindTexture(GL_TEXTURE_2D, tex.get());
+        glBindTexture(GL_TEXTURE_2D, tex);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      buf.data());

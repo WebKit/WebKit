@@ -48,7 +48,7 @@ RemoteCommandBuffer::~RemoteCommandBuffer() = default;
 
 void RemoteCommandBuffer::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteCommandBuffer::stopListeningForIPC()

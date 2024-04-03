@@ -31,6 +31,7 @@
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include <WebCore/AdvancedPrivacyProtections.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/ServiceWorkerJob.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <WebCore/WorkerFetchResult.h>
@@ -137,7 +138,7 @@ void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&,
 void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     m_certificateInfo = *response.certificateInfo();
-    if (response.httpStatusCode() == 304 && m_cacheEntry) {
+    if (response.httpStatusCode() == httpStatus304NotModified && m_cacheEntry) {
         loadWithCacheEntry(*m_cacheEntry);
         completionHandler(PolicyAction::Ignore);
         return;
@@ -181,9 +182,9 @@ void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(const WebCore::FragmentedSh
             m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
     }
 
-    buffer.forEachSegment([&](auto& segment) {
+    buffer.forEachSegment([&](auto segment) {
         if (segment.size())
-            m_script.append(m_decoder->decode(segment.data(), segment.size()));
+            m_script.append(m_decoder->decode(segment));
     });
 }
 
@@ -203,8 +204,8 @@ void ServiceWorkerSoftUpdateLoader::didFailLoading(const ResourceError& error)
 void ServiceWorkerSoftUpdateLoader::didComplete()
 {
     m_networkLoad = nullptr;
-    if (m_session)
-        m_session->removeSoftUpdateLoader(this);
+    if (CheckedPtr session = m_session.get())
+        session->removeSoftUpdateLoader(this);
 }
 
 } // namespace WebKit

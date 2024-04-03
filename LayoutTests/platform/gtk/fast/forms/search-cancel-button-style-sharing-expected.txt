@@ -24,5 +24,7 @@ layer at (207,45) size 170x18
   RenderBlock {DIV} at (0,0) size 170x18
     RenderText {#text} at (0,0) size 56x17
       text run at (0,0) width 56: "this one"
+layer at (181,46) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (377,46) size 16x16
   RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]

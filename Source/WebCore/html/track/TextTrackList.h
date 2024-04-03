@@ -63,7 +63,7 @@ public:
     const MediaTime& duration() const { return m_duration; }
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const override;
 
 private:
     TextTrackList(ScriptExecutionContext*);

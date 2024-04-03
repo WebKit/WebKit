@@ -36,13 +36,7 @@ TransformOperationData::TransformOperationData(FloatRect boundingBox, const Rend
 {
     if (renderer) {
         motionPathData = MotionPath::motionPathDataForRenderer(*renderer);
-        isSVGRenderer =
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-            is<RenderSVGModelObject>(renderer)
-#else
-            false
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
-            || is<LegacyRenderSVGModelObject>(renderer);
+        isSVGRenderer = is<RenderSVGModelObject>(renderer) || is<LegacyRenderSVGModelObject>(renderer);
     }
 }
 

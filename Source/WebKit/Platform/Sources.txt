@@ -1,7 +1,6 @@
 Platform/LogInitialization.cpp
 Platform/Logging.cpp
 Platform/Module.cpp
-Platform/SharedMemory.cpp
 
 Platform/IPC/ArgumentCoders.cpp
 Platform/IPC/Connection.cpp

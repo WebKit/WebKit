@@ -58,11 +58,10 @@ public:
     EventTarget* relatedTarget() const final { return m_relatedTarget.get(); }
 
 private:
-    FocusEvent() = default;
+    FocusEvent();
     FocusEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<WindowProxy>&&, int, RefPtr<EventTarget>&&);
     FocusEvent(const AtomString& type, const Init&);
 
-    EventInterface eventInterface() const final;
     bool isFocusEvent() const final;
 
     void setRelatedTarget(RefPtr<EventTarget>&& relatedTarget) final { m_relatedTarget = WTFMove(relatedTarget); }

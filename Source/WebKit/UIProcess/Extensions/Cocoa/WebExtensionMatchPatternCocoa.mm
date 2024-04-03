@@ -32,7 +32,10 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
+#import <WebCore/PublicSuffixStore.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -47,6 +50,12 @@ using namespace WebCore;
 static constexpr ASCIILiteral allURLsPattern = "<all_urls>"_s;
 static constexpr ASCIILiteral allHostsAndSchemesPattern = "*://*/*"_s;
 
+WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::extensionSchemes()
+{
+    static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "webkit-extension"_s };
+    return schemes;
+}
+
 WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::validSchemes()
 {
     static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "file"_s, "ftp"_s, "webkit-extension"_s };
@@ -57,6 +66,26 @@ WebExtensionMatchPattern::URLSchemeSet& WebExtensionMatchPattern::supportedSchem
 {
     static MainThreadNeverDestroyed<URLSchemeSet> schemes = std::initializer_list<String> { "*"_s, "http"_s, "https"_s, "webkit-extension"_s };
     return schemes;
+}
+
+bool WebExtensionMatchPattern::patternsMatchURL(const MatchPatternSet& matchPatterns, const URL& url)
+{
+    for (auto& matchPattern : matchPatterns) {
+        if (matchPattern->matchesURL(url))
+            return true;
+    }
+
+    return false;
+}
+
+bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& matchPatterns, const WebExtensionMatchPattern& otherPattern)
+{
+    for (auto& matchPattern : matchPatterns) {
+        if (matchPattern->matchesPattern(otherPattern))
+            return true;
+    }
+
+    return false;
 }
 
 static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
@@ -70,8 +99,12 @@ void WebExtensionMatchPattern::registerCustomURLScheme(String urlScheme)
     auto canonicalScheme = URLParser::maybeCanonicalizeScheme(String(urlScheme));
     ASSERT(canonicalScheme);
 
+    extensionSchemes().addVoid(canonicalScheme.value());
     validSchemes().addVoid(canonicalScheme.value());
     supportedSchemes().addVoid(canonicalScheme.value());
+
+    for (auto& pool : WebProcessPool::allProcessPools())
+        pool->sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsWebExtension(urlScheme));
 }
 
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& pattern)
@@ -86,7 +119,7 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const String& scheme, const String& host, const String& path)
 {
     String resolvedScheme = !scheme.isEmpty() ? scheme : "*"_s;
-    String resolvedHost = !host.isEmpty() ? host : "*"_s;
+    String resolvedHost = !host.isEmpty() || equalLettersIgnoringASCIICase(scheme, "file"_s) ? host : "*"_s;
     String resolvedPath = !path.isEmpty() ? path : "/*"_s;
 
     String pattern = makeString(resolvedScheme, "://"_s, resolvedHost, resolvedPath);
@@ -94,6 +127,25 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
     return patternCache().ensure(pattern, [&] {
         return create(resolvedScheme, resolvedHost, resolvedPath);
     }).iterator->value;
+}
+
+RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const URL& url, OptionSet<CreateOptions> options)
+{
+    ASSERT(!url.isEmpty());
+
+    String scheme = "*"_s;
+    if (options.contains(CreateOptions::MatchExactScheme) || !url.protocolIsInHTTPFamily())
+        scheme = url.protocol().toString();
+
+    String host = url.host().toString();
+    if (options.contains(CreateOptions::MatchSubdomains) && !host.isEmpty())
+        host = makeString("*."_s, host);
+
+    String path = "/*"_s;
+    if (!options.contains(CreateOptions::MatchAllPaths))
+        path = url.hasPath() ? url.path().toString() : "/"_s;
+
+    return getOrCreate(scheme, host, path);
 }
 
 Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allURLsMatchPattern()
@@ -106,7 +158,7 @@ Ref<WebExtensionMatchPattern> WebExtensionMatchPattern::allHostsAndSchemesMatchP
     return getOrCreate(allHostsAndSchemesPattern).releaseNonNull();
 }
 
-bool WebExtensionMatchPattern::patternsMatchAllHosts(HashSet<Ref<WebExtensionMatchPattern>>& patterns)
+bool WebExtensionMatchPattern::patternsMatchAllHosts(const MatchPatternSet& patterns)
 {
     for (auto& pattern : patterns) {
         if (pattern->matchesAllHosts())
@@ -266,6 +318,15 @@ String WebExtensionMatchPattern::path() const
     return pattern().path();
 }
 
+bool WebExtensionMatchPattern::hostIsPublicSuffix() const
+{
+    auto host = pattern().host();
+    if (host.startsWith("*."_s))
+        host = host.substring(2);
+
+    return WebCore::PublicSuffixStore::singleton().isPublicSuffix(host);
+}
+
 String WebExtensionMatchPattern::stringWithScheme(const String& differentScheme) const
 {
     if (!isValid())
@@ -407,7 +468,7 @@ HashSet<String> toStrings(const MatchPatternSet& matchPatterns)
     return stringsToReturn;
 }
 
-MatchPatternSet toPatterns(HashSet<String>& domains)
+MatchPatternSet toPatterns(const HashSet<String>& domains)
 {
     MatchPatternSet matchPatterns;
     matchPatterns.reserveInitialCapacity(domains.size());
@@ -418,7 +479,20 @@ MatchPatternSet toPatterns(HashSet<String>& domains)
     return matchPatterns;
 }
 
-NSSet *toAPI(MatchPatternSet& set)
+MatchPatternSet toPatterns(NSSet *set)
+{
+    MatchPatternSet matchPatterns;
+    matchPatterns.reserveInitialCapacity(set.count);
+
+    for (id object in set) {
+        if (auto *pattern = dynamic_objc_cast<_WKWebExtensionMatchPattern>(object))
+            matchPatterns.addVoid(pattern._webExtensionMatchPattern);
+    }
+
+    return matchPatterns;
+}
+
+NSSet *toAPI(const MatchPatternSet& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)

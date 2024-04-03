@@ -369,7 +369,7 @@ RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const
         break;
     case Token::Number: {
         bool ok;
-        double value = charactersToDouble(tokenStart, tokenEnd - tokenStart, &ok);
+        double value = charactersToDouble({ tokenStart, tokenEnd }, &ok);
         if (!ok)
             return nullptr;
         result = JSON::Value::create(value);

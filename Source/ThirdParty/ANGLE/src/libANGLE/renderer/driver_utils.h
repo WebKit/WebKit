@@ -172,14 +172,17 @@ class IntelDriverVersion
 {
   public:
     IntelDriverVersion(uint32_t buildNumber);
-    bool operator==(const IntelDriverVersion &);
-    bool operator!=(const IntelDriverVersion &);
-    bool operator<(const IntelDriverVersion &);
-    bool operator>=(const IntelDriverVersion &);
+    IntelDriverVersion(uint32_t majorVersion, uint32_t minorVersion);
+    bool operator==(const IntelDriverVersion &) const;
+    bool operator!=(const IntelDriverVersion &) const;
+    bool operator<(const IntelDriverVersion &) const;
+    bool operator>=(const IntelDriverVersion &) const;
 
   private:
     uint32_t mBuildNumber;
 };
+
+IntelDriverVersion ParseIntelWindowsDriverVersion(uint32_t driverVersion);
 
 bool IsSandyBridge(uint32_t DeviceId);
 bool IsIvyBridge(uint32_t DeviceId);

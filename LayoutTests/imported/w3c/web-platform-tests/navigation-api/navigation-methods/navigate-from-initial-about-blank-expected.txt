@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: Invalid URL
 
 
 Harness Error (TIMEOUT), message = null

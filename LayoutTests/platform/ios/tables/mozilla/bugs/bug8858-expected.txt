@@ -15,15 +15,15 @@ layer at (0,0) size 800x601
           RenderTableRow {TR} at (0,1) size 773x292
             RenderTableCell {TD} at (1,1) size 771x216 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=2]
               RenderBlock {P} at (5,5) size 761x46
-                RenderInline {FONT} at (0,0) size 23x28 [color=#E91C05]
+                RenderInline {FONT} at (0,1) size 23x28 [color=#E91C05]
                   RenderText {#text} at (0,1) size 23x28
                     text run at (0,1) width 23: "W"
-                RenderInline {B} at (0,0) size 234x19
-                  RenderInline {FONT} at (0,0) size 234x19 [color=#E91C05]
+                RenderInline {B} at (22,8) size 234x19
+                  RenderInline {FONT} at (22,8) size 234x19 [color=#E91C05]
                     RenderText {#text} at (22,8) size 234x19
                       text run at (22,8) width 234: "elcome to Pacific Shore Properties"
                     RenderBR {BR} at (255,8) size 1x19
-                RenderInline {FONT} at (0,0) size 357x15
+                RenderInline {FONT} at (0,30) size 357x15
                   RenderText {#text} at (0,30) size 357x15
                     text run at (0,30) width 357: "Pacific Shore Properties is situated on beautiful Mayne Island."
               RenderBlock {P} at (5,67) size 761x48

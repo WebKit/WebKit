@@ -413,6 +413,26 @@ bool IsValidUnsignedShortReadPixelsFormat(GLenum readFormat, const gl::Context *
            ((readFormat == GL_DEPTH_COMPONENT) && (context->getExtensions().readDepthNV));
 }
 
+// Returns true for all colors except
+// - transparent/opaque black
+// - transparent/opaque white
+bool IsNonTrivialClearColor(const GLfloat *color)
+{
+    return !(((color[0] == 0.0f && color[1] == 0.0f && color[2] == 0.0f) ||
+              (color[0] == 1.0f && color[1] == 1.0f && color[2] == 1.0f)) &&
+             (color[3] == 0.0f || color[3] == 1.0f));
+}
+
+// Returns true for all colors except
+// - (0, 0, 0, 0 or 1)
+// - (1, 1, 1, 0 or 1)
+bool IsNonTrivialClearColor(const GLuint *color)
+{
+    return !(((color[0] == 0 && color[1] == 0 && color[2] == 0) ||
+              (color[0] == 1 && color[1] == 1 && color[2] == 1)) &&
+             (color[3] == 0 || color[3] == 1));
+}
+
 }  // namespace
 
 FramebufferGL::FramebufferGL(const gl::FramebufferState &data, GLuint id, bool emulatedAlpha)
@@ -532,6 +552,15 @@ angle::Result FramebufferGL::clear(const gl::Context *context, GLbitfield mask)
     }
 
     contextGL->markWorkSubmitted();
+
+    // Perform cheaper checks first, relying on short-circuiting
+    if ((mask & GL_COLOR_BUFFER_BIT) != 0 && mState.getEnabledDrawBuffers().hasGaps() &&
+        GetFeaturesGL(context).clearsWithGapsNeedFlush.enabled &&
+        IsNonTrivialClearColor(context->getState().getColorClearValue().data()))
+    {
+        return contextGL->flush(context);
+    }
+
     return angle::Result::Continue;
 }
 
@@ -561,6 +590,14 @@ angle::Result FramebufferGL::clearBufferfv(const gl::Context *context,
     }
 
     contextGL->markWorkSubmitted();
+
+    // Perform cheaper checks first, relying on short-circuiting
+    if (buffer == GL_COLOR && mState.getEnabledDrawBuffers().hasGaps() &&
+        GetFeaturesGL(context).clearsWithGapsNeedFlush.enabled && IsNonTrivialClearColor(values))
+    {
+        return contextGL->flush(context);
+    }
+
     return angle::Result::Continue;
 }
 
@@ -590,6 +627,14 @@ angle::Result FramebufferGL::clearBufferuiv(const gl::Context *context,
     }
 
     contextGL->markWorkSubmitted();
+
+    // Perform cheaper checks first, relying on short-circuiting
+    if (mState.getEnabledDrawBuffers().hasGaps() &&
+        GetFeaturesGL(context).clearsWithGapsNeedFlush.enabled && IsNonTrivialClearColor(values))
+    {
+        return contextGL->flush(context);
+    }
+
     return angle::Result::Continue;
 }
 
@@ -619,6 +664,15 @@ angle::Result FramebufferGL::clearBufferiv(const gl::Context *context,
     }
 
     contextGL->markWorkSubmitted();
+
+    // Perform cheaper checks first, relying on short-circuiting
+    if (buffer == GL_COLOR && mState.getEnabledDrawBuffers().hasGaps() &&
+        GetFeaturesGL(context).clearsWithGapsNeedFlush.enabled &&
+        IsNonTrivialClearColor(reinterpret_cast<const GLuint *>(values)))
+    {
+        return contextGL->flush(context);
+    }
+
     return angle::Result::Continue;
 }
 

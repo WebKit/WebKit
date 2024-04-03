@@ -27,8 +27,8 @@
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 
-#include "ShareableBitmap.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -58,7 +58,7 @@ struct UpdateInfo {
     float updateScaleFactor { 0 };
 
     // The handle of the shareable bitmap containing the updates. Will be null if there are no updates.
-    std::optional<ShareableBitmap::Handle> bitmapHandle;
+    std::optional<WebCore::ShareableBitmap::Handle> bitmapHandle;
 
     // The offset in the bitmap where the rendered contents are.
     WebCore::IntPoint bitmapOffset;

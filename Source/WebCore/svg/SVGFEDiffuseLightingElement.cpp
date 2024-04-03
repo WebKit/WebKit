@@ -57,18 +57,18 @@ void SVGFEDiffuseLightingElement::attributeChanged(const QualifiedName& name, co
 {
     switch (name.nodeName()) {
     case AttributeNames::inAttr:
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::surfaceScaleAttr:
-        m_surfaceScale->setBaseValInternal(newValue.toFloat());
+        Ref { m_surfaceScale }->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::diffuseConstantAttr:
-        m_diffuseConstant->setBaseValInternal(newValue.toFloat());
+        Ref { m_diffuseConstant }->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::kernelUnitLengthAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            m_kernelUnitLengthX->setBaseValInternal(result->first);
-            m_kernelUnitLengthY->setBaseValInternal(result->second);
+            Ref { m_kernelUnitLengthX }->setBaseValInternal(result->first);
+            Ref { m_kernelUnitLengthY }->setBaseValInternal(result->second);
         }
         break;
     default:
@@ -158,11 +158,11 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::createFilterEffect(const Filte
     if (!lightElement)
         return nullptr;
 
-    auto* renderer = this->renderer();
+    CheckedPtr renderer = this->renderer();
     if (!renderer)
         return nullptr;
 
-    auto lightSource = lightElement->lightSource();
+    Ref lightSource = lightElement->lightSource();
     auto& style = renderer->style();
 
     Color color = style.colorWithColorFilter(style.svgStyle().lightingColor());

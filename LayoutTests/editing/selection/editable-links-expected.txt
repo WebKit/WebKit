@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 65x17
         text run at (0,0) width 65: "This is an "
-      RenderInline {A} at (0,0) size 77x17 [color=#0000EE]
+      RenderInline {A} at (65,0) size 77x17 [color=#0000EE]
         RenderText {#text} at (65,0) size 77x17
           text run at (65,0) width 77: "editable link"
       RenderText {#text} at (142,0) size 4x17

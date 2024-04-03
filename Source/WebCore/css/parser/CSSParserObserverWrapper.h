@@ -31,10 +31,11 @@
 
 #include "CSSParserObserver.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class CSSParserObserverWrapper {
+class CSSParserObserverWrapper : public CanMakeWeakPtr<CSSParserObserverWrapper> {
 public:
     explicit CSSParserObserverWrapper(CSSParserObserver& observer)
         : m_observer(observer)

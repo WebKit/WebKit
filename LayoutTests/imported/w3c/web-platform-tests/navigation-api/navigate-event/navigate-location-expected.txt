@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT location API fires navigate event Test timed out
+FAIL location API fires navigate event assert_equals: expected "replace" but got "push"
 

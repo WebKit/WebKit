@@ -1,0 +1,11 @@
+This tests ChildNode's before function allows inserting "this" object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testNode.before(testNode); testNode.isConnected is true
+PASS container.firstChild is testNode
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

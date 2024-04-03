@@ -50,45 +50,44 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (!ScrollingTreeScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+    auto* state = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (!state)
         return false;
 
-    const auto& state = downcast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (state->hasChangedProperty(ScrollingStateNode::Property::FrameScaleFactor))
+        m_frameScaleFactor = state->frameScaleFactor();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::FrameScaleFactor))
-        m_frameScaleFactor = state.frameScaleFactor();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::HeaderHeight))
+        m_headerHeight = state->headerHeight();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::HeaderHeight))
-        m_headerHeight = state.headerHeight();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::FooterHeight))
+        m_footerHeight = state->footerHeight();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::FooterHeight))
-        m_footerHeight = state.footerHeight();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::BehaviorForFixedElements))
+        m_behaviorForFixed = state->scrollBehaviorForFixedElements();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::BehaviorForFixedElements))
-        m_behaviorForFixed = state.scrollBehaviorForFixedElements();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::TopContentInset))
+        m_topContentInset = state->topContentInset();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::TopContentInset))
-        m_topContentInset = state.topContentInset();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
+        m_visualViewportIsSmallerThanLayoutViewport = state->visualViewportIsSmallerThanLayoutViewport();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
-        m_visualViewportIsSmallerThanLayoutViewport = state.visualViewportIsSmallerThanLayoutViewport();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame))
+        m_fixedElementsLayoutRelativeToFrame = state->fixedElementsLayoutRelativeToFrame();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame))
-        m_fixedElementsLayoutRelativeToFrame = state.fixedElementsLayoutRelativeToFrame();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::LayoutViewport))
+        m_layoutViewport = state->layoutViewport();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::LayoutViewport))
-        m_layoutViewport = state.layoutViewport();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::MinLayoutViewportOrigin))
+        m_minLayoutViewportOrigin = state->minLayoutViewportOrigin();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::MinLayoutViewportOrigin))
-        m_minLayoutViewportOrigin = state.minLayoutViewportOrigin();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::MaxLayoutViewportOrigin))
+        m_maxLayoutViewportOrigin = state->maxLayoutViewportOrigin();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::MaxLayoutViewportOrigin))
-        m_maxLayoutViewportOrigin = state.maxLayoutViewportOrigin();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::OverrideVisualViewportSize))
+        m_overrideVisualViewportSize = state->overrideVisualViewportSize();
 
-    if (state.hasChangedProperty(ScrollingStateNode::Property::OverrideVisualViewportSize))
-        m_overrideVisualViewportSize = state.overrideVisualViewportSize();
-
-    if (state.hasChangedProperty(ScrollingStateNode::Property::LayoutViewport)) {
+    if (state->hasChangedProperty(ScrollingStateNode::Property::LayoutViewport)) {
         // This requires that minLayoutViewportOrigin and maxLayoutViewportOrigin have been updated.
         updateViewportForCurrentScrollPosition({ });
     }
@@ -133,7 +132,7 @@ void ScrollingTreeFrameScrollingNode::updateViewportForCurrentScrollPosition(std
 
 FloatRect ScrollingTreeFrameScrollingNode::layoutViewportRespectingRubberBanding() const
 {
-    return layoutViewportForScrollPosition(currentScrollPosition(), frameScaleFactor(), StickToViewportBounds);
+    return layoutViewportForScrollPosition(currentScrollPosition(), frameScaleFactor(), ScrollBehaviorForFixedElements::StickToViewportBounds);
 }
 
 FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const

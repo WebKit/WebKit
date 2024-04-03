@@ -6,14 +6,14 @@ layer at (0,0) size 800x386
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 204x18
           text run at (0,0) width 204: "The black border below should "
-        RenderInline {I} at (0,0) size 21x18
+        RenderInline {I} at (203,0) size 21x18
           RenderText {#text} at (203,0) size 21x18
             text run at (203,0) width 21: "not"
-        RenderText {#text} at (223,0) size 758x36
+        RenderText {#text} at (0,0) size 758x36
           text run at (223,0) width 218: " cut through the top left corner of "
           text run at (440,0) width 318: "the blue border. It would cut through with our old"
           text run at (0,18) width 88: "behavior, but "
-        RenderInline {A} at (0,0) size 24x18 [color=#0000EE]
+        RenderInline {A} at (87,18) size 24x18 [color=#0000EE]
           RenderText {#text} at (87,18) size 24x18
             text run at (87,18) width 24: "this"
         RenderText {#text} at (110,18) size 312x18

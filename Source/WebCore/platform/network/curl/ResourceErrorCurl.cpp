@@ -43,6 +43,36 @@ ResourceError::ResourceError(int curlCode, const URL& failingURL, Type type)
 {
 }
 
+ResourceError ResourceError::fromIPCData(std::optional<IPCData>&& ipcData)
+{
+    if (!ipcData)
+        return { };
+
+    return {
+        ipcData->domain,
+        ipcData->errorCode,
+        ipcData->failingURL,
+        ipcData->localizedDescription,
+        ipcData->type,
+        ipcData->isSanitized
+    };
+}
+
+auto ResourceError::ipcData() const -> std::optional<IPCData>
+{
+    if (isNull())
+        return std::nullopt;
+
+    return IPCData {
+        type(),
+        domain(),
+        errorCode(),
+        failingURL(),
+        localizedDescription(),
+        m_isSanitized
+    };
+}
+
 bool ResourceError::isCertificationVerificationError() const
 {
     return domain() == curlErrorDomain() && errorCode() == CURLE_PEER_FAILED_VERIFICATION;

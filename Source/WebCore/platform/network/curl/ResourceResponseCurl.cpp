@@ -106,8 +106,8 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
         break;
     }
 
-    setMimeType(AtomString { extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase() });
-    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
+    setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
+    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toString());
     setCertificateInfo(WTFMove(response.certificateInfo));
     setSource(ResourceResponse::Source::Network);
 }
@@ -115,7 +115,7 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
     if (startsWithLettersIgnoringASCIICase(header, "http/"_s)) {
-        setHTTPStatusText(extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)));
+        setHTTPStatusText(String { extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)) });
         return;
     }
 
@@ -134,7 +134,7 @@ String ResourceResponse::platformSuggestedFilename() const
 {
     StringView contentDisposition = filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
     if (contentDisposition.is8Bit())
-        return String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
+        return String::fromUTF8WithLatin1Fallback(contentDisposition.span8());
     return contentDisposition.toString();
 }
 

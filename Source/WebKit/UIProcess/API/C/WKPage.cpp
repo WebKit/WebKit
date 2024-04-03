@@ -243,13 +243,13 @@ void WKPageLoadFileWithUserData(WKPageRef pageRef, WKURLRef fileURL, WKURLRef re
 void WKPageLoadData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->dataReference(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
+    toImpl(pageRef)->loadData(toImpl(dataRef)->span(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef));
 }
 
 void WKPageLoadDataWithUserData(WKPageRef pageRef, WKDataRef dataRef, WKStringRef MIMETypeRef, WKStringRef encodingRef, WKURLRef baseURLRef, WKTypeRef userDataRef)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->loadData(toImpl(dataRef)->dataReference(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
+    toImpl(pageRef)->loadData(toImpl(dataRef)->span(), toWTFString(MIMETypeRef), toWTFString(encodingRef), toWTFString(baseURLRef), toImpl(userDataRef));
 }
 
 static String encodingOf(const String& string)
@@ -259,18 +259,16 @@ static String encodingOf(const String& string)
     return "latin1"_s;
 }
 
-static IPC::DataReference dataFrom(const String& string)
+static std::span<const uint8_t> dataFrom(const String& string)
 {
     if (string.isNull() || !string.is8Bit())
         return { reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar) };
-    return { string.characters8(), string.length() * sizeof(LChar) };
+    return string.span8();
 }
 
 static Ref<WebCore::DataSegment> dataReferenceFrom(const String& string)
 {
-    if (string.isNull() || !string.is8Bit())
-        return WebCore::DataSegment::create(Vector<uint8_t>(reinterpret_cast<const uint8_t*>(string.characters16()), string.length() * sizeof(UChar)));
-    return WebCore::DataSegment::create(Vector<uint8_t>(string.characters8(), string.length() * sizeof(LChar)));
+    return WebCore::DataSegment::create(dataFrom(string));
 }
 
 static void loadString(WKPageRef pageRef, WKStringRef stringRef, const String& mimeType, const String& baseURL, WKTypeRef userDataRef)
@@ -584,7 +582,7 @@ static void restoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef
 
     // FIXME: This is for backwards compatibility with Safari. Remove it once Safari no longer depends on it.
     if (toImpl(sessionStateRef)->type() == API::Object::Type::Data) {
-        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->bytes(), toImpl(static_cast<WKDataRef>(sessionStateRef))->size(), sessionState))
+        if (!decodeLegacySessionState(toImpl(static_cast<WKDataRef>(sessionStateRef))->span(), sessionState))
             return;
     } else {
         ASSERT(toImpl(sessionStateRef)->type() == API::Object::Type::SessionState);
@@ -1587,14 +1585,10 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        void createNewPage(WebPageProxy& page, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
+        void createNewPage(WebPageProxy& page, Ref<API::PageConfiguration>&& configuration, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
         {
             if (m_client.createNewPage) {
-                auto configuration = page.configuration().copy();
-                configuration->setRelatedPage(&page);
-
                 auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
-
                 return completionHandler(adoptRef(toImpl(m_client.createNewPage(toAPI(&page), toAPI(configuration.ptr()), toAPI(navigationAction.ptr()), toAPI(apiWindowFeatures.ptr()), m_client.base.clientInfo))));
             }
         

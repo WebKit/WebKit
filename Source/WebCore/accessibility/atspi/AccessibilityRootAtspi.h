@@ -34,7 +34,7 @@ class AccessibilityObjectAtspi;
 class Page;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
-class AccessibilityRootAtspi final : public RefCounted<AccessibilityRootAtspi> {
+class AccessibilityRootAtspi final : public RefCounted<AccessibilityRootAtspi>, public CanMakeWeakPtr<AccessibilityRootAtspi> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessibilityRootAtspi);
 public:
     static Ref<AccessibilityRootAtspi> create(Page&);

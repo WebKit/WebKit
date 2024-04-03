@@ -120,6 +120,7 @@ protected:
 #if ENABLE(INLINE_PATH_DATA)
     virtual void recordFillLine(const PathDataLine&) = 0;
     virtual void recordFillArc(const PathArc&) = 0;
+    virtual void recordFillClosedArc(const PathClosedArc&) = 0;
     virtual void recordFillQuadCurve(const PathDataQuadCurve&) = 0;
     virtual void recordFillBezierCurve(const PathDataBezierCurve&) = 0;
 #endif
@@ -135,6 +136,7 @@ protected:
     virtual void recordStrokeLine(const PathDataLine&) = 0;
     virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) = 0;
     virtual void recordStrokeArc(const PathArc&) = 0;
+    virtual void recordStrokeClosedArc(const PathClosedArc&) = 0;
     virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
     virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
 #endif

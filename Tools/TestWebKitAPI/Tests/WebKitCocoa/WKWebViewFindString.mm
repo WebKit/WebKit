@@ -28,8 +28,8 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "WKWebViewFindStringFindDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKFindDelegate.h>
 #import <WebKit/_WKInputDelegate.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -48,48 +48,6 @@ static const NSUInteger maxCount = 100;
 - (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession
 {
     focusDidStartInputSession = YES;
-}
-
-@end
-
-@interface WKWebViewFindStringFindDelegate : NSObject <_WKFindDelegate>
-@property (nonatomic, readonly) NSString *findString;
-@property (nonatomic, readonly) NSUInteger matchesCount;
-@property (nonatomic, readonly) NSInteger matchIndex;
-@property (nonatomic, readonly) BOOL didFail;
-@end
-
-@implementation WKWebViewFindStringFindDelegate {
-    RetainPtr<NSString> _findString;
-}
-
-- (NSString *)findString
-{
-    return _findString.get();
-}
-
-- (void)_webView:(WKWebView *)webView didCountMatches:(NSUInteger)matches forString:(NSString *)string
-{
-    _findString = string;
-    _matchesCount = matches;
-    _didFail = NO;
-    isDone = YES;
-}
-
-- (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex
-{
-    _findString = string;
-    _matchesCount = matches;
-    _matchIndex = matchIndex;
-    _didFail = NO;
-    isDone = YES;
-}
-
-- (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string
-{
-    _findString = string;
-    _didFail = YES;
-    isDone = YES;
 }
 
 @end

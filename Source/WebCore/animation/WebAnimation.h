@@ -65,7 +65,7 @@ public:
 
     WEBCORE_EXPORT static HashSet<WebAnimation*>& instances();
 
-    virtual bool isDeclarativeAnimation() const { return false; }
+    virtual bool isStyleOriginatedAnimation() const { return false; }
     virtual bool isCSSAnimation() const { return false; }
     virtual bool isCSSTransition() const { return false; }
 
@@ -102,7 +102,8 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise.get(); }
 
-    virtual void cancel();
+    enum class Silently : bool { No, Yes };
+    virtual void cancel(Silently = Silently::No);
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     void updatePlaybackRate(double);
@@ -144,6 +145,7 @@ public:
     void effectTimingDidChange();
     void suspendEffectInvalidation();
     void unsuspendEffectInvalidation();
+    bool isEffectInvalidationSuspended() const { return m_suspendCount; }
     void setSuspended(bool);
     bool isSuspended() const { return m_isSuspended; }
     bool isReplaceable() const;
@@ -174,7 +176,6 @@ protected:
 private:
     enum class DidSeek : bool { No, Yes };
     enum class SynchronouslyNotify : bool { No, Yes };
-    enum class Silently : bool { No, Yes };
     enum class RespectHoldTime : bool { No, Yes };
     enum class AutoRewind : bool { No, Yes };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
@@ -196,7 +197,6 @@ private:
     void resetPendingTasks();
     void setEffectInternal(RefPtr<AnimationEffect>&&, bool = false);
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
-    bool isEffectInvalidationSuspended() { return m_suspendCount; }
     bool computeRelevance();
     void invalidateEffect();
     double effectivePlaybackRate() const;
@@ -211,7 +211,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return WebAnimationEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebAnimation; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

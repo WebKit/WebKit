@@ -33,9 +33,24 @@
 
 [
     Conditional=WEB_AUTHN,
+] dictionary AuthenticationExtensionsPRFValues {
+    required BufferSource first;
+    BufferSource second;
+};
+
+[
+    Conditional=WEB_AUTHN,
+] dictionary AuthenticationExtensionsPRFInputs {
+    AuthenticationExtensionsPRFValues eval;
+    record<USVString, AuthenticationExtensionsPRFValues> evalByCredential;
+};
+
+[
+    Conditional=WEB_AUTHN,
 ] dictionary AuthenticationExtensionsClientInputs {
     USVString appid;
     // For Google to turn off the legacy AppID support.
     boolean credProps;
     AuthenticationExtensionsLargeBlobInputs largeBlob;
+    AuthenticationExtensionsPRFInputs prf;
 };

@@ -22,7 +22,7 @@ layer at (0,0) size 800x391
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "The "
-          RenderInline {code} at (0,0) size 24x15
+          RenderInline {code} at (29,3) size 24x15
             RenderText {#text} at (29,3) size 24x15
               text run at (29,3) width 24: "div"
           RenderText {#text} at (53,0) size 242x17
@@ -31,7 +31,7 @@ layer at (0,0) size 800x391
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 29x17
             text run at (0,0) width 29: "The "
-          RenderInline {code} at (0,0) size 48x15
+          RenderInline {code} at (29,3) size 48x15
             RenderText {#text} at (29,3) size 48x15
               text run at (29,3) width 48: "object"
           RenderText {#text} at (77,0) size 270x17

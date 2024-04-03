@@ -64,6 +64,7 @@ typedef id <NSTextFinderAsynchronousDocumentFindMatch> FindMatch;
 
 - (void)findMatchesForString:(NSString *)targetString relativeToMatch:(FindMatch)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector;
 - (void)replaceMatches:(NSArray<FindMatch> *)matches withString:(NSString *)replacementString inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector;
+- (void)selectFindMatch:(id<NSTextFinderAsynchronousDocumentFindMatch>)findMatch completionHandler:(void (^)(void))completionHandler;
 
 @end
 
@@ -150,6 +151,22 @@ TEST(WebKit, FindInPage)
     // Ensure that we cap the number of matches. There are actually 1600, but we only get the first 1000.
     result = findMatches(webView.get(), @" ");
     EXPECT_EQ((NSUInteger)1000, [result.matches count]);
+}
+
+TEST(WebKit, FindInPageSelectMatch)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
+    auto request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView _setUsePlatformFindUI:NO];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto result = findMatches(webView.get(), @"Birthday");
+    RetainPtr match = [result.matches objectAtIndex:0];
+
+    [webView selectFindMatch:match.get() completionHandler:nil];
+    while (![webView selectionRangeHasStartOffset:19 endOffset:27])
+        TestWebKitAPI::Util::spinRunLoop();
 }
 
 TEST(WebKit, FindInPageWithPlatformPresentation)

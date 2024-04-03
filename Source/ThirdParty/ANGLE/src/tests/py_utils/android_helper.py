@@ -32,9 +32,9 @@ class _Global(object):
     initialized = False
     is_android = False
     current_suite = None
-    lib_extension = None
     traces_outside_of_apk = False
     temp_dir = None
+    use_run_as = True
 
 
 def _ApkPath(suite_name):
@@ -82,13 +82,8 @@ def _InitializeAndroid(apk_path):
 
     apk_files = subprocess.check_output([_FindAapt(), 'list', apk_path]).decode().split()
     apk_so_libs = [posixpath.basename(f) for f in apk_files if f.endswith('.so')]
-    if 'libangle_util.cr.so' in apk_so_libs:
-        _Global.lib_extension = '.cr.so'
-    else:
-        assert 'libangle_util.so' in apk_so_libs
-        _Global.lib_extension = '.so'
     # When traces are outside of the apk this lib is also outside
-    interpreter_so_lib = 'libangle_trace_interpreter' + _Global.lib_extension
+    interpreter_so_lib = 'libangle_trace_interpreter.so'
     _Global.traces_outside_of_apk = interpreter_so_lib not in apk_so_libs
 
     if logging.getLogger().isEnabledFor(logging.DEBUG):
@@ -153,7 +148,14 @@ def _AdbShell(cmd):
 
 
 def _GetAdbRoot():
-    shell_id, su_path = _AdbShell('id -u; which su || echo noroot').decode().strip().split('\n')
+    shell_id, su_path, data_permissions = _AdbShell(
+        'id -u; which su || echo noroot; stat --format %a /data').decode().strip().split('\n')
+
+    if data_permissions.endswith('7'):
+        # run-as broken due to "/data readable or writable by others"
+        _Global.use_run_as = False
+        logging.warning('run-as not available due to /data permissions')
+
     if int(shell_id) == 0:
         logging.info('adb already got root')
         return True
@@ -210,14 +212,17 @@ def _AddDeqpFiles(suite_name):
     ]
     if '_gles2_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles2/**')
-    if '_gles3_' in suite_name:
+    elif '_gles3_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles3/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles3/**')
-    if '_gles31_' in suite_name:
+    elif '_gles31_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gles31/**')
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles31/**')
-    if '_gles32_' in suite_name:
+    elif '_gles32_' in suite_name:
         patterns.append('gen/vk_gl_cts_data/data/gl_cts/data/gles32/**')
+    else:
+        # Harness crashes if vk_gl_cts_data/data dir doesn't exist, so add a file
+        patterns.append('gen/vk_gl_cts_data/data/gles2/data/brick.png')
 
     _MakeTar('/sdcard/chromium_tests_root/deqp.tar', patterns)
     _AdbShell('r=/sdcard/chromium_tests_root; tar -xf $r/deqp.tar -C $r/ && rm $r/deqp.tar')
@@ -257,7 +262,7 @@ def _CompareHashes(local_path, device_path):
     else:
         cmd = 'test -f {path} && sha256sum -b {path} || true'.format(path=device_path)
 
-    if device_path.startswith('/data'):
+    if _Global.use_run_as and device_path.startswith('/data'):
         # Use run-as for files that reside on /data, which aren't accessible without root
         cmd = "run-as {TEST_PACKAGE_NAME} sh -c '{cmd}'".format(
             TEST_PACKAGE_NAME=TEST_PACKAGE_NAME, cmd=cmd)
@@ -330,6 +335,12 @@ def PrepareRestrictedTraces(traces):
     # of the trace on the device, so keep that in mind as space becomes a problem in the future.
     app_tmp_path = '/data/local/tmp/angle_traces/'
 
+    if _Global.use_run_as:
+        _AdbShell('mkdir -p ' + app_tmp_path + ' && run-as ' + TEST_PACKAGE_NAME +
+                  ' mkdir -p angle_traces')
+    else:
+        _AdbShell('mkdir -p ' + app_tmp_path + ' /data/data/com.android.angle.test/angle_traces/')
+
     def _HashesMatch(local_path, device_path):
         nonlocal total_size, skipped
         if _CompareHashes(local_path, device_path):
@@ -355,18 +366,17 @@ def PrepareRestrictedTraces(traces):
         if _HashesMatch(local_path, device_path):
             return
 
-        tmp_path = posixpath.join(app_tmp_path, lib_name)
-        logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
-        try:
-            _AdbRun(['push', local_path, tmp_path])
-            _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
-            _AdbShell('rm ' + tmp_path)
-        finally:
-            _RemoveDeviceFile(tmp_path)
-
-    # Create the directories we need
-    _AdbShell('mkdir -p ' + app_tmp_path)
-    _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' mkdir -p angle_traces')
+        if _Global.use_run_as:
+            tmp_path = posixpath.join(app_tmp_path, lib_name)
+            logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
+            try:
+                _AdbRun(['push', local_path, tmp_path])
+                _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
+                _AdbShell('rm ' + tmp_path)
+            finally:
+                _RemoveDeviceFile(tmp_path)
+        else:
+            _AdbRun(['push', local_path, '/data/data/com.android.angle.test/angle_traces/'])
 
     # Set up each trace
     for idx, trace in enumerate(sorted(traces)):
@@ -376,7 +386,7 @@ def PrepareRestrictedTraces(traces):
         _Push('../../' + path_from_root, path_from_root)
 
         if _Global.traces_outside_of_apk:
-            lib_name = 'libangle_restricted_traces_' + trace + _Global.lib_extension
+            lib_name = 'libangle_restricted_traces_' + trace + '.so'
             _PushLibToAppDir(lib_name)
 
         tracegz = 'gen/tracegz_' + trace + '.gz'
@@ -384,7 +394,7 @@ def PrepareRestrictedTraces(traces):
 
     # Push one additional file when running outside the APK
     if _Global.traces_outside_of_apk:
-        _PushLibToAppDir('libangle_trace_interpreter' + _Global.lib_extension)
+        _PushLibToAppDir('libangle_trace_interpreter.so')
 
     logging.info('Synced files for %d traces (%.1fMB, %d files already ok) in %.1fs', len(traces),
                  total_size / 1e6, skipped,
@@ -540,7 +550,7 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
 
             if '--list-tests' in args:
                 # When listing tests, there may be no output file. We parse stdout anyways.
-                test_output = '{"interrupted": false}'
+                test_output = b'{"interrupted": false}'
             else:
                 try:
                     test_output = _ReadDeviceFile(device_test_output_path)

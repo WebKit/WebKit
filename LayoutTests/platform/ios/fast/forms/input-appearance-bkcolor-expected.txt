@@ -14,5 +14,5 @@ layer at (15,31) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
     RenderText {#text} at (0,0) size 106x14
       text run at (0,0) width 106: "This should be pink."
-layer at (15,52) size 141x14
+layer at (15,53) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15

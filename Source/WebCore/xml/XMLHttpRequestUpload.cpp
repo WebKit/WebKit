@@ -26,6 +26,7 @@
 #include "config.h"
 #include "XMLHttpRequestUpload.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "WebCoreOpaqueRoot.h"
 #include "XMLHttpRequestProgressEvent.h"

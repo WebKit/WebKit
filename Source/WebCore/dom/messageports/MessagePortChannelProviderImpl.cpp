@@ -32,9 +32,7 @@
 
 namespace WebCore {
 
-MessagePortChannelProviderImpl::MessagePortChannelProviderImpl()
-{
-}
+MessagePortChannelProviderImpl::MessagePortChannelProviderImpl() = default;
 
 MessagePortChannelProviderImpl::~MessagePortChannelProviderImpl()
 {
@@ -43,35 +41,42 @@ MessagePortChannelProviderImpl::~MessagePortChannelProviderImpl()
 
 void MessagePortChannelProviderImpl::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    ensureOnMainThread([registry = &m_registry, local, remote] {
-        registry->didCreateMessagePortChannel(local, remote);
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local, remote] {
+        if (CheckedPtr registry = weakRegistry.get())
+            registry->didCreateMessagePortChannel(local, remote);
     });
 }
 
 void MessagePortChannelProviderImpl::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    ensureOnMainThread([registry = &m_registry, local, remote] {
-        registry->didEntangleLocalToRemote(local, remote, Process::identifier());
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local, remote] {
+        if (CheckedPtr registry = weakRegistry.get())
+            registry->didEntangleLocalToRemote(local, remote, Process::identifier());
     });
 }
 
 void MessagePortChannelProviderImpl::messagePortDisentangled(const MessagePortIdentifier& local)
 {
-    ensureOnMainThread([registry = &m_registry, local] {
-        registry->didDisentangleMessagePort(local);
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local] {
+        if (CheckedPtr registry = weakRegistry.get())
+            registry->didDisentangleMessagePort(local);
     });
 }
 
 void MessagePortChannelProviderImpl::messagePortClosed(const MessagePortIdentifier& local)
 {
-    ensureOnMainThread([registry = &m_registry, local] {
-        registry->didCloseMessagePort(local);
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local] {
+        if (CheckedPtr registry = weakRegistry.get())
+            registry->didCloseMessagePort(local);
     });
 }
 
 void MessagePortChannelProviderImpl::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
-    ensureOnMainThread([registry = &m_registry, message = WTFMove(message), remoteTarget]() mutable {
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, message = WTFMove(message), remoteTarget]() mutable {
+        CheckedPtr registry = weakRegistry.get();
+        if (!registry)
+            return;
         if (registry->didPostMessageToRemote(WTFMove(message), remoteTarget))
             MessagePort::notifyMessageAvailable(remoteTarget);
     });
@@ -85,8 +90,9 @@ void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIde
         outerCallback(WTFMove(messages), WTFMove(messageDeliveryCallback));
     };
 
-    ensureOnMainThread([registry = &m_registry, port, callback = WTFMove(callback)]() mutable {
-        registry->takeAllMessagesForPort(port, WTFMove(callback));
+    ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, port, callback = WTFMove(callback)]() mutable {
+        if (CheckedPtr registry = weakRegistry.get())
+            registry->takeAllMessagesForPort(port, WTFMove(callback));
     });
 }
 

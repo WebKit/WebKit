@@ -68,6 +68,8 @@
 #include <wtf/Forward.h>
 #include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
+#include <wtf/LazyRef.h>
+#include <wtf/LazyUniqueRef.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
@@ -75,6 +77,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/text/AdaptiveStringSearcher.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
 
@@ -318,11 +321,13 @@ public:
     static Ref<VM> createContextGroup(HeapType = HeapType::Small);
     JS_EXPORT_PRIVATE ~VM();
 
-    Watchdog& ensureWatchdog();
-    Watchdog* watchdog() { return m_watchdog.get(); }
+    Watchdog* watchdog() { return m_watchdog.getIfExists(); }
+    Watchdog& ensureWatchdog() { return m_watchdog.get(*this); }
 
-    HeapProfiler* heapProfiler() const { return m_heapProfiler.get(); }
-    JS_EXPORT_PRIVATE HeapProfiler& ensureHeapProfiler();
+    HeapProfiler* heapProfiler() { return m_heapProfiler.getIfExists(); }
+    HeapProfiler& ensureHeapProfiler() { return m_heapProfiler.get(*this); }
+
+    AdaptiveStringSearcherTables& adaptiveStringSearcherTables() { return m_stringSearcherTables.get(*this); }
 
     bool isAnalyzingHeap() const { return m_activeHeapAnalyzer; }
     HeapAnalyzer* activeHeapAnalyzer() const { return m_activeHeapAnalyzer; }
@@ -471,8 +476,8 @@ public:
 #endif
     
     ALWAYS_INLINE CompleteSubspace& primitiveGigacageAuxiliarySpace() { return heap.primitiveGigacageAuxiliarySpace; }
-    ALWAYS_INLINE CompleteSubspace& jsValueGigacageAuxiliarySpace() { return heap.jsValueGigacageAuxiliarySpace; }
-    ALWAYS_INLINE CompleteSubspace& immutableButterflyJSValueGigacageAuxiliarySpace() { return heap.immutableButterflyJSValueGigacageAuxiliarySpace; }
+    ALWAYS_INLINE CompleteSubspace& auxiliarySpace() { return heap.auxiliarySpace; }
+    ALWAYS_INLINE CompleteSubspace& immutableButterflyAuxiliarySpace() { return heap.immutableButterflyAuxiliarySpace; }
     ALWAYS_INLINE CompleteSubspace& gigacageAuxiliarySpace(Gigacage::Kind kind) { return heap.gigacageAuxiliarySpace(kind); }
     ALWAYS_INLINE CompleteSubspace& cellSpace() { return heap.cellSpace; }
     ALWAYS_INLINE CompleteSubspace& variableSizedCellSpace() { return heap.variableSizedCellSpace; }
@@ -687,7 +692,6 @@ public:
     NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
-    MacroAssemblerCodeRef<JSEntryPtrTag> getCTILinkCall();
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> getCTIVirtualCall(CallMode);
 
@@ -839,19 +843,13 @@ public:
 
     Ref<CompactTDZEnvironmentMap> m_compactVariableMap;
 
-    std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
-    ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }
-    HasOwnPropertyCache& ensureHasOwnPropertyCache();
+    LazyUniqueRef<VM, HasOwnPropertyCache> m_hasOwnPropertyCache;
+    ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.getIfExists(); }
+    HasOwnPropertyCache& ensureHasOwnPropertyCache() { return m_hasOwnPropertyCache.get(*this); }
 
-    std::unique_ptr<MegamorphicCache> m_megamorphicCache;
-    ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.get(); }
-    JS_EXPORT_PRIVATE void ensureMegamorphicCacheSlow();
-    MegamorphicCache& ensureMegamorphicCache()
-    {
-        if (UNLIKELY(!m_megamorphicCache))
-            ensureMegamorphicCacheSlow();
-        return *m_megamorphicCache;
-    }
+    LazyUniqueRef<VM, MegamorphicCache> m_megamorphicCache;
+    ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.getIfExists(); }
+    MegamorphicCache& ensureMegamorphicCache() { return m_megamorphicCache.get(*this); }
 
     enum class StructureChainIntegrityEvent : uint8_t {
         Add,
@@ -862,7 +860,8 @@ public:
     JS_EXPORT_PRIVATE void invalidateStructureChainIntegrity(StructureChainIntegrityEvent);
 
 #if ENABLE(REGEXP_TRACING)
-    ListHashSet<RegExp*> m_rtTraceList;
+    using RTTraceList = ListHashSet<RegExp*>;
+    RTTraceList m_rtTraceList;
     void addRegExpToTrace(RegExp*);
     JS_EXPORT_PRIVATE void dumpRegExpTrace();
 #endif
@@ -955,8 +954,8 @@ public:
 
     BytecodeIntrinsicRegistry& bytecodeIntrinsicRegistry() { return *m_bytecodeIntrinsicRegistry; }
     
-    ShadowChicken* shadowChicken() { return m_shadowChicken.get(); }
-    void ensureShadowChicken();
+    ShadowChicken* shadowChicken() { return m_shadowChicken.getIfExists(); }
+    ShadowChicken& ensureShadowChicken() { return m_shadowChicken.get(*this); }
     
     template<typename Func>
     void logEvent(CodeBlock*, const char* summary, const Func& func);
@@ -1025,6 +1024,9 @@ public:
 #if ENABLE(WEBASSEMBLY)
     void registerWasmInstance(Wasm::Instance&);
 #endif
+
+    void notifyDebuggerHookInjected() { m_isDebuggerHookInjected = true; }
+    bool isDebuggerHookInjected() const { return m_isDebuggerHookInjected; }
 
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
@@ -1122,13 +1124,14 @@ private:
     MicrotaskQueue m_microtaskQueue;
     MallocPtr<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
     VMTraps m_traps;
-    RefPtr<Watchdog> m_watchdog;
-    std::unique_ptr<HeapProfiler> m_heapProfiler;
+    LazyRef<VM, Watchdog> m_watchdog;
+    LazyUniqueRef<VM, HeapProfiler> m_heapProfiler;
+    LazyUniqueRef<VM, AdaptiveStringSearcherTables> m_stringSearcherTables;
 #if ENABLE(SAMPLING_PROFILER)
     RefPtr<SamplingProfiler> m_samplingProfiler;
 #endif
     std::unique_ptr<FuzzerAgent> m_fuzzerAgent;
-    std::unique_ptr<ShadowChicken> m_shadowChicken;
+    LazyUniqueRef<VM, ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
     uint64_t m_drainMicrotaskDelayScopeCount { 0 };
 
@@ -1143,6 +1146,7 @@ private:
     bool m_hasTerminationRequest { false };
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };
+    bool m_isDebuggerHookInjected { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;

@@ -449,7 +449,6 @@ $code.="
 .align 64
 chacha20_poly1305_open:
 .cfi_startproc
-    _CET_ENDBR
     push %rbp
 .cfi_push %rbp
     push %rbx
@@ -872,7 +871,6 @@ $code.="
 .align 64
 chacha20_poly1305_seal:
 .cfi_startproc
-    _CET_ENDBR
     push %rbp
 .cfi_push %rbp
     push %rbx

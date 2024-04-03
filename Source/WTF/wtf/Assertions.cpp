@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -113,7 +113,7 @@ ALLOW_NONLITERAL_FORMAT_BEGIN
 
 ALLOW_NONLITERAL_FORMAT_END
 
-    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), length);
+    return StringImpl::create(std::span { reinterpret_cast<const LChar*>(buffer.data()), length });
 }
 
 #if PLATFORM(COCOA)
@@ -284,30 +284,48 @@ void WTFReportBacktraceWithPrefix(const char* prefix)
     WTFReportBacktraceWithPrefixAndPrintStream(out, prefix);
 }
 
+static constexpr int kDefaultFramesToShow = 31;
+static constexpr int kDefaultFramesToSkip = 2;
+
+void WTFReportBacktraceWithStackDepth(int framesToShow)
+{
+    WTFReportBacktraceWithPrefixAndStackDepth("", framesToShow);
+}
+
+void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToShow)
+{
+    int frames = framesToShow + kDefaultFramesToSkip;
+    Vector<void*> samples;
+    samples.reserveInitialCapacity(frames);
+
+    WTFGetBacktrace(samples.data(), &frames);
+    CrashLogPrintStream out;
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples.data() + kDefaultFramesToSkip, framesToShow, prefix);
+    else
+        out.print("%sno stacktrace available", prefix);
+}
+
 void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* prefix)
 {
-    static constexpr int framesToShow = 31;
-    static constexpr int framesToSkip = 2;
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* samples[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    if (frames > framesToSkip)
-        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + framesToSkip, frames - framesToSkip, prefix);
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + kDefaultFramesToSkip, frames - kDefaultFramesToSkip, prefix);
     else
         out.print("%sno stacktrace available", prefix);
 }
 
 void WTFReportBacktrace()
 {
-    static constexpr int framesToShow = 31;
-    static constexpr int framesToSkip = 2;
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* samples[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    if (frames > framesToSkip)
-        WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
+    if (frames > kDefaultFramesToSkip)
+        WTFPrintBacktrace(samples + kDefaultFramesToSkip, frames - kDefaultFramesToSkip);
     else
         CrashLogPrintStream { }.print("no stacktrace available");
 }
@@ -329,6 +347,9 @@ void WTFCrash()
     WTFReportBacktrace();
 #if ASAN_ENABLED
     __builtin_trap();
+#elif OS(DARWIN) && CPU(ARM64)
+    WTFBreakpointTrap();
+    __builtin_trap(); // Suppress NO_RETURN_DUE_TO_CRASH warning.
 #else
     *(int *)(uintptr_t)0xbbadbeef = 0;
     // More reliable, but doesn't say BBADBEEF.
@@ -604,10 +625,8 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 #if !RELEASE_LOG_DISABLED
 void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 {
-    static constexpr int framesToShow = 32;
-    static constexpr int framesToSkip = 2;
-    void* stack[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
+    void* stack[kDefaultFramesToShow + kDefaultFramesToSkip];
+    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
     WTFGetBacktrace(stack, &frames);
     StackTraceSymbolResolver { { stack, static_cast<size_t>(frames) } }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
 #if USE(OS_LOG)
@@ -634,35 +653,6 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 } // extern "C"
 
 #if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
-#if CPU(X86_64)
-
-#define CRASH_INST "int3"
-
-// This ordering was chosen to be consistent with JSC's JIT asserts. We probably shouldn't change this ordering
-// since it would make tooling crash reports much harder. If, for whatever reason, we decide to change the ordering
-// here we should update the abortWithuint64_t functions.
-#define CRASH_GPR0 "r11"
-#define CRASH_GPR1 "r10"
-#define CRASH_GPR2 "r9"
-#define CRASH_GPR3 "r8"
-#define CRASH_GPR4 "r15"
-#define CRASH_GPR5 "r14"
-#define CRASH_GPR6 "r13"
-
-#elif CPU(ARM64) // CPU(X86_64)
-
-#define CRASH_INST "brk #0xc471"
-
-// See comment above on the ordering.
-#define CRASH_GPR0 "x16"
-#define CRASH_GPR1 "x17"
-#define CRASH_GPR2 "x18"
-#define CRASH_GPR3 "x19"
-#define CRASH_GPR4 "x20"
-#define CRASH_GPR5 "x21"
-#define CRASH_GPR6 "x22"
-
-#endif // CPU(ARM64)
 
 void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
 {
@@ -673,7 +663,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
     register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
     register uint64_t misc6GPR asm(CRASH_GPR6) = misc6;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
     __builtin_unreachable();
 }
 
@@ -685,7 +675,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
     register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR));
     __builtin_unreachable();
 }
 
@@ -696,7 +686,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
     register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR));
     __builtin_unreachable();
 }
 
@@ -706,7 +696,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
     register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR));
     __builtin_unreachable();
 }
 
@@ -715,7 +705,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
     register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR));
     __builtin_unreachable();
 }
 
@@ -723,14 +713,14 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason, u
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
     register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR));
     __builtin_unreachable();
 }
 
 void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t reason)
 {
     register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(reasonGPR));
     __builtin_unreachable();
 }
 

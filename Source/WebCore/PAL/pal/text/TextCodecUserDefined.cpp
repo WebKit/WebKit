@@ -45,14 +45,12 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecUserDefined::decode(const char* bytes, size_t length, bool, bool, bool&)
+String TextCodecUserDefined::decode(std::span<const uint8_t> bytes, bool, bool, bool&)
 {
     StringBuilder result;
-    result.reserveCapacity(length);
-    for (size_t i = 0; i < length; ++i) {
-        signed char c = bytes[i];
-        result.append(static_cast<UChar>(c & 0xF7FF));
-    }
+    result.reserveCapacity(bytes.size());
+    for (char byte : bytes)
+        result.append(static_cast<UChar>(byte & 0xF7FF));
     return result.toString();
 }
 
@@ -68,7 +66,7 @@ static Vector<uint8_t> encodeComplexUserDefined(StringView string, UnencodableHa
             // No way to encode this character with x-user-defined.
             UnencodableReplacementArray replacement;
             int replacementLength = TextCodec::getUnencodableReplacement(character, handling, replacement);
-            result.append(replacement.data(), replacementLength);
+            result.append(std::span(replacement.data(), replacementLength));
         }
     }
 

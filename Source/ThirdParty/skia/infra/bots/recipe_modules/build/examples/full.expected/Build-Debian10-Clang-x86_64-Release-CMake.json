@@ -1,0 +1,50 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0777",
+      "[START_DIR]/cache/docker/cmake"
+    ],
+    "infra_step": true,
+    "name": "mkdirs out_dir"
+  },
+  {
+    "cmd": [
+      "docker",
+      "run",
+      "--rm",
+      "--volume",
+      "[START_DIR]/cache/work:/SRC",
+      "--volume",
+      "[START_DIR]/cache/docker/cmake:/OUT",
+      "gcr.io/skia-public/cmake-release:3.13.4_v4",
+      "/SRC/skia/infra/cmake/build_skia.sh"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "DOCKER_CONFIG": "/home/chrome-bot/.docker",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "Build Skia using CMake in Docker"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
+      "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Release-CMake/Release",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Release",
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+    ],
+    "infra_step": true,
+    "name": "copy build products"
+  },
+  {
+    "name": "$result"
+  }
+]

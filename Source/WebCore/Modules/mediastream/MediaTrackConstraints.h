@@ -79,6 +79,8 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainDOMString> whiteBalanceMode;
     std::optional<ConstrainDouble> zoom;
     std::optional<ConstrainBoolean> torch;
+
+    std::optional<ConstrainBoolean> backgroundBlur;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {

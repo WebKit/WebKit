@@ -41,21 +41,28 @@ try {
     // Not an object
     set1.isSupersetOf(1);
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSupersetOf expects the first parameter to be an object")
+    if (e != "TypeError: Set operation expects first argument to be an object")
         throw e;
 }
 
 try {
     set1.isSupersetOf({ });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSupersetOf expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
         throw e;
 }
 
 try {
     set1.isSupersetOf({ size:NaN });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.isSupersetOf expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
+        throw e;
+}
+
+try {
+    set1.isSupersetOf({ size: -34787348578345787853478 });
+} catch (e) {
+    if (e != "RangeError: Set operation expects first argument to have non-negative 'size' property")
         throw e;
 }
 

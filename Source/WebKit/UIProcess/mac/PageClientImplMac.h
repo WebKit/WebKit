@@ -91,7 +91,7 @@ private:
     void preferencesDidChange() override;
     void toolTipChanged(const String& oldToolTip, const String& newToolTip) override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
     void didChangeContentSize(const WebCore::IntSize&) override;
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
@@ -102,7 +102,7 @@ private:
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
     bool executeSavedCommandBySelector(const String& selector) override;
-    void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&& image) override;
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image) override;
     void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::FragmentedSharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title,
         const String& url, const String& visibleURL, RefPtr<WebCore::FragmentedSharedBuffer>&& archiveBuffer, const String& originIdentifier) override;
     void updateSecureInputState() override;
@@ -136,8 +136,8 @@ private:
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
-    void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
+    void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -176,7 +176,7 @@ private:
     void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) override;
 #endif
 
-    void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
+    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) override;
 
     void makeFirstResponder() override;
     void assistiveTechnologyMakeFirstResponder() override;
@@ -265,7 +265,7 @@ private:
     bool useFormSemanticContext() const override;
 
     bool isTextRecognitionInFullscreenVideoEnabled() const final { return true; }
-    void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect) final;
+    void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect) final;
     void cancelTextRecognitionForVideoInElementFullscreen() final;
 
 #if ENABLE(DRAG_SUPPORT)
@@ -300,6 +300,11 @@ private:
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const override;
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) override;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    bool canHandleSwapCharacters() const override;
+    void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) override;
 #endif
 
 #if ENABLE(DATA_DETECTION)

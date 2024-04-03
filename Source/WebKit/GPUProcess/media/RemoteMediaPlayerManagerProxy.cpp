@@ -37,6 +37,7 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <wtf/Logger.h>
@@ -70,11 +71,13 @@ void RemoteMediaPlayerManagerProxy::clear()
 
 void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
     ASSERT(RunLoop::isMain());
-    ASSERT(m_gpuConnectionToWebProcess);
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, m_gpuConnectionToWebProcess->protectedConnection(), engineIdentifier, WTFMove(proxyConfiguration), Ref { m_gpuConnectionToWebProcess->videoFrameObjectHeap() }, m_gpuConnectionToWebProcess->webProcessIdentity());
+    auto proxy = RemoteMediaPlayerProxy::create(*this, identifier, connection->protectedConnection(), engineIdentifier, WTFMove(proxyConfiguration), Ref { connection->videoFrameObjectHeap() }, connection->webProcessIdentity());
     m_proxies.add(identifier, WTFMove(proxy));
 }
 
@@ -85,8 +88,12 @@ void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier iden
     if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
 
-    if (m_gpuConnectionToWebProcess && !hasOutstandingRenderingResourceUsage())
-        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
+
+    if (!hasOutstandingRenderingResourceUsage())
+        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -162,7 +169,8 @@ Logger& RemoteMediaPlayerManagerProxy::logger()
 {
     if (!m_logger) {
         m_logger = Logger::create(this);
-        m_logger->setEnabled(this, m_gpuConnectionToWebProcess ? m_gpuConnectionToWebProcess->sessionID().isAlwaysOnLoggingAllowed() : false);
+        auto connection = m_gpuConnectionToWebProcess.get();
+        m_logger->setEnabled(this, connection ? connection->sessionID().isAlwaysOnLoggingAllowed() : false);
     }
 
     return *m_logger;

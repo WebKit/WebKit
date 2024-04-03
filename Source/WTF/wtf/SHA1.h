@@ -59,12 +59,7 @@ public:
 
     void addBytes(const CString& input)
     {
-        addBytes(input.bytes());
-    }
-
-    void addBytes(const uint8_t* input, size_t length)
-    {
-        addBytes(std::span(input, length));
+        addBytes(input.span());
     }
 
     // Size of the SHA1 hash

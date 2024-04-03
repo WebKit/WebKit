@@ -131,7 +131,7 @@ public:
     bool processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() const { return m_processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol; }
     void setProcessSwapsOnNavigationWithinSameNonHTTPFamilyProtocol(bool swaps) { m_processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = swaps; }
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     bool useSystemAppearanceForScrollbars() const { return m_useSystemAppearanceForScrollbars; }
     void setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars) { m_useSystemAppearanceForScrollbars = useSystemAppearanceForScrollbars; }
 #endif
@@ -157,6 +157,12 @@ public:
 
     void setTimeZoneOverride(const WTF::String& timeZoneOverride) { m_timeZoneOverride = timeZoneOverride; }
     const WTF::String& timeZoneOverride() const { return m_timeZoneOverride; }
+
+    void setMemoryFootprintPollIntervalForTesting(Seconds interval) { m_memoryFootprintPollIntervalForTesting = interval; }
+    Seconds memoryFootprintPollIntervalForTesting() const { return m_memoryFootprintPollIntervalForTesting; }
+
+    void setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds) { m_memoryFootprintNotificationThresholds = WTFMove(thresholds); }
+    const Vector<size_t>& memoryFootprintNotificationThresholds() const { return m_memoryFootprintNotificationThresholds; }
 
 private:
     WTF::String m_injectedBundlePath;
@@ -198,6 +204,8 @@ private:
     std::optional<audit_token_t> m_presentingApplicationProcessToken;
 #endif
     WTF::String m_timeZoneOverride;
+    Seconds m_memoryFootprintPollIntervalForTesting;
+    Vector<size_t> m_memoryFootprintNotificationThresholds;
 };
 
 } // namespace API

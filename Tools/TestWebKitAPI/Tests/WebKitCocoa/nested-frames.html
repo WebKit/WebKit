@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Outer Subframe</title>
+<style>
+iframe {
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+    <p>The round pegs in the square holes.
+        <iframe title="Inner Subframe"></iframe>
+    </p>
+    <script>
+        addEventListener("load", () => {
+            const subframe = document.querySelector("iframe");
+            subframe.addEventListener("load", () => {
+                parent.postMessage("subframeLoaded", "*");
+            });
+            subframe.srcdoc = `
+                <head>
+                    <title>Inner Subframe</title>
+                </head>
+                <body>
+                    <a href='https://webkit.org'>The ones who see things differently.</a>
+                </body>`;
+        });
+    </script>
+</html>

@@ -37,14 +37,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawBuffers);
 WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLDrawBuffers)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
 }
 
 WebGLDrawBuffers::~WebGLDrawBuffers() = default;
 
 bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {
-    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s);
+    return context.protectedGraphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s);
 }
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
@@ -65,7 +65,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
         }
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
         GCGLenum value[1] { bufs[0] == GraphicsContextGL::BACK ? GraphicsContextGL::COLOR_ATTACHMENT0 : GraphicsContextGL::NONE };
-        context.graphicsContextGL()->drawBuffersEXT(value);
+        context.protectedGraphicsContextGL()->drawBuffersEXT(value);
         context.setBackDrawBuffer(bufs[0]);
     } else {
         if (n > context.maxDrawBuffers()) {

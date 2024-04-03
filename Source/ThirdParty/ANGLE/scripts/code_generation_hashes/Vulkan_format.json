@@ -4,9 +4,9 @@
   "src/libANGLE/renderer/angle_format_map.json":
     "eab6744df71f7bf6bfe9e8bb39949b79",
   "src/libANGLE/renderer/vulkan/gen_vk_format_table.py":
-    "eb449f344ed8c4d0dfa3a3ba169d9484",
+    "91aa6fbc6daa64cd8b366d0c5d584fd4",
   "src/libANGLE/renderer/vulkan/vk_format_map.json":
     "e452d2f42133783544f01675540f9765",
   "src/libANGLE/renderer/vulkan/vk_format_table_autogen.cpp":
-    "385a1af04d1da4a9183f042e1c1f10c1"
+    "e0272ceb2c22f696a6139ceed0b6674a"
 }

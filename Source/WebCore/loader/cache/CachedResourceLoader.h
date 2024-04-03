@@ -31,6 +31,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "KeepaliveRequestTracker.h"
+#include "MixedContentChecker.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
 #include <wtf/CheckedPtr.h>
@@ -138,6 +139,7 @@ public:
     CachePolicy cachePolicy(CachedResource::Type, const URL&) const;
     
     LocalFrame* frame() const; // Can be null
+    RefPtr<LocalFrame> protectedFrame() const;
     Document* document() const { return m_document.get(); } // Can be null
     RefPtr<Document> protectedDocument() const { return document(); }
     void setDocument(Document* document) { m_document = document; }
@@ -169,7 +171,7 @@ public:
 
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
 
-    Vector<CachedResource*> visibleResourcesToPrioritize();
+    Vector<CachedResourceHandle<CachedResource>> visibleResourcesToPrioritize();
 
     static FetchMetadataSite computeFetchMetadataSite(const ResourceRequest&, CachedResource::Type, FetchOptions::Mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite = FetchMetadataSite::SameOrigin);
 
@@ -187,7 +189,7 @@ private:
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     void updateHTTPRequestHeaders(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
 
-    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ForPreload);
+    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ForPreload, MixedContentChecker::IsUpgradable);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource, ForPreload, ImageLoading) const;
@@ -196,7 +198,7 @@ private:
     CachedResourceHandle<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&, PAL::SessionID, const CookieJar&, const Settings&);
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource&, ResourceError&);
-    bool checkInsecureContent(CachedResource::Type, const URL&) const;
+    bool checkInsecureContent(CachedResource::Type, const URL&, MixedContentChecker::IsUpgradable) const;
 
     void performPostLoadActions();
 
@@ -205,6 +207,8 @@ private:
 
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&, const URL& preRedirectURL) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
+
+    RefPtr<DocumentLoader> protectedDocumentLoader() const;
 
     MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
     MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;
@@ -233,16 +237,16 @@ class ResourceCacheValidationSuppressor {
 public:
     ResourceCacheValidationSuppressor(CachedResourceLoader& loader)
         : m_loader(loader)
-        , m_previousState(m_loader.m_allowStaleResources)
+        , m_previousState(loader.m_allowStaleResources)
     {
-        m_loader.m_allowStaleResources = true;
+        m_loader->m_allowStaleResources = true;
     }
     ~ResourceCacheValidationSuppressor()
     {
-        m_loader.m_allowStaleResources = m_previousState;
+        m_loader->m_allowStaleResources = m_previousState;
     }
 private:
-    CachedResourceLoader& m_loader;
+    WeakRef<CachedResourceLoader> m_loader;
     bool m_previousState;
 };
 

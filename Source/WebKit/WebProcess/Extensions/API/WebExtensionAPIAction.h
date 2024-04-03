@@ -37,7 +37,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIAction : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAction, action);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAction, action, action);
 
 public:
 #if PLATFORM(COCOA)
@@ -54,11 +54,11 @@ public:
     void disable(double tabIdentifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void isEnabled(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void setIcon(JSContextRef, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void setIcon(WebFrame&, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void getPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setPopup(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void openPopup(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void openPopup(WebPage&, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     WebExtensionAPIEvent& onClicked();
 

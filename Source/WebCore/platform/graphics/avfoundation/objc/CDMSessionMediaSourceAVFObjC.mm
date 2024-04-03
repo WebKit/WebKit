@@ -29,6 +29,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "CDMPrivateMediaSourceAVFObjC.h"
+#import "Logging.h"
 #import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
 #import <wtf/FileSystem.h>
@@ -55,7 +56,7 @@ CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
     m_sourceBuffers.clear();
 }
 
-void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error, bool& shouldIgnore)
+void CDMSessionMediaSourceAVFObjC::videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;
@@ -68,7 +69,7 @@ void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLay
         m_client->sendError(LegacyCDMSessionClient::MediaKeyErrorDomain, code);
 }
 
-void CDMSessionMediaSourceAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error, bool& shouldIgnore)
+void CDMSessionMediaSourceAVFObjC::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error, bool& shouldIgnore)
 {
     if (!m_client)
         return;

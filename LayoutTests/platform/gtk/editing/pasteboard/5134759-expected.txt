@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 647x17
           text run at (0,0) width 504: "This tests for a hang when pasting underlined content at the end of a paragraph. "
           text run at (504,0) width 143: "You should see 'Hello "
-        RenderInline {U} at (0,0) size 45x17
+        RenderInline {U} at (646,0) size 45x17
           RenderText {#text} at (646,0) size 45x17
             text run at (646,0) width 45: "World!"
         RenderText {#text} at (690,0) size 50x17
@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 39x17
             text run at (0,0) width 35: "Hello"
             text run at (35,0) width 4: " "
-          RenderInline {SPAN} at (0,0) size 44x17
+          RenderInline {SPAN} at (39,0) size 44x17
             RenderText {#text} at (39,0) size 44x17
               text run at (39,0) width 44: "World!"
         RenderBlock (anonymous) at (0,18) size 784x0

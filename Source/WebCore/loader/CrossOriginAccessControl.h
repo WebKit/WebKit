@@ -56,7 +56,7 @@ enum class CrossOriginEmbedderPolicyValue : bool;
 WEBCORE_EXPORT bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodAllowlist(const String&);
 
-void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const String&, const OriginAccessPatterns&);
+void updateRequestReferrer(ResourceRequest&, ReferrerPolicy, const URL&, const OriginAccessPatterns&);
     
 WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentialsPolicy);
 

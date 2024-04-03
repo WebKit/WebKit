@@ -2,6 +2,7 @@ Fullscreen content
 
 PASS invoking div with auto action is no-op
 FAIL invoking div with toggleFullscreen action makes div fullscreen assert_true: expected true got false
+PASS invoking div with toggleFullscreen action (without user activation) is a no-op
 PASS invoking div with toggleFullscreen action and preventDefault is a no-op
 FAIL invoking fullscreen div with toggleFullscreen action exits fullscreen assert_false: expected false got true
 FAIL invoking fullscreen div with toggleFullscreen (case-insensitive) action exits fullscreen assert_false: expected false got true

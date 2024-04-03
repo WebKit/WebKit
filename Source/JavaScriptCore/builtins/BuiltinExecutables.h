@@ -63,7 +63,9 @@ SourceCode name##Source();
 
     static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement = PrivateBrandRequirement::None);
 
-    void finalizeUnconditionally(CollectionScope);
+    DECLARE_VISIT_AGGREGATE;
+
+    void clear();
 
 private:
     VM& m_vm;

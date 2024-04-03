@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x400
+  RenderSVGRoot {svg} at (0,0) size 400x400
+layer at (0,0) size 400x400
+  RenderSVGViewportContainer at (0,0) size 400x400
+layer at (0,0) size 30x30
+  RenderSVGHiddenContainer {pattern} at (0,0) size 30x30
+layer at (0,0) size 30x30
+  RenderSVGEllipse {circle} at (0,0) size 30x30 [fill={[type=SOLID] [color=#FF0000]}] [cx=15.00] [cy=15.00] [r=15.00]
+layer at (-40,-40) size 80x80 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-40,-40) size 80x80 [fill={[type=SOLID] [color=#000000]}] [x=-40.00] [y=-40.00] [width=80.00] [height=80.00]

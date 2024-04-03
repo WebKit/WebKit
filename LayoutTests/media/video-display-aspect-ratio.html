@@ -1,15 +1,19 @@
-<video controls></video>
-<script src=media-file.js></script>
-<script src=video-test.js></script>
+<!DOCTYPE html>
+<title>Test video dimension aspect ratio.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<video></video>
 <script>
-    testExpected("video.videoWidth", 0, "==");
-    testExpected("video.videoHeight", 0, "==");
+async_test(function(t) {
+    var video = document.querySelector("video");
+    assert_equals(video.videoWidth, 0);
+    assert_equals(video.videoHeight, 0);
 
-    waitForEvent('loadedmetadata', function () {
-        testExpected("video.videoWidth", 426, "==");
-        testExpected("video.videoHeight", 240, "==");
-        endTest();
-    } );
+    video.onloadedmetadata = t.step_func_done(function() {
+        assert_equals(video.videoWidth, 426);
+        assert_equals(video.videoHeight, 240);
+    });
 
-    video.src = findMediaFile("video", "content/test-par-16-9");
+    video.src = "content/test-par-16-9.mp4";
+});
 </script>

@@ -33,8 +33,6 @@ interface mixin CanvasDrawPath {
     undefined stroke(Path2D path);
     undefined clip(optional CanvasFillRule fillRule = "nonzero");
     undefined clip(Path2D path, optional CanvasFillRule fillRule = "nonzero");
-    // FIXME: Implement resetClip.
-    // undefined resetClip();
 
     boolean isPointInPath(unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");
     boolean isPointInPath(Path2D path, unrestricted double x, unrestricted double y, optional CanvasFillRule fillRule = "nonzero");

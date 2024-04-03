@@ -46,31 +46,31 @@ layer at (0,0) size 785x1432
       RenderBlock {P} at (0,436) size 769x36
         RenderText {#text} at (0,0) size 354x18
           text run at (0,0) width 354: "This paragraph should have no border around it, as the "
-        RenderInline {TT} at (0,0) size 94x15
+        RenderInline {TT} at (353,2) size 94x15
           RenderText {#text} at (353,2) size 94x15
             text run at (353,2) width 94: "border-style"
-        RenderText {#text} at (446,0) size 740x36
+        RenderText {#text} at (0,0) size 740x36
           text run at (446,0) width 294: " was not set, and it should not be offset in any"
           text run at (0,18) width 30: "way."
       RenderBlock {P} at (0,488) size 769x42 [border: (3px double #800000)]
         RenderText {#text} at (3,3) size 543x18
           text run at (3,3) width 543: "This paragraph should have a medium maroon double border around it, even though "
-        RenderInline {CODE} at (0,0) size 95x15
+        RenderInline {CODE} at (545,5) size 95x15
           RenderText {#text} at (545,5) size 95x15
             text run at (545,5) width 95: "border-width"
-        RenderText {#text} at (639,3) size 755x36
+        RenderText {#text} at (3,3) size 755x36
           text run at (639,3) width 119: " was not explicitly"
           text run at (3,21) width 22: "set."
       RenderBlock {P} at (0,546) size 769x18
         RenderText {#text} at (0,0) size 633x18
           text run at (0,0) width 633: "This paragraph should have no border around it, as its declaration is invalid and should be ignored."
       RenderBlock {P} at (0,580) size 769x37
-        RenderInline {A} at (0,0) size 25x18
+        RenderInline {A} at (0,1) size 25x18
           RenderText {#text} at (0,1) size 25x18
             text run at (0,1) width 25: "The"
         RenderText {#text} at (24,1) size 730x18
           text run at (24,1) width 730: " following image is also an anchor which points to a target on this page, but it should not have a border around it: "
-        RenderInline {A} at (0,0) size 16x18 [color=#0000FF]
+        RenderInline {A} at (753,1) size 16x18 [color=#0000FF]
           RenderImage {IMG} at (753,0) size 16x15
         RenderText {#text} at (0,19) size 4x18
           text run at (0,19) width 4: "."
@@ -84,7 +84,7 @@ layer at (0,0) size 785x1432
                 text run at (3,21) width 179: "second half of the test page."
           RenderTableRow {TR} at (0,52) size 767x54
             RenderTableCell {TD} at (5,67) size 193x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 54x18
+              RenderText {#text} at (3,18) size 54x18
                 text run at (3,3) width 54: "Cell one"
             RenderTableCell {TD} at (202,52) size 561x54 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (3,3) size 554x18
@@ -103,12 +103,12 @@ layer at (0,0) size 785x1432
         RenderTableSection {TBODY} at (1,1) size 767x618
           RenderTableRow {TR} at (0,0) size 767x28
             RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (5,5) size 161x18
                 RenderText {#text} at (5,5) size 161x18
                   text run at (5,5) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 767x590
             RenderTableCell {TD} at (0,309) size 14x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 4x18
+              RenderText {#text} at (5,286) size 4x18
                 text run at (5,5) width 4: " "
             RenderTableCell {TD} at (14,28) size 753x590 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (5,5) size 743x36
@@ -131,19 +131,19 @@ layer at (0,0) size 785x1432
               RenderBlock {P} at (5,241) size 743x36
                 RenderText {#text} at (0,0) size 354x18
                   text run at (0,0) width 354: "This paragraph should have no border around it, as the "
-                RenderInline {TT} at (0,0) size 94x15
+                RenderInline {TT} at (353,2) size 94x15
                   RenderText {#text} at (353,2) size 94x15
                     text run at (353,2) width 94: "border-style"
-                RenderText {#text} at (446,0) size 740x36
+                RenderText {#text} at (0,0) size 740x36
                   text run at (446,0) width 294: " was not set, and it should not be offset in any"
                   text run at (0,18) width 30: "way."
               RenderBlock {P} at (5,293) size 743x42 [border: (3px double #800000)]
                 RenderText {#text} at (3,3) size 543x18
                   text run at (3,3) width 543: "This paragraph should have a medium maroon double border around it, even though "
-                RenderInline {CODE} at (0,0) size 95x15
+                RenderInline {CODE} at (545,5) size 95x15
                   RenderText {#text} at (545,5) size 95x15
                     text run at (545,5) width 95: "border-width"
-                RenderText {#text} at (639,3) size 690x36
+                RenderText {#text} at (3,3) size 690x36
                   text run at (639,3) width 54: " was not"
                   text run at (3,21) width 87: "explicitly set."
               RenderBlock {P} at (5,351) size 743x18
@@ -153,10 +153,10 @@ layer at (0,0) size 785x1432
                 RenderInline {A} at (0,0) size 25x18
                   RenderText {#text} at (0,0) size 25x18
                     text run at (0,0) width 25: "The"
-                RenderText {#text} at (24,0) size 733x37
+                RenderText {#text} at (0,0) size 733x37
                   text run at (24,0) width 709: " following image is also an anchor which points to a target on this page, but it should not have a border around"
                   text run at (0,19) width 18: "it: "
-                RenderInline {A} at (0,0) size 16x18 [color=#0000FF]
+                RenderInline {A} at (17,19) size 16x18 [color=#0000FF]
                   RenderImage {IMG} at (17,18) size 16x15
                 RenderText {#text} at (32,19) size 5x18
                   text run at (32,19) width 5: "."
@@ -170,7 +170,7 @@ layer at (0,0) size 785x1432
                         text run at (3,21) width 203: "the second half of the test page."
                   RenderTableRow {TR} at (0,52) size 741x54
                     RenderTableCell {TD} at (5,67) size 187x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 54x18
+                      RenderText {#text} at (3,18) size 54x18
                         text run at (3,3) width 54: "Cell one"
                     RenderTableCell {TD} at (196,52) size 541x54 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
                       RenderBlock (anonymous) at (3,3) size 534x18

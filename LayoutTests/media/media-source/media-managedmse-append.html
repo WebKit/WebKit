@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-resume-after-stall-endofstream</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var start;
+    var end;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await Promise.all([ waitFor(video, 'loadedmetadata'), waitFor(sourceBuffer, 'update') ]);
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+
+        run('video.play()');
+        // waiting event could be fired anytime between now and the remove operation below
+        // if the system is a bit slow to append segments.
+        const waitingPromise = waitFor(video, 'waiting', true);
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        run('start = sourceBuffer.buffered.start(0)');
+        run('end = sourceBuffer.buffered.end(0)');
+        // Appending the same media segment twice should succeed and not change the buffered range.
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0) == start', true);
+        testExpected('sourceBuffer.buffered.end(0) == end', true);
+
+        run('sourceBuffer.remove(0, sourceBuffer.buffered.end(0))');
+        await Promise.all([ waitFor(sourceBuffer, 'update'), waitingPromise ]);
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        // playback will restart
+        await Promise.all([ waitFor(sourceBuffer, 'update'), waitFor(video, 'playing', true) ]);
+        run('end = sourceBuffer.buffered.end(0)');
+
+        // playback will stall again once it reaches the end of segment1 (ending at 2s).
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await Promise.all([ waitFor(sourceBuffer, 'update'), waitFor(video, 'waiting', true) ]);
+
+        run('end = sourceBuffer.buffered.end(0)');
+        run('source.endOfStream()');
+        testExpected('sourceBuffer.buffered.end(0) > end', true);
+
+        await Promise.all([ waitFor(source, 'sourceended'), waitFor(video, 'ended', true) ]);
+        
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

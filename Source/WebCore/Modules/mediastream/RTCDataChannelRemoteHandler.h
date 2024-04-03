@@ -50,7 +50,7 @@ public:
 
     WEBCORE_EXPORT void didChangeReadyState(RTCDataChannelState);
     WEBCORE_EXPORT void didReceiveStringData(String&&);
-    WEBCORE_EXPORT void didReceiveRawData(const uint8_t*, size_t);
+    WEBCORE_EXPORT void didReceiveRawData(std::span<const uint8_t>);
     WEBCORE_EXPORT void didDetectError(Ref<RTCError>&&);
     WEBCORE_EXPORT void bufferedAmountIsDecreasing(size_t);
 
@@ -62,7 +62,7 @@ private:
     // RTCDataChannelHandler
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
-    bool sendRawData(const uint8_t*, size_t) final;
+    bool sendRawData(std::span<const uint8_t>) final;
     void close() final;
 
     RTCDataChannelIdentifier m_remoteIdentifier;

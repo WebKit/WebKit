@@ -112,9 +112,7 @@ void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataSto
 
 void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
 {
-    auto* websiteDataStore = WebKit::toImpl(dataStoreRef);
-    websiteDataStore->useExplicitTrackingPreventionState();
-    websiteDataStore->setTrackingPreventionEnabled(enable);
+    WebKit::toImpl(dataStoreRef)->setTrackingPreventionEnabled(enable);
 }
 
 void WKWebsiteDataStoreIsStatisticsEphemeral(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsEphemeralFunction completionHandler)
@@ -325,9 +323,9 @@ void WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom(WKWebsiteDataStor
     WebKit::toImpl(dataStoreRef)->setTopFrameUniqueRedirectFrom(URL { WebKit::toImpl(host)->string() }, URL { WebKit::toImpl(hostRedirectedFrom)->string() }, [] { });
 }
 
-void WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(WKWebsiteDataStoreRef dataStoreRef, WKStringRef fromHost, WKStringRef toHost, void* context, WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecorationFunction callback)
+void WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(WKWebsiteDataStoreRef dataStoreRef, WKStringRef fromHost, WKStringRef toHost, bool wasFiltered, void* context, WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecorationFunction callback)
 {
-    WebKit::toImpl(dataStoreRef)->setCrossSiteLoadWithLinkDecorationForTesting(URL { WebKit::toImpl(fromHost)->string() }, URL { WebKit::toImpl(toHost)->string() }, [context, callback] {
+    WebKit::toImpl(dataStoreRef)->setCrossSiteLoadWithLinkDecorationForTesting(URL { WebKit::toImpl(fromHost)->string() }, URL { WebKit::toImpl(toHost)->string() }, wasFiltered, [context, callback] {
         callback(context);
     });
 }

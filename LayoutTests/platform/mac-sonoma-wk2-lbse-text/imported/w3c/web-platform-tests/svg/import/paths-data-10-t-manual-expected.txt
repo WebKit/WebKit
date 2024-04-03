@@ -1,0 +1,148 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 220x80
+  RenderSVGTransformableContainer {g} at (0,0) size 219.58x80
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (10,3.13) size 40x21
+  RenderSVGText {text} at (10,3) size 41x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x21
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 4 width 40.04: "open"
+layer at (10,21.13) size 85x21
+  RenderSVGText {text} at (10,21) size 85x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x21
+      chunk 1 text run 1 at (10.00,38.00) startOffset 0 endOffset 10 width 84.57: "join=round"
+layer at (10,39.13) size 70x21
+  RenderSVGText {text} at (10,39) size 70x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x21
+      chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 8 width 69.56: "cap=butt"
+layer at (10,57.13) size 35x21
+  RenderSVGText {text} at (10,57) size 36x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x21
+      chunk 1 text run 1 at (10.00,74.00) startOffset 0 endOffset 4 width 35.01: "M, L"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line join=ROUND]}] [fill={[type=SOLID] [color=#008000]}] [data="M 100 0 L 100 80 L 0 40 L 100 0"]
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (10,3.13) size 40x21
+  RenderSVGText {text} at (10,3) size 41x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x21
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 4 width 40.04: "open"
+layer at (10,21.13) size 82x21
+  RenderSVGText {text} at (10,21) size 82x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x21
+      chunk 1 text run 1 at (10.00,38.00) startOffset 0 endOffset 10 width 81.56: "join=bevel"
+layer at (10,39.13) size 86x21
+  RenderSVGText {text} at (10,39) size 86x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 86x21
+      chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 9 width 85.57: "cap=round"
+layer at (10,57.13) size 29x21
+  RenderSVGText {text} at (10,57) size 29x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 29x21
+      chunk 1 text run 1 at (10.00,74.00) startOffset 0 endOffset 4 width 29.00: "m, l"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line cap=ROUND] [line join=BEVEL]}] [fill={[type=SOLID] [color=#008000]}] [data="M 100 0 L 100 80 L 0 40 L 100 0"]
+layer at (0,0) size 105x80
+  RenderSVGTransformableContainer {g} at (0,0) size 104.58x80
+layer at (10,3.13) size 40x21
+  RenderSVGText {text} at (10,3) size 41x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x21
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 4 width 40.04: "open"
+layer at (10,21.13) size 79x21
+  RenderSVGText {text} at (10,21) size 79x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 79x21
+      chunk 1 text run 1 at (10.00,38.00) startOffset 0 endOffset 10 width 78.53: "join=miter"
+layer at (10,39.13) size 95x21
+  RenderSVGText {text} at (10,39) size 95x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 95x21
+      chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 10 width 94.57: "cap=square"
+layer at (10,57.13) size 35x21
+  RenderSVGText {text} at (10,57) size 36x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x21
+      chunk 1 text run 1 at (10.00,74.00) startOffset 0 endOffset 4 width 35.01: "M, L"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#008000]}] [data="M 100 0 L 100 80 L 0 40 L 100 0"]
+layer at (0,0) size 210x80
+  RenderSVGTransformableContainer {g} at (0,0) size 209.58x80
+layer at (125,3.13) size 52x21
+  RenderSVGText {text} at (125,3) size 53x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x21
+      chunk 1 text run 1 at (125.00,20.00) startOffset 0 endOffset 6 width 52.03: "closed"
+layer at (125,21.13) size 85x21
+  RenderSVGText {text} at (125,21) size 85x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x21
+      chunk 1 text run 1 at (125.00,38.00) startOffset 0 endOffset 10 width 84.57: "join=round"
+layer at (125,39.13) size 70x21
+  RenderSVGText {text} at (125,39) size 70x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x21
+      chunk 1 text run 1 at (125.00,56.00) startOffset 0 endOffset 8 width 69.56: "cap=butt"
+layer at (125,57.13) size 56x21
+  RenderSVGText {text} at (125,57) size 57x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 57x21
+      chunk 1 text run 1 at (125.00,74.00) startOffset 0 endOffset 7 width 56.00: "M, L, Z"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line join=ROUND]}] [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 100 40 L 0 80 Z"]
+layer at (0,0) size 211x80
+  RenderSVGTransformableContainer {g} at (0,0) size 210.58x80
+layer at (125,3.13) size 52x21
+  RenderSVGText {text} at (125,3) size 53x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x21
+      chunk 1 text run 1 at (125.00,20.00) startOffset 0 endOffset 6 width 52.03: "closed"
+layer at (125,21.13) size 82x21
+  RenderSVGText {text} at (125,21) size 82x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x21
+      chunk 1 text run 1 at (125.00,38.00) startOffset 0 endOffset 10 width 81.56: "join=bevel"
+layer at (125,39.13) size 86x21
+  RenderSVGText {text} at (125,39) size 86x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 86x21
+      chunk 1 text run 1 at (125.00,56.00) startOffset 0 endOffset 9 width 85.57: "cap=round"
+layer at (125,57.13) size 48x21
+  RenderSVGText {text} at (125,57) size 48x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 48x21
+      chunk 1 text run 1 at (125.00,74.00) startOffset 0 endOffset 7 width 48.00: "m, l, z"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line cap=ROUND] [line join=BEVEL]}] [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 100 40 L 0 80 Z"]
+layer at (0,0) size 220x80
+  RenderSVGTransformableContainer {g} at (0,0) size 219.58x80
+layer at (125,3.13) size 52x21
+  RenderSVGText {text} at (125,3) size 53x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x21
+      chunk 1 text run 1 at (125.00,20.00) startOffset 0 endOffset 6 width 52.03: "closed"
+layer at (125,21.13) size 79x21
+  RenderSVGText {text} at (125,21) size 79x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 79x21
+      chunk 1 text run 1 at (125.00,38.00) startOffset 0 endOffset 10 width 78.53: "join=miter"
+layer at (125,39.13) size 95x21
+  RenderSVGText {text} at (125,39) size 95x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 95x21
+      chunk 1 text run 1 at (125.00,56.00) startOffset 0 endOffset 10 width 94.57: "cap=square"
+layer at (125,57.13) size 56x21
+  RenderSVGText {text} at (125,57) size 57x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 57x21
+      chunk 1 text run 1 at (125.00,74.00) startOffset 0 endOffset 7 width 56.00: "M, L, Z"
+layer at (0,0) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (0,0) size 100x80
+  RenderSVGPath {path} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#3399DD] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 100 40 L 0 80 Z"]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

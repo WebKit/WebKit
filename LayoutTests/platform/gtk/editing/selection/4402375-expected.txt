@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 131x17
           text run at (0,0) width 131: "This is a testcase for "
-        RenderInline {A} at (0,0) size 149x17 [color=#0000EE]
+        RenderInline {A} at (131,0) size 149x17 [color=#0000EE]
           RenderText {#text} at (131,0) size 149x17
             text run at (131,0) width 149: "rdar://problem/4402375"
-        RenderText {#text} at (280,0) size 761x35
+        RenderText {#text} at (0,0) size 761x35
           text run at (280,0) width 481: " \"REGRESSION (417.8-TOT): finding text sometimes also selects previous"
           text run at (0,18) width 137: "image (5127) (6451)\""
       RenderBlock {P} at (0,70) size 784x36

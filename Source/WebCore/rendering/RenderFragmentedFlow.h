@@ -60,7 +60,11 @@ public:
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG
-    bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_fragmentRangeMap.contains(downcast<RenderBox>(child)); }
+    bool hasChildInfo(RenderObject* child) const
+    {
+        auto* renderBox = dynamicDowncast<RenderBox>(child);
+        return renderBox && m_fragmentRangeMap.contains(*renderBox);
+    }
 #endif
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
@@ -109,7 +113,7 @@ public:
 
     virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
 
-    void logicalWidthChangedInFragmentsForBlock(const RenderBlock*, bool&);
+    void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, bool&);
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;
@@ -119,8 +123,8 @@ public:
     RenderFragmentContainer* lastFragment() const;
 
     virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
-    bool getFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
-    bool computedFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool computedFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
     bool hasCachedFragmentRangeForBox(const RenderBox&) const;
 
     // Check if the object is in fragment and the fragment is part of this flow thread.
@@ -143,12 +147,12 @@ public:
     LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
     void clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
 
-    void addFragmentsVisualEffectOverflow(const RenderBox*);
-    void addFragmentsVisualOverflowFromTheme(const RenderBlock*);
-    void addFragmentsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
-    void addFragmentsLayoutOverflow(const RenderBox*, const LayoutRect&);
-    void addFragmentsVisualOverflow(const RenderBox*, const LayoutRect&);
-    void clearFragmentsOverflow(const RenderBox*);
+    void addFragmentsVisualEffectOverflow(const RenderBox&);
+    void addFragmentsVisualOverflowFromTheme(const RenderBlock&);
+    void addFragmentsOverflowFromChild(const RenderBox&, const RenderBox&, const LayoutSize&);
+    void addFragmentsLayoutOverflow(const RenderBox&, const LayoutRect&);
+    void addFragmentsVisualOverflow(const RenderBox&, const LayoutRect&);
+    void clearFragmentsOverflow(const RenderBox&);
 
     LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
@@ -160,7 +164,7 @@ public:
 
     bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
-    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*) const;
+    bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox&) const;
 
     void layout() override;
 
@@ -198,7 +202,7 @@ protected:
     void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
-    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
     void removeRenderBoxFragmentInfo(RenderBox&);
     void removeLineFragmentInfo(const RenderBlockFlow&);
@@ -237,11 +241,11 @@ protected:
     std::unique_ptr<ContainingFragmentMap> m_lineToFragmentMap;
 
     // Map a box to the list of fragments in which the box is rendered.
-    using RenderFragmentContainerRangeMap = HashMap<const RenderBox*, RenderFragmentContainerRange>;
+    using RenderFragmentContainerRangeMap = HashMap<SingleThreadWeakRef<const RenderBox>, RenderFragmentContainerRange>;
     RenderFragmentContainerRangeMap m_fragmentRangeMap;
 
     // Map a box with a fragment break to the auto height fragment affected by that break. 
-    using RenderBoxToFragmentMap = HashMap<RenderBox*, RenderFragmentContainer*>;
+    using RenderBoxToFragmentMap = HashMap<SingleThreadWeakRef<RenderBox>, SingleThreadWeakRef<RenderFragmentContainer>>;
     RenderBoxToFragmentMap m_breakBeforeToFragmentMap;
     RenderBoxToFragmentMap m_breakAfterToFragmentMap;
 

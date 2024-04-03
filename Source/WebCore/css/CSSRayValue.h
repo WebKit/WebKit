@@ -58,6 +58,17 @@ public:
 
     bool equals(const CSSRayValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_angle.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (m_position) {
+            if (func(*m_position) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
         : CSSValue(RayClass)

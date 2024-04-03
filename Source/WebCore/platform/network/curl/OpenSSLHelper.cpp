@@ -124,7 +124,7 @@ public:
         if (length < 0)
             return std::nullopt;
 
-        return Vector { data, static_cast<size_t>(length) };
+        return Vector(std::span<const uint8_t> { data, static_cast<size_t>(length) });
     }
 
     String getDataAsString() const
@@ -134,7 +134,7 @@ public:
         if (length < 0)
             return String();
 
-        return String(data, length);
+        return String({ data, static_cast<size_t>(length) });
     }
 
     std::unique_ptr<X509, deleter<X509>> readX509()
@@ -190,7 +190,7 @@ static String toString(const ASN1_STRING* name)
     if (length <= 0)
         return String();
 
-    String result(data, length);
+    String result({ data, static_cast<size_t>(length) });
     OPENSSL_free(data);
     return result;
 }

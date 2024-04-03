@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Decoder;
@@ -77,7 +78,7 @@ private:
     void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 
-    GPUConnectionToWebProcess& m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
     mutable Lock m_layersLock;

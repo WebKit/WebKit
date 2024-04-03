@@ -877,7 +877,7 @@ TEST_P(UniformTest, Sampler)
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 
-    GLint location = glGetUniformLocation(program.get(), "tex2D");
+    GLint location = glGetUniformLocation(program, "tex2D");
     ASSERT_NE(-1, location);
 
     const GLint sampler[] = {0, 0, 0, 0};
@@ -886,7 +886,7 @@ TEST_P(UniformTest, Sampler)
     glUniform1i(location, sampler[0]);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // Uniform1i
     glUniform1i(location, sampler[0]);
@@ -1141,14 +1141,14 @@ TEST_P(UniformTestES3, BooleanUniformAsIfAndForCondition)
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFragShader);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     GLint uniformLocation = glGetUniformLocation(program, "u");
     ASSERT_NE(uniformLocation, -1);
 
     glUniform1i(uniformLocation, GL_FALSE);
 
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
@@ -1190,8 +1190,8 @@ TEST_P(UniformTestES31, StructLocationLayoutQualifier)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Zero(), kFS);
 
-    EXPECT_EQ(12, glGetUniformLocation(program.get(), "uS.f"));
-    EXPECT_EQ(13, glGetUniformLocation(program.get(), "uS.f2"));
+    EXPECT_EQ(12, glGetUniformLocation(program, "uS.f"));
+    EXPECT_EQ(13, glGetUniformLocation(program, "uS.f2"));
 }
 
 // Set uniform location with a layout qualifier in the fragment shader. The same uniform exists in
@@ -1218,7 +1218,7 @@ TEST_P(UniformTestES31, UniformLocationInFragmentShader)
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
 
-    EXPECT_EQ(12, glGetUniformLocation(program.get(), "tex2D"));
+    EXPECT_EQ(12, glGetUniformLocation(program, "tex2D"));
 }
 
 // Test two unused uniforms that have the same location.
@@ -1296,13 +1296,13 @@ TEST_P(UniformTestES3, StructWithNonSquareMatrixAndBool)
 
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
-    GLint location = glGetUniformLocation(program.get(), "uni.b");
+    GLint location = glGetUniformLocation(program, "uni.b");
     ASSERT_NE(-1, location);
     glUniform1i(location, 1);
 
-    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
 
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
@@ -1380,15 +1380,15 @@ TEST_P(UniformTestES3, MatrixUniformUpload)
 
                 ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), shader.str().c_str());
 
-                glUseProgram(program.get());
+                glUseProgram(program);
 
-                GLint location = glGetUniformLocation(program.get(), "m");
+                GLint location = glGetUniformLocation(program, "m");
                 ASSERT_NE(-1, location);
 
                 uniformMatrixCxRfv[cols][rows](location, 1, transpose != 0, matrixValues);
                 ASSERT_GL_NO_ERROR();
 
-                drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.0f);
+                drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
 
                 ASSERT_GL_NO_ERROR();
                 EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white)

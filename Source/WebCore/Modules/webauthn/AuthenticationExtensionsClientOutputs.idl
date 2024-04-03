@@ -41,8 +41,25 @@
 [
     Conditional=WEB_AUTHN,
     JSGenerateToJSObject,
+] dictionary AuthenticationExtensionsPRFValues {
+    required ArrayBuffer first;
+    ArrayBuffer second;
+};
+
+[
+    Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+] dictionary AuthenticationExtensionsPRFOutputs {
+    boolean enabled;
+    AuthenticationExtensionsPRFValues results;
+};
+
+[
+    Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
 ] dictionary AuthenticationExtensionsClientOutputs {
     boolean appid;
     CredentialPropertiesOutput credProps;
     AuthenticationExtensionsLargeBlobOutputs largeBlob;
+    AuthenticationExtensionsPRFOutputs prf;
 };

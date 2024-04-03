@@ -84,7 +84,7 @@ public:
     ExceptionOr<void> abort();
     ExceptionOr<void> commit();
 
-    EventTargetInterface eventTargetInterface() const final { return IDBTransactionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBTransaction; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ThreadSafeRefCounted::ref(); }
     void derefEventTarget() final { ThreadSafeRefCounted::deref(); }
@@ -182,7 +182,7 @@ private:
 
     Ref<IDBRequest> requestIndexRecord(IDBIndex&, IndexedDB::IndexRecordType, const IDBKeyRangeData&);
 
-    void commitOnServer(IDBClient::TransactionOperation&, uint64_t pendingRequestCount);
+    void commitOnServer(IDBClient::TransactionOperation&, uint64_t handledRequestResultsCount);
     void abortOnServerAndCancelRequests(IDBClient::TransactionOperation&);
 
     void createObjectStoreOnServer(IDBClient::TransactionOperation&, const IDBObjectStoreInfo&);
@@ -269,6 +269,7 @@ private:
     uint64_t m_lastWriteOperationID { 0 };
     std::optional<IDBResourceIdentifier> m_lastTransactionOperationBeforeCommit;
     std::optional<IDBError> m_commitResult;
+    uint64_t m_handledRequestResultsCount { 0 };
 };
 
 class TransactionActivator {

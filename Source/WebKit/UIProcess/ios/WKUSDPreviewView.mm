@@ -134,7 +134,12 @@ static NSString *getUTIForUSDMIMEType(const String& mimeType)
 - (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item
 {
     RefPtr<WebKit::WebPageProxy> page = _webView->_page;
+
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = page->uiClient().presentingViewController();
+
     [presentingViewController presentViewController:previewController animated:YES completion:nil];
 }
 

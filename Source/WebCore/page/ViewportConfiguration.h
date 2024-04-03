@@ -148,9 +148,9 @@ public:
     WEBCORE_EXPORT static Parameters imageDocumentParameters();
     WEBCORE_EXPORT static Parameters xhtmlMobileParameters();
     WEBCORE_EXPORT static Parameters testingParameters();
-    
-#if !LOG_DISABLED
+
     String description() const;
+#if !LOG_DISABLED
     WEBCORE_EXPORT void dump() const;
 #endif
 

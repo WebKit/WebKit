@@ -1,0 +1,56 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (90,8.13) size 421x52
+  RenderSVGTransformableContainer {g} at (90,8.13) size 420.23x51.88
+layer at (145,19.13) size 142x13
+  RenderSVGText {text} at (55,11) size 142x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 142x14
+      chunk 1 text run 1 at (145.00,30.00) startOffset 0 endOffset 26 width 142.00: "Filters: feDiffuseLighting"
+layer at (90,8.13) size 370x52
+  RenderSVGTransformableContainer {g} at (0,0) size 369.22x51.88
+layer at (90,8.13) size 369x21
+  RenderSVGText {text} at (0,0) size 370x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 370x21
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 369.21: "Various values for surfaceScale: 1, 10 and -10"
+layer at (90,30) size 50x31
+  RenderSVGImage {image} at (0,21.88) size 50x30
+layer at (160,30) size 50x31
+  RenderSVGImage {image} at (70,21.88) size 50x30
+layer at (230,30) size 50x31
+  RenderSVGImage {image} at (140,21.88) size 50x30
+layer at (90,8.13) size 374x52
+  RenderSVGTransformableContainer {g} at (0,0) size 373.22x51.88
+layer at (90,8.13) size 373x21
+  RenderSVGText {text} at (0,0) size 374x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 374x21
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 47 width 373.22: "Various values for diffuseConstants: 0, 1 and 2"
+layer at (90,30) size 50x31
+  RenderSVGImage {image} at (0,21.88) size 50x30
+layer at (160,30) size 50x31
+  RenderSVGImage {image} at (70,21.88) size 50x30
+layer at (230,30) size 50x31
+  RenderSVGImage {image} at (140,21.88) size 50x30
+layer at (90,8.13) size 421x52
+  RenderSVGTransformableContainer {g} at (0,0) size 420.23x51.88
+layer at (90,8.13) size 420x21
+  RenderSVGText {text} at (0,0) size 421x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 421x21
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 420.23: "Various values for lighting color: red, yellow and blue"
+layer at (90,30) size 50x31
+  RenderSVGImage {image} at (0,21.88) size 50x30
+layer at (160,30) size 50x31
+  RenderSVGImage {image} at (70,21.88) size 50x30
+layer at (230,30) size 50x31
+  RenderSVGImage {image} at (140,21.88) size 50x30
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

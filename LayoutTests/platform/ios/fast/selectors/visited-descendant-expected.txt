@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 668: "Test that visited style does not match to non-topmost links. The link should be red, with red underlining."
       RenderBlock {P} at (0,180) size 784x20
         RenderInline {A} at (0,0) size 0x19 [color=#FF0000]
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x19
         RenderInline {A} at (0,0) size 31x19 [color=#FF0000]
           RenderText {#text} at (0,0) size 31x19
             text run at (0,0) width 31: "Link"
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 31: "Link"
         RenderText {#text} at (30,0) size 5x19
           text run at (30,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 33x19 [color=#008000]
+        RenderInline {SPAN} at (34,0) size 33x19 [color=#008000]
           RenderText {#text} at (34,0) size 33x19
             text run at (34,0) width 33: "Span"
         RenderText {#text} at (0,0) size 0x0
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 31: "Link"
         RenderText {#text} at (30,0) size 5x19
           text run at (30,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 33x19 [color=#008000]
+        RenderInline {SPAN} at (34,0) size 33x19 [color=#008000]
           RenderText {#text} at (34,0) size 33x19
             text run at (34,0) width 33: "Span"
         RenderText {#text} at (0,0) size 0x0

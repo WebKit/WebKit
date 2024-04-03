@@ -19,7 +19,7 @@
         return null;
     }
 
-    if (!HTMLImageElement.prototype.srcset) {
+    if (!HTMLImageElement.prototype.hasOwnProperty("srcset")) {
         window.addEventListener('DOMContentLoaded', function () {
             var images = document.querySelectorAll('img');
             for (var i = 0; i < images.length; i++) {
@@ -30,12 +30,21 @@
     }
     </script>
 </head>
-<body>
+<body class="benchmark-index">
 <main>
 
 <div id="logo">
-<span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span>
+<a href="/"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span></a>
 </div>
+
+<hr>
+
+<a class="benchmark" href="Speedometer3.0" tabindex="0">
+<img id="speedometer-logo"
+    srcset="resources/Speedometer-Logo.png 1x, resources/Speedometer-Logo@2x.png 2x" alt="Speedometer">
+<p>Speedometer is a browser benchmark that measures the responsiveness of web applications.<br>
+It's maintained by major browser engine developers under an open governance model.</p>
+</a>
 
 <hr>
 
@@ -52,13 +61,14 @@
 <p>MotionMark is a benchmark designed to put browser graphics systems to the test.</p>
 </a>
 
-<a class="benchmark" href="Speedometer2.1" tabindex="0">
-<img id="speedometer-logo"
-    srcset="resources/Speedometer-Logo.png 1x, resources/Speedometer-Logo@2x.png 2x" alt="Speedometer">
-<p>Speedometer is a browser benchmark that measures the responsiveness of web applications.</p>
-</a>
-
 </section>
+
+<hr>
+
+<section class="announcements">
+    <a href="announcements"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span> <span>announcements</span></a>
+</section>
+
 </main>
 </body>
 </html>

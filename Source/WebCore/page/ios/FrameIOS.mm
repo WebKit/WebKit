@@ -392,17 +392,17 @@ Node* LocalFrame::deepestNodeAtLocation(const FloatPoint& viewportLocation)
 
 static bool nodeIsMouseFocusable(Node& node)
 {
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    auto& element = downcast<Element>(node);
-    if (element.isMouseFocusable())
+    if (element->isMouseFocusable())
         return true;
 
-    if (RefPtr shadowRoot = element.shadowRoot()) {
+    if (RefPtr shadowRoot = element->shadowRoot()) {
         if (shadowRoot->delegatesFocus()) {
-            for (auto& node : composedTreeDescendants(element)) {
-                if (is<Element>(node) && downcast<Element>(node).isMouseFocusable())
+            for (auto& node : composedTreeDescendants(*element)) {
+                if (auto* element = dynamicDowncast<Element>(node); element && element->isMouseFocusable())
                     return true;
             }
         }
@@ -588,12 +588,11 @@ int LocalFrame::preferredHeight() const
     if (!body)
         return 0;
 
-    RenderObject* renderer = body->renderer();
-    if (!is<RenderBlock>(renderer))
+    auto* block = dynamicDowncast<RenderBlock>(body->renderer());
+    if (!block)
         return 0;
 
-    RenderBlock& block = downcast<RenderBlock>(*renderer);
-    return block.height() + block.marginTop() + block.marginBottom();
+    return block->height() + block->marginTop() + block->marginBottom();
 }
 
 void LocalFrame::updateLayout() const

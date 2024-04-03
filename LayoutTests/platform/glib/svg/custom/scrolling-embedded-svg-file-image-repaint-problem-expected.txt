@@ -10,13 +10,13 @@ layer at (0,0) size 785x986
               text run at (0,0) width 75: "Full version"
           RenderText {#text} at (75,0) size 8x17
             text run at (75,0) width 8: ", "
-          RenderInline {a} at (0,0) size 85x17 [color=#0000EE]
+          RenderInline {a} at (83,0) size 85x17 [color=#0000EE]
             RenderText {#text} at (83,0) size 85x17
               text run at (83,0) width 85: "Basic version"
         RenderBlock {p} at (0,34) size 769x18
           RenderText {#text} at (0,0) size 118x17
             text run at (0,0) width 118: "Specification link: "
-          RenderInline {a} at (0,0) size 185x17 [color=#0000EE]
+          RenderInline {a} at (118,0) size 185x17 [color=#0000EE]
             RenderText {#text} at (118,0) size 185x17
               text run at (118,0) width 185: "3.4 How groups are rendered"
         RenderBlock {p} at (0,68) size 769x18
@@ -25,12 +25,12 @@ layer at (0,0) size 785x986
               text run at (0,0) width 154: "pservers-pattern-01-b \x{2190}"
           RenderText {#text} at (154,0) size 4x17
             text run at (154,0) width 4: " "
-          RenderInline {a} at (0,0) size 35x17 [color=#0000EE]
+          RenderInline {a} at (158,0) size 35x17 [color=#0000EE]
             RenderText {#text} at (158,0) size 35x17
               text run at (158,0) width 35: "index"
           RenderText {#text} at (193,0) size 4x17
             text run at (193,0) width 4: " "
-          RenderInline {a} at (0,0) size 135x17 [color=#0000EE]
+          RenderInline {a} at (197,0) size 135x17 [color=#0000EE]
             RenderText {#text} at (197,0) size 135x17
               text run at (197,0) width 135: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
@@ -126,12 +126,12 @@ layer at (0,0) size 785x986
               text run at (0,0) width 154: "pservers-pattern-01-b \x{2190}"
           RenderText {#text} at (154,0) size 4x17
             text run at (154,0) width 4: " "
-          RenderInline {a} at (0,0) size 35x17 [color=#0000EE]
+          RenderInline {a} at (158,0) size 35x17 [color=#0000EE]
             RenderText {#text} at (158,0) size 35x17
               text run at (158,0) width 35: "index"
           RenderText {#text} at (193,0) size 4x17
             text run at (193,0) width 4: " "
-          RenderInline {a} at (0,0) size 135x17 [color=#0000EE]
+          RenderInline {a} at (197,0) size 135x17 [color=#0000EE]
             RenderText {#text} at (197,0) size 135x17
               text run at (197,0) width 135: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0

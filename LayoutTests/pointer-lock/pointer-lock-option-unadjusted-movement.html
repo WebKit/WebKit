@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+</div>
+<script>
+    description("Test pointer lock unadjustedMovement option.")
+    window.jsTestIsAsync = true;
+    shouldBeDefined("window.testRunner");
+
+    targetDiv1 = document.getElementById("target1");
+
+    todo = [
+        // verify that requestPointerLock returns a promise
+        async () => {
+            window.internals.settings.setPointerLockOptionsEnabled(true);
+            debug("     requestPointerLock()")
+            const promise = targetDiv1.requestPointerLock();
+            shouldBeNonNull(promise);
+            try {
+                await promise;
+                debug("     Promise resolved.");
+                doNextStepWithUserGesture();
+            } catch (error) {
+                testFailed(`     Promise rejected with ${error}`);
+                finishJSTest();            
+            }
+        },
+        // verify that it is possible to change to unadjustedMovement
+        // or, if it isn't possible on this platform, that we get the correct error for that.
+        async () => {
+            debug("     requestPointerLock({unadjustedMovement: true})");
+            const promise = targetDiv1.requestPointerLock({unadjustedMovement: true});
+            shouldBeNonNull(promise);
+            try {
+                await promise;
+                debug("     unadjustedMovement is supported.");
+            } catch (error) {
+                // Not all platforms support unadjustedMovement
+                if (error instanceof DOMException && error.code == DOMException.NOT_SUPPORTED_ERR) {
+                    debug("     unadjustedMovement is not supported.");
+                } else {
+                    testFailed(`     Promise rejected with unexpected error ${error}`);
+                }
+            }
+            doNextStep();
+        },
+        // remove pointer lock
+        () => {
+            expectOnlyChangeEvent("Unlock");
+            document.exitPointerLock();
+        },
+        // verify that requestPointerLock doesn't return a promise when PointerLockOptionsEnabled = false
+        () => {
+            window.internals.settings.setPointerLockOptionsEnabled(false);
+            expectOnlyChangeEvent("Lock with PointerLockOptionsEnabled = false");
+            const promise = targetDiv1.requestPointerLock();
+            shouldBeUndefined(promise);
+        },
+        // remove pointer lock again
+        () => {
+            expectOnlyChangeEvent("Unlock");
+            document.exitPointerLock();
+        },
+    ];
+    doNextStepWithUserGesture();
+</script>
+<script src="../http/tests/resources/js-test-post.js"></script>
+</body>
+</html>
+

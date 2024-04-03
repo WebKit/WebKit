@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
+#include "ProcessIdentity.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
 #include <wtf/Deque.h>
@@ -40,6 +41,7 @@ OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
+OBJC_PROTOCOL(WebSampleBufferVideoRendering);
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
@@ -64,7 +66,7 @@ public:
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
 
-    MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player.get(); }
+    RefPtr<MediaPlayerPrivateInterface> player() const final;
 
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
@@ -75,13 +77,12 @@ public:
 
     bool hasSelectedVideo() const;
 
-    MediaTime currentMediaTime() const final;
     void willSeek();
 
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
-    void setVideoLayer(AVSampleBufferDisplayLayer*);
+    void setVideoRenderer(WebSampleBufferVideoRendering *);
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void flushActiveSourceBuffersIfNeeded();
@@ -109,8 +110,13 @@ public:
     void failedToCreateRenderer(RendererType);
     bool needsVideoLayer() const;
 
+    void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
+
 private:
+    friend class SourceBufferPrivateAVFObjC;
+
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
+    MediaPlayerPrivateMediaSourceAVFObjC* platformPlayer() const { return m_player.get(); }
 
     void notifyActiveSourceBuffersChanged() final;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -120,7 +126,8 @@ private:
 
     void setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC*);
 
-    friend class SourceBufferPrivateAVFObjC;
+    void bufferedChanged(const PlatformTimeRanges&) final;
+    void trackBufferedChanged(SourceBufferPrivate&, Vector<PlatformTimeRanges>&&) final;
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
@@ -133,6 +140,9 @@ private:
     const void* m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
 #endif
+
+    HashMap<SourceBufferPrivate*, Vector<PlatformTimeRanges>> m_bufferedRanges;
+    ProcessIdentity m_resourceOwner;
 };
 
 } // namespace WebCore

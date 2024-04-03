@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 478x56
                   RenderTableRow {TR} at (0,0) size 478x28
                     RenderTableCell {TD} at (0,0) size 478x28 [bgcolor=#6666CC] [r=0 c=0 rs=1 cs=1]
-                      RenderInline {FONT} at (0,0) size 230x19 [color=#FFFFFF]
-                        RenderInline {B} at (0,0) size 230x19
+                      RenderInline {FONT} at (124,4) size 230x19 [color=#FFFFFF]
+                        RenderInline {B} at (124,4) size 230x19
                           RenderText {#text} at (124,4) size 230x19
                             text run at (124,4) width 188: "BrowserWatch Headline "
                             text run at (311,4) width 43: "News"

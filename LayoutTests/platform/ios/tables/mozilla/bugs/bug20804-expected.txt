@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x60
         RenderText {#text} at (0,0) size 149x19
           text run at (0,0) width 149: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 170x19 [color=#0000EE]
+        RenderInline {A} at (148,0) size 170x19 [color=#0000EE]
           RenderText {#text} at (148,0) size 170x19
             text run at (148,0) width 170: "http://www.microsoft.com"
         RenderBR {BR} at (317,0) size 1x19

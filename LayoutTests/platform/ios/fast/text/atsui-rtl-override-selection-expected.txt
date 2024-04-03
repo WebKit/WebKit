@@ -12,4 +12,3 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,38) size 800x20
         RenderText {#text} at (0,0) size 287x19
           text run at (0,0) width 287: "\x{201C}remips\x{201D} should be highlighted in the above."
-caret: position 10 of child 0 {#text} of child 3 {BDO} of body

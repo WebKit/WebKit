@@ -24,3 +24,6 @@ struct WebKit::WebPreferencesStore : WTF::CanMakeCheckedPtr {
     WebKit::WebPreferencesStore::ValueMap m_values;
     WebKit::WebPreferencesStore::ValueMap m_overriddenDefaults;
 };
+
+using WebKit::WebPreferencesStore::ValueMap = MemoryCompactRobinHoodHashMap<String, WebKit::WebPreferencesStore::Value>;
+using WebKit::WebPreferencesStore::Value = std::variant<String, bool, uint32_t, double>

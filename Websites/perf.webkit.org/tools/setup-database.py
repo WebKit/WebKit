@@ -1,5 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
+import argparse
 import json
 import os
 import shutil
@@ -9,10 +10,13 @@ import time
 
 
 def main():
-    if len(sys.argv) <= 1:
-        sys.exit('Specify the database directory')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('database_directory')
+    parser.add_argument('--keep-database-running', default=False, action='store_true',
+                        help='Keep database running after setup')
+    args = parser.parse_args()
 
-    database_dir = os.path.abspath(sys.argv[1])
+    database_dir = os.path.abspath(args.database_directory)
     if os.path.exists(database_dir) and not os.path.isdir(database_dir):
         sys.exit('The specified path is not a directory')
 
@@ -24,10 +28,10 @@ def main():
 
     psql_dir = determine_psql_dir()
 
-    print "Initializing database at %s" % database_dir
+    print(f'Initializing database at {database_dir}')
     execute_psql_command(psql_dir, 'initdb', [database_dir])
 
-    print "Starting postgres at %s" % database_dir
+    print(f'Starting postgres at {database_dir}')
     start_or_stop_database(psql_dir, database_dir, 'start')
     postgres_is_running = False
     for unused in range(0, 5):
@@ -39,28 +43,35 @@ def main():
 
     if not postgres_is_running:
         sys.exit('Postgres failed to start in time')
-    print 'Postgres is running!'
+    print('Postgres is running!')
 
-    done = False
+    keep_database_running = args.keep_database_running
     try:
-        print "Creating database: %s" % database_name
+        print(f'Creating database: {database_name}')
         execute_psql_command(psql_dir, 'createdb', [database_name, '--host', 'localhost'])
 
-        print "Creating user: %s" % username
+        print(f'Creating user: {username}')
         execute_psql_command(psql_dir, 'psql', [database_name, '--host', 'localhost', '--command',
-            "create role \"%s\" with nosuperuser login encrypted password '%s';" % (username, password)])
+                                                f'create role "{username}" with nosuperuser login '
+                                                f'encrypted password \'{password}\';'])
 
-        print "Granting all access on %s to %s" % (database_name, username)
+        print(f'Granting all access on {database_name} to {username}')
         execute_psql_command(psql_dir, 'psql', [database_name, '--host', 'localhost', '--command',
-            'grant all privileges on database "%s" to "%s";' % (database_name, username)])
+                                                f'grant all privileges on database "{database_name}" to "{username}";'])
+        # PostgreSQL 15 revokes the CREATE permission from all users except a database owner from the public
+        # (or default) schema
+        execute_psql_command(psql_dir, 'psql', [database_name, '--host', 'localhost', '--command',
+                                                f'grant all on schema public to "{username}";'])
 
-        print "Successfully configured postgres database %s at %s" % (database_name, database_dir)
+        print(f'Successfully configured postgres database {database_name} at {database_dir}')
 
-        done = True
     except Exception as exception:
-        start_or_stop_database(psql_dir, database_dir, 'stop')
+        keep_database_running = False
         shutil.rmtree(database_dir)
         raise exception
+    finally:
+        if not keep_database_running:
+            start_or_stop_database(psql_dir, database_dir, 'stop')
 
     sys.exit(0)
 
@@ -101,5 +112,5 @@ def execute_psql_command(psql_dir, command, args=[], suppressStdout=False):
         stderr=subprocess.STDOUT if suppressStdout else None)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

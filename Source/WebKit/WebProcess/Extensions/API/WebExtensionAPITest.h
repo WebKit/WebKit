@@ -39,7 +39,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPITest : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPITest, test, test);
 
 public:
 #if PLATFORM(COCOA)
@@ -66,13 +66,6 @@ public:
     JSValue *assertSafe(JSContextRef, JSValue *function, NSString *message);
 
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
-
-    WebExtensionAPIEvent& testEvent();
-    void fireTestEvent();
-
-private:
-    RefPtr<WebExtensionAPIWebNavigationEvent> m_webNavigationEvent;
-    RefPtr<WebExtensionAPIEvent> m_event;
 #endif
 };
 

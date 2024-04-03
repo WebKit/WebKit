@@ -1,0 +1,68 @@
+# Copyright 2020 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../gn/skia.gni")
+
+if (skia_enable_svg && skia_use_expat) {
+  config("public_config") {
+    defines = [ "SK_ENABLE_SVG" ]
+    include_dirs = [ "include" ]
+  }
+
+  skia_component("svg") {
+    check_includes = false
+    import("svg.gni")
+    public_configs = [ ":public_config" ]
+    public = skia_svg_public
+    sources = skia_svg_sources
+    configs = [ "../../:skia_private" ]
+    deps = [
+      "../..:skia",
+      "../skresources",
+      "../skshaper",
+    ]
+  }
+
+  if (skia_enable_tools) {
+    if (defined(is_skia_standalone)) {
+      skia_source_set("tool") {
+        check_includes = false
+        testonly = true
+
+        configs = [ "../..:skia_private" ]
+        sources = [ "utils/SvgTool.cpp" ]
+
+        deps = [
+          "../..:flags",
+          "../..:skia",
+          "../..:tool_utils",
+        ]
+
+        public_deps = [ ":svg" ]
+      }
+    }
+
+    skia_source_set("tests") {
+      testonly = true
+
+      configs = [ "../..:skia_private" ]
+      sources = [
+        "tests/Filters.cpp",
+        "tests/Text.cpp",
+      ]
+
+      deps = [
+        ":svg",
+        "../..:skia",
+        "../..:test",
+      ]
+    }
+  }
+} else {
+  group("svg") {
+  }
+  group("tests") {
+  }
+}

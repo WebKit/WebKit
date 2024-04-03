@@ -59,6 +59,9 @@ public:
     {
         return static_cast<SharedWorkerGlobalScope&>(Base::wrapped());
     }
+
+    Ref<SharedWorkerGlobalScope> protectedWrapped() const;
+
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
@@ -98,6 +101,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSSharedWorkerGlobalScopePrototype, JSSharedWorkerGlobalScopePrototype::Base);
 

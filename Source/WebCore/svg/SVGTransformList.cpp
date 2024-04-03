@@ -58,7 +58,7 @@ AffineTransform SVGTransformList::concatenate() const
 {
     AffineTransform result;
     for (auto& transform : m_items)
-        result *= transform->matrix()->value();
+        result *= transform->matrix().value();
     return result;
 }
 
@@ -115,11 +115,11 @@ bool SVGTransformList::parse(StringParsingBuffer<UChar>& buffer)
 String SVGTransformList::valueAsString() const
 {
     StringBuilder builder;
-    for (const auto& transfrom : m_items) {
+    for (const auto& transform : m_items) {
         if (builder.length())
             builder.append(' ');
 
-        builder.append(transfrom->value().valueAsString());
+        builder.append(transform->value().valueAsString());
     }
     return builder.toString();
 }

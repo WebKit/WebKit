@@ -12,7 +12,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,2) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,22) size 388x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 379x59
+              RenderText {#text} at (2,22) size 379x59
                 text run at (2,2) width 379: "a bunch of text, a bunch of text, a bunch of text, a bunch of"
                 text run at (2,22) width 28: "text "
                 text run at (29,22) width 319: "a bunch of text, a bunch of text, a bunch of text, a"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x2460
         RenderTableSection {TBODY} at (1,1) size 498x68
           RenderTableRow {TR} at (0,2) size 498x64
             RenderTableCell {TD} at (2,19) size 104x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 100x26
+              RenderTable {TABLE} at (2,19) size 100x26
                 RenderTableSection {TBODY} at (0,0) size 100x26
                   RenderTableRow {TR} at (0,2) size 100x22
                     RenderTableCell {TD} at (2,2) size 96x22 [r=0 c=0 rs=1 cs=1]
@@ -47,7 +47,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,2) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,32) size 672x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 668x39
+              RenderText {#text} at (2,32) size 668x39
                 text run at (2,2) width 411: "a bunch of text, a bunch of text, a bunch of text, a bunch of text "
                 text run at (412,2) width 258: "a bunch of text, a bunch of text, a bunch"
                 text run at (2,22) width 145: "of text, a bunch of text"
@@ -61,7 +61,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,2) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,22) size 388x64 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 379x59
+              RenderText {#text} at (2,22) size 379x59
                 text run at (2,2) width 379: "a bunch of text, a bunch of text, a bunch of text, a bunch of"
                 text run at (2,22) width 28: "text "
                 text run at (29,22) width 319: "a bunch of text, a bunch of text, a bunch of text, a"
@@ -76,7 +76,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,2) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,32) size 672x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 668x39
+              RenderText {#text} at (2,32) size 668x39
                 text run at (2,2) width 411: "a bunch of text, a bunch of text, a bunch of text, a bunch of text "
                 text run at (412,2) width 258: "a bunch of text, a bunch of text, a bunch"
                 text run at (2,22) width 145: "of text, a bunch of text"
@@ -88,7 +88,7 @@ layer at (0,0) size 800x2460
         RenderTableSection {TBODY} at (1,1) size 154x508
           RenderTableRow {TR} at (0,2) size 154x504
             RenderTableCell {TD} at (2,202) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (2,2) size 100x100
+              RenderImage {IMG} at (2,202) size 100x100
             RenderTableCell {TD} at (108,2) size 44x504 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 40x499
                 text run at (2,2) width 8: "a"
@@ -125,7 +125,7 @@ layer at (0,0) size 800x2460
         RenderTableSection {TBODY} at (1,1) size 498x168
           RenderTableRow {TR} at (0,2) size 498x164
             RenderTableCell {TD} at (2,32) size 388x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (2,2) size 100x100
+              RenderImage {IMG} at (2,32) size 100x100
             RenderTableCell {TD} at (392,2) size 104x164 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x159
                 text run at (2,2) width 100: "a bunch of text,"
@@ -145,7 +145,7 @@ layer at (0,0) size 800x2460
         RenderTableSection {TBODY} at (1,1) size 214x168
           RenderTableRow {TR} at (0,2) size 214x164
             RenderTableCell {TD} at (2,32) size 104x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (2,2) size 100x100
+              RenderImage {IMG} at (2,32) size 100x100
             RenderTableCell {TD} at (108,2) size 104x164 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x159
                 text run at (2,2) width 100: "a bunch of text,"
@@ -170,7 +170,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,28) size 104x104 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,58) size 388x44 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 356x39
+              RenderText {#text} at (2,32) size 356x39
                 text run at (2,2) width 356: "there there there there there there there there there there"
                 text run at (2,22) width 68: "there there"
       RenderBlock (anonymous) at (0,1856) size 784x40
@@ -187,7 +187,7 @@ layer at (0,0) size 800x2460
             RenderTableCell {TD} at (2,28) size 104x104 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 100x100
             RenderTableCell {TD} at (108,68) size 432x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 428x19
+              RenderText {#text} at (2,42) size 428x19
                 text run at (2,2) width 428: "there there there there there there there there there there there there"
       RenderBlock (anonymous) at (0,2032) size 784x40
         RenderBR {BR} at (0,0) size 0x19
@@ -201,7 +201,7 @@ layer at (0,0) size 800x2460
                 text run at (2,2) width 392: "hello hello hello hello hello hello hello hello hello hello hello"
           RenderTableRow {TR} at (0,28) size 498x124
             RenderTableCell {TD} at (2,38) size 388x104 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (2,2) size 100x100
+              RenderImage {IMG} at (2,12) size 100x100
             RenderTableCell {TD} at (392,28) size 104x124 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x119
                 text run at (2,2) width 68: "there there"
@@ -222,7 +222,7 @@ layer at (0,0) size 800x2460
                 text run at (2,2) width 392: "hello hello hello hello hello hello hello hello hello hello hello"
           RenderTableRow {TR} at (0,28) size 400x124
             RenderTableCell {TD} at (2,38) size 290x104 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (2,2) size 100x100
+              RenderImage {IMG} at (2,12) size 100x100
             RenderTableCell {TD} at (293,28) size 105x124 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x119
                 text run at (2,2) width 68: "there there"

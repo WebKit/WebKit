@@ -33,7 +33,7 @@ public:
     using Base = JSFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static NumberConstructor* create(VM&, Structure*, NumberPrototype*, GetterSetter*);
+    static NumberConstructor* create(VM&, Structure*, NumberPrototype*);
 
     DECLARE_INFO;
 

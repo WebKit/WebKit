@@ -190,7 +190,7 @@ String keyForCharCode(unichar charCode)
     case NSNextFunctionKey:
         return "Unidentified"_s;
     default:
-        return String(reinterpret_cast<UChar*>(&charCode), 1);
+        return span(*reinterpret_cast<const UChar*>(&charCode));
     }
 }
 

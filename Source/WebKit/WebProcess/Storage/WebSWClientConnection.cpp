@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebSWClientConnection.h"
 
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
@@ -102,8 +101,11 @@ void WebSWClientConnection::addServiceWorkerRegistrationInServer(ServiceWorkerRe
 
 void WebSWClientConnection::removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier identifier)
 {
-    if (WebProcess::singleton().removeServiceWorkerRegistration(identifier))
-        send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
+    if (WebProcess::singleton().removeServiceWorkerRegistration(identifier)) {
+        RunLoop::main().dispatch([identifier, connection = Ref { *this }]() {
+            connection->send(Messages::WebSWServerConnection::RemoveServiceWorkerRegistrationInServer { identifier });
+        });
+    }
 }
 
 void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier registrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&& completionHandler)

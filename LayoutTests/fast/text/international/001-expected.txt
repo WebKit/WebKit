@@ -8,17 +8,17 @@ layer at (0,0) size 800x600
           text run at (0,0) width 32: "\x{5EFA}\x{7BC9}"
       RenderText {#text} at (32,0) size 8x17
         text run at (32,0) width 8: ", "
-      RenderInline {A} at (0,0) size 48x17 [color=#0000EE]
+      RenderInline {A} at (40,0) size 48x17 [color=#0000EE]
         RenderText {#text} at (40,0) size 48x17
           text run at (40,0) width 48: "\x{7F8E}\x{8853}\x{9928}"
       RenderText {#text} at (88,0) size 8x17
         text run at (88,0) width 8: ", "
-      RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
+      RenderInline {A} at (96,0) size 32x17 [color=#0000EE]
         RenderText {#text} at (96,0) size 32x17
           text run at (96,0) width 32: "\x{6B74}\x{53F2}"
       RenderText {#text} at (128,0) size 8x17
         text run at (128,0) width 8: ", "
-      RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
+      RenderInline {A} at (136,0) size 32x17 [color=#0000EE]
         RenderText {#text} at (136,0) size 32x17
           text run at (136,0) width 32: "\x{6587}\x{5B66}"
       RenderText {#text} at (168,0) size 23x17

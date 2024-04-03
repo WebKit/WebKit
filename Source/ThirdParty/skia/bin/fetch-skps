@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Copies the latest bot-generated SKP set to ./skps.
+# If you are having trouble, please refer to the instructions at:
+# go/download-skps
+
+set -x
+set -e
+
+ROOT_DIR="$(cd $(dirname $0)/..; pwd)"
+python3 ${ROOT_DIR}/bin/fetch-sk
+case "$(uname -s)" in
+  CYGWIN*) SK_EXE="sk.exe";;
+  MINGW*)  SK_EXE="sk.exe";;
+  *)       SK_EXE="sk";;
+esac
+${ROOT_DIR}/bin/${SK_EXE} asset download skp $(pwd)/skps

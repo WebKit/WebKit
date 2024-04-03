@@ -38,8 +38,8 @@ public:
     using RelatedLayerMap = HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<RemoteLayerTreeNode>>;
     
     static void applyHierarchyUpdates(RemoteLayerTreeNode&, const LayerProperties&, const RelatedLayerMap&);
-    static void applyProperties(RemoteLayerTreeNode&, RemoteLayerTreeHost*, const LayerProperties&, const RelatedLayerMap&, RemoteLayerBackingStoreProperties::LayerContentsType);
-    static void applyPropertiesToLayer(CALayer *, RemoteLayerTreeNode*, RemoteLayerTreeHost*, const LayerProperties&, RemoteLayerBackingStoreProperties::LayerContentsType);
+    static void applyProperties(RemoteLayerTreeNode&, RemoteLayerTreeHost*, const LayerProperties&, const RelatedLayerMap&, LayerContentsType);
+    static void applyPropertiesToLayer(CALayer *, RemoteLayerTreeNode*, RemoteLayerTreeHost*, const LayerProperties&, LayerContentsType);
 
 private:
     static void updateMask(RemoteLayerTreeNode&, const LayerProperties&, const RelatedLayerMap&);

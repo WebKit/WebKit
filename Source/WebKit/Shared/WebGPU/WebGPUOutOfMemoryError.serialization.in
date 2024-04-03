@@ -23,4 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::OutOfMemoryError {
 };
+
+header: "WebGPUError.h"
+using WebKit::WebGPU::Error = std::variant<WebKit::WebGPU::OutOfMemoryError, WebKit::WebGPU::ValidationError, WebKit::WebGPU::InternalError>;
 #endif

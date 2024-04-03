@@ -1,0 +1,14 @@
+uniform half4 colorGreen;
+
+inline int tooBig(int x) {
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+    ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x; ++x;
+    return x;
+}
+
+half4 main(float2 coords) {
+    int y = 0;
+    y = tooBig(y);
+    y = tooBig(y);
+    return colorGreen;
+}

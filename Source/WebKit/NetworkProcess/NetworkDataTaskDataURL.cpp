@@ -186,7 +186,7 @@ void NetworkDataTaskDataURL::downloadDecodedData(Vector<uint8_t>&& data)
 #elif USE(SOUP)
         ResourceError error(downloadDestinationError(m_response, "Cannot write destination file."_s));
 #endif
-        downloadPtr->didFail(error, IPC::DataReference());
+        downloadPtr->didFail(error, { });
         invalidateAndCancel();
         return;
     }

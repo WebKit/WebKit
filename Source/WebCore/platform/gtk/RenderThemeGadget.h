@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !USE(GTK4)
+#if !USE(GTK4) && USE(CAIRO)
 
 #include "Color.h"
 #include "IntSize.h"
@@ -112,4 +112,4 @@ private:
 
 } // namespace WebCore
 
-#endif // !USE(GTK4)
+#endif // !USE(GTK4) && USE(CAIRO)

@@ -79,9 +79,7 @@ RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context
 {
 }
 
-RTCRtpScriptTransformer::~RTCRtpScriptTransformer()
-{
-}
+RTCRtpScriptTransformer::~RTCRtpScriptTransformer() = default;
 
 ReadableStream& RTCRtpScriptTransformer::readable()
 {

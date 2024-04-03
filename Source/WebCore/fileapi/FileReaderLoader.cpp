@@ -37,6 +37,7 @@
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPStatusCodes.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -136,7 +137,7 @@ void FileReaderLoader::cleanup()
 
 void FileReaderLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
-    if (response.httpStatusCode() != 200) {
+    if (response.httpStatusCode() != httpStatus200OK) {
         failed(httpStatusCodeToErrorCode(response.httpStatusCode()));
         return;
     }
@@ -269,7 +270,7 @@ ExceptionCode FileReaderLoader::toErrorCode(BlobResourceHandle::Error error)
 ExceptionCode FileReaderLoader::httpStatusCodeToErrorCode(int httpStatusCode)
 {
     switch (httpStatusCode) {
-    case 403:
+    case httpStatus403Forbidden:
         return ExceptionCode::SecurityError;
     default:
         return ExceptionCode::NotReadableError;
@@ -309,7 +310,7 @@ String FileReaderLoader::stringResult()
         // No conversion is needed.
         break;
     case ReadAsBinaryString:
-        m_stringResult = String(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_rawData->span().first(m_bytesLoaded);
         break;
     case ReadAsText:
         convertToText();
@@ -340,9 +341,9 @@ void FileReaderLoader::convertToText()
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/plain"_s, m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     if (isCompleted())
-        m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_decoder->decodeAndFlush(m_rawData->span().first(m_bytesLoaded));
     else
-        m_stringResult = m_decoder->decode(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
+        m_stringResult = m_decoder->decode(m_rawData->span().first(m_bytesLoaded));
 }
 
 void FileReaderLoader::convertToDataURL()

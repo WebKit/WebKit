@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -187,12 +187,11 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         if (globalObject->vm().isTerminationException(error))
             return InjectedScript();
 
-        unsigned line = 0;
-        unsigned column = 0;
+        LineColumn lineColumn;
         auto& stack = error->stack();
         if (stack.size() > 0)
-            stack[0].computeLineAndColumn(line, column);
-        WTFLogAlways("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(globalObject).utf8().data(), line, column);
+            lineColumn = stack[0].computeLineAndColumn();
+        WTFLogAlways("Error when creating injected script: %s (%d:%d)\n", error->value().toWTFString(globalObject).utf8().data(), lineColumn.line, lineColumn.column);
         RELEASE_ASSERT_NOT_REACHED();
     }
     if (!createResult.value()) {

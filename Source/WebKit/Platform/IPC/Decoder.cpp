@@ -34,7 +34,7 @@
 
 namespace IPC {
 
-static uint8_t* copyBuffer(DataReference buffer)
+static uint8_t* copyBuffer(std::span<const uint8_t> buffer)
 {
     uint8_t* bufferCopy;
     const size_t bufferSize = buffer.size_bytes();
@@ -47,12 +47,12 @@ static uint8_t* copyBuffer(DataReference buffer)
     return bufferCopy;
 }
 
-std::unique_ptr<Decoder> Decoder::create(DataReference buffer, Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Vector<Attachment>&& attachments)
 {
-    return Decoder::create({ copyBuffer(buffer), buffer.size() }, [](DataReference buffer) { fastFree(const_cast<uint8_t*>(buffer.data())); }, WTFMove(attachments)); // NOLINT
+    return Decoder::create({ copyBuffer(buffer), buffer.size() }, [](auto buffer) { fastFree(const_cast<uint8_t*>(buffer.data())); }, WTFMove(attachments)); // NOLINT
 }
 
-std::unique_ptr<Decoder> Decoder::create(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
 {
     ASSERT(bufferDeallocator);
     ASSERT(!!buffer.data());
@@ -66,7 +66,7 @@ std::unique_ptr<Decoder> Decoder::create(DataReference buffer, BufferDeallocator
     return decoder;
 }
 
-Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
     : m_buffer { buffer }
     , m_bufferPosition { m_buffer.begin() }
     , m_bufferDeallocator { WTFMove(bufferDeallocator) }
@@ -87,7 +87,7 @@ Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Ve
         return;
 }
 
-Decoder::Decoder(DataReference stream, uint64_t destinationID)
+Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     : m_buffer { stream }
     , m_bufferPosition { m_buffer.begin() }
     , m_bufferDeallocator { nullptr }
@@ -143,7 +143,7 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
 
     auto attachments = std::exchange(decoder.m_attachments, { });
 
-    DataReference wrappedMessage;
+    std::span<const uint8_t> wrappedMessage;
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 

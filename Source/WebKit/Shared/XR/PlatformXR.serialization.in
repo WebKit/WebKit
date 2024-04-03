@@ -22,6 +22,11 @@
 
 #if ENABLE(WEBXR)
 
+enum class PlatformXR::Layout : uint8_t {
+    Shared,
+    Layered,
+};
+
 enum class PlatformXR::SessionFeature : uint8_t {
     ReferenceSpaceTypeViewer,
     ReferenceSpaceTypeLocal,
@@ -95,12 +100,26 @@ enum class PlatformXR::XRTargetRayMode : uint8_t {
     Vector<WebCore::FloatPoint> bounds;
 };
 
+#if PLATFORM(COCOA)
+[Nested, RValue] struct PlatformXR::FrameData::LayerSetupData {
+    std::array<std::array<uint16_t, 2>, 2> physicalSize;
+    std::array<WebCore::IntRect, 2> viewports;
+    std::array<std::span<const float>, 2> horizontalSamples;
+    std::span<const float> verticalSamples;
+    WebCore::IntSize screenSize;
+    std::array<uint16_t, 2> framebufferSize;
+    MachSendRight completionSyncEvent;
+};
+#endif
+
 [Nested, RValue] struct PlatformXR::FrameData::LayerData {
 #if PLATFORM(COCOA)
+    std::optional<PlatformXR::FrameData::LayerSetupData> layerSetup;
+    uint64_t renderingFrameIndex;
     std::tuple<MachSendRight, bool> colorTexture;
     std::tuple<MachSendRight, bool> depthStencilBuffer;
-    std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #else
+    WebCore::IntSize framebufferSize;
     PlatformGLObject opaqueTexture;
 #endif
 };

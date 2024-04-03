@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct WebExtensionFrameParameters {
-    bool errorOccurred;
+    bool errorOccurred { false };
     std::optional<URL> url;
     WebKit::WebExtensionFrameIdentifier parentFrameIdentifier;
     std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;

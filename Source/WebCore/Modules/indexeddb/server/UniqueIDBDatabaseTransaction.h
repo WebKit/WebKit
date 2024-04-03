@@ -68,7 +68,8 @@ public:
 
     WEBCORE_EXPORT void abort();
     WEBCORE_EXPORT void abortWithoutCallback();
-    WEBCORE_EXPORT void commit(uint64_t pendingRequestCount);
+    bool shouldAbortDueToUnhandledRequestError(uint64_t handledRequestResultsCount) const;
+    WEBCORE_EXPORT void commit(uint64_t handledRequestResultsCount);
 
     WEBCORE_EXPORT void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     WEBCORE_EXPORT void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
@@ -103,7 +104,7 @@ private:
     Vector<uint64_t> m_objectStoreIdentifiers;
 
     std::optional<IDBError> m_suspensionAbortResult;
-    Deque<IDBError> m_requestResults;
+    Vector<IDBError> m_requestResults;
 };
 
 } // namespace IDBServer

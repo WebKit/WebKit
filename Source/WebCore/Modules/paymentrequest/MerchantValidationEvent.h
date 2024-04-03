@@ -54,9 +54,6 @@ private:
     MerchantValidationEvent(const AtomString& type, const String& methodName, URL&& validationURL);
     MerchantValidationEvent(const AtomString& type, String&& methodName, URL&& validationURL, Init&&);
 
-    // Event
-    EventInterface eventInterface() const final;
-
     bool m_isCompleted { false };
     String m_methodName;
     URL m_validationURL;

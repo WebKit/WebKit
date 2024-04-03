@@ -31,7 +31,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderBox.h"
 #include "RenderLayerModelObject.h"
 #include "SVGBoundingBoxComputation.h"
@@ -86,7 +85,6 @@ protected:
     RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
     RenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
-    void willBeDestroyed() override;
     void updateFromStyle() override;
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
@@ -101,8 +99,7 @@ protected:
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const override;
-    // FIXME: [LBSE] Upstream SVG outline painting functionality
-    // void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
+    void paintSVGOutline(PaintInfo&, const LayoutPoint& adjustedPaintOffset);
 
     // Returns false if the rect has no intersection with the applied clip rect. When the context specifies edge-inclusive
     // intersection, this return value allows distinguishing between no intersection and zero-area intersection.
@@ -117,5 +114,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGModelObject, isRenderSVGModelObject())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

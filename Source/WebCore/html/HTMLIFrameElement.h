@@ -23,8 +23,8 @@
 
 #pragma once
 
-#include "FeaturePolicy.h"
 #include "HTMLFrameElementBase.h"
+#include "PermissionsPolicy.h"
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
-    const FeaturePolicy& featurePolicy() const;
+    const PermissionsPolicy& permissionsPolicy() const;
 
     const AtomString& loadingForBindings() const;
     void setLoadingForBindings(const AtomString&);
@@ -74,7 +74,7 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    mutable std::optional<FeaturePolicy> m_featurePolicy;
+    mutable std::optional<PermissionsPolicy> m_permissionsPolicy;
 #if ENABLE(FULLSCREEN_API)
     bool m_IFrameFullscreenFlag { false };
 #endif

@@ -53,7 +53,7 @@ public:
 #endif
 
     virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;
-    virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage&)>) = 0;
+    virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) = 0;
     virtual void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t bufferIndex) = 0;
 
 protected:

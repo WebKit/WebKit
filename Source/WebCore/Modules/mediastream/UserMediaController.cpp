@@ -30,14 +30,15 @@
 
 #include "Document.h"
 #include "LocalDOMWindow.h"
+#include "PermissionsPolicy.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "UserMediaRequest.h"
 
 namespace WebCore {
 
-const char* UserMediaController::supplementName()
+ASCIILiteral UserMediaController::supplementName()
 {
-    return "UserMediaController";
+    return "UserMediaController"_s;
 }
 
 UserMediaController::UserMediaController(UserMediaClient* client)
@@ -70,8 +71,8 @@ void UserMediaController::logGetDisplayMediaDenial(Document& document)
 void UserMediaController::logEnumerateDevicesDenial(Document& document)
 {
     // We redo the check to print to the console log.
-    isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::Yes);
-    isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::Yes);
+    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::Yes);
+    isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::Yes);
     if (RefPtr window = document.domWindow())
         window->printErrorMessage(makeString("Not allowed to call enumerateDevices."));
 }

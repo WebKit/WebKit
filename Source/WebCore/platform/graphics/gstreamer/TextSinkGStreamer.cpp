@@ -41,7 +41,7 @@ using namespace WebCore;
 
 struct _WebKitTextSinkPrivate {
     GRefPtr<GstElement> appSink;
-    WeakPtr<MediaPlayerPrivateGStreamer> mediaPlayerPrivate;
+    ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer> mediaPlayerPrivate;
     const char* streamId { nullptr };
 };
 
@@ -63,11 +63,11 @@ static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&
     if (priv->streamId) {
         // Player private methods that interact with WebCore must run from the main thread. Things can be destroyed before that
         // code runs, including the text sink and priv, so pass everything in a safe way.
-        callOnMainThread([mediaPlayerPrivate = WeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate),
-            streamId = priv->streamId, sample = WTFMove(sample)] {
-            if (!mediaPlayerPrivate)
+        callOnMainThread([mediaPlayerPrivate = ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>(priv->mediaPlayerPrivate), streamId = priv->streamId, sample = WTFMove(sample)] {
+            RefPtr player = mediaPlayerPrivate.get();
+            if (!player)
                 return;
-            mediaPlayerPrivate->handleTextSample(sample.get(), streamId);
+            player->handleTextSample(sample.get(), streamId);
         });
         return;
     }
@@ -130,7 +130,7 @@ static void webkit_text_sink_class_init(WebKitTextSinkClass* klass)
     elementClass->query = GST_DEBUG_FUNCPTR(webkitTextSinkQuery);
 }
 
-GstElement* webkitTextSinkNew(WeakPtr<MediaPlayerPrivateGStreamer>&& player)
+GstElement* webkitTextSinkNew(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player)
 {
     auto* element = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_TEXT_SINK, nullptr));
     auto* sink = WEBKIT_TEXT_SINK(element);

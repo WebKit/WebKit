@@ -26,19 +26,20 @@
 #pragma once
 
 #include "MessageReceiver.h"
-#include "SharedMemory.h"
 #include "SharedStringHashTableReadOnly.h"
+#include "VisitedLinkTableIdentifier.h"
+#include <WebCore/SharedMemory.h>
 #include <WebCore/VisitedLinkStore.h>
 
 namespace WebKit {
 
 class VisitedLinkTableController final : public WebCore::VisitedLinkStore, public IPC::MessageReceiver {
 public:
-    static Ref<VisitedLinkTableController> getOrCreate(uint64_t identifier);
+    static Ref<VisitedLinkTableController> getOrCreate(VisitedLinkTableIdentifier);
     virtual ~VisitedLinkTableController();
 
 private:
-    explicit VisitedLinkTableController(uint64_t identifier);
+    explicit VisitedLinkTableController(VisitedLinkTableIdentifier);
 
     // WebCore::VisitedLinkStore.
     bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const URL& baseURL, const AtomString& attributeURL) override;
@@ -47,12 +48,12 @@ private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void setVisitedLinkTable(SharedMemory::Handle&&);
+    void setVisitedLinkTable(WebCore::SharedMemory::Handle&&);
     void visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>&);
     void allVisitedLinkStateChanged();
     void removeAllVisitedLinks();
 
-    uint64_t m_identifier;
+    VisitedLinkTableIdentifier m_identifier;
     SharedStringHashTableReadOnly m_visitedLinkTable;
 };
 

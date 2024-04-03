@@ -32,6 +32,7 @@
 #include "SelectorMatchingState.h"
 #include "StyleRelations.h"
 #include "StyleScopeOrdinal.h"
+#include "StyleScrollbarState.h"
 
 namespace WebCore {
 
@@ -39,16 +40,6 @@ class CSSSelector;
 class Element;
 class RenderScrollbar;
 class RenderStyle;
-
-struct StyleScrollbarState {
-    ScrollbarPart scrollbarPart { NoPart };
-    ScrollbarPart hoveredPart { NoPart };
-    ScrollbarPart pressedPart { NoPart };
-    ScrollbarOrientation orientation { ScrollbarOrientation::Vertical };
-    ScrollbarButtonsPlacement buttonsPlacement { ScrollbarButtonsNone };
-    bool enabled { false };
-    bool scrollCornerIsVisible { false };
-};
 
 class SelectorChecker {
     WTF_MAKE_NONCOPYABLE(SelectorChecker);
@@ -91,9 +82,10 @@ public:
         { }
 
         const SelectorChecker::Mode resolvingMode;
+        // FIXME: Switch to PseudoElementIdentifier.
         PseudoId pseudoId { PseudoId::None };
+        AtomString pseudoElementNameArgument;
         std::optional<StyleScrollbarState> scrollbarState;
-        AtomString nameIdentifier;
         const ContainerNode* scope { nullptr };
         const Element* hasScope { nullptr };
         bool matchesAllHasScopes { false };
@@ -125,6 +117,7 @@ private:
     bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelector&) const;
 
     bool checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
+    bool checkViewTransitionPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
 
     bool m_strictParsing;
     bool m_documentIsHTML;

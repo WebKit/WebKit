@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 697x17
-          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+        RenderInline {I} at (51,0) size 697x17
+          RenderInline {A} at (51,0) size 301x17 [color=#0000EE]
             RenderText {#text} at (51,0) size 301x17
               text run at (51,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11916"
           RenderText {#text} at (351,0) size 397x17
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 38: "PASS"
 layer at (27,45) size 153x18 scrollX 19 scrollWidth 172
   RenderBlock {DIV} at (0,0) size 153x18
-    RenderText {#text} at (-19,0) size 173x17
+    RenderText {#text} at (-20,0) size 173x17
       text run at (-19,0) width 23 RTL: "\x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (3,0) width 5 RTL: " "
       text run at (7,0) width 27: "she"
@@ -75,4 +75,6 @@ layer at (11,70) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 layer at (180,94) size 16x16
   RenderBlock {DIV} at (169,1) size 16x16 [bgcolor=#000000]
+layer at (11,94) size 16x16
+  RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of child 3 {P} of body

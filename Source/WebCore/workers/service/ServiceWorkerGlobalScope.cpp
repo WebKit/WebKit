@@ -159,9 +159,9 @@ void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
     });
 }
 
-EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
+enum EventTargetInterfaceType ServiceWorkerGlobalScope::eventTargetInterface() const
 {
-    return ServiceWorkerGlobalScopeEventTargetInterfaceType;
+    return EventTargetInterfaceType::ServiceWorkerGlobalScope;
 }
 
 ServiceWorkerThread& ServiceWorkerGlobalScope::thread()

@@ -27,7 +27,7 @@
 #include "XSLTProcessor.h"
 
 #include "CachedResourceLoader.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
@@ -276,11 +276,11 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
         resultType = (const xmlChar*)"html";
 
     if (xmlStrEqual(resultType, (const xmlChar*)"html"))
-        return "text/html"_s;
+        return textHTMLContentTypeAtom();
     if (xmlStrEqual(resultType, (const xmlChar*)"text"))
-        return "text/plain"_s;
+        return textPlainContentTypeAtom();
 
-    return "application/xml"_s;
+    return applicationXMLContentTypeAtom();
 }
 
 bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String& resultString, String& resultEncoding)
@@ -300,7 +300,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
     xsltMaxDepth = 1000;
 
     xmlChar* origMethod = sheet->method;
-    if (!origMethod && mimeType == "text/html"_s)
+    if (!origMethod && mimeType == textHTMLContentTypeAtom())
         sheet->method = reinterpret_cast<xmlChar*>(const_cast<char*>("html"));
 
     bool success = false;

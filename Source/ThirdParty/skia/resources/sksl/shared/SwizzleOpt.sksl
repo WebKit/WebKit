@@ -1,0 +1,48 @@
+uniform half4 colorRed, colorGreen, testInputs;
+
+half fn(half4 v) {
+    // Add an un-inlinable construct to ensure that fn() remains a standalone function.
+    for (int x=1; x<=2; ++x) {
+        return v.x;
+    }
+}
+
+half4 main(float2 coords) {
+    half4 v = testInputs;
+
+    v = v.rgba;
+    v = v.rgb0.abgr;
+    v = v.rgba.00ra;
+    v = v.rgba.rrra.00ra.11ab;
+    v = v.abga.gb11;
+    v = v.abgr.abgr;
+    v = half4(v.rrrr.bb, 1, 1);
+    v = half4(v.ba.grgr);
+
+    // The swizzle will not be optimized away to avoid eliminating fn().
+    v = half3(fn(v), 123, 456).yyzz;
+    v = half3(fn(v), half2(123, 456)).yyzz;
+
+    // The swizzle will be optimized away because fn() can be reordered.
+    v = half3(fn(v), 123, 456).yzzx;
+    v = half3(fn(v), half2(123, 456)).yzzx;
+
+    // The swizzle will not be optimized away to avoid duplicating fn().
+    v = half3(fn(v), 123, 456).yxxz;
+    v = half3(fn(v), half2(123, 456)).yxxz;
+
+    // Swizzled constants.
+    v = half4(1, 2, 3, 4).xxyz;
+
+    // Swizzled uniforms mixed with constants.
+    v = half4(1, colorRed.rgb).yzwx;
+    v = half4(1, colorRed.rgb).yxzw;
+
+    // Left-side swizzles.
+    v.rgba = v;
+    v.abgr = v;
+    v.rgba.ra = v.gb;
+    v.abgr.gba = v.aa1;
+
+    return v == half4(1) ? colorGreen : colorRed;
+}

@@ -68,7 +68,7 @@ public:
 
 private:
     static DOMCSSPaintWorklet* from(DOMCSSNamespace&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 };
 
 } // namespace WebCore

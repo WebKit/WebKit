@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (95.94,100.08) size 238x19
+  RenderSVGTransformableContainer {g} at (95.94,100.08) size 236.56x18.41
+layer at (198,100.08) size 135x19
+  RenderSVGTransformableContainer {g} at (102.06,0) size 134.50x18.41
+layer at (198,112.80) size 4x5
+  RenderSVGEllipse {circle} at (0,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (200,100.08) size 133x18
+  RenderSVGText {text} at (2,0) size 133x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 133x19
+      chunk 1 text run 1 at (200.00,114.80) startOffset 0 endOffset 17 width 132.50: "Lorem ipsum dolor"
+layer at (126.19,100.08) size 148x19
+  RenderSVGTransformableContainer {g} at (30.25,0) size 147.63x18.41
+layer at (198,112.80) size 5x5
+  RenderSVGEllipse {circle} at (71.81,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (126.19,100.08) size 148x18
+  RenderSVGText {text} at (0,0) size 148x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 148x19
+      chunk 1 (middle anchor) text run 1 at (126.19,114.80) startOffset 0 endOffset 21 width 147.62: "sit amet, consectetur"
+layer at (95.94,100.08) size 107x19
+  RenderSVGTransformableContainer {g} at (0,0) size 106.06x18.41
+layer at (198,112.80) size 5x5
+  RenderSVGEllipse {circle} at (102.06,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=200.00] [cy=114.80] [r=2.00]
+layer at (95.94,100.08) size 104x18
+  RenderSVGText {text} at (0,0) size 105x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 105x19
+      chunk 1 (end anchor) text run 1 at (95.95,114.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
+layer at (95.94,100.08) size 242x139
+  RenderSVGTransformableContainer {g} at (95.94,100.08) size 241.02x138.41
+layer at (95.94,100.08) size 241x138
+  RenderSVGText {text} at (0,0) size 241x139 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (104,0) size 133x19
+      RenderSVGInlineText {#text} at (104,0) size 133x19
+        chunk 1 text run 1 at (200.00,114.80) startOffset 0 endOffset 17 width 132.50: "Lorem ipsum dolor"
+    RenderSVGInlineText {#text} at (236,0) size 5x19
+      chunk 1 text run 1 at (332.50,114.80) startOffset 0 endOffset 1 width 4.45: " "
+    RenderSVGTSpan {tspan} at (28,60) size 148x19
+      RenderSVGInlineText {#text} at (28,60) size 148x19
+        chunk 1 (middle anchor) text run 1 at (123.97,174.80) startOffset 0 endOffset 21 width 147.62: "sit amet, consectetur"
+    RenderSVGInlineText {#text} at (175,60) size 5x19
+      chunk 1 text run 1 at (271.59,174.80) startOffset 0 endOffset 1 width 4.45: " "
+    RenderSVGTSpan {tspan} at (0,120) size 105x19
+      RenderSVGInlineText {#text} at (0,120) size 105x19
+        chunk 1 (end anchor) text run 1 at (95.95,234.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
+    RenderSVGInlineText {#text} at (0,0) size 0x0

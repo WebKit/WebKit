@@ -22,23 +22,23 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,152) size 784x18
         RenderText {#text} at (0,0) size 416x18
           text run at (0,0) width 416: "The simplified original testcase with image size reduced to190px"
-      RenderBlock {P} at (0,186) size 784x52
-        RenderTable {TABLE} at (0,0) size 640x52 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 638x50
-            RenderTableRow {TR} at (0,2) size 638x22
-              RenderTableCell {TD} at (2,2) size 635x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderBlock {P} at (0,186) size 784x53
+        RenderTable {TABLE} at (0,0) size 640x53 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 638x51
+            RenderTableRow {TR} at (0,2) size 638x23
+              RenderTableCell {TD} at (2,2) size 635x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                 RenderImage {IMG} at (2,2) size 190x19
-            RenderTableRow {TR} at (0,26) size 638x22
-              RenderTableCell {TD} at (2,26) size 127x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,26) size 638x23
+              RenderTableCell {TD} at (2,26) size 127x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x18
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (130,26) size 507x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,26) size 507x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
-      RenderBlock (anonymous) at (0,264) size 784x18
+      RenderBlock (anonymous) at (0,264) size 784x19
         RenderText {#text} at (0,0) size 150x18
           text run at (0,0) width 150: "Testcase without image"
-      RenderBlock {P} at (0,298) size 784x70
+      RenderBlock {P} at (0,298) size 784x71
         RenderTable {TABLE} at (0,0) size 640x70 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x68
             RenderTableRow {TR} at (0,2) size 638x40
@@ -56,6 +56,6 @@ layer at (0,0) size 800x600
 layer at (8,150) size 130x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,142) size 130x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,262) size 130x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,254) size 130x2 [color=#808080] [border: (1px inset #808080)]
+  RenderBlock {HR} at (0,254) size 130x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,392) size 130x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,384) size 130x2 [color=#808080] [border: (1px inset #808080)]
+  RenderBlock {HR} at (0,384) size 130x3 [color=#808080] [border: (1px inset #808080)]

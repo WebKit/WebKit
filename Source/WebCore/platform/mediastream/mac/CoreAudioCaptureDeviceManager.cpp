@@ -116,9 +116,11 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
     if (filterTapEnabledDevices) {
         // Ignore output devices that have input only for echo cancellation.
         AudioObjectPropertyAddress address = {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#if HAVE(AUDIO_DEVICE_PROPERTY_REFERENCE_STREAM_ENABLED)
+            kAudioDevicePropertyReferenceStreamEnabled,
+#else
             kAudioDevicePropertyTapEnabled,
-ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
             kAudioDevicePropertyScopeOutput,
 #if HAVE(AUDIO_OBJECT_PROPERTY_ELEMENT_MAIN)
             kAudioObjectPropertyElementMain

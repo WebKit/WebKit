@@ -23,6 +23,7 @@
 headers: "NetworkResourceLoadParameters.h"
 
 enum class WebKit::PreconnectOnly : bool;
+enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 class WebKit::NetworkLoadParameters {
     WebKit::WebPageProxyIdentifier webPageProxyID;
@@ -44,7 +45,7 @@ class WebKit::NetworkLoadParameters {
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
     bool needsCertificateInfo;
     bool isMainFrameNavigation;
-    bool isMainResourceNavigationForAnyFrame;
+    std::optional<WebKit::NavigationActionData> mainResourceNavigationDataForAnyFrame;
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking;
     [NotSerialized] Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     WebKit::PreconnectOnly shouldPreconnectOnly;
@@ -59,9 +60,9 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     WebCore::ResourceLoaderIdentifier identifier;
     
     RefPtr<WebCore::FormData> request.httpBody();
-    std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensionsIfHttpBody();
+    std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensionsIfHttpBody();
 
-    std::optional<WebKit::SandboxExtension::Handle> sandboxExtensionIflocalFile();
+    std::optional<WebKit::SandboxExtensionHandle> sandboxExtensionIflocalFile();
 
     Seconds maximumBufferingTime;
     
@@ -106,5 +107,10 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebKit::UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    bool pageHasExtensionController;
+#endif
+
     bool linkPreconnectEarlyHintsEnabled;
+    bool shouldRecordFrameLoadForStorageAccess;
 };

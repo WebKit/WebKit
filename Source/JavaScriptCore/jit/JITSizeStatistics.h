@@ -36,6 +36,8 @@
 
 namespace JSC {
 
+class JITPlan;
+
 class JITSizeStatistics {
     WTF_MAKE_TZONE_ALLOCATED(JITSizeStatistics);
 public:
@@ -45,7 +47,7 @@ public:
     };
 
     Marker markStart(String identifier, CCallHelpers&);
-    void markEnd(Marker, CCallHelpers&);
+    void markEnd(Marker, CCallHelpers&, JITPlan&);
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 

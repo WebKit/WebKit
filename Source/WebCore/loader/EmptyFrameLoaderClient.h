@@ -93,10 +93,9 @@ private:
     LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) final;
     void dispatchShow() final;
 
-    void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String&, FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, PolicyCheckIdentifier, FramePolicyFunction&&) final;
-    void broadcastFrameRemovalToOtherProcesses() final;
+    void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String&, FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, uint64_t, std::optional<HitTestResult>&&, bool, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
     void cancelPolicyCheck() final;
 
@@ -172,9 +171,9 @@ private:
     void saveViewStateToItem(HistoryItem&) final;
     bool canCachePage() const final;
     void didDisplayInsecureContent() final;
-    void didRunInsecureContent(SecurityOrigin&, const URL&) final;
+    void didRunInsecureContent(SecurityOrigin&) final;
     RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
-    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
+    RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final;
     AtomString overrideMediaType() const final;
@@ -184,6 +183,7 @@ private:
 
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
+    IntPoint accessibilityRemoteFrameOffset() final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setAXIsolatedTreeRoot(WebCore::AXCoreObject*) final;
 #endif

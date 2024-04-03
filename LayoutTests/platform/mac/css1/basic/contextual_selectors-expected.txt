@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,159) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 570x18
           text run at (0,0) width 570: "This sentence should be normal for its section, except for the last word, which should be "
-        RenderInline {EM} at (0,0) size 37x18 [color=#008000]
+        RenderInline {EM} at (569,0) size 37x18 [color=#008000]
           RenderText {#text} at (569,0) size 37x18
             text run at (569,0) width 37: "green"
         RenderText {#text} at (605,0) size 5x18
@@ -45,12 +45,12 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 728x154
           RenderTableRow {TR} at (0,0) size 728x26
             RenderTableCell {TD} at (0,0) size 728x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 728x128
             RenderTableCell {TD} at (0,77) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,55) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 716x128 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 708x18 [color=#800080]
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,38) size 708x18 [color=#800080]
                 RenderText {#text} at (0,0) size 628x18
                   text run at (0,0) width 628: "This sentence should be normal for its section, except for the last word, which should be "
-                RenderInline {EM} at (0,0) size 42x18 [color=#008000]
+                RenderInline {EM} at (627,0) size 42x18 [color=#008000]
                   RenderText {#text} at (627,0) size 42x18
                     text run at (627,0) width 42: "green"
                 RenderText {#text} at (668,0) size 6x18

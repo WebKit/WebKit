@@ -207,13 +207,7 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         case InlineCallFrame::CallVarargs:
         case InlineCallFrame::ConstructVarargs:
         case InlineCallFrame::BoundFunctionCall: {
-            CallLinkInfo* callLinkInfo = nullptr;
-            {
-                ConcurrentJSLocker locker(baselineCodeBlockForCaller->m_lock);
-                callLinkInfo = baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(locker, callBytecodeIndex);
-            }
-            RELEASE_ASSERT(callLinkInfo);
-            jumpTarget = callLinkInfo->doneLocation().retagged<JSEntryPtrTag>();
+            jumpTarget = static_cast<const BaselineJITCode*>(baselineCodeBlockForCaller->jitCode().get())->getCallLinkDoneLocationForBytecodeIndex(callBytecodeIndex).retagged<JSEntryPtrTag>();
             break;
         }
 

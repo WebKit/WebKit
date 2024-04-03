@@ -48,7 +48,7 @@ CommandEncoderImpl::CommandEncoderImpl(WebGPUPtr<WGPUCommandEncoder>&& commandEn
 
 CommandEncoderImpl::~CommandEncoderImpl() = default;
 
-Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescriptor& descriptor)
+RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();
 
@@ -58,6 +58,7 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .nextInChain = nullptr,
                 .view = m_convertToBackingContext->convertToBacking(colorAttachment->view),
+                .depthSlice = colorAttachment->depthSlice,
                 .resolveTarget = colorAttachment->resolveTarget ? m_convertToBackingContext->convertToBacking(*colorAttachment->resolveTarget) : nullptr,
                 .loadOp = m_convertToBackingContext->convertToBacking(colorAttachment->loadOp),
                 .storeOp = m_convertToBackingContext->convertToBacking(colorAttachment->storeOp),
@@ -67,6 +68,7 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .nextInChain = nullptr,
                 .view = nullptr,
+                .depthSlice = std::nullopt,
                 .resolveTarget = nullptr,
                 .loadOp = WGPULoadOp_Clear,
                 .storeOp = WGPUStoreOp_Discard,
@@ -95,8 +97,15 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
         .endOfPassWriteIndex = descriptor.timestampWrites ? descriptor.timestampWrites->endOfPassWriteIndex : 0
     };
 
+    WGPURenderPassDescriptorMaxDrawCount maxDrawCount {
+        .chain = {
+            nullptr,
+            WGPUSType_RenderPassDescriptorMaxDrawCount,
+        },
+        .maxDrawCount = descriptor.maxDrawCount.value_or(0)
+    };
     WGPURenderPassDescriptor backingDescriptor {
-        .nextInChain = nullptr,
+        .nextInChain = descriptor.maxDrawCount ? &maxDrawCount.chain : nullptr,
         .label = label.data(),
         .colorAttachmentCount = static_cast<uint32_t>(colorAttachments.size()),
         .colorAttachments = colorAttachments.data(),
@@ -108,12 +117,12 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
     return RenderPassEncoderImpl::create(adoptWebGPU(wgpuCommandEncoderBeginRenderPass(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
 }
 
-Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional<ComputePassDescriptor>& descriptor)
+RefPtr<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional<ComputePassDescriptor>& descriptor)
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
     WGPUComputePassTimestampWrites timestampWrites {
-        .querySet = (descriptor && descriptor->timestampWrites) ? m_convertToBackingContext->convertToBacking(*descriptor->timestampWrites->querySet) : nullptr,
+        .querySet = (descriptor && descriptor->timestampWrites && descriptor->timestampWrites->querySet) ? m_convertToBackingContext->convertToBacking(*descriptor->timestampWrites->querySet) : nullptr,
         .beginningOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->beginningOfPassWriteIndex : 0,
         .endOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->endOfPassWriteIndex : 0
     };
@@ -257,7 +266,7 @@ void CommandEncoderImpl::resolveQuerySet(
     wgpuCommandEncoderResolveQuerySet(m_backing.get(), m_convertToBackingContext->convertToBacking(querySet), firstQuery, queryCount, m_convertToBackingContext->convertToBacking(destination), destinationOffset);
 }
 
-Ref<CommandBuffer> CommandEncoderImpl::finish(const CommandBufferDescriptor& descriptor)
+RefPtr<CommandBuffer> CommandEncoderImpl::finish(const CommandBufferDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();
 

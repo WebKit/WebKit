@@ -39,7 +39,6 @@ FrameDestructionObserver::FrameDestructionObserver(LocalFrame* frame)
 FrameDestructionObserver::~FrameDestructionObserver()
 {
     observeFrame(nullptr);
-
 }
 
 void FrameDestructionObserver::observeFrame(LocalFrame* frame)

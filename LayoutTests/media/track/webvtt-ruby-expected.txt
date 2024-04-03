@@ -6,7 +6,7 @@ RUN(video.textTracks[0].mode = 'showing')
 RUN(video.currentTime = 1)
 EVENT(seeked)
 EXPECTED (window.internals.shadowRoot(video).querySelector('rt') != 'null') OK
-EXPECTED (rubyText.offsetTop < rubyBase.offsetTop == 'true') OK
-EXPECTED (rubyBase.offsetTop == (rubyText.offsetTop + rubyText.offsetHeight) == 'true') OK
+EXPECTED (rubyText.getBoundingClientRect().top < rubyBase.getBoundingClientRect().top == 'true') OK
+EXPECTED (rubyBase.getBoundingClientRect().top == rubyText.getBoundingClientRect().bottom == 'true') OK
 END OF TEST
 

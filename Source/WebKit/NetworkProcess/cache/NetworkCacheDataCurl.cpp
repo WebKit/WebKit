@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkCacheData.h"
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -108,7 +108,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::Platfor
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && OS(WINDOWS)
-RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
 {
     if (isNull() || !isMap())
         return nullptr;
@@ -117,7 +117,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (!newHandle)
         return nullptr;
 
-    return SharedMemory::map({ WTFMove(newHandle), m_size }, SharedMemory::Protection::ReadOnly);
+    return WebCore::SharedMemory::map({ WTFMove(newHandle), m_size }, WebCore::SharedMemory::Protection::ReadOnly);
 }
 #endif
 

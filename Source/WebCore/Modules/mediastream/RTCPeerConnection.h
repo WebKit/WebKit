@@ -89,10 +89,10 @@ class RTCPeerConnection final
     , private LoggerHelper
 #endif
 {
-    WTF_MAKE_ISO_ALLOCATED(RTCPeerConnection);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(RTCPeerConnection, WEBCORE_EXPORT);
 public:
     static ExceptionOr<Ref<RTCPeerConnection>> create(Document&, RTCConfiguration&&);
-    virtual ~RTCPeerConnection();
+    WEBCORE_EXPORT virtual ~RTCPeerConnection();
 
     using DataChannelInit = RTCDataChannelInit;
 
@@ -163,7 +163,7 @@ public:
     WEBCORE_EXPORT void gatherDecoderImplementationName(Function<void(String&&)>&&);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return RTCPeerConnectionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCPeerConnection; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted::ref;
@@ -207,6 +207,9 @@ public:
     const char* logClassName() const final { return "RTCPeerConnection"; }
     WTFLogChannel& logChannel() const final;
 #endif
+
+    void startGatheringStatLogs(Function<void(String&&)>&&);
+    void stopGatheringStatLogs();
 
 private:
     RTCPeerConnection(Document&);

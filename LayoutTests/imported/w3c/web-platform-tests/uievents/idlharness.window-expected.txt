@@ -59,6 +59,8 @@ PASS MouseEvent interface: attribute screenX
 PASS MouseEvent interface: attribute screenY
 PASS MouseEvent interface: attribute clientX
 PASS MouseEvent interface: attribute clientY
+FAIL MouseEvent interface: attribute layerX assert_own_property: expected property "layerX" missing
+FAIL MouseEvent interface: attribute layerY assert_own_property: expected property "layerY" missing
 PASS MouseEvent interface: attribute ctrlKey
 PASS MouseEvent interface: attribute shiftKey
 PASS MouseEvent interface: attribute altKey
@@ -74,6 +76,8 @@ PASS MouseEvent interface: new MouseEvent("event") must inherit property "screen
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "screenY" with the proper type
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "clientX" with the proper type
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "clientY" with the proper type
+PASS MouseEvent interface: new MouseEvent("event") must inherit property "layerX" with the proper type
+PASS MouseEvent interface: new MouseEvent("event") must inherit property "layerY" with the proper type
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "ctrlKey" with the proper type
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "shiftKey" with the proper type
 PASS MouseEvent interface: new MouseEvent("event") must inherit property "altKey" with the proper type
@@ -119,6 +123,8 @@ PASS MouseEvent interface: new WheelEvent("event") must inherit property "screen
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "screenY" with the proper type
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "clientX" with the proper type
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "clientY" with the proper type
+PASS MouseEvent interface: new WheelEvent("event") must inherit property "layerX" with the proper type
+PASS MouseEvent interface: new WheelEvent("event") must inherit property "layerY" with the proper type
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "ctrlKey" with the proper type
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "shiftKey" with the proper type
 PASS MouseEvent interface: new WheelEvent("event") must inherit property "altKey" with the proper type
@@ -225,6 +231,14 @@ PASS UIEvent interface: new CompositionEvent("event") must inherit property "det
 PASS UIEvent interface: new CompositionEvent("event") must inherit property "initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long)" with the proper type
 PASS UIEvent interface: calling initUIEvent(DOMString, optional boolean, optional boolean, optional Window?, optional long) on new CompositionEvent("event") with too few arguments must throw TypeError
 PASS UIEvent interface: new CompositionEvent("event") must inherit property "which" with the proper type
+PASS TextEvent interface: existence and properties of interface object
+PASS TextEvent interface object length
+PASS TextEvent interface object name
+PASS TextEvent interface: existence and properties of interface prototype object
+PASS TextEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS TextEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS TextEvent interface: attribute data
+PASS TextEvent interface: operation initTextEvent(DOMString, optional boolean, optional boolean, optional Window?, optional DOMString)
 PASS MutationEvent interface: existence and properties of interface object
 PASS MutationEvent interface object length
 PASS MutationEvent interface object name

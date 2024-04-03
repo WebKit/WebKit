@@ -81,7 +81,7 @@ void RemoteQueueProxy::writeBuffer(
     if (!convertedBuffer)
         return;
 
-    auto sendResult = send(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, Vector<uint8_t>(static_cast<const uint8_t*>(source) + dataOffset, size.value_or(byteLength - dataOffset))));
+    auto sendResult = send(Messages::RemoteQueue::WriteBuffer(convertedBuffer, bufferOffset, std::span { static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)) }));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -101,7 +101,7 @@ void RemoteQueueProxy::writeTexture(
     if (!convertedDestination || !convertedDataLayout || !convertedSize)
         return;
 
-    auto sendResult = send(Messages::RemoteQueue::WriteTexture(*convertedDestination, Vector<uint8_t>(static_cast<const uint8_t*>(source), byteLength), *convertedDataLayout, *convertedSize));
+    auto sendResult = send(Messages::RemoteQueue::WriteTexture(*convertedDestination, Vector(std::span { static_cast<const uint8_t*>(source), byteLength }), *convertedDataLayout, *convertedSize));
     UNUSED_VARIABLE(sendResult);
 }
 

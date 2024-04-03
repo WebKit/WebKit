@@ -166,12 +166,12 @@ void JSTestAsyncKeyValueIterable::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncKeyValueIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestAsyncKeyValueIterablePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestAsyncKeyValueIterable::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestAsyncKeyValueIterable::getConstructor(vm, prototype->globalObject()));
 }
 
 struct TestAsyncKeyValueIterableIteratorTraits {
@@ -294,7 +294,7 @@ void JSTestAsyncKeyValueIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle
 {
     auto* jsTestAsyncKeyValueIterable = static_cast<JSTestAsyncKeyValueIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestAsyncKeyValueIterable->wrapped(), jsTestAsyncKeyValueIterable);
+    uncacheWrapper(world, jsTestAsyncKeyValueIterable->protectedWrapped().ptr(), jsTestAsyncKeyValueIterable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

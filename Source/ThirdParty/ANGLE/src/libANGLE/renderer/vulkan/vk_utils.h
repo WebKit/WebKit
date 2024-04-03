@@ -18,6 +18,7 @@
 #include "common/FixedVector.h"
 #include "common/Optional.h"
 #include "common/PackedEnums.h"
+#include "common/WorkerThread.h"
 #include "common/backtrace_utils.h"
 #include "common/debug.h"
 #include "libANGLE/Error.h"
@@ -78,7 +79,6 @@ class ImageVk;
 class ProgramExecutableVk;
 class RenderbufferVk;
 class RenderTargetVk;
-class RendererVk;
 class RenderPassCache;
 class ShareGroupVk;
 }  // namespace rx
@@ -126,6 +126,7 @@ constexpr uint32_t kInvalidMemoryHeapIndex = UINT32_MAX;
 
 namespace vk
 {
+class Renderer;
 
 // Used for memory allocation tracking.
 enum class MemoryAllocationType;
@@ -168,6 +169,10 @@ static constexpr PackedAttachmentIndex kAttachmentIndexZero    = PackedAttachmen
 template <typename VulkanStruct1, typename VulkanStruct2>
 void AddToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
 {
+    // Catch bugs where this function is called with `&pointer` instead of `pointer`.
+    static_assert(!std::is_pointer<VulkanStruct1>::value);
+    static_assert(!std::is_pointer<VulkanStruct2>::value);
+
     ASSERT(ptr->pNext == nullptr);
 
     VkBaseOutStructure *localPtr = reinterpret_cast<VkBaseOutStructure *>(chainStart);
@@ -179,6 +184,9 @@ void AddToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
 template <typename VulkanStruct1, typename VulkanStruct2>
 void AppendToPNextChain(VulkanStruct1 *chainStart, VulkanStruct2 *ptr)
 {
+    static_assert(!std::is_pointer<VulkanStruct1>::value);
+    static_assert(!std::is_pointer<VulkanStruct2>::value);
+
     if (!ptr)
     {
         return;
@@ -269,11 +277,12 @@ class [[nodiscard]] ScopedQueueSerialIndex final : angle::NonCopyable
     QueueSerialIndexAllocator *mIndexAllocator;
 };
 
-// Abstracts error handling. Implemented by both ContextVk for GL and DisplayVk for EGL errors.
+// Abstracts error handling. Implemented by ContextVk for GL, DisplayVk for EGL, worker threads,
+// CLContextVk etc.
 class Context : angle::NonCopyable
 {
   public:
-    Context(RendererVk *renderer);
+    Context(Renderer *renderer);
     virtual ~Context();
 
     virtual void handleError(VkResult result,
@@ -281,15 +290,30 @@ class Context : angle::NonCopyable
                              const char *function,
                              unsigned int line) = 0;
     VkDevice getDevice() const;
-    RendererVk *getRenderer() const { return mRenderer; }
+    Renderer *getRenderer() const { return mRenderer; }
     const angle::FeaturesVk &getFeatures() const;
 
     const angle::VulkanPerfCounters &getPerfCounters() const { return mPerfCounters; }
     angle::VulkanPerfCounters &getPerfCounters() { return mPerfCounters; }
 
   protected:
-    RendererVk *const mRenderer;
+    Renderer *const mRenderer;
     angle::VulkanPerfCounters mPerfCounters;
+};
+
+// Abstract global operations that are handled differently between EGL and OpenCL.
+class GlobalOps : angle::NonCopyable
+{
+  public:
+    virtual ~GlobalOps() = default;
+
+    virtual void putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value) = 0;
+    virtual bool getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)  = 0;
+
+    virtual std::shared_ptr<angle::WaitableEvent> postMultiThreadWorkerTask(
+        const std::shared_ptr<angle::Closure> &task) = 0;
+
+    virtual void notifyDeviceLost() = 0;
 };
 
 class RenderPassDesc;
@@ -383,7 +407,7 @@ class GarbageObject
     GarbageObject &operator=(GarbageObject &&rhs);
 
     bool valid() const { return mHandle != VK_NULL_HANDLE; }
-    void destroy(RendererVk *renderer);
+    void destroy(Renderer *renderer);
 
     template <typename DerivedT, typename HandleT>
     static GarbageObject Get(WrappedObject<DerivedT, HandleT> *object)
@@ -458,8 +482,8 @@ class StagingBuffer final : angle::NonCopyable
   public:
     StagingBuffer();
     void release(ContextVk *contextVk);
-    void collectGarbage(RendererVk *renderer, const QueueSerial &queueSerial);
-    void destroy(RendererVk *renderer);
+    void collectGarbage(Renderer *renderer, const QueueSerial &queueSerial);
+    void destroy(Renderer *renderer);
 
     angle::Result init(Context *context, VkDeviceSize size, StagingUsage usage);
 
@@ -592,7 +616,7 @@ template <typename T>
 class [[nodiscard]] RendererScoped final : angle::NonCopyable
 {
   public:
-    RendererScoped(RendererVk *renderer) : mRenderer(renderer) {}
+    RendererScoped(Renderer *renderer) : mRenderer(renderer) {}
     ~RendererScoped() { mVar.release(mRenderer); }
 
     const T &get() const { return mVar; }
@@ -601,7 +625,7 @@ class [[nodiscard]] RendererScoped final : angle::NonCopyable
     T &&release() { return std::move(mVar); }
 
   private:
-    RendererVk *mRenderer;
+    Renderer *mRenderer;
     T mVar;
 };
 
@@ -672,6 +696,12 @@ class AtomicRefCounted : angle::NonCopyable
     {
         ASSERT(isReferenced());
         mRefCount.fetch_sub(1, std::memory_order_relaxed);
+    }
+
+    unsigned int getAndReleaseRef()
+    {
+        ASSERT(isReferenced());
+        return mRefCount.fetch_sub(1, std::memory_order_relaxed);
     }
 
     bool isReferenced() const { return mRefCount.load(std::memory_order_relaxed) != 0; }
@@ -1096,6 +1126,9 @@ void InitExtendedDynamicStateEXTFunctions(VkDevice device);
 // VK_EXT_extended_dynamic_state2
 void InitExtendedDynamicState2EXTFunctions(VkDevice device);
 
+// VK_EXT_vertex_input_dynamic_state
+void InitVertexInputDynamicStateEXTFunctions(VkDevice device);
+
 // VK_KHR_fragment_shading_rate
 void InitFragmentShadingRateKHRInstanceFunction(VkInstance instance);
 void InitFragmentShadingRateKHRDeviceFunction(VkDevice device);
@@ -1281,6 +1314,22 @@ enum class RenderPassClosureReason
 
     InvalidEnum,
     EnumCount = InvalidEnum,
+};
+
+// The scope of synchronization for a sync object.  Synchronization is done between the signal
+// entity (src) and the entities waiting on the signal (dst)
+//
+// - For GL fence sync objects, src is the current context and dst is host / the rest of share
+// group.
+// - For EGL fence sync objects, src is the current context and dst is host / all other contexts.
+// - For EGL global fence sync objects (which is an ANGLE extension), src is all contexts who have
+//   previously made a submission to the queue used by the current context and dst is host / all
+//   other contexts.
+enum class SyncFenceScope
+{
+    CurrentContextToShareGroup,
+    CurrentContextToAllContexts,
+    AllContextsToAllContexts,
 };
 
 }  // namespace rx

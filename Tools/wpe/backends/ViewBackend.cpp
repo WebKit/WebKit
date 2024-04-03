@@ -36,16 +36,6 @@ ViewBackend::ViewBackend(uint32_t width, uint32_t height)
 
 ViewBackend::~ViewBackend() = default;
 
-#if !(defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY)
-void ViewBackend::initializeAccessibility()
-{
-}
-
-void ViewBackend::updateAccessibilityState(uint32_t)
-{
-}
-#endif // !ENABLE(ACCESSIBILITY)
-
 void ViewBackend::setInputClient(std::unique_ptr<InputClient>&& client)
 {
     m_inputClient = std::move(client);
@@ -81,9 +71,7 @@ void ViewBackend::dispatchInputAxisEvent(struct wpe_input_axis_event* event)
 
 void ViewBackend::dispatchInputKeyboardEvent(struct wpe_input_keyboard_event* event)
 {
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
     notifyAccessibilityKeyEventListeners(event);
-#endif
 
     if (m_inputClient && m_inputClient->dispatchKeyboardEvent(event))
         return;
@@ -96,5 +84,19 @@ void ViewBackend::dispatchInputTouchEvent(struct wpe_input_touch_event* event)
         return;
     wpe_view_backend_dispatch_touch_event(backend(), event);
 }
+
+#if ((defined(USE_GLIB) && USE_GLIB) && !(defined(USE_ATK) && USE_ATK))
+void ViewBackend::initializeAccessibility()
+{
+}
+
+void ViewBackend::updateAccessibilityState(uint32_t)
+{
+}
+
+void ViewBackend::notifyAccessibilityKeyEventListeners(struct wpe_input_keyboard_event*)
+{
+}
+#endif
 
 } // namespace WPEToolingBackends

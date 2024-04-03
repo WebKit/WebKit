@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 300x300
+  RenderSVGRoot {svg} at (0,0) size 300x300
+layer at (0,0) size 300x300
+  RenderSVGViewportContainer at (0,0) size 300x300
+layer at (0,0) size 2x2 backgroundClip at (20,20) size 10x10 clip at (20,20) size 10x10
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (-5,-5) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGPath {path} at (-5,-5) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 0 -5 L 5 5 L -5 5 Z"]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
+layer at (10,17.50) size 81x16
+  RenderSVGText {text} at (10,17) size 82x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x16
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 13 width 81.25: "Basic Markers"
+layer at (130,40) size 50x50
+  RenderSVGPath {path} at (130,40) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=16.00]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 130 40 L 180 40 L 180 90"]
+layer at (10,102.50) size 124x16
+  RenderSVGText {text} at (10,102) size 124x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 124x16
+      chunk 1 text run 1 at (10.00,115.00) startOffset 0 endOffset 21 width 123.65: "Start, Middle and End"
+layer at (130,135) size 50x50
+  RenderSVGPath {path} at (130,135) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=16.00]}] [start marker=markerStart] [middle marker=markerMiddle] [end marker=markerEnd] [data="M 130 135 L 180 135 L 180 185"]
+layer at (10,197.50) size 126x16
+  RenderSVGText {text} at (10,197) size 127x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 127x16
+      chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 126.36: "Automatic Orientation"
+layer at (130,230) size 50x50
+  RenderSVGPath {path} at (130,230) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=16.00]}] [start marker=marker2] [middle marker=marker2] [end marker=marker2] [data="M 130 230 L 180 230 L 180 280"]

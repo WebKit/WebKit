@@ -82,6 +82,8 @@ if (GBM_LIBRARY AND NOT TARGET GBM::GBM)
         INTERFACE_COMPILE_OPTIONS "${GBM_COMPILE_OPTIONS}"
         INTERFACE_INCLUDE_DIRECTORIES "${GBM_INCLUDE_DIR}"
     )
+    find_package(LibDRM REQUIRED)
+    target_link_libraries(GBM::GBM INTERFACE LibDRM::LibDRM)
 endif ()
 
 mark_as_advanced(

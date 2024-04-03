@@ -129,7 +129,7 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
             if (!m_videoElement)
                 return std::nullopt;
 
-            auto player = m_videoElement->player();
+            RefPtr player = m_videoElement->player();
             if (!player)
                 return std::nullopt;
 
@@ -223,7 +223,6 @@ void VideoPresentationModelVideoElement::setVideoSizeFenced(const FloatSize& siz
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
     m_videoElement->setVideoLayerSizeFenced(size, WTFMove(fence));
     m_videoElement->setVideoFullscreenFrame({ { }, size });
-
 }
 
 void VideoPresentationModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)

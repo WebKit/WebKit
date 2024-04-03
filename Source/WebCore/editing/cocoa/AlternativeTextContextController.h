@@ -24,25 +24,24 @@
  */
 
 #import "DictationContext.h"
+#import "PlatformTextAlternatives.h"
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
-
-@class NSTextAlternatives;
 
 namespace WebCore {
 
 class AlternativeTextContextController {
 public:
-    DictationContext addAlternatives(NSTextAlternatives *);
-    void replaceAlternatives(NSTextAlternatives *, DictationContext);
+    DictationContext addAlternatives(PlatformTextAlternatives *);
+    void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
     void removeAlternativesForContext(DictationContext);
     void clear();
 
-    NSTextAlternatives *alternativesForContext(DictationContext) const;
+    PlatformTextAlternatives *alternativesForContext(DictationContext) const;
 
 private:
-    HashMap<DictationContext, RetainPtr<NSTextAlternatives>> m_alternatives;
-    HashMap<RetainPtr<NSTextAlternatives>, DictationContext> m_contexts;
+    HashMap<DictationContext, RetainPtr<PlatformTextAlternatives>> m_alternatives;
+    HashMap<RetainPtr<PlatformTextAlternatives>, DictationContext> m_contexts;
 };
 
 } // namespace WebCore

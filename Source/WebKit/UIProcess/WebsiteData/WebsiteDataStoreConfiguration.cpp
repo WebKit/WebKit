@@ -127,34 +127,17 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 
     copy->m_baseCacheDirectory = this->m_baseCacheDirectory;
     copy->m_baseDataDirectory = this->m_baseDataDirectory;
+    copy->m_directories = this->m_directories;
     copy->m_serviceWorkerProcessTerminationDelayEnabled = this->m_serviceWorkerProcessTerminationDelayEnabled;
     copy->m_fastServerTrustEvaluationEnabled = this->m_fastServerTrustEvaluationEnabled;
     copy->m_networkCacheSpeculativeValidationEnabled = this->m_networkCacheSpeculativeValidationEnabled;
     copy->m_staleWhileRevalidateEnabled = this->m_staleWhileRevalidateEnabled;
-    copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_generalStorageDirectory = this->m_generalStorageDirectory;
     copy->m_unifiedOriginStorageLevel = this->m_unifiedOriginStorageLevel;
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_originQuotaRatio = this->m_originQuotaRatio;
     copy->m_totalQuotaRatio = this->m_totalQuotaRatio;
     copy->m_standardVolumeCapacity = this->m_standardVolumeCapacity;
     copy->m_volumeCapacityOverride = this->m_volumeCapacityOverride;
-    copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
-    copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
-    copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;
-    copy->m_mediaCacheDirectory = this->m_mediaCacheDirectory;
-    copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
-    copy->m_serviceWorkerRegistrationDirectory = this->m_serviceWorkerRegistrationDirectory;
-    copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
-    copy->m_hstsStorageDirectory = this->m_hstsStorageDirectory;
-    copy->m_localStorageDirectory = this->m_localStorageDirectory;
-    copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
-    copy->m_alternativeServicesDirectory = this->m_alternativeServicesDirectory;
-    copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;
-    copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
-    copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;
-    copy->m_searchFieldHistoryDirectory = this->m_searchFieldHistoryDirectory;
-    copy->m_cookieStorageFile = this->m_cookieStorageFile;
     copy->m_sourceApplicationBundleIdentifier = this->m_sourceApplicationBundleIdentifier;
     copy->m_sourceApplicationSecondaryIdentifier = this->m_sourceApplicationSecondaryIdentifier;
     copy->m_httpProxy = this->m_httpProxy;
@@ -186,9 +169,6 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     if (m_proxyConfiguration)
         copy->m_proxyConfiguration = adoptCF(CFDictionaryCreateCopy(nullptr, this->m_proxyConfiguration.get()));
 #endif
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-    copy->m_modelElementCacheDirectory = this->m_modelElementCacheDirectory;
-#endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     copy->m_isDeclarativeWebPushEnabled = this->m_isDeclarativeWebPushEnabled;
 #endif
@@ -199,6 +179,60 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 WebPushD::WebPushDaemonConnectionConfiguration WebsiteDataStoreConfiguration::webPushDaemonConnectionConfiguration() const
 {
     return { m_webPushDaemonUsesMockBundlesForTesting, { }, m_webPushPartitionString, m_identifier };
+}
+
+WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() const &
+{
+    return {
+        crossThreadCopy(applicationCacheFlatFileSubdirectoryName),
+        crossThreadCopy(applicationCacheDirectory),
+        crossThreadCopy(alternativeServicesDirectory),
+        crossThreadCopy(cacheStorageDirectory),
+        crossThreadCopy(cookieStorageFile),
+        crossThreadCopy(deviceIdHashSaltsStorageDirectory),
+        crossThreadCopy(generalStorageDirectory),
+        crossThreadCopy(hstsStorageDirectory),
+        crossThreadCopy(indexedDBDatabaseDirectory),
+        crossThreadCopy(javaScriptConfigurationDirectory),
+        crossThreadCopy(localStorageDirectory),
+        crossThreadCopy(mediaCacheDirectory),
+        crossThreadCopy(mediaKeysStorageDirectory),
+        crossThreadCopy(networkCacheDirectory),
+        crossThreadCopy(resourceLoadStatisticsDirectory),
+        crossThreadCopy(searchFieldHistoryDirectory),
+        crossThreadCopy(serviceWorkerRegistrationDirectory),
+        crossThreadCopy(webSQLDatabaseDirectory),
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+        crossThreadCopy(modelElementCacheDirectory),
+#endif
+    };
+}
+
+WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Directories::isolatedCopy() &&
+{
+    return {
+        crossThreadCopy(WTFMove(applicationCacheFlatFileSubdirectoryName)),
+        crossThreadCopy(WTFMove(applicationCacheDirectory)),
+        crossThreadCopy(WTFMove(alternativeServicesDirectory)),
+        crossThreadCopy(WTFMove(cacheStorageDirectory)),
+        crossThreadCopy(WTFMove(cookieStorageFile)),
+        crossThreadCopy(WTFMove(deviceIdHashSaltsStorageDirectory)),
+        crossThreadCopy(WTFMove(generalStorageDirectory)),
+        crossThreadCopy(WTFMove(hstsStorageDirectory)),
+        crossThreadCopy(WTFMove(indexedDBDatabaseDirectory)),
+        crossThreadCopy(WTFMove(javaScriptConfigurationDirectory)),
+        crossThreadCopy(WTFMove(localStorageDirectory)),
+        crossThreadCopy(WTFMove(mediaCacheDirectory)),
+        crossThreadCopy(WTFMove(mediaKeysStorageDirectory)),
+        crossThreadCopy(WTFMove(networkCacheDirectory)),
+        crossThreadCopy(WTFMove(resourceLoadStatisticsDirectory)),
+        crossThreadCopy(WTFMove(searchFieldHistoryDirectory)),
+        crossThreadCopy(WTFMove(serviceWorkerRegistrationDirectory)),
+        crossThreadCopy(WTFMove(webSQLDatabaseDirectory)),
+#if ENABLE(ARKIT_INLINE_PREVIEW)
+        crossThreadCopy(WTFMove(modelElementCacheDirectory)),
+#endif
+    };
 }
 
 } // namespace WebKit

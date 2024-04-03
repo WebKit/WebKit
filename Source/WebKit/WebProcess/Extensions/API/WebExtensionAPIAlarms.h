@@ -37,7 +37,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIAlarms : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAlarms, alarms);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIAlarms, alarms, alarms);
 
 public:
 #if PLATFORM(COCOA)

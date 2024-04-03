@@ -15,9 +15,9 @@
 #include "common/linux/dma_buf_utils.h"
 #include "common/system_utils.h"
 #include "libANGLE/Display.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/linux/wayland/WindowSurfaceVkWayland.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -109,9 +109,9 @@ const char *DisplayVkWayland::getWSIExtension() const
     return VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
 }
 
-bool DisplayVkWayland::isWayland() const
+angle::NativeWindowSystem DisplayVkWayland::getWindowSystem() const
 {
-    return true;
+    return angle::NativeWindowSystem::Wayland;
 }
 
 bool IsVulkanWaylandDisplayAvailable()

@@ -58,7 +58,7 @@ struct WebSocketFrame {
     WEBCORE_EXPORT static bool needsExtendedLengthField(size_t payloadLength);
     WEBCORE_EXPORT static ParseFrameResult parseFrame(uint8_t* data, size_t dataLength, WebSocketFrame&, const uint8_t*& frameEnd, String& errorString); // May modify part of data to unmask the frame.
 
-    WEBCORE_EXPORT WebSocketFrame(OpCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, const uint8_t* payload = nullptr, size_t payloadLength = 0);
+    WEBCORE_EXPORT WebSocketFrame(OpCode = OpCodeInvalid, bool final = false, bool compress = false, bool masked = false, std::span<const uint8_t> payload = { });
     WEBCORE_EXPORT void makeFrameData(Vector<uint8_t>& frameData);
 
     OpCode opCode;
@@ -67,8 +67,7 @@ struct WebSocketFrame {
     bool reserved2;
     bool reserved3;
     bool masked;
-    const uint8_t* payload;
-    size_t payloadLength;
+    std::span<const uint8_t> payload;
 };
 
 } // namespace WebCore

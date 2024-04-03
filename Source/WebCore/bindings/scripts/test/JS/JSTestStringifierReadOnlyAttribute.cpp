@@ -160,12 +160,12 @@ void JSTestStringifierReadOnlyAttribute::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadOnlyAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestStringifierReadOnlyAttributePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestStringifierReadOnlyAttribute::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestStringifierReadOnlyAttribute::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestStringifierReadOnlyAttribute_identifierGetter(JSGlobalObject& lexicalGlobalObject, JSTestStringifierReadOnlyAttribute& thisObject)
@@ -227,7 +227,7 @@ void JSTestStringifierReadOnlyAttributeOwner::finalize(JSC::Handle<JSC::Unknown>
 {
     auto* jsTestStringifierReadOnlyAttribute = static_cast<JSTestStringifierReadOnlyAttribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestStringifierReadOnlyAttribute->wrapped(), jsTestStringifierReadOnlyAttribute);
+    uncacheWrapper(world, jsTestStringifierReadOnlyAttribute->protectedWrapped().ptr(), jsTestStringifierReadOnlyAttribute);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

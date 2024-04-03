@@ -165,7 +165,10 @@ bool AlternativeTextController::hasPendingCorrection() const
 
 bool AlternativeTextController::isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const
 {
-    return !protectedDocument()->markers().hasMarkers(misspellingRange, DocumentMarker::Type::SpellCheckingExemption);
+    CheckedPtr controller = protectedDocument()->markersIfExists();
+    if (!controller)
+        return true;
+    return !controller->hasMarkers(misspellingRange, DocumentMarker::Type::SpellCheckingExemption);
 }
 
 void AlternativeTextController::show(const SimpleRange& rangeToReplace, const String& replacement)
@@ -420,8 +423,12 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     RefPtr node = position.containerNode();
+    CheckedPtr markers = node->document().markersIfExists();
+    if (!markers)
+        return;
+
     ASSERT(node);
-    for (auto& marker : node->document().markers().markersFor(*node)) {
+    for (auto& marker : markers->markersFor(*node)) {
         ASSERT(marker);
         if (respondToMarkerAtEndOfWord(*marker, position))
             break;
@@ -475,8 +482,11 @@ void AlternativeTextController::markCorrection(const SimpleRange& replacedRange,
 
 void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction)
 {
-    DocumentMarkerController& markers = rangeOfCorrection.startContainer().document().markers();
-    auto correctedOnceMarkers = markers.markersInRange(rangeOfCorrection, DocumentMarker::Type::Autocorrected);
+    CheckedPtr markers = rangeOfCorrection.startContainer().document().markersIfExists();
+    if (!markers)
+        return;
+
+    auto correctedOnceMarkers = markers->markersInRange(rangeOfCorrection, DocumentMarker::Type::Autocorrected);
     if (correctedOnceMarkers.isEmpty())
         return;
 
@@ -661,10 +671,13 @@ void AlternativeTextController::applyAlternativeTextToRange(const SimpleRange& r
 
 void AlternativeTextController::removeCorrectionIndicatorMarkers()
 {
+    CheckedPtr markers = protectedDocument()->markersIfExists();
+    if (!markers)
+        return;
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
-    protectedDocument()->markers().dismissMarkers(DocumentMarker::Type::CorrectionIndicator);
+    markers->dismissMarkers(DocumentMarker::Type::CorrectionIndicator);
 #else
-    protectedDocument()->markers().removeMarkers(DocumentMarker::Type::CorrectionIndicator);
+    markers->removeMarkers(DocumentMarker::Type::CorrectionIndicator);
 #endif
 }
 

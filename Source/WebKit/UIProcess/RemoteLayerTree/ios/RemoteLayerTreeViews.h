@@ -29,6 +29,8 @@
 #import "WKBaseScrollView.h"
 #import <wtf/OptionSet.h>
 
+OBJC_CLASS UIScrollView;
+
 namespace WebCore {
 class FloatRect;
 class IntPoint;

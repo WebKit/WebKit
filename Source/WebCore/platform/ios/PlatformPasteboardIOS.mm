@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "ColorCocoa.h"
+#import "CommonAtomStrings.h"
 #import "Image.h"
 #import "NSURLUtilities.h"
 #import "Pasteboard.h"
@@ -53,10 +54,18 @@
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
 #define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(MACCATALYST))
 
+@interface UIPasteboard () <AbstractPasteboard>
+@end
+
 namespace WebCore {
 
+static UIPasteboard *generalUIPasteboard()
+{
+    return static_cast<UIPasteboard *>([PAL::getUIPasteboardClass() generalPasteboard]);
+}
+
 PlatformPasteboard::PlatformPasteboard()
-    : m_pasteboard([PAL::getUIPasteboardClass() generalPasteboard])
+    : m_pasteboard(generalUIPasteboard())
 {
 }
 
@@ -66,11 +75,11 @@ PlatformPasteboard::PlatformPasteboard(const String& name)
     if (name == Pasteboard::nameOfDragPasteboard())
         m_pasteboard = [WebItemProviderPasteboard sharedInstance];
     else
-        m_pasteboard = [PAL::getUIPasteboardClass() generalPasteboard];
+        m_pasteboard = generalUIPasteboard();
 }
 #else
 PlatformPasteboard::PlatformPasteboard(const String&)
-    : m_pasteboard([PAL::getUIPasteboardClass() generalPasteboard])
+    : m_pasteboard(generalUIPasteboard())
 {
 }
 #endif
@@ -358,10 +367,10 @@ int64_t PlatformPasteboard::changeCount() const
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (domType == "text/plain"_s)
+    if (domType == textPlainContentTypeAtom())
         return kUTTypePlainText;
 
-    if (domType == "text/html"_s)
+    if (domType == textHTMLContentTypeAtom())
         return kUTTypeHTML;
 
     if (domType == "text/uri-list"_s)

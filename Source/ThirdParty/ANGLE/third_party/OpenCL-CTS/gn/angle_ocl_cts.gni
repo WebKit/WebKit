@@ -1,0 +1,55 @@
+# Copyright 2024 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//gni/angle.gni")
+
+template("ocl_cts_binary") {
+  executable("test_$target_name") {
+    cflags = [
+      "-Wno-deprecated-declarations",
+      "-Wno-#warnings",
+      "-Wno-format",
+      "-Wno-vla-cxx-extension",
+      "-Wno-deprecated-volatile",
+      "-Wno-c++11-narrowing",
+    ]
+    defines = [ "CL_TARGET_OPENCL_VERSION=300" ]
+    deps = [
+      "$angle_root:cl_includes",
+      "$angle_root/third_party/OpenCL-CTS/gn:test_common",
+      "$angle_root/third_party/OpenCL-ICD-Loader:opencl_icd_loader",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs -= [ "//build/config/compiler:no_exceptions" ]
+    configs -= [ "//build/config/compiler:no_rtti" ]
+    include_dirs = [
+      "$angle_root/third_party/OpenCL-CTS/src/test_common",
+      "$angle_root/third_party/OpenCL-CTS/src/test_common/autotest",
+      "$angle_root/third_party/OpenCL-CTS/src/test_common/harness",
+      "$angle_root/third_party/OpenCL-CTS/src/test_common/miniz",
+      "$angle_root/third_party/OpenCL-ICD-Loader/src/loader",
+    ]
+
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "deps",
+                             "include_dirs",
+                             "cflags",
+                           ])
+    if (defined(invoker.configs)) {
+      configs += invoker.configs
+    }
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+    if (defined(invoker.include_dirs)) {
+      include_dirs += invoker.include_dirs
+    }
+    if (defined(invoker.cflags)) {
+      cflags += invoker.cflags
+    }
+  }
+}

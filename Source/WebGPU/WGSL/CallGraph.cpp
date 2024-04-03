@@ -33,21 +33,14 @@
 
 namespace WGSL {
 
-CallGraph::CallGraph(ShaderModule& shaderModule)
-    : m_ast(shaderModule)
-{
-}
-
 class CallGraphBuilder : public AST::Visitor {
 public:
-    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
-        : m_callGraph(shaderModule)
-        , m_pipelineLayouts(pipelineLayouts)
-        , m_result(result)
+    CallGraphBuilder(ShaderModule& shaderModule)
+        : m_shaderModule(shaderModule)
     {
     }
 
-    CallGraph build();
+    void build();
 
     void visit(AST::Function&) override;
     void visit(AST::CallExpression&) override;
@@ -55,43 +48,37 @@ public:
 private:
     void initializeMappings();
 
+    ShaderModule& m_shaderModule;
     CallGraph m_callGraph;
-    const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
-    PrepareResult& m_result;
     HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
     Vector<CallGraph::Callee>* m_callees { nullptr };
     Deque<AST::Function*> m_queue;
 };
 
-CallGraph CallGraphBuilder::build()
+void CallGraphBuilder::build()
 {
     initializeMappings();
-    return m_callGraph;
+    m_shaderModule.setCallGraph(WTFMove(m_callGraph));
 }
 
 void CallGraphBuilder::initializeMappings()
 {
-    for (auto& declaration : m_callGraph.m_ast.declarations()) {
-        if (!is<AST::Function>(declaration))
+    for (auto& declaration : m_shaderModule.declarations()) {
+        auto* function = dynamicDowncast<AST::Function>(declaration);
+        if (!function)
             continue;
 
-        auto& function = downcast<AST::Function>(declaration);
-        const auto& name = function.name();
+        const auto& name = function->name();
         {
-            auto result = m_callGraph.m_functionsByName.add(name, &function);
+            auto result = m_callGraph.m_functionsByName.add(name, function);
             ASSERT_UNUSED(result, result.isNewEntry);
         }
 
-        if (!m_pipelineLayouts.contains(name))
+        if (!function->stage())
             continue;
 
-        if (!function.stage())
-            continue;
-
-        auto addResult = m_result.entryPoints.add(function.name(), Reflection::EntryPointInformation { });
-        ASSERT(addResult.isNewEntry);
-        m_callGraph.m_entrypoints.append({ function, *function.stage(), addResult.iterator->value });
-        m_queue.append(&function);
+        m_callGraph.m_entrypoints.append({ *function, *function->stage(), function->name() });
+        m_queue.append(function);
     }
 
     while (!m_queue.isEmpty())
@@ -116,11 +103,11 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
     for (auto& argument : call.arguments())
         AST::Visitor::visit(argument);
 
-    if (!is<AST::IdentifierExpression>(call.target()))
+    auto* target = dynamicDowncast<AST::IdentifierExpression>(call.target());
+    if (!target)
         return;
 
-    auto& target = downcast<AST::IdentifierExpression>(call.target());
-    auto it = m_callGraph.m_functionsByName.find(target.identifier());
+    auto it = m_callGraph.m_functionsByName.find(target->identifier());
     if (it == m_callGraph.m_functionsByName.end())
         return;
 
@@ -132,9 +119,9 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
         m_callees->at(result.iterator->value).callSites.append(&call);
 }
 
-CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
+void buildCallGraph(ShaderModule& shaderModule)
 {
-    return CallGraphBuilder(shaderModule, pipelineLayouts, result).build();
+    CallGraphBuilder(shaderModule).build();
 }
 
 } // namespace WGSL

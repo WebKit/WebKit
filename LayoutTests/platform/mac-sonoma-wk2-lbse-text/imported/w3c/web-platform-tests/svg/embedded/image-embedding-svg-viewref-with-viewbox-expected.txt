@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-355,-1110) size 455x1210 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (-355,-1110) size 455x1210 [fill={[type=SOLID] [color=#FF0000]}] [x=-355.00] [y=-1110.00] [width=455.00] [height=1210.00]
+layer at (-355,-1110) size 455x1210 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGImage {image} at (-355,-1110) size 455x1210

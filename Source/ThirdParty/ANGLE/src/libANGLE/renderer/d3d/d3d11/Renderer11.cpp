@@ -4208,8 +4208,8 @@ void Renderer11::generateCaps(gl::Caps *outCaps,
 
 void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const
 {
-    ApplyFeatureOverrides(features, mDisplay->getState());
-    if (!mDisplay->getState().featuresAllDisabled)
+    ApplyFeatureOverrides(features, mDisplay->getState().featureOverrides);
+    if (!mDisplay->getState().featureOverrides.allDisabled)
     {
         d3d11::InitializeFeatures(mRenderer11DeviceCaps, mAdapterDescription, features);
     }
@@ -4217,8 +4217,8 @@ void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const
 
 void Renderer11::initializeFrontendFeatures(angle::FrontendFeatures *features) const
 {
-    ApplyFeatureOverrides(features, mDisplay->getState());
-    if (!mDisplay->getState().featuresAllDisabled)
+    ApplyFeatureOverrides(features, mDisplay->getState().featureOverrides);
+    if (!mDisplay->getState().featureOverrides.allDisabled)
     {
         d3d11::InitializeFrontendFeatures(mAdapterDescription, features);
     }
@@ -4524,10 +4524,12 @@ angle::Result Renderer11::markRawBufferUsage(const gl::Context *context)
         }
     }
 
-    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
+    const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers =
+        executable->getAtomicCounterBuffers();
+    for (size_t index = 0; index < atomicCounterBuffers.size(); ++index)
     {
-        GLuint binding     = atomicCounterBuffer.pod.binding;
-        const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
+        const GLuint binding = executable->getAtomicCounterBufferBinding(index);
+        const auto &buffer   = glState.getIndexedAtomicCounterBuffer(binding);
 
         if (buffer.get() != nullptr)
         {

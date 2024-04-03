@@ -27,6 +27,7 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include <WebCore/FrameIdentifier.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,13 +40,16 @@ class RemoteScrollingCoordinatorTransaction {
 public:
     enum class FromDeserialization : bool { No, Yes };
     RemoteScrollingCoordinatorTransaction();
-    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, FromDeserialization = FromDeserialization::Yes);
+    RemoteScrollingCoordinatorTransaction(std::unique_ptr<WebCore::ScrollingStateTree>&&, bool, WebCore::FrameIdentifier = { }, FromDeserialization = FromDeserialization::Yes);
     RemoteScrollingCoordinatorTransaction(RemoteScrollingCoordinatorTransaction&&);
     RemoteScrollingCoordinatorTransaction& operator=(RemoteScrollingCoordinatorTransaction&&);
     ~RemoteScrollingCoordinatorTransaction();
 
     std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
     const std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() const { return m_scrollingStateTree; }
+
+    WebCore::FrameIdentifier rootFrameIdentifier() const { return m_rootFrameID; }
+    void setFrameIdentifier(WebCore::FrameIdentifier identifier) { m_rootFrameID = identifier; }
 
     bool clearScrollLatching() const { return m_clearScrollLatching; }
 
@@ -60,6 +64,9 @@ private:
     // Data encoded here should be "imperative" (valid just for one transaction). Stateful things should live on scrolling tree nodes.
     // Maybe RequestedScrollData should move here.
     bool m_clearScrollLatching { false };
+
+    // Frame Identifier for the root frame of this transaction
+    WebCore::FrameIdentifier m_rootFrameID;
 };
 
 } // namespace WebKit

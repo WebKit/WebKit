@@ -492,7 +492,7 @@ static String fontNameMapName(FT_Face face, unsigned id)
         switch (name.platform_id) {
         case TT_PLATFORM_MACINTOSH:
             if (name.encoding_id == TT_MAC_ID_ROMAN)
-                return String(name.string, name.string_len);
+                return String({ name.string, name.string_len });
             // FIXME: implement other macintosh encodings.
             break;
         case TT_PLATFORM_APPLE_UNICODE:

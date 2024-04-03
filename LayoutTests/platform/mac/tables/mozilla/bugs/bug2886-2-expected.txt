@@ -9,7 +9,7 @@ layer at (0,0) size 800x270
             RenderTableCell {TH} at (2,2) size 164x21 [color=#CC0000] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,3) size 31x15
                 text run at (0,3) width 31: "17.6 "
-              RenderInline {A} at (0,0) size 134x15 [color=#3333FF]
+              RenderInline {A} at (30,3) size 134x15 [color=#3333FF]
                 RenderText {#text} at (30,3) size 134x15
                   text run at (30,3) width 134: "Table Border Test 2"
             RenderTableCell {TD} at (167,2) size 22x21 [color=#FFFF00] [bgcolor=#CC0000] [r=0 c=1 rs=1 cs=1]
@@ -80,28 +80,28 @@ layer at (0,0) size 800x270
                 text run at (0,0) width 13: "U"
             RenderTableCell {TD} at (290,70) size 47x0 [r=2 c=7 rs=1 cs=1]
       RenderBlock {P} at (0,108) size 648x37
-        RenderInline {A} at (0,0) size 88x21 [color=#3333FF] [bgcolor=#FFFFF5]
+        RenderInline {A} at (0,14) size 88x21 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderImage {IMG} at (0,0) size 88x31
       RenderBlock {P} at (0,157) size 648x25
         RenderText {#text} at (0,2) size 78x21
           text run at (0,2) width 78: "(Back to "
-        RenderInline {A} at (0,0) size 234x21 [color=#3333FF] [bgcolor=#FFFFF5]
+        RenderInline {A} at (77,2) size 234x21 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderText {#text} at (77,2) size 234x21
             text run at (77,2) width 234: "CSS Testing Information"
         RenderText {#text} at (310,2) size 13x21
           text run at (310,2) width 13: ", "
-        RenderInline {A} at (0,0) size 117x21 [color=#3333FF] [bgcolor=#FFFFF5]
+        RenderInline {A} at (322,2) size 117x21 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderText {#text} at (322,2) size 117x21
             text run at (322,2) width 117: "David Baron"
         RenderText {#text} at (438,2) size 9x21
           text run at (438,2) width 9: ")"
       RenderBlock {P} at (0,194) size 648x25
-        RenderInline {A} at (0,0) size 38x21 [color=#3333FF] [bgcolor=#FFFFF5]
+        RenderInline {A} at (0,2) size 38x21 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderText {#text} at (0,2) size 38x21
             text run at (0,2) width 38: "LDB"
         RenderText {#text} at (37,2) size 13x21
           text run at (37,2) width 13: ", "
-        RenderInline {A} at (0,0) size 235x21 [color=#3333FF] [bgcolor=#FFFFF5]
+        RenderInline {A} at (49,2) size 235x21 [color=#3333FF] [bgcolor=#FFFFF5]
           RenderText {#text} at (49,2) size 235x21
             text run at (49,2) width 235: "dbaron@fas.harvard.edu"
 layer at (88,120) size 648x1

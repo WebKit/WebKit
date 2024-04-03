@@ -115,6 +115,9 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
         [&](Idle&) {
             createSessionIfNeeded();
 
+            // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+            // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+            // We should call PageClientImpl::presentingViewController() instead.
             auto* presentingViewController = page.uiClient().presentingViewController();
             if (!presentingViewController) {
                 RELEASE_LOG_ERROR(XR, "ARKitCoordinator: failed to obtain presenting ViewController from page.");
@@ -282,7 +285,8 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
                     PlatformXRPose(frame.camera.projectionMatrix).toColumnMajorFloatArray()
                 },
             });
-            auto colorTexture = makeMachSendRight(presentationSession.colorTexture);
+            id<MTLTexture> colorTexture = presentationSession.colorTexture;
+            auto colorTextureSendRight = makeMachSendRight(colorTexture);
             auto renderingFrameIndex = presentationSession.renderingFrameIndex;
             // FIXME: Send this event once at setup time, not every frame.
             id<MTLSharedEvent> completionEvent = presentationSession.completionEvent;
@@ -291,7 +295,8 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
 
             // FIXME: rdar://77858090 (Need to transmit color space information)
             frameData.layers.set(defaultLayerHandle(), PlatformXR::FrameData::LayerData {
-                .colorTexture = WTFMove(colorTexture),
+                .framebufferSize = IntSize(colorTexture.width, colorTexture.height),
+                .colorTexture = WTFMove(colorTextureSendRight),
                 .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
             });
             frameData.shouldRender = true;

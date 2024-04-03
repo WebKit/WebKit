@@ -24,7 +24,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderImageResource.h"
 #include "RenderSVGModelObject.h"
 #include "SVGBoundingBoxComputation.h"
@@ -40,9 +39,11 @@ public:
     virtual ~RenderSVGImage();
 
     SVGImageElement& imageElement() const;
+    Ref<SVGImageElement> protectedImageElement() const;
 
     RenderImageResource& imageResource() { return *m_imageResource; }
     const RenderImageResource& imageResource() const { return *m_imageResource; }
+    CheckedRef<RenderImageResource> checkedImageResource() const;
 
     bool updateImageViewport();
 
@@ -87,5 +88,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGImage, isRenderSVGImage())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

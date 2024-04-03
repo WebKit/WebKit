@@ -80,5 +80,9 @@ layer at (181,80) size 16x16
   RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (11,104) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (181,104) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]
 layer at (11,128) size 16x16
   RenderBlock {DIV} at (0,1) size 16x16 [bgcolor=#000000]
+layer at (181,128) size 16x16
+  RenderBlock {DIV} at (170,1) size 16x16 [bgcolor=#000000]

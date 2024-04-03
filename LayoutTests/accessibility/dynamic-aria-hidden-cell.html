@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table id="table" tabindex="0">
+    <thead id="thead">
+        <tr id="tr0">
+            <th id="th0-0-hidden" aria-hidden="true">Header one</th>
+            <th id="th0-1" tabindex="0" aria-colindex="1"><strong>Header two</strong></th>
+            <th id="th0-2" tabindex="0" aria-colindex="2"><strong>Header three</strong></th>
+        </tr>
+    </thead>
+    <tbody id="tbody">
+        <tr id="tr1">
+            <td id="td1-0-hidden" aria-hidden="true">A</td>
+            <td id="td1-1" tabindex="0" aria-colindex="1">B</td>
+            <td id="td1-2" tabindex="0" aria-colindex="2">C</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+var output = "This test ensures we report the right information for tables with presentational cells.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var table = accessibilityController.accessibleElementById("table");
+    output += expect("table.rowCount", "2");
+    output += expect("table.columnCount", "2");
+
+    output += expect("accessibilityController.accessibleElementById('th0-1').rowIndexRange()", "'{0, 1}'");
+    output += expect("accessibilityController.accessibleElementById('th0-1').columnIndexRange()", "'{0, 1}'");
+
+    output += expect("accessibilityController.accessibleElementById('th0-2').rowIndexRange()", "'{0, 1}'");
+    output += expect("accessibilityController.accessibleElementById('th0-2').columnIndexRange()", "'{1, 1}'");
+
+    output += expect("accessibilityController.accessibleElementById('td1-1').rowIndexRange()", "'{1, 1}'");
+    output += expect("accessibilityController.accessibleElementById('td1-1').columnIndexRange()", "'{0, 1}'");
+
+    output += expect("accessibilityController.accessibleElementById('td1-2').rowIndexRange()", "'{1, 1}'");
+    output += expect("accessibilityController.accessibleElementById('td1-2').columnIndexRange()", "'{1, 1}'");
+
+    document.getElementById("th0-0-hidden").removeAttribute("aria-hidden");
+    document.getElementById("td1-0-hidden").removeAttribute("aria-hidden");
+    setTimeout(async function() {
+        output += await expectAsync("table.columnCount", "3");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('th0-0-hidden').rowIndexRange()", "'{0, 1}'");
+        output += await expectAsync("accessibilityController.accessibleElementById('th0-0-hidden').columnIndexRange()", "'{0, 1}'");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('th0-1').rowIndexRange()", "'{0, 1}'");
+        output += await expectAsync("accessibilityController.accessibleElementById('th0-1').columnIndexRange()", "'{1, 1}'");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('td1-0-hidden').rowIndexRange()", "'{1, 1}'");
+        output += await expectAsync("accessibilityController.accessibleElementById('td1-0-hidden').columnIndexRange()", "'{0, 1}'");
+
+        output += expect("accessibilityController.accessibleElementById('td1-1').rowIndexRange()", "'{1, 1}'");
+        output += expect("accessibilityController.accessibleElementById('td1-1').columnIndexRange()", "'{1, 1}'");
+
+        output += expect("accessibilityController.accessibleElementById('td1-2').rowIndexRange()", "'{1, 1}'");
+        output += expect("accessibilityController.accessibleElementById('td1-2').columnIndexRange()", "'{2, 1}'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

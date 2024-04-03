@@ -1,47 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x412
-  RenderBlock {HTML} at (0,0) size 800x412
-    RenderBody {BODY} at (8,16) size 784x380
-      RenderBlock {P} at (0,0) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (0,22) size 133x72 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 133x24 [border: (3px solid #FFA500)]
-          RenderText {#text} at (55,3) size 23x17
-            text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,27) size 63x42
-          RenderTableRow {TR} at (0,2) size 63x38
-            RenderTableCell {TD} at (2,2) size 59x38 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 57x17
-                text run at (1,1) width 57: "Centered"
-              RenderBR {BR} at (58,1) size 0x17
-              RenderText {#text} at (1,19) size 24x17
-                text run at (1,19) width 24: "OK"
-      RenderBlock {P} at (0,110) size 784x6 [border: (3px solid #800080)]
-      RenderBlock {P} at (0,132) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (325,154) size 134x72 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 133x24 [border: (3px solid #FFA500)]
-          RenderText {#text} at (55,3) size 23x17
-            text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,27) size 63x42
-          RenderTableRow {TR} at (0,2) size 63x38
-            RenderTableCell {TD} at (2,2) size 59x38 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 57x17
-                text run at (1,1) width 57: "Centered"
-              RenderBR {BR} at (58,1) size 0x17
-              RenderText {#text} at (1,19) size 45x17
-                text run at (1,19) width 45: "SHIFT"
-      RenderBlock {P} at (0,242) size 784x6 [border: (3px solid #800080)]
-      RenderBlock {P} at (0,264) size 784x6 [border: (3px solid #800080)]
-      RenderTable {TABLE} at (0,286) size 133x72 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 133x24 [border: (3px solid #FFA500)]
-          RenderText {#text} at (55,3) size 23x17
-            text run at (55,3) width 23: "cap"
-        RenderTableSection {TBODY} at (35,27) size 63x42
-          RenderTableRow {TR} at (0,2) size 63x38
-            RenderTableCell {TD} at (2,2) size 59x38 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 57x17
-                text run at (1,1) width 57: "Centered"
-              RenderBR {BR} at (58,1) size 0x17
-              RenderText {#text} at (1,19) size 55x17
-                text run at (1,19) width 55: "NOSTD"
-      RenderBlock {P} at (0,374) size 784x6 [border: (3px solid #800080)]
+layer at (0,0) size 800x245
+  RenderBlock {html} at (0,0) size 800x245
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 567x14
+          text run at (0,0) width 567: "error on line 35 at column 75: Opening and ending tag mismatch: br line 35 and td"
+          text run at (566,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
+    RenderBody {body} at (8,168) size 784x61
+      RenderBlock {p} at (0,0) size 784x60 [border: (3px solid #800080)]
+        RenderTable {table} at (325,3) size 134x54 [border: (3px solid #008000)]
+          RenderBlock {caption} at (0,0) size 133x24 [border: (3px solid #FFA500)]
+            RenderText {#text} at (55,3) size 23x17
+              text run at (55,3) width 23: "cap"
+          RenderTableSection (anonymous) at (35,27) size 63x24
+            RenderTableRow {tr} at (0,2) size 63x20
+              RenderTableCell {td} at (2,2) size 59x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 57x17
+                  text run at (1,1) width 57: "Centered"
+                RenderBR {br} at (58,1) size 0x17

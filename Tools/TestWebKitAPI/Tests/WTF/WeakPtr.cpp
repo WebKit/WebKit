@@ -228,7 +228,7 @@ TEST(WTF_WeakPtr, Operators)
 
     WeakPtr<Foo> weakPtr4 = WTFMove(weakPtr);
     EXPECT_EQ(weakPtr4.get(), &f);
-    EXPECT_FALSE(weakPtr);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(weakPtr);
 }
 
 TEST(WTF_WeakPtr, Forget)
@@ -333,7 +333,7 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssign)
         WeakPtr<Derived> derivedWeakPtr = makeWeakPtr(derived);
         WeakPtr<Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
-        EXPECT_NULL(derivedWeakPtr.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
@@ -348,7 +348,7 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssign)
         WeakPtr<Base> baseWeakPtr;
         baseWeakPtr = WTFMove(derivedWeakPtr);
         EXPECT_EQ(baseWeakPtr.get(), &derived);
-        EXPECT_NULL(derivedWeakPtr.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
@@ -367,7 +367,7 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
         auto derivedWeakPtr = makeWeakPtr(derived);
         WeakPtr<const Base> baseWeakPtr { WTFMove(derivedWeakPtr) };
         EXPECT_EQ(baseWeakPtr.get(), &derived);
-        EXPECT_NULL(derivedWeakPtr.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
@@ -382,7 +382,7 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
         WeakPtr<const Base> baseWeakPtr;
         baseWeakPtr = WTFMove(derivedWeakPtr);
         EXPECT_EQ(baseWeakPtr.get(), &derived);
-        EXPECT_NULL(derivedWeakPtr.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(derivedWeakPtr.get());
     }
 
     {
@@ -2815,7 +2815,7 @@ TEST(WTF_ThreadSafeWeakPtr, UseAfterMoveResistance)
     auto counter = adoptRef(*new ThreadSafeInstanceCounter());
     auto weakPtr = ThreadSafeWeakPtr { counter.get() };
     auto movedTo = WTFMove(weakPtr);
-    EXPECT_NULL(weakPtr.get());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_NULL(weakPtr.get());
     EXPECT_NOT_NULL(movedTo.get());
     ThreadSafeWeakPtr<ThreadSafeInstanceCounter> emptyConstructor;
     EXPECT_NULL(emptyConstructor.get());

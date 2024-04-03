@@ -207,10 +207,6 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 #if ENABLE(VIDEO)
     if (auto* vttElement = dynamicDowncast<WebVTTElement>(element))
         language = vttElement->language();
-    else if (auto* ruby = dynamicDowncast<WebVTTRubyElement>(element))
-        language = ruby->language();
-    else if (auto* rubyText = dynamicDowncast<WebVTTRubyTextElement>(element))
-        language = rubyText->language();
     else
 #endif
         language = element.effectiveLang();
@@ -416,32 +412,32 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
     return false;
 }
 
-ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesAnimatingFullscreenTransitionPseudoClass(const Element& element)
 {
-    if (&element != element.document().fullscreenManager().currentFullscreenElement())
+    CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
+    if (!fullscreenManager || &element != fullscreenManager->currentFullscreenElement())
         return false;
-    return element.document().fullscreenManager().isAnimatingFullscreen();
+    return fullscreenManager->isAnimatingFullscreen();
 }
 
-ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
-{
-    auto* currentFullscreenElement = element.document().fullscreenManager().currentFullscreenElement();
-    return currentFullscreenElement && currentFullscreenElement->isDescendantOrShadowDescendantOf(element);
-}
-
-ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
+ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    return element.document().fullscreenManager().fullscreenElement();
+    CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
+    return fullscreenManager && fullscreenManager->fullscreenElement();
 }
 
-ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
+#if ENABLE(VIDEO)
+ALWAYS_INLINE bool matchesInWindowFullScreenPseudoClass(const Element& element)
 {
     if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
-    return element.document().fullscreenManager().areFullscreenControlsHidden();
+
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
+#endif
 
 #endif
 
@@ -460,10 +456,6 @@ ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 {
     if (auto* webVTTElement = dynamicDowncast<WebVTTElement>(element))
         return !webVTTElement->isPastNode();
-    if (auto* webVTTRubyElement = dynamicDowncast<WebVTTRubyElement>(element))
-        return !webVTTRubyElement->isPastNode();
-    if (auto* webVTTRubyTextElement = dynamicDowncast<WebVTTRubyTextElement>(element))
-        return !webVTTRubyTextElement->isPastNode();
     return false;
 }
 
@@ -471,10 +463,6 @@ ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 {
     if (auto* vttElement = dynamicDowncast<WebVTTElement>(element))
         return vttElement->isPastNode();
-    if (auto* ruby = dynamicDowncast<WebVTTRubyElement>(element))
-        return ruby->isPastNode();
-    if (auto* rubyText = dynamicDowncast<WebVTTRubyTextElement>(element))
-        return rubyText->isPastNode();
     return false;
 }
 
@@ -550,9 +538,6 @@ ALWAYS_INLINE bool matchesFocusPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesFocusVisiblePseudoClass(const Element& element)
 {
-    if (!element.document().settings().focusVisibleEnabled())
-        return matchesLegacyDirectFocusPseudoClass(element);
-
     if (InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::FocusVisible))
         return true;
 

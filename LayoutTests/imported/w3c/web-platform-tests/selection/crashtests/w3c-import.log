@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+user-select
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selectall-and-find-svg-text-on-selectstart.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-clip-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-around-input.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-around-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-boundary-around-empty-details.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-boundary-around-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-line-next-to-textarea.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/selection-modify-per-word-in-table-header-group.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/crashtests/table.html

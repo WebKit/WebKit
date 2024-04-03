@@ -42,4 +42,8 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTableBlock)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTable)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIFoundation, NSTextTab)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UIFoundationSoftLinkAdditions.mm>
+#endif
+
 #endif

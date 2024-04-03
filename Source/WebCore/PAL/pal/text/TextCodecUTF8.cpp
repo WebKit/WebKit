@@ -296,15 +296,15 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
     } while (m_partialSequenceSize);
 }
 
-String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecUTF8::decode(std::span<const uint8_t> bytes, bool flush, bool stopOnError, bool& sawError)
 {
     // Each input byte might turn into a character.
     // That includes all bytes in the partial-sequence buffer because
     // each byte in an invalid sequence will turn into a replacement character.
-    StringBuffer<LChar> buffer(m_partialSequenceSize + length);
+    StringBuffer<LChar> buffer(m_partialSequenceSize + bytes.size());
 
-    const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
-    const uint8_t* end = source + length;
+    const uint8_t* source = bytes.data();
+    const uint8_t* end = source + bytes.size();
     const uint8_t* alignedEnd = WTF::alignToMachineWord(end);
     LChar* destination = buffer.characters();
 
@@ -383,7 +383,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
     return String::adopt(WTFMove(buffer));
 
 upConvertTo16Bit:
-    StringBuffer<UChar> buffer16(m_partialSequenceSize + length);
+    StringBuffer<UChar> buffer16(m_partialSequenceSize + bytes.size());
 
     UChar* destination16 = buffer16.characters();
 

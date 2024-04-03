@@ -85,7 +85,7 @@ bool isSameOrigin(CFURLRef a, const URL& b)
     auto aBytes = bytesAsVector(a);
     RELEASE_ASSERT(aBytes.size() <= String::MaxLength);
 
-    StringView aString { aBytes.data(), static_cast<unsigned>(aBytes.size()) };
+    StringView aString { aBytes.span() };
     StringView bString { b.string() };
 
     if (!b.hasPath())

@@ -49,9 +49,9 @@ NavigatorScreenWakeLock* NavigatorScreenWakeLock::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorScreenWakeLock::supplementName()
+ASCIILiteral NavigatorScreenWakeLock::supplementName()
 {
-    return "NavigatorScreenWakeLock";
+    return "NavigatorScreenWakeLock"_s;
 }
 
 WakeLock& NavigatorScreenWakeLock::wakeLock(Navigator& navigator)

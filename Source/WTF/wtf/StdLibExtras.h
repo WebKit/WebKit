@@ -28,6 +28,7 @@
 
 #include <cstring>
 #include <memory>
+#include <span>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -132,7 +133,7 @@ inline bool is8ByteAligned(void* p)
 }
 
 template<typename ToType, typename FromType>
-inline ToType bitwise_cast(FromType from)
+constexpr inline ToType bitwise_cast(FromType from)
 {
     static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
 #if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
@@ -349,7 +350,7 @@ inline void insertIntoBoundedVector(VectorType& vector, size_t size, const Eleme
 WTF_EXPORT_PRIVATE bool isCompilationThread();
 
 template<typename Func>
-bool isStatelessLambda()
+constexpr bool isStatelessLambda()
 {
     return std::is_empty<Func>::value;
 }
@@ -596,22 +597,22 @@ public:
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 {
-    static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
-    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be refcounted");
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUniqueWithoutRefCountedCheck(Args&&... args)
 {
-    static_assert(std::is_same<typename T::webkitFastMalloced, int>::value, "T is FastMalloced");
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
 {
-    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be refcounted");
+    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 

@@ -110,4 +110,13 @@ angle::Result ContextImpl::drawPixelLocalStorageEXTDisable(gl::Context *,
     UNREACHABLE();
     return angle::Result::Stop;
 }
+
+angle::Result ContextImpl::bindMetalRasterizationRateMap(gl::Context *,
+                                                         RenderbufferImpl *renderbuffer,
+                                                         GLMTLRasterizationRateMapANGLE map)
+{
+    UNREACHABLE();
+    return angle::Result::Stop;
+}
+
 }  // namespace rx

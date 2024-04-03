@@ -185,7 +185,7 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
 {
     Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent firing event for worker %llu", serviceWorkerGlobalScope->thread().identifier().toUInt64());
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
 
         auto installEvent = ExtendableEvent::create(eventNames().installEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(installEvent);
@@ -199,7 +199,7 @@ void ServiceWorkerThread::queueTaskToFireInstallEvent()
                 }
             }
             callOnMainThread([weakThis = WTFMove(weakThis), hasRejectedAnyPromise] {
-                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent finishing for worker %llu", weakThis ? weakThis->identifier().toUInt64() : 0);
+                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireInstallEvent finishing for worker %" PRIu64, weakThis ? weakThis->identifier().toUInt64() : 0);
                 if (weakThis)
                     weakThis->finishedFiringInstallEvent(hasRejectedAnyPromise);
             });
@@ -211,14 +211,14 @@ void ServiceWorkerThread::queueTaskToFireActivateEvent()
 {
     Ref serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*globalScope());
     serviceWorkerGlobalScope->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, serviceWorkerGlobalScope]() mutable {
-        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent firing event for worker %llu", serviceWorkerGlobalScope->thread().identifier().toUInt64());
+        RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope->thread().identifier().toUInt64());
 
         auto activateEvent = ExtendableEvent::create(eventNames().activateEvent, { }, ExtendableEvent::IsTrusted::Yes);
         serviceWorkerGlobalScope->dispatchEvent(activateEvent);
 
         activateEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis)](auto&&) mutable {
             callOnMainThread([weakThis = WTFMove(weakThis)] {
-                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent finishing for worker %llu", weakThis ? weakThis->identifier().toUInt64() : 0);
+                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireActivateEvent finishing for worker %" PRIu64, weakThis ? weakThis->identifier().toUInt64() : 0);
                 if (weakThis)
                     weakThis->finishedFiringActivateEvent();
             });
@@ -335,7 +335,7 @@ void ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent(std::option
 
         pushSubscriptionChangeEvent->whenAllExtendLifetimePromisesAreSettled([weakThis = WTFMove(weakThis)](auto&&) mutable {
             callOnMainThread([weakThis = WTFMove(weakThis)] {
-                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent finishing for worker %llu", weakThis ? weakThis->identifier().toUInt64() : 0);
+                RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent finishing for worker %" PRIu64, weakThis ? weakThis->identifier().toUInt64() : 0);
                 if (weakThis)
                     weakThis->finishedFiringPushSubscriptionChangeEvent();
             });

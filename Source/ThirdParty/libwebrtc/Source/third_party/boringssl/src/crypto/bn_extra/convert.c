@@ -455,11 +455,3 @@ int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len) {
   }
   return len;
 }
-
-int BN_bn2lebinpad(const BIGNUM *in, uint8_t *out, int len) {
-  if (len < 0 ||
-      !BN_bn2le_padded(out, (size_t)len, in)) {
-    return -1;
-  }
-  return len;
-}

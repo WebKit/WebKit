@@ -1,9 +1,15 @@
+function(MSVC_ADD_COMPILE_OPTIONS)
+    foreach (_option ${ARGV})
+        add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:${_option}>)
+    endforeach ()
+endfunction()
+
 if (NOT COMPILER_IS_CLANG_CL)
     # List of disabled warnings
     # When adding to the list add a short description and link to the warning's text if available
     #
     # https://bugs.webkit.org/show_bug.cgi?id=221508 is for tracking removal of warnings
-    add_compile_options(
+    MSVC_ADD_COMPILE_OPTIONS(
         /wd4018 # 'token' : signed/unsigned mismatch
                 # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4018
 
@@ -118,7 +124,7 @@ if (NOT COMPILER_IS_CLANG_CL)
 endif ()
 
 # Create pdb files for debugging purposes, also for Release builds
-add_compile_options(/Zi /GS)
+MSVC_ADD_COMPILE_OPTIONS(/Zi /GS)
 
 # Disable ICF (identical code folding) optimization,
 # as it makes it unsafe to pointer-compare functions with identical definitions.
@@ -127,10 +133,10 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS " /DEBUG /OPT:NOICF /OPT:REF")
 
 # We do not use exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
-add_compile_options(/EHa- /EHc- /EHs- /fp:except-)
+MSVC_ADD_COMPILE_OPTIONS(/EHa- /EHc- /EHs- /fp:except-)
 
 # We have some very large object files that have to be linked
-add_compile_options(/analyze- /bigobj)
+MSVC_ADD_COMPILE_OPTIONS(/analyze- /bigobj)
 
 # Use CRT security features
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -138,10 +144,10 @@ if (NOT COMPILER_IS_CLANG_CL)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
 endif ()
 
-add_compile_options(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 
 # Specify the source code encoding
-add_compile_options(/utf-8 /validate-charset)
+MSVC_ADD_COMPILE_OPTIONS(/utf-8 /validate-charset)
 
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     string(APPEND CMAKE_SHARED_LINKER_FLAGS " /OPT:NOREF")
@@ -152,7 +158,7 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     #set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /VERBOSE /VERBOSE:INCR /TIME")
     #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE /VERBOSE:INCR /TIME")
 elseif (${CMAKE_BUILD_TYPE} MATCHES "Release")
-    add_compile_options(/Oy-)
+    MSVC_ADD_COMPILE_OPTIONS(/Oy-)
 endif ()
 
 if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")
@@ -185,6 +191,10 @@ set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${replace_CMAKE_SHARED_LINKER_FLAG
 string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO})
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${replace_CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO")
 
+# Setup MASM assembly
+enable_language(ASM_MASM)
+set(CMAKE_ASM_MASM_COMPILE_OBJECT "<CMAKE_ASM_MASM_COMPILER> /nologo /Cp /Fo <OBJECT> /c /Ta <SOURCE>")
+
 if (COMPILER_IS_CLANG_CL)
     # FIXME: Building with clang-cl seemed to fail with 128 bit int support
     set(HAVE_INT128_T OFF)
@@ -193,5 +203,5 @@ endif ()
 
 # Enable the new lambda processor for better C++ conformance
 if (NOT COMPILER_IS_CLANG_CL AND MSVC_VERSION GREATER_EQUAL 1928)
-    add_compile_options(/Zc:lambda)
+    MSVC_ADD_COMPILE_OPTIONS(/Zc:lambda)
 endif ()

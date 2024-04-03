@@ -14,11 +14,9 @@
 
 #include <openssl/base.h>
 
-#include "fork_detect.h"
-
 // TSAN cannot cope with this test and complains that "starting new threads
 // after multi-threaded fork is not supported".
-#if defined(OPENSSL_FORK_DETECTION) && !defined(OPENSSL_TSAN)
+#if defined(OPENSSL_LINUX) && !defined(OPENSSL_TSAN)
 #include <errno.h>
 #include <inttypes.h>
 #include <stdio.h>
@@ -34,6 +32,8 @@
 
 #include <gtest/gtest.h>
 
+#include "fork_detect.h"
+
 
 static pid_t WaitpidEINTR(pid_t pid, int *out_status, int options) {
   pid_t ret;
@@ -47,20 +47,19 @@ static pid_t WaitpidEINTR(pid_t pid, int *out_status, int options) {
 // The *InChild functions run inside a child process and must report errors via
 // |stderr| and |_exit| rather than GTest.
 
-static void CheckGenerationAtLeastInChild(const char *name,
-                                   uint64_t minimum_expected) {
+static void CheckGenerationInChild(const char *name, uint64_t expected) {
   uint64_t generation = CRYPTO_get_fork_generation();
-  if (generation < minimum_expected) {
+  if (generation != expected) {
     fprintf(stderr, "%s generation (#1) was %" PRIu64 ", wanted %" PRIu64 ".\n",
-            name, generation, minimum_expected);
+            name, generation, expected);
     _exit(1);
   }
 
   // The generation should be stable.
-  uint64_t new_generation = CRYPTO_get_fork_generation();
-  if (new_generation != generation) {
+  generation = CRYPTO_get_fork_generation();
+  if (generation != expected) {
     fprintf(stderr, "%s generation (#2) was %" PRIu64 ", wanted %" PRIu64 ".\n",
-            name, new_generation, generation);
+            name, generation, expected);
     _exit(1);
   }
 }
@@ -96,9 +95,10 @@ static void ForkInChild(std::function<void()> f) {
 }
 
 TEST(ForkDetect, Test) {
-  uint64_t start = CRYPTO_get_fork_generation();
+  const uint64_t start = CRYPTO_get_fork_generation();
   if (start == 0) {
-    GTEST_SKIP() << "Fork detection not supported. Skipping test.\n";
+    fprintf(stderr, "Fork detection not supported. Skipping test.\n");
+    return;
   }
 
   // The fork generation should be stable.
@@ -111,22 +111,16 @@ TEST(ForkDetect, Test) {
     // Fork grandchildren before observing the fork generation. The
     // grandchildren will observe |start| + 1.
     for (int i = 0; i < 2; i++) {
-      ForkInChild(
-          [&] { CheckGenerationAtLeastInChild("Grandchild", start + 1); });
+      ForkInChild([&] { CheckGenerationInChild("Grandchild", start + 1); });
     }
 
     // Now the child also observes |start| + 1. This is fine because it has
     // already diverged from the grandchild at this point.
+    CheckGenerationInChild("Child", start + 1);
 
-    CheckGenerationAtLeastInChild("Child", start + 1);
-
-    // In the pthread_atfork the value may have changed.
-    uint64_t child_generation = CRYPTO_get_fork_generation();
     // Forked grandchildren will now observe |start| + 2.
     for (int i = 0; i < 2; i++) {
-      ForkInChild([&] {
-        CheckGenerationAtLeastInChild("Grandchild", child_generation + 1);
-      });
+      ForkInChild([&] { CheckGenerationInChild("Grandchild", start + 2); });
     }
 
 #if defined(OPENSSL_THREADS)
@@ -137,10 +131,8 @@ TEST(ForkDetect, Test) {
       std::vector<std::thread> threads(4);
       for (int i = 0; i < 2; i++) {
         for (auto &t : threads) {
-          t = std::thread([&] {
-            CheckGenerationAtLeastInChild("Grandchild thread",
-                                          child_generation + 1);
-          });
+          t = std::thread(
+              [&] { CheckGenerationInChild("Grandchild thread", start + 2); });
         }
         for (auto &t : threads) {
           t.join();
@@ -149,15 +141,8 @@ TEST(ForkDetect, Test) {
     });
 #endif  // OPENSSL_THREADS
 
-    // The child's observed value should be unchanged.
-    if (child_generation != CRYPTO_get_fork_generation()) {
-      fprintf(stderr,
-              "Child generation (final stable check) was %" PRIu64
-              ", wanted %" PRIu64 ".\n",
-              child_generation, CRYPTO_get_fork_generation());
-      _exit(1);
-    }
-
+    // The child still observes |start| + 1.
+    CheckGenerationInChild("Child", start + 1);
     _exit(0);
   }
 
@@ -172,4 +157,4 @@ TEST(ForkDetect, Test) {
   EXPECT_EQ(start, CRYPTO_get_fork_generation());
 }
 
-#endif  // OPENSSL_FORK_DETECTION && !OPENSSL_TSAN
+#endif  // OPENSSL_LINUX && !OPENSSL_TSAN

@@ -1,5 +1,5 @@
 
-FAIL Tests requestSession accepts immersive-ar mode - webgl promise_test: Unhandled rejection with value: "Session with params \"immersive-ar\" was rejected on device {\"supportsImmersive\":true,\"supportedModes\":[\"inline\",\"immersive-ar\"],\"views\":[{\"eye\":\"left\",\"projectionMatrix\":[1,0,0,0,0,1,0,0,3,2,-1,-1,0,0,-0.2,0],\"viewOffset\":{\"position\":[-0.1,0,0],\"orientation\":[0,0,0,1]},\"resolution\":{\"width\":200,\"height\":200}},{\"eye\":\"right\",\"projectionMatrix\":[1,0,0,0,0,1,0,0,3,2,-1,-1,0,0,-0.2,0],\"viewOffset\":{\"position\":[0.1,0,0],\"orientation\":[0,0,0,1]},\"resolution\":{\"width\":200,\"height\":200}}],\"viewerOrigin\":{\"position\":[0,0,0],\"orientation\":[0,0,0,1]},\"supportedFeatures\":[\"viewer\",\"local\",\"local-floor\",\"bounded-floor\",\"unbounded\",\"hit-test\",\"dom-overlay\",\"light-estimation\",\"anchors\",\"depth-sensing\"],\"environmentBlendMode\":\"additive\",\"interactionMode\":\"screen-space\"} with error: OperationError: Unable to create a framebuffer."
+PASS Tests requestSession accepts immersive-ar mode - webgl
 PASS Tests requestSession accepts immersive-ar mode - webgl2
 PASS Tests requestSession rejects immersive-ar mode when unsupported
 

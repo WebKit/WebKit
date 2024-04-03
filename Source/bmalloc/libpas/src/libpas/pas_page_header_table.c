@@ -41,6 +41,10 @@ pas_page_base* pas_page_header_table_add(pas_page_header_table* table,
 {
     pas_page_base* page_base;
 
+    uintptr_t boundary_int = (uintptr_t)boundary;
+    PAS_PROFILE(PAGE_HEADER_TABLE_ADD, boundary_int);
+    boundary = (void*)boundary_int;
+
     if (verbose)
         pas_log("Adding page header for boundary = %p.\n", boundary);
     

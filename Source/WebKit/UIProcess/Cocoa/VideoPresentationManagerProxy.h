@@ -30,12 +30,12 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
-#include "ShareableBitmap.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PlatformLayer.h>
-#include <WebCore/PlatformVideoFullscreenInterface.h>
+#include <WebCore/PlatformVideoPresentationInterface.h>
 #include <WebCore/PlatformView.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -44,6 +44,7 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS LMPlayableViewController;
 OBJC_CLASS WKLayerHostView;
 OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
@@ -177,18 +178,22 @@ public:
 
     bool isPlayingVideoInEnhancedFullscreen() const;
 
-    WebCore::PlatformVideoFullscreenInterface* controlsManagerInterface();
+    WebCore::PlatformVideoPresentationInterface* controlsManagerInterface();
     using VideoInPictureInPictureDidChangeObserver = WTF::Observer<void(bool)>;
     void addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver&);
 
-    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoFullscreenInterface&)>&&);
+    void forEachSession(Function<void(VideoPresentationModelContext&, WebCore::PlatformVideoPresentationInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::PlatformVideoFullscreenInterface* returningToStandbyInterface() const;
+    WebCore::PlatformVideoPresentationInterface* returningToStandbyInterface() const;
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    LMPlayableViewController *playableViewController(PlaybackSessionContextIdentifier) const;
 #endif
 
     PlatformLayerContainer createLayerWithID(PlaybackSessionContextIdentifier, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
@@ -201,12 +206,12 @@ private:
     explicit VideoPresentationManagerProxy(WebPageProxy&, PlaybackSessionManagerProxy&);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoFullscreenInterface>> ModelInterfaceTuple;
+    typedef std::tuple<RefPtr<VideoPresentationModelContext>, RefPtr<WebCore::PlatformVideoPresentationInterface>> ModelInterfaceTuple;
     ModelInterfaceTuple createModelAndInterface(PlaybackSessionContextIdentifier);
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     VideoPresentationModelContext& ensureModel(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
-    WebCore::PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier) const;
+    WebCore::PlatformVideoPresentationInterface& ensureInterface(PlaybackSessionContextIdentifier);
+    WebCore::PlatformVideoPresentationInterface* findInterface(PlaybackSessionContextIdentifier) const;
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
@@ -228,7 +233,7 @@ private:
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, ShareableBitmap::Handle&& textTrack);
+    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, WebCore::ShareableBitmap::Handle&& textTrack);
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
 

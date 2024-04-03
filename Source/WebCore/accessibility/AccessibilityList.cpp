@@ -100,7 +100,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
 {
     // Check if the list item has a pseudo-element that should be accessible (e.g. an image or text)
     auto* element = dynamicDowncast<Element>(node);
-    auto* beforePseudo = element ? element->beforePseudoElement() : nullptr;
+    RefPtr beforePseudo = element ? element->beforePseudoElement() : nullptr;
     if (!beforePseudo)
         return false;
 
@@ -157,6 +157,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
         return AccessibilityRole::DescriptionList;
 
     for (const auto& child : children) {
+        RefPtr node = child->node();
         auto* axChild = dynamicDowncast<AccessibilityObject>(child.get());
         if (axChild && axChild->ariaRoleAttribute() == AccessibilityRole::ListItem)
             listItemCount++;
@@ -166,12 +167,12 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
                 if (!hasVisibleMarkers && (childRenderer->style().listStyleType().type != ListStyleType::Type::None || childRenderer->style().listStyleImage() || childHasPseudoVisibleListItemMarkers(childRenderer->node())))
                     hasVisibleMarkers = true;
                 listItemCount++;
-            } else if (child->node() && child->node()->hasTagName(liTag)) {
+            } else if (node && node->hasTagName(liTag)) {
                 // Inline elements that are in a list with an explicit role should also count.
                 if (m_ariaRole == AccessibilityRole::List)
                     listItemCount++;
 
-                if (childHasPseudoVisibleListItemMarkers(child->node())) {
+                if (childHasPseudoVisibleListItemMarkers(node.get())) {
                     hasVisibleMarkers = true;
                     listItemCount++;
                 }

@@ -1321,6 +1321,13 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this._layoutOverlayShowing)
             this.showLayoutOverlay();
     }
+
+    async getMediaStats()
+    {
+        let target = WI.assumingMainTarget();
+        let {mediaStats} = await target.DOMAgent.getMediaStats(this.id);
+        return mediaStats;
+    }
 };
 
 WI.DOMNode._defaultLayoutOverlayConfiguration = {

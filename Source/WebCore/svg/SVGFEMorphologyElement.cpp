@@ -56,16 +56,16 @@ void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const A
     case AttributeNames::operatorAttr: {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(newValue);
         if (propertyValue != MorphologyOperatorType::Unknown)
-            m_svgOperator->setBaseValInternal<MorphologyOperatorType>(propertyValue);
+            Ref { m_svgOperator }->setBaseValInternal<MorphologyOperatorType>(propertyValue);
         break;
     }
     case AttributeNames::inAttr:
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::radiusAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            m_radiusX->setBaseValInternal(result->first);
-            m_radiusY->setBaseValInternal(result->second);
+            Ref { m_radiusX }->setBaseValInternal(result->first);
+            Ref { m_radiusY }->setBaseValInternal(result->second);
         }
         break;
     default:

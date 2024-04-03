@@ -48,8 +48,6 @@ public:
 private:
     NavigationCurrentEntryChangeEvent(const AtomString& type, const Init&);
 
-    EventInterface eventInterface() const override;
-
     std::optional<NavigationNavigationType> m_navigationType;
     RefPtr<NavigationHistoryEntry> m_from;
 };

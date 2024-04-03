@@ -60,16 +60,16 @@ void LegacyRenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void LegacyRenderSVGViewportContainer::calcViewport()
 {
-    SVGSVGElement& element = svgSVGElement();
-    SVGLengthContext lengthContext(&element);
-    FloatRect newViewport(element.x().value(lengthContext), element.y().value(lengthContext), element.width().value(lengthContext), element.height().value(lengthContext));
+    Ref element = svgSVGElement();
+    SVGLengthContext lengthContext(element.ptr());
+    FloatRect newViewport(element->x().value(lengthContext), element->y().value(lengthContext), element->width().value(lengthContext), element->height().value(lengthContext));
 
     if (m_viewport == newViewport)
         return;
 
     m_viewport = newViewport;
 
-    setNeedsBoundariesUpdate();
+    invalidateCachedBoundaries();
     setNeedsTransformUpdate();
 }
 

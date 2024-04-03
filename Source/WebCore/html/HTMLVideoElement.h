@@ -89,7 +89,7 @@ public:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture };
+    enum class VideoPresentationMode { Inline, Fullscreen, PictureInPicture, InWindow };
     static VideoPresentationMode toPresentationMode(HTMLMediaElementEnums::VideoFullscreenMode);
     WEBCORE_EXPORT bool webkitSupportsPresentationMode(VideoPresentationMode) const;
     VideoPresentationMode webkitPresentationMode() const;
@@ -112,12 +112,21 @@ public:
 #endif
 
     RenderVideo* renderer() const;
+    void acceleratedRenderingStateChanged();
+    bool supportsAcceleratedRendering() const;
 
     bool shouldServiceRequestVideoFrameCallbacks() const { return !m_videoFrameRequests.isEmpty(); }
     void serviceRequestVideoFrameCallbacks(ReducedResolutionSeconds);
 
     unsigned requestVideoFrameCallback(Ref<VideoFrameRequestCallback>&&);
     void cancelVideoFrameCallback(unsigned);
+
+    WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
+
+#if USE(GSTREAMER)
+    void enableGStreamerHolePunching() { m_enableGStreamerHolePunching = true; }
+    bool isGStreamerHolePunchingEnabled() const final { return m_enableGStreamerHolePunching; }
+#endif
 
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
@@ -142,7 +151,11 @@ private:
 
     PlatformMediaSession::MediaType presentationType() const final { return PlatformMediaSession::MediaType::Video; }
 
+    bool mediaPlayerRenderingCanBeAccelerated() final { return m_renderingCanBeAccelerated; }
+    void mediaPlayerRenderingModeChanged() final;
     void mediaPlayerEngineUpdated() final;
+
+    void computeAcceleratedRenderingStateAndUpdateMediaPlayer() final;
 
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
 
@@ -150,13 +163,15 @@ private:
 
     FloatSize m_lastReportedNaturalSize { };
 
+    bool m_renderingCanBeAccelerated { false };
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_enteringPictureInPicture { false };
     bool m_exitingPictureInPicture { false };
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-    PictureInPictureObserver* m_pictureInPictureObserver { nullptr };
+    WeakPtr<PictureInPictureObserver> m_pictureInPictureObserver;
 #endif
 
     struct VideoFrameRequest {
@@ -174,6 +189,10 @@ private:
     Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
     Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
     unsigned m_nextVideoFrameRequestIndex { 0 };
+
+#if USE(GSTREAMER)
+    bool m_enableGStreamerHolePunching { false };
+#endif
 };
 
 } // namespace WebCore

@@ -35,13 +35,18 @@ TextStream& operator<<(TextStream& ts, const StyleContentAlignmentData& o)
     return ts << o.position() << " " << o.distribution() << " " << o.overflow();
 }
 
-bool StyleContentAlignmentData::isStartward(TextDirection inlineDirection, bool isFlexReverse) const
+bool StyleContentAlignmentData::isStartward(std::optional<TextDirection> leftRightAxisDirection, bool isFlexReverse) const
 {
     switch (static_cast<ContentPosition>(m_position)) {
     case ContentPosition::Normal:
-        return static_cast<ContentDistribution>(m_distribution) == ContentDistribution::Default
-            || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::Stretch
-            || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::SpaceBetween;
+        switch (static_cast<ContentDistribution>(m_distribution)) {
+        case ContentDistribution::Default:
+        case ContentDistribution::Stretch:
+        case ContentDistribution::SpaceBetween:
+            return !isFlexReverse;
+        default:
+            return false;
+        }
     case ContentPosition::Start:
     case ContentPosition::Baseline:
         return true;
@@ -54,33 +59,49 @@ bool StyleContentAlignmentData::isStartward(TextDirection inlineDirection, bool 
     case ContentPosition::FlexEnd:
         return isFlexReverse;
     case ContentPosition::Left:
-        return inlineDirection == TextDirection::LTR;
+        if (leftRightAxisDirection)
+            return leftRightAxisDirection == TextDirection::LTR;
+        return true;
     case ContentPosition::Right:
-        return inlineDirection == TextDirection::RTL;
+        if (leftRightAxisDirection)
+            return leftRightAxisDirection == TextDirection::RTL;
+        return true;
     default:
         ASSERT("Invalid ContentPosition");
         return true;
     }
 }
-bool StyleContentAlignmentData::isEndward(TextDirection inlineDirection, bool isFlexReverse) const
+bool StyleContentAlignmentData::isEndward(std::optional<TextDirection> leftRightAxisDirection, bool isFlexReverse) const
 {
     switch (static_cast<ContentPosition>(m_position)) {
     case ContentPosition::Normal:
+        switch (static_cast<ContentDistribution>(m_distribution)) {
+        case ContentDistribution::Default:
+        case ContentDistribution::Stretch:
+        case ContentDistribution::SpaceBetween:
+            return isFlexReverse;
+        default:
+            return false;
+        }
     case ContentPosition::Start:
     case ContentPosition::Baseline:
+    case ContentPosition::Center:
         return false;
     case ContentPosition::End:
     case ContentPosition::LastBaseline:
-    case ContentPosition::Center:
         return true;
     case ContentPosition::FlexStart:
         return isFlexReverse;
     case ContentPosition::FlexEnd:
         return !isFlexReverse;
     case ContentPosition::Left:
-        return inlineDirection == TextDirection::RTL;
+        if (leftRightAxisDirection)
+            return leftRightAxisDirection == TextDirection::RTL;
+        return false;
     case ContentPosition::Right:
-        return inlineDirection == TextDirection::LTR;
+        if (leftRightAxisDirection)
+            return leftRightAxisDirection == TextDirection::LTR;
+        return false;
     default:
         ASSERT("Invalid ContentPosition");
         return false;

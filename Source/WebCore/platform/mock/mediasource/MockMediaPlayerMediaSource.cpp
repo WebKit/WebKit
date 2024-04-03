@@ -152,7 +152,7 @@ void MockMediaPlayerMediaSource::setPageIsVisible(bool, String&&)
 
 bool MockMediaPlayerMediaSource::seeking() const
 {
-    return !m_seekCompleted;
+    return !!m_lastSeekTarget;
 }
 
 bool MockMediaPlayerMediaSource::paused() const
@@ -170,14 +170,15 @@ MediaPlayer::ReadyState MockMediaPlayerMediaSource::readyState() const
     return m_readyState;
 }
 
-MediaTime MockMediaPlayerMediaSource::maxMediaTimeSeekable() const
+MediaTime MockMediaPlayerMediaSource::maxTimeSeekable() const
 {
     return m_duration;
 }
 
 const PlatformTimeRanges& MockMediaPlayerMediaSource::buffered() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->buffered() : PlatformTimeRanges::emptyRanges();
+    ASSERT_NOT_REACHED();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 bool MockMediaPlayerMediaSource::didLoadingProgress() const
@@ -193,14 +194,14 @@ void MockMediaPlayerMediaSource::paint(GraphicsContext&, const FloatRect&)
 {
 }
 
-MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
+MediaTime MockMediaPlayerMediaSource::currentTime() const
 {
-    return m_currentTime;
+    return m_lastSeekTarget ? m_lastSeekTarget->time : m_currentTime;
 }
 
-bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
+bool MockMediaPlayerMediaSource::timeIsProgressing() const
 {
-    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime());
+    return m_playing && m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentTime());
 }
 
 void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
@@ -209,14 +210,14 @@ void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
         player->activeSourceBuffersChanged();
 }
 
-MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
+MediaTime MockMediaPlayerMediaSource::duration() const
 {
     return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();
 }
 
 void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
-    m_seekCompleted = false;
+    m_lastSeekTarget = target;
     m_mediaSourcePrivate->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { this }](auto&& result) {
         if (!weakThis || !result)
             return;
@@ -225,7 +226,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            m_seekCompleted = true;
+            m_lastSeekTarget.reset();
             m_currentTime = seekTime;
 
             if (auto player = m_player.get()) {
@@ -247,7 +248,7 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
     if (!m_mediaSourcePrivate)
         return;
 
-    auto& buffered = m_mediaSourcePrivate->buffered();
+    auto buffered = m_mediaSourcePrivate->buffered();
     size_t pos = buffered.find(m_currentTime);
     if (pos == notFound)
         return;

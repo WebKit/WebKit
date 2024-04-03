@@ -39,3 +39,16 @@ header: "PrepareBackingStoreBuffersData.h"
 };
 
 #endif
+
+header: "ImageBufferBackendHandle.h"
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING) && PLATFORM(COCOA)
+using WebKit::ImageBufferBackendHandle = std::variant<WebCore::ShareableBitmap::Handle, MachSendRight, WebCore::DynamicContentScalingDisplayList>
+#endif
+
+#if !ENABLE(RE_DYNAMIC_CONTENT_SCALING) && PLATFORM(COCOA)
+using WebKit::ImageBufferBackendHandle = std::variant<WebCore::ShareableBitmap::Handle, MachSendRight>
+#endif
+
+#if !PLATFORM(COCOA)
+using WebKit::ImageBufferBackendHandle = std::variant<WebCore::ShareableBitmap::Handle>
+#endif

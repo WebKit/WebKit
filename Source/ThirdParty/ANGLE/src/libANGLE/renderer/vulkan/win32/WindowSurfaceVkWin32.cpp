@@ -9,7 +9,7 @@
 
 #include "libANGLE/renderer/vulkan/win32/WindowSurfaceVkWin32.h"
 
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {

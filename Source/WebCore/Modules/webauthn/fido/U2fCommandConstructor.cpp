@@ -71,7 +71,7 @@ static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8
     data.appendVector(challengeParameter);
     data.appendVector(applicationParameter);
     data.append(static_cast<uint8_t>(keyHandle.length()));
-    data.append(keyHandle.data(), keyHandle.length());
+    data.append(keyHandle.span());
 
     apdu::ApduCommand command;
     command.setIns(static_cast<uint8_t>(U2fApduInstruction::kSign));

@@ -26,8 +26,8 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::PixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     DestroyGetPixelBufferSharedMemory()
-    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
-    CacheFont(WebCore::Font::Attributes data, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
+    CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
@@ -40,10 +40,14 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     ReleaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier)
 
 #if PLATFORM(COCOA)
-    PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)  -> (Vector<WebKit::ImageBufferSetPrepareBufferForDisplayOutputData> swapBuffersOutput) NotStreamEncodableReply ReplyCanDispatchOutOfOrder
+    // These messages also result in the 'DidPrepareForDisplay' message being
+    // returned on the RemoteImageBufferSetProxy message receiver (one for each
+    // inputData)
+    PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)
+    PrepareImageBufferSetsForDisplaySync(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)  -> (Vector<WebKit::SwapBuffersDisplayRequirement> displayRequirements) Synchronous
 #endif
 
-    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers)
+    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers, bool forcePurge)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 
 #if USE(GRAPHICS_LAYER_WC)

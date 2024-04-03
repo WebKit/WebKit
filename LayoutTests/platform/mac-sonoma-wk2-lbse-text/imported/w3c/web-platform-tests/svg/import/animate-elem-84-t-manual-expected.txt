@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 340x250
+  RenderSVGTransformableContainer {g} at (0,0) size 340x250
+layer at (0,0) size 340x250
+  RenderSVGTransformableContainer {g} at (0,0) size 340x250
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,150) size 100x100
+  RenderSVGRect {rect} at (0,150) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=150.00] [width=100.00] [height=100.00]
+layer at (120,75) size 100x100
+  RenderSVGRect {rect} at (120,75) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=120.00] [y=75.00] [width=100.00] [height=100.00]
+layer at (240,0) size 100x100
+  RenderSVGTransformableContainer {g} at (240,0) size 100x100
+layer at (240,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (240,150) size 100x100
+  RenderSVGTransformableContainer {g} at (240,150) size 100x100
+layer at (240,150) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=150.00] [width=100.00] [height=100.00]
+layer at (11.48,42.03) size 299x92
+  RenderSVGTransformableContainer {g} at (11.48,42.03) size 297.59x91.20
+layer at (11.48,117.03) size 77x16
+  RenderSVGText {text} at (0,75) size 78x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x17
+      chunk 1 (middle anchor) text run 1 at (11.49,130.00) startOffset 0 endOffset 12 width 77.03: "currentColor"
+layer at (152.09,42.03) size 35x16
+  RenderSVGText {text} at (140,0) size 37x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x17
+      chunk 1 (middle anchor) text run 1 at (152.10,55.00) startOffset 0 endOffset 5 width 35.81: "green"
+layer at (270.92,117.03) size 39x16
+  RenderSVGText {text} at (259,75) size 39x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 39x17
+      chunk 1 (middle anchor) text run 1 at (270.93,130.00) startOffset 0 endOffset 7 width 38.13: "inherit"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

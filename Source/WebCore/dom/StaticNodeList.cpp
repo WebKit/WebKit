@@ -34,6 +34,7 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StaticNodeList);
+WTF_MAKE_ISO_ALLOCATED_IMPL(StaticWrapperNodeList);
 WTF_MAKE_ISO_ALLOCATED_IMPL(StaticElementList);
 
 unsigned StaticNodeList::length() const
@@ -46,6 +47,16 @@ Node* StaticNodeList::item(unsigned index) const
     if (index < m_nodes.size())
         return const_cast<Node*>(m_nodes[index].ptr());
     return nullptr;
+}
+
+unsigned StaticWrapperNodeList::length() const
+{
+    return m_nodeList->length();
+}
+
+Node* StaticWrapperNodeList::item(unsigned index) const
+{
+    return m_nodeList->item(index);
 }
 
 unsigned StaticElementList::length() const

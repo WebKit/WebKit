@@ -66,7 +66,7 @@ static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, const 
                 hasReferences = true;
                 continue;
             }
-            if (token.functionId() == CSSValueEnv && parserContext.constantPropertiesEnabled) {
+            if (token.functionId() == CSSValueEnv) {
                 if (!isValidConstantReference(block, parserContext))
                     return false; // Bail if any references are invalid
                 hasReferences = true;

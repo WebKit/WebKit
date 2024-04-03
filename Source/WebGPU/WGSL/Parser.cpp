@@ -33,6 +33,7 @@
 
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -132,6 +133,11 @@ struct TemplateTypes<TT> {
         FAIL(builder.toString()); \
     } \
     auto& name = *name##Expected;
+
+#define CHECK_RECURSION() \
+    SetForScope __parseDepth(m_parseDepth, m_parseDepth + 1); \
+    if (m_parseDepth > 128) \
+        FAIL("maximum parser recursive depth reached"_s);
 
 static bool canBeginUnaryExpression(const Token& token)
 {
@@ -367,6 +373,7 @@ Result<void> Parser<Lexer>::parseShader()
         case TokenType::KeywordDiagnostic: {
             consume();
             PARSE(diagnostic, Diagnostic);
+            CONSUME_TYPE(Semicolon);
             auto& directive = MAKE_ARENA_NODE(DiagnosticDirective, WTFMove(diagnostic));
             m_shaderModule.directives().append(directive);
             break;
@@ -419,7 +426,7 @@ Result<void> Parser<Lexer>::parseRequireDirective()
         CONSUME_TYPE_NAMED(identifier, Identifier);
         auto* languageFeature = parseLanguageFeature(identifier.ident);
         if (!languageFeature)
-            FAIL("Expected 'readonly_and_readwrite_storage_textures'"_s);
+            FAIL("Expected 'readonly_and_readwrite_storage_textures', 'packed_4x8_integer_dot_product', 'unrestricted_pointer_parameters' or 'pointer_composite_access'"_s);
         m_shaderModule.requiredFeatures().add(*languageFeature);
 
         if (current().type != TokenType::Comma)
@@ -568,6 +575,9 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
     } else if (current().type == TokenType::KeywordAlias) {
         PARSE(alias, TypeAlias);
         return { alias };
+    } else if (current().type ==  TokenType::KeywordConstAssert) {
+        PARSE(assert, ConstAssert);
+        return { assert };
     }
 
     PARSE(attributes, Attributes);
@@ -590,6 +600,16 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
     default:
         FAIL("Trying to parse a GlobalDecl, expected 'const', 'fn', 'override', 'struct' or 'var'."_s);
     }
+}
+
+template<typename Lexer>
+Result<AST::ConstAssert::Ref> Parser<Lexer>::parseConstAssert()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordConstAssert);
+    PARSE(test, Expression);
+    CONSUME_TYPE(Semicolon);
+    RETURN_ARENA_NODE(ConstAssert, WTFMove(test));
 }
 
 template<typename Lexer>
@@ -616,6 +636,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(group, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(GroupAttribute, WTFMove(group));
     }
@@ -623,6 +645,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(binding, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BindingAttribute, WTFMove(binding));
     }
@@ -630,6 +654,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(location, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(LocationAttribute, WTFMove(location));
     }
@@ -657,6 +683,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
             break;
         }
 
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BuiltinAttribute, *builtin);
     }
@@ -691,6 +719,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "align"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(alignment, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(AlignAttribute, WTFMove(alignment));
     }
@@ -719,6 +749,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "size"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(SizeAttribute, WTFMove(size));
     }
@@ -726,6 +758,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
     if (ident.ident == "id"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
+        if (current().type  == TokenType::Comma)
+            consume();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(IdAttribute, WTFMove(size));
     }
@@ -801,6 +835,9 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
         else
             break;
     }
+
+    if (members.isEmpty())
+        FAIL(makeString("structures must have at least one member"));
 
     CONSUME_TYPE(BraceRight);
 
@@ -972,6 +1009,9 @@ Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
 
     AccessMode accessMode;
     if (current().type == TokenType::Comma) {
+        if (addressSpace != AddressSpace::Storage)
+            FAIL("only variables in the <storage> address space may specify an access mode"_s);
+
         consume();
         PARSE(actualAccessMode, AccessMode);
         accessMode = actualAccessMode;
@@ -1075,6 +1115,7 @@ template<typename Lexer>
 Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     switch (current().type) {
     case TokenType::BraceLeft: {
@@ -1156,6 +1197,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         PARSE(rhs, Expression);
         CONSUME_TYPE(Semicolon);
         RETURN_ARENA_NODE(PhonyAssignmentStatement, WTFMove(rhs));
+    }
+    case TokenType::KeywordConstAssert: {
+        PARSE(assert, ConstAssert);
+        RETURN_ARENA_NODE(ConstAssertStatement, WTFMove(assert));
     }
     default:
         FAIL("Not a valid statement"_s);
@@ -1598,11 +1643,12 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseUnaryExpression()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     if (canBeginUnaryExpression(current())) {
         auto op = toUnaryOperation(current());
         consume();
-        PARSE(expression, SingularExpression);
+        PARSE(expression, UnaryExpression);
         RETURN_ARENA_NODE(UnaryExpression, WTFMove(expression), op);
     }
 
@@ -1747,6 +1793,7 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseLHSExpression()
 {
     START_PARSE();
+    CHECK_RECURSION();
 
     if (current().type == TokenType::And || current().type == TokenType::Star) {
         auto op = toUnaryOperation(current());

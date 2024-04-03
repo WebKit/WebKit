@@ -497,7 +497,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
                 return;
 
             auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-            crypto->addBytes(publicKeyData->data(), publicKeyData->size());
+            crypto->addBytes(publicKeyData->span());
             auto publicKeyDataHash = crypto->computeHash();
 
             auto keyID = base64URLEncodeToString(publicKeyDataHash.data(), publicKeyDataHash.size());
@@ -517,7 +517,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
                         return;
 
                     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-                    crypto->addBytes(publicKeyData->data(), publicKeyData->size());
+                    crypto->addBytes(publicKeyData->span());
                     auto publicKeyDataHash = crypto->computeHash();
 
                     auto keyID = base64URLEncodeToString(publicKeyDataHash.data(), publicKeyDataHash.size());
@@ -543,7 +543,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
             return;
 
         auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-        crypto->addBytes(publicKeyData->data(), publicKeyData->size());
+        crypto->addBytes(publicKeyData->span());
         auto publicKeyDataHash = crypto->computeHash();
 
         auto keyID = base64URLEncodeToString(publicKeyDataHash.data(), publicKeyDataHash.size());

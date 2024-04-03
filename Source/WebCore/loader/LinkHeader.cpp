@@ -89,7 +89,7 @@ template<typename CharacterType> static std::optional<String> findURLBoundaries(
     if (!skipExactly(buffer, '>'))
         return std::nullopt;
 
-    return String(urlStart, urlEnd - urlStart);
+    return String({ urlStart, urlEnd });
 }
 
 template<typename CharacterType> static bool invalidParameterDelimiter(StringParsingBuffer<CharacterType>& buffer)
@@ -179,7 +179,7 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
     skipWhile<isTabOrSpace>(buffer);
     bool hasEqual = skipExactly(buffer, '=');
     skipWhile<isTabOrSpace>(buffer);
-    auto name = parameterNameFromString(StringView { nameStart, static_cast<unsigned>(nameEnd - nameStart) });
+    auto name = parameterNameFromString(std::span { nameStart, static_cast<size_t>(nameEnd - nameStart) });
     if (hasEqual)
         return name;
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);
@@ -248,7 +248,7 @@ template<typename CharacterType> static bool parseParameterValue(StringParsingBu
     if (completeQuotes)
         --valueEnd;
     ASSERT(valueEnd >= valueStart);
-    value = String(valueStart, valueEnd - valueStart);
+    value = String({ valueStart, valueEnd });
     return !hasQuotes || completeQuotes;
 }
 

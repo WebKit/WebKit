@@ -37,83 +37,41 @@
 
 namespace WebCore {
 
+template<typename T>
 class CapabilityRange {
-private:
-    friend struct IPC::ArgumentCoder<CapabilityRange, void>;
 public:
-    struct LongRange {
-        LongRange(int max, int min)
-            : max(max)
-            , min(min)
-        {
-            RELEASE_ASSERT(min <= max);
-        }
-        int max;
-        int min;
-    };
-
-    struct DoubleRange {
-        DoubleRange(double max, double min)
-            : max(max)
-            , min(min)
-        {
-            RELEASE_ASSERT(min <= max);
-        }
-        double max;
-        double min;
-    };
-
-    enum class Type : uint8_t {
-        Undefined,
-        DoubleRange,
-        LongRange,
-    };
-    Type type() const
-    {
-        if (m_doubleRange)
-            return Type::DoubleRange;
-        if (m_longRange)
-            return Type::LongRange;
-        return Type::Undefined;
-    }
-
     CapabilityRange() = default;
-
-    CapabilityRange(double value)
-        : m_doubleRange({ value, value })
+    CapabilityRange(T min, T max)
+        : m_min(min)
+        , m_max(max)
     {
+        RELEASE_ASSERT(min <= max);
     }
 
-    CapabilityRange(int value)
-        : m_longRange({ value, value })
-    {
-    }
-
-    CapabilityRange(double min, double max)
-        : m_doubleRange({ max, min })
-    {
-    }
-    
-    CapabilityRange(int min, int max)
-        : m_longRange({ max, min })
-    {
-    }
-
-    const DoubleRange& doubleRange() const
-    {
-        RELEASE_ASSERT(m_doubleRange);
-        return *m_doubleRange;
-    }
-
-    const LongRange& longRange() const
-    {
-        RELEASE_ASSERT(m_longRange);
-        return *m_longRange;
-    }
+    T min() const { return m_min; }
+    T max() const { return m_max; }
 
 private:
-    std::optional<DoubleRange> m_doubleRange;
-    std::optional<LongRange> m_longRange;
+    T m_min { 0 };
+    T m_max { 0 };
+};
+
+class LongCapabilityRange : public CapabilityRange<int> {
+public:
+    LongCapabilityRange() = default;
+    LongCapabilityRange(int min, int max)
+        : CapabilityRange(min, max)
+    {
+    }
+};
+
+class DoubleCapabilityRange : public CapabilityRange<double> {
+public:
+    DoubleCapabilityRange() = default;
+    DoubleCapabilityRange(double min, double max)
+        : CapabilityRange(min, max)
+    {
+    }
 };
 
 class RealtimeMediaSourceCapabilities {
@@ -128,8 +86,13 @@ public:
         ReadOnly = 0,
         ReadWrite = 1,
     };
-    
-    RealtimeMediaSourceCapabilities(CapabilityRange width, CapabilityRange height, CapabilityRange aspectRatio, CapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityRange volume, CapabilityRange sampleRate, CapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, CapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, CapabilityRange zoom, bool torch, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    enum class BackgroundBlur : uint8_t {
+        Off,
+        On,
+        OnOff,
+    };
+
+    RealtimeMediaSourceCapabilities(LongCapabilityRange width, LongCapabilityRange height, DoubleCapabilityRange aspectRatio, DoubleCapabilityRange frameRate, Vector<VideoFacingMode>&& facingMode, DoubleCapabilityRange volume, LongCapabilityRange sampleRate, LongCapabilityRange sampleSize, EchoCancellation echoCancellation, String&& deviceId, String&& groupId, DoubleCapabilityRange focusDistance, Vector<MeteringMode>&& whiteBalanceModes, DoubleCapabilityRange zoom, bool torch, BackgroundBlur backgroundBlur, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
@@ -145,6 +108,7 @@ public:
         , m_whiteBalanceModes(whiteBalanceModes)
         , m_zoom(WTFMove(zoom))
         , m_torch(torch)
+        , m_backgroundBlur(backgroundBlur)
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -158,36 +122,36 @@ public:
     }
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
-    const CapabilityRange& width() const { return m_width; }
-    void setWidth(const CapabilityRange& width) { m_width = width; }
+    const LongCapabilityRange& width() const { return m_width; }
+    void setWidth(const LongCapabilityRange& width) { m_width = width; }
 
     bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
-    const CapabilityRange& height() const { return m_height; }
-    void setHeight(const CapabilityRange& height) { m_height = height; }
+    const LongCapabilityRange& height() const { return m_height; }
+    void setHeight(const LongCapabilityRange& height) { m_height = height; }
 
     bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
-    const CapabilityRange& frameRate() const { return m_frameRate; }
-    void setFrameRate(const CapabilityRange& frameRate) { m_frameRate = frameRate; }
+    const DoubleCapabilityRange& frameRate() const { return m_frameRate; }
+    void setFrameRate(const DoubleCapabilityRange& frameRate) { m_frameRate = frameRate; }
 
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
     const Vector<VideoFacingMode>& facingMode() const { return m_facingMode; }
     void addFacingMode(VideoFacingMode mode) { m_facingMode.append(mode); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
-    const CapabilityRange& aspectRatio() const { return m_aspectRatio; }
-    void setAspectRatio(const CapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
+    const DoubleCapabilityRange& aspectRatio() const { return m_aspectRatio; }
+    void setAspectRatio(const DoubleCapabilityRange& aspectRatio) { m_aspectRatio = aspectRatio; }
 
     bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
-    const CapabilityRange& volume() const { return m_volume; }
-    void setVolume(const CapabilityRange& volume) { m_volume = volume; }
+    const DoubleCapabilityRange& volume() const { return m_volume; }
+    void setVolume(const DoubleCapabilityRange& volume) { m_volume = volume; }
 
     bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
-    const CapabilityRange& sampleRate() const { return m_sampleRate; }
-    void setSampleRate(const CapabilityRange& sampleRate) { m_sampleRate = sampleRate; }
+    const LongCapabilityRange& sampleRate() const { return m_sampleRate; }
+    void setSampleRate(const LongCapabilityRange& sampleRate) { m_sampleRate = sampleRate; }
 
     bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
-    const CapabilityRange& sampleSize() const { return m_sampleSize; }
-    void setSampleSize(const CapabilityRange& sampleSize) { m_sampleSize = sampleSize; }
+    const LongCapabilityRange& sampleSize() const { return m_sampleSize; }
+    void setSampleSize(const LongCapabilityRange& sampleSize) { m_sampleSize = sampleSize; }
 
     bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
     EchoCancellation echoCancellation() const { return m_echoCancellation; }
@@ -202,43 +166,49 @@ public:
     void setGroupId(const String& id)  { m_groupId = id; }
 
     bool supportsFocusDistance() const { return m_supportedConstraints.supportsFocusDistance(); }
-    const CapabilityRange& focusDistance() const { return m_focusDistance; }
-    void setFocusDistance(const CapabilityRange& focusDistance) { m_focusDistance = focusDistance; }
+    const DoubleCapabilityRange& focusDistance() const { return m_focusDistance; }
+    void setFocusDistance(const DoubleCapabilityRange& focusDistance) { m_focusDistance = focusDistance; }
 
     bool supportsWhiteBalanceMode() const { return m_supportedConstraints.supportsWhiteBalanceMode(); }
     const Vector<MeteringMode>& whiteBalanceModes() const { return m_whiteBalanceModes; }
     void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTFMove(modes); }
 
     bool supportsZoom() const { return m_supportedConstraints.supportsZoom(); }
-    const CapabilityRange& zoom() const { return m_zoom; }
-    void setZoom(const CapabilityRange& zoom) { m_zoom = zoom; }
+    const DoubleCapabilityRange& zoom() const { return m_zoom; }
+    void setZoom(const DoubleCapabilityRange& zoom) { m_zoom = zoom; }
 
     bool supportsTorch() const { return m_supportedConstraints.supportsTorch(); }
     bool torch() const { return m_torch; }
     void setTorch(bool torch) { m_torch = torch; }
 
+    bool supportsBackgroundBlur() const { return m_supportedConstraints.supportsBackgroundBlur(); }
+    BackgroundBlur backgroundBlur() const { return m_backgroundBlur; }
+    void setBackgroundBlur(BackgroundBlur backgroundBlur) { m_backgroundBlur = backgroundBlur; }
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
-    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
+    RealtimeMediaSourceCapabilities isolatedCopy() const { return { m_width, m_height, m_aspectRatio, m_frameRate, Vector<VideoFacingMode> { m_facingMode }, m_volume, m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_focusDistance, Vector<MeteringMode> { m_whiteBalanceModes }, m_zoom, m_torch, m_backgroundBlur, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } }; }
 
 private:
-    CapabilityRange m_width;
-    CapabilityRange m_height;
-    CapabilityRange m_aspectRatio;
-    CapabilityRange m_frameRate;
+    LongCapabilityRange m_width;
+    LongCapabilityRange m_height;
+    DoubleCapabilityRange m_aspectRatio;
+    DoubleCapabilityRange m_frameRate;
     Vector<VideoFacingMode> m_facingMode;
-    CapabilityRange m_volume;
-    CapabilityRange m_sampleRate;
-    CapabilityRange m_sampleSize;
+    DoubleCapabilityRange m_volume;
+    LongCapabilityRange m_sampleRate;
+    LongCapabilityRange m_sampleSize;
     EchoCancellation m_echoCancellation { EchoCancellation::ReadOnly };
     String m_deviceId;
     String m_groupId;
-    CapabilityRange m_focusDistance;
+    DoubleCapabilityRange m_focusDistance;
 
     Vector<MeteringMode> m_whiteBalanceModes;
-    CapabilityRange m_zoom;
+    DoubleCapabilityRange m_zoom;
     bool m_torch { false };
+
+    BackgroundBlur m_backgroundBlur { BackgroundBlur::Off };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

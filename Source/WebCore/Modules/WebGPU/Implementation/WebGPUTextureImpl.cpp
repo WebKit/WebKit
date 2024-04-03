@@ -46,7 +46,7 @@ TextureImpl::TextureImpl(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format,
 
 TextureImpl::~TextureImpl() = default;
 
-Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)
+RefPtr<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)
 {
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 

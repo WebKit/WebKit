@@ -865,6 +865,10 @@ fn testArray()
     { let x : array<u32, 1> = array<u32, 1>(u); }
     { let x : array<S, 2> = array<S, 2>(S(i), S(i)); }
     { _ = array<S, 2>(S(i), S(i)); }
+
+
+    var x1 = 0;
+    let x2 = array(x1, 0, 0i, x1);
 }
 
 // 16.1.2.2.
@@ -1354,6 +1358,8 @@ fn testBitcast()
     let i = 0i;
     let f = 0f;
     let h = 0h;
+
+    { const x =bitcast<vec2<i32>>(vec2(.659341217228384203)); }
 
     // @const @must_use fn bitcast<T>(e : T) -> T
     { const x: u32 = bitcast<u32>(5u); }
@@ -4142,11 +4148,11 @@ fn testDerivativeFunctions()
 @group(0) @binding(21) var ts3d: texture_storage_3d<rgba32float, write>;
 @group(0) @binding(22) var te: texture_external;
 
-var td2d: texture_depth_2d;
-var td2da: texture_depth_2d_array;
-var tdc: texture_depth_cube;
-var tdca: texture_depth_cube_array;
-var tdms2d: texture_depth_multisampled_2d;
+@group(0) @binding(23) var td2d: texture_depth_2d;
+@group(0) @binding(24) var td2da: texture_depth_2d_array;
+@group(0) @binding(25) var tdc: texture_depth_cube;
+@group(0) @binding(26) var tdca: texture_depth_cube_array;
+@group(0) @binding(27) var tdms2d: texture_depth_multisampled_2d;
 
 // 16.7.1
 // RUN: %metal-compile testTextureDimensions

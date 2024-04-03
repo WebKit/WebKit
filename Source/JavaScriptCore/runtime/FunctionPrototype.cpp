@@ -220,7 +220,9 @@ JSC_DEFINE_CUSTOM_GETTER(argumentsGetter, (JSGlobalObject* globalObject, Encoded
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
-    return JSValue::encode(retrieveArguments(vm, vm.topCallFrame, thisObj));
+    JSValue result = retrieveArguments(vm, vm.topCallFrame, thisObj);
+    EXCEPTION_ASSERT(scope.exception() || result);
+    return JSValue::encode(result);
 }
 
 class RetrieveCallerFunctionFunctor {

@@ -199,6 +199,74 @@
                 { "name": "pseudoId", "$ref": "CSS.PseudoId", "optional": true }
             ],
             "description": "An object referencing a node and a pseudo-element, primarily used to identify an animation effect target."
+        },
+        {
+            "id": "MediaStats",
+            "type": "object",
+            "description": "A structure holding media element statistics and configurations.",
+            "properties": [
+                { "name": "audio", "$ref": "AudioMediaStats", "optional": true },
+                { "name": "video", "$ref": "VideoMediaStats", "optional": true },
+                { "name": "devicePixelRatio", "type": "number", "optional": true, "description": "The ratio between physical screen pixels and CSS pixels." },
+                { "name": "viewport", "$ref": "ViewportSize", "optional": true, "description": "The viewport size occupied by the media element." },
+                { "name": "quality", "$ref": "VideoPlaybackQuality", "optional": true },
+                { "name": "source", "type": "string", "optional": true, "description": "The source type of the media element." }
+            ]
+        },
+        {
+            "id": "AudioMediaStats",
+            "type": "object",
+            "description": "A structure holding media element's audio-specific statistics and configurations.",
+            "properties": [
+                { "name": "bitrate", "type": "integer", "description": "The data rate of the primary audio track in bits/s." },
+                { "name": "codec", "type": "string", "description": "The codec string of the primary audio track. (E.g., \"hvc1.1.6.L123.B0\")" },
+                { "name": "humanReadableCodecString", "type": "string", "description": "A human readable version of the `codec` parameter."},
+                { "name": "numberOfChannels", "type": "integer", "description": "The number of audio channels in the primary audio track." },
+                { "name": "sampleRate", "type": "number", "description": "The sample rate of the primary audio track in hertz." }
+            ]
+        },
+        {
+            "id": "VideoMediaStats",
+            "type": "object",
+            "description": "A structure holding media element's audio-specific statistics and configurations.",
+            "properties": [
+                { "name": "bitrate", "type": "integer", "description": "The data rate of the video track in bits/s." },
+                { "name": "codec", "type": "string", "description": "The codec string of the video track. (E.g., \"hvc1.1.6.L123.B0\")" },
+                { "name": "humanReadableCodecString", "type": "string", "description": "A human readable version of the `codec` parameter."},
+                { "name": "colorSpace", "$ref": "VideoColorSpace" },
+                { "name": "framerate", "type": "number", "description": "The nominal frame rate of video track in frames per second." },
+                { "name": "height", "type": "integer", "description": "The native height of the video track in CSS pixels" },
+                { "name": "width", "type": "integer", "description": "The native width of the video track in CSS pixels" }
+            ]
+        },
+        {
+            "id": "VideoColorSpace",
+            "type": "object",
+            "description": "WebCodecs VideoColorSpace",
+            "properties": [
+                { "name": "fullRange", "type": "boolean", "optional": true, "description": "A flag indicating whether the colorspace is Full range (true) or Video range (false)" },
+                { "name": "matrix", "type": "string", "optional": true, "description": "The matrix specification of the colorspace" },
+                { "name": "primaries", "type": "string", "optional": true, "description": "The color primaries specification of the colorspace" },
+                { "name": "transfer", "type": "string", "optional": true, "description": "The transfer function specification of the colorspace" }
+            ]
+        },
+        {
+            "id": "VideoPlaybackQuality",
+            "type": "object",
+            "description": "A count of frames enqueued for display by the media element, and a subset count of dropped and display composited frames.",
+            "properties": [
+                { "name": "displayCompositedVideoFrames", "type": "integer", "description": "The number of frames of the total which were composited by the display." },
+                { "name": "droppedVideoFrames", "type": "integer", "description": "The number of frames of the total which were dropped without being displayed." },
+                { "name": "totalVideoFrames", "type": "integer", "description": "The total number of frames enqueued for display by the media element." }
+            ]
+        },
+        {
+            "id": "ViewportSize",
+            "type": "object",
+            "properties": [
+                { "name": "width", "type": "number" },
+                { "name": "height", "type": "number" }
+            ]
         }
     ],
     "commands": [
@@ -694,6 +762,16 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "allow", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "getMediaStats",
+            "description": "Returns media stats for the selected node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to retrieve mediastats for." }
+            ],
+            "returns": [
+                { "name": "mediaStats", "$ref": "MediaStats", "description": "An interleaved array of node attribute names and values." }
             ]
         }
     ],

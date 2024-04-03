@@ -32,12 +32,12 @@
 #include "GlyphPage.h"
 
 #include "CairoUtilities.h"
-#include "CharacterProperties.h"
 #include "Font.h"
 #include "FontCascade.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 

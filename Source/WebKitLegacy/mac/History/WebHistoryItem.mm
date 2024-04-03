@@ -141,7 +141,7 @@ void WKNotifyHistoryItemChanged()
 {
     WebCoreThreadViolationCheckRoundOne();
 
-    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title)];
+    WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString)];
     item->_private->_lastVisitedTime = time;
 
     return item;
@@ -181,21 +181,6 @@ void WKNotifyHistoryItemChanged()
 - (NSString *)originalURLString
 {
     return nsStringNilIfEmpty(core(_private)->originalURLString());
-}
-
-- (NSString *)title
-{
-    return nsStringNilIfEmpty(core(_private)->title());
-}
-
-- (void)setAlternateTitle:(NSString *)alternateTitle
-{
-    core(_private)->setAlternateTitle(alternateTitle);
-}
-
-- (NSString *)alternateTitle
-{
-    return nsStringNilIfEmpty(core(_private)->alternateTitle());
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -281,7 +266,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString, title, displayTitle)];
+    auto item = [self initWithWebCoreHistoryItem:HistoryItem::create(LegacyHistoryItemClient::singleton(), URLString)];
     if (!item)
         return nil;
     item->_private->_lastVisitedTime = time;
@@ -301,11 +286,6 @@ WebHistoryItem *kit(HistoryItem* item)
     ASSERT(!historyItemWrappers().get(*core(_private)));
     historyItemWrappers().set(*core(_private), self);
     return self;
-}
-
-- (void)setTitle:(NSString *)title
-{
-    core(_private)->setTitle(title);
 }
 
 - (void)setViewState:(id)statePList
@@ -369,9 +349,8 @@ WebHistoryItem *kit(HistoryItem* item)
     return core(_private)->scrollPosition();
 }
 
-- (void)_visitedWithTitle:(NSString *)title
+- (void)_visited
 {
-    core(_private)->setTitle(title);
     _private->_lastVisitedTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
@@ -402,10 +381,6 @@ WebHistoryItem *kit(HistoryItem* item)
     
     if (!coreItem->urlString().isEmpty())
         [dict setObject:(NSString*)coreItem->urlString() forKey:@""];
-    if (!coreItem->title().isEmpty())
-        [dict setObject:(NSString*)coreItem->title() forKey:titleKey];
-    if (!coreItem->alternateTitle().isEmpty())
-        [dict setObject:(NSString*)coreItem->alternateTitle() forKey:displayTitleKey];
     if (_private->_lastVisitedTime) {
         // Store as a string to maintain backward compatibility. (See 3245793)
         [dict setObject:[NSString stringWithFormat:@"%.1lf", _private->_lastVisitedTime]

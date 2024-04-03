@@ -1,0 +1,4 @@
+
+
+FAIL Video frames are resized in letterbox-mode when captured at non-native size. assert_true: Pixel at 5x5 is not black, found {0, 0, 0, 0} expected true got false
+

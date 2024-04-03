@@ -252,7 +252,7 @@ void ValidatedFormListedElement::updateValidity()
     bool newIsValid = this->computeValidity();
 
     if (newIsValid != m_isValid) {
-        HTMLElement& element = asHTMLElement();
+        SUPPRESS_UNCOUNTED_LOCAL auto& element = asHTMLElement();
         Style::PseudoClassChangeInvalidation styleInvalidation(element, {
             { CSSSelector::PseudoClass::Valid, newIsValid },
             { CSSSelector::PseudoClass::Invalid, !newIsValid },
@@ -327,6 +327,11 @@ void ValidatedFormListedElement::insertedIntoAncestor(Node::InsertionType insert
     syncWithFieldsetAncestors(&parentOfInsertedTree);
 
     FormListedElement::elementInsertedIntoAncestor(asHTMLElement(), insertionType);
+
+    if (!insertionType.connectedToDocument)
+        resetFormOwner();
+    // Need to wait for didFinishInsertingNode to reset form when this element is inserted into a document
+    // because we rely on TreeScope::getElementById to return the right element.
 }
 
 void ValidatedFormListedElement::setDataListAncestorState(TriState isInsideDataList)

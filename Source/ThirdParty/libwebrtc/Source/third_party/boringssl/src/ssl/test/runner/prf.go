@@ -13,7 +13,6 @@ import (
 	"encoding"
 	"hash"
 
-	"golang.org/x/crypto/cryptobyte"
 	"golang.org/x/crypto/hkdf"
 )
 
@@ -229,15 +228,15 @@ type finishedHash struct {
 }
 
 func (h *finishedHash) UpdateForHelloRetryRequest() {
-	data := cryptobyte.NewBuilder(nil)
-	data.AddUint8(typeMessageHash)
-	data.AddUint24(uint32(h.hash.Size()))
-	data.AddBytes(h.Sum())
+	data := newByteBuilder()
+	data.addU8(typeMessageHash)
+	data.addU24(h.hash.Size())
+	data.addBytes(h.Sum())
 	h.hash = h.suite.hash().New()
 	if h.buffer != nil {
 		h.buffer = []byte{}
 	}
-	h.Write(data.BytesOrPanic())
+	h.Write(data.finish())
 }
 
 func (h *finishedHash) Write(msg []byte) (n int, err error) {

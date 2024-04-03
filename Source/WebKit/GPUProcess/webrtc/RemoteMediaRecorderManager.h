@@ -25,12 +25,14 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Connection;
@@ -64,7 +66,7 @@ private:
     void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(std::optional<WebCore::ExceptionData>&&, String&&, unsigned, unsigned)>&&);
     void releaseRecorder(MediaRecorderIdentifier);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<MediaRecorderIdentifier, std::unique_ptr<RemoteMediaRecorder>> m_recorders;
 };
 

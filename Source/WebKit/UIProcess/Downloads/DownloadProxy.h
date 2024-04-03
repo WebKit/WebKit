@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "Connection.h"
-#include "DataReference.h"
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
 #include "SandboxExtension.h"
@@ -116,7 +115,7 @@ public:
     void shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result);
     void didCreateDestination(const String& path);
     void didFinish();
-    void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
+    void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
     void willSendRequest(WebCore::ResourceRequest&& redirectRequest, const WebCore::ResourceResponse& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse&, String&& suggestedFilename, CompletionHandler<void(String, SandboxExtension::Handle, AllowOverwrite)>&&);
 

@@ -10,7 +10,7 @@
 #include "libANGLE/renderer/vulkan/MemoryTracking.h"
 
 #include "common/debug.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 // Consts
 namespace
@@ -57,7 +57,7 @@ void OutputMemoryLogStream(std::stringstream &outStream, vk::MemoryLogSeverity s
 
 // Check for currently allocated memory. It is used at the end of the renderer object and when
 // there is an allocation error (from ANGLE_VK_TRY()).
-void CheckForCurrentMemoryAllocations(RendererVk *renderer, vk::MemoryLogSeverity severity)
+void CheckForCurrentMemoryAllocations(vk::Renderer *renderer, vk::MemoryLogSeverity severity)
 {
     if (kTrackMemoryAllocationSizes)
     {
@@ -97,7 +97,7 @@ void CheckForCurrentMemoryAllocations(RendererVk *renderer, vk::MemoryLogSeverit
 }
 
 // In case of an allocation error, log pending memory allocation if the size in non-zero.
-void LogPendingMemoryAllocation(RendererVk *renderer, vk::MemoryLogSeverity severity)
+void LogPendingMemoryAllocation(vk::Renderer *renderer, vk::MemoryLogSeverity severity)
 {
     if (!kTrackMemoryAllocationSizes)
     {
@@ -126,7 +126,7 @@ void LogPendingMemoryAllocation(RendererVk *renderer, vk::MemoryLogSeverity seve
     }
 }
 
-void LogMemoryHeapStats(RendererVk *renderer, vk::MemoryLogSeverity severity)
+void LogMemoryHeapStats(vk::Renderer *renderer, vk::MemoryLogSeverity severity)
 {
     if (!kTrackMemoryAllocationSizes)
     {
@@ -189,7 +189,7 @@ void LogMemoryHeapStats(RendererVk *renderer, vk::MemoryLogSeverity severity)
 }
 }  // namespace
 
-MemoryAllocationTracker::MemoryAllocationTracker(RendererVk *renderer)
+MemoryAllocationTracker::MemoryAllocationTracker(vk::Renderer *renderer)
     : mRenderer(renderer), mMemoryAllocationID(0)
 {}
 
@@ -573,7 +573,7 @@ void MemoryReport::processCallback(const VkDeviceMemoryReportCallbackDataEXT &ca
     {
         INFO() << std::right << std::setw(9) << reportType << ": size=" << std::setw(10)
                << callbackData.size << "; type=" << std::setw(15) << std::left
-               << RendererVk::GetVulkanObjectTypeName(callbackData.objectType)
+               << Renderer::GetVulkanObjectTypeName(callbackData.objectType)
                << "; heapIdx=" << callbackData.heapIndex << "; id=" << std::hex
                << callbackData.memoryObjectId << "; handle=" << std::hex
                << callbackData.objectHandle << ": Total=" << std::right << std::setw(10) << std::dec
@@ -599,10 +599,10 @@ void MemoryReport::logMemoryReportStats() const
         VkDeviceSize importedMemory     = memorySizes.importedMemory;
         VkDeviceSize importedMemoryMax  = memorySizes.importedMemoryMax;
         INFO() << std::right << "- Type=" << std::setw(15)
-               << RendererVk::GetVulkanObjectTypeName(objectType)
-               << ":  Allocated=" << std::setw(10) << allocatedMemory << " (max=" << std::setw(10)
-               << allocatedMemoryMax << ");  Imported=" << std::setw(10) << importedMemory
-               << " (max=" << std::setw(10) << importedMemoryMax << ")";
+               << Renderer::GetVulkanObjectTypeName(objectType) << ":  Allocated=" << std::setw(10)
+               << allocatedMemory << " (max=" << std::setw(10) << allocatedMemoryMax
+               << ");  Imported=" << std::setw(10) << importedMemory << " (max=" << std::setw(10)
+               << importedMemoryMax << ")";
     }
 }
 }  // namespace vk

@@ -34,7 +34,8 @@ class Encoder;
 }
 
 namespace WebCore {
-using ScrollingNodeID = uint64_t;
+struct ScrollingNodeIDType;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 }
 
 namespace WebKit {

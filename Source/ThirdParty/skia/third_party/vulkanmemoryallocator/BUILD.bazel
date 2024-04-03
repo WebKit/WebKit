@@ -1,0 +1,8 @@
+licenses(["notice"])
+# TODO(kjlubick) remove this after G3 rolls
+
+alias(
+    name = "vulkanmemoryallocator",
+    actual = "//src/gpu/vk/vulkanmemoryallocator:vulkanmemoryallocator",
+    visibility = ["//visibility:public"],
+)

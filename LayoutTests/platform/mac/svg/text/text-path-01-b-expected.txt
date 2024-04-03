@@ -33,11 +33,11 @@ layer at (0,0) size 800x600
           RenderSVGPath {path} at (55,130) size 367x145 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 33.5 145.8 C 41 123 70.3 69.7 104.5 86.8 C 121 95 133 116 144.5 129.8 C 156.2 144.4 173 155.5 190.5 159.8 C 221.8 167.6 231 146.9 252.5 130.8"]
         RenderSVGText {text} at (-9,50) size 217x120 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 216x120
-            RenderSVGTSpan {tspan} at (0,0) size 56x58
+            RenderSVGTSpan {tspan} at (0,36) size 56x58
               RenderSVGInlineText {#text} at (0,36) size 56x57
                 chunk 1 text run 1 at (37.56,135.44) startOffset 0 endOffset 1 width 22.27: "T"
                 chunk 1 text run 2 at (46.81,117.90) startOffset 1 endOffset 2 width 17.40: "e"
-            RenderSVGTSpan {tspan} at (0,0) size 44x41
+            RenderSVGTSpan {tspan} at (34,25) size 44x41
               RenderSVGInlineText {#text} at (34,25) size 44x41
                 chunk 1 text run 1 at (57.16,103.45) startOffset 0 endOffset 1 width 18.18: "x"
             RenderSVGInlineText {#text} at (50,0) size 165x120

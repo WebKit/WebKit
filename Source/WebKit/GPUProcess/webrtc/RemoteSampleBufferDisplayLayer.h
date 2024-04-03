@@ -36,6 +36,7 @@
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class ImageTransferSessionVT;
@@ -79,7 +80,7 @@ private:
     void enqueueVideoFrame(SharedVideoFrame&&);
     void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
     void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender
@@ -89,14 +90,13 @@ private:
     // WebCore::SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidFail() final;
 
-    GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;
-
 };
 
 }

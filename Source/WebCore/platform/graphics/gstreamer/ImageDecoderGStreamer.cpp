@@ -38,6 +38,17 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_image_decoder_debug);
 #define GST_CAT_DEFAULT webkit_image_decoder_debug
 
+static Lock s_decoderLock;
+static Vector<RefPtr<ImageDecoderGStreamer>> s_imageDecoders;
+
+void teardownGStreamerImageDecoders()
+{
+    Locker lock { s_decoderLock };
+    for (auto& decoder : s_imageDecoders)
+        decoder->tearDown();
+    s_imageDecoders.clear();
+}
+
 class ImageDecoderGStreamerSample final : public MediaSampleGStreamer {
 public:
     static Ref<ImageDecoderGStreamerSample> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
@@ -51,7 +62,11 @@ public:
             return nullptr;
         return m_image->image().nativeImage()->platformImage();
     }
-    void dropImage() { m_image = nullptr; }
+    void dropImage()
+    {
+        m_image = nullptr;
+        m_frame = nullptr;
+    }
 
     SampleFlags flags() const override
     {
@@ -62,7 +77,7 @@ private:
     ImageDecoderGStreamerSample(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize)
         : MediaSampleGStreamer(WTFMove(sample), presentationSize, { })
     {
-        m_frame = VideoFrameGStreamer::createWrappedSample(platformSample().sample.gstSample, MediaTime::invalidTime());
+        m_frame = VideoFrameGStreamer::create(GRefPtr(platformSample().sample.gstSample), presentationSize);
         m_image = m_frame->convertToImage();
     }
 
@@ -83,7 +98,12 @@ ImageDecoderGStreamerSample* toSample(Iterator iter)
 
 RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    return adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
+    RefPtr decoder = adoptRef(*new ImageDecoderGStreamer(data, mimeType, alphaOption, gammaAndColorProfileOption));
+    {
+        Locker lock { s_decoderLock };
+        s_imageDecoders.append(decoder);
+    }
+    return decoder;
 }
 
 ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption, GammaAndColorProfileOption)
@@ -96,7 +116,7 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 
     static Atomic<uint32_t> decoderId;
     GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-", decoderId.exchangeAdd(1)).utf8().data());
-    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, const auto&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
+    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, auto&&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
         auto caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
         auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });
         GST_DEBUG_OBJECT(pad.get(), "Caps on parser source pad: %" GST_PTR_FORMAT, caps.get());
@@ -119,14 +139,25 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
 
         GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
         configureVideoDecoderForHarnessing(element);
-        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto& stream, const auto& outputBuffer) {
-            auto outputCaps = stream.outputCaps();
-            storeDecodedSample(adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr)));
-        }, { });
+        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto&, auto&& outputSample) {
+            storeDecodedSample(WTFMove(outputSample));
+        });
         return m_decoderHarness;
     });
 
     pushEncodedData(data);
+}
+
+ImageDecoderGStreamer::~ImageDecoderGStreamer()
+{
+    tearDown();
+}
+
+void ImageDecoderGStreamer::tearDown()
+{
+    m_sampleData.clear();
+    m_decoderHarness = nullptr;
+    m_parserHarness = nullptr;
 }
 
 bool ImageDecoderGStreamer::supportsContainerType(const String& type)
@@ -181,18 +212,6 @@ RepetitionCount ImageDecoderGStreamer::repetitionCount() const
 {
     // In the absence of instructions to the contrary, assume all media formats repeat infinitely.
     return frameCount() > 1 ? RepetitionCountInfinite : RepetitionCountNone;
-}
-
-String ImageDecoderGStreamer::uti() const
-{
-    notImplemented();
-    return { };
-}
-
-ImageDecoder::FrameMetadata ImageDecoderGStreamer::frameMetadataAtIndex(size_t) const
-{
-    notImplemented();
-    return { };
 }
 
 Seconds ImageDecoderGStreamer::frameDurationAtIndex(size_t index) const
@@ -317,7 +336,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
         }
     }
 
-    m_decoderHarness->flush();
+    m_decoderHarness->reset();
 }
 
 #undef GST_CAT_DEFAULT

@@ -32,8 +32,9 @@ public:
     using DOMWrapped = TestNode;
     static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
     {
-        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm())) JSTestNode(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(vm)) JSTestNode(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -60,6 +61,9 @@ public:
     {
         return static_cast<TestNode&>(Base::wrapped());
     }
+
+    Ref<TestNode> protectedWrapped() const;
+
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNode>&&);
 

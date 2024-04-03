@@ -20,5 +20,19 @@ Successfully added item: 17 times
 Successfully added item: 18 times
 Successfully added item: 19 times
 Successfully added item: 20 times
+Successfully added item: 21 times
+Successfully added item: 22 times
+Successfully added item: 23 times
+Successfully added item: 24 times
+Successfully added item: 25 times
+Successfully added item: 26 times
+Successfully added item: 27 times
+Successfully added item: 28 times
+Successfully added item: 29 times
+Successfully added item: 30 times
+Successfully added item: 31 times
+Successfully added item: 32 times
+Successfully added item: 33 times
+Successfully added item: 34 times
 User gesture: QuotaExceededError: Attempt to store more data than allowed using history.pushState()
 

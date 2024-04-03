@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,7 +37,7 @@ namespace WebCore {
 class CachedImage;
 class RenderElement;
 
-class RenderImageResource {
+class RenderImageResource : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
 public:
     RenderImageResource();
@@ -45,7 +46,7 @@ public:
     virtual void initialize(RenderElement& renderer) { initialize(renderer, nullptr); }
     virtual void shutdown();
 
-    void setCachedImage(CachedImage*);
+    void setCachedImage(CachedResourceHandle<CachedImage>&&);
     CachedImage* cachedImage() const { return m_cachedImage.get(); }
 
     void resetAnimation();

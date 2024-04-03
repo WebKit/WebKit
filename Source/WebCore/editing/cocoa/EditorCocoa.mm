@@ -27,10 +27,13 @@
 #import "Editor.h"
 
 #import "ArchiveResource.h"
+#import "Blob.h"
 #import "CSSValueList.h"
 #import "CSSValuePool.h"
 #import "CachedResourceLoader.h"
 #import "ColorMac.h"
+#import "DOMURL.h"
+#import "DeprecatedGlobalSettings.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
@@ -44,7 +47,10 @@
 #import "HTMLAttachmentElement.h"
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
+#import "HTMLPictureElement.h"
+#import "HTMLSourceElement.h"
 #import "HTMLSpanElement.h"
+#import "ImageBufferUtilitiesCG.h"
 #import "ImageOverlay.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
@@ -56,6 +62,7 @@
 #import "PlatformStrategies.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
+#import "ReplaceSelectionCommand.h"
 #import "Settings.h"
 #import "SystemSoundManager.h"
 #import "Text.h"
@@ -65,6 +72,10 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/NSURLExtras.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MultiRepresentationHEICAdditions.h>
+#endif
 
 namespace WebCore {
 
@@ -232,7 +243,7 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         return;
 
     if (document->selection().selection().isContentRichlyEditable()) {
-        if (auto fragment = createFragmentAndAddResources(*document->frame(), attributedString)) {
+        if (auto fragment = createFragment(*document->frame(), attributedString, AddResources::Yes)) {
             if (shouldInsertFragment(*fragment, selectedRange(), EditorInsertAction::Pasted))
                 pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
         }
@@ -327,17 +338,19 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
 {
     // This is only supported for single-Node fragments.
-    RefPtr firstChild = fragment.firstChild();
-    if (!firstChild || firstChild != fragment.lastChild())
+    if (!fragment.hasOneChild())
         return;
 
     // And only supported for HTML elements.
-    if (!node.isHTMLElement() || !firstChild->isHTMLElement())
+    RefPtr oldElement = dynamicDowncast<HTMLElement>(node);
+    if (!oldElement)
+        return;
+
+    RefPtr newElement = dynamicDowncast<HTMLElement>(*fragment.firstChild());
+    if (!newElement)
         return;
 
     // And only if the source Element and destination Element have the same HTML tag name.
-    Ref oldElement = downcast<HTMLElement>(node);
-    Ref newElement = downcast<HTMLElement>(*firstChild);
     if (oldElement->localName() != newElement->localName())
         return;
 
@@ -384,5 +397,49 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     client()->setInsertionPasteboard({ });
 #endif
 }
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+void Editor::insertMultiRepresentationHEIC(const std::span<const uint8_t>& data)
+{
+    auto document = protectedDocument();
+
+    String primaryType = MULTI_REPRESENTATION_HEIC_MIME_TYPE_STRING;
+    auto primaryBuffer = FragmentedSharedBuffer::create(data);
+
+    String fallbackType = "image/png"_s;
+    auto fallbackData = encodeData(data, fallbackType, std::nullopt);
+    auto fallbackBuffer = FragmentedSharedBuffer::create(WTFMove(fallbackData));
+
+    auto picture = HTMLPictureElement::create(HTMLNames::pictureTag, document);
+
+    auto source = HTMLSourceElement::create(document);
+    source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), primaryBuffer->copyData(), primaryType)) });
+    source->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { primaryType });
+    picture->appendChild(WTFMove(source));
+
+    auto image = HTMLImageElement::create(document);
+    image->setSrc(AtomString { DOMURL::createObjectURL(document, Blob::create(document.ptr(), fallbackBuffer->copyData(), fallbackType)) });
+    picture->appendChild(WTFMove(image));
+
+    auto fragment = document->createDocumentFragment();
+    fragment->appendChild(WTFMove(picture));
+
+    ReplaceSelectionCommand::create(document.get(), WTFMove(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
+        auto primaryAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        auto primaryIdentifier = primaryAttachment->ensureUniqueIdentifier();
+        registerAttachmentIdentifier(primaryIdentifier, "image/heic"_s, makeString(primaryIdentifier, ".heic"_s), WTFMove(primaryBuffer));
+        source->setAttachmentElement(WTFMove(primaryAttachment));
+
+        auto fallbackAttachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document.get());
+        auto fallbackIdentifier = fallbackAttachment->ensureUniqueIdentifier();
+        registerAttachmentIdentifier(fallbackIdentifier, fallbackType, makeString(fallbackIdentifier, ".png"_s), WTFMove(fallbackBuffer));
+        image->setAttachmentElement(WTFMove(fallbackAttachment));
+    }
+#endif
+}
+#endif
 
 }

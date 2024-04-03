@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (197,5) size 105x70 [bgcolor=#800080]
         RenderText {#text} at (2,2) size 151x19
           text run at (2,2) width 151: "First non-breaking line."
-        RenderInline {NOBR} at (0,0) size 169x19
+        RenderInline {NOBR} at (2,22) size 169x19
           RenderText {#text} at (2,22) size 169x19
             text run at (2,22) width 169: "Second non-breaking line."
         RenderText {#text} at (0,0) size 0x0

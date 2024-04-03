@@ -228,12 +228,13 @@ class TIntermLoop : public TIntermNode
     TIntermNode *getInit() { return mInit; }
     TIntermTyped *getCondition() { return mCond; }
     TIntermTyped *getExpression() { return mExpr; }
+    // Returns non-null body.
     TIntermBlock *getBody() { return mBody; }
 
     void setInit(TIntermNode *init) { mInit = init; }
     void setCondition(TIntermTyped *condition) { mCond = condition; }
     void setExpression(TIntermTyped *expression) { mExpr = expression; }
-    void setBody(TIntermBlock *body) { mBody = body; }
+    void setBody(TIntermBlock *body) { mBody = EnsureBody(body); }
 
     virtual TIntermLoop *deepCopy() const override { return new TIntermLoop(*this); }
 
@@ -242,10 +243,11 @@ class TIntermLoop : public TIntermNode
     TIntermNode *mInit;   // for-loop initialization
     TIntermTyped *mCond;  // loop exit condition
     TIntermTyped *mExpr;  // for-loop expression
-    TIntermBlock *mBody;  // loop body
+    TIntermBlock *mBody;  // loop body, non-null.
 
   private:
     TIntermLoop(const TIntermLoop &);
+    static TIntermBlock *EnsureBody(TIntermBlock *body);
 };
 
 //
@@ -1040,6 +1042,16 @@ class TIntermPreprocessorDirective final : public TIntermNode
 
     TIntermPreprocessorDirective(const TIntermPreprocessorDirective &);
 };
+
+inline TIntermBlock *TIntermLoop::EnsureBody(TIntermBlock *body)
+{
+    if (ANGLE_LIKELY(body))
+    {
+        return body;
+    }
+    UNREACHABLE();
+    return new TIntermBlock();
+}
 
 }  // namespace sh
 

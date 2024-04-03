@@ -72,7 +72,7 @@ public:
 
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
     void resolve(Ref<DeferredPromise>&&, const String& contentType, FetchBodyOwner*, ReadableStream*);
-    void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, const unsigned char*, unsigned);
+    void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, std::span<const uint8_t>);
     void resolveWithFormData(Ref<DeferredPromise>&&, const String& contentType, const FormData&, ScriptExecutionContext*);
     void consumeFormDataAsStream(const FormData&, FetchBodySource&, ScriptExecutionContext*);
 
@@ -84,7 +84,7 @@ public:
 
     void setAsLoading() { m_isLoading = true; }
 
-    static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, const String& contentType, const uint8_t* data, size_t length);
+    static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, const String& contentType, std::span<const uint8_t> data);
 
 private:
     Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);

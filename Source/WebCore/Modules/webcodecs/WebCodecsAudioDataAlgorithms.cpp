@@ -54,8 +54,7 @@ bool isValidAudioDataInit(const WebCodecsAudioData::Init& init)
     if (!WTF::safeMultiply(totalSamples, bytesPerSample, totalSize))
         return false;
 
-    auto dataSize = init.data.span().size();
-    return dataSize >= totalSize;
+    return init.data.length() >= totalSize;
 }
 
 bool isAudioSampleFormatInterleaved(const AudioSampleFormat& format)

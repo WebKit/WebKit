@@ -22,6 +22,7 @@
 #pragma once
 
 #include <cstdint>
+#include <span>
 #include <string>
 #include <wtf/Forward.h>
 #include <wtf/text/LChar.h>
@@ -134,7 +135,8 @@ template<size_t N>
 struct IntegerToStringConversionTrait<Vector<LChar, N>> {
     using ReturnType = Vector<LChar, N>;
     using AdditionalArgumentType = void;
-    static ReturnType flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
+    // FIXME: Should take in a std::span.
+    static ReturnType flush(LChar* characters, unsigned length, void*) { return { std::span { characters, length } }; }
 };
 
 } // namespace WTF

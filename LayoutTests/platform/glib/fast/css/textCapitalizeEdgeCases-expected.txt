@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (25,25) size 694x18
           RenderText {#text} at (664,0) size 30x17
             text run at (664,0) width 30 RTL: "Capi"
-          RenderInline {SPAN} at (0,0) size 15x17
+          RenderInline {SPAN} at (649,0) size 15x17
             RenderText {#text} at (649,0) size 15x17
               text run at (649,0) width 15 RTL: "tal"
           RenderText {#text} at (632,0) size 17x17
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 694x29
             RenderText {#text} at (0,11) size 31x17
               text run at (0,11) width 31: "A W"
-            RenderInline {DIV} at (0,0) size 14x17
+            RenderInline {DIV} at (30,11) size 14x17
               RenderText {#text} at (30,11) size 14x17
                 text run at (30,11) width 14: "or"
             RenderText {#text} at (43,11) size 43x17
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,29) size 694x18
             RenderText {#text} at (0,0) size 35x17
               text run at (0,0) width 35: "In Be"
-            RenderInline {SPAN} at (0,0) size 16x17
+            RenderInline {SPAN} at (35,0) size 16x17
               RenderText {#text} at (35,0) size 16x17
                 text run at (35,0) width 16: "tw"
             RenderText {#text} at (51,0) size 22x17

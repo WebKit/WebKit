@@ -8,10 +8,10 @@ layer at (0,0) size 800x238
           text run at (0,0) width 299: "This is a test of generated content in <button> "
           text run at (298,0) width 24: "for "
         RenderInline {I} at (0,0) size 778x36
-          RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
+          RenderInline {A} at (321,0) size 353x18 [color=#0000EE]
             RenderText {#text} at (321,0) size 353x18
               text run at (321,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9561"
-          RenderText {#text} at (673,0) size 778x36
+          RenderText {#text} at (0,0) size 778x36
             text run at (673,0) width 5: " "
             text run at (677,0) width 101: "REGRESSION:"
             text run at (0,18) width 436: "Content property on :before of button causes hang on click or hover"
@@ -44,7 +44,7 @@ layer at (0,0) size 800x238
           RenderBlock (anonymous) at (8,2) size 60x13
             RenderText {#text} at (0,0) size 35x13
               text run at (0,0) width 35: "button"
-            RenderInline (generated) at (0,0) size 26x13
+            RenderInline (generated) at (34,0) size 26x13
               RenderText at (34,0) size 26x13
                 text run at (34,0) width 26: "after"
         RenderBR {BR} at (119,19) size 1x18
@@ -90,7 +90,7 @@ layer at (0,0) size 800x238
           RenderBlock (anonymous) at (8,2) size 60x13
             RenderText {#text} at (0,0) size 35x13
               text run at (0,0) width 35: "button"
-            RenderInline (generated) at (0,0) size 26x13
+            RenderInline (generated) at (34,0) size 26x13
               RenderText at (34,0) size 26x13
                 text run at (34,0) width 26: "after"
         RenderBR {BR} at (119,95) size 1x18
@@ -120,7 +120,7 @@ layer at (0,0) size 800x238
           RenderBlock (anonymous) at (8,2) size 60x13
             RenderText {#text} at (0,0) size 35x13
               text run at (0,0) width 35: "button"
-            RenderInline (generated) at (0,0) size 26x13
+            RenderInline (generated) at (34,0) size 26x13
               RenderText at (34,0) size 26x13
                 text run at (34,0) width 26: "after"
         RenderBR {BR} at (119,133) size 1x18

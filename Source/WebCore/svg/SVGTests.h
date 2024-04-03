@@ -23,12 +23,14 @@
 
 #include "QualifiedName.h"
 #include "SVGStringList.h"
+#include <wtf/Forward.h>
 #include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 
 class SVGElement;
 class SVGStringList;
+class WeakPtrImplWithEventTargetData;
 
 template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry;
@@ -70,14 +72,19 @@ public:
 
     // These methods are called from DOM through the super classes.
     SVGStringList& requiredFeatures() { return conditionalProcessingAttributes().requiredFeatures(); }
+    Ref<SVGStringList> protectedRequiredFeatures();
     SVGStringList& requiredExtensions() { return conditionalProcessingAttributes().requiredExtensions(); }
+    Ref<SVGStringList> protectedRequiredExtensions();
     SVGStringList& systemLanguage() { return conditionalProcessingAttributes().systemLanguage(); }
+    Ref<SVGStringList> protectedSystemLanguage();
 
 protected:
     SVGTests(SVGElement* contextElement);
 
 private:
-    SVGElement& m_contextElement;
+    Ref<SVGElement> protectedContextElement() const;
+
+    WeakRef<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
 };
 
 } // namespace WebCore

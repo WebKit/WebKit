@@ -71,7 +71,7 @@ private:
 
     PDFDocument& document() const;
 
-    void appendBytes(DocumentWriter&, const uint8_t*, size_t) override;
+    void appendBytes(DocumentWriter&, std::span<const uint8_t>) override;
     void finish() override;
 };
 
@@ -82,7 +82,7 @@ inline PDFDocument& PDFDocumentParser::document() const
     return downcast<PDFDocument>(*RawDataDocumentParser::document());
 }
 
-void PDFDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
+void PDFDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 {
     document().updateDuringParsing();
 }

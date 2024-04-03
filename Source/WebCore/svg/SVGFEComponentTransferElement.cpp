@@ -54,7 +54,7 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
 void SVGFEComponentTransferElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == SVGNames::inAttr)
-        m_in1->setBaseValInternal(newValue);
+        Ref { m_in1 }->setBaseValInternal(newValue);
 
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
@@ -98,29 +98,28 @@ bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffe
 {
     ASSERT(isRelevantTransferFunctionElement(childElement));
 
-    if (!is<SVGComponentTransferFunctionElement>(childElement)) {
-        ASSERT_NOT_REACHED();
+    auto* child = dynamicDowncast<SVGComponentTransferFunctionElement>(childElement);
+    ASSERT(child);
+    if (!child)
         return false;
-    }
 
     auto& effect = downcast<FEComponentTransfer>(filterEffect);
-    auto& child = downcast<SVGComponentTransferFunctionElement>(childElement);
 
     switch (attrName.nodeName()) {
     case AttributeNames::typeAttr:
-        return effect.setType(child.channel(), child.type());
+        return effect.setType(child->channel(), child->type());
     case AttributeNames::slopeAttr:
-        return effect.setSlope(child.channel(), child.slope());
+        return effect.setSlope(child->channel(), child->slope());
     case AttributeNames::interceptAttr:
-        return effect.setIntercept(child.channel(), child.intercept());
+        return effect.setIntercept(child->channel(), child->intercept());
     case AttributeNames::amplitudeAttr:
-        return effect.setAmplitude(child.channel(), child.amplitude());
+        return effect.setAmplitude(child->channel(), child->amplitude());
     case AttributeNames::exponentAttr:
-        return effect.setExponent(child.channel(), child.exponent());
+        return effect.setExponent(child->channel(), child->exponent());
     case AttributeNames::offsetAttr:
-        return effect.setOffset(child.channel(), child.offset());
+        return effect.setOffset(child->channel(), child->offset());
     case AttributeNames::tableValuesAttr:
-        return effect.setTableValues(child.channel(), child.tableValues());
+        return effect.setTableValues(child->channel(), child->tableValues());
     default:
         break;
     }

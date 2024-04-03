@@ -101,7 +101,7 @@ public:
 
     void dataDrop(uint32_t dataSegmentIndex);
 
-    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(cachedBoundsCheckingSize()); }
+    void* cachedMemory() const { return m_cachedMemory.getMayBeNull(); }
     size_t cachedBoundsCheckingSize() const { return m_cachedBoundsCheckingSize; }
 
     void setMemory(Ref<Memory>&& memory)
@@ -128,7 +128,7 @@ public:
 #else
             m_cachedBoundsCheckingSize = memory()->mappedCapacity();
 #endif
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->basePointer(), m_cachedBoundsCheckingSize);
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void>(memory()->basePointer());
             ASSERT(memory()->basePointer() == cachedMemory());
         }
     }
@@ -209,12 +209,20 @@ public:
 
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
+
+    static constexpr uintptr_t NullWasmCallee = 0;
+
     struct ImportFunctionInfo {
         // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
         Instance* targetInstance { nullptr };
         WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
         CodePtr<WasmEntryPtrTag> importFunctionStub;
         WriteBarrier<JSObject> importFunction { };
+        // This is only used when we need to jump directly into the LLInt/IPInt.
+        const uintptr_t* boxedTargetCalleeLoadLocation { &NullWasmCallee };
+#if CPU(ADDRESS32)
+        void* _ { nullptr }; // padding
+#endif
     };
     unsigned numImportFunctions() const { return m_numImportFunctions; }
     ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
@@ -224,6 +232,7 @@ public:
     }
     static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, targetInstance); }
     static size_t offsetOfWasmEntrypointLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypointLoadLocation); }
+    static size_t offsetOfBoxedTargetCalleeLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, boxedTargetCalleeLoadLocation); }
     static size_t offsetOfImportFunctionStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunctionStub); }
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
     WriteBarrier<JSObject>& importFunction(unsigned importFunctionNum) { return importFunctionInfo(importFunctionNum)->importFunction; }
@@ -241,6 +250,8 @@ public:
         m_temporaryCallFrame = callFrame;
     }
 
+    void* softStackLimit() const { return m_softStackLimit; }
+
 private:
     Instance(VM&, JSGlobalObject*, Ref<Module>&&);
     
@@ -255,7 +266,7 @@ private:
     void* m_softStackLimit { nullptr };
     JSWebAssemblyInstance* m_owner { nullptr };
     JSGlobalObject* m_globalObject; // This is kept by JSWebAssemblyInstance*.
-    CagedPtr<Gigacage::Primitive, void, tagCagedPtr> m_cachedMemory;
+    CagedPtr<Gigacage::Primitive, void> m_cachedMemory;
     size_t m_cachedBoundsCheckingSize { 0 };
     Ref<Module> m_module;
     RefPtr<Memory> m_memory;

@@ -1,0 +1,3 @@
+
+PASS Duplicate policy names should be tolerated (unless in enforcing mode)
+

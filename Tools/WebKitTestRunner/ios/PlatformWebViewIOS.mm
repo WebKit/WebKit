@@ -213,7 +213,7 @@ static CGRect viewRectForWindowRect(CGRect windowRect, PlatformWebView::WebViewS
     return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height - (mode == PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar ? statusBarBottom : 0));
 }
 
-PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
@@ -227,7 +227,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     [webViewController setHorizontalSystemMinimumLayoutMargin:options.horizontalSystemMinimumLayoutMargin()];
     [m_window setRootViewController:webViewController.get()];
 
-    m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:(__bridge WKWebViewConfiguration *)configuration];
 
     [m_window.rootViewController.view addSubview:m_view];
     [m_view becomeFirstResponder];

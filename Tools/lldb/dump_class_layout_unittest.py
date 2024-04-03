@@ -33,8 +33,9 @@ import unittest
 from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayoutBase
 from webkitpy.common.system.systemhost import SystemHost
 
-# Run these tests with ./Tools/Scripts/test-webkitpy dump_class_layout_unittest
-# Run a single test with e.g. ./Tools/Scripts/test-webkitpy dump_class_layout_unittest.TestDumpClassLayout.serial_test_ClassWithUniquePtrs
+# Build for x86_64.
+# Run these tests with xcrun python3 Tools/Scripts/test-lldb-webkit
+# Run a single test with e.g. xcrun python3 Tools/Scripts/test-lldb-webkit --debug  --no-build --verbose dump_class_layout_unittest.TestDumpClassLayout.serial_test_MemberHasBitfieldPadding
 # Compare with clang's output: clang++ -Xclang -fdump-record-layouts DumpClassLayoutTesting.cpp
 
 debugger_instance = None
@@ -68,9 +69,9 @@ class TestDumpClassLayout(unittest.TestCase):
 
     def serial_test_BasicClassLayout(self):
         EXPECTED_RESULT = """  +0 <  8> BasicClassLayout
-  +0 <  4>   int intMember
-  +4 <  1>   bool boolMember
-  +5 <  3>   <PADDING: 3 bytes>
+  +0 <  4>     int intMember
+  +4 <  1>     bool boolMember
+  +5 <  3>     <PADDING: 3 bytes>
 Total byte size: 8
 Total pad bytes: 3
 Padding percentage: 37.50 %"""
@@ -80,13 +81,13 @@ Padding percentage: 37.50 %"""
     def serial_test_PaddingBetweenClassMembers(self):
         EXPECTED_RESULT = """  +0 < 16> PaddingBetweenClassMembers
   +0 <  8>     BasicClassLayout basic1
-  +0 <  4>       int intMember
-  +4 <  1>       bool boolMember
-  +5 <  3>   <PADDING: 3 bytes>
+  +0 <  4>         int intMember
+  +4 <  1>         bool boolMember
+  +5 <  3>     <PADDING: 3 bytes>
   +8 <  8>     BasicClassLayout basic2
-  +8 <  4>       int intMember
- +12 <  1>       bool boolMember
- +13 <  3>   <PADDING: 3 bytes>
+  +8 <  4>         int intMember
+ +12 <  1>         bool boolMember
+ +13 <  3>     <PADDING: 3 bytes>
 Total byte size: 16
 Total pad bytes: 6
 Padding percentage: 37.50 %"""
@@ -95,14 +96,14 @@ Padding percentage: 37.50 %"""
 
     def serial_test_BoolPaddingClass(self):
         EXPECTED_RESULT = """  +0 < 12> BoolPaddingClass
-  +0 <  1>   bool bool1
-  +1 <  1>   bool bool2
-  +2 <  1>   bool bool3
-  +3 <  1>   <PADDING: 1 byte>
+  +0 <  1>     bool bool1
+  +1 <  1>     bool bool2
+  +2 <  1>     bool bool3
+  +3 <  1>     <PADDING: 1 byte>
   +4 <  8>     BoolMemberFirst memberClass
-  +4 <  1>       bool boolMember
-  +5 <  3>       <PADDING: 3 bytes>
-  +8 <  4>       int intMember
+  +4 <  1>         bool boolMember
+  +5 <  3>         <PADDING: 3 bytes>
+  +8 <  4>         int intMember
 Total byte size: 12
 Total pad bytes: 4
 Padding percentage: 33.33 %"""
@@ -111,13 +112,13 @@ Padding percentage: 33.33 %"""
 
     def serial_test_ClassWithEmptyClassMembers(self):
         EXPECTED_RESULT = """  +0 < 12> ClassWithEmptyClassMembers
-  +0 <  4>   int intMember
+  +0 <  4>     int intMember
   +4 <  1>     EmptyClass empty1
-  +4 <  1>   <PADDING: 1 byte>
-  +5 <  1>   bool boolMember
+  +4 <  1>     <PADDING: 1 byte>
+  +5 <  1>     bool boolMember
   +6 <  1>     EmptyClass empty2
-  +6 <  2>   <PADDING: 2 bytes>
-  +8 <  4>   int intMember2
+  +6 <  2>     <PADDING: 2 bytes>
+  +8 <  4>     int intMember2
 Total byte size: 12
 Total pad bytes: 3
 Padding percentage: 25.00 %"""
@@ -126,10 +127,10 @@ Padding percentage: 25.00 %"""
 
     def serial_test_SimpleVirtualClass(self):
         EXPECTED_RESULT = """  +0 < 24> SimpleVirtualClass
-  +0 <  8>    __vtbl_ptr_type * _vptr
-  +8 <  4>   int intMember
- +12 <  4>   <PADDING: 4 bytes>
- +16 <  8>   double doubleMember
+  +0 <  8>     __vtbl_ptr_type * _vptr
+  +8 <  4>     int intMember
+ +12 <  4>     <PADDING: 4 bytes>
+ +16 <  8>     double doubleMember
 Total byte size: 24
 Total pad bytes: 4
 Padding percentage: 16.67 %"""
@@ -138,12 +139,12 @@ Padding percentage: 16.67 %"""
 
     def serial_test_VirtualClassWithNonVirtualBase(self):
         EXPECTED_RESULT = """  +0 < 24> VirtualClassWithNonVirtualBase
-  +0 <  8>    __vtbl_ptr_type * _vptr
+  +0 <  8>     __vtbl_ptr_type * _vptr
   +8 <  8>     BasicClassLayout BasicClassLayout
-  +8 <  4>       int intMember
- +12 <  1>       bool boolMember
- +13 <  3>   <PADDING: 3 bytes>
- +16 <  8>   double doubleMember
+  +8 <  4>         int intMember
+ +12 <  1>         bool boolMember
+ +13 <  3>     <PADDING: 3 bytes>
+ +16 <  8>     double doubleMember
 Total byte size: 24
 Total pad bytes: 3
 Padding percentage: 12.50 %"""
@@ -154,10 +155,10 @@ Padding percentage: 12.50 %"""
         EXPECTED_RESULT = """  +0 < 16> InterleavedVirtualNonVirtual
   +0 < 16>     ClassWithVirtualBase ClassWithVirtualBase
   +0 <  8>         VirtualBaseClass VirtualBaseClass
-  +0 <  8>            __vtbl_ptr_type * _vptr
-  +8 <  1>       bool boolMember
-  +9 <  1>   bool boolMember
- +10 <  6>   <PADDING: 6 bytes>
+  +0 <  8>             __vtbl_ptr_type * _vptr
+  +8 <  1>         bool boolMember
+  +9 <  1>     bool boolMember
+ +10 <  6>     <PADDING: 6 bytes>
 Total byte size: 16
 Total pad bytes: 6
 Padding percentage: 37.50 %"""
@@ -167,11 +168,11 @@ Padding percentage: 37.50 %"""
     def serial_test_ClassWithTwoVirtualBaseClasses(self):
         EXPECTED_RESULT = """  +0 < 24> ClassWithTwoVirtualBaseClasses
   +0 <  8>     VirtualBaseClass VirtualBaseClass
-  +0 <  8>        __vtbl_ptr_type * _vptr
+  +0 <  8>         __vtbl_ptr_type * _vptr
   +8 <  8>     VirtualBaseClass2 VirtualBaseClass2
-  +8 <  8>        __vtbl_ptr_type * _vptr
- +16 <  1>   bool boolMember
- +17 <  7>   <PADDING: 7 bytes>
+  +8 <  8>         __vtbl_ptr_type * _vptr
+ +16 <  1>     bool boolMember
+ +17 <  7>     <PADDING: 7 bytes>
 Total byte size: 24
 Total pad bytes: 7
 Padding percentage: 29.17 %"""
@@ -181,22 +182,22 @@ Padding percentage: 29.17 %"""
     def serial_test_ClassWithVirtualInheritance(self):
         EXPECTED_RESULT = """  +0 < 64> ClassWithVirtualInheritance
   +0 < 32>     VirtualInheritingA VirtualInheritingA
-  +0 <  8>        __vtbl_ptr_type * _vptr
-  +8 <  4>       int intMemberA
- +12 <  4>   <PADDING: 4 bytes>
+  +0 <  8>         __vtbl_ptr_type * _vptr
+  +8 <  4>         int intMemberA
+ +12 <  4>     <PADDING: 4 bytes>
  +16 < 40>     VirtualInheritingB VirtualInheritingB
- +16 <  8>        __vtbl_ptr_type * _vptr
+ +16 <  8>         __vtbl_ptr_type * _vptr
  +24 <  8>         BasicClassLayout BasicClassLayout
- +24 <  4>           int intMember
- +28 <  1>           bool boolMember
- +29 <  3>       <PADDING: 3 bytes>
- +32 <  4>       int intMemberB
- +36 <  4>   <PADDING: 4 bytes>
- +40 <  8>   double derivedMember
+ +24 <  4>             int intMember
+ +28 <  1>             bool boolMember
+ +29 <  3>         <PADDING: 3 bytes>
+ +32 <  4>         int intMemberB
+ +36 <  4>     <PADDING: 4 bytes>
+ +40 <  8>     double derivedMember
  +48 < 16>     VirtualBase VirtualBase
- +48 <  8>        __vtbl_ptr_type * _vptr
- +56 <  1>       bool baseMember
- +57 <  7>   <PADDING: 7 bytes>
+ +48 <  8>         __vtbl_ptr_type * _vptr
+ +56 <  1>         bool baseMember
+ +57 <  7>     <PADDING: 7 bytes>
 Total byte size: 64
 Total pad bytes: 18
 Padding percentage: 28.12 %"""
@@ -206,26 +207,26 @@ Padding percentage: 28.12 %"""
     def serial_test_ClassWithInheritanceAndClassMember(self):
         EXPECTED_RESULT = """  +0 < 80> ClassWithInheritanceAndClassMember
   +0 < 32>     VirtualInheritingA VirtualInheritingA
-  +0 <  8>        __vtbl_ptr_type * _vptr
-  +8 <  4>       int intMemberA
- +12 <  4>   <PADDING: 4 bytes>
+  +0 <  8>         __vtbl_ptr_type * _vptr
+  +8 <  4>         int intMemberA
+ +12 <  4>     <PADDING: 4 bytes>
  +16 < 40>     VirtualInheritingB dataMember
- +16 <  8>        __vtbl_ptr_type * _vptr
+ +16 <  8>         __vtbl_ptr_type * _vptr
  +24 <  8>         BasicClassLayout BasicClassLayout
- +24 <  4>           int intMember
- +28 <  1>           bool boolMember
- +29 <  3>       <PADDING: 3 bytes>
- +32 <  4>       int intMemberB
- +36 <  4>       <PADDING: 4 bytes>
+ +24 <  4>             int intMember
+ +28 <  1>             bool boolMember
+ +29 <  3>         <PADDING: 3 bytes>
+ +32 <  4>         int intMemberB
+ +36 <  4>         <PADDING: 4 bytes>
  +40 < 16>         VirtualBase VirtualBase
- +40 <  8>            __vtbl_ptr_type * _vptr
- +48 <  1>           bool baseMember
- +49 <  7>   <PADDING: 7 bytes>
- +56 <  8>   double derivedMember
+ +40 <  8>             __vtbl_ptr_type * _vptr
+ +48 <  1>             bool baseMember
+ +49 <  7>     <PADDING: 7 bytes>
+ +56 <  8>     double derivedMember
  +64 < 16>     VirtualBase VirtualBase
- +64 <  8>        __vtbl_ptr_type * _vptr
- +72 <  1>       bool baseMember
- +73 <  7>   <PADDING: 7 bytes>
+ +64 <  8>         __vtbl_ptr_type * _vptr
+ +72 <  1>         bool baseMember
+ +73 <  7>     <PADDING: 7 bytes>
 Total byte size: 80
 Total pad bytes: 25
 Padding percentage: 31.25 %"""
@@ -236,23 +237,23 @@ Padding percentage: 31.25 %"""
         EXPECTED_RESULT = """  +0 < 72> DerivedClassWithIndirectVirtualInheritance
   +0 < 64>     ClassWithVirtualInheritance ClassWithVirtualInheritance
   +0 < 32>         VirtualInheritingA VirtualInheritingA
-  +0 <  8>            __vtbl_ptr_type * _vptr
-  +8 <  4>           int intMemberA
- +12 <  4>       <PADDING: 4 bytes>
+  +0 <  8>             __vtbl_ptr_type * _vptr
+  +8 <  4>             int intMemberA
+ +12 <  4>         <PADDING: 4 bytes>
  +16 < 40>         VirtualInheritingB VirtualInheritingB
- +16 <  8>            __vtbl_ptr_type * _vptr
+ +16 <  8>             __vtbl_ptr_type * _vptr
  +24 <  8>             BasicClassLayout BasicClassLayout
- +24 <  4>               int intMember
- +28 <  1>               bool boolMember
- +29 <  3>           <PADDING: 3 bytes>
- +32 <  4>           int intMemberB
- +36 <  4>       <PADDING: 4 bytes>
- +40 <  8>       double derivedMember
- +48 <  8>   long mostDerivedMember
+ +24 <  4>                 int intMember
+ +28 <  1>                 bool boolMember
+ +29 <  3>             <PADDING: 3 bytes>
+ +32 <  4>             int intMemberB
+ +36 <  4>         <PADDING: 4 bytes>
+ +40 <  8>         double derivedMember
+ +48 <  8>     long mostDerivedMember
  +56 < 16>     VirtualBase VirtualBase
- +56 <  8>        __vtbl_ptr_type * _vptr
- +64 <  1>       bool baseMember
- +65 <  7>   <PADDING: 7 bytes>
+ +56 <  8>         __vtbl_ptr_type * _vptr
+ +64 <  1>         bool baseMember
+ +65 <  7>     <PADDING: 7 bytes>
 Total byte size: 72
 Total pad bytes: 18
 Padding percentage: 25.00 %"""
@@ -261,27 +262,27 @@ Padding percentage: 25.00 %"""
 
     def serial_test_ClassWithClassMembers(self):
         EXPECTED_RESULT = """  +0 < 72> ClassWithClassMembers
-  +0 <  1>   bool boolMember
-  +1 <  3>   <PADDING: 3 bytes>
+  +0 <  1>     bool boolMember
+  +1 <  3>     <PADDING: 3 bytes>
   +4 <  8>     BasicClassLayout classMember
-  +4 <  4>       int intMember
-  +8 <  1>       bool boolMember
-  +9 <  7>   <PADDING: 7 bytes>
+  +4 <  4>         int intMember
+  +8 <  1>         bool boolMember
+  +9 <  7>     <PADDING: 7 bytes>
  +16 < 24>     ClassWithTwoVirtualBaseClasses virtualClassesMember
  +16 <  8>         VirtualBaseClass VirtualBaseClass
- +16 <  8>            __vtbl_ptr_type * _vptr
+ +16 <  8>             __vtbl_ptr_type * _vptr
  +24 <  8>         VirtualBaseClass2 VirtualBaseClass2
- +24 <  8>            __vtbl_ptr_type * _vptr
- +32 <  1>       bool boolMember
- +33 <  7>   <PADDING: 7 bytes>
- +40 <  8>   double doubleMember
+ +24 <  8>             __vtbl_ptr_type * _vptr
+ +32 <  1>         bool boolMember
+ +33 <  7>     <PADDING: 7 bytes>
+ +40 <  8>     double doubleMember
  +48 < 16>     ClassWithVirtualBase virtualClassMember
  +48 <  8>         VirtualBaseClass VirtualBaseClass
- +48 <  8>            __vtbl_ptr_type * _vptr
- +56 <  1>       bool boolMember
- +57 <  7>   <PADDING: 7 bytes>
- +64 <  4>   int intMember
- +68 <  4>   <PADDING: 4 bytes>
+ +48 <  8>             __vtbl_ptr_type * _vptr
+ +56 <  1>         bool boolMember
+ +57 <  7>     <PADDING: 7 bytes>
+ +64 <  4>     int intMember
+ +68 <  4>     <PADDING: 4 bytes>
 Total byte size: 72
 Total pad bytes: 28
 Padding percentage: 38.89 %"""
@@ -290,19 +291,19 @@ Padding percentage: 38.89 %"""
 
     def serial_test_ClassWithBitfields(self):
         EXPECTED_RESULT = """  +0 < 12> ClassWithBitfields
-  +0 <  1>   bool boolMember
-  +1 < :1>   unsigned int bitfield1 : 1
-  +1 < :2>   unsigned int bitfield2 : 2
-  +1 < :1>   unsigned int bitfield3 : 1
-  +1 < :1>   bool bitfield4 : 1
-  +1 < :2>   bool bitfield5 : 2
-  +1 < :1>   bool bitfield6 : 1
-  +2 <  2>   <PADDING: 2 bytes>
-  +4 <  4>   int intMember
-  +8 < :1>   unsigned int bitfield7 : 1
-  +8 < :1>   bool bitfield8 : 1
-  +8 < :6>   <UNUSED BITS: 6 bits>
-  +9 <  3>   <PADDING: 3 bytes>
+  +0 <  1>     bool boolMember
+  +1 < :1>     unsigned int bitfield1 : 1
+  +1 < :2>     unsigned int bitfield2 : 2
+  +1 < :1>     unsigned int bitfield3 : 1
+  +1 < :1>     bool bitfield4 : 1
+  +1 < :2>     bool bitfield5 : 2
+  +1 < :1>     bool bitfield6 : 1
+  +2 <  2>     <PADDING: 2 bytes>
+  +4 <  4>     int intMember
+  +8 < :1>     unsigned int bitfield7 : 1
+  +8 < :1>     bool bitfield8 : 1
+  +8 < :6>     <UNUSED BITS: 6 bits>
+  +9 <  3>     <PADDING: 3 bytes>
 Total byte size: 12
 Total pad bytes: 5
 Padding percentage: 41.67 %"""
@@ -311,20 +312,20 @@ Padding percentage: 41.67 %"""
 
     def serial_test_ClassWithPaddedBitfields(self):
         EXPECTED_RESULT = """  +0 < 16> ClassWithPaddedBitfields
-  +0 <  1>   bool boolMember
-  +1 < :1>   unsigned int bitfield1 : 1
-  +1 < :1>   bool bitfield2 : 1
-  +1 < :2>   unsigned int bitfield3 : 2
-  +1 < :1>   unsigned int bitfield4 : 1
-  +1 < :2>   unsigned long bitfield5 : 2
-  +1 < :1>   <UNUSED BITS: 1 bit>
-  +2 <  1>   <PADDING: 1 bytes>
-  +4 <  4>   int intMember
-  +8 < :1>   unsigned int bitfield7 : 1
-  +8 < :9>   unsigned int bitfield8 : 9
-  +9 < :1>   bool bitfield9 : 1
-  +9 < :5>   <UNUSED BITS: 5 bits>
- +10 <  6>   <PADDING: 6 bytes>
+  +0 <  1>     bool boolMember
+  +1 < :1>     unsigned int bitfield1 : 1
+  +1 < :1>     bool bitfield2 : 1
+  +1 < :2>     unsigned int bitfield3 : 2
+  +1 < :1>     unsigned int bitfield4 : 1
+  +1 < :2>     unsigned long bitfield5 : 2
+  +1 < :1>     <UNUSED BITS: 1 bit>
+  +2 <  1>     <PADDING: 1 bytes>
+  +4 <  4>     int intMember
+  +8 < :1>     unsigned int bitfield7 : 1
+  +8 < :9>     unsigned int bitfield8 : 9
+  +9 < :1>     bool bitfield9 : 1
+  +9 < :5>     <UNUSED BITS: 5 bits>
+ +10 <  6>     <PADDING: 6 bytes>
 Total byte size: 16
 Total pad bytes: 7
 Padding percentage: 49.22 %"""
@@ -334,23 +335,23 @@ Padding percentage: 49.22 %"""
     def serial_test_MemberHasBitfieldPadding(self):
         EXPECTED_RESULT = """  +0 < 24> MemberHasBitfieldPadding
   +0 < 16>     ClassWithPaddedBitfields bitfieldMember
-  +0 <  1>       bool boolMember
-  +1 < :1>       unsigned int bitfield1 : 1
-  +1 < :1>       bool bitfield2 : 1
-  +1 < :2>       unsigned int bitfield3 : 2
-  +1 < :1>       unsigned int bitfield4 : 1
-  +1 < :2>       unsigned long bitfield5 : 2
-  +1 < :1>       <UNUSED BITS: 1 bit>
-  +2 <  1>       <PADDING: 1 bytes>
-  +4 <  4>       int intMember
-  +8 < :1>       unsigned int bitfield7 : 1
-  +8 < :9>       unsigned int bitfield8 : 9
-  +9 < :1>       bool bitfield9 : 1
-  +9 < :5>       <UNUSED BITS: 5 bits>
- +10 <  6>   <PADDING: 6 bytes>
- +16 < :1>   bool bitfield1 : 1
- +16 < :7>   <UNUSED BITS: 7 bits>
- +17 <  7>   <PADDING: 7 bytes>
+  +0 <  1>         bool boolMember
+  +1 < :1>         unsigned int bitfield1 : 1
+  +1 < :1>         bool bitfield2 : 1
+  +1 < :2>         unsigned int bitfield3 : 2
+  +1 < :1>         unsigned int bitfield4 : 1
+  +1 < :2>         unsigned long bitfield5 : 2
+  +1 < :1>         <UNUSED BITS: 1 bit>
+  +2 <  1>         <PADDING: 1 bytes>
+  +4 <  4>         int intMember
+  +8 < :1>         unsigned int bitfield7 : 1
+  +8 < :9>         unsigned int bitfield8 : 9
+  +9 < :1>         bool bitfield9 : 1
+  +9 < :5>         <UNUSED BITS: 5 bits>
+ +10 <  6>     <PADDING: 6 bytes>
+ +16 < :1>     bool bitfield1 : 1
+ +16 < :7>     <UNUSED BITS: 7 bits>
+ +17 <  7>     <PADDING: 7 bytes>
 Total byte size: 24
 Total pad bytes: 14
 Padding percentage: 61.98 %"""
@@ -360,22 +361,22 @@ Padding percentage: 61.98 %"""
     def serial_test_InheritsFromClassWithPaddedBitfields(self):
         EXPECTED_RESULT = """  +0 < 16> InheritsFromClassWithPaddedBitfields
   +0 < 16>     ClassWithPaddedBitfields ClassWithPaddedBitfields
-  +0 <  1>       bool boolMember
-  +1 < :1>       unsigned int bitfield1 : 1
-  +1 < :1>       bool bitfield2 : 1
-  +1 < :2>       unsigned int bitfield3 : 2
-  +1 < :1>       unsigned int bitfield4 : 1
-  +1 < :2>       unsigned long bitfield5 : 2
-  +1 < :1>       <UNUSED BITS: 1 bit>
-  +2 <  1>       <PADDING: 1 bytes>
-  +4 <  4>       int intMember
-  +8 < :1>       unsigned int bitfield7 : 1
-  +8 < :9>       unsigned int bitfield8 : 9
-  +9 < :1>       bool bitfield9 : 1
-  +9 < :5>       <UNUSED BITS: 5 bits>
- +10 < :1>   bool derivedBitfield : 1
- +10 < :7>   <UNUSED BITS: 7 bits>
- +11 <  5>   <PADDING: 5 bytes>
+  +0 <  1>         bool boolMember
+  +1 < :1>         unsigned int bitfield1 : 1
+  +1 < :1>         bool bitfield2 : 1
+  +1 < :2>         unsigned int bitfield3 : 2
+  +1 < :1>         unsigned int bitfield4 : 1
+  +1 < :2>         unsigned long bitfield5 : 2
+  +1 < :1>         <UNUSED BITS: 1 bit>
+  +2 <  1>         <PADDING: 1 bytes>
+  +4 <  4>         int intMember
+  +8 < :1>         unsigned int bitfield7 : 1
+  +8 < :9>         unsigned int bitfield8 : 9
+  +9 < :1>         bool bitfield9 : 1
+  +9 < :5>         <UNUSED BITS: 5 bits>
+ +10 < :1>     bool derivedBitfield : 1
+ +10 < :7>     <UNUSED BITS: 7 bits>
+ +11 <  5>     <PADDING: 5 bytes>
 Total byte size: 16
 Total pad bytes: 6
 Padding percentage: 42.97 %"""

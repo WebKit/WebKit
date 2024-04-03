@@ -27,7 +27,7 @@
 #include "PointerRewriter.h"
 
 #include "AST.h"
-#include "ASTVisitor.h"
+#include "ASTScopedVisitorInlines.h"
 #include "CallGraph.h"
 #include "ContextProviderInlines.h"
 #include "WGSL.h"
@@ -36,58 +36,63 @@
 
 namespace WGSL {
 
-class PointerRewriter : public AST::Visitor, public ContextProvider<AST::Expression*> {
+class PointerRewriter : AST::ScopedVisitor<AST::Expression*> {
+    using Base = AST::ScopedVisitor<AST::Expression*>;
+    using Base::visit;
+
 public:
-    PointerRewriter(CallGraph& callGraph)
-        : AST::Visitor()
-        , m_callGraph(callGraph)
+    PointerRewriter(ShaderModule& shaderModule)
+        : Base()
+        , m_shaderModule(shaderModule)
     {
     }
 
     void run();
 
     void visit(AST::CompoundStatement&) override;
-    void visit(AST::ForStatement&) override;
     void visit(AST::VariableStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
+    void visit(AST::LoopStatement&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::UnaryExpression&) override;
 
 private:
-    CallGraph& m_callGraph;
+    void rewrite(AST::Statement::List&);
+
+    ShaderModule& m_shaderModule;
     unsigned m_currentStatementIndex { 0 };
     Vector<unsigned> m_indicesToDelete;
 };
 
 void PointerRewriter::run()
 {
-    AST::Visitor::visit(m_callGraph.ast());
+    Base::visit(m_shaderModule);
 }
 
-void PointerRewriter::visit(AST::CompoundStatement& statement)
+void PointerRewriter::rewrite(AST::Statement::List& statements)
 {
     auto indexScope = SetForScope(m_currentStatementIndex, 0);
     auto insertionScope = SetForScope(m_indicesToDelete, Vector<unsigned>());
     ContextScope blockScope(this);
 
-    for (auto& statement : statement.statements()) {
-        AST::Visitor::visit(statement);
+    for (auto& statement : statements) {
+        Base::visit(statement);
         ++m_currentStatementIndex;
     }
 
     for (int i = m_indicesToDelete.size() - 1; i >= 0; --i)
-        m_callGraph.ast().remove(statement.statements(), m_indicesToDelete[i]);
+        m_shaderModule.remove(statements, m_indicesToDelete[i]);
 }
 
-void PointerRewriter::visit(AST::ForStatement& statement)
+void PointerRewriter::visit(AST::CompoundStatement& statement)
 {
-    ContextScope forScope(this);
-    AST::Visitor::visit(statement);
+    ContextScope blockScope(this);
+    rewrite(statement.statements());
 }
 
 void PointerRewriter::visit(AST::VariableStatement& statement)
 {
-    AST::Visitor::visit(statement);
+    Base::visit(statement);
 
     auto& variable = statement.variable();
     auto* initializer = variable.maybeInitializer();
@@ -114,18 +119,33 @@ void PointerRewriter::visit(AST::PhonyAssignmentStatement& statement)
     m_indicesToDelete.append(m_currentStatementIndex);
 }
 
+void PointerRewriter::visit(AST::LoopStatement& statement)
+{
+    ContextScope loopScope(this);
+    rewrite(statement.body());
+
+    if (auto& continuing = statement.continuing()) {
+        ContextScope continuingScope(this);
+        rewrite(continuing->body);
+    }
+}
+
 void PointerRewriter::visit(AST::IdentifierExpression& identifier)
 {
     auto* variable = readVariable(identifier.identifier());
     if (!variable || !*variable)
         return;
 
-    m_callGraph.ast().replace(identifier, **variable);
+    auto& identity = m_shaderModule.astBuilder().construct<AST::IdentityExpression>(
+        identifier.span(),
+        **variable
+    );
+    m_shaderModule.replace(identifier, identity);
 }
 
 void PointerRewriter::visit(AST::UnaryExpression& unary)
 {
-    AST::Visitor::visit(unary);
+    Base::visit(unary);
 
     if (unary.operation() != AST::UnaryOperation::Dereference)
         return;
@@ -133,19 +153,17 @@ void PointerRewriter::visit(AST::UnaryExpression& unary)
     AST::Expression* nested = &unary.expression();
     while (is<AST::IdentityExpression>(*nested))
         nested = &downcast<AST::IdentityExpression>(*nested).expression();
-    if (!is<AST::UnaryExpression>(*nested))
+
+    auto* nestedUnary = dynamicDowncast<AST::UnaryExpression>(*nested);
+    if (!nestedUnary || nestedUnary->operation() != AST::UnaryOperation::AddressOf)
         return;
 
-    auto& nestedUnary = downcast<AST::UnaryExpression>(*nested);
-    if (nestedUnary.operation() != AST::UnaryOperation::AddressOf)
-        return;
-
-    m_callGraph.ast().replace(unary, nestedUnary.expression());
+    m_shaderModule.replace(unary, nestedUnary->expression());
 }
 
-void rewritePointers(CallGraph& callGraph)
+void rewritePointers(ShaderModule& shaderModule)
 {
-    PointerRewriter(callGraph).run();
+    PointerRewriter(shaderModule).run();
 }
 
 } // namespace WGSL

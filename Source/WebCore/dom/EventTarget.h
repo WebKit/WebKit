@@ -87,7 +87,7 @@ public:
     inline void ref(); // Defined in Node.h.
     inline void deref(); // Defined in Node.h.
 
-    virtual EventTargetInterface eventTargetInterface() const = 0;
+    virtual enum EventTargetInterfaceType eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;
@@ -171,6 +171,9 @@ public:
     bool isInGCReacheableRefMap() const { return hasEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap, flag); }
 
+    bool hasValidQuerySelectorAllResults() const { return hasEventTargetFlag(EventTargetFlag::HasValidQuerySelectorAllResults); }
+    void setHasValidQuerySelectorAllResults(bool flag) { setEventTargetFlag(EventTargetFlag::HasValidQuerySelectorAllResults, flag); }
+
 protected:
     enum ConstructNodeTag { ConstructNode };
     EventTarget() = default;
@@ -190,17 +193,18 @@ protected:
         IsConnected = 1 << 3,
         IsInShadowTree = 1 << 4,
         HasBeenInUserAgentShadowTree = 1 << 5,
+        HasValidQuerySelectorAllResults = 1 << 6,
         // Element bits
-        HasSyntheticAttrChildNodes = 1 << 6,
-        HasDuplicateAttribute = 1 << 7,
-        HasLangAttr = 1 << 8,
-        HasXMLLangAttr = 1 << 9,
-        HasFormAssociatedCustomElementInterface = 1 << 10,
-        HasShadowRootContainingSlots = 1 << 11,
-        IsInTopLayer = 1 << 12,
+        HasSyntheticAttrChildNodes = 1 << 7,
+        HasDuplicateAttribute = 1 << 8,
+        HasLangAttr = 1 << 9,
+        HasXMLLangAttr = 1 << 10,
+        HasFormAssociatedCustomElementInterface = 1 << 11,
+        HasShadowRootContainingSlots = 1 << 12,
+        IsInTopLayer = 1 << 13,
+        // 1-bit free
         // SVGElement bits
-        HasPendingResources = 1 << 13,
-        // 2 Free bits
+        HasPendingResources = 1 << 15,
     };
 
     EventTargetData& ensureEventTargetData()

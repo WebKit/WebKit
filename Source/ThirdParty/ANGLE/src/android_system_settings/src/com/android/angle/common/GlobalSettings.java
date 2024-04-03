@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.android.angle.R;
+
 class GlobalSettings
 {
     public static final String DRIVER_SELECTION_ANGLE = "angle";
@@ -171,6 +173,15 @@ class GlobalSettings
         final String driverSelectionValues = String.join(",", mDriverSelectionValues);
 
         final ContentResolver contentResolver = mContext.getContentResolver();
+        Settings.Global.putString(contentResolver,
+                DRIVER_SELECTION_PACKAGES, driverSelectionPackages);
+        Settings.Global.putString(contentResolver, DRIVER_SELECTION_VALUES, driverSelectionValues);
+    }
+
+    static void writeGlobalSettings(Context context, String driverSelectionPackages,
+            String driverSelectionValues)
+    {
+        final ContentResolver contentResolver = context.getContentResolver();
         Settings.Global.putString(contentResolver,
                 DRIVER_SELECTION_PACKAGES, driverSelectionPackages);
         Settings.Global.putString(contentResolver, DRIVER_SELECTION_VALUES, driverSelectionValues);

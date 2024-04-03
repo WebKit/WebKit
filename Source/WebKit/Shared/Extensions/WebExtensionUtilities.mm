@@ -121,7 +121,7 @@ static NSString *constructExpectedMessage(NSString *key, NSString *expected, NSS
     return [NSString stringWithFormat:@"%@ is expected, but %@ was provided", expected, found];
 }
 
-static bool validateSingleObject(NSString *key, NSObject *value, id expectedValueType, NSString **outExceptionString)
+static bool validateSingleObject(NSString *key, NSObject *value, Class expectedValueType, NSString **outExceptionString)
 {
     ASSERT([expectedValueType respondsToSelector:@selector(isSubclassOfClass:)]);
 
@@ -274,6 +274,7 @@ bool validateDictionary(NSDictionary<NSString *, id> *dictionary, NSString *sour
             return;
 
         id expectedValueType = keyTypes[key];
+        ASSERT(expectedValueType);
 
         if (!validate(key, value, expectedValueType, &errorString)) {
             *stop = YES;
@@ -366,6 +367,46 @@ NSString *toWebAPI(NSLocale *locale)
     if (locale.countryCode.length)
         return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
     return locale.languageCode;
+}
+
+size_t storageSizeOf(NSString *keyOrValue)
+{
+    // The size of a key is the length of the key string.
+    // The size of a value is the length of the JSON representation of the value.
+    // If keyOrValue represents a value we assume that the string is the JSON representation.
+    return [keyOrValue lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+}
+
+size_t storageSizeOf(NSDictionary<NSString *, NSString *> *keysAndValues)
+{
+    __block double storageSize = 0;
+    [keysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        storageSize += storageSizeOf(key) + storageSizeOf(value);
+    }];
+
+    return storageSize;
+}
+
+bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWithError)
+{
+    __block bool itemExceededQuota = false;
+    __block NSString *keyWithError;
+
+    [items enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+        size_t sizeOfCurrentItem = storageSizeOf(key) + storageSizeOf(value);
+        if (sizeOfCurrentItem > quota) {
+            itemExceededQuota = true;
+            keyWithError = key;
+            *stop = YES;
+        }
+    }];
+
+    ASSERT(!itemExceededQuota || (itemExceededQuota && keyWithError));
+
+    if (outKeyWithError)
+        *outKeyWithError = keyWithError;
+
+    return itemExceededQuota;
 }
 
 } // namespace WebKit

@@ -15,7 +15,7 @@ layer at (0,0) size 800x610
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
             RenderTableCell {TD} at (367,10) size 199x20 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 43x19
+              RenderText {#text} at (0,10) size 43x19
                 text run at (0,0) width 43: "Empty"
           RenderTableRow {TR} at (0,40) size 566x20
             RenderTableCell {TD} at (0,40) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
@@ -30,9 +30,9 @@ layer at (0,0) size 800x610
         RenderTableSection {TBODY} at (0,0) size 566x80
           RenderTableRow {TR} at (0,0) size 566x60
             RenderTableCell {TD} at (0,10) size 222x40 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (0,0) size 222x40
+              RenderImage {IMG} at (0,10) size 222x40
             RenderTableCell {TD} at (222,10) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (0,0) size 145x40
+              RenderImage {IMG} at (0,10) size 145x40
             RenderTableCell {TD} at (367,0) size 199x60 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 197x59
                 text run at (0,0) width 197: "Empty - lots of text here now -"
@@ -55,11 +55,11 @@ layer at (0,0) size 800x610
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
             RenderTableCell {TD} at (367,10) size 199x20 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 43x19
+              RenderText {#text} at (0,10) size 43x19
                 text run at (0,0) width 43: "Empty"
           RenderTableRow {TR} at (0,40) size 566x40
             RenderTableCell {TD} at (0,50) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
-              RenderImage {IMG} at (0,0) size 367x20
+              RenderImage {IMG} at (0,10) size 367x20
             RenderTableCell {TD} at (367,40) size 199x40 [bgcolor=#990099] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 186x39
                 text run at (0,0) width 186: "Empty - this has lots and lots"
@@ -75,7 +75,7 @@ layer at (0,0) size 800x610
             RenderTableCell {TD} at (228,2) size 147x42 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 145x40
             RenderTableCell {TD} at (377,12) size 187x22 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 43x19
+              RenderText {#text} at (1,11) size 43x19
                 text run at (1,1) width 43: "Empty"
           RenderTableRow {TR} at (0,46) size 566x22
             RenderTableCell {TD} at (2,46) size 373x22 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]
@@ -94,7 +94,7 @@ layer at (0,0) size 800x610
             RenderTableCell {TD} at (222,0) size 145x40 [bgcolor=#666600] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 145x40
             RenderTableCell {TD} at (367,10) size 199x20 [bgcolor=#009999] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 43x19
+              RenderText {#text} at (0,10) size 43x19
                 text run at (0,0) width 43: "Empty"
           RenderTableRow {TR} at (0,40) size 566x20
             RenderTableCell {TD} at (0,40) size 367x20 [bgcolor=#0000FF] [r=1 c=0 rs=1 cs=2]

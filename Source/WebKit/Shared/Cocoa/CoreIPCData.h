@@ -27,8 +27,6 @@
 
 #if PLATFORM(COCOA)
 
-#include "DataReference.h"
-
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
@@ -50,7 +48,7 @@ public:
     {
     }
 
-    CoreIPCData(const IPC::DataReference& data)
+    CoreIPCData(std::span<const uint8_t> data)
         : m_cfData(adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size())))
     {
     }
@@ -60,7 +58,7 @@ public:
         return m_cfData;
     }
 
-    IPC::DataReference dataReference() const
+    std::span<const uint8_t> dataReference() const
     {
         return { CFDataGetBytePtr(m_cfData.get()), static_cast<size_t>(CFDataGetLength(m_cfData.get())) };
     }

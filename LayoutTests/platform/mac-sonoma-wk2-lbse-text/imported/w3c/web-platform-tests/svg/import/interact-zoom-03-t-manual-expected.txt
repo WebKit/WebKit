@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (5,1.56) size 65x41
+  RenderSVGTransformableContainer {g} at (5,1.56) size 65x40.44
+layer at (5,1.56) size 65x41
+  RenderSVGTransformableContainer {g} at (0,0) size 65x40.44
+layer at (5,1.56) size 59x7
+  RenderSVGText {text} at (0,0) size 60x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 60x7
+      chunk 1 text run 1 at (5.00,7.00) startOffset 0 endOffset 23 width 59.29: "Test \"disable\" value of"
+layer at (5,8.56) size 61x7
+  RenderSVGText {text} at (0,7) size 62x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 62x7
+      chunk 1 text run 1 at (5.00,14.00) startOffset 0 endOffset 21 width 61.04: "zoomAndPan attribute."
+layer at (10,22) size 60x21
+  RenderSVGTransformableContainer {g} at (5,20.44) size 60x20
+layer at (10,22) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=20.00] [cy=32.00] [r=10.00]
+layer at (20,22) size 20x20
+  RenderSVGEllipse {circle} at (10,0) size 20x20 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=32.00] [r=10.00]
+layer at (50,22) size 20x20
+  RenderSVGEllipse {circle} at (40,0) size 20x20 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=60.00] [cy=32.00] [r=10.00]
+layer at (40,22) size 20x20
+  RenderSVGEllipse {circle} at (30,0) size 20x20 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=50.00] [cy=32.00] [r=10.00]
+layer at (30,22) size 20x20
+  RenderSVGEllipse {circle} at (20,0) size 20x20 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [cx=40.00] [cy=32.00] [r=10.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -51,6 +51,9 @@ public:
     void addListener(NetworkRTCMonitor&);
     void removeListener(NetworkRTCMonitor&);
 
+    const RTCNetwork::IPAddress& ipv4() const { return m_ipv4; }
+    const RTCNetwork::IPAddress& ipv6()  const { return m_ipv6; }
+
 private:
     void onNetworksChanged();
 
@@ -136,6 +139,16 @@ void NetworkManagerWrapper::onNetworksChanged()
 NetworkRTCMonitor::~NetworkRTCMonitor()
 {
     ASSERT(!m_manager);
+}
+
+const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv4() const
+{
+    return networkManager().ipv4();
+}
+
+const RTCNetwork::IPAddress& NetworkRTCMonitor::ipv6()  const
+{
+    return networkManager().ipv6();
 }
 
 void NetworkRTCMonitor::startUpdatingIfNeeded()

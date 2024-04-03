@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>In-Browser Tests for Speedometer</title>
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+        <style>
+            body {
+                margin: 8px;
+            }
+        </style>
+
+        <script src="../node_modules/mocha/mocha.js"></script>
+        <script src="../node_modules/expect.js/index.js"></script>
+        <script src="../node_modules/sinon/pkg/sinon.js"></script>
+        <script type="module">
+            mocha.setup({
+                ui: "bdd",
+                rootHooks: {
+                    afterEach() {
+                        sinon.restore();
+                    },
+                },
+            });
+        </script>
+    </head>
+
+    <body>
+        <div id="mocha"></div>
+        <script src="../resources/benchmark-runner.mjs" type="module"></script>
+        <script src="benchmark-runner-tests.mjs" type="module"></script>
+        <script type="module">
+            const runner = mocha.run();
+            runner.on("end", function () {
+                const event = new Event("complete");
+                window.dispatchEvent(event);
+            });
+            window.mochaResults = runner;
+        </script>
+    </body>
+</html>

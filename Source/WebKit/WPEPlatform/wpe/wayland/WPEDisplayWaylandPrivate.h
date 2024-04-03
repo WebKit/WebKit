@@ -26,12 +26,12 @@
 #pragma once
 
 #include "WPEDisplayWayland.h"
+#include "WPEMonitor.h"
 #include "WPEWaylandCursor.h"
-#include "WPEWaylandOutput.h"
 #include "WPEWaylandSeat.h"
 
 struct xdg_wm_base* wpeDisplayWaylandGetXDGWMBase(WPEDisplayWayland*);
 WPE::WaylandSeat* wpeDisplayWaylandGetSeat(WPEDisplayWayland*);
 WPE::WaylandCursor* wpeDisplayWaylandGetCursor(WPEDisplayWayland*);
-WPE::WaylandOutput* wpeDisplayWaylandGetOutput(WPEDisplayWayland*, struct wl_output*);
+WPEMonitor* wpeDisplayWaylandFindMonitor(WPEDisplayWayland*, struct wl_output*);
 struct zwp_linux_dmabuf_v1* wpeDisplayWaylandGetLinuxDMABuf(WPEDisplayWayland*);

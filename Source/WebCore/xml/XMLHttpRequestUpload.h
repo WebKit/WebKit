@@ -50,7 +50,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    EventTargetInterface eventTargetInterface() const final { return XMLHttpRequestUploadEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::XMLHttpRequestUpload; }
     ScriptExecutionContext* scriptExecutionContext() const final { return m_request.scriptExecutionContext(); }
 
     XMLHttpRequest& m_request;

@@ -38,12 +38,13 @@ static String readFileIntoString(const char* fileName)
     long bufferCapacity = ftell(file);
     RELEASE_ASSERT(bufferCapacity != -1);
     RELEASE_ASSERT(fseek(file, 0, SEEK_SET) != -1);
-    Vector<char> buffer;
-    buffer.resize(bufferCapacity);
-    size_t readSize = fread(buffer.data(), 1, buffer.size(), file);
+
+    LChar* buffer;
+    String string = String::createUninitialized(bufferCapacity, buffer);
+    size_t readSize = fread(buffer, 1, bufferCapacity, file);
     fclose(file);
-    RELEASE_ASSERT(readSize == buffer.size());
-    return String(buffer.data(), buffer.size());
+    RELEASE_ASSERT(readSize == static_cast<size_t>(bufferCapacity));
+    return string;
 }
 
 FuzzerPredictions::FuzzerPredictions(const char* filename)

@@ -1,0 +1,192 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-10,-10) size 479x303 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-10,-10) size 478.30x302.31
+layer at (70,23.13) size 332x21
+  RenderSVGText {text} at (80,33) size 333x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 333x21
+      chunk 1 text run 1 at (70.00,40.00) startOffset 0 endOffset 42 width 332.19: "feDiffuseLight using feDistantLight source"
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (20,90.48) size 31x12
+  RenderSVGText {text} at (30,100) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (65,90.48) size 36x12
+  RenderSVGText {text} at (75,100) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (65.00,100.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (110,90.48) size 36x12
+  RenderSVGText {text} at (120,100) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (110.00,100.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (160,90.48) size 25x12
+  RenderSVGText {text} at (170,100) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (160.00,100.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (70,118.13) size 347x21
+  RenderSVGText {text} at (80,128) size 348x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 348x21
+      chunk 1 text run 1 at (70.00,135.00) startOffset 0 endOffset 43 width 347.21: "feSpecularLight using feDistantLight source"
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (20,185.48) size 31x12
+  RenderSVGText {text} at (30,195) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (65,185.48) size 36x12
+  RenderSVGText {text} at (75,195) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (65.00,195.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (110,185.48) size 36x12
+  RenderSVGText {text} at (120,195) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (110.00,195.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (160,185.48) size 25x12
+  RenderSVGText {text} at (170,195) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (160.00,195.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (30,213.13) size 438x21
+  RenderSVGText {text} at (40,223) size 439x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 439x21
+      chunk 1 text run 1 at (30.00,230.00) startOffset 0 endOffset 55 width 438.28: "feDiffuseLight and feSpecularLight using feDistantLight"
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (20,280.48) size 31x12
+  RenderSVGText {text} at (30,290) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (20.00,290.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (65,280.48) size 36x12
+  RenderSVGText {text} at (75,290) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (65.00,290.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (110,280.48) size 36x12
+  RenderSVGText {text} at (120,290) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (110.00,290.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (160,280.48) size 25x12
+  RenderSVGText {text} at (170,290) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (160.00,290.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (240,0) size 220x30
+  RenderSVGTransformableContainer {g} at (250,10) size 220x30
+layer at (240,0) size 40x30
+  RenderSVGImage {image} at (0,0) size 40x30
+layer at (300,0) size 40x30
+  RenderSVGImage {image} at (60,0) size 40x30
+layer at (360,0) size 40x30
+  RenderSVGImage {image} at (120,0) size 40x30
+layer at (420,0) size 40x30
+  RenderSVGImage {image} at (180,0) size 40x30
+layer at (245,90.48) size 31x12
+  RenderSVGText {text} at (255,100) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (245.00,100.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (305,90.48) size 36x12
+  RenderSVGText {text} at (315,100) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (305.00,100.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (365,90.48) size 36x12
+  RenderSVGText {text} at (375,100) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (365.00,100.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (430,90.48) size 25x12
+  RenderSVGText {text} at (440,100) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (430.00,100.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (240,0) size 220x30
+  RenderSVGTransformableContainer {g} at (250,10) size 220x30
+layer at (240,0) size 40x30
+  RenderSVGImage {image} at (0,0) size 40x30
+layer at (300,0) size 40x30
+  RenderSVGImage {image} at (60,0) size 40x30
+layer at (360,0) size 40x30
+  RenderSVGImage {image} at (120,0) size 40x30
+layer at (420,0) size 40x30
+  RenderSVGImage {image} at (180,0) size 40x30
+layer at (245,185.48) size 31x12
+  RenderSVGText {text} at (255,195) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (245.00,195.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (305,185.48) size 36x12
+  RenderSVGText {text} at (315,195) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (305.00,195.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (365,185.48) size 36x12
+  RenderSVGText {text} at (375,195) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (365.00,195.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (430,185.48) size 25x12
+  RenderSVGText {text} at (440,195) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (430.00,195.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (240,0) size 220x30
+  RenderSVGTransformableContainer {g} at (250,10) size 220x30
+layer at (240,0) size 40x30
+  RenderSVGImage {image} at (0,0) size 40x30
+layer at (300,0) size 40x30
+  RenderSVGImage {image} at (60,0) size 40x30
+layer at (360,0) size 40x30
+  RenderSVGImage {image} at (120,0) size 40x30
+layer at (420,0) size 40x30
+  RenderSVGImage {image} at (180,0) size 40x30
+layer at (245,280.48) size 31x12
+  RenderSVGText {text} at (255,290) size 31x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 31x12
+      chunk 1 text run 1 at (245.00,290.00) startOffset 0 endOffset 6 width 30.59: "90 deg"
+layer at (305,280.48) size 36x12
+  RenderSVGText {text} at (315,290) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (305.00,290.00) startOffset 0 endOffset 7 width 36.15: "270 deg"
+layer at (365,280.48) size 36x12
+  RenderSVGText {text} at (375,290) size 37x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 37x12
+      chunk 1 text run 1 at (365.00,290.00) startOffset 0 endOffset 7 width 36.15: "180 deg"
+layer at (430,280.48) size 25x12
+  RenderSVGText {text} at (440,290) size 26x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 26x12
+      chunk 1 text run 1 at (430.00,290.00) startOffset 0 endOffset 5 width 25.02: "0 deg"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.3 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (1,-0.41) size 478x24 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (1,-0.41) size 478x23.02
+layer at (1,1) size 478x21
+  RenderSVGRect {rect} at (0,1.41) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.11,-0.41) size 68x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x23
+      chunk 1 (middle anchor) text run 1 at (206.12,18.00) startOffset 0 endOffset 5 width 67.76: "DRAFT"

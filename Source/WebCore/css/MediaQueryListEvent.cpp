@@ -33,14 +33,14 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaQueryListEvent);
 
 MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const String& media, bool matches)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::MediaQueryListEvent, type, CanBubble::No, IsCancelable::No)
     , m_media(media)
     , m_matches(matches)
 {
 }
 
 MediaQueryListEvent::MediaQueryListEvent(const AtomString& type, const Init& init, IsTrusted isTrusted)
-    : Event(type, init, isTrusted)
+    : Event(EventInterfaceType::MediaQueryListEvent, type, init, isTrusted)
     , m_media(init.media)
     , m_matches(init.matches)
 {

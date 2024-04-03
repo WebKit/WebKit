@@ -234,8 +234,9 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MouseActivityState                          = ContentAreaHoverState << 1,
     ScrollbarHoverState                         = MouseActivityState << 1,
     ScrollbarEnabledState                       = ScrollbarHoverState << 1,
+    ScrollbarLayoutDirection                    = ScrollbarEnabledState << 1,
     // ScrollingStateFrameScrollingNode
-    KeyboardScrollData                          = ScrollbarEnabledState << 1,
+    KeyboardScrollData                          = ScrollbarLayoutDirection << 1,
     FrameScaleFactor                            = KeyboardScrollData << 1,
     EventTrackingRegion                         = FrameScaleFactor << 1,
     RootContentsLayer                           = EventTrackingRegion << 1,
@@ -265,6 +266,9 @@ enum class ScrollingStateNodeProperty : uint64_t {
     ViewportConstraints                         = 1LLU << 1, // Same value as ScrollableAreaSize, RelatedOverflowScrollingNodes and OverflowScrollingNode
     // ScrollingStateOverflowScrollProxyNode
     OverflowScrollingNode                       = 1LLU << 1, // Same value as ScrollableAreaSize, ViewportConstraints and RelatedOverflowScrollingNodes
+    // ScrollingStateFrameHostingNode
+    LayerHostingContextIdentifier               = 1LLU << 1,
+
 };
 
 class ScrollingStateNode : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingStateNode> {
@@ -370,7 +374,7 @@ inline ScrollingNodeID ScrollingStateNode::parentNodeID() const
 {
     auto parent = m_parent.get();
     if (!parent)
-        return 0;
+        return { };
     return parent->scrollingNodeID();
 }
 

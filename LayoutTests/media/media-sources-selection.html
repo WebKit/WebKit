@@ -1,0 +1,35 @@
+<html>
+<meta name="fuzzy" content="maxDifference=0-77; totalPixels=0-345149" />
+<title>Source selection alternative</title>
+<script src="../resources/testharness.js"></script>
+<script src="utilities.js"></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let video = document.getElementsByTagName('video')[0];
+        const sources = [
+            {src: 'content/vp8-opus-bad.webm', type: 'video/webm; codecs=vp8,opus'},
+            {src: 'content/h264-aac-good.mp4', type: 'video/mp4; codecs=avc1,mp4a.40.2'}
+        ];
+        for (var source of sources) {
+            let sourceElement = video.appendChild(document.createElement('source'));
+            sourceElement.src = source.src;
+            sourceElement.type = source.type;
+        }
+        await once(video, 'canplay');
+        video.play();
+        // duration of the last frame.
+        video.currentTime = video.duration - 0.02;
+        await Promise.all([ once(video, 'seeked'), once(video, 'ended') ]);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video width="720px" height="480px" />
+</body>
+</html>

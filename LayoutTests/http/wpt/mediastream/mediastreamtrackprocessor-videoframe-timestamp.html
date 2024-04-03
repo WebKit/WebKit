@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transfer MediaStreamTrack to dedicated worker</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id=video autplay playsinline></video>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+async function pipeVideoFrameToMediaStreamTrackProcessor(videoFrame)
+{
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const generator = new VideoTrackGenerator();
+            const processor = new MediaStreamTrackProcessor(generator);
+            generator.writable.getWriter().write(event.data);
+            const data = await processor.readable.getReader().read();
+            self.postMessage(data.value);
+            data.value.close();
+        }
+    `);
+    worker.postMessage(videoFrame, [videoFrame]);
+    return new Promise(resolve => worker.onmessage = e => resolve(e.data));
+}
+
+async function createConnections(test, firstConnectionCallback, secondConnectionCallback)
+{
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+
+    test.add_cleanup(() => pc1.close());
+    test.add_cleanup(() => pc2.close());
+
+    pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+
+    firstConnectionCallback(pc1);
+
+    const offer = await pc1.createOffer();
+    await pc1.setLocalDescription(offer);
+    await pc2.setRemoteDescription(offer);
+
+    secondConnectionCallback(pc2);
+
+    const answer = await pc2.createAnswer();
+    await pc2.setLocalDescription(answer);
+    await pc1.setRemoteDescription(answer);
+}
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+
+    video.srcObject = stream;
+    test.add_cleanup(async () => video.srcObject = null);
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+
+    const videoFrame1 = new VideoFrame(video, { timestamp: 10 });
+    const videoFrame2 = await pipeVideoFrameToMediaStreamTrackProcessor(videoFrame1);
+    test.add_cleanup(() => videoFrame2.close());
+    assert_equals(videoFrame1.timestamp, videoFrame2.timestamp);
+
+    const videoFrame3 = new VideoFrame(video);
+    const videoFrame4 = await pipeVideoFrameToMediaStreamTrackProcessor(videoFrame3);
+    test.add_cleanup(() => videoFrame4.close());
+    assert_equals(videoFrame3.timestamp, videoFrame4.timestamp);
+}, "Check timestamp is preserved for camera video frames");
+
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+
+    let pc2;
+    await createConnections(test, pc1 => {
+        pc1.addTrack(stream.getVideoTracks()[0], stream);
+        pc1.getTransceivers()[0].setCodecPreferences([{mimeType: "video/VP8", clockRate: 90000}]);
+    }, pc => {
+      pc2 = pc;
+    });
+
+    video.srcObject = new MediaStream([pc2.getReceivers()[0].track]);
+    test.add_cleanup(async () => video.srcObject = null);
+    await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+
+    const videoFrame1 = new VideoFrame(video, { timestamp: 10 });
+    const videoFrame2 = await pipeVideoFrameToMediaStreamTrackProcessor(videoFrame1);
+    test.add_cleanup(() => videoFrame2.close());
+    assert_equals(videoFrame1.timestamp, videoFrame2.timestamp);
+
+    const videoFrame3 = new VideoFrame(video);
+    const videoFrame4 = await pipeVideoFrameToMediaStreamTrackProcessor(videoFrame3);
+    test.add_cleanup(() => videoFrame4.close());
+    assert_equals(videoFrame3.timestamp, videoFrame4.timestamp);
+}, "Check timestamp is preserved for libwebrtc video frames");
+</script>
+</body>
+</html>

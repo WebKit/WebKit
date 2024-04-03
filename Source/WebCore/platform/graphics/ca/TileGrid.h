@@ -44,6 +44,8 @@ class GraphicsContext;
 class PlatformCALayer;
 class TileController;
 
+using TileIndex = IntPoint;
+
 class TileGrid : public PlatformCALayerClient {
     WTF_MAKE_NONCOPYABLE(TileGrid);
     WTF_MAKE_FAST_ALLOCATED;
@@ -93,8 +95,6 @@ public:
     void removeUnparentedTilesNow();
 #endif
 
-    using TileIndex = IntPoint;
-
     using TileCohort = unsigned;
     static constexpr TileCohort visibleTileCohort = std::numeric_limits<TileCohort>::max();
 
@@ -135,7 +135,7 @@ private:
     TileCohort newestTileCohort() const;
     TileCohort oldestTileCohort() const;
 
-    void removeTiles(const Vector<TileGrid::TileIndex>& toRemove);
+    void removeTiles(const Vector<TileIndex>& toRemove);
 
     // PlatformCALayerClient
     void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) override;
@@ -147,6 +147,7 @@ private:
     bool platformCALayerDrawsContent() const override { return true; }
     float platformCALayerDeviceScaleFactor() const override;
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
+    bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
 
     TileController& m_controller;
 #if USE(CA)

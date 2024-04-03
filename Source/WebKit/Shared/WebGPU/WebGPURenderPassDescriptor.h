@@ -42,6 +42,7 @@ struct RenderPassDescriptor : public ObjectDescriptorBase {
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
     std::optional<WebGPUIdentifier> occlusionQuerySet;
     std::optional<RenderPassTimestampWrites> timestampWrites;
+    std::optional<uint64_t> maxDrawCount;
 };
 
 } // namespace WebKit::WebGPU

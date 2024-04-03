@@ -9,7 +9,7 @@ frame "<!--frame1-->" - didCommitLoadForFrame
 http://localhost/pink-bullet.png - willSendRequest <NSURLRequest URL http://localhost/pink-bullet.png, main document URL cache-expired-subresource.html, http method GET> redirectResponse (null)
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 resources/cache-expired-subresource.webarchive - didFinishLoading
-http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/test.php, http status code 200>
+http://localhost/pink-bullet.png - didReceiveResponse <NSURLResponse http://localhost/pink-bullet.png, http status code 200>
 http://localhost/pink-bullet.png - didFinishLoading
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
@@ -28,14 +28,14 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 284x134
               RenderText {#text} at (0,0) size 240x18
                 text run at (0,0) width 240: "This page has a small pink circle in it"
-              RenderBR {BR} at (239,14) size 1x0
+              RenderBR {BR} at (239,0) size 1x18
               RenderImage {IMG} at (0,18) size 11x9
-              RenderBR {BR} at (11,27) size 0x0
+              RenderBR {BR} at (11,13) size 0x18
               RenderText {#text} at (0,27) size 163x18
                 text run at (0,27) width 107: "See, right there! "
                 text run at (106,27) width 57: "A circle!"
-              RenderBR {BR} at (162,41) size 1x0
-      RenderBR {BR} at (304,154) size 0x0
+              RenderBR {BR} at (162,27) size 1x18
+      RenderBR {BR} at (304,140) size 0x18
       RenderText {#text} at (0,154) size 736x36
         text run at (0,154) width 736: "This tests that loading a webarchive with a subresource that has an expired cache header does not attempt to hit the"
         text run at (0,172) width 364: "network for resource, and actually uses the archived data"

@@ -58,6 +58,7 @@ sub getJhbuildIncludedFilePaths
 
     foreach my $includeFile ($dom->findnodes('/moduleset/include/@href')) {
         push(@includes, $includeFile->to_literal());
+        push(@includes, getJhbuildIncludedFilePaths($includeFile->to_literal()));
     }
     return @includes;
 }

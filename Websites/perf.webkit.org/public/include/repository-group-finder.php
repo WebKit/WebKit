@@ -2,6 +2,10 @@
 
 class RepositoryGroupFinder
 {
+    private $db;
+    private $triggerable_id;
+    private $repositories_by_group;
+    private $accepts_patch_by_group;
 
     function __construct($db, $triggerable_id) {
         $this->db = $db;

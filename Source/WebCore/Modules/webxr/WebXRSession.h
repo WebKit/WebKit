@@ -110,7 +110,7 @@ private:
     WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override { return WebXRSessionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::WebXRSession; }
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 

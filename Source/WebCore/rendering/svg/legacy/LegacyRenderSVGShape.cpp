@@ -46,6 +46,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -54,7 +55,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGShape);
 
 LegacyRenderSVGShape::LegacyRenderSVGShape(Type type, SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGModelObject(type, element, WTFMove(style), SVGModelObjectFlag::IsShape)
+    : LegacyRenderSVGModelObject(type, element, WTFMove(style), { SVGModelObjectFlag::IsShape, SVGModelObjectFlag::UsesBoundaryCaching })
     , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
     , m_needsShapeUpdate(true) // Default is true, so we grab a Path object once from SVGGraphicsElement.
     , m_needsTransformUpdate(true) // Default is true, so we grab a AffineTransform object once from SVGGraphicsElement.
@@ -165,8 +166,10 @@ void LegacyRenderSVGShape::layout()
         SVGResourcesCache::clientLayoutChanged(*this);
 
     // If our bounds changed, notify the parents.
-    if (updateCachedBoundariesInParents)
-        LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
+    if (updateCachedBoundariesInParents) {
+        if (CheckedPtr parent = this->parent())
+            parent->invalidateCachedBoundaries();
+    }
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();
@@ -195,7 +198,7 @@ bool LegacyRenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeT
 
 AffineTransform LegacyRenderSVGShape::nonScalingStrokeTransform() const
 {
-    return graphicsElement().getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+    return protectedGraphicsElement()->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
 }
 
 void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
@@ -263,9 +266,17 @@ void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 
 void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground
-        || style().visibility() == Visibility::Hidden || isEmpty())
+    if (style().usedVisibility() == Visibility::Hidden || isEmpty())
         return;
+
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        paintInfo.eventRegionContext()->unite(FloatRoundedRect(m_fillBoundingBox), *this, style(), false);
+        return;
+    }
+
+    if (paintInfo.context().paintingDisabled() || paintInfo.phase != PaintPhase::Foreground)
+        return;
+
     FloatRect boundingBox = repaintRectInLocalCoordinates();
     if (!SVGRenderSupport::paintInfoIntersectsRepaintRect(boundingBox, m_localTransform, paintInfo))
         return;
@@ -278,8 +289,8 @@ void LegacyRenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         SVGRenderingContext renderingContext(*this, childPaintInfo);
 
         if (renderingContext.isRenderingPrepared()) {
-            const SVGRenderStyle& svgStyle = style().svgStyle();
-            if (svgStyle.shapeRendering() == ShapeRendering::CrispEdges)
+            Ref svgStyle = style().svgStyle();
+            if (svgStyle->shapeRendering() == ShapeRendering::CrispEdges)
                 childPaintInfo.context().setShouldAntialias(false);
 
             fillStrokeMarkers(childPaintInfo);
@@ -328,16 +339,21 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     if (hitTestAction != HitTestForeground)
         return false;
 
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return false;
+
     FloatPoint localPoint = valueOrDefault(m_localTransform.inverse()).mapPoint(pointInParent);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
 
-    SVGHitTestCycleDetectionScope hitTestScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGPath, request, style().effectivePointerEvents());
-    bool isVisible = (style().visibility() == Visibility::Visible);
-    if (isVisible || !hitRules.requireVisible) {
+    PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGPath, request, style().usedPointerEvents());
+    if (isVisibleToHitTesting(style(), request) || !hitRules.requireVisible) {
         const SVGRenderStyle& svgStyle = style().svgStyle();
         WindRule fillRule = svgStyle.fillRule();
         if (request.svgClipContent())
@@ -346,7 +362,7 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
             || (hitRules.canHitFill && (svgStyle.hasFill() || !hitRules.requireFill) && fillContains(localPoint, hitRules.requireFill, fillRule))
             || (hitRules.canHitBoundingBox && objectBoundingBox().contains(localPoint))) {
             updateHitTestResult(result, LayoutPoint(localPoint));
-            if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
                 return true;
         }
     }
@@ -432,7 +448,8 @@ FloatRect LegacyRenderSVGShape::repaintRectInLocalCoordinates(RepaintRectCalcula
 
 float LegacyRenderSVGShape::strokeWidth() const
 {
-    SVGLengthContext lengthContext(&graphicsElement());
+    Ref graphicsElement = this->graphicsElement();
+    SVGLengthContext lengthContext(graphicsElement.ptr());
     return lengthContext.valueForLength(style().strokeWidth());
 }
 
@@ -445,7 +462,7 @@ Path& LegacyRenderSVGShape::ensurePath()
 
 std::unique_ptr<Path> LegacyRenderSVGShape::createPath() const
 {
-    return makeUnique<Path>(pathFromGraphicsElement(graphicsElement()));
+    return makeUnique<Path>(pathFromGraphicsElement(protectedGraphicsElement()));
 }
 
 }

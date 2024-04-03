@@ -37,6 +37,7 @@
 #import <Foundation/NSURLRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
@@ -69,6 +70,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
         setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
+        setIsPrivateTokenUsageByThirdPartyAllowed(platformData.m_isPrivateTokenUsageByThirdPartyAllowed);
     }
 
     setCachePartition(cachePartition);
@@ -127,6 +129,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         privacyProxyFailClosedForUnreachableNonMainHosts(),
         useAdvancedPrivacyProtections(),
         didFilterLinkDecoration(),
+        isPrivateTokenUsageByThirdPartyAllowed(),
     };
 }
 
@@ -208,7 +211,7 @@ void ResourceRequest::doUpdateResourceRequest()
 void ResourceRequest::doUpdateResourceHTTPBody()
 {
     if (NSData* bodyData = [m_nsRequest HTTPBody])
-        m_httpBody = FormData::create([bodyData bytes], [bodyData length]);
+        m_httpBody = FormData::create(span(bodyData));
     else if (NSInputStream* bodyStream = [m_nsRequest HTTPBodyStream]) {
         FormData* formData = httpBodyFromStream(bodyStream);
         // There is no FormData object if a client provided a custom data stream.

@@ -41,7 +41,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 ] interface Document : Node {
     [CallWith=CurrentDocument] constructor();
 
-    [CallWith=CurrentDocument, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] static Document parseHTMLUnsafe(DOMString html);
+    [CallWith=CurrentDocument, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] static Document parseHTMLUnsafe(HTMLString html);
 
     [SameObject] readonly attribute DOMImplementation implementation;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
@@ -102,3 +102,5 @@ Document includes GlobalEventHandlers;
 Document includes DocumentAndElementEventHandlers;
 Document includes FontFaceSource;
 Document includes XPathEvaluatorBase;
+
+typedef [StringContext=TrustedHTML] DOMString HTMLString;

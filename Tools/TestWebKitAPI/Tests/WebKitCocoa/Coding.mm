@@ -54,7 +54,6 @@ TEST(Coding, WKPreferences)
     [a setJavaScriptCanOpenWindowsAutomatically:YES];
 #else
     [a setJavaScriptCanOpenWindowsAutomatically:NO];
-    [a setPlugInsEnabled:YES];
     [a setTabFocusesLinks:YES];
 #endif
 
@@ -66,7 +65,6 @@ TEST(Coding, WKPreferences)
     EXPECT_EQ([a shouldPrintBackgrounds], [b shouldPrintBackgrounds]);
 
 #if PLATFORM(MAC)
-    EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
     EXPECT_EQ([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif
 }

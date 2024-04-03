@@ -116,7 +116,7 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 
 class LocalFrame final : public Frame {
 public:
-    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, Frame* opener);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
     WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, Frame& parent);
 
@@ -152,8 +152,8 @@ public:
 
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }
-    CheckedRef<EventHandler> checkedEventHandler();
-    CheckedRef<const EventHandler> checkedEventHandler() const;
+    WEBCORE_EXPORT CheckedRef<EventHandler> checkedEventHandler();
+    WEBCORE_EXPORT CheckedRef<const EventHandler> checkedEventHandler() const;
 
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
@@ -162,6 +162,7 @@ public:
 
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
+    CheckedRef<FrameSelection> checkedSelection() const;
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     CheckedRef<ScriptController> checkedScript();
@@ -306,20 +307,26 @@ public:
     void didAccessWindowProxyPropertyViaOpener(WindowProxyProperty);
 #endif
 
+    WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies() const;
+    void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
+    bool requestSkipUserActivationCheckForStorageAccess(const RegistrableDomain&);
+
+    String customUserAgent() const final;
+    String customUserAgentAsSiteSpecificQuirks() const final;
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 
 private:
     friend class NavigationDisabler;
 
-    LocalFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent);
+    LocalFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
 
     void dropChildren();
 
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
-    void broadcastFrameRemovalToOtherProcesses() final;
     void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
@@ -328,6 +335,7 @@ private:
     void setOpener(Frame*) final;
     const Frame* opener() const final;
     Frame* opener();
+    FrameLoaderClient& loaderClient() final;
 
     WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 
@@ -376,6 +384,7 @@ private:
     FloatSize m_overrideScreenSize;
 
     UniqueRef<EventHandler> m_eventHandler;
+    HashSet<RegistrableDomain> m_storageAccessExceptionDomains;
 };
 
 inline LocalFrameView* LocalFrame::view() const

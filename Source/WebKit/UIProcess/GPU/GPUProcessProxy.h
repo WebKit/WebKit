@@ -30,11 +30,11 @@
 #include "AuxiliaryProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <memory>
 #include <pal/SessionID.h>
 
@@ -71,13 +71,13 @@ class GPUProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;
 public:
+    static void keepProcessAliveTemporarily();
     static Ref<GPUProcessProxy> getOrCreate();
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
-    ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
 #if ENABLE(MEDIA_STREAM)
@@ -98,6 +98,7 @@ public:
 
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void cancelGetDisplayMediaPrompt();
 #endif
 
     void removeSession(PAL::SessionID);
@@ -119,7 +120,7 @@ public:
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
@@ -166,7 +167,9 @@ private:
 
 #if ENABLE(VP9)
     void setHasVP9HardwareDecoder(bool hasVP9HardwareDecoder) { s_hasVP9HardwareDecoder = hasVP9HardwareDecoder; }
-    void setHasVP9ExtensionSupport(bool hasVP9ExtensionSupport) { s_hasVP9ExtensionSupport = hasVP9ExtensionSupport; }
+#endif
+#if ENABLE(AV1)
+    void setHasAV1HardwareDecoder(bool hasAV1HardwareDecoder) { s_hasAV1HardwareDecoder = hasAV1HardwareDecoder; }
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
@@ -176,7 +179,10 @@ private:
     GPUProcessCreationParameters processCreationParameters();
     void platformInitializeGPUProcessParameters(GPUProcessCreationParameters&);
 
-    ProcessThrottler m_throttler;
+#if USE(EXTENSIONKIT)
+    void sendBookmarkDataForCacheDirectory();
+#endif
+
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
@@ -198,7 +204,9 @@ private:
 #endif
 #if ENABLE(VP9)
     static std::optional<bool> s_hasVP9HardwareDecoder;
-    static std::optional<bool> s_hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    static std::optional<bool> s_hasAV1HardwareDecoder;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

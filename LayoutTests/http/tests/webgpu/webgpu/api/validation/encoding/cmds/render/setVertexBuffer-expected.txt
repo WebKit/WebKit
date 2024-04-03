@@ -1,1 +1,8 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :slot:
+PASS :vertex_buffer_state:
+PASS :vertex_buffer,device_mismatch:
+PASS :vertex_buffer_usage:
+PASS :offset_alignment:
+PASS :offset_and_size_oob:
+

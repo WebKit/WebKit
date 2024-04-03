@@ -45,7 +45,7 @@
 // The tester API.
 extern "C" {
 // Returns 0 if driver should continue.
-typedef int (*WKMessageTestSendMessageFunc)(IPC::DataReference buffer, void* context);
+typedef int (*WKMessageTestSendMessageFunc)(std::span<const uint8_t> buffer, void* context);
 typedef void (*WKMessageTestDriverFunc)(WKMessageTestSendMessageFunc sendMessageFunc, void* context);
 }
 
@@ -70,7 +70,7 @@ static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void
     }
 }
 
-static int sendTestMessage(IPC::DataReference buffer, void* context)
+static int sendTestMessage(std::span<const uint8_t> buffer, void* context)
 {
     auto messageContext = reinterpret_cast<SendMessageContext*>(context);
     if (messageContext->shouldStop)
@@ -79,7 +79,7 @@ static int sendTestMessage(IPC::DataReference buffer, void* context)
     if (!testedConnection->isValid())
         return 1;
     BinarySemaphore semaphore;
-    auto decoder = IPC::Decoder::create(buffer, [&semaphore] (IPC::DataReference) { semaphore.signal(); }, { }); // NOLINT
+    auto decoder = IPC::Decoder::create(buffer, [&semaphore] (std::span<const uint8_t>) { semaphore.signal(); }, { }); // NOLINT
     if (decoder) {
         testedConnection->dispatchIncomingMessageForTesting(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
         semaphore.wait();

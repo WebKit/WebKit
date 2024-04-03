@@ -24,13 +24,13 @@ let initialCompositingUpdateCount = 0;
 if (window.internals)
     internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
 
-setTimeout(() => {
+requestAnimationFrame(() => {
     test.className = "color-animation";
     if (window.internals) {
         internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         initialCompositingUpdateCount = internals.compositingUpdateCount();
     }
-}, 0);
+});
 
 test.onanimationend = () => {
     if (!window.internals)

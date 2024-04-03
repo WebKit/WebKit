@@ -118,7 +118,7 @@ ALWAYS_INLINE void gcSafeMemcpy(T* dst, T* src, size_t bytes)
 
             : [end] "+r" (end), [alignedEnd] "+r" (alignedEnd), [dstPtr] "+r" (dstPtr), [srcPtr] "+r" (srcPtr)
             :
-            : "d0", "d1", "memory"
+            : "d0", "d1", "memory", "cc"
         );
 #endif // CPU(X86_64)
     } else {
@@ -233,7 +233,7 @@ ALWAYS_INLINE void gcSafeMemmove(T* dst, T* src, size_t bytes)
 
             : [alignedEnd] "+r" (alignedEnd), [end] "+r" (end), [dstPtr] "+r" (dstPtr), [srcPtr] "+r" (srcPtr)
             :
-            : "d0", "d1", "memory"
+            : "d0", "d1", "memory", "cc"
         );
 #endif // CPU(X86_64)
     }
@@ -289,7 +289,7 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
 
         : [alignedBytes] "+r" (alignedBytes), [bytes] "+r" (bytes), [dstPtr] "+r" (dstPtr), [end] "+r" (end), [alignedEnd] "+r" (alignedEnd)
         :
-        : "d0", "d1", "memory"
+        : "d0", "d1", "memory", "cc"
     );
 #endif // CPU(X86_64)
 #else

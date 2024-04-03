@@ -31,10 +31,6 @@ namespace WebCore {
 
 class RenderElement;
 class RenderObject;
-class RenderRubyAsBlock;
-class RenderRubyAsInline;
-class RenderRubyBase;
-class RenderRubyRun;
 class RenderTreeBuilder;
 
 class RenderTreeBuilder::Ruby {
@@ -42,25 +38,10 @@ class RenderTreeBuilder::Ruby {
 public:
     Ruby(RenderTreeBuilder&);
 
-    void attach(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
-    RenderPtr<RenderObject> detach(RenderRubyAsInline& parent, RenderObject& child) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderRubyAsBlock& parent, RenderObject& child) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detach(RenderRubyRun& parent, RenderObject& child) WARN_UNUSED_RETURN;
-
-    void moveChildren(RenderRubyBase& from, RenderRubyBase& to);
-
-    RenderElement& findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild);
-
     RenderElement& findOrCreateParentForStyleBasedRubyChild(RenderElement& parent, const RenderObject& child, RenderObject*& beforeChild);
     void attachForStyleBasedRuby(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
 private:
-    void moveInlineChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
-    void moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
-    void moveChildrenInternal(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild = nullptr);
-    RenderRubyBase& rubyBaseSafe(RenderRubyRun&);
-
     RenderTreeBuilder& m_builder;
 };
 

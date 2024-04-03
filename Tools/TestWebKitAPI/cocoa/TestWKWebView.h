@@ -29,7 +29,7 @@
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
-#import "WKSEDefinitions.h"
+#import "WKBrowserEngineDefinitions.h"
 @class _WKActivatedElementInfo;
 @class _WKTextInputContext;
 @protocol UITextInputInternal;
@@ -37,8 +37,8 @@
 @protocol UITextInputPrivate;
 @protocol UITextInputTraits_Private;
 @protocol UIWKInteractionViewProtocol_Staging_95652872;
-@protocol WKSETextInput;
-@protocol WKSEExtendedTextInputTraits;
+@protocol BETextInput;
+@protocol BEExtendedTextInputTraits;
 #endif
 
 @interface WKWebView (AdditionalDeclarations)
@@ -58,6 +58,8 @@ struct AutocorrectionContext {
     String contextBeforeSelection;
     String selectedText;
     String contextAfterSelection;
+    String markedText;
+    NSRange selectedRangeInMarkedText;
 };
 
 } // namespace TestWebKitAPI
@@ -66,9 +68,9 @@ struct AutocorrectionContext {
 #if PLATFORM(IOS_FAMILY)
 @property (nonatomic, readonly) CGRect selectionClipRect;
 @property (nonatomic, readonly) BOOL hasAsyncTextInput;
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-@property (nonatomic, readonly) id<WKSETextInput> asyncTextInput;
-@property (nonatomic, readonly) id<WKSEExtendedTextInputTraits> extendedTextInputTraits;
+#if USE(BROWSERENGINEKIT)
+@property (nonatomic, readonly) id<BETextInput> asyncTextInput;
+@property (nonatomic, readonly) id<BEExtendedTextInputTraits> extendedTextInputTraits;
 #endif
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
 - (void)synchronouslyAdjustSelectionWithDelta:(NSRange)range;
@@ -79,6 +81,7 @@ struct AutocorrectionContext {
 - (std::pair<CGRect, CGRect>)autocorrectionRectsForString:(NSString *)string;
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
 - (void)replaceText:(NSString *)input withText:(NSString *)correction shouldUnderline:(BOOL)shouldUnderline completion:(void(^)())completion;
+- (void)insertText:(NSString *)primaryString alternatives:(NSArray<NSString *> *)alternatives;
 - (void)handleKeyEvent:(WebEvent *)event completion:(void (^)(WebEvent *theEvent, BOOL handled))completion;
 - (void)selectTextForContextMenuWithLocationInView:(CGPoint)locationInView completion:(void(^)(BOOL shouldPresent))completion;
 - (void)defineSelection;
@@ -89,8 +92,10 @@ struct AutocorrectionContext {
 - (void)extendSelectionToEndOfParagraph;
 #endif // PLATFORM(IOS_FAMILY)
 
+@property (nonatomic, readonly) CGImageRef snapshotAfterScreenUpdates;
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
 @property (nonatomic, readonly) NSString *contentsAsString;
+@property (nonatomic, readonly) NSData *contentsAsWebArchive;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
 @property (nonatomic, readonly) NSString *selectedText;
 - (void)loadTestPageNamed:(NSString *)pageName;
@@ -103,6 +108,7 @@ struct AutocorrectionContext {
 - (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences;
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName preferences:(WKWebpagePreferences *)preferences;
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;
 - (void)expectElementCount:(NSInteger)count querySelector:(NSString *)querySelector;
@@ -144,6 +150,7 @@ struct AutocorrectionContext {
 - (void)collapseToEnd;
 - (void)addToTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
+- (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end inFrame:(WKFrameInfo *)frameInfo;
 - (void)clickOnElementID:(NSString *)elementID;
 - (void)waitForPendingMouseEvents;
 - (void)focus;

@@ -68,7 +68,7 @@ public:
     static Ref<WebSocketChannel> create(Document& document, WebSocketChannelClient& client, SocketProvider& provider) { return adoptRef(*new WebSocketChannel(document, client, provider)); }
     virtual ~WebSocketChannel();
 
-    bool send(const uint8_t* data, int length);
+    bool send(std::span<const uint8_t> data);
 
     // ThreadableWebSocketChannel functions.
     ConnectStatus connect(const URL&, const String& protocol) final;
@@ -88,7 +88,7 @@ public:
     // SocketStreamHandleClient functions.
     void didOpenSocketStream(SocketStreamHandle&) final;
     void didCloseSocketStream(SocketStreamHandle&) final;
-    void didReceiveSocketStreamData(SocketStreamHandle&, const uint8_t*, size_t) final;
+    void didReceiveSocketStreamData(SocketStreamHandle&, std::span<const uint8_t>) final;
     void didFailToReceiveSocketStreamData(SocketStreamHandle&) final;
     void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) final;
     void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) final;
@@ -116,7 +116,7 @@ private:
     void refThreadableWebSocketChannel() override { ref(); }
     void derefThreadableWebSocketChannel() override { deref(); }
 
-    bool appendToBuffer(const uint8_t* data, size_t len);
+    bool appendToBuffer(std::span<const uint8_t>);
     void skipBuffer(size_t len);
     bool processBuffer();
     void resumeTimerFired();
@@ -149,7 +149,7 @@ private:
         RefPtr<Blob> blobData;
     };
     void enqueueTextFrame(CString&&);
-    void enqueueRawFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength);
+    void enqueueRawFrame(WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void enqueueBlobFrame(WebSocketFrame::OpCode, Blob&);
 
     void processOutgoingFrameQueue();
@@ -169,7 +169,7 @@ private:
 
     // If you are going to send a hybi-10 frame, you need to use the outgoing frame queue
     // instead of call sendFrame() directly.
-    void sendFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength, Function<void(bool)> completionHandler);
+    void sendFrame(WebSocketFrame::OpCode, std::span<const uint8_t> data, Function<void(bool)> completionHandler);
 
     enum BlobLoaderStatus {
         BlobLoaderNotStarted,

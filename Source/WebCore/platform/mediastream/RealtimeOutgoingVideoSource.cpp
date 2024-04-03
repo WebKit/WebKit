@@ -120,8 +120,22 @@ void RealtimeOutgoingVideoSource::stop()
     m_blackFrameTimer.stop();
 }
 
-void RealtimeOutgoingVideoSource::updateBlackFramesSending()
+void RealtimeOutgoingVideoSource::updateFramesSending()
 {
+    double videoFrameScaling = 1.0;
+    if (m_maxPixelCount && *m_maxPixelCount > 0) {
+        int counter = 0;
+        while (videoFrameScaling * m_width * m_height > *m_maxPixelCount) {
+            if (++counter % 2)
+                videoFrameScaling *= 3.0 / 4.0;
+            else
+                videoFrameScaling *= 2.0 / 3.0;
+        }
+        if (videoFrameScaling != 1)
+            videoFrameScaling = std::sqrt(videoFrameScaling);
+    }
+    m_videoFrameScaling = videoFrameScaling;
+
     if (!m_muted && m_enabled) {
         if (!m_isObservingVideoFrames) {
             m_isObservingVideoFrames = true;
@@ -145,7 +159,7 @@ void RealtimeOutgoingVideoSource::sourceMutedChanged()
 
     m_muted = m_videoSource->muted();
 
-    updateBlackFramesSending();
+    updateFramesSending();
 }
 
 void RealtimeOutgoingVideoSource::sourceEnabledChanged()
@@ -154,7 +168,7 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
     m_enabled = m_videoSource->enabled();
 
-    updateBlackFramesSending();
+    updateFramesSending();
 }
 
 void RealtimeOutgoingVideoSource::initializeFromSource()
@@ -166,7 +180,7 @@ void RealtimeOutgoingVideoSource::initializeFromSource()
     m_muted = m_videoSource->muted();
     m_enabled = m_videoSource->enabled();
 
-    updateBlackFramesSending();
+    updateFramesSending();
 }
 
 void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc::VideoFrame>* sink, const rtc::VideoSinkWants& sinkWants)
@@ -179,15 +193,19 @@ void RealtimeOutgoingVideoSource::AddOrUpdateSink(rtc::VideoSinkInterface<webrtc
     std::optional<double> maxFrameRate;
     if (sinkWants.max_framerate_fps != std::numeric_limits<int>::max())
         maxFrameRate = sinkWants.max_framerate_fps;
-    ensureOnMainThread([this, protectedThis = Ref { *this }, maxFrameRate] {
-        if (m_maxFrameRate == maxFrameRate)
+    std::optional<double> maxPixelCount;
+    if (sinkWants.max_pixel_count != std::numeric_limits<int>::max())
+        maxPixelCount = sinkWants.max_pixel_count;
+    ensureOnMainThread([this, protectedThis = Ref { *this }, maxFrameRate, maxPixelCount] {
+        if (m_maxFrameRate == maxFrameRate && m_maxPixelCount == maxPixelCount)
             return;
         m_maxFrameRate = maxFrameRate;
+        m_maxPixelCount = maxPixelCount;
         if (!m_isObservingVideoFrames)
             return;
         m_videoSource->source().removeVideoFrameObserver(*this);
         m_isObservingVideoFrames = false;
-        updateBlackFramesSending();
+        updateFramesSending();
     });
 
     Locker locker { m_sinksLock };

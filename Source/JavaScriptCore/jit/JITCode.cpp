@@ -197,8 +197,9 @@ unsigned JITCodeWithCodeRef::offsetOf(void* pointerIntoCode)
 
 size_t JITCodeWithCodeRef::size()
 {
-    RELEASE_ASSERT(m_executableMemory);
-    return m_executableMemory->sizeInBytes();
+    if (RefPtr memory = m_executableMemory)
+        return memory->sizeInBytes();
+    return 0;
 }
 
 bool JITCodeWithCodeRef::contains(void* address)

@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "Logging.h"
+#include "MediaStreamTrackDataHolder.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NativePromise.h>
@@ -60,6 +61,12 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&&
     return privateTrack;
 }
 
+Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<const Logger>&& logger, UniqueRef<MediaStreamTrackDataHolder>&& dataHolder, std::function<void(Function<void()>&&)>&& postTask)
+{
+    auto privateTrack = adoptRef(*new MediaStreamTrackPrivate(WTFMove(logger), WTFMove(dataHolder), WTFMove(postTask)));
+    privateTrack->initialize();
+    return privateTrack;
+}
 class MediaStreamTrackPrivateSourceObserver : public ThreadSafeRefCounted<MediaStreamTrackPrivateSourceObserver, WTF::DestructionThread::Main> {
 public:
     static Ref<MediaStreamTrackPrivateSourceObserver> create(Ref<RealtimeMediaSource>&& source, std::function<void(Function<void()>&&)>&& postTask) { return adoptRef(*new MediaStreamTrackPrivateSourceObserver(WTFMove(source), WTFMove(postTask))); }
@@ -111,7 +118,7 @@ public:
     {
         auto callbacks = std::exchange(m_applyConstraintsCallbacks, { });
         for (auto& callback : callbacks.values())
-            callback(RealtimeMediaSource::ApplyConstraintsError { "applyConstraint cancelled"_s, ""_s }, { }, { });
+            callback(RealtimeMediaSource::ApplyConstraintsError { MediaConstraintType::Unknown, "applyConstraint cancelled"_s }, { }, { });
     }
 
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<RealtimeMediaSource::ApplyConstraintsError>&&, RealtimeMediaSourceSettings&&, RealtimeMediaSourceCapabilities&&)>;
@@ -315,11 +322,36 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& trackLogger
 {
     UNUSED_PARAM(trackLogger);
     ALWAYS_LOG(LOGIDENTIFIER);
+    if (!isMainThread())
+        return;
 
 #if !RELEASE_LOG_DISABLED
-    if (isMainThread())
-        m_sourceObserver->source().setLogger(m_logger.copyRef(), m_logIdentifier);
+    m_sourceObserver->source().setLogger(m_logger.copyRef(), m_logIdentifier);
 #endif
+}
+
+MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, UniqueRef<MediaStreamTrackDataHolder>&& dataHolder, std::function<void(Function<void()>&&)>&& postTask)
+    : m_sourceObserver(MediaStreamTrackPrivateSourceObserver::create(WTFMove(dataHolder->source), WTFMove(postTask)))
+    , m_id(WTFMove(dataHolder->trackId))
+    , m_label(WTFMove(dataHolder->label))
+    , m_type(dataHolder->type)
+    , m_deviceType(dataHolder->deviceType)
+    , m_isCaptureTrack(false)
+    , m_captureDidFail(false)
+    , m_contentHint(dataHolder->contentHint)
+    , m_logger(WTFMove(logger))
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
+    , m_isProducingData(dataHolder->isProducingData)
+    , m_isMuted(dataHolder->isMuted)
+    , m_isInterrupted(dataHolder->isInterrupted)
+    , m_settings(WTFMove(dataHolder->settings))
+    , m_capabilities(WTFMove(dataHolder->capabilities))
+#if ASSERT_ENABLED
+    , m_creationThreadId(isMainThread() ? 0 : Thread::current().uid())
+#endif
+{
 }
 
 void MediaStreamTrackPrivate::initialize()
@@ -363,7 +395,7 @@ void MediaStreamTrackPrivate::removeObserver(MediaStreamTrackPrivate::Observer& 
     m_observers.remove(observer);
 }
 
-void MediaStreamTrackPrivate::setContentHint(HintValue hintValue)
+void MediaStreamTrackPrivate::setContentHint(MediaStreamTrackHintValue hintValue)
 {
     m_contentHint = hintValue;
 }
@@ -455,6 +487,18 @@ RealtimeMediaSource& MediaStreamTrackPrivate::source()
     return m_sourceObserver->source();
 }
 
+const RealtimeMediaSource& MediaStreamTrackPrivate::source() const
+{
+    ASSERT(isMainThread());
+    return m_sourceObserver->source();
+}
+
+RealtimeMediaSource& MediaStreamTrackPrivate::sourceForProcessor()
+{
+    ASSERT(isOnCreationThread());
+    return m_sourceObserver->source();
+}
+
 bool MediaStreamTrackPrivate::hasSource(const RealtimeMediaSource* source) const
 {
     ASSERT(isMainThread());
@@ -491,6 +535,7 @@ void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constrain
     m_sourceObserver->applyConstraints(constraints, WTFMove(callback));
 }
 
+#if ENABLE(WEB_AUDIO)
 RefPtr<WebAudioSourceProvider> MediaStreamTrackPrivate::createAudioSourceProvider()
 {
     ASSERT(isMainThread());
@@ -504,6 +549,7 @@ RefPtr<WebAudioSourceProvider> MediaStreamTrackPrivate::createAudioSourceProvide
     return nullptr;
 #endif
 }
+#endif
 
 void MediaStreamTrackPrivate::sourceStarted()
 {
@@ -600,6 +646,24 @@ void MediaStreamTrackPrivate::updateReadyState()
     forEachObserver([this](auto& observer) {
         observer.readyStateChanged(*this);
     });
+}
+
+UniqueRef<MediaStreamTrackDataHolder> MediaStreamTrackPrivate::toDataHolder()
+{
+    return makeUniqueRef<MediaStreamTrackDataHolder>(
+        m_id.isolatedCopy(),
+        m_label.isolatedCopy(),
+        m_type,
+        m_deviceType,
+        m_isEnabled,
+        m_isEnded,
+        m_contentHint,
+        m_isProducingData,
+        m_isMuted,
+        m_isInterrupted,
+        m_settings.isolatedCopy(),
+        m_capabilities.isolatedCopy(),
+        Ref { m_sourceObserver->source() });
 }
 
 #if !RELEASE_LOG_DISABLED

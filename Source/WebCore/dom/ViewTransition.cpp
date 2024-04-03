@@ -26,11 +26,26 @@
 #include "config.h"
 #include "ViewTransition.h"
 
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
+#include "CSSTransformListValue.h"
 #include "CheckVisibilityOptions.h"
+#include "ComputedStyleExtractor.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
+#include "FrameSnapshotting.h"
+#include "HostWindow.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
-#include "TypedElementDescendantIteratorInlines.h"
+#include "LayoutRect.h"
+#include "PseudoElementRequest.h"
+#include "RenderBox.h"
+#include "RenderLayer.h"
+#include "RenderView.h"
+#include "StyleResolver.h"
+#include "StyleScope.h"
+#include "Styleable.h"
+#include "WebAnimation.h"
 
 namespace WebCore {
 
@@ -248,6 +263,71 @@ static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name
     return { };
 }
 
+static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFrame& frame, Node& node, LayoutRect& oldOverflowRect)
+{
+    if (!node.renderer())
+        return nullptr;
+
+    ASSERT(node.renderer()->hasLayer());
+    CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(node.renderer());
+
+    oldOverflowRect = layerRenderer->layer()->localBoundingBox();
+    IntRect paintRect = snappedIntRect(oldOverflowRect);
+
+    ASSERT(frame.page());
+    float scaleFactor = frame.page()->deviceScaleFactor();
+    if (frame.page()->delegatesScaling())
+        scaleFactor *= frame.page()->pageScaleFactor();
+
+    ASSERT(frame.document());
+    auto hostWindow = (frame.document()->view() && frame.document()->view()->root()) ? frame.document()->view()->root()->hostWindow() : nullptr;
+
+    auto buffer = ImageBuffer::create(paintRect.size(), RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { ImageBufferOptions::Accelerated }, hostWindow);
+    if (!buffer)
+        return nullptr;
+
+    buffer->context().translate(-paintRect.location());
+
+    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
+    paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
+    paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
+    paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition);
+    layerRenderer->layer()->paint(buffer->context(), paintRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
+
+    return buffer;
+}
+
+// This only iterates through elements with a RenderLayer, which is sufficient for View Transitions which force their creation.
+static ExceptionOr<void> forEachElementInPaintOrder(const std::function<ExceptionOr<void>(Element&)>& function, RenderLayer& layer)
+{
+    if (RefPtr element = layer.renderer().element()) {
+        auto result = function(*element);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    layer.updateLayerListsIfNeeded();
+
+    for (auto* child : layer.negativeZOrderLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    for (auto* child : layer.normalFlowLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    for (auto* child : layer.positiveZOrderLayers()) {
+        auto result = forEachElementInPaintOrder(function, *child);
+        if (result.hasException())
+            return result.releaseException();
+    }
+    return { };
+};
+
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
 ExceptionOr<void> ViewTransition::captureOldState()
 {
@@ -257,23 +337,42 @@ ExceptionOr<void> ViewTransition::captureOldState()
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
     // FIXME: Set transition’s initial snapshot containing block size to the snapshot containing block size.
-    // FIXME: Loop should probably use flat tree.
-    for (Ref element : descendantsOfType<Element>(document)) {
-        // FIXME: This check should also cover fragmented content.
-        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
-            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
-                return check.releaseException();
-            // FIXME: Set element’s captured in a view transition to true.
-            captureElements.append(element);
-        }
+    if (CheckedPtr view = document->renderView()) {
+        auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
+            if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+                if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                    return check.releaseException();
+
+                // FIXME: Skip fragmented content.
+
+                element.setCapturedInViewTransition(true);
+                captureElements.append(element);
+            }
+            return { };
+        }, *view->layer());
+        if (result.hasException())
+            return result.releaseException();
     }
-    // FIXME: Sort captureElements in paint order.
+
     for (auto& element : captureElements) {
-        // FIXME: Fill in the rest of CapturedElement.
         CapturedElement capture;
+
+        CheckedPtr renderBox = dynamicDowncast<RenderBox>(element->renderer());
+        if (renderBox)
+            capture.oldSize = renderBox->size();
+        capture.oldProperties = copyElementBaseProperties(element, capture.oldSize);
+        if (m_document->frame())
+            capture.oldImage = snapshotNodeVisualOverflowClippedToViewport(*m_document->frame(), element.get(), capture.oldOverflowRect);
+
         auto transitionName = element->computedStyle()->viewTransitionName();
         m_namedElements.add(transitionName->name, capture);
     }
+
+    for (auto& element : captureElements) {
+        element->setCapturedInViewTransition(false);
+        element->invalidateStyleAndLayerComposition();
+    }
+
     return { };
 }
 
@@ -284,27 +383,102 @@ ExceptionOr<void> ViewTransition::captureNewState()
         return { };
     ListHashSet<AtomString> usedTransitionNames;
     Ref document = *m_document;
-    // FIXME: Loop should probably use flat tree.
-    for (Ref element : descendantsOfType<Element>(document)) {
-        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
-            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
-                return check.releaseException();
+    if (CheckedPtr view = document->renderView()) {
+        auto result = forEachElementInPaintOrder([&](Element& element) -> ExceptionOr<void> {
+            if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+                if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                    return check.releaseException();
 
-            if (!m_namedElements.contains(name)) {
-                CapturedElement capturedElement;
-                m_namedElements.add(name, capturedElement);
+                if (!m_namedElements.contains(name)) {
+                    CapturedElement capturedElement;
+                    m_namedElements.add(name, capturedElement);
+                }
+                m_namedElements.find(name)->newElement = &element;
             }
-            m_namedElements.find(name)->newElement = element.ptr();
-        }
+            return { };
+        }, *view->layer());
+        if (result.hasException())
+            return result.releaseException();
     }
     return { };
+}
+
+void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const CapturedElement& capturedElement)
+{
+    auto& resolver = protectedDocument()->styleScope().resolver();
+
+    // image animation name rule
+    {
+        CSSValueListBuilder list;
+        list.append(CSSPrimitiveValue::create("-ua-view-transition-fade-out"_s));
+        if (capturedElement.newElement)
+            list.append(CSSPrimitiveValue::create("-ua-mix-blend-mode-plus-lighter"_s));
+        Ref valueList = CSSValueList::createCommaSeparated(WTFMove(list));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionOld, name, props);
+    }
+
+    {
+        CSSValueListBuilder list;
+        list.append(CSSPrimitiveValue::create("-ua-view-transition-fade-in"_s));
+        if (capturedElement.oldImage)
+            list.append(CSSPrimitiveValue::create("-ua-mix-blend-mode-plus-lighter"_s));
+        Ref valueList = CSSValueList::createCommaSeparated(WTFMove(list));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(valueList));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionNew, name, props);
+    }
+
+    if (!capturedElement.oldImage || !capturedElement.newElement)
+        return;
+
+    // group animation name rule
+    {
+        Ref list = CSSValueList::createCommaSeparated(CSSPrimitiveValue::create(makeString("-ua-view-transition-group-anim-"_s, name)));
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyAnimationName, WTFMove(list));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, props);
+    }
+
+    // image pair isolation rule
+    {
+        Ref props = MutableStyleProperties::create();
+        props->setProperty(CSSPropertyIsolation, CSSPrimitiveValue::create(CSSValueID::CSSValueIsolate));
+
+        resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionImagePair, name, props);
+    }
+
+    if (!capturedElement.oldProperties)
+        return;
+
+    // group keyframes
+    Ref props = MutableStyleProperties::createEmpty();
+    props->setProperty(CSSPropertyWidth, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyWidth));
+    props->setProperty(CSSPropertyHeight, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyHeight));
+    props->setProperty(CSSPropertyTransform, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyTransform));
+    props->setProperty(CSSPropertyBackdropFilter, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyBackdropFilter));
+
+    Ref keyframe = StyleRuleKeyframe::create(WTFMove(props));
+    keyframe->setKeyText("from"_s);
+
+    Ref keyframes = StyleRuleKeyframes::create(AtomString(makeString("-ua-view-transition-group-anim-"_s, name)));
+    keyframes->wrapperAppendKeyframe(WTFMove(keyframe));
+
+    // We can add this to the normal namespace, since we recreate the resolver when the view-transition ends.
+    resolver.addKeyframeStyle(WTFMove(keyframes));
 }
 
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements
 void ViewTransition::setupTransitionPseudoElements()
 {
     protectedDocument()->setHasViewTransitionPseudoElementTree(true);
-    // FIXME: Implement step 9.
+
+    for (auto& [name, capturedElement] : m_namedElements.map())
+        setupDynamicStyleSheet(name, capturedElement);
 
     if (RefPtr documentElement = protectedDocument()->documentElement())
         documentElement->invalidateStyleInternal();
@@ -326,10 +500,17 @@ void ViewTransition::activateViewTransition()
         return;
     }
 
-    // FIXME: Set captured element flag to true.
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
+        if (RefPtr newElement = capturedElement->newElement.get())
+            newElement->setCapturedInViewTransition(true);
+    }
 
     setupTransitionPseudoElements();
-    // FIXME: Update pseudo-element styles for transition.
+    checkFailure = updatePseudoElementStyles();
+    if (checkFailure.hasException()) {
+        skipViewTransition(checkFailure.releaseException());
+        return;
+    }
 
     m_phase = ViewTransitionPhase::Animating;
     m_ready.second->resolve();
@@ -338,9 +519,37 @@ void ViewTransition::activateViewTransition()
 // https://drafts.csswg.org/css-view-transitions/#handle-transition-frame-algorithm
 void ViewTransition::handleTransitionFrame()
 {
-    bool hasActiveAnimations = false;
+    if (!m_document)
+        return;
 
-    // FIXME: Actually query the animation state.
+    RefPtr documentElement = m_document->documentElement();
+    if (!documentElement)
+        return;
+
+    auto checkForActiveAnimations = [&](const Style::PseudoElementIdentifier& pseudoElementIdentifier) {
+        if (!documentElement->animations(pseudoElementIdentifier))
+            return false;
+
+        for (auto& animation : *documentElement->animations(pseudoElementIdentifier)) {
+            auto playState = animation->playState();
+            if (playState == WebAnimation::PlayState::Paused || playState == WebAnimation::PlayState::Running)
+                return true;
+            if (m_document->timeline().hasPendingAnimationEventForAnimation(animation))
+                return true;
+        }
+        return false;
+    };
+
+    bool hasActiveAnimations = checkForActiveAnimations({ PseudoId::ViewTransition });
+
+    for (auto& name : namedElements().keys()) {
+        if (hasActiveAnimations)
+            break;
+        hasActiveAnimations = checkForActiveAnimations({ PseudoId::ViewTransitionGroup, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionImagePair, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionNew, name })
+            || checkForActiveAnimations({ PseudoId::ViewTransitionOld, name });
+    }
 
     if (!hasActiveAnimations) {
         m_phase = ViewTransitionPhase::Done;
@@ -349,7 +558,7 @@ void ViewTransition::handleTransitionFrame()
     }
 
     // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
-    // FIXME: Update pseudo-element styles for transition.
+    updatePseudoElementStyles();
 }
 
 // https://drafts.csswg.org/css-view-transitions/#clear-view-transition-algorithm
@@ -360,13 +569,105 @@ void ViewTransition::clearViewTransition()
 
     ASSERT(m_document->activeViewTransition() == this);
 
-    // FIXME: Implement step 3.
+    // End animations on pseudo-elements so they can run again.
+    if (RefPtr documentElement = m_document->documentElement()) {
+        Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransition }).cancelStyleOriginatedAnimations();
+        for (auto& name : namedElements().keys()) {
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionGroup, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionImagePair, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name }).cancelStyleOriginatedAnimations();
+            Styleable(*documentElement, Style::PseudoElementIdentifier { PseudoId::ViewTransitionOld, name }).cancelStyleOriginatedAnimations();
+        }
+    }
+
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
+        if (RefPtr newElement = capturedElement->newElement.get())
+            newElement->setCapturedInViewTransition(false);
+    }
 
     protectedDocument()->setHasViewTransitionPseudoElementTree(false);
     protectedDocument()->setActiveViewTransition(nullptr);
+    protectedDocument()->styleScope().clearViewTransitionStyles();
 
     if (RefPtr documentElement = protectedDocument()->documentElement())
         documentElement->invalidateStyleInternal();
+}
+
+Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& element, const LayoutSize& size)
+{
+    ComputedStyleExtractor styleExtractor(&element);
+
+    CSSPropertyID transitionProperties[] = {
+        CSSPropertyWritingMode,
+        CSSPropertyDirection,
+        CSSPropertyTextOrientation,
+        CSSPropertyMixBlendMode,
+        CSSPropertyBackdropFilter,
+#if ENABLE(DARK_MODE_CSS)
+        CSSPropertyColorScheme,
+#endif
+        CSSPropertyWidth,
+        CSSPropertyHeight,
+    };
+
+    Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
+
+    TransformationMatrix transform;
+    auto* renderer = element.renderer();
+    RenderElement* container = nullptr;
+    while (renderer && !renderer->isRenderView()) {
+        container = renderer->container();
+        if (!container)
+            break;
+        LayoutSize containerOffset = renderer->offsetFromContainer(*container, LayoutPoint());
+        TransformationMatrix localTransform;
+        renderer->getTransformFromContainer(containerOffset, localTransform);
+        transform = localTransform * transform;
+        renderer = container;
+    }
+    // Apply the inverse of what will be added by the default value of 'transform-origin',
+    // since the computed transform has already included it.
+    transform.translate(size.width() / 2, size.height() / 2);
+    transform.translateRight(-size.width() / 2, -size.height() / 2);
+
+    if (element.renderer()) {
+        Ref<CSSValue> transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, element.renderer()->style()));
+        props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+    } else
+        props->setProperty(CSSPropertyTransform, CSSPrimitiveValue::create(CSSValueID::CSSValueNone));
+
+    return props;
+}
+
+// https://drafts.csswg.org/css-view-transitions-1/#update-pseudo-element-styles
+ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
+{
+    auto& resolver = protectedDocument()->styleScope().resolver();
+
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
+        RefPtr<MutableStyleProperties> properties;
+        if (RefPtr newElement = capturedElement->newElement.get()) {
+            // FIXME: Also check fragmented content here.
+            CheckVisibilityOptions visibilityOptions { .contentVisibilityAuto = true };
+            if (!newElement->checkVisibility(visibilityOptions))
+                return Exception { ExceptionCode::InvalidStateError, "One of the transitioned elements has become hidden."_s };
+            CheckedPtr renderBox = dynamicDowncast<RenderBox>(newElement->renderer());
+            properties = copyElementBaseProperties(*newElement, renderBox ? renderBox->size() : LayoutSize { });
+        } else
+            properties = capturedElement->oldProperties;
+
+        if (properties) {
+            // group styles rule
+            if (!capturedElement->groupStyleProperties) {
+                capturedElement->groupStyleProperties = properties;
+                resolver.setViewTransitionStyles(CSSSelector::PseudoElement::ViewTransitionGroup, name, *properties);
+            } else
+                capturedElement->groupStyleProperties->mergeAndOverrideOnConflict(*properties);
+        }
+    }
+
+    protectedDocument()->styleScope().didChangeStyleSheetContents();
+    return { };
 }
 
 }

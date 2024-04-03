@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
               chunk 1 (vertical) text run 2 at (134.40,117.60) startOffset 1 endOffset 2 height 17.60: "\x{5B57}"
           RenderSVGInlineText {#text} at (0,35) size 18x5
             chunk 1 (vertical) text run 1 at (134.40,135.20) startOffset 0 endOffset 1 height 17.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 91x18
+          RenderSVGTSpan {tspan} at (0,32) size 91x18
             RenderSVGInlineText {#text} at (0,32) size 18x91
               chunk 1 (vertical) text run 1 at (134.40,132.00) startOffset 0 endOffset 1 height 17.60: "L"
               chunk 1 (vertical) text run 2 at (134.40,141.00) startOffset 1 endOffset 2 height 17.60: "o"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
               chunk 1 (vertical) text run 11 at (134.40,209.40) startOffset 10 endOffset 11 height 17.60: "m"
           RenderSVGInlineText {#text} at (0,122) size 18x5
             chunk 1 (vertical) text run 1 at (134.40,222.60) startOffset 0 endOffset 1 height 17.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGTSpan {tspan} at (0,127) size 36x17
             RenderSVGInlineText {#text} at (0,127) size 17x36
               chunk 1 (vertical) text run 1 at (134.40,227.70) startOffset 0 endOffset 1 height 17.60: "\x{6F22}"
               chunk 1 (vertical) text run 2 at (134.40,245.30) startOffset 1 endOffset 2 height 17.60: "\x{5B57}"

@@ -45,7 +45,7 @@
     if (!(self = [super init]))
         return nil;
 
-    m_dictionary = [dictionary mutableCopy];
+    m_dictionary = adoptNS([dictionary mutableCopy]);
     return self;
 }
 
@@ -61,6 +61,9 @@
 
 - (void)encodeObject:(id)object forKey:(NSString *)key
 {
+    if (!object)
+        return;
+
     if (!IPC::isSerializableValue(object)) {
         ASSERT_NOT_REACHED_WITH_MESSAGE("WKKeyedCoder attempt to encode object of unsupported type %s", object_getClassName(object));
         return;
@@ -80,7 +83,7 @@
         return nil;
 
     id object = [m_dictionary objectForKey:key];
-    if (![object isKindOfClass:aClass]) {
+    if (object && ![object isKindOfClass:aClass]) {
         m_failedDecoding = YES;
         return nil;
     }
@@ -88,9 +91,56 @@
     return object;
 }
 
+- (id)decodeObjectOfClasses:(NSSet<Class> *)classes forKey:(NSString *)key
+{
+    if (m_failedDecoding)
+        return nil;
+
+    id object = [m_dictionary objectForKey:key];
+    if (!object)
+        return nil;
+    for (id aClass in classes) {
+        if ([object isKindOfClass:aClass])
+            return object;
+    }
+
+    m_failedDecoding = YES;
+    return nil;
+}
+
 - (id)decodeObjectForKey:(NSString *)key
 {
     return [m_dictionary objectForKey:key];
+}
+
+- (void)encodeBool:(BOOL)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (BOOL)decodeBoolForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] boolValue];
+}
+
+- (void)encodeInt64:(int64_t)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (int64_t)decodeInt64ForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] longLongValue];
+}
+
+- (void)encodeInteger:(NSInteger)value forKey:(NSString *)key
+{
+    [self encodeObject:@(value) forKey:key];
+}
+
+- (NSInteger)decodeIntegerForKey:(NSString *)key
+{
+    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] integerValue];
 }
 
 - (NSDictionary *)accumulatedDictionary

@@ -80,6 +80,7 @@ public:
 #endif
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
+    WEBCORE_EXPORT CheckedPtr<FrameLoader> checkedFrameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     RefPtr<DocumentLoader> protectedDocumentLoader() const;
     const ResourceRequest& originalRequest() const { return m_originalRequest; }
@@ -103,6 +104,7 @@ public:
     const ResourceResponse& response() const { return m_response; }
 
     const FragmentedSharedBuffer* resourceData() const;
+    RefPtr<const FragmentedSharedBuffer> protectedResourceData() const;
     void clearResourceData();
     
     virtual bool isSubresourceLoader() const;
@@ -156,7 +158,8 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    const LocalFrame* frame() const { return m_frame.get(); }
+    LocalFrame* frame() const { return m_frame.get(); }
+    RefPtr<LocalFrame> protectedFrame() const;
 
     const ResourceLoaderOptions& options() const { return m_options; }
 

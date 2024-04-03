@@ -53,4 +53,6 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_CONTROL_PART(ImageControlsButton)
+
 #endif // ENABLE(SERVICE_CONTROLS)

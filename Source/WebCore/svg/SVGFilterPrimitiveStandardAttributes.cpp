@@ -52,19 +52,19 @@ void SVGFilterPrimitiveStandardAttributes::attributeChanged(const QualifiedName&
 
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::yAttr:
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::widthAttr:
-        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_width }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::heightAttr:
-        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::resultAttr:
-        m_result->setBaseValInternal(newValue);
+        Ref { m_result }->setBaseValInternal(newValue);
         break;
     default:
         break;
@@ -99,28 +99,30 @@ RefPtr<FilterEffect> SVGFilterPrimitiveStandardAttributes::filterEffect(const Fi
 
 void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const QualifiedName& attribute)
 {
-    if (m_effect && !setFilterEffectAttribute(*m_effect, attribute))
+    RefPtr effect = m_effect;
+    if (effect && !setFilterEffectAttribute(*effect, attribute))
         return;
 
-    if (auto* renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+    if (CheckedPtr renderer = this->renderer())
+        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRepaint(effect.get());
 }
 
 void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(const Element& child, const QualifiedName& attribute)
 {
     ASSERT(child.parentNode() == this);
 
-    if (m_effect && !setFilterEffectAttributeFromChild(*m_effect, child, attribute))
+    RefPtr effect = m_effect;
+    if (effect && !setFilterEffectAttributeFromChild(*effect, child, attribute))
         return;
 
-    if (auto* renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+    if (CheckedPtr renderer = this->renderer())
+        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRepaint(effect.get());
 }
 
 void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
 {
-    if (auto* renderer = this->renderer())
-        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRebuild();
+    if (CheckedPtr renderer = this->renderer())
+        static_cast<LegacyRenderSVGResourceFilterPrimitive&>(*renderer).markFilterEffectForRebuild();
 
     m_effect = nullptr;
 }
@@ -167,7 +169,7 @@ void SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(SVGEl
     if (!parent)
         return;
 
-    RenderElement* renderer = parent->renderer();
+    CheckedPtr renderer = parent->renderer();
     if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
         return;
 

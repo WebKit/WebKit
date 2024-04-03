@@ -32,7 +32,7 @@
 namespace JSC {
 
 using ConcurrentJSLock = Lock;
-using ConcurrentJSLockerImpl = LockHolder;
+using ConcurrentJSLockerImpl = Locker<Lock>;
 
 static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConurrentJSLock is always one byte.");
 

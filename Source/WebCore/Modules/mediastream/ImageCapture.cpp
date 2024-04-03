@@ -54,8 +54,10 @@ ExceptionOr<Ref<ImageCapture>> ImageCapture::create(Document& document, Ref<Medi
 ImageCapture::ImageCapture(Document& document, Ref<MediaStreamTrack> track)
     : ActiveDOMObject(document)
     , m_track(track)
+#if !RELEASE_LOG_DISABLED
     , m_logger(track->logger())
     , m_logIdentifier(track->logIdentifier())
+#endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 }
@@ -66,6 +68,16 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
+
+    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_track->readyState() == MediaStreamTrack::State::Ended) {
+        ERROR_LOG(identifier, "rejecting promise, track has ended");
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        return;
+    }
 
     m_track->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
@@ -86,6 +98,16 @@ void ImageCapture::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCa
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
 
+    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-getphotocapabilities
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_track->readyState() == MediaStreamTrack::State::Ended) {
+        ERROR_LOG(identifier, "rejecting promise, track has ended");
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        return;
+    }
+
     m_track->getPhotoCapabilities()->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
             if (!result) {
@@ -104,6 +126,16 @@ void ImageCapture::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettin
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
+
+    // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_track->readyState() == MediaStreamTrack::State::Ended) {
+        ERROR_LOG(identifier, "rejecting promise, track has ended");
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+        return;
+    }
 
     m_track->getPhotoSettings()->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
@@ -124,10 +156,12 @@ const char* ImageCapture::activeDOMObjectName() const
     return "ImageCapture";
 }
 
+#if !RELEASE_LOG_DISABLED
 WTFLogChannel& ImageCapture::logChannel() const
 {
     return LogWebRTC;
 }
+#endif
 
 } // namespace WebCore
 

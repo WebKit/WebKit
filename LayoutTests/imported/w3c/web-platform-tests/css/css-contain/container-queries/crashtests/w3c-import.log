@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1346969-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1362391-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1429955-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1505250-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-custom-highlight-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-remove-insert-evaluator-crash.html
@@ -50,6 +52,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/math-block-container-child-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/orthogonal-replaced-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/pseudo-container-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/remove-dom-child-change-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/reversed-ol-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/size-change-during-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/svg-layout-root-crash.html

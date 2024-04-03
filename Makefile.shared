@@ -17,12 +17,11 @@ endif
 BUILD_GOAL = $(SCHEME)
 else
 USE_WORKSPACE =
-BUILD_WEBKIT_OPTIONS += --no-use-workspace
+BUILD_WEBKIT_BASE += --no-use-workspace
 BUILD_GOAL = $(notdir $(CURDIR))
 endif
 
-
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
+XCODE_OPTIONS = $(ARGS)
 XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_ADDITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
 	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
@@ -31,29 +30,27 @@ endif
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))
 		ifneq (default,$(OVERRIDE_SDKROOT))
-			XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(OVERRIDE_SDKROOT)
+			BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --sdk=$(OVERRIDE_SDKROOT)
 		endif
 		OVERRIDE_SDKROOT =
 	else
-		XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(SDKROOT)
+		BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --sdk=$(SDKROOT)
 	endif
 endif
 
 ifneq (,$(ARCHS))
 	ifneq (,$(OVERRIDE_ARCHS))
 		ifneq (default,$(OVERRIDE_ARCHS))
-			XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(OVERRIDE_ARCHS)"
-			XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+			BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architecture="$(OVERRIDE_ARCHS)"
 		endif
 		OVERRIDE_ARCHS =
 	else
-		XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(ARCHS)"
-		XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+		BUILD_WEBKIT_BASE := $(BUILD_WEBKIT_BASE) --architecture="$(ARCHS)"
 	endif
 endif
 
-ifneq (,$(SDK_VARIANT))
-	XCODE_OPTIONS += SDK_VARIANT="$(SDK_VARIANT)"
+ifeq (iosmac,$(SDK_VARIANT))
+	BUILD_WEBKIT_BASE += --maccatalyst
 endif
 
 ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
@@ -99,6 +96,14 @@ XCODE_OPTIONS += CC=$(CC)
 endif
 endif
 
+ifeq ($(CODE_COVERAGE),YES)
+CONFIG_OPTIONS += --coverage
+else
+ifeq ($(CODE_COVERAGE),NO)
+CONFIG_OPTIONS += --no-coverage
+endif
+endif
+
 ifneq ($(CPLUSPLUS),)
 XCODE_OPTIONS += CPLUSPLUS=$(CPLUSPLUS)
 endif
@@ -111,8 +116,8 @@ CONFIG_OPTIONS += --no-libfuzzer
 endif
 endif
 
-ifneq ($(WK_LIBFUZZER_COVERAGE),)
-XCODE_OPTIONS += WK_LIBFUZZER_COVERAGE=$(WK_LIBFUZZER_COVERAGE)
+ifneq ($(WK_SANITIZER_COVERAGE),)
+XCODE_OPTIONS += WK_SANITIZER_COVERAGE=$(WK_SANITIZER_COVERAGE)
 endif
 
 ifeq ($(TSAN),YES)
@@ -139,6 +144,20 @@ else ifeq ($(WK_LTO_MODE),none)
 CONFIG_OPTIONS += --lto-mode=none
 endif
 
+ANALYZER_XCODE_SETTINGS = RUN_CLANG_STATIC_ANALYZER=YES CLANG_STATIC_ANALYZER_MODE=deep CLANG_ANALYZER_OUTPUT=html
+ifneq (,$(ANALYZER_EXEC))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_EXEC="$(ANALYZER_EXEC)"
+endif
+ifneq (,$(ANALYZER_FLAGS))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_OTHER_FLAGS="$(ANALYZER_FLAGS)"
+endif
+ifneq (,$(ANALYZER_OUTPUT))
+	ANALYZER_XCODE_SETTINGS += CLANG_ANALYZER_OUTPUT_DIR="$(ANALYZER_OUTPUT)"
+endif
+ifeq (,$(PATH_TO_SCAN_BUILD))
+	PATH_TO_SCAN_BUILD = scan-build
+endif
+
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 
 define set_webkit_configuration
@@ -150,40 +169,46 @@ define invoke_xcode
 		echo; \
 		echo "===== BUILDING $(BUILD_GOAL) ====="; \
 		echo; \
-		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		eval build_webkit_options=(`perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_BASE) $(BUILD_WEBKIT_OPTIONS)`); \
+		xcodebuild $1 $(OTHER_OPTIONS) $(XCODE_TARGET) "$${build_webkit_options[@]}" $(XCODE_OPTIONS) $2 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
 all:
 	@$(call set_webkit_configuration,)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 debug d: force
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 release r: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 release+assert ra: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 release+assert ra: override GCC_PREPROCESSOR_ADDITIONS += ASSERT_ENABLED=1
 
 testing t: force
 	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
-	@$(call invoke_xcode,,,)
+	@$(call invoke_xcode,,)
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,CLANG_STATIC_ANALYZER_MODE=deep)
+	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
+	@for dir in $$(ls -d $(ANALYZER_OUTPUT)/StaticAnalyzer/*); do \
+		mkdir -p $$dir/StaticAnalyzerReports; \
+		find $$dir -name 'report-*.html' -exec mv {} $$dir/StaticAnalyzerReports/ \;; \
+		$(PATH_TO_SCAN_BUILD) --generate-index-only $$dir; \
+	done
 
 clean:
 ifndef XCODE_TARGET
-	@$(call invoke_xcode,,,-alltargets clean)
+	@$(call invoke_xcode,,-alltargets clean)
 else
-	@$(call invoke_xcode,,,clean)
+	@$(call invoke_xcode,,clean)
 endif
 
 installsrc:

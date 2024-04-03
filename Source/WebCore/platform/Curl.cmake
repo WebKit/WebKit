@@ -22,7 +22,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/NetworkStorageSessionCurl.cpp
     platform/network/curl/OpenSSLHelper.cpp
     platform/network/curl/ProtectionSpaceCurl.cpp
-    platform/network/curl/PublicSuffixCurl.cpp
+    platform/network/curl/PublicSuffixStoreCurl.cpp
     platform/network/curl/ResourceErrorCurl.cpp
     platform/network/curl/ResourceRequestCurl.cpp
     platform/network/curl/ResourceResponseCurl.cpp

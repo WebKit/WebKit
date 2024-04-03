@@ -360,7 +360,7 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     auto translateSelector = ^{
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
         if ([webView hasAsyncTextInput])
             return @selector(translate:);
 #endif

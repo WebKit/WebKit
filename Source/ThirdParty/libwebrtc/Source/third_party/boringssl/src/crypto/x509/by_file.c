@@ -62,6 +62,7 @@
 
 #include "internal.h"
 
+#ifndef OPENSSL_NO_STDIO
 
 static int by_file_ctrl(X509_LOOKUP *ctx, int cmd, const char *argc, long argl,
                         char **ret);
@@ -277,3 +278,5 @@ err:
   sk_X509_INFO_pop_free(inf, X509_INFO_free);
   return count;
 }
+
+#endif  // OPENSSL_NO_STDIO

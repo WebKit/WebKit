@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -548,14 +548,14 @@ namespace JSC {
             return emitNodeInTailPosition(nullptr, n);
         }
 
-        RegisterID* emitDefineClassElements(PropertyListNode* n, RegisterID* constructor, RegisterID* prototype, Vector<JSTextPosition>& instanceFieldLocations, Vector<JSTextPosition>& staticFieldLocations)
+        RegisterID* emitDefineClassElements(PropertyListNode* n, RegisterID* constructor, RegisterID* prototype, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>& instanceElementDefinitions, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>& staticElementDefinitions)
         {
             ASSERT(constructor->refCount() && prototype->refCount());
             if (UNLIKELY(!m_vm.isSafeToRecurse()))
                 return emitThrowExpressionTooDeepException();
             if (UNLIKELY(n->needsDebugHook()))
                 emitDebugHook(n);
-            return n->emitBytecode(*this, constructor, prototype, &instanceFieldLocations, &staticFieldLocations);
+            return n->emitBytecode(*this, constructor, prototype, &instanceElementDefinitions, &staticElementDefinitions);
         }
 
         RegisterID* emitNodeForProperty(RegisterID* dst, ExpressionNode* node)
@@ -582,9 +582,15 @@ namespace JSC {
         }
 
         void emitExpressionInfo(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
-        {            
+        {
+            ASSERT(divot && divotStart && divotEnd);
             ASSERT(divot.offset >= divotStart.offset);
             ASSERT(divotEnd.offset >= divot.offset);
+
+            // Don't emit expression info if the data could cause us to crash later.
+            // In this case we'll just use the wrong info for an error message, not crash.
+            if (!divot || !divotStart || !divotEnd)
+                return;
 
             if (m_isBuiltinFunction)
                 return;
@@ -612,7 +618,7 @@ namespace JSC {
             unsigned column = divotOffset - lineStart;
 
             unsigned instructionOffset = instructions().size();
-            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, line, column);
+            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, { line, column });
         }
 
 
@@ -730,7 +736,7 @@ namespace JSC {
         RegisterID* emitNewFunction(RegisterID* dst, FunctionMetadataNode*);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode*);
         RegisterID* emitNewDefaultConstructor(RegisterID* dst, ConstructorKind, const Identifier& name, const Identifier& ecmaName, const SourceCode& classSource, NeedsClassFieldInitializer, PrivateBrandRequirement);
-        RegisterID* emitNewClassFieldInitializerFunction(RegisterID* dst, Vector<JSTextPosition>&& classFieldLocations, bool isDerived);
+        RegisterID* emitNewClassFieldInitializerFunction(RegisterID* dst, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>&&, bool isDerived);
         RegisterID* emitNewArrowFunctionExpression(RegisterID*, ArrowFuncExprNode*);
         RegisterID* emitNewMethodDefinition(RegisterID* dst, MethodDefinitionNode*);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
@@ -746,6 +752,7 @@ namespace JSC {
         RegisterID* emitToNumeric(RegisterID* dst, RegisterID* src);
         RegisterID* emitToString(RegisterID* dst, RegisterID* src);
         RegisterID* emitToObject(RegisterID* dst, RegisterID* src, const Identifier& message);
+        RegisterID* emitToThis(RegisterID* srcDst);
         RegisterID* emitInc(RegisterID* srcDst);
         RegisterID* emitDec(RegisterID* srcDst);
 
@@ -847,14 +854,14 @@ namespace JSC {
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
         RegisterID* emitGetGlobalPrivate(RegisterID* dst, const Identifier& property);
 
-        enum class ReturnFrom { Normal, Finally };
-        RegisterID* emitReturn(RegisterID* src, ReturnFrom = ReturnFrom::Normal);
+        RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src);
 
         RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, RegisterID* lazyThis, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
         RegisterID* emitToPropertyKey(RegisterID* dst, RegisterID* src);
+        RegisterID* emitToPropertyKeyOrNumber(RegisterID* dst, RegisterID* src);
 
         ResolveType resolveType();
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
@@ -873,6 +880,7 @@ namespace JSC {
         void emitJumpIfFalse(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionCall(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
+        void emitJumpIfNotEvalFunction(RegisterID* cond, Label& target);
         void emitJumpIfEmptyPropertyNameEnumerator(RegisterID* cond, Label& target);
         void emitJumpIfSentinelString(RegisterID* cond, Label& target);
         unsigned emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target);
@@ -940,6 +948,8 @@ namespace JSC {
 
         void pushClassHeadLexicalScope(VariableEnvironment&);
         void popClassHeadLexicalScope(VariableEnvironment&);
+
+        std::optional<Variable> tryResolveVariable(ExpressionNode*);
 
     private:
         static constexpr int CurrentLexicalScopeIndex = -2;
@@ -1071,7 +1081,7 @@ namespace JSC {
         bool isNewTargetUsedInInnerArrowFunction();
         bool isArgumentsUsedInInnerArrowFunction();
 
-        void emitToThis();
+        void emitToThis() { emitToThis(&m_thisRegister); }
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 

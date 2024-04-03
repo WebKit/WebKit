@@ -62,7 +62,7 @@ static RefPtr<SharedBuffer> convertToSharedBuffer(T array)
 {
     if (!array)
         return nullptr;
-    return SharedBuffer::create(array->data(), array->byteLength());
+    return SharedBuffer::create(array->span());
 }
 
 std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)

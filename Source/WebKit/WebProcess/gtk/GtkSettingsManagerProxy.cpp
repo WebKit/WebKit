@@ -28,7 +28,8 @@
 
 #include "GtkSettingsManagerProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/CairoUtilities.h>
+#include <WebCore/FontRenderOptions.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderTheme.h>
 
@@ -54,17 +55,17 @@ void GtkSettingsManagerProxy::settingsDidChange(GtkSettingsState&& state)
 
 void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 {
+    bool shouldUpdateStyle = false;
     if (state.themeName) {
         g_object_set(m_settings, "gtk-theme-name", state.themeName->utf8().data(), nullptr);
         RenderTheme::singleton().platformColorsDidChange();
-        Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+        shouldUpdateStyle = true;
     }
 
     if (state.fontName)
         g_object_set(m_settings, "gtk-font-name", state.fontName->utf8().data(), nullptr);
 
     bool hintingSettingsDidChange = false;
-
     if (state.xftHinting) {
         g_object_set(m_settings, "gtk-xft-hinting", *state.xftHinting, nullptr);
         hintingSettingsDidChange = true;
@@ -75,23 +76,26 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
         hintingSettingsDidChange = true;
     }
 
-    if (hintingSettingsDidChange)
+    if (hintingSettingsDidChange) {
         applyHintingSettings();
+        shouldUpdateStyle = true;
+    }
 
-    bool antialiasSettingsDidChagne = false;
-
+    bool antialiasSettingsDidChange = false;
     if (state.xftAntialias) {
         g_object_set(m_settings, "gtk-xft-antialias", *state.xftAntialias, nullptr);
-        antialiasSettingsDidChagne = true;
+        antialiasSettingsDidChange = true;
     }
 
     if (state.xftRGBA) {
         g_object_set(m_settings, "gtk-xft-rgba", state.xftRGBA->utf8().data(), nullptr);
-        antialiasSettingsDidChagne = true;
+        antialiasSettingsDidChange = true;
     }
 
-    if (antialiasSettingsDidChagne)
+    if (antialiasSettingsDidChange) {
         applyAntialiasSettings();
+        shouldUpdateStyle = true;
+    }
 
     if (state.xftDPI)
         g_object_set(m_settings, "gtk-xft-dpi", *state.xftDPI, nullptr);
@@ -110,78 +114,70 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
     if (state.enableAnimations)
         g_object_set(m_settings, "gtk-enable-animations", *state.enableAnimations, nullptr);
+
+    if (shouldUpdateStyle)
+        Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
 void GtkSettingsManagerProxy::applyHintingSettings()
 {
     gint hinting;
     GUniqueOutPtr<char> hintStyleString;
-    
-    g_object_get(m_settings,
-        "gtk-xft-hinting", &hinting,
-        "gtk-xft-hintstyle", &hintStyleString.outPtr(),
-        nullptr);
+    g_object_get(m_settings, "gtk-xft-hinting", &hinting, "gtk-xft-hintstyle", &hintStyleString.outPtr(), nullptr);
 
-    cairo_hint_metrics_t hintMetrics = CAIRO_HINT_METRICS_ON;
-
-    cairo_hint_style_t hintStyle = CAIRO_HINT_STYLE_DEFAULT;
+    std::optional<FontRenderOptions::Hinting> hintStyle;
     switch (hinting) {
     case 0:
-        hintStyle = CAIRO_HINT_STYLE_NONE;
+        hintStyle = FontRenderOptions::Hinting::None;
         break;
     case 1:
         if (hintStyleString) {
             if (!strcmp(hintStyleString.get(), "hintnone"))
-                hintStyle = CAIRO_HINT_STYLE_NONE;
+                hintStyle = FontRenderOptions::Hinting::None;
             else if (!strcmp(hintStyleString.get(), "hintslight"))
-                hintStyle = CAIRO_HINT_STYLE_SLIGHT;
+                hintStyle = FontRenderOptions::Hinting::Slight;
             else if (!strcmp(hintStyleString.get(), "hintmedium"))
-                hintStyle = CAIRO_HINT_STYLE_MEDIUM;
+                hintStyle = FontRenderOptions::Hinting::Medium;
             else if (!strcmp(hintStyleString.get(), "hintfull"))
-                hintStyle = CAIRO_HINT_STYLE_FULL;
+                hintStyle = FontRenderOptions::Hinting::Full;
         }
         break;
     }
-
-    setDefaultCairoHintOptions(hintMetrics, hintStyle);
+    FontRenderOptions::singleton().setHinting(hintStyle);
 }
 
 void GtkSettingsManagerProxy::applyAntialiasSettings()
 {
     gint antialias;
     GUniqueOutPtr<char> rgbaString;
+    g_object_get(m_settings, "gtk-xft-antialias", &antialias, "gtk-xft-rgba", &rgbaString.outPtr(), nullptr);
 
-    g_object_get(m_settings,
-        "gtk-xft-antialias", &antialias,
-        "gtk-xft-rgba", &rgbaString.outPtr(),
-        nullptr);
-
-    cairo_subpixel_order_t subpixelOrder = CAIRO_SUBPIXEL_ORDER_DEFAULT;
+    std::optional<FontRenderOptions::SubpixelOrder> subpixelOrder;
     if (rgbaString) {
         if (!strcmp(rgbaString.get(), "rgb"))
-            subpixelOrder = CAIRO_SUBPIXEL_ORDER_RGB;
+            subpixelOrder = FontRenderOptions::SubpixelOrder::HorizontalRGB;
         else if (!strcmp(rgbaString.get(), "bgr"))
-            subpixelOrder = CAIRO_SUBPIXEL_ORDER_BGR;
+            subpixelOrder = FontRenderOptions::SubpixelOrder::HorizontalBGR;
         else if (!strcmp(rgbaString.get(), "vrgb"))
-            subpixelOrder = CAIRO_SUBPIXEL_ORDER_VRGB;
+            subpixelOrder = FontRenderOptions::SubpixelOrder::VerticalRGB;
         else if (!strcmp(rgbaString.get(), "vbgr"))
-            subpixelOrder = CAIRO_SUBPIXEL_ORDER_VBGR;
+            subpixelOrder = FontRenderOptions::SubpixelOrder::VerticalBGR;
     }
+    FontRenderOptions::singleton().setSubpixelOrder(subpixelOrder);
 
-    cairo_antialias_t antialiasMode = CAIRO_ANTIALIAS_DEFAULT;
+    std::optional<FontRenderOptions::Antialias> antialiasMode;
     switch (antialias) {
     case 0:
-        antialiasMode = CAIRO_ANTIALIAS_NONE;
+        antialiasMode = FontRenderOptions::Antialias::None;
         break;
     case 1:
-        if (subpixelOrder != CAIRO_SUBPIXEL_ORDER_DEFAULT)
-            antialiasMode = CAIRO_ANTIALIAS_SUBPIXEL;
+        if (subpixelOrder.has_value())
+            antialiasMode = FontRenderOptions::Antialias::Subpixel;
         else
-            antialiasMode = CAIRO_ANTIALIAS_GRAY;
+            antialiasMode = FontRenderOptions::Antialias::Normal;
         break;
     }
-
-    setDefaultCairoAntialiasOptions(antialiasMode, subpixelOrder);
+    FontRenderOptions::singleton().setAntialias(antialiasMode);
 }
 
 } // namespace WebKit

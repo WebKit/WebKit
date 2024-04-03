@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionInfo.h"
@@ -139,6 +138,10 @@
 #include <WebCore/SystemBattery.h>
 #endif
 
+#if ENABLE(AV1) && PLATFORM(COCOA)
+#include <WebCore/AV1UtilitiesCocoa.h>
+#endif
+
 #if ENABLE(VP9) && PLATFORM(COCOA)
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
@@ -180,10 +183,10 @@ public:
     }
 
 private:
-    Logger& logger() final { return m_process.logger(); }
+    Logger& logger() final { return m_process.get()->logger(); }
     void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&) final { }
     void removeMessageReceiver(IPC::ReceiverName messageReceiverName) final { }
-    IPC::Connection& connection() final { return m_process.connection(); }
+    IPC::Connection& connection() final { return m_process.get()->connection(); }
     bool willStartCapture(CaptureDevice::DeviceType type) const final
     {
         switch (type) {
@@ -192,9 +195,9 @@ private:
         case CaptureDevice::DeviceType::Speaker:
             return false;
         case CaptureDevice::DeviceType::Microphone:
-            return m_process.allowsAudioCapture();
+            return m_process.get()->allowsAudioCapture();
         case CaptureDevice::DeviceType::Camera:
-            if (!m_process.allowsVideoCapture())
+            if (!m_process.get()->allowsVideoCapture())
                 return false;
 #if PLATFORM(IOS) || PLATFORM(VISION)
             MediaSessionManageriOS::providePresentingApplicationPID();
@@ -202,49 +205,52 @@ private:
             return true;
             break;
         case CaptureDevice::DeviceType::Screen:
-            return m_process.allowsDisplayCapture();
+            return m_process.get()->allowsDisplayCapture();
         case CaptureDevice::DeviceType::Window:
-            return m_process.allowsDisplayCapture();
+            return m_process.get()->allowsDisplayCapture();
         }
     }
     
     bool setCaptureAttributionString() final
     {
-        return m_process.setCaptureAttributionString();
+        return m_process.get()->setCaptureAttributionString();
     }
 
 #if ENABLE(APP_PRIVACY_REPORT)
     void setTCCIdentity() final
     {
-        m_process.setTCCIdentity();
+        m_process.get()->setTCCIdentity();
     }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    void setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
+    bool setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
     {
-        WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(m_process.mediaEnvironment(pageIdentifier));
+        auto mediaEnvironment = m_process.get()->mediaEnvironment(pageIdentifier);
+        bool result = !mediaEnvironment.isEmpty();
+        WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(WTFMove(mediaEnvironment));
+        return result;
     }
 #endif
 
     void startProducingData(CaptureDevice::DeviceType type) final
     {
         if (type == CaptureDevice::DeviceType::Microphone)
-            m_process.startCapturingAudio();
+            m_process.get()->startCapturingAudio();
 #if PLATFORM(IOS)
         else if (type == CaptureDevice::DeviceType::Camera)
-            m_process.overridePresentingApplicationPIDIfNeeded();
+            m_process.get()->overridePresentingApplicationPIDIfNeeded();
 #endif
     }
 
     const ProcessIdentity& resourceOwner() const final
     {
-        return m_process.webProcessIdentity();
+        return m_process.get()->webProcessIdentity();
     }
 
-    RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.videoFrameObjectHeap(); }
+    RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() final { return &m_process.get()->videoFrameObjectHeap(); }
 
-    GPUConnectionToWebProcess& m_process;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_process;
 };
 
 #endif
@@ -304,12 +310,14 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
         hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
         gpuProcess.send(Messages::GPUProcessProxy::SetHasVP9HardwareDecoder(hasVP9HardwareDecoder));
     }
-    bool hasVP9ExtensionSupport;
-    if (parameters.hasVP9ExtensionSupport)
-        hasVP9ExtensionSupport = *parameters.hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    bool hasAV1HardwareDecoder;
+    if (parameters.hasAV1HardwareDecoder)
+        hasAV1HardwareDecoder = *parameters.hasAV1HardwareDecoder;
     else {
-        hasVP9ExtensionSupport = WebCore::hasVP9ExtensionSupport();
-        gpuProcess.send(Messages::GPUProcessProxy::SetHasVP9ExtensionSupport(hasVP9ExtensionSupport));
+        hasAV1HardwareDecoder = WebCore::av1HardwareDecoderAvailable();
+        gpuProcess.send(Messages::GPUProcessProxy::SetHasAV1HardwareDecoder(hasAV1HardwareDecoder));
     }
 #endif
 
@@ -319,7 +327,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #endif
 #if ENABLE(VP9)
         hasVP9HardwareDecoder,
-        hasVP9ExtensionSupport
+#endif
+#if ENABLE(AV1)
+        hasAV1HardwareDecoder
 #endif
     };
     m_connection->send(Messages::GPUProcessConnection::DidInitialize(info), 0);
@@ -343,6 +353,8 @@ uint64_t GPUConnectionToWebProcess::gObjectCountForTesting = 0;
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+    assertIsMainThread();
+
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     m_routingArbitrator->processDidTerminate();
 #endif
@@ -387,6 +399,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
+
+    if (m_remoteMediaResourceManager)
+        m_remoteMediaResourceManager->stopListeningForIPC();
+
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
 }
@@ -464,7 +480,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (!m_sampleBufferDisplayLayerManager->allowsExitUnderMemoryPressure())
         return false;
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     if (m_remoteMediaRecorderManager && !m_remoteMediaRecorderManager->allowsExitUnderMemoryPressure())
         return false;
 #endif
@@ -534,8 +550,12 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 #if ENABLE(VIDEO)
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
-    if (!m_remoteMediaResourceManager)
-        m_remoteMediaResourceManager = makeUnique<RemoteMediaResourceManager>();
+    assertIsMainThread();
+
+    if (!m_remoteMediaResourceManager) {
+        m_remoteMediaResourceManager = RemoteMediaResourceManager::create();
+        m_remoteMediaResourceManager->initializeConnection(&connection());
+    }
 
     return *m_remoteMediaResourceManager;
 }
@@ -559,7 +579,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProces
 }
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
 RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 {
     if (!m_remoteMediaRecorderManager)
@@ -818,6 +838,16 @@ void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommand
 
 void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTesting overrides)
 {
+    if (!allowTestOnlyIPC()) {
+        MESSAGE_CHECK(!overrides.systemHasAC && !overrides.systemHasBattery && !overrides.vp9HardwareDecoderDisabled && !overrides.vp9DecoderDisabled && !overrides.vp9ScreenSizeAndScale);
+#if PLATFORM(COCOA)
+#if ENABLE(VP9)
+        VP9TestingOverrides::singleton().resetOverridesToDefaultValues();
+#endif
+        SystemBatteryStatusTestingOverrides::singleton().resetOverridesToDefaultValues();
+#endif
+        return;
+    }
 #if ENABLE(VP9) && PLATFORM(COCOA)
     VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTFMove(overrides.vp9HardwareDecoderDisabled));
     VP9TestingOverrides::singleton().setVP9DecoderDisabled(WTFMove(overrides.vp9DecoderDisabled));
@@ -862,7 +892,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     if (decoder.messageReceiverName() == Messages::RemoteMediaRecorderManager::messageReceiverName()) {
         mediaRecorderManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
@@ -1095,13 +1125,6 @@ void GPUConnectionToWebProcess::dispatchDisplayWasReconfigured()
 {
     for (auto& context : m_remoteGraphicsContextGLMap.values())
         context->displayWasReconfigured();
-}
-#endif
-
-#if ENABLE(VP9)
-void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
-{
-    m_gpuProcess->enableVP9Decoders(shouldEnableVP8Decoder, shouldEnableVP9Decoder, shouldEnableVP9SWDecoder);
 }
 #endif
 

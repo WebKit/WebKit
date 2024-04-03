@@ -28,6 +28,7 @@
 
 #import "LegacySessionStateCoding.h"
 #import "WKNSData.h"
+#include <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -38,7 +39,7 @@ RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
 
 bool decodeSessionState(NSData *data, SessionState& state)
 {
-    return decodeLegacySessionState(static_cast<const uint8_t*>(data.bytes), data.length, state);
+    return decodeLegacySessionState(span(data), state);
 }
 
 }

@@ -53,13 +53,10 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "public.jpeg"_s,
             "public.png"_s,
             "public.tiff"_s,
-            "public.jpeg-2000"_s,
             "public.mpo-image"_s,
-#if HAVE(WEBP)
             "public.webp"_s,
             "com.google.webp"_s,
             "org.webmproject.webp"_s,
-#endif
 #if HAVE(AVIF)
             "public.avif"_s,
             "public.avis"_s,
@@ -157,6 +154,9 @@ Vector<String> allowableImageTypes()
     allowableImageTypes.append("public.heif"_s);
     allowableImageTypes.append("public.heic"_s);
 #endif
+    // JPEG2000 is supported only for PDF. Allow it at the process
+    // level but disallow it in WebCore.
+    allowableImageTypes.append("public.jpeg-2000"_s);
     return allowableImageTypes;
 }
 

@@ -59,6 +59,10 @@
 #include <WebCore/PlatformDisplayX11.h>
 #endif
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
+
 #if USE(GBM)
 #include <WebCore/PlatformDisplayGBM.h>
 #endif
@@ -327,10 +331,23 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if USE(LIBDRM)
     if (strcmp(policy, "never")) {
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+        String deviceFile, renderNode;
+        auto* webView = webkit_uri_scheme_request_get_web_view(request);
+        if (auto* wpeView = webkit_web_view_get_wpe_view(webView)) {
+            auto* display = wpe_view_get_display(wpeView);
+            deviceFile = String::fromUTF8(wpe_display_get_drm_device(display));
+            renderNode = String::fromUTF8(wpe_display_get_drm_render_node(display));
+        } else {
+            deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
+            renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+        }
+#else
         auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
+        auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+#endif
         if (!deviceFile.isEmpty())
             addTableRow(displayObject, "DRM Device"_s, deviceFile);
-        auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
         if (!renderNode.isEmpty())
             addTableRow(displayObject, "DRM Render Node"_s, renderNode);
     }

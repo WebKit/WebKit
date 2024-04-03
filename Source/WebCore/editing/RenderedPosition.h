@@ -34,6 +34,7 @@
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
 #include "TextAffinity.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -81,7 +82,7 @@ private:
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
-    CheckedPtr<const RenderObject> m_renderer;
+    SingleThreadWeakPtr<const RenderObject> m_renderer;
     InlineIterator::LeafBoxIterator m_box;
     unsigned m_offset { 0 };
 

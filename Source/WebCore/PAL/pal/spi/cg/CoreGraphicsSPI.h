@@ -40,9 +40,9 @@
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
-#if ENABLE(UNIFIED_PDF)
+#if ENABLE(UNIFIED_PDF) && HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
 #include <CoreGraphics/CGPDFPageLayout.h>
-#endif // ENABLE(UNIFIED_PDF)
+#endif // ENABLE(UNIFIED_PDF) && HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
@@ -405,6 +405,8 @@ CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
+
+CGSize CGDisplayScreenSize(CGDirectDisplayID);
 
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);

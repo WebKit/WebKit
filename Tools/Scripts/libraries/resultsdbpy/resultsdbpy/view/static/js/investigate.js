@@ -28,6 +28,7 @@ import {queryToParams, paramsToQuery, QueryModifier, percentage, elapsedTime} fr
 import {Configuration} from '/assets/js/configuration.js'
 import {Expectations} from '/assets/js/expectations.js';
 import {Failures} from '/assets/js/failures.js';
+import {TypeForSuite} from '/assets/js/suites.js';
 
 function commitsForUuid(uuid) {
     return `Commits: ${CommitBank.commitsDuring(uuid).map((commit) => {
@@ -59,7 +60,8 @@ function testRunLink(suite, data)
 {
     if (!data.start_time)
         return '';
-    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">Test run</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
+    const typ = TypeForSuite(suite);
+    return `<a href="/urls/build?${parametersForInstance(suite, data)}" target="_blank">${typ.runDescription}</a> @ ${new Date(data.start_time * 1000).toLocaleString()}`;
 }
 
 function archiveLink(suite, data)
@@ -72,7 +74,7 @@ function archiveLink(suite, data)
 function elapsed(data)
 {
     if (data.time)
-        return `Took ${data.time / 1000} seconds`;
+        return `Took ${elapsedTime(data.time / 1000)}`;
     if (data.stats && data.stats.start_time && data.stats.end_time)
         return `Suite took ${elapsedTime(data.stats.start_time, data.stats.end_time)}`;
     return '';
@@ -111,8 +113,6 @@ function prioritizedFailures(failures, max = 0, willFilterExpected = false)
         failuresToDisplay = failuresToDisplay.splice(0, max);
         failuresToDisplay[max - 1] = null;
     }
-
-
 
     return `<div>${failuresToDisplay.map(failure => {
         if (failure === null) {
@@ -365,7 +365,11 @@ class _InvestigateDrawer {
             this.data.forEach(datum => {
                 datum.failures = new Failures(this.suite, datum.configuration);
                 failures.forEach(failure => {
-                    if (datum.configuration.compare(failure.configuration) === 0)
+                    if (
+                        datum.configuration.compare(failure.configuration) === 0 &&
+                        failure.uuid_range[0] <= datum.uuid && datum.uuid <= failure.uuid_range[1] &&
+                        failure.start_time_range[0] <= datum.start_time && datum.start_time <= failure.start_time_range[1]
+                    )
                         datum.failures = Failures.combine(datum.failures, failure);
                 });
             });

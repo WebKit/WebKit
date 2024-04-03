@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "DrawingArea.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/NotImplemented.h>

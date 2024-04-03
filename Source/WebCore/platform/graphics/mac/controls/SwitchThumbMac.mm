@@ -27,7 +27,14 @@
 
 #if PLATFORM(MAC)
 
+#import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
+#import "GraphicsContext.h"
+#import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "SwitchMacUtilities.h"
+#import <pal/spi/mac/CoreUISPI.h>
+#import <pal/spi/mac/NSAppearanceSPI.h>
 
 namespace WebCore {
 
@@ -39,8 +46,6 @@ SwitchThumbMac::SwitchThumbMac(SwitchThumbPart& part, ControlFactoryMac& control
 
 IntSize SwitchThumbMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
 {
-    // For now we need the track sizes to paint the thumb. As it happens the thumb is the square
-    // of the track's height. We (ab)use that fact with drawingThumbLength below.
     return SwitchMacUtilities::cellSize(controlSize);
 }
 
@@ -58,6 +63,8 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
+    GraphicsContextStateSaver stateSaver(context);
+
     auto isOn = owningPart().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
@@ -67,42 +74,65 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
     auto controlSize = controlSizeForSize(logicalBounds.size(), style);
-    auto size = SwitchMacUtilities::visualCellSize(controlSize, style);
+    auto logicalTrackSize = cellSize(controlSize, style);
+    auto logicalThumbSize = IntSize { logicalTrackSize.height(), logicalTrackSize.height() };
+    auto trackSize = SwitchMacUtilities::visualCellSize(logicalTrackSize, style);
+    auto thumbSize = SwitchMacUtilities::visualCellSize(logicalThumbSize, style);
     auto outsets = SwitchMacUtilities::visualCellOutsets(controlSize, isVertical);
 
-    auto trackRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, size);
-    auto inflatedTrackRect = inflatedRect(trackRect, size, outsets, style);
-    if (isVertical)
+    auto trackRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, trackSize);
+    auto thumbRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, thumbSize);
+
+    auto inflatedTrackRect = inflatedRect(trackRect, trackSize, outsets, style);
+    auto inflatedThumbRect = inflatedRect(thumbRect, thumbSize, outsets, style);
+    if (isVertical) {
         inflatedTrackRect.setSize(inflatedTrackRect.size().transposedSize());
+        inflatedThumbRect.setSize(inflatedThumbRect.size().transposedSize());
+    }
 
-    auto drawingThumbLength = inflatedTrackRect.height();
+    if (style.zoomFactor != 1) {
+        inflatedTrackRect.scale(1 / style.zoomFactor);
+        inflatedThumbRect.scale(1 / style.zoomFactor);
+        context.scale(style.zoomFactor);
+    }
+
     auto drawingThumbIsLogicallyLeft = (!isRTL && !isOn) || (isRTL && isOn);
-    auto drawingThumbLogicalXAxis = inflatedTrackRect.width() - drawingThumbLength;
+    auto drawingThumbLogicalXAxis = inflatedTrackRect.width() - inflatedThumbRect.width();
     auto drawingThumbLogicalXAxisProgress = drawingThumbLogicalXAxis * progress;
-    auto drawingThumbX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
-    auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, drawingThumbLength, drawingThumbLength);
+    auto drawingThumbLogicalX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
+    auto drawingThumbRect = NSMakeRect(drawingThumbLogicalX, 0, inflatedThumbRect.width(), inflatedThumbRect.height());
 
-    auto trackBuffer = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);
+    auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
-    if (!trackBuffer)
+    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
+    if (!maskImage)
         return;
 
-    auto cgContext = trackBuffer->context().platformContext();
+    auto trackImage = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);
+    if (!trackImage)
+        return;
 
-    GraphicsContextStateSaver stateSaver(context);
+    auto cgContext = trackImage->context().platformContext();
 
-    [[NSAppearance currentDrawingAppearance] _drawInRect:drawingThumbRect context:cgContext options:@{
-        (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,
-        (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive),
-        (__bridge NSString *)kCUISizeKey: SwitchMacUtilities::coreUISizeForControlSize(controlSize),
-        (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
-        (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
-    }];
+    {
+        CGContextStateSaver stateSaverTrack(cgContext);
+
+        // FIXME: clipping in context() might not always be accurate for context().platformContext().
+        trackImage->context().clipToImageBuffer(*maskImage, NSMakeRect(0, 0, inflatedTrackRect.width(), inflatedTrackRect.height()));
+
+        [[NSAppearance currentDrawingAppearance] _drawInRect:drawingThumbRect context:cgContext options:@{
+            (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,
+            (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive),
+            (__bridge NSString *)kCUISizeKey: SwitchMacUtilities::coreUISizeForControlSize(controlSize),
+            (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
+            (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
+        }];
+    }
 
     if (isVertical)
         SwitchMacUtilities::rotateContextForVerticalWritingMode(context, inflatedTrackRect);
 
-    context.drawConsumingImageBuffer(WTFMove(trackBuffer), inflatedTrackRect.location());
+    context.drawConsumingImageBuffer(WTFMove(trackImage), inflatedTrackRect.location());
 }
 
 } // namespace WebCore

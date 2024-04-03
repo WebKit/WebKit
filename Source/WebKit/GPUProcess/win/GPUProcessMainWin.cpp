@@ -38,7 +38,7 @@ SOFT_LINK_OPTIONAL(user32, SetProcessDpiAwarenessContext, BOOL, STDAPICALLTYPE, 
 
 namespace WebKit {
 
-class GPUProcessMainWin final: public AuxiliaryProcessMainBaseNoSingleton<GPUProcess> {
+class GPUProcessMainWin final: public AuxiliaryProcessMainBase<GPUProcess> {
 public:
     bool platformInitialize() override
     {

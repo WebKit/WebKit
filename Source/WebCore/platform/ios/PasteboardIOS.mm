@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CommonAtomStrings.h"
 #import "DeprecatedGlobalSettings.h"
 #import "DragData.h"
 #import "Image.h"
@@ -539,7 +540,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([cocoaType isEqualToString:(NSString *)kUTTypePlainText]
         || [cocoaType isEqualToString:(NSString *)kUTTypeUTF8PlainText]
         || [cocoaType isEqualToString:(NSString *)kUTTypeUTF16PlainText]) {
-        resultTypes.add("text/plain"_s);
+        resultTypes.add(textPlainContentTypeAtom());
         return;
     }
     if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
@@ -547,7 +548,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return;
     }
     if ([cocoaType isEqualToString:(NSString *)kUTTypeHTML]) {
-        resultTypes.add("text/html"_s);
+        resultTypes.add(textHTMLContentTypeAtom());
         // We don't return here for App compatibility.
     }
 ALLOW_DEPRECATED_DECLARATIONS_END

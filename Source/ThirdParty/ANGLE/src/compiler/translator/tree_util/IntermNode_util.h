@@ -75,6 +75,11 @@ const TVariable *DeclareInterfaceBlock(TIntermBlock *root,
 // If the input node is not a block node, put it inside a block node and return that.
 TIntermBlock *EnsureBlock(TIntermNode *node);
 
+// If the input node is nullptr, return a new block.
+// If the input node is a block node, return it.
+// If the input node is not a block node, put it inside a block node and return that.
+TIntermBlock *EnsureLoopBodyBlock(TIntermNode *node);
+
 // Should be called from inside Compiler::compileTreeImpl() where the global level is in scope.
 TIntermSymbol *ReferenceGlobalVariable(const ImmutableString &name,
                                        const TSymbolTable &symbolTable);

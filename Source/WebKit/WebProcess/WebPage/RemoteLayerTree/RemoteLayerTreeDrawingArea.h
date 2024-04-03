@@ -137,7 +137,7 @@ private:
     public:
         static Ref<BackingStoreFlusher> create(Ref<IPC::Connection>&&);
 
-        void flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>&&);
+        void flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&&);
 
         bool hasPendingFlush() const { return m_hasPendingFlush; }
         void markHasPendingFlush()

@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (0,0) size 702x18
-          RenderInline {A} at (0,0) size 304x18 [color=#0000EE]
+        RenderInline {I} at (53,0) size 702x18
+          RenderInline {A} at (53,0) size 304x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 304x18
               text run at (53,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=11916"
           RenderText {#text} at (356,0) size 399x18
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 37: "PASS"
 layer at (30,45) size 99x14 scrollX 29 scrollWidth 128
   RenderBlock {DIV} at (0,0) size 99x14
-    RenderText {#text} at (-29,0) size 129x13
+    RenderText {#text} at (-30,0) size 129x13
       text run at (-29,0) width 17 RTL: "\x{5D5}\x{5D6}\x{5D4}\x{5D5}"
       text run at (-12,0) width 4 RTL: " "
       text run at (-8,0) width 18: "she"

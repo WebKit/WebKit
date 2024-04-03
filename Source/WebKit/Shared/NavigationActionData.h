@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,21 @@
 
 #pragma once
 
+#include "FrameInfoData.h"
 #include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityOriginData.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebCore {
-typedef int SandboxFlags;
+using SandboxFlags = int;
 }
 
 namespace WebKit {
@@ -77,6 +75,12 @@ struct NavigationActionData {
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif
+    FrameInfoData originatingFrameInfoData;
+    std::optional<WebPageProxyIdentifier> originatingPageID;
+    FrameInfoData frameInfo;
+    uint64_t navigationID;
+    WebCore::ResourceRequest originalRequest;
+    WebCore::ResourceRequest request;
 };
 
 }

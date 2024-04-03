@@ -6,7 +6,7 @@ layer at (50,50) size 700x156
       RenderBlock {p} at (1,17) size 596x20
         RenderText {#text} at (0,0) size 351x19
           text run at (0,0) width 351: "There should be a yellow square in the top-left corner, "
-        RenderInline {em} at (0,0) size 39x19
+        RenderInline {em} at (350,0) size 39x19
           RenderText {#text} at (350,0) size 40x19
             text run at (350,0) width 40: "inside"
         RenderText {#text} at (389,0) size 110x19

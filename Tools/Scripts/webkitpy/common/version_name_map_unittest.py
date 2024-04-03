@@ -75,3 +75,24 @@ class VersionMapTestCase(unittest.TestCase):
         self.assertEqual('iOS 11', map.to_name(version=Version(11), platform='ios'))
         self.assertEqual('iOS 10', map.to_name(version=Version(10), platform='ios'))
         self.assertEqual('iOS 10', map.to_name(version=Version(10, 3), platform='ios'))
+
+    def test__automap_to_major_version(self):
+        r = VersionNameMap._automap_to_major_version("iOS")
+        self.assertEqual({"iOS 1": Version(1)}, r)
+
+        r = VersionNameMap._automap_to_major_version(
+            "iOS", minimum=Version(1), maximum=Version(1)
+        )
+        self.assertEqual({"iOS 1": Version(1)}, r)
+
+        r = VersionNameMap._automap_to_major_version(
+            "iOS", minimum=Version(1), maximum=Version(3)
+        )
+        self.assertEqual(
+            {"iOS 1": Version(1), "iOS 2": Version(2), "iOS 3": Version(3)}, r
+        )
+
+    def test_visionos_name_by_version(self):
+        map = VersionNameMap()
+        self.assertEqual(('visionos', Version(1)), map.from_name('visionOS 1'))
+        self.assertEqual('visionOS 1', map.to_name(version=Version(1), platform='visionos'))

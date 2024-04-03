@@ -41,7 +41,7 @@ Ref<SpeechSynthesisErrorEvent> SpeechSynthesisErrorEvent::create(const AtomStrin
 }
 
 SpeechSynthesisErrorEvent::SpeechSynthesisErrorEvent(const AtomString& type, const SpeechSynthesisErrorEventInit& initializer)
-    : SpeechSynthesisEvent(type, initializer)
+    : SpeechSynthesisEvent(EventInterfaceType::SpeechSynthesisErrorEvent, type, initializer)
     , m_error(initializer.error)
 {
 }

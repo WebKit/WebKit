@@ -96,6 +96,8 @@ public:
 
     pointer data() { return bitwise_cast<T*>(bitwise_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
     const_pointer data() const { return bitwise_cast<const T*>(bitwise_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
+    std::span<T> span() { return { data(), size() }; }
+    std::span<const T> span() const { return { data(), size() }; }
 
     iterator begin() { return data(); }
     iterator end() { return data() + size(); }

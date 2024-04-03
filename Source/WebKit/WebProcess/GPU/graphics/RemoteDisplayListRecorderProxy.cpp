@@ -353,6 +353,11 @@ void RemoteDisplayListRecorderProxy::recordFillArc(const PathArc& arc)
     send(Messages::RemoteDisplayListRecorder::FillArc(arc));
 }
 
+void RemoteDisplayListRecorderProxy::recordFillClosedArc(const PathClosedArc& closedArc)
+{
+    send(Messages::RemoteDisplayListRecorder::FillClosedArc(closedArc));
+}
+
 void RemoteDisplayListRecorderProxy::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
     send(Messages::RemoteDisplayListRecorder::FillQuadCurve(curve));
@@ -389,7 +394,11 @@ void RemoteDisplayListRecorderProxy::recordPaintFrameForMedia(MediaPlayer& playe
 void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
 #if PLATFORM(COCOA)
-    auto sharedVideoFrame = ensureSharedVideoFrameWriter().write(frame, [&](auto& semaphore) {
+    Locker locker { m_sharedVideoFrameWriterLock };
+    if (!m_sharedVideoFrameWriter)
+        m_sharedVideoFrameWriter = makeUnique<SharedVideoFrameWriter>();
+
+    auto sharedVideoFrame = m_sharedVideoFrameWriter->write(frame, [&](auto& semaphore) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameSemaphore { semaphore });
     }, [&](SharedMemory::Handle&& handle) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { WTFMove(handle) });
@@ -421,6 +430,11 @@ void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const
 void RemoteDisplayListRecorderProxy::recordStrokeArc(const PathArc& arc)
 {
     send(Messages::RemoteDisplayListRecorder::StrokeArc(arc));
+}
+
+void RemoteDisplayListRecorderProxy::recordStrokeClosedArc(const PathClosedArc& closedArc)
+{
+    send(Messages::RemoteDisplayListRecorder::StrokeClosedArc(closedArc));
 }
 
 void RemoteDisplayListRecorderProxy::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
@@ -594,20 +608,11 @@ void RemoteDisplayListRecorderProxy::disconnect()
 {
     m_renderingBackend = nullptr;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
+    Locker locker { m_sharedVideoFrameWriterLock };
     if (m_sharedVideoFrameWriter)
         m_sharedVideoFrameWriter->disable();
 #endif
 }
-
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-SharedVideoFrameWriter& RemoteDisplayListRecorderProxy::ensureSharedVideoFrameWriter()
-{
-    if (!m_sharedVideoFrameWriter)
-        m_sharedVideoFrameWriter = makeUnique<SharedVideoFrameWriter>();
-
-    return *m_sharedVideoFrameWriter;
-}
-#endif
 
 } // namespace WebCore
 

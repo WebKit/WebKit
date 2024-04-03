@@ -29,7 +29,6 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import "APIAttachment.h"
-#import "DataReference.h"
 #import "WKObject.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageProxy.h"
@@ -37,6 +36,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/WTFString.h>
 
 // FIXME: We probably need to hang on the picker itself until the context menu operation is done, and this object will probably do that.
@@ -124,13 +124,13 @@
         return;
 
     Vector<String> types;
-    IPC::DataReference dataReference;
+    std::span<const uint8_t> dataReference;
 
     id item = [items objectAtIndex:0];
 
     if ([item isKindOfClass:[NSAttributedString class]]) {
         NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:@{ }];
-        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+        dataReference = span(data);
 
         types.append(NSPasteboardTypeRTFD);
         types.append(WebCore::legacyRTFDPasteboardType());
@@ -142,7 +142,7 @@
         if (!image)
             return;
 
-        dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+        dataReference = span(data);
         types.append(NSPasteboardTypeTIFF);
     } else if ([item isKindOfClass:[NSItemProvider class]]) {
         NSItemProvider *itemProvider = (NSItemProvider *)item;

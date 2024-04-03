@@ -42,7 +42,9 @@ public:
     WEBCORE_EXPORT String href() const;
     WEBCORE_EXPORT MediaList& media() const;
     WEBCORE_EXPORT CSSStyleSheet* styleSheet() const;
+    RefPtr<CSSStyleSheet> protectedStyleSheet() const;
     String layerName() const;
+    String supportsText() const;
 
 private:
     friend class MediaList;

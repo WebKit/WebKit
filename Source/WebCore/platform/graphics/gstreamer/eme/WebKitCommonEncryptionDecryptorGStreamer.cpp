@@ -432,11 +432,16 @@ static gboolean sinkEventHandler(GstBaseTransform* trans, GstEvent* event)
     // handled in here.
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_CUSTOM_DOWNSTREAM_OOB: {
-        ASSERT(gst_event_has_name(event, "attempt-to-decrypt"));
-        GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
-        gboolean result = installCDMProxyIfNotAvailable(self);
-        gst_event_unref(event);
-        return result;
+        GST_DEBUG_OBJECT(self, "Custom Downstream OOB %" GST_PTR_FORMAT, event);
+
+        if (gst_event_has_name(event, "attempt-to-decrypt")) {
+            GST_DEBUG_OBJECT(self, "Handling attempt-to-decrypt");
+            gboolean result = installCDMProxyIfNotAvailable(self);
+            gst_event_unref(event);
+            return result;
+        }
+        // Let event propagate.
+        break;
     }
     case GST_EVENT_FLUSH_START:
         GST_DEBUG_OBJECT(self, "Flush-start");
@@ -490,7 +495,7 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
         GST_DEBUG_OBJECT(self, "READY->PAUSED");
 
-        LockHolder locker(priv->lock);
+        Locker locker(priv->lock);
         priv->isStopped = false;
         break;
     }
@@ -498,7 +503,7 @@ static GstStateChangeReturn changeState(GstElement* element, GstStateChange tran
         // We need to do this here instead of after the , otherwise we won't be able to break the wait.
         GST_DEBUG_OBJECT(self, "PAUSED->READY");
 
-        LockHolder locker(priv->lock);
+        Locker locker(priv->lock);
         priv->isStopped = true;
         priv->condition.notifyOne();
         if (priv->cdmProxy)

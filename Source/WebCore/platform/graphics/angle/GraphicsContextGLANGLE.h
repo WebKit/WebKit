@@ -288,11 +288,11 @@ public:
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
-    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
-    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) override;
+    void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) override;
     void destroyEGLImage(GCEGLImage) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
-    bool destroyEGLSync(GCEGLSync) final;
+    void destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;

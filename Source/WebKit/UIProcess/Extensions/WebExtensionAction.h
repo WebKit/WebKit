@@ -40,6 +40,16 @@ OBJC_CLASS _WKWebExtensionAction;
 OBJC_CLASS _WKWebExtensionActionWebView;
 OBJC_CLASS _WKWebExtensionActionWebViewDelegate;
 
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS UIViewController;
+OBJC_CLASS _WKWebExtensionActionViewController;
+#endif
+
+#if PLATFORM(MAC)
+OBJC_CLASS NSPopover;
+OBJC_CLASS _WKWebExtensionActionPopover;
+#endif
+
 namespace WebKit {
 
 class WebExtensionContext;
@@ -63,6 +73,10 @@ public:
     enum class LoadOnFirstAccess { No, Yes };
     enum class FallbackWhenEmpty { No, Yes };
 
+#if PLATFORM(MAC)
+    enum class Appearance : uint8_t { Default, Light, Dark, Both };
+#endif
+
     bool operator==(const WebExtensionAction&) const;
 
     WebExtensionContext* extensionContext() const;
@@ -83,23 +97,37 @@ public:
     String badgeText() const;
     void setBadgeText(String);
 
+    bool hasUnreadBadgeText() const;
+    void setHasUnreadBadgeText(bool);
+
     void incrementBlockedResourceCount(ssize_t amount);
 
     bool isEnabled() const;
     void setEnabled(std::optional<bool>);
 
     bool presentsPopup() const { return !popupPath().isEmpty(); }
-    bool canProgrammaticallyPresentPopup() const { return m_respondsToPresentPopup; }
+    bool canProgrammaticallyPresentPopup() const;
 
     String popupPath() const;
     void setPopupPath(String);
 
+#if PLATFORM(IOS_FAMILY)
+    UIViewController *popupViewController();
+#endif
+
+#if PLATFORM(MAC)
+    NSPopover *popupPopover();
+
+    Appearance popupPopoverAppearance() const { return m_popoverAppearance; }
+    void setPopupPopoverAppearance(Appearance);
+#endif
+
     WKWebView *popupWebView(LoadOnFirstAccess = LoadOnFirstAccess::Yes);
     void presentPopupWhenReady();
+    void popupDidFinishDocumentLoad();
     void readyToPresentPopup();
     void popupSizeDidChange();
-    void popupDidClose();
-    void closePopupWebView();
+    void closePopup();
 
     NSArray *platformMenuItems() const;
 
@@ -108,9 +136,24 @@ public:
 #endif
 
 private:
+    WebExtensionAction* fallbackAction() const;
+
+#if PLATFORM(MAC)
+    void detectPopoverColorScheme();
+#endif
+
     WeakPtr<WebExtensionContext> m_extensionContext;
     RefPtr<WebExtensionTab> m_tab;
     RefPtr<WebExtensionWindow> m_window;
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<_WKWebExtensionActionViewController> m_popupViewController;
+#endif
+
+#if PLATFORM(MAC)
+    RetainPtr<_WKWebExtensionActionPopover> m_popupPopover;
+    Appearance m_popoverAppearance { Appearance::Default };
+#endif
 
     RetainPtr<_WKWebExtensionActionWebView> m_popupWebView;
     RetainPtr<_WKWebExtensionActionWebViewDelegate> m_popupWebViewDelegate;
@@ -121,8 +164,8 @@ private:
     String m_customBadgeText;
     ssize_t m_blockedResourceCount { 0 };
     std::optional<bool> m_customEnabled;
-    bool m_popupPresented { false };
-    bool m_respondsToPresentPopup { false };
+    std::optional<bool> m_hasUnreadBadgeText;
+    bool m_popupPresented : 1 { false };
 };
 
 } // namespace WebKit

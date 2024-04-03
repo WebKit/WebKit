@@ -111,6 +111,12 @@ private:
     char32_t m_character;
 };
 
+inline unsigned stringLength(size_t length)
+{
+    RELEASE_ASSERT(length <= String::MaxLength);
+    return static_cast<unsigned>(length);
+}
+
 template<> class StringTypeAdapter<const LChar*, void> {
 public:
     StringTypeAdapter(const LChar* characters)
@@ -126,9 +132,7 @@ public:
 private:
     static unsigned computeLength(const LChar* characters)
     {
-        size_t length = std::strlen(reinterpret_cast<const char*>(characters));
-        RELEASE_ASSERT(length <= String::MaxLength);
-        return static_cast<unsigned>(length);
+        return stringLength(std::strlen(reinterpret_cast<const char*>(characters)));
     }
 
     const LChar* m_characters;
@@ -154,8 +158,7 @@ private:
         size_t length = 0;
         while (characters[length])
             ++length;
-        RELEASE_ASSERT(length <= String::MaxLength);
-        return static_cast<unsigned>(length);
+        return stringLength(length);
     }
 
     const UChar* m_characters;
@@ -186,28 +189,35 @@ public:
     }
 };
 
-template<typename CharType, size_t N>
-class StringTypeAdapter<Vector<CharType, N>, void> {
+template<typename CharacterType, size_t Extent> class StringTypeAdapter<std::span<CharacterType, Extent>, void> {
 public:
-    using CharTypeForString = std::conditional_t<sizeof(CharType) == sizeof(LChar), LChar, UChar>;
-    static_assert(sizeof(CharTypeForString) == sizeof(CharType));
-
-    StringTypeAdapter(const Vector<CharType, N>& vector)
-        : m_vector { vector }
+    StringTypeAdapter(std::span<CharacterType, Extent> span)
+        : m_characters { span.data() }
+        , m_length { stringLength(span.size()) }
     {
     }
 
-    size_t length() const { return m_vector.size(); }
-    bool is8Bit() const { return sizeof(CharType) == 1; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, characters(), length()); }
+    unsigned length() const { return m_length; }
+    static constexpr bool is8Bit() { return sizeof(CharacterType) == 1; }
+
+    template<typename DestinationCharacterType> void writeTo(DestinationCharacterType* destination) const
+    {
+        using CharacterTypeForString = std::conditional_t<sizeof(CharacterType) == sizeof(LChar), LChar, UChar>;
+        static_assert(sizeof(CharacterTypeForString) == sizeof(CharacterType));
+        StringImpl::copyCharacters(destination, reinterpret_cast<const CharacterTypeForString*>(m_characters), m_length);
+    }
 
 private:
-    const CharTypeForString* characters() const
-    {
-        return reinterpret_cast<const CharTypeForString*>(m_vector.data());
-    }
+    const CharacterType* m_characters;
+    unsigned m_length;
+};
 
-    const Vector<CharType, N>& m_vector;
+template<typename CharacterType, size_t InlineCapacity> class StringTypeAdapter<Vector<CharacterType, InlineCapacity>, void> : public StringTypeAdapter<std::span<const CharacterType>> {
+public:
+    StringTypeAdapter(const Vector<CharacterType, InlineCapacity>& vector)
+        : StringTypeAdapter<std::span<const CharacterType>> { vector.span() }
+    {
+    }
 };
 
 template<> class StringTypeAdapter<StringImpl*, void> {
@@ -300,6 +310,7 @@ struct FromUTF8 {
         is8Bit = result.isAllASCII;
         conversionFailed = false;
     }
+    template<typename T, size_t Extent> FromUTF8(std::span<T, Extent> span) : FromUTF8(span.data(), span.size()) { }
 };
 
 template<> class StringTypeAdapter<FromUTF8, void> {

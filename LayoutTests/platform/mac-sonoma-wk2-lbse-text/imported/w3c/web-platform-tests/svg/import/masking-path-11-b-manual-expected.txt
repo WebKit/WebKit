@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (140,80) size 200x200
+  RenderSVGTransformableContainer {g} at (140,80) size 200x200
+layer at (190,130) size 100x100
+  RenderSVGResourceMasker {mask} at (190,130) size 100x100
+layer at (190,130) size 100x100
+  RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=240.00] [cy=180.00] [r=50.00]
+layer at (190.64,153.83) size 98x55
+  RenderSVGText {text} at (0,23) size 100x57 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 99x56
+      chunk 1 (middle anchor) text run 1 at (190.65,198.00) startOffset 0 endOffset 3 width 98.70: "ABC"
+layer at (140,80) size 200x200
+  RenderSVGImage {image} at (0,0) size 200x200
+layer at (190,130) size 100x100
+  RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=190.00] [y=130.00] [width=100.00] [height=100.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

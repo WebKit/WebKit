@@ -1,0 +1,7 @@
+int foo(int x);
+
+void func() { int x = foo(1); }
+
+/*%%*
+function 'int foo(int x)' is not defined
+*%%*/

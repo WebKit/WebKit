@@ -34,6 +34,7 @@ import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, e
 import {Configuration} from '/assets/js/configuration.js';
 import {Expectations} from '/assets/js/expectations.js';
 import {Drawer, BranchSelector, ConfigurationSelectors} from '/assets/js/drawer.js';
+import {TypeForSuite} from '/assets/js/suites.js';
 import {Legend} from '/assets/js/timeline.js';
 import {ToolTip} from '/assets/js/tooltip.js';
 import {Failures} from '/assets/js/failures.js';
@@ -60,6 +61,7 @@ function willFilterExpected() {
 class SuiteFailuresView {
     constructor(suite) {
         this.suite = suite;
+        this.suiteType = TypeForSuite(this.suite);
         this.dataForConfig = {};
 
         this.ref = REF.createRef({
@@ -105,8 +107,8 @@ class SuiteFailuresView {
                 }
 
                 const agregatedStats = {
-                    tests_run: diff.results.map(result => result.stats.tests_run).reduce((a, b) => a + b, 0),
-                    tests_skipped: diff.results.map(result => result.stats.tests_skipped).reduce((a, b) => a + b, 0),
+                    tests_run: diff.results.map(result => result.stats.tests_run).reduce((a, b) => (~~a) + (~~b), 0),
+                    tests_skipped: diff.results.map(result => result.stats.tests_skipped).reduce((a, b) => (~~a) + (~~b), 0),
                 };
 
                 let lastValue = 0;
@@ -182,7 +184,7 @@ class SuiteFailuresView {
                                 </div>
                             </div>
                             ${diff.results.length === 1 ? `<div class="item">
-                                <b>Test Run</b>
+                                <b>${this.suiteType.runTitle}</b>
                                 <div>
                                     ${diff.results[0].start_time ? (() => {
                                         const branch = queryToParams(document.URL.split('?')[1]).branch;
@@ -194,7 +196,7 @@ class SuiteFailuresView {
                                         if (branch)
                                             buildParams['branch'] = branch;
                                         const query = paramsToQuery(buildParams);
-                                        let result = `<a href="/urls/build?${query}" target="_blank">Test run</a> @ ${new Date(diff.results[0].start_time * 1000).toLocaleString()}<br>`;
+                                        let result = `<a href="/urls/build?${query}" target="_blank">${this.suiteType.runDescription}</a> @ ${new Date(diff.results[0].start_time * 1000).toLocaleString()}<br>`;
                                         if (!ArchiveRouter.hasArchive(suite))
                                             return result;
                                         result += `<a href="/archive/${ArchiveRouter.pathFor(suite)}?${query}" target="_blank">${ArchiveRouter.labelFor(suite)}</a><br>`;
@@ -207,7 +209,7 @@ class SuiteFailuresView {
                         </div>
                         ${diff.results.length === 1 || !diff.failures.length ? '' : `<div class="divider mobile-control"></div>
                             <div class="col-s-6 list">
-                                <b>Test Runs</b>
+                                <b>${this.suiteType.runTitle}s</b>
                                 ${diff.failures.slice(0, 8).map(failure => {
                                     let worst = 'success';
                                     Expectations.failureTypes.forEach(type => {

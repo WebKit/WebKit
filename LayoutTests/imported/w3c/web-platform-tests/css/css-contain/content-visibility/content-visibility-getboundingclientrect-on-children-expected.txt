@@ -1,0 +1,4 @@
+
+PASS Calling getBoundingClientRect on container and then children should not timeout.
+PASS Calling getBoundingClientRect on children and then container should not timeout.
+

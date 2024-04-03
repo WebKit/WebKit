@@ -90,6 +90,10 @@ class TestGitHub(unittest.TestCase):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             self.assertEqual(github.Tracker(self.URL).issue(1).timestamp, 1639510960)
 
+    def test_modified(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            self.assertEqual(github.Tracker(self.URL).issue(1).modified, 1710859207)
+
     def test_creator(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             self.assertEqual(

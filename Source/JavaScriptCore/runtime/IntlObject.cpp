@@ -333,7 +333,7 @@ Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& t
 
 Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&& buffer)
 {
-    StringView locale(buffer.data(), buffer.size());
+    StringView locale(buffer.span());
     ASSERT(locale.is8Bit());
     size_t extensionIndex = locale.find("-u-"_s);
     if (extensionIndex == notFound)
@@ -354,8 +354,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
         end++;
     }
 
-    Vector<char, 32> result;
-    result.append(buffer.data(), extensionIndex + 2); // "-u" is included.
+    Vector<char, 32> result(buffer.subspan(0, extensionIndex + 2)); // "-u" is included.
     StringView extension = locale.substring(extensionIndex, extensionLength);
     ASSERT(extension.is8Bit());
     auto subtags = unicodeExtensionComponents(extension);
@@ -363,7 +362,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
         auto subtag = subtags[index];
         ASSERT(subtag.is8Bit());
         result.append('-');
-        result.append(subtag.characters8(), subtag.length());
+        result.append(subtag.span8());
 
         if (subtag.length() != 2) {
             ++index;
@@ -384,15 +383,13 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
             auto value = subtags[valueIndex];
             if (value != "true"_s) {
                 result.append('-');
-                result.append(value.characters8(), value.length());
+                result.append(value.span8());
             }
         }
         index = valueIndexEnd;
     }
 
-    unsigned remainingStart = extensionIndex + extensionLength;
-    unsigned remainingLength = buffer.size() - remainingStart;
-    result.append(buffer.data() + remainingStart, remainingLength);
+    result.append(buffer.subspan(extensionIndex + extensionLength));
     return result;
 }
 
@@ -408,7 +405,7 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
         // This must be immortal to make concurrent ref/deref safe.
         if (isImmortal)
             return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
-        return String(buffer.data(), buffer.size());
+        return buffer.span();
     };
 
     return createResult(canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer)));
@@ -432,10 +429,10 @@ static void addScriptlessLocaleIfNeeded(LocaleSet& availableLocales, StringView 
 
     Vector<char, 12> buffer;
     ASSERT(subtags[0].is8Bit() && subtags[0].containsOnlyASCII());
-    buffer.append(reinterpret_cast<const char*>(subtags[0].characters8()), subtags[0].length());
+    buffer.append(subtags[0].span8());
     buffer.append('-');
     ASSERT(subtags[2].is8Bit() && subtags[2].containsOnlyASCII());
-    buffer.append(reinterpret_cast<const char*>(subtags[2].characters8()), subtags[2].length());
+    buffer.append(subtags[2].span8());
 
     availableLocales.add(StringImpl::createStaticStringImpl(buffer.data(), buffer.size()));
 }
@@ -1639,7 +1636,7 @@ const Vector<String>& intlAvailableCalendars()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String calendar(pointer, length);
+            String calendar({ pointer, static_cast<size_t>(length) });
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
                 return createImmortalThreadSafeString(WTFMove(mapped.value()));
             return createImmortalThreadSafeString(WTFMove(calendar));
@@ -1710,7 +1707,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available collations"_s);
             return { };
         }
-        String collation(pointer, length);
+        String collation({ pointer, static_cast<size_t>(length) });
         if (collation == "standard"_s || collation == "search"_s)
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
@@ -1767,7 +1764,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available currencies"_s);
             return { };
         }
-        String currency(pointer, length);
+        String currency({ pointer, static_cast<size_t>(length) });
         if (currency == "EQE"_s)
             continue;
         if (currency == "LSM"_s)
@@ -1822,7 +1819,7 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
         }
         if (unumsys_isAlgorithmic(numberingSystem.get()))
             continue;
-        elements.constructAndAppend(name, length);
+        elements.constructAndAppend(std::span { name, static_cast<size_t>(length) });
     }
 
     // The AvailableNumberingSystems abstract operation returns a List, ordered as if an Array of the same
@@ -1876,7 +1873,7 @@ const Vector<String>& intlAvailableTimeZones()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String timeZone(pointer, length);
+            String timeZone({ pointer, static_cast<size_t>(length) });
             if (isValidTimeZoneNameFromICUTimeZone(timeZone)) {
                 if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTFMove(timeZone)))
                     temporary.append(WTFMove(mapped.value()));

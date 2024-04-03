@@ -27,14 +27,20 @@
 #import "GraphicsContext.h"
 
 #import "DisplayListRecorder.h"
+#import "Font.h"
 #import "GraphicsContextCG.h"
 #import "IOSurface.h"
 #import "IntRect.h"
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#include "MultiRepresentationHEICMetrics.h"
+#endif
 
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
@@ -56,6 +62,17 @@ namespace WebCore {
 
 // NSColor, NSBezierPath, and NSGraphicsContext calls do not raise exceptions
 // so we don't block exceptions.
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/GraphicsContextCocoaAdditions.mm>
+#else
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image&, const Font&, const FloatRect&, ImagePaintingOptions)
+{
+    return ImageDrawResult::DidNothing;
+}
+#endif
+#endif
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, const Color& color)
 {

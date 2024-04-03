@@ -176,7 +176,7 @@ class CopyTexImageTest : public ANGLETest<>
 
             ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
                              essl1_shaders::fs::Checkered());
-            drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+            drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0.5f);
             EXPECT_GL_NO_ERROR();
 
             if (mesaFlipY)
@@ -264,6 +264,58 @@ class CopyTexImageTest : public ANGLETest<>
                       kFboSizes[0] / 2);
         verifyResults(tex, expected[0], kFboSizes[0], 0, offset + effectiveExtent, kFboSizes[0] / 2,
                       kFboSizes[0]);
+    }
+
+    void testBGRAToRGBAConversion()
+    {
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        GLColor bgraInputData(128, 64, 255, 255);
+        GLColor bgraExpectedData(255, 64, 128, 255);
+
+        GLTexture bgraTexture;
+        glBindTexture(GL_TEXTURE_2D, bgraTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE,
+                     &bgraInputData);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bgraTexture, 0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, bgraExpectedData);
+
+        // Copy BGRA framebuffer -> RGBA texture
+        GLTexture rgbaTexture;
+        glBindTexture(GL_TEXTURE_2D, rgbaTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbaTexture, 0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, bgraExpectedData);
+    }
+
+    void testRGBAToBGRAConversion()
+    {
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        GLColor rgbaData(255, 128, 64, 255);
+
+        GLTexture rgbaTexture;
+        glBindTexture(GL_TEXTURE_2D, rgbaTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &rgbaData);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rgbaTexture, 0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, rgbaData);
+
+        // Copy RGBA framebuffer -> BGRA Texture
+        GLTexture bgraTexture;
+        glBindTexture(GL_TEXTURE_2D, bgraTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE,
+                     nullptr);
+
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bgraTexture, 0);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, rgbaData);
     }
 
     GLuint mTextureProgram;
@@ -700,7 +752,7 @@ TEST_P(CopyTexImageTest, CopyTexSubImageMesaYFlip)
 
     ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
                      essl1_shaders::fs::Checkered());
-    drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
 
     GLTexture tex;
@@ -718,7 +770,7 @@ TEST_P(CopyTexImageTest, CopyTexSubImageMesaYFlip)
 
     // Make sure out-of-bound writes to the texture return invalid value.
     glBindFramebuffer(GL_FRAMEBUFFER, mFbos[1]);
-    drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
 
     glFramebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
@@ -1192,7 +1244,7 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawTextureData)
                                   currLayer);
         ASSERT_GL_NO_ERROR();
         glUseProgram(greenProgram);
-        drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     }
@@ -1239,7 +1291,7 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawMismatchedTextureTypes)
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture3D, 0, currLayer);
         ASSERT_GL_NO_ERROR();
         glUseProgram(greenProgram);
-        drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     }
@@ -1313,28 +1365,174 @@ TEST_P(CopyTexImageTestES3, RedefineSameLevel)
                          GLColor::yellow);
 }
 
-ANGLE_INSTANTIATE_TEST(CopyTexImageTest,
-                       ANGLE_ALL_TEST_PLATFORMS_ES2,
-                       ES2_D3D11_PRESENT_PATH_FAST(),
-                       ES3_VULKAN(),
-                       ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
-                       ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
-                       ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-                       ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+class CopyTexImagePreRotationTest : public ANGLETest<>
+{
+  protected:
+    CopyTexImagePreRotationTest()
+    {
+        // Use a non-square window to catch width/height mismatch bugs
+        setWindowWidth(54);
+        setWindowHeight(32);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Basic copy test in the presence of pre-rotation
+TEST_P(CopyTexImagePreRotationTest, Basic)
+{
+    glClearColor(1, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, w, h);
+
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
+
+    // Verify results
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::magenta);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Copy test in the presence of pre-rotation with non-zero offsets and non-square sizes
+TEST_P(CopyTexImagePreRotationTest, NonZeroNonSquare)
+{
+    // Draw four colors in the framebuffer
+    ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                     essl1_shaders::fs::Checkered());
+    drawQuad(checkerProgram, essl1_shaders::PositionAttrib(), 0.5f);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    const int texWidth  = (w + 6) * 2;
+    const int texHeight = (h - 8) * 2;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, texWidth * 2, texHeight * 2);
+
+    // Copy with non-zero non-symmetric offsets to mips 0 and 1.
+    //
+    // The framebuffer is:
+    //
+    //                 54
+    //      ____________^____________
+    //     /                         \
+    //     +------------+------------+\
+    //     |            |            | |
+    //     |    Red     |    Blue    | |
+    //     |            |            | |
+    //     |            |            | |
+    //     +------------+------------+  > 32
+    //     |            |            | |
+    //     |   Green    |   Yellow   | |
+    //     |            |            | |
+    //     |            |            | |
+    //     +------------+------------+/
+    //
+    // The texture's mip 0 is 120x48 and mip 1 is 60x24.
+    //
+    struct Copy
+    {
+        int mip;
+        int texX, texY;
+        int x, y;
+        int width, height;
+        GLColor expect;
+    };
+
+    // Make random copies with non-zero offsets, non-zero sizes and generally different numbers to
+    // catch any mix up.
+    const std::array<Copy, 4> kCopies = {{
+        {1, 20, 13, 11, 2, 9, 13, GLColor::red},
+        {1, 31, 17, 29, 27, 20, 5, GLColor::yellow},
+        {0, 57, 1, 3, 22, 17, 9, GLColor::green},
+        {0, 19, 38, 46, 4, 3, 11, GLColor::blue},
+    }};
+
+    for (size_t i = 0; i < kCopies.size(); ++i)
+    {
+        glCopyTexSubImage2D(GL_TEXTURE_2D, kCopies[i].mip, kCopies[i].texX, kCopies[i].texY,
+                            kCopies[i].x, kCopies[i].y, kCopies[i].width, kCopies[i].height);
+    }
+
+    // Verify results
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    for (int mip = 0; mip < 2; ++mip)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, mip);
+        for (size_t i = 0; i < kCopies.size(); ++i)
+        {
+            if (kCopies[i].mip == mip)
+            {
+                EXPECT_PIXEL_RECT_EQ(kCopies[i].texX, kCopies[i].texY, kCopies[i].width,
+                                     kCopies[i].height, kCopies[i].expect);
+            }
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// ANGLE allows BGRA <-> RGBA copies. Test that these work and correctly swizzle the channels.
+TEST_P(CopyTexImageTest, BGRAAndRGBAConversions)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"));
+    testBGRAToRGBAConversion();
+    testRGBAToBGRAConversion();
+}
+
+// ANGLE allows BGRA <-> RGBA copies. Test that these work and correctly swizzle the channels.
+// ES3 uses different validation code for glCopyTexImage.
+TEST_P(CopyTexImageTestES3, BGRAAndRGBAConversions)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"));
+    testBGRAToRGBAConversion();
+    testRGBAToBGRAConversion();
+}
+
+ANGLE_INSTANTIATE_TEST_ES2_AND(
+    CopyTexImageTest,
+    ES2_D3D11_PRESENT_PATH_FAST(),
+    ES3_VULKAN(),
+    ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
+    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
+    ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImageTestES3);
-ANGLE_INSTANTIATE_TEST(CopyTexImageTestES3,
-                       ANGLE_ALL_TEST_PLATFORMS_ES3,
-                       ES3_OPENGL().enable(Feature::EmulateCopyTexImage2D),
-                       ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
-                       ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-                       ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
-ANGLE_INSTANTIATE_TEST(CopyTexImageTestRobustResourceInit,
-                       ANGLE_ALL_TEST_PLATFORMS_ES2,
-                       ES2_D3D11_PRESENT_PATH_FAST(),
-                       ES3_VULKAN(),
-                       ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
-                       ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
-                       ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
-                       ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    CopyTexImageTestES3,
+    ES3_OPENGL().enable(Feature::EmulateCopyTexImage2D),
+    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
+    ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+
+ANGLE_INSTANTIATE_TEST_ES2_AND(
+    CopyTexImageTestRobustResourceInit,
+    ES2_D3D11_PRESENT_PATH_FAST(),
+    ES3_VULKAN(),
+    ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
+    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
+    ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+    ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImagePreRotationTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(CopyTexImagePreRotationTest,
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
+
 }  // namespace angle

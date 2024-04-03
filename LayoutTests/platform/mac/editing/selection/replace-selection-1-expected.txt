@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 46x18
           text run at (0,0) width 42: "A new"
           text run at (41,0) width 5: " "
-        RenderInline {A} at (0,0) size 26x18 [color=#0000EE]
+        RenderInline {A} at (45,0) size 26x18 [color=#0000EE]
           RenderText {#text} at (45,0) size 26x18
             text run at (45,0) width 26: "link"
 selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body

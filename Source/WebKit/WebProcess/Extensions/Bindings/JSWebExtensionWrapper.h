@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #include "Logging.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -34,10 +32,9 @@
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS JSValue;
 OBJC_CLASS NSString;
 
-#ifdef __OBJC__
+#if JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 @interface JSValue (WebKitExtras)
 - (NSString *)_toJSONString;
@@ -51,14 +48,17 @@ OBJC_CLASS NSString;
 - (void)_awaitThenableResolutionWithCompletionHandler:(void (^)(JSValue *result, JSValue *error))completionHandler;
 @end
 
-#endif // __OBJC__
+#endif // JSC_OBJC_API_ENABLED && defined(__OBJC__)
 
 namespace WebKit {
+
+class WebPage;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 class JSWebExtensionWrappable;
 class WebExtensionAPIRuntimeBase;
 class WebExtensionCallbackHandler;
-class WebPage;
 
 class JSWebExtensionWrapper {
 public:
@@ -105,6 +105,8 @@ private:
 #endif
 };
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
 enum class NullStringPolicy : uint8_t {
     NoNullString,
     NullAsNullString,
@@ -119,6 +121,11 @@ enum class NullOrEmptyString : bool {
 enum class NullValuePolicy : bool {
     NotAllowed,
     Allowed,
+};
+
+enum class ValuePolicy : bool {
+    Recursive,
+    StopAtTopLevel,
 };
 
 inline RefPtr<WebFrame> toWebFrame(JSContextRef context)
@@ -146,6 +153,8 @@ inline JSValueRef toJSValueRefOrJSNull(JSContextRef context, JSValueRef value)
     return value ? value : JSValueMakeNull(context);
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 inline JSValueRef toJS(JSContextRef context, JSWebExtensionWrappable* impl)
 {
     return JSWebExtensionWrapper::wrap(context, impl);
@@ -163,11 +172,13 @@ inline Ref<WebExtensionCallbackHandler> toJSErrorCallbackHandler(JSContextRef co
 
 RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef, JSValueRef callback, WebExtensionAPIRuntimeBase&);
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
 #ifdef __OBJC__
 
 id toNSObject(JSContextRef, JSValueRef, Class containingObjectsOfClass = Nil);
 NSString *toNSString(JSContextRef, JSValueRef, NullStringPolicy = NullStringPolicy::NullAndUndefinedAsNullString);
-NSDictionary *toNSDictionary(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed);
+NSDictionary *toNSDictionary(JSContextRef, JSValueRef, NullValuePolicy = NullValuePolicy::NotAllowed, ValuePolicy = ValuePolicy::Recursive);
 
 inline NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containingObjectsOfClass = NSObject.class)
 {
@@ -250,5 +261,3 @@ inline bool isDictionary(JSContextRef context, JSValueRef value) { return toJSVa
 #endif // __OBJC__
 
 } // namespace WebKit
-
-#endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Camera background blur</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <script>
+        promise_test(async (test) => {
+            assert_true(navigator.mediaDevices.getSupportedConstraints().backgroundBlur, "supported constraint");
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode : "environment" } });
+            assert_array_equals(stream.getVideoTracks()[0].getCapabilities().backgroundBlur, [true], 'capabilities');
+            assert_true(stream.getVideoTracks()[0].getSettings().backgroundBlur, 'settings');
+        }, 'getUserMedia backgroundBlur on');
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode : "user" } });
+            assert_array_equals(stream.getVideoTracks()[0].getCapabilities().backgroundBlur, [false], 'capabilities');
+            assert_false(stream.getVideoTracks()[0].getSettings().backgroundBlur, 'settings');
+        }, 'getUserMedia backgroundBlur off');
+    </script>
+</body>
+</html>

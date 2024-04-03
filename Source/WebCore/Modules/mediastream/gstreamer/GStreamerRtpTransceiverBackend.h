@@ -40,6 +40,8 @@ public:
 
     GstWebRTCRTPTransceiver* rtcTransceiver() { return m_rtcTransceiver.get(); }
 
+    void tearDown();
+
 private:
     RTCRtpTransceiverDirection direction() const final;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const final;

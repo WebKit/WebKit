@@ -138,7 +138,7 @@ void RealTimeThreads::demoteThreadFromRealTime(const Thread& thread)
 {
     ASSERT(isMainThread());
 
-    struct sched_param param = { 0 };
+    struct sched_param param = { };
     sched_setscheduler(thread.id(), SCHED_OTHER | SCHED_RESET_ON_FORK, &param);
 }
 

@@ -57,12 +57,12 @@ private:
     bool supportsCopySubject() final { return true; }
 #endif
 
-#if PLATFORM(COCOA)
-    void searchWithSpotlight() override;
-#endif
-
 #if HAVE(TRANSLATION_UI_SERVICES)
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView) final;
 #endif
 
 #if PLATFORM(GTK)

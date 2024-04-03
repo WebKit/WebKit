@@ -143,8 +143,8 @@ private:
     explicit WebCodecsVideoFrame(ScriptExecutionContext&);
     WebCodecsVideoFrame(ScriptExecutionContext&, WebCodecsVideoFrameData&&);
 
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&);
-    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<WebCodecsVideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
+    static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameFromOtherFrame(ScriptExecutionContext&, Ref<VideoFrame>&&, Init&&, VideoFrame::ShouldCloneWithDifferentTimestamp);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> initializeFrameWithResourceAndSize(ScriptExecutionContext&, Ref<NativeImage>&&, Init&&);
 
     WebCodecsVideoFrameData m_data;

@@ -27,9 +27,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionError.h"
 #include "WebExtensionWindowIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakObjCPtr.h>
 
 OBJC_PROTOCOL(_WKWebExtensionWindow);
@@ -58,7 +60,7 @@ static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTy
     };
 }
 
-class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow> {
+class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow>, public Identified<WebExtensionWindowIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -87,10 +89,8 @@ public:
 
     enum class PopulateTabs : bool { No, Yes };
 
-    using Error = std::optional<String>;
     using TabVector = Vector<Ref<WebExtensionTab>>;
 
-    WebExtensionWindowIdentifier identifier() const { return m_identifier; }
     WebExtensionWindowParameters parameters(PopulateTabs = PopulateTabs::No) const;
     WebExtensionWindowParameters minimalParameters() const;
 
@@ -109,11 +109,15 @@ public:
     Type type() const;
 
     State state() const;
-    void setState(State, CompletionHandler<void(Error)>&&);
+    void setState(State, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+
+    bool isOpen() const;
+    void didOpen() { ASSERT(!m_isOpen); m_isOpen = true; }
+    void didClose() { ASSERT(m_isOpen); m_isOpen = false; }
 
     bool isFocused() const;
     bool isFrontmost() const;
-    void focus(CompletionHandler<void(Error)>&&);
+    void focus(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool isPrivate() const;
 
@@ -122,11 +126,11 @@ public:
 
     // Handles the frame in the screen's native coordinate system.
     CGRect frame() const;
-    void setFrame(CGRect, CompletionHandler<void(Error)>&&);
+    void setFrame(CGRect, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     CGRect screenFrame() const;
 
-    void close(CompletionHandler<void(Error)>&&);
+    void close(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
 #ifdef __OBJC__
     _WKWebExtensionWindow *delegate() const { return m_delegate.getAutoreleased(); }
@@ -135,9 +139,9 @@ public:
 #endif
 
 private:
-    WebExtensionWindowIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+    bool m_isOpen : 1 { false };
     mutable bool m_private : 1 { false };
     mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToTabs : 1 { false };
@@ -159,17 +163,5 @@ _WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
 #endif
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebExtensionWindowTypeFilter> {
-    using values = EnumValues<
-        WebKit::WebExtensionWindowTypeFilter,
-        WebKit::WebExtensionWindowTypeFilter::Normal,
-        WebKit::WebExtensionWindowTypeFilter::Popup
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

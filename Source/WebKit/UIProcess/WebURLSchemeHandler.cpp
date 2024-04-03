@@ -33,10 +33,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebURLSchemeHandler::WebURLSchemeHandler()
-    : m_identifier(WebURLSchemeHandlerIdentifier::generate())
-{
-}
+WebURLSchemeHandler::WebURLSchemeHandler() = default;
 
 WebURLSchemeHandler::~WebURLSchemeHandler()
 {

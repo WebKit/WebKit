@@ -139,6 +139,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         static_cast<uint32_t>(ShFragmentSynchronizationType::InvalidEnum));
 
     std::vector<uint32_t> validOutputs;
+#ifndef ANGLE_TRANSLATOR_FUZZER_METAL_ONLY
     validOutputs.push_back(SH_ESSL_OUTPUT);
     validOutputs.push_back(SH_GLSL_COMPATIBILITY_OUTPUT);
     validOutputs.push_back(SH_GLSL_130_OUTPUT);
@@ -155,6 +156,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     validOutputs.push_back(SH_HLSL_3_0_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_1_OUTPUT);
     validOutputs.push_back(SH_HLSL_4_0_FL9_3_OUTPUT);
+#endif
+#ifdef ANGLE_ENABLE_METAL
+    validOutputs.push_back(SH_MSL_METAL_OUTPUT);
+#endif
     bool found = false;
     for (auto valid : validOutputs)
     {
@@ -186,6 +191,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
         if (translator == nullptr)
         {
+            sh::Finalize();
             return 0;
         }
 
@@ -219,6 +225,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
         if (!translator->Init(resources))
         {
+            sh::Finalize();
             return 0;
         }
 
@@ -230,5 +237,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     const char *shaderStrings[] = {reinterpret_cast<const char *>(data)};
     translator->compile(shaderStrings, 1, options);
 
+    sh::Finalize();
     return 0;
 }

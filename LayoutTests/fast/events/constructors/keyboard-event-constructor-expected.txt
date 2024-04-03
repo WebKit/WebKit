@@ -74,30 +74,6 @@ PASS new KeyboardEvent('eventType', { location: [12345, 67890] }).location is Ke
 PASS new KeyboardEvent('eventType', { location: {} }).location is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
 PASS new KeyboardEvent('eventType', { location: {moemoe: 12345} }).location is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
 PASS new KeyboardEvent('eventType', { location: {valueOf: function () { return 12345; }} }).location is 12345
-PASS new KeyboardEvent('eventType', { keyLocation: KeyboardEvent.DOM_KEY_LOCATION_STANDARD }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: KeyboardEvent.DOM_KEY_LOCATION_LEFT }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_LEFT
-PASS new KeyboardEvent('eventType', { keyLocation: 4294967294 }).keyLocation is 4294967294
-PASS new KeyboardEvent('eventType', { keyLocation: 4294967295 }).keyLocation is 4294967295
-PASS new KeyboardEvent('eventType', { keyLocation: 9007199254740991 }).keyLocation is 4294967295
-PASS new KeyboardEvent('eventType', { keyLocation: 18446744073709551615 }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: 12345678901234567890 }).keyLocation is 3944679424
-PASS new KeyboardEvent('eventType', { keyLocation: -1 }).keyLocation is 4294967295
-PASS new KeyboardEvent('eventType', { keyLocation: 123.45 }).keyLocation is 123
-PASS new KeyboardEvent('eventType', { keyLocation: NaN }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: undefined }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: null }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: '' }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: '12345' }).keyLocation is 12345
-PASS new KeyboardEvent('eventType', { keyLocation: '12345a' }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: 'abc' }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: [] }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: [12345] }).keyLocation is 12345
-PASS new KeyboardEvent('eventType', { keyLocation: [12345, 67890] }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: {} }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: {moemoe: 12345} }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_STANDARD
-PASS new KeyboardEvent('eventType', { keyLocation: {valueOf: function () { return 12345; }} }).keyLocation is 12345
-PASS new KeyboardEvent('eventType', { keyLocation: KeyboardEvent.DOM_KEY_LOCATION_LEFT }).location is KeyboardEvent.DOM_KEY_LOCATION_LEFT
-PASS new KeyboardEvent('eventType', { location: KeyboardEvent.DOM_KEY_LOCATION_LEFT }).keyLocation is KeyboardEvent.DOM_KEY_LOCATION_LEFT
 PASS new KeyboardEvent('eventType', { ctrlKey: false }).ctrlKey is false
 PASS new KeyboardEvent('eventType', { ctrlKey: true }).ctrlKey is true
 PASS new KeyboardEvent('eventType', { altKey: false }).altKey is false
@@ -106,7 +82,7 @@ PASS new KeyboardEvent('eventType', { shiftKey: false }).shiftKey is false
 PASS new KeyboardEvent('eventType', { shiftKey: true }).shiftKey is true
 PASS new KeyboardEvent('eventType', { metaKey: false }).metaKey is false
 PASS new KeyboardEvent('eventType', { metaKey: true }).metaKey is true
-PASS new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph') is true
+PASS new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph') is false
 PASS new KeyboardEvent('eventType', { modifierCapsLock: true }).getModifierState('CapsLock') is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).cancelable is true

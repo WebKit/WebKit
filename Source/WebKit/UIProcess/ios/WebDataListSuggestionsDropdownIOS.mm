@@ -83,7 +83,7 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 
 + (instancetype)textSuggestionWithInputText:(NSString *)inputText
 {
-#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#if USE(BROWSERENGINEKIT)
     return [[[super alloc] initWithInputText:inputText] autorelease];
 #else
     return [super textSuggestionWithInputText:inputText];
@@ -464,7 +464,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self _updateTextSuggestions];
 
-    if (![UIKeyboard isInHardwareKeyboardMode] && activationType != WebCore::DataListSuggestionActivationType::IndicatorClicked)
+    if (![UIKeyboard isInHardwareKeyboardMode] && !(activationType == WebCore::DataListSuggestionActivationType::IndicatorClicked || activationType == WebCore::DataListSuggestionActivationType::DataListMayHaveChanged))
         return;
 
     [self _showSuggestions];

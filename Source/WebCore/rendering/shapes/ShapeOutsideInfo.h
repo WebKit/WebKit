@@ -107,19 +107,19 @@ public:
     static ShapeOutsideInfo& ensureInfo(const RenderBox& key)
     {
         InfoMap& infoMap = ShapeOutsideInfo::infoMap();
-        if (ShapeOutsideInfo* info = infoMap.get(&key))
+        if (ShapeOutsideInfo* info = infoMap.get(key))
             return *info;
-        auto result = infoMap.add(&key, makeUnique<ShapeOutsideInfo>(key));
+        auto result = infoMap.add(key, makeUnique<ShapeOutsideInfo>(key));
         return *result.iterator->value;
     }
-    static void removeInfo(const RenderBox& key) { infoMap().remove(&key); }
-    static ShapeOutsideInfo* info(const RenderBox& key) { return infoMap().get(&key); }
+    static void removeInfo(const RenderBox& key) { infoMap().remove(key); }
+    static ShapeOutsideInfo* info(const RenderBox& key) { return infoMap().get(key); }
 
 private:
     LayoutUnit logicalTopOffset() const;
     LayoutUnit logicalLeftOffset() const;
 
-    typedef HashMap<const RenderBox*, std::unique_ptr<ShapeOutsideInfo>> InfoMap;
+    using InfoMap = HashMap<SingleThreadWeakRef<const RenderBox>, std::unique_ptr<ShapeOutsideInfo>>;
     static InfoMap& infoMap()
     {
         static NeverDestroyed<InfoMap> staticInfoMap;

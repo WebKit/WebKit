@@ -36,7 +36,7 @@ public:
     explicit MediaRecorderProvider(WebPage&);
 
 private:
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
     std::unique_ptr<WebCore::MediaRecorderPrivate> createMediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&) final;
 #endif
 

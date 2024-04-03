@@ -641,6 +641,40 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
     g_assert_true(atspi_state_set_contains(stateSet.get(), ATSPI_STATE_SHOWING));
 }
 
+static void testAccessibleStateChangedFocus(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <div id='container'></div>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+
+    test->startEventMonitor(nullptr, { "object:state-changed" });
+    test->runJavaScriptAndWaitUntilFinished(
+        "container=document.getElementById('container');"
+        "var i = document.createElement('div');"
+        "i.setAttribute('tabindex', '-1');"
+        "container.appendChild(i);"
+        "i.innerHTML = 'TEST';"
+        "i.focus();",
+        nullptr);
+    auto events = test->stopEventMonitor(1);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_cmpstr(events[0]->type, ==, "object:state-changed:focused");
+    auto* div = events[0]->source;
+    g_assert_true(ATSPI_IS_ACCESSIBLE(div));
+}
+
 static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 {
     test->showInWindow(800, 600);
@@ -3421,6 +3455,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "selection/menulist", testSelectionMenuList);
     AccessibilityTest::add("WebKitAccessibility", "table/basic", testTableBasic);
     AccessibilityTest::add("WebKitAccessibility", "collection/get-matches", testCollectionGetMatches);
+    AccessibilityTest::add("WebKitAccessibility", "accessible/state-changed/focus", testAccessibleStateChangedFocus);
 }
 
 void afterAll()

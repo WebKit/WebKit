@@ -52,11 +52,11 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IDBConnectionToServerDelegate
-    void deleteDatabase(const WebCore::IDBRequestData&) final;
-    void openDatabase(const WebCore::IDBRequestData&) final;
+    void deleteDatabase(const WebCore::IDBOpenRequestData&) final;
+    void openDatabase(const WebCore::IDBOpenRequestData&) final;
     void abortTransaction(const WebCore::IDBResourceIdentifier&) final;
-    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount) final;
-    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t handledRequestResultsCount) final;
+    void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;
     void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName) final;
@@ -71,12 +71,12 @@ private:
     void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&) final;
     void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&) final;
     void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&) final;
-    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&) final;
-    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier) final;
-    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) final;
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier) final;
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
-    void openDBRequestCancelled(const WebCore::IDBRequestData&) final;
+    void establishTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBTransactionInfo&) final;
+    void databaseConnectionPendingClose(WebCore::IDBDatabaseConnectionIdentifier) final;
+    void databaseConnectionClosed(WebCore::IDBDatabaseConnectionIdentifier) final;
+    void abortOpenAndUpgradeNeeded(WebCore::IDBDatabaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier) final;
+    void didFireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer) final;
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&) final;
 
     void getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&) final;
 
@@ -99,9 +99,9 @@ private:
     void didDeleteRecord(const WebCore::IDBResultData&);
     void didOpenCursor(const WebIDBResult&);
     void didIterateCursor(const WebIDBResult&);
-    void fireVersionChangeEvent(uint64_t uniqueDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
+    void fireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier uniqueDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
-    void didCloseFromServer(uint64_t databaseConnectionIdentifier, const WebCore::IDBError&);
+    void didCloseFromServer(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBError&);
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion);
     void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&);
 

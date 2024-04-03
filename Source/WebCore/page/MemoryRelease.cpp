@@ -35,6 +35,7 @@
 #include "CommonVM.h"
 #include "CookieJar.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCache.h"
 #include "GCController.h"
 #include "HRTFElevation.h"
@@ -55,7 +56,9 @@
 #include "ScrollingThread.h"
 #include "SelectorQuery.h"
 #include "StyleScope.h"
+#include "StyleSheetContentsCache.h"
 #include "StyledElement.h"
+#include "TextBreakingPositionCache.h"
 #include "TextPainter.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
@@ -81,14 +84,16 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     SelectorQueryCache::singleton().clear();
 
     for (auto& document : Document::allDocuments()) {
-        if (CheckedPtr renderView = document->renderView())
+        if (CheckedPtr renderView = document->renderView()) {
             LayoutIntegration::LineLayout::releaseCaches(*renderView);
+            Layout::TextBreakingPositionCache::singleton().clear();
+        }
     }
 
     if (maintainMemoryCache == MaintainMemoryCache::No)
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
 
-    InlineStyleSheetOwner::clearCache();
+    Style::StyleSheetContentsCache::singleton().clear();
     HTMLNameCache::clear();
     ImmutableStyleProperties::clearDeduplicationMap();
     SVGPathElement::clearCache();
@@ -121,8 +126,10 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         return document.get();
     });
     for (auto& document : protectedDocuments) {
+        document->clearQuerySelectorAllResults();
         document->styleScope().releaseMemory();
-        document->fontSelector().emptyCaches();
+        if (RefPtr fontSelector = document->fontSelectorIfExists())
+            fontSelector->emptyCaches();
         document->cachedResourceLoader().garbageCollectDocumentResources();
     }
 
@@ -132,8 +139,8 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
 
 #if ENABLE(VIDEO)
-    for (auto* mediaElement : HTMLMediaElement::allMediaElements())
-        mediaElement->purgeBufferedDataIfPossible();
+    for (auto& mediaElement : HTMLMediaElement::allMediaElements())
+        Ref { mediaElement.get() }->purgeBufferedDataIfPossible();
 #endif
 
     if (synchronous == Synchronous::Yes) {
@@ -246,7 +253,9 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
 #endif
 
 #if !PLATFORM(COCOA)
+#if !USE(SKIA)
 void platformReleaseMemory(Critical) { }
+#endif
 void platformReleaseGraphicsMemory(Critical) { }
 void jettisonExpensiveObjectsOnTopLevelNavigation() { }
 void registerMemoryReleaseNotifyCallbacks() { }

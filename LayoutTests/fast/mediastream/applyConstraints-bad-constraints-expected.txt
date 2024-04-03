@@ -1,0 +1,8 @@
+
+PASS applyConstraints with a frameRate constraint that is too high
+PASS applyConstraints with a frameRate constraint that is too low
+PASS applyConstraints with a zoom constraint that is too high
+PASS applyConstraints with a zoom constraint that is too low
+PASS applyConstraints with a sampleRate constraint that is too high
+PASS applyConstraints with a sampleRate constraint that is too low
+

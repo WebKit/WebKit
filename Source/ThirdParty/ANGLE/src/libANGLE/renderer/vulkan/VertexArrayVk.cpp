@@ -15,9 +15,9 @@
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace rx
 {
@@ -55,7 +55,7 @@ ANGLE_INLINE bool ClientBindingAligned(const gl::VertexAttribute &attrib,
     return reinterpret_cast<intptr_t>(attrib.pointer) % alignment == 0 && stride % alignment == 0;
 }
 
-bool ShouldCombineAttributes(RendererVk *renderer,
+bool ShouldCombineAttributes(vk::Renderer *renderer,
                              const gl::VertexAttribute &attrib,
                              const gl::VertexBinding &binding)
 {
@@ -91,7 +91,7 @@ angle::Result StreamVertexData(ContextVk *contextVk,
                                size_t srcStride,
                                VertexCopyFunction vertexLoadFunction)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint8_t *dst = dstBufferHelper->getMappedMemory() + dstOffset;
 
@@ -119,7 +119,7 @@ angle::Result StreamVertexDataWithDivisor(ContextVk *contextVk,
                                           uint32_t divisor,
                                           size_t numSrcVertices)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     uint8_t *dst = dstBufferHelper->getMappedMemory();
 
@@ -191,6 +191,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk, const gl::VertexArrayState &s
       mCurrentArrayBufferRelativeOffsets{},
       mCurrentArrayBuffers{},
       mCurrentArrayBufferStrides{},
+      mCurrentArrayBufferDivisors{},
       mCurrentElementArrayBuffer(nullptr),
       mLineLoopHelper(contextVk->getRenderer()),
       mDirtyLineLoopTranslation(true)
@@ -202,6 +203,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk, const gl::VertexArrayState &s
     mCurrentArrayBufferRelativeOffsets.fill(0);
     mCurrentArrayBuffers.fill(&emptyBuffer);
     mCurrentArrayBufferStrides.fill(0);
+    mCurrentArrayBufferDivisors.fill(0);
 
     mBindingDirtyBitsRequiresPipelineUpdate.set(gl::VertexArray::DIRTY_BINDING_DIVISOR);
     if (!contextVk->getRenderer()->useVertexInputBindingStrideDynamicState())
@@ -222,7 +224,7 @@ void VertexArrayVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     for (std::unique_ptr<vk::BufferHelper> &buffer : mCachedStreamIndexBuffers)
     {
@@ -354,9 +356,9 @@ angle::Result VertexArrayVk::convertIndexBufferCPU(ContextVk *contextVk,
                                                    BufferBindingDirty *bindingDirty)
 {
     ASSERT(!mState.getElementArrayBuffer() || indexType == gl::DrawElementsType::UnsignedByte);
-    RendererVk *renderer = contextVk->getRenderer();
-    size_t elementSize   = contextVk->getVkIndexTypeSize(indexType);
-    const size_t amount  = elementSize * indexCount;
+    vk::Renderer *renderer = contextVk->getRenderer();
+    size_t elementSize     = contextVk->getVkIndexTypeSize(indexType);
+    const size_t amount    = elementSize * indexCount;
 
     // Applications often time draw a quad with two triangles. This is try to catch all the
     // common used element array buffer with pre-created BufferHelper objects to improve
@@ -734,7 +736,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
                                              size_t attribIndex,
                                              bool bufferOnly)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
     if (attrib.enabled)
     {
         const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
@@ -899,6 +901,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
 
             mCurrentArrayBufferFormats[attribIndex]    = format;
             mCurrentArrayBufferCompressed[attribIndex] = compressed;
+            mCurrentArrayBufferDivisors[attribIndex]   = binding.getDivisor();
         }
     }
     else
@@ -912,6 +915,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
         mCurrentArrayBufferHandles[attribIndex]         = emptyBuffer.getBuffer().getHandle();
         mCurrentArrayBufferOffsets[attribIndex]         = emptyBuffer.getOffset();
         mCurrentArrayBufferStrides[attribIndex]         = 0;
+        mCurrentArrayBufferDivisors[attribIndex]        = 0;
         mCurrentArrayBufferCompressed[attribIndex]      = false;
         mCurrentArrayBufferRelativeOffsets[attribIndex] = 0;
 
@@ -923,7 +927,7 @@ angle::Result VertexArrayVk::syncDirtyAttrib(ContextVk *contextVk,
 }
 
 gl::AttributesMask VertexArrayVk::mergeClientAttribsRange(
-    RendererVk *renderer,
+    vk::Renderer *renderer,
     const gl::AttributesMask activeStreamedAttribs,
     size_t startVertex,
     size_t endVertex,
@@ -1006,8 +1010,8 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                                                    gl::DrawElementsType indexTypeOrInvalid,
                                                    const void *indices)
 {
-    ContextVk *contextVk = vk::GetImpl(context);
-    RendererVk *renderer = contextVk->getRenderer();
+    ContextVk *contextVk   = vk::GetImpl(context);
+    vk::Renderer *renderer = contextVk->getRenderer();
 
     const gl::AttributesMask activeAttribs =
         context->getStateCache().getActiveClientAttribsMask() |
@@ -1149,8 +1153,9 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
             vertexDataBuffer
                 ->getBufferForVertexArray(contextVk, vertexDataBuffer->getSize(), &bufferOffset)
                 .getHandle();
-        mCurrentArrayBufferOffsets[attribIndex] = bufferOffset + startOffset;
-        mCurrentArrayBufferStrides[attribIndex] = stride;
+        mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset + startOffset;
+        mCurrentArrayBufferStrides[attribIndex]  = stride;
+        mCurrentArrayBufferDivisors[attribIndex] = divisor;
     }
 
     return angle::Result::Continue;
@@ -1233,10 +1238,11 @@ angle::Result VertexArrayVk::updateDefaultAttrib(ContextVk *contextVk, size_t at
         mCurrentArrayBufferHandles[attribIndex] =
             bufferHelper->getBufferForVertexArray(contextVk, kDefaultValueSize, &bufferOffset)
                 .getHandle();
-        mCurrentArrayBufferOffsets[attribIndex] = bufferOffset;
-        mCurrentArrayBuffers[attribIndex]       = bufferHelper;
-        mCurrentArrayBufferSerial[attribIndex]  = bufferHelper->getBufferSerial();
-        mCurrentArrayBufferStrides[attribIndex] = 0;
+        mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset;
+        mCurrentArrayBuffers[attribIndex]        = bufferHelper;
+        mCurrentArrayBufferSerial[attribIndex]   = bufferHelper->getBufferSerial();
+        mCurrentArrayBufferStrides[attribIndex]  = 0;
+        mCurrentArrayBufferDivisors[attribIndex] = 0;
 
         ANGLE_TRY(setDefaultPackedInput(contextVk, attribIndex,
                                         &mCurrentArrayBufferFormats[attribIndex]));

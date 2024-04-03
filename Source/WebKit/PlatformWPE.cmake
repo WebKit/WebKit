@@ -276,6 +276,12 @@ list(APPEND WebKit_DEPENDENCIES
     webkitwpe-forwarding-headers
 )
 
+if (GI_VERSION VERSION_GREATER_EQUAL 1.79.2)
+    set(USE_GI_FINISH_FUNC_ANNOTATION 1)
+else ()
+    set(USE_GI_FINISH_FUNC_ANNOTATION 0)
+endif ()
+
 GENERATE_GLIB_API_HEADERS(WebKit WPE_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
     WPE_API_INSTALLED_HEADERS
@@ -283,7 +289,9 @@ GENERATE_GLIB_API_HEADERS(WebKit WPE_API_HEADER_TEMPLATES
     "-DWTF_PLATFORM_WPE=1"
     "-DUSE_GTK4=0"
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
+    "-DUSE_GI_FINISH_FUNC_ANNOTATION=${USE_GI_FINISH_FUNC_ANNOTATION}"
 )
+unset(USE_GI_FINISH_FUNC_ANNOTATION)
 
 GENERATE_GLIB_API_HEADERS(WebKit WPE_WEB_PROCESS_EXTENSION_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
@@ -410,26 +418,40 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
 list(APPEND WebKit_LIBRARIES
-    Cairo::Cairo
-    Freetype::Freetype
-    HarfBuzz::HarfBuzz
-    HarfBuzz::ICU
     WPE::libwpe
-    ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
 )
 
-if (ENABLE_ACCESSIBILITY)
-    list(APPEND WebKit_LIBRARIES ATK::Bridge)
+if (USE_ATK)
+    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+        ${ATK_INCLUDE_DIRS}
+    )
+
+    list(APPEND WebKit_LIBRARIES
+        ATK::Bridge
+        ${ATK_LIBRARIES}
+    )
+endif ()
+
+if (USE_CAIRO)
+    list(APPEND WebKit_LIBRARIES
+        Cairo::Cairo
+        Freetype::Freetype
+    )
+
+    list(APPEND WebKit_SOURCES
+        Shared/API/c/cairo/WKImageCairo.cpp
+
+        UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
+    )
 endif ()
 
 if (ENABLE_BUBBLEWRAP_SANDBOX)
@@ -452,15 +474,6 @@ else ()
     )
     list(APPEND WebKit_LIBRARIES
         ${GSTREAMER_LIBRARIES}
-    )
-endif ()
-
-if (USE_LIBDRM)
-    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WebKit_LIBRARIES
-        ${LIBDRM_LIBRARIES}
     )
 endif ()
 
@@ -544,12 +557,12 @@ if (ENABLE_WPE_QT_API)
     )
 
     set(qtwpe_LIBRARIES
+        Epoxy::Epoxy
         Qt5::Core Qt5::Quick
+        WPE::FDO
         WebKit
         ${GLIB_GOBJECT_LIBRARIES}
         ${GLIB_LIBRARIES}
-        ${LIBEPOXY_LIBRARIES}
-        ${WPEBACKEND_FDO_LIBRARIES}
     )
 
     set(qtwpe_INCLUDE_DIRECTORIES
@@ -559,10 +572,8 @@ if (ENABLE_WPE_QT_API)
         ${GLIB_INCLUDE_DIRS}
         ${Qt5_INCLUDE_DIRS}
         ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-        ${LIBEPOXY_INCLUDE_DIRS}
         ${LIBSOUP_INCLUDE_DIRS}
         ${WPE_INCLUDE_DIRS}
-        ${WPEBACKEND_FDO_INCLUDE_DIRS}
     )
 
     list(APPEND WPE_QT_API_INSTALLED_HEADERS

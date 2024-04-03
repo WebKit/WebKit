@@ -47,6 +47,11 @@ NetworkMDNSRegister::NetworkMDNSRegister(NetworkConnectionToWebProcess& connecti
 
 NetworkMDNSRegister::~NetworkMDNSRegister() = default;
 
+bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
+{
+    return m_registeredNames.contains(name);
+}
+
 #if ENABLE_MDNS
 struct NetworkMDNSRegister::DNSServiceDeallocator {
     void operator()(DNSServiceRef service) const { DNSServiceRefDeallocate(service); }
@@ -55,6 +60,8 @@ struct NetworkMDNSRegister::DNSServiceDeallocator {
 void NetworkMDNSRegister::unregisterMDNSNames(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
 {
     m_services.remove(documentIdentifier);
+    for (auto& name : m_perDocumentRegisteredNames.take(documentIdentifier))
+        m_registeredNames.remove(name);
 }
 
 struct PendingRegistrationRequest {
@@ -107,6 +114,11 @@ static void registerMDNSNameCallback(DNSServiceRef service, DNSRecordRef record,
 void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&& completionHandler)
 {
     auto name = makeString(WTF::UUID::createVersion4(), ".local"_s);
+
+    m_registeredNames.add(name);
+    m_perDocumentRegisteredNames.ensure(documentIdentifier, [] {
+        return Vector<String>();
+    }).iterator->value.append(name);
 
     DNSServiceRef service;
     auto iterator = m_services.find(documentIdentifier);

@@ -75,9 +75,9 @@ void RemoteMediaEngineConfigurationFactory::registerFactory()
     MediaEngineConfigurationFactory::installFactory({ WTFMove(createDecodingConfiguration), WTFMove(createEncodingConfiguration) });
 }
 
-const char* RemoteMediaEngineConfigurationFactory::supplementName()
+ASCIILiteral RemoteMediaEngineConfigurationFactory::supplementName()
 {
-    return "RemoteMediaEngineConfigurationFactory";
+    return "RemoteMediaEngineConfigurationFactory"_s;
 }
 
 GPUProcessConnection& RemoteMediaEngineConfigurationFactory::gpuProcessConnection()

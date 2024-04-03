@@ -71,7 +71,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // WebCore::GraphicsContextGL overrides.
-    std::optional<WebCore::GraphicsContextGL::EGLImageAttachResult> createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource) override;
+    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint) override;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
@@ -334,7 +334,7 @@ public:
     GCGLuint getUniformBlockIndex(PlatformGLObject program, const String& uniformBlockName) final;
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
-    void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
+    void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
     String getTranslatedShaderSourceANGLE(PlatformGLObject arg0) final;
     void drawBuffersEXT(std::span<const GCGLenum> bufs) final;
     PlatformGLObject createQueryEXT() final;
@@ -365,10 +365,14 @@ public:
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     RefPtr<WebCore::PixelBuffer> drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY) final;
-    bool destroyEGLSync(GCEGLSync) final;
+    void destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
 
     bool enableRequiredWebXRExtensions() final;
+    bool createFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) final;
+    void enableFoveation(GCGLuint) final;
+    void disableFoveation() final;
+
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
@@ -413,6 +417,7 @@ private:
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
+    uint32_t createObjectName();
 
     RefPtr<IPC::Connection> m_connection;
     bool m_didInitialize { false };
@@ -430,6 +435,7 @@ private:
 #endif
     GCGLenum m_externalImageTarget { 0 };
     GCGLenum m_externalImageBindingQuery { 0 };
+    uint32_t m_nextObjectName { 0 };
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

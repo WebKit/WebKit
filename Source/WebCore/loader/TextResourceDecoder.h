@@ -48,7 +48,7 @@ public:
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(const String& mimeType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
     WEBCORE_EXPORT ~TextResourceDecoder();
 
-    static String textFromUTF8(const unsigned char* data, unsigned length);
+    static String textFromUTF8(std::span<const uint8_t>);
 
     void setEncoding(const PAL::TextEncoding&, EncodingSource);
     const PAL::TextEncoding& encoding() const { return m_encoding; }
@@ -56,12 +56,9 @@ public:
 
     bool hasEqualEncodingForCharset(const String& charset) const;
 
-    WEBCORE_EXPORT String decode(const char* data, size_t length);
-    String decode(const uint8_t* data, size_t length) { return decode(reinterpret_cast<const char*>(data), length); }
+    WEBCORE_EXPORT String decode(std::span<const uint8_t>);
     WEBCORE_EXPORT String flush();
-
-    WEBCORE_EXPORT String decodeAndFlush(const char* data, size_t length);
-    String decodeAndFlush(const uint8_t* data, size_t length) { return decodeAndFlush(reinterpret_cast<const char*>(data), length); }
+    WEBCORE_EXPORT String decodeAndFlush(std::span<const uint8_t>);
 
     void setHintEncoding(const TextResourceDecoder* parentFrameDecoder);
    
@@ -77,11 +74,11 @@ private:
     static ContentType determineContentType(const String& mimeType);
     static const PAL::TextEncoding& defaultEncoding(ContentType, const PAL::TextEncoding& defaultEncoding);
 
-    size_t checkForBOM(const char*, size_t);
-    bool checkForCSSCharset(const char*, size_t, bool& movedDataToBuffer);
-    bool checkForHeadCharset(const char*, size_t, bool& movedDataToBuffer);
-    bool checkForMetaCharset(const char*, size_t);
-    void detectJapaneseEncoding(const char*, size_t);
+    size_t checkForBOM(std::span<const uint8_t>);
+    bool checkForCSSCharset(std::span<const uint8_t>, bool& movedDataToBuffer);
+    bool checkForHeadCharset(std::span<const uint8_t>, bool& movedDataToBuffer);
+    bool checkForMetaCharset(std::span<const uint8_t>);
+    void detectJapaneseEncoding(std::span<const uint8_t>);
     bool shouldAutoDetect() const;
 
     ContentType m_contentType;
@@ -90,7 +87,7 @@ private:
     std::unique_ptr<HTMLMetaCharsetParser> m_charsetParser;
     EncodingSource m_source { DefaultEncoding };
     const char* m_parentFrameAutoDetectedEncoding { nullptr };
-    Vector<char> m_buffer;
+    Vector<uint8_t> m_buffer;
     bool m_checkedForBOM { false };
     bool m_checkedForCSSCharset { false };
     bool m_checkedForHeadCharset { false };

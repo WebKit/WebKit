@@ -36,13 +36,12 @@ void FragmentedSharedBufferTest::SetUp()
     WTF::initializeMainThread();
 
     // create temp file
-    FileSystem::PlatformFileHandle handle;
-    m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
-    FileSystem::writeToFile(handle, testData(), strlen(testData()));
-    FileSystem::closeFile(handle);
+    auto result = FileSystem::openTemporaryFile("tempTestFile"_s);
+    m_tempFilePath = result.first;
+    FileSystem::writeToFile(result.second, testData(), strlen(testData()));
+    FileSystem::closeFile(result.second);
 
-    m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile"_s, handle);
-    FileSystem::closeFile(handle);
+    m_tempEmptyFilePath = FileSystem::createTemporaryFile("tempEmptyTestFile"_s);
 }
 
 void FragmentedSharedBufferTest::TearDown()

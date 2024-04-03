@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ArityCheckMode.h"
+#include "CallMode.h"
 #include "JSCPtrTag.h"
 #include <wtf/CodePtr.h>
 #include <wtf/SentinelLinkedList.h>
@@ -39,6 +41,8 @@ class CallSlot {
 public:
     JSCell* m_calleeOrExecutable { nullptr };
     uint32_t m_count { 0 };
+    uint8_t m_index { 0 };
+    ArityCheckMode m_arityCheckMode { MustCheckArity };
     CodePtr<JSEntryPtrTag> m_target;
     CodeBlock* m_codeBlock { nullptr }; // This is weakly held. And cleared whenever m_target is changed.
 
@@ -47,6 +51,7 @@ public:
     static ptrdiff_t offsetOfTarget() { return OBJECT_OFFSETOF(CallSlot, m_target); }
     static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(CallSlot, m_codeBlock); }
 };
+static_assert(sizeof(CallSlot) <= 32, "This should be small enough to keep iteration of vector in polymorphic call fast");
 
 class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:
@@ -54,9 +59,47 @@ public:
         CallLinkInfo,
 #if ENABLE(JIT)
         PolymorphicCallNode,
+        DirectCall,
 #endif
         CachedCall,
     };
+
+    enum CallType : uint8_t {
+        None,
+        Call,
+        CallVarargs,
+        Construct,
+        ConstructVarargs,
+        TailCall,
+        TailCallVarargs,
+        DirectCall,
+        DirectConstruct,
+        DirectTailCall
+    };
+
+    enum class UseDataIC : bool { No, Yes };
+
+    static CallMode callModeFor(CallType callType)
+    {
+        switch (callType) {
+        case Call:
+        case CallVarargs:
+        case DirectCall:
+            return CallMode::Regular;
+        case TailCall:
+        case TailCallVarargs:
+        case DirectTailCall:
+            return CallMode::Tail;
+        case Construct:
+        case ConstructVarargs:
+        case DirectConstruct:
+            return CallMode::Construct;
+        case None:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 
     explicit CallLinkInfoBase(CallSiteType callSiteType)
         : m_callSiteType(callSiteType)
@@ -71,7 +114,7 @@ public:
 
     CallSiteType callSiteType() const { return m_callSiteType; }
 
-    void unlink(VM&);
+    void unlinkOrUpgrade(VM&, CodeBlock*, CodeBlock*);
 
 private:
     CallSiteType m_callSiteType;

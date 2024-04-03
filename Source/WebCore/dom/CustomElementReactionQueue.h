@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CustomElementFormValue.h"
+#include "Element.h"
 #include "GCReachableRef.h"
 #include "QualifiedName.h"
 #include <wtf/CheckedRef.h>
@@ -99,18 +100,19 @@ class CustomElementQueue {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CustomElementQueue);
 public:
-    CustomElementQueue();
-    WEBCORE_EXPORT ~CustomElementQueue();
+    CustomElementQueue() = default;
+    ~CustomElementQueue() { ASSERT(isEmpty()); }
 
+    bool isEmpty() const { return m_elements.isEmpty(); }
     void add(Element&);
-    void processQueue(JSC::JSGlobalObject*);
+    WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
 
-    Vector<GCReachableRef<Element>, 4> takeElements();
+    Vector<Ref<Element>, 4> takeElements();
 
 private:
     void invokeAll();
 
-    Vector<GCReachableRef<Element>, 4> m_elements;
+    Vector<Ref<Element>, 4> m_elements;
     bool m_invoking { false };
 };
 
@@ -224,17 +226,15 @@ public:
 
     ALWAYS_INLINE ~CustomElementReactionStack()
     {
-        if (UNLIKELY(m_queue))
-            processQueue(m_state);
+        if (UNLIKELY(!m_queue.isEmpty()))
+            m_queue.processQueue(m_state);
         s_currentProcessingStack = m_previousProcessingStack;
     }
 
-    Vector<GCReachableRef<Element>, 4> takeElements();
+    Vector<Ref<Element>, 4> takeElements() { return m_queue.takeElements(); }
 
 private:
-    WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
-
-    std::unique_ptr<CustomElementQueue> m_queue;
+    CustomElementQueue m_queue;
     CustomElementReactionStack* const m_previousProcessingStack;
     JSC::JSGlobalObject* const m_state;
 

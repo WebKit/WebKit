@@ -78,7 +78,7 @@ TEST(WTF_PackedRefPtr, Basic)
     {
         PackedRefPtr<RefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -86,7 +86,7 @@ TEST(WTF_PackedRefPtr, Basic)
     {
         PackedRefPtr<RefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2(WTFMove(p1));
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -102,7 +102,7 @@ TEST(WTF_PackedRefPtr, Basic)
     {
         PackedRefPtr<DerivedRefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -204,7 +204,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -250,7 +250,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -280,7 +280,7 @@ TEST(WTF_PackedRefPtr, Assignment)
         IGNORE_WARNINGS_BEGIN("self-move")
         ptr = WTFMove(ptr);
         IGNORE_WARNINGS_END
-        EXPECT_EQ(&a, ptr.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
@@ -338,7 +338,7 @@ TEST(WTF_PackedRefPtr, Release)
     {
         PackedRefPtr<RefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -346,7 +346,7 @@ TEST(WTF_PackedRefPtr, Release)
     {
         PackedRefPtr<RefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2(WTFMove(p1));
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -354,7 +354,7 @@ TEST(WTF_PackedRefPtr, Release)
     {
         PackedRefPtr<DerivedRefLogger> p1 = &a;
         PackedRefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -367,7 +367,7 @@ TEST(WTF_PackedRefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -380,7 +380,7 @@ TEST(WTF_PackedRefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -525,7 +525,7 @@ TEST(WTF_PackedRefPtr, AssignBeforeDeref)
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | slot=b deref(a) | deref(b) ", takeLogStr().c_str());

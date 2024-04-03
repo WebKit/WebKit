@@ -1,0 +1,11 @@
+uniform int value;
+
+void main() {
+    while (true) switch (value) { default: continue; }
+    for (;;) switch (value) { case 5: continue; }
+}
+
+/*%%*
+continue statement cannot be used in a switch
+continue statement cannot be used in a switch
+*%%*/

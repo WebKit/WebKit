@@ -42,13 +42,18 @@
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC {
-    class AssemblerData;
+    enum class AssemblerDataType : uint8_t { Code, Hashes };
+    template<AssemblerDataType>
+    class AssemblerDataImpl;
 
-    typedef ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True> ThreadSpecificAssemblerData;
-
+    using AssemblerData = AssemblerDataImpl<AssemblerDataType::Code>;
+    using ThreadSpecificAssemblerData = ThreadSpecific<AssemblerData, WTF::CanBeGCThread::True>;
     JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerData();
+
 #if CPU(ARM64E)
-    JS_EXPORT_PRIVATE ThreadSpecificAssemblerData& threadSpecificAssemblerHashes();
+    using AssemblerHashes = AssemblerDataImpl<AssemblerDataType::Hashes>;
+    using ThreadSpecificAssemblerHashes = ThreadSpecific<AssemblerHashes, WTF::CanBeGCThread::True>;
+    JS_EXPORT_PRIVATE ThreadSpecificAssemblerHashes& threadSpecificAssemblerHashes();
 #endif
 
     class LinkBuffer;
@@ -99,28 +104,26 @@ namespace JSC {
 #endif
     };
 
-    class AssemblerData {
-        WTF_MAKE_NONCOPYABLE(AssemblerData);
+    template<AssemblerDataType type>
+    class AssemblerDataImpl {
+        WTF_MAKE_NONCOPYABLE(AssemblerDataImpl);
         static constexpr size_t InlineCapacity = 128;
     public:
-        AssemblerData()
+        AssemblerDataImpl()
             : m_buffer(m_inlineBuffer)
             , m_capacity(InlineCapacity)
         {
+            if constexpr (type == AssemblerDataType::Code)
+                takeBufferIfLarger(*threadSpecificAssemblerData());
+#if CPU(ARM64E)
+            if constexpr (type == AssemblerDataType::Hashes)
+                takeBufferIfLarger(*threadSpecificAssemblerHashes());
+#else
+            static_assert(type != AssemblerDataType::Hashes);
+#endif
         }
 
-        AssemblerData(size_t initialCapacity)
-        {
-            if (initialCapacity <= InlineCapacity) {
-                m_capacity = InlineCapacity;
-                m_buffer = m_inlineBuffer;
-            } else {
-                m_capacity = initialCapacity;
-                m_buffer = static_cast<char*>(AssemblerDataMalloc::malloc(m_capacity));
-            }
-        }
-
-        AssemblerData(AssemblerData&& other)
+        AssemblerDataImpl(AssemblerDataImpl&& other)
         {
             if (other.isInlineBuffer()) {
                 ASSERT(other.m_capacity == InlineCapacity);
@@ -134,7 +137,7 @@ namespace JSC {
             other.m_capacity = InlineCapacity;
         }
 
-        AssemblerData& operator=(AssemblerData&& other)
+        AssemblerDataImpl& operator=(AssemblerDataImpl&& other)
         {
             if (m_buffer && !isInlineBuffer())
                 AssemblerDataMalloc::free(m_buffer);
@@ -152,7 +155,7 @@ namespace JSC {
             return *this;
         }
 
-        void takeBufferIfLarger(AssemblerData&& other)
+        void takeBufferIfLarger(AssemblerDataImpl& other)
         {
             if (other.isInlineBuffer())
                 return;
@@ -170,8 +173,16 @@ namespace JSC {
             other.m_capacity = InlineCapacity;
         }
 
-        ~AssemblerData()
+        ~AssemblerDataImpl()
         {
+            if constexpr (type == AssemblerDataType::Code)
+                threadSpecificAssemblerData()->takeBufferIfLarger(*this);
+#if CPU(ARM64E)
+            if constexpr (type == AssemblerDataType::Hashes)
+                threadSpecificAssemblerHashes()->takeBufferIfLarger(*this);
+#else
+            static_assert(type != AssemblerDataType::Hashes);
+#endif
             clear();
         }
 
@@ -299,11 +310,7 @@ namespace JSC {
             , m_hashes()
 #endif
         {
-            auto& threadSpecificData = threadSpecificAssemblerData();
-            m_storage.takeBufferIfLarger(WTFMove(*threadSpecificData));
 #if CPU(ARM64E)
-            auto& threadSpecificHashes = threadSpecificAssemblerHashes();
-            m_hashes.takeBufferIfLarger(WTFMove(*threadSpecificHashes));
             ASSERT(m_storage.capacity() == m_hashes.capacity());
 #endif
         }
@@ -312,11 +319,7 @@ namespace JSC {
         {
 #if CPU(ARM64E)
             ASSERT(m_storage.capacity() == m_hashes.capacity());
-            auto& threadSpecificHashes = threadSpecificAssemblerHashes();
-            threadSpecificHashes->takeBufferIfLarger(WTFMove(m_hashes));
 #endif
-            auto& threadSpecificData = threadSpecificAssemblerData();
-            threadSpecificData->takeBufferIfLarger(WTFMove(m_storage));
         }
 
         bool isAvailable(unsigned space)
@@ -375,7 +378,7 @@ namespace JSC {
         }
 
 #if CPU(ARM64E)
-        AssemblerData&& releaseAssemblerHashes()
+        AssemblerHashes&& releaseAssemblerHashes()
         {
             return WTFMove(m_hashes);
         }
@@ -492,7 +495,7 @@ namespace JSC {
         unsigned m_index;
 #if CPU(ARM64E)
         ARM64EHash<ShouldSign::Yes> m_hash;
-        AssemblerData m_hashes;
+        AssemblerHashes m_hashes;
 #endif
     };
 

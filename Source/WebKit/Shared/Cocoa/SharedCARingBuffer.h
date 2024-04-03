@@ -27,9 +27,9 @@
 
 #if USE(MEDIATOOLBOX)
 
-#include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/Atomics.h>
 #include <wtf/Function.h>
 
@@ -37,18 +37,18 @@ namespace WebKit {
 
 class SharedCARingBufferBase : public WebCore::CARingBuffer {
 protected:
-    SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<SharedMemory>);
+    SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory>);
     void* data() final { return static_cast<Byte*>(m_storage->data()) + sizeof(TimeBoundsBuffer); }
     TimeBoundsBuffer& timeBoundsBuffer() final { return *reinterpret_cast<TimeBoundsBuffer*>(m_storage->data()); }
 
-    Ref<SharedMemory> m_storage;
+    Ref<WebCore::SharedMemory> m_storage;
 };
 
 struct ConsumerSharedCARingBufferHandle {
-    SharedMemory::Handle memory;
+    WebCore::SharedMemory::Handle memory;
     size_t frameCount { 0 };
 
-    void takeOwnershipOfMemory(MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
+    void takeOwnershipOfMemory(WebCore::MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
 };
 
 class ConsumerSharedCARingBuffer final : public SharedCARingBufferBase {

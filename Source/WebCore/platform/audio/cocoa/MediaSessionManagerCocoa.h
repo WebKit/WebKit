@@ -61,6 +61,7 @@ public:
 
     void prepareToSendUserMediaPermissionRequest() final;
 
+    std::optional<NowPlayingInfo> nowPlayingInfo() const final { return m_nowPlayingInfo; }
     static WEBCORE_EXPORT void clearNowPlayingInfo();
     static WEBCORE_EXPORT void setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo&);
 
@@ -96,7 +97,7 @@ protected:
 
     virtual void providePresentingApplicationPIDIfNecessary() { }
 
-    PlatformMediaSession* nowPlayingEligibleSession();
+    WeakPtr<PlatformMediaSession> nowPlayingEligibleSession();
 
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
@@ -131,6 +132,7 @@ private:
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     MediaUniqueIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
+    std::optional<NowPlayingInfo> m_nowPlayingInfo;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;

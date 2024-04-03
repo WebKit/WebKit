@@ -32,7 +32,7 @@
 #include "BlobURL.h"
 #include "LegacySchemeRegistry.h"
 #include "OriginAccessEntry.h"
-#include "PublicSuffix.h"
+#include "PublicSuffixStore.h"
 #include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
 #include <pal/text/TextEncoding.h>
@@ -414,7 +414,6 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
 
 bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     // https://html.spec.whatwg.org/#same-site
     if (isOpaque() != other.isOpaque())
         return false;
@@ -424,14 +423,11 @@ bool SecurityOrigin::isSameSiteAs(const SecurityOrigin& other) const
     if (isOpaque())
         return isSameOriginAs(other);
 
-    auto topDomain = topPrivatelyControlledDomain(domain());
+    auto topDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain());
     if (topDomain.isEmpty())
         return host() == other.host();
 
-    return topDomain == topPrivatelyControlledDomain(other.domain());
-#else
-    return isSameOriginAs(other);
-#endif // ENABLE(PUBLIC_SUFFIX_LIST)
+    return topDomain == PublicSuffixStore::singleton().topPrivatelyControlledDomain(other.domain());
 }
 
 bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffix, bool treatIPAddressAsDomain) const
@@ -448,11 +444,7 @@ bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffi
     if (domainSuffix.length() == host().length())
         return true;
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    return !isPublicSuffix(domainSuffix);
-#else
-    return true;
-#endif
+    return !PublicSuffixStore::singleton().isPublicSuffix(domainSuffix);
 }
 
 bool SecurityOrigin::isPotentiallyTrustworthy() const

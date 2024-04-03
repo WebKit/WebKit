@@ -30,12 +30,14 @@
 
 namespace WebCore {
 
+struct CSSRegisteredCustomProperty;
+
 namespace Style {
 
 class Builder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, OptionSet<PropertyCascade::PropertyType> = PropertyCascade::allProperties(), const HashSet<AnimatableCSSProperty>* animatedProperties = nullptr);
+    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, OptionSet<PropertyCascade::PropertyType> = PropertyCascade::normalProperties(), const HashSet<AnimatableCSSProperty>* animatedProperties = nullptr);
     ~Builder();
 
     void applyAllProperties();
@@ -45,6 +47,8 @@ public:
 
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
     void applyCustomProperty(const AtomString& name);
+
+    RefPtr<const CSSCustomPropertyValue> resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue&);
 
     BuilderState& state() { return m_state; }
 
@@ -62,6 +66,7 @@ private:
     void applyCascadeProperty(const PropertyCascade::Property&);
     void applyRollbackCascadeProperty(const PropertyCascade::Property&, SelectorChecker::LinkMatchMask);
     void applyProperty(CSSPropertyID, CSSValue&, SelectorChecker::LinkMatchMask);
+    void applyCustomPropertyValue(const CSSCustomPropertyValue&, ApplyValueType, const CSSRegisteredCustomProperty*);
 
     Ref<CSSValue> resolveVariableReferences(CSSPropertyID, CSSValue&);
     RefPtr<CSSCustomPropertyValue> resolveCustomPropertyValue(CSSCustomPropertyValue&);

@@ -37,6 +37,7 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteImageBufferSetProxy.h"
+#include "RemoteImageBufferSetProxyMessages.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
@@ -69,6 +70,7 @@ std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create
 RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
     : m_parameters(parameters)
     , m_dispatcher(dispatcher)
+    , m_queue(WorkQueue::create("RemoteRenderingBackendProxy", WorkQueue::QOS::UserInteractive))
 {
 }
 
@@ -243,13 +245,13 @@ void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceId
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, std::span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
-        auto sendResult = sendSync(Messages::RemoteImageBuffer::GetPixelBufferWithNewMemory(WTFMove(*handle), destinationFormat, srcRect), imageBuffer);
+        auto sendResult = sendSync(Messages::RemoteImageBuffer::GetPixelBufferWithNewMemory(WTFMove(*handle), destinationFormat, srcRect.location(), srcRect.size()), imageBuffer);
         if (!sendResult.succeeded())
             return false;
     } else {
         if (!m_getPixelBufferSharedMemory)
             return false;
-        auto sendResult = sendSync(Messages::RemoteImageBuffer::GetPixelBuffer(destinationFormat, srcRect), imageBuffer);
+        auto sendResult = sendSync(Messages::RemoteImageBuffer::GetPixelBuffer(destinationFormat, srcRect.location(), srcRect.size()), imageBuffer);
         if (!sendResult.succeeded())
             return false;
     }
@@ -259,7 +261,7 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResource
 
 void RemoteRenderingBackendProxy::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    send(Messages::RemoteImageBuffer::PutPixelBuffer(Ref { const_cast<PixelBuffer&>(pixelBuffer) }, srcRect, destPoint, destFormat), imageBuffer);
+    send(Messages::RemoteImageBuffer::PutPixelBuffer(Ref { const_cast<PixelBuffer&>(pixelBuffer) }, srcRect.location(), srcRect.size(), destPoint, destFormat), imageBuffer);
 }
 
 std::optional<SharedMemory::Handle> RemoteRenderingBackendProxy::updateSharedMemoryForGetPixelBuffer(size_t dataSize)
@@ -310,7 +312,7 @@ void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& han
     send(Messages::RemoteRenderingBackend::CacheNativeImage(WTFMove(handle), renderingResourceIdentifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformData::Attributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
+void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformDataAttributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)
 {
     send(Messages::RemoteRenderingBackend::CacheFont(fontAttributes, platformData, ident));
 }
@@ -358,12 +360,10 @@ void RemoteRenderingBackendProxy::releaseAllImageResources()
 }
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput, CompletionHandler<void(Vector<SwapBuffersResult>&&)> callback)
+Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput)
 {
-    if (prepareBuffersInput.isEmpty()) {
-        callback(Vector<SwapBuffersResult>());
-        return;
-    }
+    if (prepareBuffersInput.isEmpty())
+        return Vector<SwapBuffersDisplayRequirement>();
 
     bool needsSync = false;
 
@@ -389,27 +389,26 @@ void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerP
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay - input buffers  " << inputData);
 
-    m_prepareReply = streamConnection().sendWithAsyncReply(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), [prepareBuffersInput = WTFMove(prepareBuffersInput), callback = WTFMove(callback)](Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&& outputData) mutable {
-        Vector<SwapBuffersResult> result;
-        for (auto& data : outputData)
-            result.append(SwapBuffersResult { WTFMove(data.backendHandle), data.displayRequirement, data.bufferCacheIdentifiers });
-        callback(WTFMove(result));
-    }, renderingBackendIdentifier(), defaultTimeout);
-
-    if (needsSync)
-        ensurePrepareCompleted();
-}
-
-void RemoteRenderingBackendProxy::ensurePrepareCompleted()
-{
-    if (m_prepareReply) {
-        streamConnection().waitForAsyncReplyAndDispatchImmediately<Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay>(m_prepareReply, defaultTimeout);
-        m_prepareReply = { };
+    Vector<SwapBuffersDisplayRequirement> result;
+    if (needsSync) {
+        auto sendResult = streamConnection().sendSync(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplaySync(inputData), renderingBackendIdentifier(), defaultTimeout);
+        if (!sendResult.succeeded()) {
+            result.grow(inputData.size());
+            for (auto& displayRequirement : result)
+                displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
+        } else
+            std::tie(result) = sendResult.takeReply();
+    } else {
+        streamConnection().send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), renderingBackendIdentifier(), defaultTimeout);
+        result.grow(inputData.size());
+        for (auto& displayRequirement : result)
+            displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
     }
+    return result;
 }
 #endif
 
-void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& bufferSets, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& bufferSets, CompletionHandler<void(bool)>&& completionHandler, bool forcePurge)
 {
     Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> identifiers;
     for (auto& pair : bufferSets) {
@@ -419,7 +418,7 @@ void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<Remo
     m_currentVolatilityRequest = MarkSurfacesAsVolatileRequestIdentifier::generate();
     m_markAsVolatileRequests.add(m_currentVolatilityRequest, WTFMove(completionHandler));
 
-    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(m_currentVolatilityRequest, identifiers));
+    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(m_currentVolatilityRequest, identifiers, forcePurge));
 }
 
 void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)

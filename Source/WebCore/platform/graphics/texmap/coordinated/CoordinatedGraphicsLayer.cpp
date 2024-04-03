@@ -26,7 +26,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "CairoUtilities.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -35,8 +34,6 @@
 #include "NicosiaBackingStore.h"
 #include "NicosiaContentLayer.h"
 #include "NicosiaImageBacking.h"
-#include "NicosiaPaintingContext.h"
-#include "NicosiaPaintingEngine.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #include "TiledBackingStore.h"
@@ -45,6 +42,10 @@
 #include <wtf/SetForScope.h>
 #endif
 #include <wtf/text/CString.h>
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -73,6 +74,11 @@ void CoordinatedGraphicsLayer::notifyFlushRequired()
 
 void CoordinatedGraphicsLayer::didChangeAnimations()
 {
+    m_animations.setTranslate(client().transformMatrixForProperty(AnimatedProperty::Translate));
+    m_animations.setRotate(client().transformMatrixForProperty(AnimatedProperty::Rotate));
+    m_animations.setScale(client().transformMatrixForProperty(AnimatedProperty::Scale));
+    m_animations.setTransform(client().transformMatrixForProperty(AnimatedProperty::Transform));
+
     m_nicosia.delta.animationsChanged = true;
     notifyFlushRequired();
 }
@@ -624,7 +630,7 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    auto nativeImage = image ? image->nativeImageForCurrentFrame() : nullptr;
+    auto nativeImage = image ? image->currentNativeImage() : nullptr;
     if (m_compositedImage == image && m_compositedNativeImage == nativeImage)
         return;
 
@@ -893,7 +899,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         ASSERT(m_compositedImage);
         auto& image = *m_compositedImage;
         uintptr_t imageID = reinterpret_cast<uintptr_t>(&image);
+#if USE(CAIRO)
         uintptr_t nativeImageID = getSurfaceUniqueID(m_compositedNativeImage->platformImage().get());
+#elif USE(SKIA)
+        uintptr_t nativeImageID = m_compositedNativeImage->platformImage()->uniqueID();
+#endif
 
         // Respawn the ImageBacking object if the underlying image changed.
         if (m_nicosia.imageBacking) {
@@ -913,18 +923,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         layerState.update.isVisible = transformedVisibleRect().intersects(IntRect(contentsRect()));
         if (layerState.update.isVisible && (!nativeImageID || layerState.update.nativeImageID != nativeImageID)) {
             layerState.update.nativeImageID = nativeImageID;
-            layerState.update.imageBackingStore = m_coordinator->imageBackingStore(nativeImageID,
-                [&] {
-                    auto buffer = Nicosia::Buffer::create(IntSize(image.size()),
-                        !image.currentFrameKnownToBeOpaque() ? Nicosia::Buffer::SupportsAlpha : Nicosia::Buffer::NoFlags);
-                    Nicosia::PaintingContext::paint(buffer,
-                        [&image](GraphicsContext& context)
-                        {
-                            IntRect rect { { }, IntSize { image.size() } };
-                            context.drawImage(image, rect, rect, ImagePaintingOptions(CompositeOperator::Copy));
-                        });
-                    return buffer;
-                });
+            layerState.update.imageBackingStore = m_coordinator->imageBackingStore(nativeImageID, [&] {
+                return paintImage(image);
+            });
             m_nicosia.delta.imageBackingChanged = true;
         }
     } else if (m_nicosia.imageBacking) {
@@ -1185,19 +1186,11 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
+            auto buffer = paintTile(dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect), layerState.mainBackingStore->contentsScale());
 
-            auto coordinatedBuffer = Nicosia::Buffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
-            SurfaceUpdateInfo updateInfo;
-            updateInfo.updateRect = dirtyRect;
-            updateInfo.updateRect.move(-tileRect.x(), -tileRect.y());
-            updateInfo.buffer = coordinatedBuffer.copyRef();
-
-            if (!m_coordinator->paintingEngine().paint(*this, WTFMove(coordinatedBuffer),
-                dirtyRect, layerState.mainBackingStore->mapToContents(dirtyRect),
-                IntRect { { 0, 0 }, dirtyRect.size() }, layerState.mainBackingStore->contentsScale()))
-                continue;
-
-            m_nicosia.backingStore->updateTile(tile.tileID(), updateInfo, tileRect);
+            IntRect updateRect(dirtyRect);
+            updateRect.move(-tileRect.x(), -tileRect.y());
+            m_nicosia.backingStore->updateTile(tile.tileID(), updateRect, tileRect, WTFMove(buffer));
 
             tile.markClean();
             didUpdateTiles |= true;
@@ -1430,6 +1423,9 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
         break;
     }
     case AnimatedProperty::Opacity:
+    case AnimatedProperty::Translate:
+    case AnimatedProperty::Rotate:
+    case AnimatedProperty::Scale:
     case AnimatedProperty::Transform:
         break;
     default:
@@ -1465,6 +1461,12 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 {
     m_animations.resume();
     didChangeAnimations();
+}
+
+void CoordinatedGraphicsLayer::transformRelatedPropertyDidChange()
+{
+    if (m_animations.hasRunningTransformAnimations())
+        didChangeAnimations();
 }
 
 void CoordinatedGraphicsLayer::animationStartedTimerFired()

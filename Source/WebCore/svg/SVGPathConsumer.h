@@ -26,6 +26,7 @@
 #include "FloatPoint.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ enum PathParsingMode {
     UnalteredParsing
 };
 
-class SVGPathConsumer {
+class SVGPathConsumer : public CanMakeSingleThreadWeakPtr<SVGPathConsumer> {
     WTF_MAKE_NONCOPYABLE(SVGPathConsumer); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGPathConsumer() = default;

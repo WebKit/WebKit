@@ -54,6 +54,19 @@ public:
 
     bool equals(const CSSScrollValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (m_scroller) {
+            if (func(*m_scroller) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_axis) {
+            if (func(*m_axis) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSScrollValue(RefPtr<CSSValue>&& scroller, RefPtr<CSSValue>&& axis)
         : CSSValue(ScrollClass)

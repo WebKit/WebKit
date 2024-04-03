@@ -1,8 +1,119 @@
-Verifies Invalid Roles from 9.1 Roles - handling author errors
+Tests invalid ARIA roles from 9.1 Roles - handling author errors.
 
 x
 x
+x
+x x x x x x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x x x x x x x x x x x x x x x x x x x x x x
+x
+x
+x
+x
+x x
+x
+x
+x
+x
+x x x x
+x
+x
+x
+x
+x
+x
+x
+x
+x x x x x x
+x
+x
+x
+x x x
 
-PASS invalid role name foo
-PASS multiple invalid role names
+PASS nav with invalid role name foo
+PASS nav with two invalid role names
+PASS nav with three invalid role names
+PASS button with invalid role name foo
+PASS button with two invalid role names
+PASS button with three invalid role names
+PASS nav with empty character as role
+PASS nav with line break (\r) character as role
+PASS nav with tab (	) as role (should be treated as whitespace)
+PASS nav with zero-width space as role (should be treated as whitespace)
+PASS nav with braille space (10240) as role
+PASS nav with braille space (x2800) as role
+PASS nav with non-breaking space (nbsp) as role
+PASS nav with standard space (nbsp) as role
+PASS link with role set to tilde diacritic
+PASS link with role foo that has tilde diacritic
+PASS link with role set to overline diacritic
+PASS link with role foo that has overline diacritic
+PASS link with role set to circumflex diacritic below
+PASS link with role foo that has circumflex diacritic below
+PASS link with role set to button with tilde diacritic
+PASS button with role set to zero-width joiner
+PASS button with role set to foo with zero-width joiner
+PASS nav with role set to theta (Θ)
+PASS nav with role set to Persian character (ژ)
+PASS nav with multiple non-latin character roles, Persian character (ژ) and ♮
+PASS nav with role set to Japanese kanji
+PASS nav with role set to Arabic text
+PASS nav with multiple role assignments set to Arabic text
+PASS nav with role set to Hebrew text
+PASS nav with multiple role assignments set to Hebrew text
+PASS link with role set to ampersand character
+PASS link with role set to less than angle bracket character
+PASS nav with role set to region followed by backslash
+PASS nav with role set to backslash followed by region
+PASS nav with role set to region with backslash after e character
+PASS span with invalid role name foo
+PASS span with two invalid role names
+PASS span with three invalid role names
+PASS div with invalid role name foo
+PASS div with two invalid role names
+PASS div with three invalid role names
+PASS span with escaped empty character as role
+PASS span with escaped line break (\r) character as role
+PASS span with escaped tab (	) as role (should be treated as whitespace)
+PASS span with escaped zero-width space as role (should be treated as whitespace)
+PASS span with escaped braille space (10240) as role
+PASS span with escaped braille space (x2800) as role
+PASS span with escaped non-breaking space (nbsp) as role
+PASS span with escaped standard space (nbsp) as role
+PASS span with empty character as role
+PASS span with line break (\r) character as role
+PASS span with tab (	) as role (should be treated as whitespace)
+PASS span with zero-width space as role (should be treated as whitespace)
+PASS span with braille space (10240) as role
+PASS span with non-breaking space (nbsp) as role
+PASS span with standard space as role
+PASS div with role set to tilde diacritic
+PASS div with role foo that has tilde diacritic
+PASS div with role set to button with tilde diacritic
+PASS div with role set to button with unescaped tilde diacritic
+PASS span with role set to theta (Θ)
+PASS span with role set to Persian character (ژ)
+PASS span with multiple non-latin character roles, Persian character (ژ) and ♮
+PASS span with role set to Japanese kanji
+PASS div with role set to Arabic text
+PASS div with multiple role assignments set to Arabic text
+PASS div with role set to Hebrew text
+PASS div with multiple role assignments set to Hebrew text
+PASS span with role set to ampersand character
+PASS span with role set to less than angle bracket character
+PASS span with role set to unescaped ampersand character
+PASS span with role set to unescaped less than angle bracket character
+PASS span with role set to region followed by backslash
+PASS span with role set to backslash followed by region
+PASS span with role set to region with forward slash after e character
 

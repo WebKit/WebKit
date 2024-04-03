@@ -38,11 +38,16 @@ class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 
 struct MarkedText : public CanMakeCheckedPtr {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     // Sorted by paint order
     enum class Type : uint8_t {
         Unmarked,
         GrammarError,
         Correction,
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        UnifiedTextReplacement,
+#endif
         SpellingError,
         TextMatch,
         DictationAlternatives,

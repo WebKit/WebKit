@@ -1,0 +1,80 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy of existing test with some added testcases. Remove the existing test after AX_THREAD_TEXT_APIS is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="group-wrapping-contenteditable1" role="group">
+    <div id="contenteditable1" contenteditable="true">this is a test.</div>
+</div>
+<div id="contenteditable2" contenteditable="true">this is a test.<br></div>
+<div id="contenteditable3" contenteditable="true">this is a test.<br>hello<br>
+    <a href="#">world</a>
+</div>
+
+<textarea id="textarea1">this is a test.</textarea>
+<textarea id="textarea2">this is a test.
+hello
+world</textarea>
+
+<input type="text" id="textfield" value="this is a text field."></input>
+
+<script>
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var output = "";
+
+    // The current behavior expects this API to only return data for text controls, which web areas and groups are not.
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("webarea.rangeForLine(0)", "null");
+    output += expect("accessibilityController.accessibleElementById('group-wrapping-contenteditable1').rangeForLine(0)", "null");
+
+    // contenteditable
+    var contenteditable = accessibilityController.accessibleElementById("contenteditable1");
+    output += expect("contenteditable.rangeForLine(0)", "'{0, 15}'");
+
+    var multilineContenteditable = accessibilityController.accessibleElementById("contenteditable2");
+    output += expect("multilineContenteditable.rangeForLine(0)", "'{0, 16}'");
+
+    multilineContenteditable = accessibilityController.accessibleElementById("contenteditable3");
+    output += expect("multilineContenteditable.rangeForLine(0)", "'{0, 16}'");
+    output += expect("multilineContenteditable.rangeForLine(1)", "'{16, 6}'");
+    output += expect("multilineContenteditable.rangeForLine(2)", "'{22, 5}'");
+
+    // Current behavior also does't expect text to respond to this API, i.e. asking for rangeForLine(0) doesn't return
+    // the range of the line the text is on, rangeForLine(1) doesn't return the range for the line after this text, etc.
+    var textChild = multilineContenteditable.childAtIndex(0);
+    output += expect("textChild.rangeForLine(0)", "null");
+    output += expect("textChild.rangeForLine(1)", "null");
+    output += expect("textChild.rangeForLine(2)", "null");
+
+    // textarea
+    var textarea = accessibilityController.accessibleElementById("textarea1");
+    output += expect("textarea.rangeForLine(0)", "'{0, 15}'");
+    output += expect("textarea.rangeForLine(1)", "'{0, 0}'");
+
+    var multilineTextarea = accessibilityController.accessibleElementById("textarea2");
+    output += expect("multilineTextarea.rangeForLine(0)", "'{0, 16}'");
+    output += expect("multilineTextarea.rangeForLine(1)", "'{16, 6}'");
+    output += expect("multilineTextarea.rangeForLine(2)", "'{22, 5}'");
+
+    // input text field
+    var textfield = accessibilityController.accessibleElementById("textfield");
+    output += expect("textfield.rangeForLine(0)", "'{0, 21}'");
+
+    document.getElementById("textfield").value = "Hello";
+    setTimeout(async function() {
+        output += await expectAsync("textfield.rangeForLine(0)", "'{0, 5}'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

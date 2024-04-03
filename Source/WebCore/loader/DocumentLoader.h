@@ -192,6 +192,7 @@ public:
     WEBCORE_EXPORT virtual void detachFromFrame(LoadWillContinueInAnotherProcess);
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
+    CheckedPtr<FrameLoader> checkedFrameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
     WEBCORE_EXPORT RefPtr<FragmentedSharedBuffer> mainResourceData() const;
     
@@ -204,6 +205,7 @@ public:
     ResourceRequest& request();
 
     CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
+    Ref<CachedResourceLoader> protectedCachedResourceLoader() const;
 
     const SubstituteData& substituteData() const { return m_substituteData; }
 
@@ -215,7 +217,7 @@ public:
     const String& responseMIMEType() const;
 #if PLATFORM(IOS_FAMILY)
     // FIXME: This method seems to violate the encapsulation of this class.
-    WEBCORE_EXPORT void setResponseMIMEType(const AtomString&);
+    WEBCORE_EXPORT void setResponseMIMEType(const String&);
 #endif
     const String& currentContentType() const;
     void replaceRequestURLForSameDocumentNavigation(const URL&);
@@ -252,6 +254,7 @@ public:
     RefPtr<Archive> popArchiveForSubframe(const String& frameName, const URL&);
     WEBCORE_EXPORT SharedBuffer* parsedArchiveData() const;
 
+    bool hasArchiveResourceCollection() const { return !!m_archiveResourceCollection; }
     WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader&, const ResourceRequest&);
 #endif
 
@@ -329,6 +332,9 @@ public:
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
 
+    const HashSet<String>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
+    void setVisibilityAdjustmentSelectors(HashSet<String>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }
+
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
     void setDeviceOrientationAndMotionAccessState(DeviceOrientationOrMotionPermissionState state) { m_deviceOrientationAndMotionAccessState = state; }
@@ -377,8 +383,8 @@ public:
     WEBCORE_EXPORT ColorSchemePreference colorSchemePreference() const;
     void setColorSchemePreference(ColorSchemePreference preference) { m_colorSchemePreference = preference; }
 
-    void addSubresourceLoader(ResourceLoader&);
-    void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
+    void addSubresourceLoader(SubresourceLoader&);
+    void removeSubresourceLoader(LoadCompletionType, SubresourceLoader&);
     void addPlugInStreamLoader(ResourceLoader&);
     void removePlugInStreamLoader(ResourceLoader&);
 
@@ -486,6 +492,9 @@ public:
     void contentFilterHandleProvisionalLoadFailure(const ResourceError&);
 #endif
 
+    uint64_t navigationID() const { return m_navigationID; }
+    WEBCORE_EXPORT void setNavigationID(uint64_t);
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -548,6 +557,8 @@ private:
 
     bool maybeLoadEmpty();
     void loadErrorDocument();
+
+    bool shouldClearContentSecurityPolicyForResponse(const ResourceResponse&) const;
 
     bool isMultipartReplacingLoad() const;
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
@@ -624,6 +635,8 @@ private:
     // benefit of the various policy handlers.
     NavigationAction m_triggeringAction;
 
+    uint64_t m_navigationID { 0 };
+
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the
     // back/forward cache.
@@ -686,6 +699,8 @@ private:
     String m_customNavigatorPlatform;
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
     ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
+
+    HashSet<String> m_visibilityAdjustmentSelectors;
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 

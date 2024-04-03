@@ -169,9 +169,9 @@ ApplePayPaymentContact PaymentContact::toApplePayPaymentContact(unsigned version
     return convert(version, m_pkContact.get());
 }
 
-PKContact *PaymentContact::pkContact() const
+RetainPtr<PKContact> PaymentContact::pkContact() const
 {
-    return m_pkContact.get();
+    return m_pkContact;
 }
 
 }

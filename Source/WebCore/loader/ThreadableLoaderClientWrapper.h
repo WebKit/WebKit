@@ -103,13 +103,13 @@ public:
 protected:
     explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient&, const String&);
 
-    ThreadableLoaderClient* m_client;
+    WeakPtr<ThreadableLoaderClient> m_client;
     String m_initiator;
     bool m_done { false };
 };
 
 inline ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper(ThreadableLoaderClient& client, const String& initiator)
-    : m_client(&client)
+    : m_client(client)
     , m_initiator(initiator.isolatedCopy())
 {
 }

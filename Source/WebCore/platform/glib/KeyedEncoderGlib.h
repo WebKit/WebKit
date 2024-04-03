@@ -41,7 +41,7 @@ public:
 private:
     RefPtr<WebCore::SharedBuffer> finishEncoding() final;
 
-    void encodeBytes(const String& key, const uint8_t*, size_t) final;
+    void encodeBytes(const String& key, std::span<const uint8_t>) final;
     void encodeBool(const String& key, bool) final;
     void encodeUInt32(const String& key, uint32_t) final;
     void encodeUInt64(const String& key, uint64_t) final;

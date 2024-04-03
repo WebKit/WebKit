@@ -70,6 +70,7 @@ public:
     bool isImportant() const { return m_metadata.m_important; }
 
     CSSValue* value() const { return m_value.get(); }
+    RefPtr<CSSValue> protectedValue() const { return m_value; }
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, TextDirection, WritingMode);

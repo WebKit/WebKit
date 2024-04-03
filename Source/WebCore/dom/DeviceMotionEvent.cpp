@@ -38,12 +38,27 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DeviceMotionEvent);
 DeviceMotionEvent::~DeviceMotionEvent() = default;
 
 DeviceMotionEvent::DeviceMotionEvent()
-    : m_deviceMotionData(DeviceMotionData::create())
+#if ENABLE(DEVICE_ORIENTATION)
+    : Event(EventInterfaceType::DeviceMotionEvent)
+#else
+    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
+    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
+    // but DeviceMotionEvent.cpp itself is required by unguarded code.
+    : Event(EventInterfaceType::Event)
+#endif
+    , m_deviceMotionData(DeviceMotionData::create())
 {
 }
 
 DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionData* deviceMotionData)
-    : Event(eventType, CanBubble::No, IsCancelable::No)
+#if ENABLE(DEVICE_ORIENTATION)
+    : Event(EventInterfaceType::DeviceMotionEvent, eventType, CanBubble::No, IsCancelable::No)
+#else
+    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
+    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
+    // but DeviceMotionEvent.cpp itself is required by unguarded code.
+    : Event(EventInterfaceType::Event, eventType, CanBubble::No, IsCancelable::No)
+#endif
     , m_deviceMotionData(deviceMotionData)
 {
 }
@@ -116,18 +131,6 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbl
 
     initEvent(type, bubbles, cancelable);
     m_deviceMotionData = DeviceMotionData::create(convert(WTFMove(acceleration)), convert(WTFMove(accelerationIncludingGravity)), convert(WTFMove(rotationRate)), interval);
-}
-
-EventInterface DeviceMotionEvent::eventInterface() const
-{
-#if ENABLE(DEVICE_ORIENTATION)
-    return DeviceMotionEventInterfaceType;
-#else
-    // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
-    // it is half-guarded by #ifdefs. DeviceMotionEvent.idl is guarded
-    // but DeviceMotionEvent.cpp itself is required by ungarded code.
-    return EventInterfaceType;
-#endif
 }
 
 #if ENABLE(DEVICE_ORIENTATION)

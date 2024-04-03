@@ -35,7 +35,7 @@ layer at (8,202) size 340x176
         RenderTableCell {TD} at (174,10) size 72x2 [bgcolor=#008000] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
         RenderTableCell {TD} at (92,10) size 72x2 [bgcolor=#008000] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
         RenderTableCell {TD} at (10,10) size 72x2 [bgcolor=#FF0000] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (71,-13) size 0x17
       RenderTableRow {TR} at (0,92) size 338x72
         RenderTableCell {TD} at (256,92) size 72x2 [bgcolor=#008000] [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
         RenderTableCell {TD} at (174,92) size 72x2 [bgcolor=#008000] [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]

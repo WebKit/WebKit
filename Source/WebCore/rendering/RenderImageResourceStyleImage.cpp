@@ -69,7 +69,7 @@ RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
 void RenderImageResourceStyleImage::setContainerContext(const IntSize& size, const URL&)
 {
     if (auto renderer = this->renderer())
-        m_styleImage->setContainerContextForRenderer(*renderer, size, renderer->style().effectiveZoom());
+        m_styleImage->setContainerContextForRenderer(*renderer, size, renderer->style().usedZoom());
 }
 
 } // namespace WebCore

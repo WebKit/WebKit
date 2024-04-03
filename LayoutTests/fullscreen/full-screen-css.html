@@ -2,7 +2,7 @@
 <script src="full-screen-test.js"></script>
 <style>
     :-webkit-full-screen { background: lime; }
-    :-webkit-full-screen-document { color: blue; }
+    :root:is(:fullscreen, :has(:fullscreen)) { color: blue; }
 </style>
 <span></span>
 <script>

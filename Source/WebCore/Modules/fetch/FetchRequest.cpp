@@ -30,6 +30,7 @@
 #include "FetchRequest.h"
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
 #include "Logging.h"
@@ -165,7 +166,8 @@ static inline std::optional<Exception> processInvalidSignal(ScriptExecutionConte
     ASCIILiteral message { "FetchRequestInit.signal should be undefined, null or an AbortSignal object. This will throw in a future release."_s };
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
 
-    if (is<Document>(context) && downcast<Document>(context).quirks().shouldIgnoreInvalidSignal())
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (document && document->quirks().shouldIgnoreInvalidSignal())
         return { };
 
     RELEASE_LOG_ERROR(ResourceLoading, "FetchRequestInit.signal should be undefined, null or an AbortSignal object.");
@@ -193,7 +195,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 
     if (init.signal) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->signalFollow(*signal);
+            protectedSignal()->signalFollow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
@@ -223,6 +225,7 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     m_options = input.m_options;
     m_referrer = input.m_referrer;
     m_fetchPriorityHint = input.m_fetchPriorityHint;
+    m_enableContentExtensionsCheck = input.m_enableContentExtensionsCheck;
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
@@ -230,14 +233,14 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 
     if (init.signal && !init.signal.isUndefined()) {
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
-            m_signal->signalFollow(*signal);
+            protectedSignal()->signalFollow(*signal);
         else if (!init.signal.isNull()) {
             if (auto exception = processInvalidSignal(*scriptExecutionContext()))
                 return WTFMove(*exception);
         }
 
     } else
-        m_signal->signalFollow(input.m_signal.get());
+        protectedSignal()->signalFollow(input.m_signal.get());
 
     if (init.hasMembers()) {
         auto fillResult = init.headers ? m_headers->fill(*init.headers) : m_headers->fill(input.headers());
@@ -350,7 +353,8 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
     clone->suspendIfNeeded();
     clone->cloneBody(*this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
-    clone->m_signal->signalFollow(m_signal);
+    clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
+    clone->protectedSignal()->signalFollow(m_signal);
     return clone;
 }
 

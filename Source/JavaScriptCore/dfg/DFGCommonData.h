@@ -132,6 +132,7 @@ public:
     FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> m_stringSearchTable8;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
+    Bag<DirectCallLinkInfo> m_directCallLinkInfos;
     Yarr::YarrBoyerMooreData m_boyerMooreData;
     
     ScratchBuffer* catchOSREntryBuffer;

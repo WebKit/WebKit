@@ -224,7 +224,7 @@ TEST_P(ExternalBufferTestES31, DispatchCompute)
 
     GLProgram program;
     program.makeCompute(kCS);
-    ASSERT_NE(program.get(), 0U);
+    ASSERT_NE(program, 0U);
     ASSERT_GL_NO_ERROR();
 
     glUseProgram(program);

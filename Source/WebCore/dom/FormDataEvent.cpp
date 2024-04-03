@@ -44,20 +44,15 @@ Ref<FormDataEvent> FormDataEvent::create(const AtomString& eventType, CanBubble 
 }
 
 FormDataEvent::FormDataEvent(const AtomString& eventType, Init&& init)
-    : Event(eventType, init, IsTrusted::No)
+    : Event(EventInterfaceType::FormDataEvent, eventType, init, IsTrusted::No)
     , m_formData(init.formData.releaseNonNull())
 {
 }
 
 FormDataEvent::FormDataEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, Ref<DOMFormData>&& formData)
-    : Event(eventType, canBubble, isCancelable, isComposed)
+    : Event(EventInterfaceType::FormDataEvent, eventType, canBubble, isCancelable, isComposed)
     , m_formData(WTFMove(formData))
 {
-}
-
-EventInterface FormDataEvent::eventInterface() const
-{
-    return FormDataEventInterfaceType;
 }
 
 } // namespace WebCore

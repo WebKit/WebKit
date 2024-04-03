@@ -205,20 +205,16 @@ MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDB
 
 MediaSessionGLib::~MediaSessionGLib()
 {
-    if (m_connection) {
-        if (m_rootRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_rootRegistrationId))
-            g_warning("Unable to unregister MPRIS D-Bus object.");
-        if (m_playerRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_playerRegistrationId))
-            g_warning("Unable to unregister MPRIS D-Bus player object.");
-    }
-    if (m_ownerId)
-        g_bus_unown_name(m_ownerId);
+    unregisterMprisSession();
 }
 
-void MediaSessionGLib::ensureMprisSessionRegistered()
+bool MediaSessionGLib::ensureMprisSessionRegistered()
 {
-    if (m_ownerId || !m_connection)
-        return;
+    if (!m_connection || mprisRegistrationEligibility() == MediaSessionGLibMprisRegistrationEligiblilty::NotEligible)
+        return false;
+
+    if (m_ownerId)
+        return true;
 
     const auto& mprisInterface = m_manager.mprisInterface();
     GUniqueOutPtr<GError> error;
@@ -227,7 +223,7 @@ void MediaSessionGLib::ensureMprisSessionRegistered()
 
     if (!m_rootRegistrationId) {
         g_warning("Failed to register MPRIS D-Bus object: %s", error->message);
-        return;
+        return false;
     }
 
     m_playerRegistrationId = g_dbus_connection_register_object(m_connection.get(), DBUS_MPRIS_OBJECT_PATH, mprisInterface->interfaces[1],
@@ -235,13 +231,35 @@ void MediaSessionGLib::ensureMprisSessionRegistered()
 
     if (!m_playerRegistrationId) {
         g_warning("Failed at MPRIS object registration: %s", error->message);
-        return;
+        return false;
     }
 
     const auto& applicationID = getApplicationID();
     m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance", getpid(), "-", m_identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2.", applicationID.ascii().data(), ".Sandboxed.instance-", m_identifier.toUInt64());
 
     m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
+
+    return true;
+}
+
+void MediaSessionGLib::unregisterMprisSession()
+{
+    if (m_connection) {
+        if (m_rootRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_rootRegistrationId))
+            g_warning("Unable to unregister MPRIS D-Bus object.");
+        m_rootRegistrationId = 0;
+
+        if (m_playerRegistrationId && !g_dbus_connection_unregister_object(m_connection.get(), m_playerRegistrationId))
+            g_warning("Unable to unregister MPRIS D-Bus player object.");
+        m_playerRegistrationId = 0;
+    }
+    if (m_ownerId) {
+        g_bus_unown_name(m_ownerId);
+        m_ownerId = 0;
+    }
+
+    // This session will only be eligible again once it is set to the primary session.
+    setMprisRegistrationEligibility(MprisRegistrationEligiblilty::NotEligible);
 }
 
 void MediaSessionGLib::emitPositionChanged(double time)
@@ -249,7 +267,8 @@ void MediaSessionGLib::emitPositionChanged(double time)
     if (!m_connection)
         return;
 
-    ensureMprisSessionRegistered();
+    if (!ensureMprisSessionRegistered())
+        return;
 
     GUniqueOutPtr<GError> error;
     int64_t position = time * 1000000;
@@ -301,7 +320,7 @@ GVariant* MediaSessionGLib::getPlaybackStatusAsGVariant(std::optional<const Plat
         if (session)
             return session.value()->state();
 
-        auto* nowPlayingSession = m_manager.nowPlayingEligibleSession();
+        auto nowPlayingSession = m_manager.nowPlayingEligibleSession();
         if (nowPlayingSession)
             return nowPlayingSession->state();
 
@@ -327,7 +346,8 @@ void MediaSessionGLib::emitPropertiesChanged(GVariant* parameters)
     if (!m_connection)
         return;
 
-    ensureMprisSessionRegistered();
+    if (!ensureMprisSessionRegistered())
+        return;
 
     GUniqueOutPtr<GError> error;
     if (!g_dbus_connection_emit_signal(m_connection.get(), nullptr, DBUS_MPRIS_OBJECT_PATH, "org.freedesktop.DBus.Properties", "PropertiesChanged", parameters, &error.outPtr()))

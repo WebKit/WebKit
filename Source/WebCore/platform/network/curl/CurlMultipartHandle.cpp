@@ -295,7 +295,7 @@ CurlMultipartHandle::ParseHeadersResult CurlMultipartHandle::parseHeadersIfPossi
     String value;
 
     for (auto p = contentStartPtr; p < end; ++p) {
-        size_t consumedLength = parseHTTPHeader(p, end - p, failureReason, name, value, false);
+        size_t consumedLength = parseHTTPHeader(std::span { p, static_cast<size_t>(end - p) }, failureReason, name, value, false);
         if (!consumedLength)
             break; // No more header to parse.
 

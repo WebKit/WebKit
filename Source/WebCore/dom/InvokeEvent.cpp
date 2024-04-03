@@ -34,8 +34,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InvokeEvent);
 
+InvokeEvent::InvokeEvent()
+    : Event(EventInterfaceType::InvokeEvent)
+{
+}
+
 InvokeEvent::InvokeEvent(const AtomString& type, const InvokeEvent::Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::InvokeEvent, type, initializer, isTrusted)
     , m_invoker(initializer.invoker)
     , m_action(initializer.action)
 {
@@ -51,11 +56,6 @@ Ref<InvokeEvent> InvokeEvent::createForBindings()
     return adoptRef(*new InvokeEvent);
 }
 
-EventInterface InvokeEvent::eventInterface() const
-{
-    return InvokeEventInterfaceType;
-}
-
 bool InvokeEvent::isInvokeEvent() const
 {
     return true;
@@ -64,6 +64,9 @@ bool InvokeEvent::isInvokeEvent() const
 RefPtr<Element> InvokeEvent::invoker() const
 {
     auto* invoker = m_invoker.get();
+    if (!invoker)
+        return nullptr;
+
     if (RefPtr target = dynamicDowncast<Node>(currentTarget())) {
         auto& treeScope = target->treeScope();
         auto node = treeScope.retargetToScope(*invoker);

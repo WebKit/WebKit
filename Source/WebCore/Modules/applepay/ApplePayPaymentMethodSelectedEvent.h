@@ -49,9 +49,6 @@ public:
 private:
     ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod&);
 
-    // Event.
-    EventInterface eventInterface() const override;
-
     const ApplePayPaymentMethod m_paymentMethod;
 };
 

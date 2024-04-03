@@ -28,30 +28,24 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
-#import <WebCore/RegistrableDomain.h>
+#import <BrowserEngineKit/BECapability.h>
+#import <WebCore/SecurityOrigin.h>
 #import <wtf/text/WTFString.h>
-
-#import "ExtensionKitSoftLink.h"
 
 namespace WebKit {
 
-using WebCore::RegistrableDomain;
-
-static RetainPtr<_SECapability> createPlatformCapability(const URL& url)
+static RetainPtr<BEMediaEnvironment> createMediaEnvironment(const URL& webPageURL)
 {
-#if USE(EXTENSIONKIT)
-    if (_SECapability *capability = [get_SECapabilityClass() mediaWithWebsite:RegistrableDomain(url).string()])
-        return capability;
-#endif
-
-    UNUSED_PARAM(url);
-    return nil;
+    NSURL *protocolHostAndPortURL = URL { webPageURL.protocolHostAndPort() };
+    RELEASE_ASSERT(protocolHostAndPortURL);
+    return adoptNS([[BEMediaEnvironment alloc] initWithWebPageURL:protocolHostAndPortURL]);
 }
 
-MediaCapability::MediaCapability(URL url)
-    : m_url { WTFMove(url) }
-    , m_platformCapability { createPlatformCapability(m_url) }
+MediaCapability::MediaCapability(URL&& webPageURL)
+    : m_webPageURL { WTFMove(webPageURL) }
+    , m_mediaEnvironment { createMediaEnvironment(m_webPageURL) }
 {
+    setPlatformCapability([BEProcessCapability mediaPlaybackAndCaptureWithEnvironment:m_mediaEnvironment.get()]);
 }
 
 bool MediaCapability::isActivatingOrActive() const
@@ -69,16 +63,13 @@ bool MediaCapability::isActivatingOrActive() const
     return false;
 }
 
-RegistrableDomain MediaCapability::registrableDomain() const
-{
-    return RegistrableDomain { m_url };
-}
-
 String MediaCapability::environmentIdentifier() const
 {
 #if USE(EXTENSIONKIT)
-    if (NSString *mediaEnvironment = [m_platformCapability mediaEnvironment])
-        return mediaEnvironment;
+    xpc_object_t xpcObject = [m_mediaEnvironment createXPCRepresentation];
+    if (!xpcObject)
+        return emptyString();
+    return String::fromUTF8(xpc_dictionary_get_string(xpcObject, "identifier"));
 #endif
 
     return { };

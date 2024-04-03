@@ -1,0 +1,75 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+SFNT_FILES = [
+    "SkIBMFamilyClass.h",
+    "SkOTTableTypes.h",
+    "SkOTTable_EBDT.h",
+    "SkOTTable_EBLC.h",
+    "SkOTTable_EBSC.h",
+    "SkOTTable_OS_2.h",
+    "SkOTTable_OS_2_V0.h",
+    "SkOTTable_OS_2_V1.h",
+    "SkOTTable_OS_2_V2.h",
+    "SkOTTable_OS_2_V3.h",
+    "SkOTTable_OS_2_V4.h",
+    "SkOTTable_OS_2_VA.h",
+    "SkOTTable_fvar.h",
+    "SkOTTable_gasp.h",
+    "SkOTTable_glyf.h",
+    "SkOTTable_head.h",
+    "SkOTTable_hhea.h",
+    "SkOTTable_hmtx.h",
+    "SkOTTable_loca.h",
+    "SkOTTable_maxp.h",
+    "SkOTTable_maxp_CFF.h",
+    "SkOTTable_maxp_TT.h",
+    "SkOTTable_name.cpp",
+    "SkOTTable_name.h",
+    "SkOTTable_post.h",
+    "SkOTUtils.cpp",
+    "SkOTUtils.h",
+    "SkPanose.h",
+    "SkSFNTHeader.h",
+    "SkTTCFHeader.h",
+]
+
+split_srcs_and_hdrs(
+    name = "sfnt",
+    files = SFNT_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":sfnt_srcs"],
+    visibility = [
+        "//src:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":sfnt_hdrs"],
+    visibility = [
+        "//src:__pkg__",
+    ],
+)
+
+alias(
+    name = "core_priv_hdrs",
+    actual = ":private_hdrs",
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)
+
+alias(
+    name = "core_srcs",
+    actual = ":srcs",
+    visibility = [
+        "//src/core:__pkg__",
+    ],
+)

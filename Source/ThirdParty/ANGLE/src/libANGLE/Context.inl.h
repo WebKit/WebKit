@@ -188,6 +188,11 @@ ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
 
     mState.setBufferBinding(this, target, bufferObject);
     mStateCache.onBufferBindingChange(this);
+
+    if (bufferObject)
+    {
+        bufferObject->onBind(this, target);
+    }
 }
 
 }  // namespace gl

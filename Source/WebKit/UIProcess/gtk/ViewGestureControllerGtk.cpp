@@ -56,7 +56,6 @@ static const double swipeCancelArea = 0.5;
 static const double swipeCancelVelocityThreshold = 0.4;
 
 #if USE(GTK4)
-static const float swipeOverlayShadowOpacity = 0.06;
 static const float swipeOverlayBorderOpacity = 0.05;
 static const float swipeOverlayOutlineOpacity = 0.05;
 static const float swipeOverlayDimmingOpacity = 0.12;
@@ -680,6 +679,9 @@ void ViewGestureController::setMagnification(double scale, FloatPoint origin)
         return;
 
     willBeginGesture(ViewGestureType::Magnification);
+
+    auto minMagnification = m_webPageProxy.minPageZoomFactor();
+    auto maxMagnification = m_webPageProxy.maxPageZoomFactor();
 
     double absoluteScale = scale * m_initialMagnification;
     m_magnification = clampTo<double>(absoluteScale, minMagnification, maxMagnification);

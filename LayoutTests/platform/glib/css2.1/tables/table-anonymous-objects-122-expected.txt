@@ -18,7 +18,7 @@ layer at (8,50) size 78x39
       RenderInline {span} at (0,0) size 38x36
         RenderText {#text} at (0,0) size 38x36
           text run at (0,0) width 38: "a b"
-      RenderInline {span} at (0,0) size 38x36
+      RenderInline {span} at (38,0) size 38x36
         RenderText {#text} at (38,0) size 38x36
           text run at (38,0) width 38: "c d"
       RenderText {#text} at (0,0) size 0x0

@@ -25,11 +25,12 @@
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WGSL {
 
-class CallGraph;
-struct PrepareResult;
+class ShaderModule;
 
-void mangleNames(CallGraph&, PrepareResult&);
+void mangleNames(ShaderModule&);
 
 } // namespace WGSL

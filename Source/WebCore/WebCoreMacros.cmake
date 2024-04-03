@@ -18,20 +18,6 @@ macro(MAKE_HASH_TOOLS _source)
 endmacro()
 
 
-# Append the given dependencies to the source file
-# This one consider the given dependencies are in ${WebCore_DERIVED_SOURCES_DIR}
-# and prepends this to every member of dependencies list
-macro(ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES _source _deps)
-    set(_tmp "")
-    foreach (f ${_deps})
-        list(APPEND _tmp "${WebCore_DERIVED_SOURCES_DIR}/${f}")
-    endforeach ()
-
-    WEBKIT_ADD_SOURCE_DEPENDENCIES(${_source} ${_tmp})
-    unset(_tmp)
-endmacro()
-
-
 macro(MAKE_JS_FILE_ARRAYS _output_cpp _output_h _namespace _scripts _scripts_dependencies)
     add_custom_command(
         OUTPUT ${_output_h} ${_output_cpp}
@@ -126,6 +112,8 @@ function(GENERATE_BINDINGS target)
         # Changing enabled features should trigger recompiling all IDL files
         # because some of them use #if.
         ${CMAKE_BINARY_DIR}/cmakeconfig.h
+        # Settings can be removed also which requires regeneration.
+        ${WTF_WEB_PREFERENCES}
     )
     if (EXISTS ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)
         list(APPEND common_generator_dependencies ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${arg_GENERATOR}.pm)

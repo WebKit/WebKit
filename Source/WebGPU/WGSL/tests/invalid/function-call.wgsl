@@ -1,6 +1,8 @@
 // RUN: %not %wgslc | %check
 
-fn f1(x: f32) -> f32 { return x; }
+fn f1(x: f32) -> f32 {
+    // CHECK-L: missing return at end of function
+}
 
 fn f2() {
     // CHECK-L: unresolved call target 'f0'
@@ -21,4 +23,10 @@ fn f2() {
 
     // CHECK-L: funtion call has too many arguments: expected 1, found 2
     _ = f1(0, 0);
+}
+
+fn f3() { }
+fn f4() {
+    // CHECK-L: cannot initialize variable with expression of type 'void'
+    let x = f3();
 }

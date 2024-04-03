@@ -1,3 +1,4 @@
+popover
 
-PASS Changing the popover attribute should always update the auto/manual behavior.
+FAIL Changing the popover attribute should always update the auto/manual behavior. promise_test: Unhandled rejection with value: object "Error: element send_keys intercepted error"
 

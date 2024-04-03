@@ -16,7 +16,7 @@ layer at (0,0) size 800x164
             RenderText {#text} at (8,10) size 144x40
               text run at (8,10) width 120: "\x{21E8} This blue block"
               text run at (8,31) width 144: "should be on the right."
-          RenderText {#text} at (184,8) size 533x79
+          RenderText {#text} at (8,8) size 533x79
             text run at (184,8) width 322: "Teal rectangle. Teal rectangle. Teal rectangle. Teal"
             text run at (184,28) width 263: "rectangle. Teal rectangle. Teal rectangle. "
             text run at (446,28) width 95: "Teal rectangle."

@@ -65,7 +65,7 @@ layer at (0,0) size 785x1774
         RenderText {#text} at (0,0) size 754x35
           text run at (0,0) width 754: "This letters in this sentence should have extra space between them,"
           text run at (0,18) width 435: "but the last few words in the sentence "
-        RenderInline {SPAN} at (0,0) size 180x17
+        RenderInline {SPAN} at (435,18) size 180x17
           RenderText {#text} at (435,18) size 180x17
             text run at (435,18) width 180: "should show normal spacing"
         RenderText {#text} at (615,18) size 9x17
@@ -99,12 +99,12 @@ layer at (0,0) size 785x1774
         RenderTableSection {TBODY} at (1,1) size 2776x646
           RenderTableRow {TR} at (0,0) size 2776x26
             RenderTableCell {TD} at (0,0) size 2776x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 2776x620
             RenderTableCell {TD} at (0,323) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+              RenderText {#text} at (4,301) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 2764x620 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 2756x18
@@ -131,7 +131,7 @@ layer at (0,0) size 785x1774
               RenderBlock {P} at (4,242) size 2756x18
                 RenderText {#text} at (0,0) size 1198x17
                   text run at (0,0) width 1198: "This letters in this sentence should have extra space between them, but the last few words in the sentence "
-                RenderInline {SPAN} at (0,0) size 180x17
+                RenderInline {SPAN} at (1198,0) size 180x17
                   RenderText {#text} at (1198,0) size 180x17
                     text run at (1198,0) width 180: "should show normal spacing"
                 RenderText {#text} at (1378,0) size 9x17

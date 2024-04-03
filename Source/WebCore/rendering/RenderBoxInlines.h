@@ -49,9 +49,6 @@ inline bool RenderBox::hasScrollableOverflowX() const { return scrollsOverflowX(
 inline bool RenderBox::hasScrollableOverflowY() const { return scrollsOverflowY() && hasVerticalOverflow(); }
 inline bool RenderBox::hasVerticalOverflow() const { return scrollHeight() != roundToInt(paddingBoxHeight()); }
 inline LayoutUnit RenderBox::intrinsicLogicalHeight() const { return style().isHorizontalWritingMode() ? intrinsicSize().height() : intrinsicSize().width(); }
-inline bool RenderBox::isBlockLevelBox() const { return style().isDisplayBlockLevel(); }
-inline bool RenderBox::isLeftLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && isHorizontalWritingMode(); }
-inline bool RenderBox::isTopLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && !isHorizontalWritingMode(); }
 inline LayoutUnit RenderBox::logicalBottom() const { return logicalTop() + logicalHeight(); }
 inline LayoutUnit RenderBox::logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
 inline LayoutUnit RenderBox::logicalLeft() const { return style().isHorizontalWritingMode() ? x() : y(); }

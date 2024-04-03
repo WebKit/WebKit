@@ -28,6 +28,7 @@
 
 #include "DOMRect.h"
 #include "DataTransfer.h"
+#include "Document.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
@@ -47,7 +48,7 @@ public:
 
 private:
     SimulatedMouseEvent(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
-        : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
+        : MouseEvent(EventInterfaceType::MouseEvent, eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
             underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
             { }, { }, 0, 0, modifiersFromUnderlyingEvent(underlyingEvent), MouseButton::Left, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::Yes,
             source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No)
@@ -91,9 +92,6 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
         return false;
 
     auto& eventNames = WebCore::eventNames();
-    if (mouseEventOptions == SendMouseOverUpDownEvents)
-        simulateMouseEvent(eventNames.mouseoverEvent, element, underlyingEvent, creationOptions);
-
     if (mouseEventOptions != SendNoEvents)
         simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions);
     if (mouseEventOptions != SendNoEvents || visualOptions == ShowPressedLook)

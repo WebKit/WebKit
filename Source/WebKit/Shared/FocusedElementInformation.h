@@ -104,6 +104,7 @@ struct FocusedElementInformation {
     bool allowsUserScaling { false };
     bool allowsUserScalingIgnoringAlwaysScalable { false };
     bool insideFixedPosition { false };
+    bool hasPlainText { false };
     WebCore::AutocapitalizeType autocapitalizeType { WebCore::AutocapitalizeType::Default };
     InputType elementType { InputType::None };
     WebCore::InputMode inputMode { WebCore::InputMode::Unspecified };
@@ -133,6 +134,7 @@ struct FocusedElementInformation {
     bool hasEverBeenPasswordField { false };
     bool shouldSynthesizeKeyEventsForEditing { false };
     bool isSpellCheckingEnabled { true };
+    bool isWritingSuggestionsEnabled { false };
     bool shouldAvoidResizingWhenInputViewBoundsChange { false };
     bool shouldAvoidScrollingWhenFocusedContentIsVisible { false };
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
@@ -140,7 +142,7 @@ struct FocusedElementInformation {
     bool preventScroll { false };
 
     FocusedElementInformationIdentifier identifier;
-    WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
+    Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;
 
     WebCore::FrameIdentifier frameID;
 };

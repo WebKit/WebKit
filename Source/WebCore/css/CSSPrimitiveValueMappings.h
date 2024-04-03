@@ -367,7 +367,6 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
     case StyleAppearance::ApplePayButton:
         return CSSValueApplePayButton;
 #endif
-    case StyleAppearance::CapsLockIndicator:
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
 #endif
@@ -407,6 +406,12 @@ template<> constexpr StyleAppearance fromCSSValueID(CSSValueID valueID)
 
 #define TYPE BackfaceVisibility
 #define FOR_EACH(CASE) CASE(Visible) CASE(Hidden)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE FieldSizing
+#define FOR_EACH(CASE) CASE(Fixed) CASE(Content)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

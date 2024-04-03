@@ -26,90 +26,44 @@
 #include "LineBreaker.h"
 
 #include "BreakingContext.h"
-#include "RenderCombineText.h"
 
 namespace WebCore {
 
-void LineBreaker::reset()
-{
-    m_positionedObjects.clear();
-    m_hyphenated = false;
-    m_clear = UsedClear::None;
-}
-
-// FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building
-// line boxes even for containers that may ultimately collapse away. Otherwise we'll never get positioned
-// elements quite right. In other words, we need to build this function's work into the normal line
-// object iteration process.
-// NB. this function will insert any floating elements that would otherwise
-// be skipped but it will not position them.
 void LineBreaker::skipTrailingWhitespace(LegacyInlineIterator& iterator, const LineInfo& lineInfo)
 {
-    while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
-        RenderObject& object = *iterator.renderer();
-        if (object.isOutOfFlowPositioned())
-            setStaticPositions(m_block, downcast<RenderBox>(object), DoNotIndentText);
-        else if (object.isFloating())
-            m_block.insertFloatingObject(downcast<RenderBox>(object));
+    while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace))
         iterator.increment();
-    }
 }
 
-void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo, FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
+void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo)
 {
-    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
-        RenderObject& object = *resolver.position().renderer();
-        if (object.isOutOfFlowPositioned()) {
-            setStaticPositions(m_block, downcast<RenderBox>(object), width.shouldIndentText());
-            if (object.style().isOriginalDisplayInlineType()) {
-                resolver.runs().appendRun(makeUnique<BidiRun>(0, 1, object, resolver.context(), resolver.dir()));
-                lineInfo.incrementRunsFromLeadingWhitespace();
-            }
-        } else if (object.isFloating())
-            m_block.legacyLineLayout()->positionNewFloatOnLine(*m_block.insertFloatingObject(downcast<RenderBox>(object)), lastFloatFromPreviousLine, lineInfo, width);
-        else if (object.style().hasTextCombine()) {
-            if (CheckedPtr combineText = dynamicDowncast<RenderCombineText>(object)) {
-                combineText->combineTextIfNeeded();
-                if (combineText->isCombined())
-                    continue;
-            }
-        }
+    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace))
         resolver.increment();
-    }
+
     resolver.commitExplicitEmbedding();
 }
 
-LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+LegacyInlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, WordMeasurements& wordMeasurements)
 {
-    reset();
-
     ASSERT(resolver.position().root() == &m_block);
 
     bool appliedStartWidth = resolver.position().offset();
 
-    LineWidth width(m_block, lineInfo.isFirstLine(), requiresIndent(lineInfo.isFirstLine(), lineInfo.previousLineBrokeCleanly(), m_block.style()));
+    LineWidth width(m_block, lineInfo.isFirstLine());
 
-    skipLeadingWhitespace(resolver, lineInfo, lastFloatFromPreviousLine, width);
+    skipLeadingWhitespace(resolver, lineInfo);
 
     if (resolver.position().atEnd())
         return resolver.position();
 
-    BreakingContext context(*this, resolver, lineInfo, width, renderTextInfo, lastFloatFromPreviousLine, appliedStartWidth, m_block);
+    BreakingContext context(*this, resolver, lineInfo, width, renderTextInfo, appliedStartWidth, m_block);
 
     while (context.currentObject()) {
         context.initializeForCurrentObject();
-        if (context.currentObject()->isBR()) {
-            context.handleBR(m_clear);
-        } else if (context.currentObject()->isOutOfFlowPositioned()) {
-            context.handleOutOfFlowPositioned(m_positionedObjects);
-        } else if (context.currentObject()->isFloating()) {
-            context.handleFloat();
-        } else if (context.currentObject()->isRenderInline()) {
+        if (context.currentObject()->isRenderInline()) {
             context.handleEmptyInline();
-        } else if (context.currentObject()->isReplacedOrInlineBlock()) {
-            context.handleReplaced();
         } else if (context.currentObject()->isRenderText()) {
-            if (context.handleText(wordMeasurements, m_hyphenated, consecutiveHyphenatedLines)) {
+            if (context.handleText(wordMeasurements)) {
                 // We've hit a hard text line break. Our line break iterator is updated, so early return.
                 return context.lineBreak();
             }

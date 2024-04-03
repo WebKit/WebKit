@@ -44,6 +44,10 @@
 #include <cairo.h>
 #endif
 
+#if HAVE(IOSURFACE)
+#include "IOSurface.h"
+#endif
+
 namespace WTF {
 class TextStream;
 }
@@ -54,7 +58,6 @@ struct ImageBufferCreationContext;
 class GraphicsContext;
 class GraphicsContextGL;
 #if HAVE(IOSURFACE)
-class IOSurface;
 class IOSurfacePool;
 #endif
 class Image;
@@ -153,8 +156,6 @@ public:
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
-
-    virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     const Parameters& parameters() { return m_parameters; }
 

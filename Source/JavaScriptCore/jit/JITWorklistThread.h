@@ -42,10 +42,17 @@ class JITWorklistThread final : public AutomaticThread {
     friend class WorkScope;
     friend class JITWorklist;
 
+    enum class State : uint8_t {
+        NotCompiling,
+        Compiling,
+    };
+
 public:
     JITWorklistThread(const AbstractLocker&, JITWorklist&);
 
     const char* name() const final;
+
+    State state() const { return m_state; }
 
 private:
     PollResult poll(const AbstractLocker&) final;
@@ -56,6 +63,7 @@ private:
     void threadIsStopping(const AbstractLocker&) final;
 
     Lock m_rightToRun;
+    State m_state { State::NotCompiling };
     JITWorklist& m_worklist;
     RefPtr<JITPlan> m_plan { nullptr };
     Safepoint* m_safepoint { nullptr };

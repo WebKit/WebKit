@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)
 
 #include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include "CAAudioStreamDescription.h"
@@ -102,4 +102,4 @@ private:
 
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)

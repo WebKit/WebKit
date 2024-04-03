@@ -29,6 +29,7 @@
 
 #include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayDeferredPaymentRequest.h"
+#include "ApplePayDisbursementPaymentRequest.h"
 #include "ApplePayError.h"
 #include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
@@ -93,6 +94,9 @@ public:
         bool supportsEMV { false };
         bool supportsCredit { false };
         bool supportsDebit { false };
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        bool supportsInstantFundsOut { false };
+#endif
     };
 
     const MerchantCapabilities& merchantCapabilities() const { return m_merchantCapabilities; }
@@ -163,11 +167,99 @@ public:
     void setDeferredPaymentRequest(std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest) { m_deferredPaymentRequest = WTFMove(deferredPaymentRequest); }
 #endif
 
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    const std::optional<ApplePayDisbursementPaymentRequest>& disbursementPaymentRequest() const { return m_disbursementPaymentRequest; }
+    void setDisbursementPaymentRequest(std::optional<ApplePayDisbursementPaymentRequest>&& disbursementPaymentRequest) { m_disbursementPaymentRequest = WTFMove(disbursementPaymentRequest); }
+#endif
+
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability() const { return m_applePayLaterAvailability; }
     void setApplePayLaterAvailability(const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability) { m_applePayLaterAvailability = applePayLaterAvailability; }
 #endif
-    
+
+    ApplePaySessionPaymentRequest(String&& countryCode
+        , String&& currencyCode
+        , ContactFields&& requiredBillingContactFields
+        , PaymentContact&& billingContact
+        , ContactFields&& requiredShippingContactFields
+        , PaymentContact&& shippingContact
+        , Vector<String>&& supportedNetworks
+        , MerchantCapabilities&& merchantCapabilities
+        , ApplePaySessionPaymentRequestShippingType&& shippingType
+        , Vector<ApplePayShippingMethod>&& shippingMethods
+        , Vector<ApplePayLineItem>&& lineItems
+        , ApplePayLineItem&& total
+        , String applicationData
+        , Vector<String>&& supportedCountries
+        , Requester&& requester
+#if HAVE(PASSKIT_INSTALLMENTS)
+        , PaymentInstallmentConfiguration&& installmentConfiguration
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+        , std::optional<ApplePayShippingContactEditingMode>&& shippingContactEditingMode
+#endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+        , std::optional<bool> supportsCouponCode
+        , String couponCode
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+        , std::optional<ApplePayRecurringPaymentRequest>&& recurringPaymentRequest
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+        , std::optional<ApplePayAutomaticReloadPaymentRequest>&& automaticReloadPaymentRequest
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+        , std::optional<Vector<ApplePayPaymentTokenContext>>&& multiTokenContexts
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+        , std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest
+#endif
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+        , std::optional<ApplePayLaterAvailability>&& applePayLaterAvailability
+#endif
+        )
+            : m_countryCode(WTFMove(countryCode))
+            , m_currencyCode(WTFMove(currencyCode))
+            , m_requiredBillingContactFields(WTFMove(requiredBillingContactFields))
+            , m_billingContact(WTFMove(billingContact))
+            , m_requiredShippingContactFields(WTFMove(requiredShippingContactFields))
+            , m_shippingContact(WTFMove(shippingContact))
+            , m_supportedNetworks(WTFMove(supportedNetworks))
+            , m_merchantCapabilities(WTFMove(merchantCapabilities))
+            , m_shippingType(WTFMove(shippingType))
+            , m_shippingMethods(WTFMove(shippingMethods))
+            , m_lineItems(WTFMove(lineItems))
+            , m_total(WTFMove(total))
+            , m_applicationData(WTFMove(applicationData))
+            , m_supportedCountries(WTFMove(supportedCountries))
+            , m_requester(WTFMove(requester))
+#if HAVE(PASSKIT_INSTALLMENTS)
+            , m_installmentConfiguration(WTFMove(installmentConfiguration))
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+            , m_shippingContactEditingMode(WTFMove(shippingContactEditingMode))
+#endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+            , m_supportsCouponCode(WTFMove(supportsCouponCode))
+            , m_couponCode(WTFMove(couponCode))
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+            , m_recurringPaymentRequest(WTFMove(recurringPaymentRequest))
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+            , m_automaticReloadPaymentRequest(WTFMove(automaticReloadPaymentRequest))
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+            , m_multiTokenContexts(WTFMove(multiTokenContexts))
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+            , m_deferredPaymentRequest(WTFMove(deferredPaymentRequest))
+#endif
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+            , m_applePayLaterAvailability(WTFMove(applePayLaterAvailability))
+#endif
+            { }
+
 private:
     unsigned m_version { 0 };
 
@@ -221,6 +313,10 @@ private:
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     std::optional<ApplePayDeferredPaymentRequest> m_deferredPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    std::optional<ApplePayDisbursementPaymentRequest> m_disbursementPaymentRequest;
 #endif
 
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)

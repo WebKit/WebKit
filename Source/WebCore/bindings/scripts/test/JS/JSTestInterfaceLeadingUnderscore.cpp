@@ -154,12 +154,12 @@ void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestInterfaceLeadingUnderscore_readonlyGetter(JSGlobalObject& lexicalGlobalObject, JSTestInterfaceLeadingUnderscore& thisObject)
@@ -206,7 +206,7 @@ void JSTestInterfaceLeadingUnderscoreOwner::finalize(JSC::Handle<JSC::Unknown> h
 {
     auto* jsTestInterfaceLeadingUnderscore = static_cast<JSTestInterfaceLeadingUnderscore*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestInterfaceLeadingUnderscore->wrapped(), jsTestInterfaceLeadingUnderscore);
+    uncacheWrapper(world, jsTestInterfaceLeadingUnderscore->protectedWrapped().ptr(), jsTestInterfaceLeadingUnderscore);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

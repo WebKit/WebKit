@@ -22,22 +22,22 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (25.00,275.00) startOffset 0 endOffset 3 width 45.00: "One"
           RenderSVGInlineText {#text} at (45,0) size 7x27
             chunk 1 text run 1 at (70.00,275.00) startOffset 0 endOffset 1 width 6.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 53x27
+          RenderSVGTSpan {tspan} at (51,0) size 53x27
             RenderSVGInlineText {#text} at (51,0) size 52x27
               chunk 1 text run 1 at (76.60,275.00) startOffset 0 endOffset 4 width 51.60: "word"
           RenderSVGInlineText {#text} at (103,0) size 7x27
             chunk 1 text run 1 at (128.20,275.00) startOffset 0 endOffset 1 width 6.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 40x27
+          RenderSVGTSpan {tspan} at (109,0) size 40x27
             RenderSVGInlineText {#text} at (109,0) size 39x27
               chunk 1 text run 1 at (134.80,275.00) startOffset 0 endOffset 3 width 38.40: "has"
           RenderSVGInlineText {#text} at (148,0) size 7x27
             chunk 1 text run 1 at (173.20,275.00) startOffset 0 endOffset 1 width 6.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 87x27
+          RenderSVGTSpan {tspan} at (154,0) size 87x27
             RenderSVGInlineText {#text} at (154,0) size 86x27
               chunk 1 text run 1 at (179.80,275.00) startOffset 0 endOffset 9 width 85.37: "different"
           RenderSVGInlineText {#text} at (240,0) size 7x27
             chunk 1 text run 1 at (265.17,275.00) startOffset 0 endOffset 1 width 6.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 118x27
+          RenderSVGTSpan {tspan} at (246,0) size 118x27
             RenderSVGInlineText {#text} at (246,0) size 117x27
               chunk 1 text run 1 at (271.77,275.00) startOffset 0 endOffset 11 width 116.40: "underlining"
           RenderSVGInlineText {#text} at (0,0) size 0x0

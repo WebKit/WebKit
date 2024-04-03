@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 558x26 [color=#0000EE]
+          RenderInline {A} at (161,27) size 558x26 [color=#0000EE]
             RenderText {#text} at (161,27) size 558x26
               text run at (161,27) width 558: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
           RenderText {#text} at (0,54) size 728x26
@@ -48,8 +48,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 155x26
               text run at (0,0) width 155: "(case sensitive)."
       RenderBlock {DIV} at (0,305) size 784x31 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 153x26
-          RenderInline {SPAN} at (0,0) size 78x26
+        RenderInline {SPAN} at (2,2) size 153x26
+          RenderInline {SPAN} at (2,2) size 78x26
             RenderText {#text} at (2,2) size 78x26
               text run at (2,2) width 78: "Foo Bar"
           RenderText {#text} at (80,2) size 75x26

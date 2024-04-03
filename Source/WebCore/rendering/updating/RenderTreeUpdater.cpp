@@ -47,6 +47,7 @@
 #include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
+#include "RenderTreeUpdaterViewTransition.h"
 #include "RenderView.h"
 #include "SVGElement.h"
 #include "StyleResolver.h"
@@ -77,6 +78,7 @@ RenderTreeUpdater::Parent::Parent(Element& element, const Style::ElementUpdate* 
 RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCallbackDisabler&)
     : m_document(document)
     , m_generatedContent(makeUnique<GeneratedContent>(*this))
+    , m_viewTransition(makeUnique<ViewTransition>(*this))
     , m_builder(renderView())
 {
 }
@@ -338,6 +340,9 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         return;
 
     generatedContent().updateBackdropRenderer(*renderer);
+    if (&element == element.document().documentElement())
+        viewTransition().updatePseudoElementTree(*renderer);
+
     m_builder.updateAfterDescendants(*renderer);
 
     if (element.hasCustomStyleResolveCallbacks() && update && update->change == Style::Change::Renderer)
@@ -353,7 +358,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
         return false;
 
     for (auto& cache : pseudoStyleCache->styles) {
-        PseudoId pseudoId = cache->styleType();
+        PseudoId pseudoId = cache->pseudoElementType();
         std::unique_ptr<RenderStyle> newPseudoStyle = renderer->getUncachedPseudoStyle({ pseudoId }, newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
@@ -381,12 +386,10 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
     if (!renderer)
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (element.document().settings().layerBasedSVGEngineEnabled()) {
         renderer->setNeedsLayout();
         return;
     }
-#endif
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
@@ -403,7 +406,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
-        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->skippedContentReason().has_value())
+        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->hasSkippedContent())
             return true;
         return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     }();
@@ -415,26 +418,34 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
 
         // display:none cancels animations.
-        auto teardownType = elementUpdate.style->display() == DisplayType::None ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
+        auto teardownType = [&]() {
+            if (!elementUpdate.style->hasDisplayAffectedByAnimations() && elementUpdate.style->display() == DisplayType::None)
+                return TeardownType::RendererUpdateCancelingAnimations;
+            return TeardownType::RendererUpdate;
+        }();
+
         tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
     bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;
-    if (hasDisplayContents)
-        element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
+    bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle);
+    bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
+    if (hasDisplayContentsOrNone)
+        element.storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
     else
-        element.clearDisplayContentsStyle();
+        element.clearDisplayContentsOrNoneStyle();
 
-    if (!hasDisplayContents) {
+    if (!hasDisplayContentsOrNone) {
         if (!elementUpdateStyle.containIntrinsicLogicalWidthHasAuto())
             element.clearLastRememberedLogicalWidth();
         if (!elementUpdateStyle.containIntrinsicLogicalHeightHasAuto())
             element.clearLastRememberedLogicalHeight();
     }
+
     auto scopeExit = makeScopeExit([&] {
-        if (!hasDisplayContents) {
+        if (!hasDisplayContentsOrNone) {
             auto* box = element.renderBox();
             if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->isSkippedContentRoot())
                 m_document.observeForContainIntrinsicSize(element);
@@ -443,7 +454,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().skippedContentReason().has_value());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().hasSkippedContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
@@ -710,11 +721,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
                 break;
             case TeardownType::Full:
-                styleable.cancelDeclarativeAnimations();
+                styleable.cancelStyleOriginatedAnimations();
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
                 break;
             case TeardownType::RendererUpdateCancelingAnimations:
-                styleable.cancelDeclarativeAnimations();
+                styleable.cancelStyleOriginatedAnimations();
                 break;
             case TeardownType::RendererUpdate:
                 styleable.willChangeRenderer();
@@ -730,7 +741,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 // we cannot create a Styleable with a PseudoElement.
                 if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
                     if (renderListItem->markerRenderer())
-                        Styleable(element, PseudoId::Marker).cancelDeclarativeAnimations();
+                        Styleable(element, Style::PseudoElementIdentifier { PseudoId::Marker }).cancelStyleOriginatedAnimations();
                 }
             }
 

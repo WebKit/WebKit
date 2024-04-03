@@ -117,8 +117,12 @@ public:
     WTF_EXPORT_PRIVATE static URL fakeURLWithRelativePart(StringView);
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
-    WTF_EXPORT_PRIVATE String strippedForUseAsReferrer() const;
-    WTF_EXPORT_PRIVATE String strippedForUseAsReferrerWithExplicitPort() const;
+    struct StripResult {
+        String string;
+        bool stripped { false };
+    };
+    WTF_EXPORT_PRIVATE StripResult strippedForUseAsReferrer() const;
+    WTF_EXPORT_PRIVATE StripResult strippedForUseAsReferrerWithExplicitPort() const;
 
     // Similar to strippedForUseAsReferrer except we also remove the query component.
     WTF_EXPORT_PRIVATE String strippedForUseAsReport() const;
@@ -212,7 +216,7 @@ public:
 
     WTF_EXPORT_PRIVATE void setFragmentIdentifier(StringView);
     WTF_EXPORT_PRIVATE void removeFragmentIdentifier();
-    WTF_EXPORT_PRIVATE String consumefragmentDirective();
+    WTF_EXPORT_PRIVATE String consumeFragmentDirective();
     WTF_EXPORT_PRIVATE void removeQueryAndFragmentIdentifier();
 
     WTF_EXPORT_PRIVATE static bool hostIsIPAddress(StringView);
@@ -323,6 +327,7 @@ WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(StringView dataURL);
 
 // FIXME: This needs a new, more specific name. The general thing named here can't be implemented correctly, since different parts of a URL need different escaping.
 WTF_EXPORT_PRIVATE String encodeWithURLEscapeSequences(const String&);
+WTF_EXPORT_PRIVATE String percentEncodeFragmentDirectiveSpecialCharacters(const String&);
 
 #ifdef __OBJC__
 

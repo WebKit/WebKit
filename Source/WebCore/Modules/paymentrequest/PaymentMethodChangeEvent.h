@@ -54,9 +54,6 @@ public:
     const MethodDetailsType& methodDetails() const { return m_methodDetails; }
     JSValueInWrappedObject& cachedMethodDetails() { return m_cachedMethodDetails; }
 
-    // Event
-    EventInterface eventInterface() const override;
-    
     struct Init final : PaymentRequestUpdateEventInit {
         String methodName;
         JSC::Strong<JSC::JSObject> methodDetails;

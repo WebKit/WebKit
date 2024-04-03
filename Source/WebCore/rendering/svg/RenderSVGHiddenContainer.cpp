@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderSVGHiddenContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -45,15 +44,4 @@ void RenderSVGHiddenContainer::layout()
     clearNeedsLayout();    
 }
 
-void RenderSVGHiddenContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderSVGContainer::styleDidChange(diff, oldStyle);
-
-    // Ensure that descendants with layers are rooted within our layer.
-    if (hasLayer())
-        layer()->setIsOpportunisticStackingContext(true);
 }
-
-}
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

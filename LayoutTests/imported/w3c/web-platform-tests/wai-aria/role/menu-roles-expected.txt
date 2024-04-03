@@ -21,6 +21,12 @@ x
 x
 x
 x
+x
+x
+x
+x
+x
+x
 
 PASS role is menu
 PASS role is menuitem (in menu)
@@ -40,4 +46,7 @@ FAIL orphaned menuitemradio outside the context of menu/menubar assert_equals: <
 </nav> expected "navigation" but got "menuitemradio"
 FAIL orphaned menuitemcheckbox outside the context of menu/menubar assert_equals: <nav role="menuitemcheckbox" data-testname="orphaned menuitemcheckbox outside the context of menu/menubar" data-expectedrole="navigation" class="ex">x
 </nav> expected "navigation" but got "menuitemcheckbox"
+FAIL orphan button with menuitem role assert_equals: <button role="menuitem" data-testname="orphan button with menuitem role" data-expectedrole="button" class="ex">x</button> expected "button" but got "menuitem"
+FAIL orphan button with menuitemcheckbox role assert_equals: <button role="menuitemcheckbox" data-testname="orphan button with menuitemcheckbox role" data-expectedrole="button" class="ex">x</button> expected "button" but got "menuitemcheckbox"
+FAIL orphan button with menuitemradio role assert_equals: <button role="menuitemradio" data-testname="orphan button with menuitemradio role" data-expectedrole="button" class="ex">x</button> expected "button" but got "menuitemradio"
 

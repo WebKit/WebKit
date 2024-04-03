@@ -41,7 +41,7 @@ public:
     virtual ~PaintingEngineThreaded();
 
 private:
-    bool paint(WebCore::GraphicsLayer&, Ref<Buffer>&&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
+    void paint(WebCore::GraphicsLayer&, Buffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
 
     Ref<WorkerPool> m_workerPool;
 };

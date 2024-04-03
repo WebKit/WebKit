@@ -265,8 +265,8 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // ICU API document.
         // > Returns pointer to display string of 'len' UChars. If the resource data contains no entry for 'currency', then 'currency' itself is returned.
         if (status == U_USING_DEFAULT_WARNING && result == currency)
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(currency, 3));
-        return jsString(vm, String(result, length));
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, { currency, 3 });
+        return jsString(vm, String({ result, static_cast<size_t>(length) }));
     }
     case Type::Calendar: {
         // a. If code does not match the Unicode Locale Identifier type nonterminal, throw a RangeError exception.
@@ -340,7 +340,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // uldn_localeDisplayName, uldn_regionDisplayName, and uldn_scriptDisplayName return U_ILLEGAL_ARGUMENT_ERROR if the display-name is not found.
         // We should return undefined if fallback is "none". Otherwise, we should return input value.
         if (status == U_ILLEGAL_ARGUMENT_ERROR)
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.data(), canonicalCode.length()));
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.span()));
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
     return jsString(vm, String(WTFMove(buffer)));

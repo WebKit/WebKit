@@ -26,6 +26,9 @@
 #pragma once
 
 #include "BPlatform.h"
+
+#if BUSE(TZONE)
+
 #include "DeferredDecommitInlines.h"
 #include "DeferredTriggerInlines.h"
 #include "EligibilityResultInlines.h"
@@ -48,7 +51,7 @@ namespace bmalloc { namespace api {
 
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
 template<typename Type>
-IsoHeap<Type>::TZoneHeap(const char* heapClass)
+TZoneHeapBase<Type>::TZoneHeapBase(const char* heapClass)
     : m_zone(malloc_create_zone(0, 0))
 {
     if (heapClass)
@@ -57,45 +60,45 @@ IsoHeap<Type>::TZoneHeap(const char* heapClass)
 #endif
 
 template<typename Type>
-void* TZoneHeap<Type>::allocate()
+void* TZoneHeapBase<Type>::allocate()
 {
     bool abortOnFailure = true;
     return IsoTLS::allocate(*this, abortOnFailure);
 }
 
 template<typename Type>
-void* TZoneHeap<Type>::tryAllocate()
+void* TZoneHeapBase<Type>::tryAllocate()
 {
     bool abortOnFailure = false;
     return IsoTLS::allocate(*this, abortOnFailure);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::deallocate(void* p)
+void TZoneHeapBase<Type>::deallocate(void* p)
 {
     IsoTLS::deallocate(*this, p);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::scavenge()
+void TZoneHeapBase<Type>::scavenge()
 {
     IsoTLS::scavenge(*this);
 }
 
 template<typename Type>
-bool TZoneHeap<Type>::isInitialized()
+bool TZoneHeapBase<Type>::isInitialized()
 {
     auto* atomic = reinterpret_cast<std::atomic<IsoHeapImpl<Config>*>*>(&m_impl);
     return atomic->load(std::memory_order_acquire);
 }
 
 template<typename Type>
-void TZoneHeap<Type>::initialize()
+void TZoneHeapBase<Type>::initialize()
 {
-    // We are using m_impl field as a guard variable of the initialization of TZoneHeap.
-    // TZoneHeap::isInitialized gets m_impl with "acquire", and TZoneHeap::initialize stores
-    // the value to m_impl with "release". To make TZoneHeap changes visible to any threads
-    // when TZoneHeap::isInitialized returns true, we need to store the value to m_impl *after*
+    // We are using m_impl field as a guard variable of the initialization of TZoneHeapBase.
+    // TZoneHeapBase::isInitialized gets m_impl with "acquire", and TZoneHeapBase::initialize stores
+    // the value to m_impl with "release". To make TZoneHeapBase changes visible to any threads
+    // when TZoneHeapBase::isInitialized returns true, we need to store the value to m_impl *after*
     // all the initialization finishes.
     auto* heap = new IsoHeapImpl<Config>();
     heap->addToAllIsoHeaps();
@@ -106,7 +109,7 @@ void TZoneHeap<Type>::initialize()
 }
 
 template<typename Type>
-auto TZoneHeap<Type>::impl() -> IsoHeapImpl<Config>&
+auto TZoneHeapBase<Type>::impl() -> IsoHeapImpl<Config>&
 {
     IsoTLS::ensureHeap(*this);
     return *m_impl;
@@ -116,11 +119,11 @@ auto TZoneHeap<Type>::impl() -> IsoHeapImpl<Config>&
 
 // This is most appropraite for template classes.
 
-#define MAKE_BTZONE_MALLOCED_INLINE(isoType) \
+#define MAKE_BTZONE_MALLOCED_INLINE(tzoneType, tzoneHeapType) \
 public: \
-    static ::bmalloc::api::TZoneHeap<isoType>& btzoneHeap() \
+    static ::bmalloc::api::tzoneHeapType<tzoneType>& btzoneHeap() \
     { \
-        static ::bmalloc::api::TZoneHeap<isoType> heap("WebKit_"#isoType); \
+        static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit_"#tzoneType); \
         return heap; \
     } \
     \
@@ -129,7 +132,7 @@ public: \
     \
     void* operator new(size_t size) \
     { \
-        RELEASE_BASSERT(size == sizeof(isoType)); \
+        RELEASE_BASSERT(size == sizeof(tzoneType)); \
         return btzoneHeap().allocate(); \
     } \
     \
@@ -151,117 +154,118 @@ public: \
         btzoneHeap().deallocate(p); \
     } \
     \
-    using webkitFastMalloced = int; \
+    using WTFIsFastAllocated = int; \
 private: \
-    using __makeBtzoneMallocedInlineMacroSemicolonifier BunusedTypeAlias = int
+    using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
-#define MAKE_BTZONE_MALLOCED_IMPL(isoType) \
-::bmalloc::api::TZoneHeap<isoType>& isoType::btzoneHeap() \
+#define MAKE_BTZONE_MALLOCED_IMPL(tzoneType, tzoneHeapType) \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<isoType> heap("WebKit "#isoType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
     return heap; \
 } \
 \
-void* isoType::operator new(size_t size) \
+void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(isoType)); \
+    RELEASE_BASSERT(size == sizeof(tzoneType)); \
     return btzoneHeap().allocate(); \
 } \
 \
-void isoType::operator delete(void* p) \
+void tzoneType::operator delete(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
-void isoType::freeAfterDestruction(void* p) \
+void tzoneType::freeAfterDestruction(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
-struct MakeBtzoneMallocedImplMacroSemicolonifier##isoType { }
+struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneType { }
 
-#define MAKE_BTZONE_MALLOCED_IMPL_NESTED(isoTypeName, isoType) \
-::bmalloc::api::TZoneHeap<isoType>& isoType::btzoneHeap() \
+#define MAKE_BTZONE_MALLOCED_IMPL_NESTED(tzoneTypeName, tzoneType, tzoneHeapType) \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<isoType> heap("WebKit "#isoType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
     return heap; \
 } \
 \
-void* isoType::operator new(size_t size) \
+void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(isoType)); \
+    RELEASE_BASSERT(size == sizeof(tzoneType)); \
     return btzoneHeap().allocate(); \
 } \
 \
-void isoType::operator delete(void* p) \
+void tzoneType::operator delete(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
-void isoType::freeAfterDestruction(void* p) \
+void tzoneType::freeAfterDestruction(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
-struct MakeBtzoneMallocedImplMacroSemicolonifier##isoTypeName { }
+struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneTypeName { }
 
-#define MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(isoType) \
+#define MAKE_BTZONE_MALLOCED_IMPL_TEMPLATE(tzoneType, tzoneHeapType) \
 template<> \
-::bmalloc::api::TZoneHeap<isoType>& isoType::btzoneHeap() \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
 { \
-    static ::bmalloc::api::TZoneHeap<isoType> heap("WebKit_"#isoType); \
-    return heap; \
-} \
-\
-template<> \
-void* isoType::operator new(size_t size) \
-{ \
-    RELEASE_BASSERT(size == sizeof(isoType)); \
-    return btzoneHeap().allocate(); \
-} \
-\
-template<> \
-void isoType::operator delete(void* p) \
-{ \
-    btzoneHeap().deallocate(p); \
-} \
-\
-template<> \
-void isoType::freeAfterDestruction(void* p) \
-{ \
-    btzoneHeap().deallocate(p); \
-} \
-\
-struct MakeBtzoneMallocedImplMacroSemicolonifier##isoType { }
-
-#define MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(isoTypeName, isoType) \
-template<> \
-::bmalloc::api::TZoneHeap<isoType>& isoType::btzoneHeap() \
-{ \
-    static ::bmalloc::api::TZoneHeap<isoType> heap("WebKit "#isoType); \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit_"#tzoneType); \
     return heap; \
 } \
 \
 template<> \
-void* isoType::operator new(size_t size) \
+void* tzoneType::operator new(size_t size) \
 { \
-    RELEASE_BASSERT(size == sizeof(isoType)); \
+    RELEASE_BASSERT(size == sizeof(tzoneType)); \
     return btzoneHeap().allocate(); \
 } \
 \
 template<> \
-void isoType::operator delete(void* p) \
+void tzoneType::operator delete(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
 template<> \
-void isoType::freeAfterDestruction(void* p) \
+void tzoneType::freeAfterDestruction(void* p) \
 { \
     btzoneHeap().deallocate(p); \
 } \
 \
-struct MakeBtzoneMallocedImplMacroSemicolonifier##isoTypeName { }
+struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneType { }
+
+#define MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(tzoneTypeName, tzoneType, tzoneHeapType) \
+template<> \
+::bmalloc::api::tzoneHeapType<tzoneType>& tzoneType::btzoneHeap() \
+{ \
+    static ::bmalloc::api::tzoneHeapType<tzoneType> heap("WebKit "#tzoneType); \
+    return heap; \
+} \
+\
+template<> \
+void* tzoneType::operator new(size_t size) \
+{ \
+    RELEASE_BASSERT(size == sizeof(tzoneType)); \
+    return btzoneHeap().allocate(); \
+} \
+\
+template<> \
+void tzoneType::operator delete(void* p) \
+{ \
+    btzoneHeap().deallocate(p); \
+} \
+\
+template<> \
+void tzoneType::freeAfterDestruction(void* p) \
+{ \
+    btzoneHeap().deallocate(p); \
+} \
+\
+struct MakeBtzoneMallocedImplMacroSemicolonifier##tzoneTypeName { }
 
 } } // namespace bmalloc::api
 
+#endif // BUSE(TZONE)

@@ -53,6 +53,16 @@ public:
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_imageValueOrNone.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        if (func(m_filterValue.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
+
 private:
     explicit CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, Ref<CSSValue>&& filterValue);
 

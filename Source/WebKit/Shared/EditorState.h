@@ -95,6 +95,7 @@ struct EditorState {
         ListType enclosingListType { ListType::None };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
         bool editableRootIsTransparentOrFullyClipped { false };
+        bool canEnableWritingSuggestions { false };
 #endif
 #if PLATFORM(IOS_FAMILY)
         String markedText;

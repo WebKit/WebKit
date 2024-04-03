@@ -37,8 +37,8 @@ namespace WebCore {
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
     // Allow (Shift) F4 and (Ctrl/Shift) Alt/AltGr + Up/Down arrow to pop the menu, matching Firefox.
-    bool eventShowsMenu = (!event->altKey() && !event->ctrlKey() && event->keyIdentifier() == "F4"_s)
-        || ((event->altGraphKey() || event->altKey()) && (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s));
+    bool eventShowsMenu = ((!event->altKey() && !event->ctrlKey() && event->keyIdentifier() == "F4"_s)
+        || event->altKey()) && (event->keyIdentifier() == "Down"_s || event->keyIdentifier() == "Up"_s);
     if (!eventShowsMenu)
         return false;
 

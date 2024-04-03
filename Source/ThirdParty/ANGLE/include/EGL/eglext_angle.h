@@ -93,6 +93,11 @@
 #define EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE 0x33AE
 #endif /* EGL_ANGLE_platform_angle_null */
 
+#ifndef EGL_ANGLE_platform_angle_webgpu
+#define EGL_ANGLE_platform_angle_webgpu 1
+#define EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE 0x34DD
+#endif /* EGL_ANGLE_platform_angle_webgpu */
+
 #ifndef EGL_ANGLE_platform_angle_vulkan
 #define EGL_ANGLE_platform_angle_vulkan 1
 #define EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE 0x3450
@@ -238,6 +243,7 @@ EGLAPI EGLint EGLAPIENTRY eglProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limi
 #ifndef ANGLE_metal_texture_client_buffer
 #define ANGLE_metal_texture_client_buffer 1
 #define EGL_METAL_TEXTURE_ANGLE 0x34A7
+#define EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE 0x34DD
 #endif /* ANGLE_metal_texture_client_buffer */
 
 #ifndef EGL_ANGLE_create_context_extensions_enabled
@@ -427,6 +433,11 @@ typedef void* (EGLAPIENTRYP PFNEGLCOPYMETALSHAREDEVENTANGLEPROC)(EGLDisplay dpy,
 EGLAPI void *EGLAPIENTRY eglCopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSync sync);
 #endif
 #endif /* EGL_ANGLE_metal_shared_event_sync */
+
+#ifndef EGL_ANGLE_global_fence_sync
+#define EGL_ANGLE_global_fence_sync 1
+#define EGL_SYNC_GLOBAL_FENCE_ANGLE 0x34DE
+#endif /* EGL_ANGLE_global_fence_sync */
 
 // clang-format on
 

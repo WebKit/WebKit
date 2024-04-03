@@ -50,3 +50,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-one.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-scrollable.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/text-selection-with-delegatesFocus.html

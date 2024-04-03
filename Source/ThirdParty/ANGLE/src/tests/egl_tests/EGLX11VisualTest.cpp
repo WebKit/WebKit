@@ -11,6 +11,8 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <X11/Xlib.h>
+#include <X11/Xresource.h>
+#include <X11/Xutil.h>
 
 #include "test_utils/ANGLETest.h"
 #include "util/OSWindow.h"
@@ -191,7 +193,7 @@ TEST_P(EGLX11VisualHintTest, InvalidWindowVisualID)
     int otherVisualId = chooseDifferentVisual(visualId);
     ASSERT_NE(visualId, otherVisualId);
 
-    OSWindow *osWindow = new X11Window(otherVisualId);
+    OSWindow *osWindow = CreateX11WindowWithVisualId(otherVisualId);
     osWindow->initialize("EGLX11VisualHintTest", 500, 500);
     setWindowVisible(osWindow, true);
 

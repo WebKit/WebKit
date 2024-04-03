@@ -137,6 +137,7 @@ public:
 
     using KeyStatusesChangedObserver = Observer<void()>;
     void addKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
+    void removeKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
 
     void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
 
@@ -172,6 +173,10 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
     , public AVContentKeySessionDelegateClient
     , private ContentKeyGroupDataSource {
 public:
+    using AVContentKeySessionDelegateClient::weakPtrFactory;
+    using AVContentKeySessionDelegateClient::WeakValueType;
+    using AVContentKeySessionDelegateClient::WeakPtrImplType;
+
     CDMInstanceSessionFairPlayStreamingAVFObjC(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC() = default;
 

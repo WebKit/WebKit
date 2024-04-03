@@ -7,13 +7,13 @@ layer at (0,0) size 800x299
         RenderText {#text} at (0,0) size 674x17
           text run at (0,0) width 423: "The background color of this paragraph should turn to green when "
           text run at (423,0) width 251: "the mouse pointer hovers either its text ("
-        RenderInline {STRONG} at (0,0) size 30x17
+        RenderInline {STRONG} at (674,0) size 30x17
           RenderText {#text} at (674,0) size 30x17
             text run at (674,0) width 30: "here"
-        RenderText {#text} at (703,0) size 744x35
+        RenderText {#text} at (0,0) size 744x35
           text run at (703,0) width 41: ") or its"
           text run at (0,18) width 157: "whitespace background, "
-        RenderInline {STRONG} at (0,0) size 30x17
+        RenderInline {STRONG} at (157,18) size 30x17
           RenderText {#text} at (157,18) size 30x17
             text run at (157,18) width 30: "here"
         RenderText {#text} at (186,18) size 5x17
@@ -21,10 +21,10 @@ layer at (0,0) size 800x299
       RenderBlock {ADDRESS} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 161x17
           text run at (0,0) width 161: "The background color of "
-        RenderInline {A} at (0,0) size 115x17 [color=#0000EE]
+        RenderInline {A} at (160,0) size 115x17 [color=#0000EE]
           RenderText {#text} at (160,0) size 81x17
             text run at (160,0) width 81: "this anchor ("
-          RenderInline {STRONG} at (0,0) size 30x17
+          RenderInline {STRONG} at (240,0) size 30x17
             RenderText {#text} at (240,0) size 30x17
               text run at (240,0) width 30: "here"
           RenderText {#text} at (269,0) size 6x17
@@ -60,7 +60,7 @@ layer at (0,0) size 800x299
             RenderTableCell {TD} at (109,55) size 90x20 [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 40x17
                 text run at (1,1) width 40: "them ("
-              RenderInline {STRONG} at (0,0) size 30x17
+              RenderInline {STRONG} at (41,1) size 30x17
                 RenderText {#text} at (41,1) size 30x17
                   text run at (41,1) width 30: "here"
               RenderText {#text} at (70,1) size 10x17
@@ -108,7 +108,7 @@ layer at (0,0) size 800x299
             RenderTableCell {TD} at (5,180) size 100x20 [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 64x17
                 text run at (1,1) width 64: "Including "
-              RenderInline {STRONG} at (0,0) size 30x17
+              RenderInline {STRONG} at (65,1) size 30x17
                 RenderText {#text} at (65,1) size 30x17
                   text run at (65,1) width 30: "here"
               RenderText {#text} at (94,1) size 5x17

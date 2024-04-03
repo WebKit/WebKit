@@ -40,13 +40,13 @@ void DeprecatedCSSOMValue::operator delete(DeprecatedCSSOMValue* value, std::des
 
     switch (value->classType()) {
     case ClassType::Complex:
-        destroyAndFree(downcast<DeprecatedCSSOMComplexValue>(*value));
+        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMComplexValue>(*value));
         break;
     case ClassType::Primitive:
-        destroyAndFree(downcast<DeprecatedCSSOMPrimitiveValue>(*value));
+        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*value));
         break;
     case ClassType::List:
-        destroyAndFree(downcast<DeprecatedCSSOMValueList>(*value));
+        destroyAndFree(uncheckedDowncast<DeprecatedCSSOMValueList>(*value));
         break;
     }
 }
@@ -55,9 +55,9 @@ unsigned short DeprecatedCSSOMValue::cssValueType() const
 {
     switch (classType()) {
     case ClassType::Complex:
-        return downcast<DeprecatedCSSOMComplexValue>(*this).cssValueType();
+        return uncheckedDowncast<DeprecatedCSSOMComplexValue>(*this).cssValueType();
     case ClassType::Primitive:
-        return downcast<DeprecatedCSSOMPrimitiveValue>(*this).cssValueType();
+        return uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*this).cssValueType();
     case ClassType::List:
         return CSS_VALUE_LIST;
     }
@@ -69,11 +69,11 @@ String DeprecatedCSSOMValue::cssText() const
 {
     switch (classType()) {
     case ClassType::Complex:
-        return downcast<DeprecatedCSSOMComplexValue>(*this).cssText();
+        return uncheckedDowncast<DeprecatedCSSOMComplexValue>(*this).cssText();
     case ClassType::Primitive:
-        return downcast<DeprecatedCSSOMPrimitiveValue>(*this).cssText();
+        return uncheckedDowncast<DeprecatedCSSOMPrimitiveValue>(*this).cssText();
     case ClassType::List:
-        return downcast<DeprecatedCSSOMValueList>(*this).cssText();
+        return uncheckedDowncast<DeprecatedCSSOMValueList>(*this).cssText();
     }
     ASSERT_NOT_REACHED();
     return emptyString();

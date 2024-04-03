@@ -77,6 +77,7 @@ public:
 
         virtual bool start() = 0;
         virtual void stop() = 0;
+        virtual void end() { stop(); }
         virtual DisplayFrameType generateFrame() = 0;
         virtual CaptureDevice::DeviceType deviceType() const = 0;
         virtual DisplaySurfaceType surfaceType() const = 0;
@@ -131,6 +132,7 @@ private:
     // RealtimeMediaSource
     void startProducingData() final;
     void stopProducingData() final;
+    void endProducingData() final;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     bool isCaptureSource() const final { return true; }
     const RealtimeMediaSourceCapabilities& capabilities() final;

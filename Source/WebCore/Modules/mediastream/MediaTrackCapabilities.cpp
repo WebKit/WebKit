@@ -32,34 +32,25 @@
 
 namespace WebCore {
 
-static DoubleRange capabilityDoubleRange(const CapabilityRange& value)
+static DoubleRange capabilityDoubleRange(const DoubleCapabilityRange& value)
 {
-    if (value.type() == CapabilityRange::Type::DoubleRange) {
-        DoubleRange range;
-        auto min = value.doubleRange().min;
-        auto max = value.doubleRange().max;
+    auto min = value.min();
+    auto max = value.max();
 
-        ASSERT(min != std::numeric_limits<double>::min() || max != std::numeric_limits<double>::max());
+    ASSERT(min != std::numeric_limits<double>::min() || max != std::numeric_limits<double>::max());
 
-        if (min != std::numeric_limits<double>::min())
-            range.min = min;
-        if (max != std::numeric_limits<double>::max())
-            range.max = max;
+    DoubleRange range;
+    if (min != std::numeric_limits<double>::min())
+        range.min = min;
+    if (max != std::numeric_limits<double>::max())
+        range.max = max;
 
-        return range;
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
+    return range;
 }
 
-static LongRange capabilityIntRange(const CapabilityRange& value)
+static LongRange capabilityLongRange(const LongCapabilityRange& value)
 {
-    if (value.type() == CapabilityRange::Type::LongRange)
-        return { value.longRange().max, value.longRange().min };
-
-    ASSERT_NOT_REACHED();
-    return { };
+    return { value.max(), value.min() };
 }
 
 static Vector<String> capabilityStringVector(const Vector<VideoFacingMode>& modes)
@@ -86,13 +77,32 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
+static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::BackgroundBlur backgroundBlur)
+{
+    Vector<bool> result;
+    result.reserveInitialCapacity(2);
+    switch (backgroundBlur) {
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::On:
+        result.append(true);
+        break;
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::Off:
+        result.append(false);
+        break;
+    case RealtimeMediaSourceCapabilities::BackgroundBlur::OnOff:
+        result.append(false);
+        result.append(true);
+        break;
+    }
+    return result;
+}
+
 MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities& capabilities, const String& groupId)
 {
     MediaTrackCapabilities result;
     if (capabilities.supportsWidth())
-        result.width = capabilityIntRange(capabilities.width());
+        result.width = capabilityLongRange(capabilities.width());
     if (capabilities.supportsHeight())
-        result.height = capabilityIntRange(capabilities.height());
+        result.height = capabilityLongRange(capabilities.height());
     if (capabilities.supportsAspectRatio())
         result.aspectRatio = capabilityDoubleRange(capabilities.aspectRatio());
     if (capabilities.supportsFrameRate())
@@ -102,9 +112,9 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
     if (capabilities.supportsVolume())
         result.volume = capabilityDoubleRange(capabilities.volume());
     if (capabilities.supportsSampleRate())
-        result.sampleRate = capabilityIntRange(capabilities.sampleRate());
+        result.sampleRate = capabilityLongRange(capabilities.sampleRate());
     if (capabilities.supportsSampleSize())
-        result.sampleSize = capabilityIntRange(capabilities.sampleSize());
+        result.sampleSize = capabilityLongRange(capabilities.sampleSize());
     if (capabilities.supportsEchoCancellation())
         result.echoCancellation = capabilityBooleanVector(capabilities.echoCancellation());
     if (capabilities.supportsDeviceId())
@@ -119,6 +129,8 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
         result.zoom = capabilityDoubleRange(capabilities.zoom());
     if (capabilities.supportsTorch())
         result.torch = capabilities.torch();
+    if (capabilities.supportsBackgroundBlur())
+        result.backgroundBlur = capabilityBooleanVector(capabilities.backgroundBlur());
 
     return result;
 }

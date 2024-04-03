@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(B3_JIT)
+#if ENABLE(B3_JIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "B3Common.h"
 #include "SIMDInfo.h"

@@ -83,6 +83,8 @@ PASS "u+0+1" is invalid
 PASS "u+000000-000001" => "U+0-1"
 PASS "u+0000000-1" is invalid
 PASS "u+0-0000001" is invalid
+PASS "u+0-10ffff" => "U+0-10FFFF"
+PASS "u+0-110000" is invalid
 PASS "u+0-222222" is invalid
 PASS "u/**/+/**/?" => "U+0-F"
 PASS "u+?" => "U+0-F"

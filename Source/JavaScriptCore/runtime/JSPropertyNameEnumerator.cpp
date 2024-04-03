@@ -38,7 +38,7 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* st
     unsigned propertyNamesBufferSizeInBytes = Checked<unsigned>(propertyNamesSize) * sizeof(WriteBarrier<JSString>);
     WriteBarrier<JSString>* propertyNamesBuffer = nullptr;
     if (propertyNamesBufferSizeInBytes) {
-        propertyNamesBuffer = static_cast<WriteBarrier<JSString>*>(vm.jsValueGigacageAuxiliarySpace().allocate(vm, propertyNamesBufferSizeInBytes, nullptr, AllocationFailureMode::Assert));
+        propertyNamesBuffer = static_cast<WriteBarrier<JSString>*>(vm.auxiliarySpace().allocate(vm, propertyNamesBufferSizeInBytes, nullptr, AllocationFailureMode::Assert));
         for (unsigned i = 0; i < propertyNamesSize; ++i)
             propertyNamesBuffer[i].clear();
     }

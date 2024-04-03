@@ -274,6 +274,10 @@ class WPEBuildFactory(BuildFactory):
     branches = [r'main', r'webkit.+']
 
 
+class WPESkiaBuildFactory(WPEBuildFactory):
+    skipUpload = True
+
+
 class WPETestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTestsRedTree
 

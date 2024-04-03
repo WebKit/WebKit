@@ -35,7 +35,6 @@ public:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
     virtual bool didTransformToRootUpdate() { return false; }
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 

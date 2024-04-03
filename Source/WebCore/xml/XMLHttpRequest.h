@@ -55,7 +55,7 @@ class XMLHttpRequestUpload;
 struct OwnedString;
 
 class XMLHttpRequest final : public ActiveDOMObject, public RefCounted<XMLHttpRequest>, private ThreadableLoaderClient, public XMLHttpRequestEventTarget {
-    WTF_MAKE_ISO_ALLOCATED(XMLHttpRequest);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(XMLHttpRequest, WEBCORE_EXPORT);
 public:
     static Ref<XMLHttpRequest> create(ScriptExecutionContext&);
     WEBCORE_EXPORT ~XMLHttpRequest();
@@ -71,7 +71,7 @@ public:
 
     virtual void didReachTimeout();
 
-    EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::XMLHttpRequest; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     using SendTypes = std::variant<RefPtr<Document>, RefPtr<Blob>, RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<DOMFormData>, String, RefPtr<URLSearchParams>>;
@@ -178,7 +178,7 @@ private:
     ExceptionOr<void> send(DOMFormData&);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
     ExceptionOr<void> send(JSC::ArrayBufferView&);
-    ExceptionOr<void> sendBytesData(const void*, size_t);
+    ExceptionOr<void> sendBytesData(std::span<const uint8_t>);
 
     void changeState(State);
     void callReadyStateChangeListener();

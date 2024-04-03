@@ -40,6 +40,19 @@ class TypeChecker;
 class TypeStore;
 struct Type;
 
+enum Packing : uint8_t {
+    Packed       = 1 << 0,
+    Unpacked     = 1 << 1,
+    Either       = Packed | Unpacked,
+
+    PStruct = 1 << 2,
+    Vec3   = 1 << 3,
+
+    PackedStruct = Packed | PStruct,
+    PackedVec3   = Packed | Vec3,
+};
+
+
 namespace Types {
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
@@ -120,8 +133,17 @@ struct Matrix {
 };
 
 struct Array {
+    // std::monostate represents a runtime-sized array
+    // unsigned represents a creation fixed array (constant size)
+    // AST::Expression* represents a fixed array (override size)
+    using Size = std::variant<std::monostate, unsigned, AST::Expression*>;
+
     const Type* element;
-    std::optional<unsigned> size;
+    Size size;
+
+    bool isRuntimeSized() const { return std::holds_alternative<std::monostate>(size); }
+    bool isCreationFixed() const { return std::holds_alternative<unsigned>(size); }
+    bool isOverrideSized() const { return std::holds_alternative<AST::Expression*>(size); }
 };
 
 struct Struct {
@@ -191,12 +213,14 @@ public:
 struct Function {
     WTF::Vector<const Type*> parameters;
     const Type* result;
+    bool mustUse;
 };
 
 struct Reference {
     AddressSpace addressSpace;
     AccessMode accessMode;
     const Type* element;
+    bool isVectorComponent;
 };
 
 struct Pointer {
@@ -257,6 +281,16 @@ struct Type : public std::variant<
     String toString() const;
     unsigned size() const;
     unsigned alignment() const;
+    Packing packing() const;
+    bool isConstructible() const;
+    bool isStorable() const;
+    bool isHostShareable() const;
+    bool hasFixedFootprint() const;
+    bool hasCreationFixedFootprint() const;
+    bool containsRuntimeArray() const;
+    bool containsOverrideArray() const;
+    bool isSampler() const;
+    bool isTexture() const;
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;

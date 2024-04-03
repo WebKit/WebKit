@@ -1,0 +1,53 @@
+
+
+
+
+FAIL .item 1 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: start; align-self: start;" data-expected-width="20" data-expected-height="20"></div>
+</div>
+width expected 20 but got 40
+FAIL .item 2 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: stretch; align-self: start;" data-expected-width="40" data-expected-height="40"></div>
+</div>
+height expected 40 but got 50
+FAIL .item 3 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: start; align-self: stretch;" data-expected-width="50" data-expected-height="50"></div>
+</div>
+width expected 50 but got 40
+PASS .item 4
+FAIL .item 5 assert_equals:
+<div class="container">
+  <div class="item ar" style="justify-self: start; align-self: start;" data-expected-width="20" data-expected-height="20"></div>
+</div>
+width expected 20 but got 50
+FAIL .item 6 assert_equals:
+<div class="container">
+  <div class="item ar" style="justify-self: stretch; align-self: start;" data-expected-width="40" data-expected-height="40"></div>
+</div>
+width expected 40 but got 50
+PASS .item 7
+FAIL .item 8 assert_equals:
+<div class="container">
+  <div class="item ar" style="justify-self: stretch; align-self: stretch;" data-expected-width="40" data-expected-height="50"></div>
+</div>
+width expected 40 but got 50
+PASS .item 9
+FAIL .item 10 assert_equals:
+<div class="container">
+  <canvas width="10" height="10" class="item" style="justify-self: stretch; align-self: start;" data-expected-width="40" data-expected-height="40"></canvas>
+</div>
+width expected 40 but got 10
+FAIL .item 11 assert_equals:
+<div class="container">
+  <canvas width="10" height="10" class="item" style="justify-self: start; align-self: stretch;" data-expected-width="50" data-expected-height="50"></canvas>
+</div>
+width expected 50 but got 10
+FAIL .item 12 assert_equals:
+<div class="container">
+  <canvas width="10" height="10" class="item" style="justify-self: stretch; align-self: stretch;" data-expected-width="40" data-expected-height="50"></canvas>
+</div>
+width expected 40 but got 10
+

@@ -584,54 +584,22 @@ macro cagePrimitive(basePtr, mask, ptr, scratch)
 end
 
 macro cagedPrimitive(ptr, length, scratch, scratch2)
-    if ARM64E
-        const source = scratch2
-        move ptr, scratch2
-    else
-        const source = ptr
-    end
+    const source = ptr
     if GIGACAGE_ENABLED
         cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
-        if ARM64E
-            const maxNumberOfAllowedPACBits = constexpr MacroAssembler::maxNumberOfAllowedPACBits
-            bfiq scratch2, 0, 64 - maxNumberOfAllowedPACBits, ptr
-        end
-    end
-    if ARM64E
-        untagArrayPtr length, ptr
     end
 end
 
-macro cagedPrimitiveMayBeNull(ptr, length, scratch, scratch2)
-    if ARM64E
-        const source = scratch2
-        move ptr, scratch2
-        removeArrayPtrTag scratch2
-        btpz scratch2, .nullCase
-        move ptr, scratch2
-    else
-        # Note that we may produce non-nullptr for nullptr in non-ARM64E architecture since we add Gigacage offset.
-        # But this behavior is aligned to AssemblyHelpers::{cageConditionallyAndUntag,cageWithoutUntagging}, FTL implementation of caging etc.
-        const source = ptr
-    end
+macro cagedPrimitiveMayBeNull(ptr, scratch)
+    # Note that we may produce non-nullptr for nullptr since we add Gigacage offset.
+    # This behavior is aligned to AssemblyHelpers::{cageConditionally,cage}, FTL implementation of caging etc.
     if GIGACAGE_ENABLED
-        cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
-        if ARM64E
-            const maxNumberOfAllowedPACBits = constexpr MacroAssembler::maxNumberOfAllowedPACBits
-            bfiq scratch2, 0, 64 - maxNumberOfAllowedPACBits, ptr
-        end
-    end
-    if ARM64E
-        .nullCase:
-        untagArrayPtr length, ptr
+        cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, ptr, scratch)
     end
 end
 
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
-    if GIGACAGE_ENABLED
-        cage(GigacageConfig + Gigacage::Config::basePtrs + GigacageJSValueBasePtrOffset, constexpr Gigacage::jsValueGigacageMask, dest, scratchOrLength)
-    end
 end
 
 macro loadVariable(get, fieldName, valueReg)
@@ -2566,14 +2534,12 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     move t3, sp
     addp CallerFrameAndPCSize, sp
 
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t1
+    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t1
     btpz t1, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
     prepareCall(t2, t3, t4, t1, macro(address)
         loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
         storep t2, address
     end)
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
-    loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
     jmp .goPolymorphic
 
@@ -2586,18 +2552,24 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
 
 .goPolymorphic:
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+.dispatch:
     invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
 .opCallSlow:
     # 64bit:t0 32bit(t0,t1) is callee
     # t2 is CallLinkInfo*
-    # t3 is caller's JSGlobalObject
+    prepareCall(t2, t3, t4, t1, macro(address)
+        storep 0, address
+    end)
     addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_slowPathCallDestination[t5], t5
-    loadp CodeBlock[cfr], t3
-    loadp CodeBlock::m_globalObject[t3], t3
-    prepareSlowCall()
-    callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
+    if X86_64_WIN or C_LOOP_WIN
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
+        loadp [t5], t5
+    else
+        leap _g_config, t5
+        loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
+    end
+    jmp .dispatch
 end
 
 macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, prepareSlowCall, prologue, dispatchAfterCall)
@@ -2651,14 +2623,12 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
             loadConstantOrVariable(size, t1, t0)
             metadata(t5, t2)
 
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t1
+            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_callee[t5], t1
             btpz t1, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
             prepareCall(t2, t3, t4, t1, macro(address)
                 loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
                 storep t2, address
             end)
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
-            loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
             jmp .goPolymorphic
 
@@ -2671,18 +2641,24 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
         .goPolymorphic:
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
+        .dispatch:
             invokeCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, t5, t1, JSEntryPtrTag)
 
         .opCallSlow:
             # 64bit:t0 32bit(t0,t1) is callee
             # t2 is CallLinkInfo*
-            # t3 is caller's JSGlobalObject
+            prepareCall(t2, t3, t4, t1, macro(address)
+                storep 0, address
+            end)
             addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
-            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_slowPathCallDestination[t5], t5
-            loadp CodeBlock[cfr], t3
-            loadp CodeBlock::m_globalObject[t3], t3
-            prepareSlowCall()
-            callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
+            if X86_64_WIN or C_LOOP_WIN
+                leap JSCConfig + constexpr JSC::offsetOfJSCConfigDefaultCallThunk, t5
+                loadp [t5], t5
+            else
+                leap _g_config, t5
+                loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigDefaultCallThunk[t5], t5
+            end
+            jmp .dispatch
         .dontUpdateSP:
             jmp _llint_throw_from_slow_path_trampoline
         end)
@@ -2723,6 +2699,23 @@ llintOpWithReturn(op_to_property_key, OpToPropertyKey, macro (size, get, dispatc
 
 .opToPropertyKeySlow:
     callSlowPath(_slow_path_to_property_key)
+    dispatch()
+end)
+
+llintOpWithReturn(op_to_property_key_or_number, OpToPropertyKeyOrNumber, macro (size, get, dispatch, return)
+    get(m_src, t2)
+    loadConstantOrVariable(size, t2, t0)
+
+    btqnz t0, numberTag, .done
+    btqnz t0, notCellMask, .opToPropertyKeyOrNumberSlow
+    bbeq JSCell::m_type[t0], SymbolType, .done
+    bbneq JSCell::m_type[t0], StringType, .opToPropertyKeyOrNumberSlow
+
+.done:
+    return(t0)
+
+.opToPropertyKeyOrNumberSlow:
+    callSlowPath(_slow_path_to_property_key_or_number)
     dispatch()
 end)
 
@@ -3100,7 +3093,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         loadi OpPutToScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
         andi InitializationModeMask, t0
         rshifti InitializationModeShift, t0
-        bineq t0, NotInitialization, .noNeedForTDZCheck
+        bilt t0, NotInitialization, .noNeedForTDZCheck
         loadp OpPutToScope::Metadata::m_operand[t5], t0
         loadq [t0], t0
         bqeq t0, ValueEmpty, .pDynamic

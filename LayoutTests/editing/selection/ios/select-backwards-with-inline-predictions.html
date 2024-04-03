@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: system-ui;
+    line-height: 150%;
+}
+
+input {
+    border: 1px solid tomato;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 18px;
+    width: 300px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that selecting backwards after typing with inline predictions does not cause a crash. This test requires WebKitTestRunner.");
+
+    input = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    for (let character of [..."i want to c"]) {
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.typeCharacter(character);
+            await UIHelper.ensurePresentationUpdate();
+        }, document.body, "keyup");
+    }
+
+    await UIHelper.setInlinePrediction("elebrate");
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.keyDown("leftArrow", ["shiftKey"]);
+    await UIHelper.ensurePresentationUpdate();
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    testPassed("Did not crash");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <input />
+</body>
+</html>

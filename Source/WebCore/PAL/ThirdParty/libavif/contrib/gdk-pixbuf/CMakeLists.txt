@@ -11,7 +11,8 @@ if(AVIF_BUILD_GDK_PIXBUF)
             add_library(pixbufloader-avif MODULE ${GDK_PIXBUF_SRCS})
 
             target_link_libraries(pixbufloader-avif PUBLIC ${GDK_PIXBUF_LIBRARIES} avif)
-            target_include_directories(pixbufloader-avif PUBLIC ${GDK_PIXBUF_INCLUDE_DIRS})
+            target_link_directories(pixbufloader-avif PUBLIC ${GDK_PIXBUF_LIBRARY_DIRS})
+            target_include_directories(pixbufloader-avif SYSTEM PUBLIC ${GDK_PIXBUF_INCLUDE_DIRS})
 
             pkg_get_variable(GDK_PIXBUF_MODULEDIR gdk-pixbuf-2.0 gdk_pixbuf_moduledir)
             string(REPLACE ${GDK_PIXBUF_PREFIX} ${CMAKE_INSTALL_PREFIX} GDK_PIXBUF_MODULEDIR ${GDK_PIXBUF_MODULEDIR})

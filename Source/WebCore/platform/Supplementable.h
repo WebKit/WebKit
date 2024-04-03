@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if ASSERT_ENABLED
 #include <wtf/Threading.h>
@@ -46,8 +47,8 @@ namespace WebCore {
 //
 // What you should know about the Supplement keys
 // ==============================================
-// The Supplement is expected to use the same const char* string instance
-// as its key. The Supplementable's SupplementMap will use the address of the
+// The Supplement is expected to use the same ASCIILiteral instance as its
+// key. The Supplementable's SupplementMap will use the address of the
 // string as the key and not the characters themselves. Hence, 2 strings with
 // the same characters will be treated as 2 different keys.
 //
@@ -56,12 +57,12 @@ namespace WebCore {
 //
 //     class MyClass : public Supplement<MySupplementable> {
 //         ...
-//         static const char* supplementName();
+//         static ASCIILiteral supplementName();
 //     }
 //
-//     const char* MyClass::supplementName()
+//     ASCIILiteral MyClass::supplementName()
 //     {
-//         return "MyClass";
+//         return "MyClass"_s;
 //     }
 //
 // An example of the using the key:
@@ -82,12 +83,12 @@ public:
     virtual bool isRefCountedWrapper() const { return false; }
 #endif
 
-    static void provideTo(Supplementable<T>* host, const char* key, std::unique_ptr<Supplement<T>> supplement)
+    static void provideTo(Supplementable<T>* host, ASCIILiteral key, std::unique_ptr<Supplement<T>> supplement)
     {
         host->provideSupplement(key, WTFMove(supplement));
     }
 
-    static Supplement<T>* from(Supplementable<T>* host, const char* key)
+    static Supplement<T>* from(Supplementable<T>* host, ASCIILiteral key)
     {
         return host ? host->requireSupplement(key) : 0;
     }
@@ -96,20 +97,20 @@ public:
 template<typename T>
 class Supplementable {
 public:
-    void provideSupplement(const char* key, std::unique_ptr<Supplement<T>> supplement)
+    void provideSupplement(ASCIILiteral key, std::unique_ptr<Supplement<T>> supplement)
     {
         ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
         ASSERT(!m_supplements.get(key));
         m_supplements.set(key, WTFMove(supplement));
     }
 
-    void removeSupplement(const char* key)
+    void removeSupplement(ASCIILiteral key)
     {
         ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
         m_supplements.remove(key);
     }
 
-    Supplement<T>* requireSupplement(const char* key)
+    Supplement<T>* requireSupplement(ASCIILiteral key)
     {
         ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
         return m_supplements.get(key);
@@ -121,7 +122,7 @@ protected:
 #endif
 
 private:
-    typedef HashMap<const char*, std::unique_ptr<Supplement<T>>, PtrHash<const char*>> SupplementMap;
+    using SupplementMap = HashMap<ASCIILiteral, std::unique_ptr<Supplement<T>>, ASCIILiteralPtrHash>;
     SupplementMap m_supplements;
 #if ASSERT_ENABLED
     Ref<Thread> m_thread { Thread::current() };

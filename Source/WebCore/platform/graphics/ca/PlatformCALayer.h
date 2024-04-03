@@ -101,6 +101,7 @@ public:
     virtual ~PlatformCALayer();
 
     PlatformLayerIdentifier layerID() const { return m_layerID; }
+    virtual std::optional<WebCore::LayerHostingContextIdentifier> hostingContextIdentifier() const { return std::nullopt; }
 
     enum class Type : uint8_t {
         Cocoa,
@@ -158,7 +159,7 @@ public:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     virtual void clearAcceleratedEffectsAndBaseValues();
-    virtual void setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, AcceleratedEffectValues&);
+    virtual void setAcceleratedEffectsAndBaseValues(const AcceleratedEffects&, const AcceleratedEffectValues&);
 #endif
 
     virtual void setMaskLayer(RefPtr<PlatformCALayer>&&);
@@ -277,7 +278,7 @@ public:
     virtual void setEventRegion(const EventRegion&) { }
     
 #if ENABLE(SCROLLING_THREAD)
-    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
     virtual void setScrollingNodeID(ScrollingNodeID) { }
 #endif
 
@@ -328,9 +329,15 @@ public:
     static void drawRepaintIndicator(GraphicsContext&, PlatformCALayer*, int repaintCount, Color customBackgroundColor = { });
     static CGRect frameForLayer(const PlatformLayer*);
 
+    virtual void markFrontBufferVolatileForTesting() { }
     void moveToLayerPool();
 
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
+
+    virtual void purgeFrontBufferForTesting() { }
+    virtual void purgeBackBufferForTesting() { }
+
+    bool needsPlatformContext() const;
 
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);

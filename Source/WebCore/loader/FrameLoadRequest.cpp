@@ -65,9 +65,19 @@ Document& FrameLoadRequest::requester()
     return m_requester.get();
 }
 
+Ref<Document> FrameLoadRequest::protectedRequester() const
+{
+    return m_requester;
+}
+
 const SecurityOrigin& FrameLoadRequest::requesterSecurityOrigin() const
 {
     return m_requesterSecurityOrigin.get();
+}
+
+Ref<SecurityOrigin> FrameLoadRequest::protectedRequesterSecurityOrigin() const
+{
+    return m_requesterSecurityOrigin;
 }
 
 } // namespace WebCore

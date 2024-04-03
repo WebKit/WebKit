@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "LegacyGlobalSettings.h"
 #include "Logging.h"
+#include "ProcessThrottler.h"
 #include "WebProcessPool.h"
 #include <wtf/RAMSize.h>
 #include <wtf/StdLibExtras.h>
@@ -38,8 +39,13 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };
 Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };
+#else
+Seconds WebProcessCache::cachedProcessLifetime { 5_min };
+Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive = cachedProcessLifetime;
+#endif
 static Seconds cachedProcessSuspensionDelay { 30_s };
 
 void WebProcessCache::setCachedProcessSuspensionDelayForTesting(Seconds delay)
@@ -160,7 +166,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
     if (it->value->process().lockdownMode() != lockdownMode)
         return nullptr;
 
-    if (!it->value->process().hasSameGPUProcessPreferencesAs(pageConfiguration))
+    if (!it->value->process().hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration))
         return nullptr;
 
     auto process = it->value->takeProcess();
@@ -326,6 +332,15 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
         m_process->platformResumeProcess();
     else
         m_suspensionTimer.stop();
+
+    // Dropping the background activity instantly might cause unnecessary process suspend/resume IPC
+    // churn. This is because the background activity might be the last activity associated with the
+    // process, so dropping it will cause a suspend IPC. Then we will almost always use the cached
+    // process very soon after this call, causing a resume IPC.
+    //
+    // To avoid this, let the background activity live until the next runloop turn.
+    if (m_backgroundActivity)
+        RunLoop::current().dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
 #endif
     m_process->setIsInProcessCache(false);
     return m_process.releaseNonNull();
@@ -341,12 +356,19 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
 void WebProcessCache::CachedProcess::startSuspensionTimer()
 {
+    ASSERT(m_process);
+
+    // Allow the cached process to run for a while before dropping all assertions. This is useful
+    // if the cached process will be reused fairly quickly after it goes into the cache, which
+    // occurs in some benchmarks like PLT5.
+    m_backgroundActivity = m_process->throttler().backgroundActivity("Cached process near-suspended"_s).moveToUniquePtr();
     m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);
 }
 
 void WebProcessCache::CachedProcess::suspensionTimerFired()
 {
     ASSERT(m_process);
+    m_backgroundActivity = nullptr;
     m_process->platformSuspendProcess();
 }
 #endif

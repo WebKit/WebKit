@@ -1,0 +1,5 @@
+int attribute;
+
+/*%%*
+name 'attribute' is reserved
+*%%*/

@@ -588,17 +588,35 @@ LLINT_SLOW_PATH_DECL(stack_check)
     LLINT_RETURN_TWO(pc, callFrame);
 }
 
-extern "C" UGPRPair llint_link_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair llint_default_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
-    return linkFor(calleeFrame, jsCast<JSGlobalObject*>(globalObject), callLinkInfo);
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
+    void* callTarget = linkFor(vm, owner, calleeFrame, callLinkInfo);
+    ensureStillAliveHere(owner);
+    if (UNLIKELY(scope.exception()))
+        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
+    return encodeResult(callTarget, nullptr);
 }
 
-extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
+extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, CallLinkInfo* callLinkInfo)
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
+    sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* calleeAsFunctionCellIgnored;
-    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
-    return virtualForWithFunction(jsCast<JSGlobalObject*>(globalObject), calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
+    calleeFrame->setCodeBlock(nullptr);
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
+    ensureStillAliveHere(owner);
+    if (UNLIKELY(scope.exception()))
+        return encodeResult(callTarget, bitwise_cast<void*>(&vm));
+    return encodeResult(callTarget, nullptr);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_object)
@@ -641,6 +659,43 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     JSValue value = getOperand(callFrame, bytecode.m_value);
     JSValue proto = getOperand(callFrame, bytecode.m_prototype);
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateLexicalEnvironment>();
+    JSScope* currentScope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    SymbolTable* symbolTable = jsCast<SymbolTable*>(getOperand(callFrame, bytecode.m_symbolTable));
+    JSValue initialValue = getOperand(callFrame, bytecode.m_initialValue);
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
+    JSScope* newScope = JSLexicalEnvironment::create(vm, globalObject, currentScope, symbolTable, initialValue);
+    LLINT_RETURN(newScope);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_direct_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateDirectArguments>();
+    LLINT_RETURN(DirectArguments::createByCopying(globalObject, callFrame));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_scoped_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateScopedArguments>();
+    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(getOperand(callFrame, bytecode.m_scope));
+    ScopedArgumentsTable* table = scope->symbolTable()->arguments();
+    LLINT_RETURN(ScopedArguments::createByCopying(globalObject, callFrame, table, scope));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_create_cloned_arguments)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCreateClonedArguments>();
+    auto result = ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned);
+    EXCEPTION_ASSERT(throwScope.exception() || result);
+    LLINT_RETURN(result);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
@@ -1106,6 +1161,14 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, JSGlobalObject* globalObject, Code
 
         scope.release();
         return baseValue.get(globalObject, i);
+    } else if (subscript.isNumber() && baseValue.isCell()) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        ArrayProfile* arrayProfile = &metadata.m_arrayProfile;
+        arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
     }
 
     baseValue.requireObjectCoercible(globalObject);
@@ -1565,8 +1628,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter_by_id)
     ASSERT(getNonConstantOperand(callFrame, bytecode.m_base).isObject());
     JSObject* baseObject = asObject(getNonConstantOperand(callFrame, bytecode.m_base));
 
-    JSValue getter = getNonConstantOperand(callFrame, bytecode.m_getter);
-    JSValue setter = getNonConstantOperand(callFrame, bytecode.m_setter);
+    JSValue getter = getOperand(callFrame, bytecode.m_getter);
+    JSValue setter = getOperand(callFrame, bytecode.m_setter);
     ASSERT(getter.isObject() || setter.isObject());
     GetterSetter* accessor = GetterSetter::create(vm, globalObject, getter, setter);
 
@@ -2123,12 +2186,14 @@ static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstru
     calleeFrame->setCodeBlock(nullptr);
     callFrame->setCurrentVPC(pc);
     
-    if (!isHostFunction(calleeAsValue, globalFuncEval))
-        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
-    
     JSScope* callerScopeChain = jsCast<JSScope*>(getOperand(callFrame, bytecode.m_scope));
     JSValue thisValue = getOperand(callFrame, bytecode.m_thisValue);
-    vm.encodedHostCallReturnValue = JSValue::encode(eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode));
+    JSValue result = eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode);
+    LLINT_CALL_CHECK_EXCEPTION(globalObject);
+    if (!result)
+        RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
+
+    vm.encodedHostCallReturnValue = JSValue::encode(result);
     DisallowGC disallowGC;
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
     LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);

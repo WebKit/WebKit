@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x140
-  RenderBlock {HTML} at (0,0) size 800x140
-    RenderBody {BODY} at (8,16) size 784x108
-      RenderBlock {P} at (0,0) size 784x32
+layer at (0,0) size 800x137
+  RenderBlock {HTML} at (0,0) size 800x137
+    RenderBody {BODY} at (8,16) size 784x105
+      RenderBlock {P} at (0,0) size 784x29
         RenderInline {NOBR} at (0,0) size 163x19
           RenderInline {B} at (0,0) size 25x19
             RenderText {#text} at (0,3) size 25x19
@@ -24,7 +24,7 @@ layer at (0,0) size 800x140
             RenderText {#text} at (99,3) size 64x19
               text run at (99,3) width 64: "\x{1790}\x{178F}\x{17AF}\x{1780}\x{179F}\x{17B6}\x{179A}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,48) size 784x60
+      RenderBlock {P} at (0,45) size 784x60
         RenderText {#text} at (0,0) size 542x19
           text run at (0,0) width 542: "Some Harfbuzz shapers will output cluster logs which suggest that some glyphs had "
         RenderInline {I} at (0,0) size 17x19
@@ -43,4 +43,3 @@ layer at (0,0) size 800x140
             text run at (0,45) width 79: "test_shell"
         RenderText {#text} at (78,40) size 262x19
           text run at (78,40) width 262: " shouldn't trigger any assertions or crash."
-caret: position 0 of child 0 {#text} of child 0 {B} of child 1 {NOBR} of child 1 {P} of body

@@ -60,6 +60,7 @@ static void nodeWasReattachedRecursive(ScrollingStateNode& node)
 
 ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
+    , m_rootFrameIdentifier(FrameIdentifier { })
 {
 }
 
@@ -220,19 +221,19 @@ ScrollingNodeID ScrollingStateTree::insertNode(ScrollingNodeType nodeType, Scrol
 
     RefPtr<ScrollingStateNode> newNode;
     if (!parentID) {
-        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame);
+        RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame || nodeType == ScrollingNodeType::Subframe);
         ASSERT(!childIndex || childIndex == notFound);
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, ScrollingNodeType::MainFrame, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, nodeType, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
         auto parent = stateNodeForID(parentID);
         if (!parent) {
             ASSERT_NOT_REACHED();
-            return 0;
+            return { };
         }
 
         ASSERT(parentID);
@@ -386,7 +387,7 @@ bool ScrollingStateTree::isValid() const
         case ScrollingNodeType::OverflowProxy: {
             auto& proxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(node);
             if (!proxyNode.overflowScrollingNode() || !nodeMap().contains(proxyNode.overflowScrollingNode())) {
-                ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateOverflowScrollProxyNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << proxyNode.overflowScrollingNode());
+                LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateOverflowScrollProxyNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << proxyNode.overflowScrollingNode());
                 isValid = false;
             }
             break;
@@ -399,7 +400,7 @@ bool ScrollingStateTree::isValid() const
             auto& positionedNode = downcast<ScrollingStatePositionedNode>(node);
             for (auto relatedNodeID : positionedNode.relatedOverflowScrollingNodes()) {
                 if (!relatedNodeID || !nodeMap().contains(relatedNodeID)) {
-                    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
+                    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
                     isValid = false;
                 }
             }

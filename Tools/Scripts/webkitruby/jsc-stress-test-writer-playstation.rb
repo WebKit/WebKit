@@ -166,7 +166,7 @@ def diffErrorHandler(expectedFilename)
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status}\\n\"", plan.name) + "\n"
         outp.puts "    " + plan.failCommand
-        outp.puts "elsif File.exists?(\"../#{Shellwords.shellescape(expectedFilename)}\")\n"
+        outp.puts "elsif File.exist?(\"../#{Shellwords.shellescape(expectedFilename)}\")\n"
         outp.puts getDiff("../#{Shellwords.shellescape(expectedFilename)}", outputFilename)
         outp.puts "    if isDifferent\n"
         outp.puts "        print " + prefixString("\"DIFF FAILURE!\\n\"", plan.name) + "\n"

@@ -152,8 +152,8 @@ inline void StringBuilder::swap(StringBuilder& other)
 inline StringBuilder::operator StringView() const
 {
     if (is8Bit())
-        return { characters<LChar>(), length() };
-    return { characters<UChar>(), length() };
+        return span<LChar>();
+    return span<UChar>();
 }
 
 inline void StringBuilder::append(UChar character)
@@ -320,7 +320,7 @@ template<typename... StringTypes> void StringBuilder::append(StringTypes... stri
 
 template<typename CharacterType> bool equal(const StringBuilder& builder, const CharacterType* buffer, unsigned length)
 {
-    return builder == StringView { buffer, length };
+    return builder == StringView { std::span { buffer, length } };
 }
 
 template<> struct IntegerToStringConversionTrait<StringBuilder> {

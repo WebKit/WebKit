@@ -13,11 +13,11 @@ layer at (0,0) size 800x553
         RenderTableSection (anonymous) at (0,0) size 302x19
           RenderTableRow {UL} at (0,0) size 302x19 [bgcolor=#00CC99]
             RenderTableCell {LI} at (0,0) size 76x19 [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 54x19 [color=#0000EE]
+              RenderInline {A} at (11,0) size 54x19 [color=#0000EE]
                 RenderText {#text} at (11,0) size 54x19
                   text run at (11,0) width 54: "people"
             RenderTableCell {LI} at (75,0) size 76x19 [r=0 c=1 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+              RenderInline {A} at (12,0) size 51x19 [color=#0000EE]
                 RenderText {#text} at (12,0) size 51x19
                   text run at (12,0) width 51: "places"
             RenderTableCell {LI} at (150,0) size 76x19 [r=0 c=2 rs=1 cs=1]
@@ -25,7 +25,7 @@ layer at (0,0) size 800x553
                 RenderText {#text} at (0,0) size 76x19
                   text run at (0,0) width 76: "members"
             RenderTableCell {LI} at (225,0) size 77x19 [r=0 c=3 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 38x19 [color=#0000EE]
+              RenderInline {A} at (19,0) size 38x19 [color=#0000EE]
                 RenderText {#text} at (19,0) size 38x19
                   text run at (19,0) width 38: "links"
       RenderBlock {DIV} at (3,86) size 680x336

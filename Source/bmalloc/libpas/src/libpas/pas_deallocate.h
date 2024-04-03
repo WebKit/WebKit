@@ -188,9 +188,13 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate(void* ptr,
                                                  pas_deallocation_mode deallocation_mode)
 {
     static const bool verbose = false;
-    
-    PAS_PROFILE(ptr, TRY_DEALLOCATE);
+
     pas_thread_local_cache* thread_local_cache;
+    uintptr_t begin;
+
+    begin = (uintptr_t)ptr;
+    PAS_PROFILE(TRY_DEALLOCATE, begin);
+    ptr = (void*)begin;
 
     if (verbose)
         pas_log("try_deallocate for %p\n", ptr);

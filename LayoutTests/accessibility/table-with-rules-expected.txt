@@ -48,6 +48,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -94,6 +96,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -140,6 +144,8 @@ AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
 AXSelectedCells: <array of size 0>
+AXSelectedChildren: (null)
+AXTableLevel: 1
 AXElementBusy: 0
 
 
@@ -173,7 +179,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 
@@ -207,7 +213,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXTitleUIElement: (null)
+AXInlineText: 0
 AXElementBusy: 0
 
 

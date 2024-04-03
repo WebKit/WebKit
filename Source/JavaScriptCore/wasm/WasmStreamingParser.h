@@ -80,7 +80,7 @@ public:
 
     StreamingParser(ModuleInformation&, StreamingParserClient&);
 
-    State addBytes(const uint8_t* bytes, size_t length) { return addBytes(bytes, length, IsEndOfStream::No); }
+    State addBytes(std::span<const uint8_t> bytes) { return addBytes(bytes, IsEndOfStream::No); }
     State finalize();
 
     String errorMessage() const { return crossThreadCopy(m_errorMessage); }
@@ -91,7 +91,7 @@ private:
     static constexpr unsigned moduleHeaderSize = 8;
     static constexpr unsigned sectionIDSize = 1;
 
-    JS_EXPORT_PRIVATE State addBytes(const uint8_t* bytes, size_t length, IsEndOfStream);
+    JS_EXPORT_PRIVATE State addBytes(std::span<const uint8_t> bytes, IsEndOfStream);
 
     State parseModuleHeader(Vector<uint8_t>&&);
     State parseSectionID(Vector<uint8_t>&&);
@@ -102,8 +102,8 @@ private:
     State parseFunctionSize(uint32_t);
     State parseFunctionPayload(Vector<uint8_t>&&);
 
-    std::optional<Vector<uint8_t>> consume(const uint8_t* bytes, size_t, size_t&, size_t);
-    Expected<uint32_t, State> consumeVarUInt32(const uint8_t* bytes, size_t, size_t&, IsEndOfStream);
+    std::optional<Vector<uint8_t>> consume(std::span<const uint8_t> bytes, size_t&, size_t);
+    Expected<uint32_t, State> consumeVarUInt32(std::span<const uint8_t> bytes, size_t&, IsEndOfStream);
 
     void moveToStateIfNotFailed(State);
     template <typename ...Args> NEVER_INLINE State WARN_UNUSED_RETURN fail(Args...);

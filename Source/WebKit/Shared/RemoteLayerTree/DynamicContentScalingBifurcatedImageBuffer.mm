@@ -29,6 +29,7 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #import "DynamicContentScalingImageBufferBackend.h"
+#import <CoreRE/RECGCommandsContext.h>
 #import <WebCore/BifurcatedGraphicsContext.h>
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <wtf/MachSendRight.h>
@@ -53,10 +54,11 @@ std::optional<WebCore::DynamicContentScalingDisplayList> DynamicContentScalingBi
     if (!m_dynamicContentScalingBackend)
         return std::nullopt;
     auto* sharing = static_cast<WebCore::ImageBufferBackend&>(*m_dynamicContentScalingBackend).toBackendSharing();
-    if (!is<ImageBufferBackendHandleSharing>(sharing))
+    auto* imageSharing = dynamicDowncast<ImageBufferBackendHandleSharing>(sharing);
+    if (!imageSharing)
         return std::nullopt;
-    auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
-    if (!std::holds_alternative<WebCore::DynamicContentScalingDisplayList>(*handle))
+    auto handle = imageSharing->takeBackendHandle();
+    if (!handle || !std::holds_alternative<WebCore::DynamicContentScalingDisplayList>(*handle))
         return std::nullopt;
     auto& displayList = std::get<WebCore::DynamicContentScalingDisplayList>(*handle);
 

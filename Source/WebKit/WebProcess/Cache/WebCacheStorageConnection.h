@@ -55,7 +55,7 @@ private:
     IPC::Connection& connection();
 
     // WebCore::CacheStorageConnection
-    void open(const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&) final;
+    Ref<OpenPromise> open(const WebCore::ClientOrigin&, const String& cacheName) final;
     void remove(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&) final;
     void retrieveCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&) final;
 

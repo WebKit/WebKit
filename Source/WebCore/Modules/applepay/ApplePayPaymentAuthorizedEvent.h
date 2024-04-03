@@ -49,9 +49,6 @@ public:
 private:
     ApplePayPaymentAuthorizedEvent(const AtomString& type, unsigned version, const Payment&);
 
-    // Event.
-    EventInterface eventInterface() const override;
-
     const ApplePayPayment m_payment;
 };
 

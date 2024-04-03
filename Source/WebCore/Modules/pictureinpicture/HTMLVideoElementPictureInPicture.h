@@ -32,6 +32,7 @@
 #include "Supplementable.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -73,12 +74,12 @@ public:
 #endif
 
 private:
-    static const char* supplementName() { return "HTMLVideoElementPictureInPicture"; }
+    static ASCIILiteral supplementName() { return "HTMLVideoElementPictureInPicture"_s; }
 
     bool m_autoPictureInPicture { false };
     bool m_disablePictureInPicture { false };
 
-    HTMLVideoElement& m_videoElement;
+    WeakRef<HTMLVideoElement> m_videoElement;
     RefPtr<PictureInPictureWindow> m_pictureInPictureWindow;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;

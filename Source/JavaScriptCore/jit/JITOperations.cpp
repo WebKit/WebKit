@@ -37,6 +37,7 @@
 #include "DFGOSREntry.h"
 #include "DFGThunks.h"
 #include "Debugger.h"
+#include "EnsureStillAliveHere.h"
 #include "ExceptionFuzz.h"
 #include "FrameTracers.h"
 #include "GetterSetter.h"
@@ -44,8 +45,10 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITExceptions.h"
+#include "JITThunks.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JITWorklist.h"
+#include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -684,6 +687,108 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (EncodedJSValu
     return JSValue::encode(jsBoolean(found));
 }
 
+static ALWAYS_INLINE JSValue inByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, StructureStubInfo* stubInfo, JSValue baseValue, CacheableIdentifier identifier)
+{
+    constexpr bool verbose = false;
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* uid = identifier.uid();
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::HasProperty);
+
+    if (UNLIKELY(!baseValue.isObject())) {
+        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+            dataLogLnIf(verbose, " ", __LINE__);
+            repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+        }
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        return jsUndefined();
+    }
+
+    JSObject* baseObject = asObject(baseValue);
+    JSObject* object = baseObject;
+    bool cacheable = true;
+    while (true) {
+        if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype())) {
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                dataLogLnIf(verbose, " ", __LINE__);
+                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+            }
+            RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
+        }
+
+        Structure* structure = object->structure();
+        bool hasProperty = object->getOwnNonIndexPropertySlot(vm, structure, uid, slot);
+        structure = object->structure(); // Reload it again since static-class-table can cause transition. But this transition only affects on this Structure.
+        cacheable &= structure->propertyAccessesAreCacheable();
+        if (hasProperty) {
+            if (LIKELY(cacheable && slot.isCacheable())) {
+                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary())
+                    vm.megamorphicCache()->initAsHasHit(baseObject->structureID(), uid);
+                else {
+                    if (UNLIKELY(baseObject->structure()->hasBeenFlattenedBefore())) {
+                        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                            dataLogLnIf(verbose, " ", __LINE__);
+                            repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+                        }
+                    }
+                    dataLogLnIf(verbose, " ", __LINE__);
+                }
+            } else {
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                    dataLogLnIf(verbose, " ", __LINE__);
+                    repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+                }
+            }
+            return jsBoolean(true);
+        }
+
+        cacheable &= structure->propertyAccessesAreCacheableForAbsence();
+        cacheable &= structure->hasMonoProto();
+
+        JSValue prototype = object->getPrototypeDirect();
+        if (!prototype.isObject()) {
+            if (LIKELY(cacheable)) {
+                if (LIKELY(!baseObject->structure()->isDictionary())) {
+                    vm.megamorphicCache()->initAsHasMiss(baseObject->structureID(), uid);
+                    return jsBoolean(false);
+                }
+                if (LIKELY(!baseObject->structure()->hasBeenFlattenedBefore()))
+                    return jsBoolean(false);
+            }
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                dataLogLnIf(verbose, " ", __LINE__);
+                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ById);
+            }
+            return jsBoolean(false);
+        }
+        object = asObject(prototype);
+    }
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByIdMegamorphic, EncodedJSValue, (EncodedJSValue base, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    ICSlowPathCallFrameTracer tracer(vm, callFrame, stubInfo);
+
+    JSValue baseValue = JSValue::decode(base);
+    CacheableIdentifier identifier = stubInfo->identifier();
+
+    return JSValue::encode(inByIdMegamorphic(globalObject, vm, callFrame, stubInfo, baseValue, identifier));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByIdMegamorphicGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    JSValue baseValue = JSValue::decode(base);
+    CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
+
+    return JSValue::encode(inByIdMegamorphic(globalObject, vm, callFrame, nullptr, baseValue, identifier));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedKey, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile))
 {
     SuperSamplerScope superSamplerScope(false);
@@ -746,6 +851,115 @@ JSC_DEFINE_JIT_OPERATION(operationInByValGaveUp, EncodedJSValue, (EncodedJSValue
     stubInfo->tookSlowPath = true;
 
     return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, JSValue::decode(base), JSValue::decode(key), arrayProfile)));
+}
+
+static ALWAYS_INLINE JSValue inByValMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, StructureStubInfo* stubInfo, ArrayProfile* profile, JSValue baseValue, JSValue subscript)
+{
+    constexpr bool verbose = false;
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(!baseValue.isObject() || !(subscript.isString() && CacheableIdentifier::isCacheableIdentifierCell(subscript)))) {
+        dataLogLnIf(verbose, " ", __LINE__);
+        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+            repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+        }
+        RELEASE_AND_RETURN(scope, jsBoolean(CommonSlowPaths::opInByVal(globalObject, baseValue, subscript, profile)));
+    }
+
+    Identifier propertyName = subscript.toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSObject* baseObject = asObject(baseValue);
+    UniquedStringImpl* uid = propertyName.impl();
+    if (UNLIKELY(!canUseMegamorphicInById(vm, uid))) {
+        dataLogLnIf(verbose, " ", __LINE__);
+        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+            repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+        }
+        if (profile)
+            profile->observeStructure(baseObject->structure());
+        RELEASE_AND_RETURN(scope, jsBoolean(baseObject->hasProperty(globalObject, uid)));
+    }
+
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::HasProperty);
+    JSObject* object = baseObject;
+    bool cacheable = true;
+    while (true) {
+        if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype())) {
+            dataLogLnIf(verbose, " ", __LINE__);
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+            }
+            RELEASE_AND_RETURN(scope, jsBoolean(object->getNonIndexPropertySlot(globalObject, uid, slot)));
+        }
+
+        Structure* structure = object->structure();
+        bool hasProperty = object->getOwnNonIndexPropertySlot(vm, structure, uid, slot);
+        structure = object->structure(); // Reload it again since static-class-table can cause transition. But this transition only affects on this Structure.
+        cacheable &= structure->propertyAccessesAreCacheable();
+        if (hasProperty) {
+            if (LIKELY(cacheable && slot.isCacheable())) {
+                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary())
+                    vm.megamorphicCache()->initAsHasHit(baseObject->structureID(), uid);
+                else {
+                    if (UNLIKELY(baseObject->structure()->hasBeenFlattenedBefore())) {
+                        dataLogLnIf(verbose, " ", __LINE__);
+                        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                            repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+                        }
+                    }
+                }
+            } else {
+                dataLogLnIf(verbose, " ", __LINE__);
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                    repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+                }
+            }
+            return jsBoolean(true);
+        }
+
+        cacheable &= structure->propertyAccessesAreCacheableForAbsence();
+        cacheable &= structure->hasMonoProto();
+
+        JSValue prototype = object->getPrototypeDirect();
+        if (!prototype.isObject()) {
+            if (LIKELY(cacheable)) {
+                if (LIKELY(!baseObject->structure()->isDictionary())) {
+                    vm.megamorphicCache()->initAsHasMiss(baseObject->structureID(), uid);
+                    return jsBoolean(false);
+                }
+                if (LIKELY(!baseObject->structure()->hasBeenFlattenedBefore()))
+                    return jsBoolean(false);
+            }
+
+            dataLogLnIf(verbose, " ", __LINE__);
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm)) {
+                repatchInBySlowPathCall(callFrame->codeBlock(), *stubInfo, InByKind::ByVal);
+            }
+            return jsBoolean(false);
+        }
+        object = asObject(prototype);
+    }
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByValMegamorphic, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    ICSlowPathCallFrameTracer tracer(vm, callFrame, stubInfo);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    return JSValue::encode(inByValMegamorphic(globalObject, vm, callFrame, stubInfo, arrayProfile, baseValue, subscript));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByValMegamorphicGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    JSValue baseValue = JSValue::decode(encodedBase);
+    return JSValue::encode(inByValMegamorphic(globalObject, vm, callFrame, nullptr, nullptr, baseValue, JSValue::decode(encodedSubscript)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (EncodedJSValue encodedBase, EncodedJSValue encodedProperty, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
@@ -968,10 +1182,9 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
         return;
     }
 
-    if (newStructure->outOfLineCapacity() == oldStructure->outOfLineCapacity()) {
-        if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
-            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset());
-    }
+    bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
+    if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictMegamorphic, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
@@ -1032,6 +1245,26 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyMegamorphicGeneric, void, (JSGlob
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
 
     putByIdMegamorphic(globalObject, vm, callFrame, nullptr, baseValue, value, identifier, PutByKind::ByIdSloppy);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPointer, JSObject* baseObject, EncodedJSValue encodedValue, const MegamorphicCache::StoreEntry* entry))
+{
+    constexpr bool verbose = false;
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    Structure* oldStructure = baseObject->structure();
+    Structure* newStructure = entry->m_newStructureID.decode();
+    PropertyOffset offset = entry->m_offset;
+
+    ASSERT(oldStructure == entry->m_oldStructureID.decode());
+    Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), newStructure->outOfLineCapacity());
+    baseObject->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
+    baseObject->putDirectOffset(vm, offset, JSValue::decode(encodedValue));
+    baseObject->setStructure(vm, newStructure);
+    ASSERT(newStructure == baseObject->structure());
+    dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject* globalObject, StructureStubInfo* stubInfo))
@@ -1705,10 +1938,9 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
         return;
     }
 
-    if (newStructure->outOfLineCapacity() == oldStructure->outOfLineCapacity()) {
-        if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
-            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset());
-    }
+    bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
+    if (LIKELY(slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutByValStrictMegamorphic, void, (EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue, JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* profile))
@@ -2032,9 +2264,6 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* f
     CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
     calleeFrame->setCodeBlock(nullptr);
 
-    if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
-        return JSValue::encode(JSValue());
-
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::sloppy()));
 }
 
@@ -2043,88 +2272,60 @@ JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* f
     CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
     calleeFrame->setCodeBlock(nullptr);
 
-    if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
-        return JSValue::encode(JSValue());
-
     return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict()));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    sanitizeStackForVM(globalObject->vm());
-    return linkFor(calleeFrame, globalObject, callLinkInfo);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
-{
-    VM& vm = globalObject->vm();
-    sanitizeStackForVM(vm);
-    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
-    JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
-    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
-
-    CallFrame* callerFrame = calleeFrame->callerFrame();
-    JSCell* owner = callerFrame->codeOwnerCell();
-    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-
-    return result;
-}
-
-JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
-{
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
     JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
-
-    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
-    auto span = stub->trailingSpan();
-    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
-    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
     if (UNLIKELY(scope.exception()))
         return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-
-    size_t first;
-    size_t second;
-    decodeResult(result, first, second);
-    return first;
+    linkPolymorphicCall(vm, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
+    ensureStillAliveHere(owner);
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
+    return static_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
+    calleeFrame->setCodeBlock(nullptr);
     JSCell* calleeAsFunctionCell;
-    NativeCallFrameTracer tracer(vm, calleeFrame);
-    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
-
-    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
-    auto span = stub->trailingSpan();
-    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
-    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-
+    void* callTarget = virtualForWithFunction(vm, owner, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
+    ensureStillAliveHere(owner);
     if (UNLIKELY(scope.exception()))
         return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
-
-    size_t first;
-    size_t second;
-    decodeResult(result, first, second);
-    return first;
+    return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+JSC_DEFINE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame* calleeFrame, CallLinkInfo* callLinkInfo))
 {
-    VM& vm = globalObject->vm();
+    JSCell* owner = callLinkInfo->ownerForSlowPath(calleeFrame);
+    VM& vm = owner->vm();
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     sanitizeStackForVM(vm);
-    JSCell* calleeAsFunctionCellIgnored;
-    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
-    return virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    calleeFrame->setCodeBlock(nullptr);
+    void* callTarget = linkFor(vm, owner, calleeFrame, callLinkInfo);
+    // Keep owner alive explicitly. Now this function can be called from tail-call. This means that CallFrame for that owner already goes away, so we should keep it alive if we would like to use it.
+    ensureStillAliveHere(owner);
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
+    return bitwise_cast<UCPURegister>(bitwise_cast<uintptr_t>(callTarget));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2))
@@ -2230,6 +2431,47 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (J
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSValue sizeValue = JSValue::decode(size);
     return JSValue::encode(constructArrayWithSizeQuirk(globalObject, profile, sizeValue));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCreateLexicalEnvironmentTDZ, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* scope, SymbolTable* table))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(JSLexicalEnvironment::create(vm, globalObject->activationStructure(), scope, table, jsTDZValue()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCreateLexicalEnvironmentUndefined, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* scope, SymbolTable* table))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(JSLexicalEnvironment::create(vm, globalObject->activationStructure(), scope, table, jsUndefined()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCreateDirectArgumentsBaseline, EncodedJSValue, (JSGlobalObject* globalObject))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(DirectArguments::createByCopying(globalObject, callFrame));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCreateScopedArgumentsBaseline, EncodedJSValue, (JSGlobalObject* globalObject, JSLexicalEnvironment* scope))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ScopedArgumentsTable* table = scope->symbolTable()->arguments();
+    return JSValue::encode(ScopedArguments::createByCopying(globalObject, callFrame, table, scope));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsBaseline, EncodedJSValue, (JSGlobalObject* globalObject))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return JSValue::encode(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned));
 }
 
 template<typename FunctionType>
@@ -2776,6 +3018,41 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
     return 0;
 }
 
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+
+JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSArrayIterator* arrayIterator, JSArray* array, void* metadataPointer))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto& metadata = *bitwise_cast<OpIteratorNext::Metadata*>(metadataPointer);
+    metadata.m_iterableProfile.observeStructureID(array->structureID());
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+
+    auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
+    int64_t index = indexSlot.get().asAnyInt();
+    ASSERT(0 <= index && index <= maxSafeInteger());
+
+    JSValue value;
+    bool done = index == JSArrayIterator::doneIndex || index >= array->length();
+    if (!done) {
+        // No need for a barrier here because we know this is a primitive.
+        indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
+        ASSERT(index == static_cast<unsigned>(index));
+        value = array->getIndex(globalObject, static_cast<unsigned>(index));
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        // No need for a barrier here because we know this is a primitive.
+        indexSlot.setWithoutWriteBarrier(jsNumber(-1));
+    }
+
+    return makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value));
+}
+
+#endif
+
 ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* callFrame, ArrayProfile* arrayProfile, JSValue baseValue, JSValue subscript)
 {
     UNUSED_PARAM(callFrame);
@@ -2828,8 +3105,13 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         }
 
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i));
-    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
+    }
 
     baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, JSValue());
@@ -2947,8 +3229,13 @@ ALWAYS_INLINE static JSValue getByValWithThis(JSGlobalObject* globalObject, Call
         }
 
         RELEASE_AND_RETURN(scope, baseValue.get(globalObject, i, slot));
-    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile)
+    } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
+        if (subscript == jsNumber(-1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return jsUndefined();
+        }
+    }
 
     baseValue.requireObjectCoercible(globalObject);
     RETURN_IF_EXCEPTION(scope, { });

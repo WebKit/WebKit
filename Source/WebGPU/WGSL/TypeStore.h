@@ -93,13 +93,13 @@ public:
     const Type* textureDepthMultisampled2dType() const { return m_textureDepthMultisampled2d; }
 
     const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
-    const Type* arrayType(const Type*, std::optional<unsigned>);
+    const Type* arrayType(const Type*, Types::Array::Size);
     const Type* vectorType(uint8_t, const Type*);
     const Type* matrixType(uint8_t columns, uint8_t rows, const Type*);
     const Type* textureType(Types::Texture::Kind, const Type*);
     const Type* textureStorageType(Types::TextureStorage::Kind, TexelFormat, AccessMode);
-    const Type* functionType(Vector<const Type*>&&, const Type*);
-    const Type* referenceType(AddressSpace, const Type*, AccessMode);
+    const Type* functionType(Vector<const Type*>&&, const Type*, bool mustUse);
+    const Type* referenceType(AddressSpace, const Type*, AccessMode, bool isVectorComponent = false);
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
     const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
@@ -136,8 +136,8 @@ private:
     const Type* m_textureDepthMultisampled2d;
     const Type* m_atomicI32;
     const Type* m_atomicU32;
-    const Type* m_atomicCompareExchangeResultI32;
-    const Type* m_atomicCompareExchangeResultU32;
+    const Type* m_atomicCompareExchangeResultI32 { nullptr };
+    const Type* m_atomicCompareExchangeResultU32 { nullptr };
 };
 
 } // namespace WGSL

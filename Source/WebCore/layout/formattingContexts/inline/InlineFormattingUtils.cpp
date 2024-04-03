@@ -284,17 +284,21 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     return { };
 }
 
-InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
+InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineContentEnd, bool lineHasIntrusiveFloat, InlineItemPosition layoutRangeEnd)
 {
-    if (!previousLineTrailingInlineItemPosition)
+    if (!previousLineContentEnd)
         return lineContentEnd;
-    if (previousLineTrailingInlineItemPosition->index < lineContentEnd.index || (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && previousLineTrailingInlineItemPosition->offset < lineContentEnd.offset)) {
+    if (previousLineContentEnd->index < lineContentEnd.index || (previousLineContentEnd->index == lineContentEnd.index && previousLineContentEnd->offset < lineContentEnd.offset)) {
         // Either full or partial advancing.
         return lineContentEnd;
     }
-    if (previousLineTrailingInlineItemPosition->index == lineContentEnd.index && !previousLineTrailingInlineItemPosition->offset && !lineContentEnd.offset) {
-        // Can't mangage to put any content on line (most likely due to floats). Note that this only applies to full content.
+    if (lineContentEnd == *previousLineContentEnd && lineHasIntrusiveFloat) {
+        // Couldn't manage to put any content on line due to floats.
         return lineContentEnd;
+    }
+    if (lineContentEnd == layoutRangeEnd) {
+        // End of content.
+        return layoutRangeEnd;
     }
     // This looks like a partial content and we are stuck. Let's force-move over to the next inline item.
     // We certainly lose some content, but we would be busy looping otherwise.
@@ -305,14 +309,13 @@ InlineItemPosition InlineFormattingUtils::leadingInlineItemPositionForNextLine(I
 InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft, bool useFirstLineStyle) const
 {
     ASSERT(inlineItem.layoutBox().isInlineLevelBox());
-    if (is<InlineTextItem>(inlineItem)) {
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (auto contentWidth = inlineTextItem.width())
+    if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
+        if (auto contentWidth = inlineTextItem->width())
             return *contentWidth;
-        auto& fontCascade = useFirstLineStyle ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
-        if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
-            return TextUtil::width(inlineTextItem, fontCascade, contentLogicalLeft);
-        return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
+        auto& fontCascade = useFirstLineStyle ? inlineTextItem->firstLineStyle().fontCascade() : inlineTextItem->style().fontCascade();
+        if (!inlineTextItem->isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(*inlineTextItem))
+            return TextUtil::width(*inlineTextItem, fontCascade, contentLogicalLeft);
+        return TextUtil::width(*inlineTextItem, fontCascade, inlineTextItem->start(), inlineTextItem->start() + 1, contentLogicalLeft);
     }
 
     if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity())
@@ -325,15 +328,15 @@ InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inline
         return boxGeometry.marginBoxWidth();
 
     if (inlineItem.isInlineBoxStart()) {
-        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart().value_or(0);
+        auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart();
         auto& style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-            logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0_lu);
+            logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd();
         return logicalWidth;
     }
 
     if (inlineItem.isInlineBoxEnd())
-        return boxGeometry.marginEnd() + boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0);
+        return boxGeometry.marginEnd() + boxGeometry.borderEnd() + boxGeometry.paddingEnd();
 
     if (inlineItem.isOpaque())
         return { };
@@ -363,46 +366,89 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& previousInl
     return TextUtil::mayBreakInBetween(previousInlineTextItem, nextInlineTextItem);
 }
 
-static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next)
+static inline const ElementBox& nearestCommonAncestor(const Box& first, const Box& second, const ElementBox& rootBox)
+{
+    auto& firstParent = first.parent();
+    auto& secondParent = second.parent();
+    // Cover a few common cases first.
+    // 'some content'
+    if (&firstParent == &secondParent)
+        return firstParent;
+    // some<span>content</span>
+    if (&secondParent != &rootBox && &secondParent.parent() == &firstParent)
+        return firstParent;
+    // <span>some</span>content
+    if (&firstParent != &rootBox && &firstParent.parent() == &secondParent)
+        return secondParent;
+    // <span>some</span><span>content</span>
+    if (&firstParent != &rootBox && &secondParent != &rootBox && &firstParent.parent() == &secondParent.parent())
+        return firstParent.parent();
+
+    HashSet<const ElementBox*> descendantsSet;
+    for (auto* descendant = &firstParent; descendant != &rootBox; descendant = &descendant->parent())
+        descendantsSet.add(descendant);
+    for (auto* descendant = &secondParent; descendant != &rootBox; descendant = &descendant->parent()) {
+        if (!descendantsSet.add(descendant).isNewEntry)
+            return *descendant;
+    }
+    return rootBox;
+}
+
+bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& next) const
 {
     // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [previous].
     // [text][ ][text][inline box start]... (<div>text content<span>..</div>)
     // soft wrap indexes: 0 and 1 definitely, 2 depends on the content after the [inline box start].
 
-    // https://drafts.csswg.org/css-text-3/#line-break-details
+    // https://www.w3.org/TR/css-text-4/#line-break-details
     // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
     // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
     ASSERT(previous.isText() || previous.isBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isBox() || next.layoutBox().isRubyInlineBox());
-    if (previous.isText() && next.isText()) {
-        auto& currentInlineTextItem = downcast<InlineTextItem>(previous);
-        auto& nextInlineTextItem = downcast<InlineTextItem>(next);
-        if (currentInlineTextItem.isWhitespace() && nextInlineTextItem.isWhitespace()) {
-            // <span> </span><span> </span>. Depending on the styles, there may or may not be a soft wrap opportunity between these 2 whitespace content.
-            return TextUtil::isWrappingAllowed(currentInlineTextItem.style()) || TextUtil::isWrappingAllowed(nextInlineTextItem.style());
-        }
-        if (currentInlineTextItem.isWhitespace()) {
-            // " <span>text</span>" : after [whitespace] position is a soft wrap opportunity.
-            return TextUtil::isWrappingAllowed(currentInlineTextItem.style());
-        }
-        if (nextInlineTextItem.isWhitespace()) {
-            // "<span>text</span> "
+
+    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
+        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
+
+    auto mayWrapPrevious = TextUtil::isWrappingAllowed(previous.layoutBox().parent().style());
+    auto mayWrapNext = TextUtil::isWrappingAllowed(next.layoutBox().parent().style());
+    if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
+        return false;
+
+    if (is<InlineTextItem>(previous) && is<InlineTextItem>(next)) {
+        auto& previousInlineTextItem = uncheckedDowncast<InlineTextItem>(previous);
+        auto& nextInlineTextItem = uncheckedDowncast<InlineTextItem>(next);
+        if (previousInlineTextItem.isWhitespace() || nextInlineTextItem.isWhitespace()) {
+            // For soft wrap opportunities created by characters that disappear at the line break (e.g. U+0020 SPACE), properties on the box directly
+            // containing that character control the line breaking at that opportunity.
+            // "<nowrap> </nowrap>after"
+            if (previousInlineTextItem.isWhitespace())
+                return mayWrapPrevious;
+
+            // "<span>before</span><nowrap> </nowrap>"
+            if (!mayWrapNext)
+                return false;
             // 'white-space: break-spaces' and '-webkit-line-break: after-white-space': line breaking opportunity exists after every preserved white space character, but not before.
             auto& style = nextInlineTextItem.style();
-            return TextUtil::isWrappingAllowed(style) && style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
+            return style.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
         }
         if (previous.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
-            // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
-            // or preserved white spaces, or in the middle of words.
+            // which elements’ line-break, word-break, and overflow-wrap properties control the determination of soft wrap opportunities at such boundaries is undefined in this level.
+            // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character or preserved white spaces, or in the middle of words.
             return true;
         }
         // Both previous and next items are non-whitespace text.
         // [text][text] : is a continuous content.
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
-        return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
+        auto previousAndNextHaveSameParent = &previousInlineTextItem.layoutBox().parent() == &nextInlineTextItem.layoutBox().parent();
+        if (previousAndNextHaveSameParent && !TextUtil::isWrappingAllowed(previousInlineTextItem.style()))
+            return false;
+        // For soft wrap opportunities defined by the boundary between two characters, the white-space property on the nearest common ancestor of the two characters controls breaking.
+        if (!endsWithSoftWrapOpportunity(previousInlineTextItem, nextInlineTextItem))
+            return false;
+        return TextUtil::isWrappingAllowed(nearestCommonAncestor(previousInlineTextItem.layoutBox(), nextInlineTextItem.layoutBox(), formattingContext().root()).style());
     }
     if (previous.layoutBox().isListMarkerBox()) {
         auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
@@ -417,14 +463,12 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
     }
-    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
-        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
 
     ASSERT_NOT_REACHED();
     return true;
 }
 
-size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList)
+size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList& inlineItemList) const
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -549,7 +593,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
             return { };
         }
     }
-    InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
+    auto annotationSize = style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString());
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 

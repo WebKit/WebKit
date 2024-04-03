@@ -763,7 +763,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, double start
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    return jsString(vm, String(string, length));
+    return jsString(vm, String({ string, static_cast<size_t>(length) }));
 }
 
 JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathematicalValue&& start, IntlMathematicalValue&& end) const
@@ -800,7 +800,7 @@ JSValue IntlNumberFormat::formatRange(JSGlobalObject* globalObject, IntlMathemat
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format a range"_s);
 
-    return jsString(vm, String(string, length));
+    return jsString(vm, String({ string, static_cast<size_t>(length) }));
 }
 #endif
 
@@ -947,7 +947,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
         throwTypeError(globalObject, scope, "Failed to format number range"_s);
         return;
     }
-    StringView resultStringView(formattedStringPointer, formattedStringLength);
+    StringView resultStringView(std::span(formattedStringPointer, formattedStringLength));
 
     // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
     // So we do not constraint iterator.

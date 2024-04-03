@@ -66,6 +66,56 @@ static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String
     return allMoved;
 }
 
+void IDBStorageManager::createVersionDirectoryIfNeeded(const String& rootDirectory)
+{
+    if (rootDirectory.isEmpty())
+        return;
+
+    bool oldVersionDirectoryExists = false;
+    Vector<String> oldVersionNames;
+    auto fileNames = FileSystem::listDirectory(rootDirectory);
+    for (auto& name : fileNames) {
+        if (name == "v0"_s)
+            oldVersionDirectoryExists = true;
+        if (name != "v0"_s && name != "v1"_s) {
+            if (auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(name))
+                oldVersionNames.append(name);
+        }
+    }
+
+    if (oldVersionNames.isEmpty() && !oldVersionDirectoryExists)
+        return;
+
+    // Delete file or symlink named v0.
+    auto oldVersionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, "v0"_s);
+    if (auto fileType = FileSystem::fileType(oldVersionDirectory)) {
+        // v0 should not be a file in normal case.
+        if (*fileType == FileSystem::FileType::Regular) {
+            FileSystem::deleteFile(oldVersionDirectory);
+            oldVersionDirectoryExists = false;
+        } else if (*fileType == FileSystem::FileType::SymbolicLink) {
+            FileSystem::deleteNonEmptyDirectory(oldVersionDirectory);
+            oldVersionDirectoryExists = false;
+        }
+    }
+
+    if (oldVersionNames.isEmpty()) {
+        if (oldVersionDirectoryExists)
+            FileSystem::deleteEmptyDirectory(oldVersionDirectory);
+        return;
+    }
+
+    // Migrate data to v0 directory.
+    if (!oldVersionDirectoryExists)
+        FileSystem::makeAllDirectories(oldVersionDirectory);
+
+    for (auto& name : oldVersionNames) {
+        auto oldPath = FileSystem::pathByAppendingComponent(rootDirectory, name);
+        auto newPath = FileSystem::pathByAppendingComponent(oldVersionDirectory, name);
+        FileSystem::moveFile(oldPath, newPath);
+    }
+}
+
 String IDBStorageManager::idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
 {
     if (rootDirectory.isEmpty())
@@ -189,13 +239,13 @@ WebCore::IDBServer::UniqueIDBDatabase& IDBStorageManager::getOrCreateUniqueIDBDa
     return *addResult.iterator->value;
 }
 
-void IDBStorageManager::openDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::openDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBOpenRequestData& requestData)
 {
     auto& database = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
     database.openDatabaseConnection(connectionToClient, requestData);
 }
 
-void IDBStorageManager::deleteDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::deleteDatabase(WebCore::IDBServer::IDBConnectionToClient& connectionToClient, const WebCore::IDBOpenRequestData& requestData)
 {
     auto& database = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
     database.handleDelete(connectionToClient, requestData);
@@ -232,7 +282,7 @@ Vector<WebCore::IDBDatabaseNameAndVersion> IDBStorageManager::getAllDatabaseName
     return result;
 }
 
-void IDBStorageManager::openDBRequestCancelled(const WebCore::IDBRequestData& requestData)
+void IDBStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequestData& requestData)
 {
     auto* database = m_databases.get(requestData.databaseIdentifier());
     if (!database)

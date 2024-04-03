@@ -28,11 +28,12 @@
 #include "WebGPUBindGroupLayout.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
+class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout>, public CanMakeWeakPtr<GPUBindGroupLayout> {
 public:
     static Ref<GPUBindGroupLayout> create(Ref<WebGPU::BindGroupLayout>&& backing)
     {

@@ -33,7 +33,7 @@ layer at (0,108) size 800x34
         text run at (2,2) width 16: "ok"
 layer at (2,110) size 796x30
   RenderBlock (positioned) {DIV} at (2,2) size 796x30 [border: (2px solid #FF0000)]
-    RenderInline {SPAN} at (0,0) size 28x19
+    RenderInline {SPAN} at (2,2) size 28x19
       RenderText {#text} at (2,2) size 28x19
         text run at (2,2) width 28: "blah"
     RenderText {#text} at (0,0) size 0x0
@@ -50,7 +50,7 @@ layer at (2,190) size 796x30
   RenderBlock (positioned) {DIV} at (2,2) size 796x30 [border: (2px solid #FF0000)]
 layer at (2,190) size 796x30
   RenderBlock (positioned) {DIV} at (2,2) size 796x30 [border: (2px solid #FF0000)]
-    RenderInline {SPAN} at (0,0) size 28x19
+    RenderInline {SPAN} at (2,2) size 28x19
       RenderText {#text} at (2,2) size 28x19
         text run at (2,2) width 28: "blah"
     RenderText {#text} at (0,0) size 0x0
@@ -66,13 +66,13 @@ layer at (0,268) size 800x34
         text run at (2,2) width 16: "ok"
 layer at (2,270) size 796x30
   RenderBlock (positioned) {DIV} at (2,2) size 796x30 [border: (2px solid #FF0000)]
-    RenderInline {SPAN} at (0,0) size 28x19
+    RenderInline {SPAN} at (2,2) size 28x19
       RenderText {#text} at (2,2) size 28x19
         text run at (2,2) width 28: "blah"
     RenderText {#text} at (0,0) size 0x0
 layer at (2,270) size 796x30
   RenderBlock (positioned) {DIV} at (2,2) size 796x30 [border: (2px solid #FF0000)]
-    RenderInline {SPAN} at (0,0) size 28x19
+    RenderInline {SPAN} at (2,2) size 28x19
       RenderText {#text} at (2,2) size 28x19
         text run at (2,2) width 28: "blah"
     RenderText {#text} at (0,0) size 0x0

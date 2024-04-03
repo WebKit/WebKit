@@ -46,12 +46,12 @@ class SWClientConnection;
 struct StructuredSerializeOptions;
 
 class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTarget, public ActiveDOMObject {
-    WTF_MAKE_ISO_ALLOCATED(ServiceWorker);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorker, WEBCORE_EXPORT);
 public:
     using State = ServiceWorkerState;
     static Ref<ServiceWorker> getOrCreate(ScriptExecutionContext&, ServiceWorkerData&&);
 
-    virtual ~ServiceWorker();
+    WEBCORE_EXPORT virtual ~ServiceWorker();
 
     const URL& scriptURL() const { return m_data.scriptURL; }
 
@@ -74,7 +74,7 @@ private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
     void updatePendingActivityForEventDispatch();
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

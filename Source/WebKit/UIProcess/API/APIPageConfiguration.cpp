@@ -49,15 +49,42 @@
 namespace API {
 using namespace WebKit;
 
+Ref<WebKit::BrowsingContextGroup> PageConfiguration::Data::createBrowsingContextGroup()
+{
+    return BrowsingContextGroup::create();
+}
+
+Ref<WebKit::WebProcessPool> PageConfiguration::Data::createWebProcessPool()
+{
+    return WebProcessPool::create(ProcessPoolConfiguration::create());
+}
+
+Ref<WebKit::WebUserContentControllerProxy> PageConfiguration::Data::createWebUserContentControllerProxy()
+{
+    return WebUserContentControllerProxy::create();
+}
+
+Ref<WebKit::WebPreferences> PageConfiguration::Data::createWebPreferences()
+{
+    return WebPreferences::create(WTF::String(), "WebKit"_s, "WebKitDebug"_s);
+}
+
+Ref<WebKit::VisitedLinkStore> PageConfiguration::Data::createVisitedLinkStore()
+{
+    return WebKit::VisitedLinkStore::create();
+}
+
+Ref<WebsitePolicies> PageConfiguration::Data::createWebsitePolicies()
+{
+    return WebsitePolicies::create();
+}
+
 Ref<PageConfiguration> PageConfiguration::create()
 {
     return adoptRef(*new PageConfiguration);
 }
 
-PageConfiguration::PageConfiguration()
-    : m_data { BrowsingContextGroup::create() }
-{
-}
+PageConfiguration::PageConfiguration() = default;
 
 PageConfiguration::~PageConfiguration() = default;
 
@@ -68,12 +95,27 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     return copy;
 }
 
-BrowsingContextGroup& PageConfiguration::browsingContextGroup()
+BrowsingContextGroup& PageConfiguration::browsingContextGroup() const
 {
     return m_data.browsingContextGroup.get();
 }
 
-WebProcessPool* PageConfiguration::processPool()
+void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& group)
+{
+    m_data.browsingContextGroup = WTFMove(group);
+}
+
+RefPtr<WebKit::WebProcessProxy> PageConfiguration::openerProcess() const
+{
+    return m_data.openerProcess;
+}
+
+void PageConfiguration::setOpenerProcess(RefPtr<WebKit::WebProcessProxy>&& process)
+{
+    m_data.openerProcess = WTFMove(process);
+}
+
+WebProcessPool& PageConfiguration::processPool() const
 {
     return m_data.processPool.get();
 }
@@ -83,7 +125,7 @@ void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
     m_data.processPool = WTFMove(processPool);
 }
 
-WebUserContentControllerProxy* PageConfiguration::userContentController()
+WebUserContentControllerProxy& PageConfiguration::userContentController() const
 {
     return m_data.userContentController.get();
 }
@@ -94,7 +136,17 @@ void PageConfiguration::setUserContentController(RefPtr<WebUserContentController
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-WebExtensionController* PageConfiguration::webExtensionController()
+const WTF::URL& PageConfiguration::requiredWebExtensionBaseURL() const
+{
+    return m_data.requiredWebExtensionBaseURL;
+}
+
+void PageConfiguration::setRequiredWebExtensionBaseURL(WTF::URL&& baseURL)
+{
+    m_data.requiredWebExtensionBaseURL = WTFMove(baseURL);
+}
+
+WebExtensionController* PageConfiguration::webExtensionController() const
 {
     return m_data.webExtensionController.get();
 }
@@ -104,7 +156,7 @@ void PageConfiguration::setWebExtensionController(RefPtr<WebExtensionController>
     m_data.webExtensionController = WTFMove(webExtensionController);
 }
 
-WebExtensionController* PageConfiguration::weakWebExtensionController()
+WebExtensionController* PageConfiguration::weakWebExtensionController() const
 {
     return m_data.weakWebExtensionController.get();
 }
@@ -125,7 +177,7 @@ void PageConfiguration::setPageGroup(RefPtr<WebPageGroup>&& pageGroup)
     m_data.pageGroup = WTFMove(pageGroup);
 }
 
-WebPreferences* PageConfiguration::preferences()
+WebPreferences& PageConfiguration::preferences() const
 {
     return m_data.preferences.get();
 }
@@ -140,22 +192,32 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
-void PageConfiguration::setRelatedPage(RefPtr<WebPageProxy>&& relatedPage)
+void PageConfiguration::setRelatedPage(WeakPtr<WebPageProxy>&& relatedPage)
 {
     m_data.relatedPage = WTFMove(relatedPage);
 }
 
-WebKit::WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
+WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
 {
     return m_data.pageToCloneSessionStorageFrom.get();
 }
 
-void PageConfiguration::setPageToCloneSessionStorageFrom(WebKit::WebPageProxy* pageToCloneSessionStorageFrom)
+void PageConfiguration::setPageToCloneSessionStorageFrom(WeakPtr<WebPageProxy>&& pageToCloneSessionStorageFrom)
 {
-    m_data.pageToCloneSessionStorageFrom = pageToCloneSessionStorageFrom;
+    m_data.pageToCloneSessionStorageFrom = WTFMove(pageToCloneSessionStorageFrom);
 }
 
-WebKit::VisitedLinkStore* PageConfiguration::visitedLinkStore()
+WebPageProxy* PageConfiguration::alternateWebViewForNavigationGestures() const
+{
+    return m_data.alternateWebViewForNavigationGestures.get();
+}
+
+void PageConfiguration::setAlternateWebViewForNavigationGestures(WeakPtr<WebPageProxy>&& alternateWebViewForNavigationGestures)
+{
+    m_data.alternateWebViewForNavigationGestures = WTFMove(alternateWebViewForNavigationGestures);
+}
+
+WebKit::VisitedLinkStore& PageConfiguration::visitedLinkStore() const
 {
     return m_data.visitedLinkStore.get();
 }
@@ -165,22 +227,29 @@ void PageConfiguration::setVisitedLinkStore(RefPtr<WebKit::VisitedLinkStore>&& v
     m_data.visitedLinkStore = WTFMove(visitedLinkStore);
 }
 
-WebKit::WebsiteDataStore* PageConfiguration::websiteDataStore()
+WebsiteDataStore& PageConfiguration::websiteDataStore() const
+{
+    if (!m_data.websiteDataStore)
+        m_data.websiteDataStore = WebsiteDataStore::defaultDataStore();
+    return *m_data.websiteDataStore;
+}
+
+WebKit::WebsiteDataStore* PageConfiguration::websiteDataStoreIfExists() const
 {
     return m_data.websiteDataStore.get();
 }
 
-RefPtr<WebKit::WebsiteDataStore> PageConfiguration::protectedWebsiteDataStore()
+Ref<WebsiteDataStore> PageConfiguration::protectedWebsiteDataStore() const
 {
-    return m_data.websiteDataStore;
+    return websiteDataStore();
 }
 
-void PageConfiguration::setWebsiteDataStore(RefPtr<WebKit::WebsiteDataStore>&& websiteDataStore)
+void PageConfiguration::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteDataStore)
 {
     m_data.websiteDataStore = WTFMove(websiteDataStore);
 }
 
-WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const
+WebsitePolicies& PageConfiguration::defaultWebsitePolicies() const
 {
     return m_data.defaultWebsitePolicies.get();
 }
@@ -190,20 +259,20 @@ void PageConfiguration::setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&& poli
     m_data.defaultWebsitePolicies = WTFMove(policies);
 }
 
-RefPtr<WebKit::WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)
+RefPtr<WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)
 {
     return m_data.urlSchemeHandlers.get(scheme);
 }
 
-void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&& handler, const WTF::String& scheme)
+void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebURLSchemeHandler>&& handler, const WTF::String& scheme)
 {
     m_data.urlSchemeHandlers.set(scheme, WTFMove(handler));
 }
 
 bool PageConfiguration::lockdownModeEnabled() const
 {
-    if (m_data.defaultWebsitePolicies)
-        return m_data.defaultWebsitePolicies->lockdownModeEnabled();
+    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+        return policies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
 }
 
@@ -215,7 +284,7 @@ void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebPr
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
-    if (RefPtr processPool = m_data.processPool; processPool && isInspectorProcessPool(*processPool)) {
+    if (RefPtr processPool = m_data.processPool.getIfExists(); processPool && isInspectorProcessPool(*processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> false because of WebInspector pool", this);
         return false;
@@ -225,9 +294,9 @@ bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
         // If the client explicitly enabled / disabled the feature, then obey their directives.
         return *m_data.delaysWebProcessLaunchUntilFirstLoad;
     }
-    if (m_data.processPool) {
-        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, m_data.processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
-        return m_data.processPool->delaysWebProcessLaunchDefaultValue();
+    if (RefPtr processPool = m_data.processPool.getIfExists()) {
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
+        return processPool->delaysWebProcessLaunchDefaultValue();
     }
     RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of global default value", this, WebProcessPool::globalDelaysWebProcessLaunchDefaultValue() ? "true" : "false");
     return WebProcessPool::globalDelaysWebProcessLaunchDefaultValue();
@@ -235,7 +304,9 @@ bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 
 bool PageConfiguration::isLockdownModeExplicitlySet() const
 {
-    return m_data.defaultWebsitePolicies && m_data.defaultWebsitePolicies->isLockdownModeExplicitlySet();
+    if (RefPtr policies = m_data.defaultWebsitePolicies.getIfExists())
+        return policies->isLockdownModeExplicitlySet();
+    return false;
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -251,10 +322,9 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 #endif
 
 #if ENABLE(GPU_PROCESS)
-WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
+GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess() const
 {
-    RefPtr preferences = m_data.preferences;
-    RELEASE_ASSERT(preferences);
+    Ref preferences = m_data.preferences.get();
 
     return {
         preferences->webGLEnabled(),
@@ -267,5 +337,14 @@ WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUP
     };
 }
 #endif
+
+NetworkProcessPreferencesForWebProcess PageConfiguration::preferencesForNetworkProcess() const
+{
+    Ref preferences = m_data.preferences.get();
+
+    return {
+        preferences->webTransportEnabled(),
+    };
+}
 
 } // namespace API

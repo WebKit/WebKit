@@ -26,6 +26,7 @@
 #ifndef PAS_BITFIT_PAGE_CONFIG_H
 #define PAS_BITFIT_PAGE_CONFIG_H
 
+#include "pas_allocation_mode.h"
 #include "pas_bitfit_max_free.h"
 #include "pas_bitfit_page_config_kind.h"
 #include "pas_bitfit_page_config_variant.h"
@@ -55,7 +56,8 @@ typedef pas_fast_path_allocation_result (*pas_bitfit_page_config_specialized_all
     pas_bitfit_allocator* allocator,
     pas_local_allocator* local_allocator,
     size_t size,
-    size_t alignment);
+    size_t alignment,
+    pas_allocation_mode allocation_mode);
 typedef void (*pas_bitfit_page_config_specialized_page_deallocate_with_page)(
     pas_bitfit_page* page, uintptr_t begin);
 typedef size_t (*pas_bitfit_page_config_specialized_page_get_allocation_size_with_page)(
@@ -128,7 +130,8 @@ PAS_API extern bool pas_marge_bitfit_page_config_variant_is_enabled_override;
         pas_bitfit_allocator* allocator, \
         pas_local_allocator* local_allocator, \
         size_t size, \
-        size_t alignment); \
+        size_t alignment, \
+        pas_allocation_mode allocation_mode); \
     PAS_API void lower_case_page_config_name ## _specialized_page_deallocate_with_page( \
         pas_bitfit_page* page, uintptr_t begin); \
     PAS_API size_t lower_case_page_config_name ## _specialized_page_get_allocation_size_with_page( \

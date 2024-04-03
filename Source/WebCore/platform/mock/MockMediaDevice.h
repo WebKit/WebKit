@@ -52,6 +52,7 @@ struct MockCameraProperties {
     Color fillColor { Color::black };
     Vector<MeteringMode> whiteBalanceMode { MeteringMode::None };
     bool hasTorch { false };
+    bool hasBackgroundBlur { false };
 };
 
 struct MockDisplayProperties {

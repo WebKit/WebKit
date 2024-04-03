@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestDefaultToJSONFilteredByExposed>;
     static JSTestDefaultToJSONFilteredByExposed* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
     {
-        JSTestDefaultToJSONFilteredByExposed* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposed>(globalObject->vm())) JSTestDefaultToJSONFilteredByExposed(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestDefaultToJSONFilteredByExposed* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposed>(vm)) JSTestDefaultToJSONFilteredByExposed(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

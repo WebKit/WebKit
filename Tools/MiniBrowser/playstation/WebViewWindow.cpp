@@ -34,11 +34,14 @@
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKURL.h>
-#include <cairo.h>
 #include <map>
 #include <toolkitten/Application.h>
 #include <toolkitten/Cursor.h>
 #include <toolkitten/MessageDialog.h>
+
+#if defined(USE_CAIRO) && USE_CAIRO
+#include <cairo.h>
+#endif
 
 #if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
 #include <WPEToolingBackends/HeadlessViewBackend.h>
@@ -278,9 +281,11 @@ void WebViewWindow::setSize(toolkitten::IntSize size)
     Widget::setSize(size);
     WKViewSetSize(m_view.get(), toWKSize(size));
 
+#if defined(USE_CAIRO) && USE_CAIRO
     size_t surfaceSize = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, this->m_size.w) * this->m_size.h;
     m_surface = std::make_unique<unsigned char[]>(surfaceSize);
     memset(m_surface.get(), 0xff, surfaceSize);
+#endif
 }
 
 bool WebViewWindow::onKeyUp(int32_t virtualKeyCode)
@@ -368,6 +373,7 @@ bool WebViewWindow::onWheelMove(toolkitten::IntPoint point, toolkitten::IntPoint
 void WebViewWindow::paintSelf(IntPoint position)
 {
     if (!dirtyRects().empty()) {
+#if defined(USE_CAIRO) && USE_CAIRO
         cairo_surface_t* wkviewSurface = cairo_image_surface_create_for_data(m_surface.get(), CAIRO_FORMAT_ARGB32, this->m_size.w, this->m_size.h, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, this->m_size.w));
         std::list<toolkitten::IntRect>::const_iterator it = dirtyRects().begin();
         toolkitten::IntRect unionRect = *it;
@@ -385,6 +391,7 @@ void WebViewWindow::paintSelf(IntPoint position)
             cairo_destroy(cr);
             cairo_surface_destroy(wkviewSurface);
         }
+#endif
     }
     if (m_active)
         Widget::paintSelf(position);

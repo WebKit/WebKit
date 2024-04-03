@@ -86,6 +86,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragImage.h>
@@ -112,6 +113,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MutableStyleProperties.h>
 #import <WebCore/Page.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
@@ -282,7 +284,7 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
     case WebMenuItemTagOther:
         return ContextMenuItemTagOther;
     case WebMenuItemTagSearchInSpotlight:
-        return ContextMenuItemTagSearchInSpotlight;
+        return ContextMenuItemTagNoAction;
     case WebMenuItemTagSearchWeb:
         return ContextMenuItemTagSearchWeb;
     case WebMenuItemTagLookUpInDictionary:
@@ -411,6 +413,8 @@ static std::optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagDictationAlternative;
     case WebMenuItemTagTranslate:
         return ContextMenuItemTagTranslate;
+    case WebMenuItemTagSwapCharacters:
+        return ContextMenuItemTagSwapCharacters;
     }
     return std::nullopt;
 }
@@ -457,8 +461,6 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagLearnSpelling;
     case ContextMenuItemTagOther:
         return WebMenuItemTagOther;
-    case ContextMenuItemTagSearchInSpotlight:
-        return WebMenuItemTagSearchInSpotlight;
     case ContextMenuItemTagSearchWeb:
         return WebMenuItemTagSearchWeb;
     case ContextMenuItemTagLookUpInDictionary:
@@ -593,6 +595,8 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
+    case ContextMenuItemTagSwapCharacters:
+        return WebMenuItemTagSwapCharacters;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations:
         return WebMenuItemTagPlayAllAnimations;
@@ -1984,7 +1988,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:WebCore::legacyTIFFPasteboardType()]];
     } else if ([type isEqualToString:WebCore::legacyTIFFPasteboardType()] && _private->promisedDragTIFFDataSource) {
         if (auto* image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(__bridge NSData *)image->tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
+            [pasteboard setData:(__bridge NSData *)image->adapter().tiffRepresentation() forType:WebCore::legacyTIFFPasteboardType()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }
@@ -2655,7 +2659,7 @@ static String commandNameForSelector(SEL selector)
     size_t selectorNameLength = strlen(selectorName);
     if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
         return String();
-    return String(selectorName, selectorNameLength - 1);
+    return String({ selectorName, selectorNameLength - 1 });
 }
 
 - (WebCore::Editor::Command)coreCommandBySelector:(SEL)selector
@@ -5922,7 +5926,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (!selectionRange)
         return;
 
-    [[self _webView] _showDictionaryLookupPopup:[WebImmediateActionController _dictionaryPopupInfoForRange:*selectionRange inFrame:coreFrame withLookupOptions:nil indicatorOptions:{ WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight } transition:WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade]];
+    [[self _webView] _showDictionaryLookupPopup:[WebImmediateActionController _dictionaryPopupInfoForRange:*selectionRange inFrame:coreFrame indicatorOptions: { WebCore::TextIndicatorOption::IncludeSnapshotWithSelectionHighlight } transition:WebCore::TextIndicatorPresentationTransition::BounceAndCrossfade]];
 }
 
 - (void)quickLookWithEvent:(NSEvent *)event

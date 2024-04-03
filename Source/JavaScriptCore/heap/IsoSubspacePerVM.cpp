@@ -41,7 +41,7 @@ IsoSubspacePerVM::~IsoSubspacePerVM()
     UNREACHABLE_FOR_PLATFORM();
 }
 
-IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(LockHolder&, JSC::Heap& heap)
+IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(Locker<Lock>&, JSC::Heap& heap)
 {
     auto result = m_subspacePerHeap.add(&heap, nullptr);
     if (result.isNewEntry) {

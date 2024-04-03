@@ -258,7 +258,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
         RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR, ecmaMode);
+        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
 
@@ -329,7 +329,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
 
     JITPutByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
+        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR);
 
     gen.generateBaselineDataICFastPath(*this);
     addSlowCase();
@@ -723,7 +723,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     JITPutByIdGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
-        baseJSR, valueJSR, stubInfoGPR, scratch1GPR, ecmaMode, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
+        baseJSR, valueJSR, stubInfoGPR, scratch1GPR, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
 
     gen.generateBaselineDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -1075,8 +1075,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 
     slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_resolve_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope"_s, "Baseline: resolve_scope");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm)
@@ -1111,8 +1111,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     // Tail call to exception check thunk
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_resolve_scope"_s, "Baseline: slow_op_resolve_scope");
 }
 
 void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
@@ -1289,8 +1289,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
 
     slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope"_s, "Baseline: get_from_scope");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& vm)
@@ -1337,7 +1337,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     jit.jumpThunk(CodeLocationLabel { vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator).retaggedCode<NoPtrTag>() });
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_get_from_scope"_s, "Baseline: slow_op_get_from_scope");
 }
 
 void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
@@ -1534,7 +1534,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
     jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "slow_op_put_to_scope"_s, "Baseline: slow_op_put_to_scope");
 }
 
 void JIT::emit_op_get_from_arguments(const JSInstruction* currentInstruction)
@@ -1967,7 +1967,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     ECMAMode ecmaMode = bytecode.m_ecmaMode;
     JITPutByValGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, RegisterSetBuilder::stubUnavailableRegisters(),
-        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, ecmaMode);
+        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR);
     stubInfo->isEnumerator = true;
 
     gen.generateBaselineDataICFastPath(*this);

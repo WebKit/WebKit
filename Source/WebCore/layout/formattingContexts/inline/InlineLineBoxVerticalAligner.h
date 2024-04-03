@@ -48,7 +48,7 @@ private:
             std::optional<InlineLayoutUnit> bottom { };
         };
         TopAndBottomAlignedMaximumHeight topAndBottomAlignedMaximumHeight { };
-        bool hasAnnotation { false };
+        bool hasTextEmphasis { false };
     };
     LineBoxAlignmentContent computeLineBoxLogicalHeight(LineBox&) const;
     void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxAlignmentContent&) const;

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGRadialGradientElement.h"
 
@@ -37,5 +36,3 @@ inline SVGRadialGradientElement& RenderSVGResourceRadialGradient::radialGradient
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

@@ -46,9 +46,11 @@ class VTTRegionList;
 class TextTrack : public TrackBase, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TextTrack);
 public:
-    static Ref<TextTrack> create(Document*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language);
-    static Ref<TextTrack> create(Document*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
+    static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language);
+    static Ref<TextTrack> create(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language);
     virtual ~TextTrack();
+
+    void didMoveToNewDocument(Document& newDocument) final;
 
     static TextTrack& captionMenuOffItem();
     static TextTrack& captionMenuAutomaticItem();
@@ -77,9 +79,11 @@ public:
     void setReadinessState(ReadinessState state) { m_readinessState = state; }
 
     TextTrackCueList* cues();
+    RefPtr<TextTrackCueList> protectedCues();
     TextTrackCueList* activeCues() const;
 
     TextTrackCueList* cuesInternal() const { return m_cues.get(); }
+    inline RefPtr<TextTrackCueList> protectedCues() const;
 
     void addClient(TextTrackClient&);
     void clearClient(TextTrackClient&);
@@ -132,7 +136,7 @@ public:
     virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
     virtual void removeCuesNotInTimeRanges(const PlatformTimeRanges&);
 
-    Document& document() const;
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
 protected:
     TextTrack(ScriptExecutionContext*, const AtomString& kind, TrackID, const AtomString& label, const AtomString& language, TextTrackType);
@@ -149,8 +153,7 @@ protected:
     WeakHashSet<TextTrackClient> m_clients;
 
 private:
-    EventTargetInterface eventTargetInterface() const final { return TextTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::TextTrack; }
 
     bool enabled() const override;
 

@@ -36,6 +36,12 @@ enum class BoolEnumType : bool;
 #if ENABLE(UINT16_ENUM)
 enum class EnumType : uint16_t;
 #endif
+#if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
+enum class InnerEnumType : uint8_t;
+#endif
+#if (ENABLE(OUTER_CONDITION)) && (!(ENABLE(INNER_CONDITION)))
+enum class InnerBoolType : bool;
+#endif
 }
 
 namespace JSC {
@@ -51,6 +57,12 @@ class ConditionalCommonClass;
 #endif
 class CommonClass;
 class AnotherCommonClass;
+#if ENABLE(OUTER_CONDITION)
+class OuterClass;
+#endif
+#if !(ENABLE(OUTER_CONDITION))
+class OtherOuterClass;
+#endif
 }
 
 namespace Namespace::Subnamespace {
@@ -71,13 +83,14 @@ class CreateUsingClass;
 namespace WebCore {
 class InheritsFrom;
 class InheritanceGrandchild;
-template<typename, typename> class ScrollSnapOffsetsInfo;
-using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
 class TimingFunction;
 class MoveOnlyBaseClass;
 class MoveOnlyDerivedClass;
 class ScrollingStateFrameHostingNode;
 class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
+#if USE(APPKIT)
+class AppKitControlSystemImage;
+#endif
 struct Amazing;
 }
 
@@ -109,6 +122,19 @@ struct RequestEncodedWithBodyRValue;
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
 #endif
+namespace IPC { template<typename> class ObjectIdentifierReference; };
+namespace IPC { template<typename> class ObjectIdentifierWriteReference; };
+namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; };
+namespace WebCore {
+template<typename, typename> class ScrollSnapOffsetsInfo;
+using FloatBoxExtent = ScrollSnapOffsetsInfo<float, double>;
+}
+namespace WebKit {
+using RemoteVideoFrameReference = IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>;
+}
+namespace WebKit {
+using RemoteVideoFrameWriteReference = IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
+}
 
 namespace IPC {
 
@@ -315,10 +341,62 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
 };
 #endif
 
+#if USE(CFSTRING)
+template<> struct ArgumentCoder<CFStringRef> {
+    static void encode(Encoder&, CFStringRef);
+    static void encode(StreamConnectionEncoder&, CFStringRef);
+};
+template<> struct ArgumentCoder<RetainPtr<CFStringRef>> {
+    static void encode(Encoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
+    {
+        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
+    }
+    static void encode(StreamConnectionEncoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
+    {
+        ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
+    }
+    static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
+};
+#endif
+
 template<> struct ArgumentCoder<WebKit::RValueWithFunctionCalls> {
     static void encode(Encoder&, WebKit::RValueWithFunctionCalls&&);
     static std::optional<WebKit::RValueWithFunctionCalls> decode(Decoder&);
 };
+
+template<> struct ArgumentCoder<WebKit::RemoteVideoFrameReference> {
+    static void encode(Encoder&, const WebKit::RemoteVideoFrameReference&);
+    static void encode(StreamConnectionEncoder&, const WebKit::RemoteVideoFrameReference&);
+    static std::optional<WebKit::RemoteVideoFrameReference> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::RemoteVideoFrameWriteReference> {
+    static void encode(Encoder&, const WebKit::RemoteVideoFrameWriteReference&);
+    static void encode(StreamConnectionEncoder&, const WebKit::RemoteVideoFrameWriteReference&);
+    static std::optional<WebKit::RemoteVideoFrameWriteReference> decode(Decoder&);
+};
+
+#if ENABLE(OUTER_CONDITION)
+template<> struct ArgumentCoder<Namespace::OuterClass> {
+    static void encode(Encoder&, const Namespace::OuterClass&);
+    static std::optional<Namespace::OuterClass> decode(Decoder&);
+};
+#endif
+
+#if !(ENABLE(OUTER_CONDITION))
+template<> struct ArgumentCoder<Namespace::OtherOuterClass> {
+    static void encode(Encoder&, const Namespace::OtherOuterClass&);
+    static std::optional<Namespace::OtherOuterClass> decode(Decoder&);
+};
+#endif
+
+#if USE(APPKIT)
+template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
+    static void encode(Encoder&, const WebCore::AppKitControlSystemImage&);
+    static void encode(StreamConnectionEncoder&, const WebCore::AppKitControlSystemImage&);
+    static std::optional<Ref<WebCore::AppKitControlSystemImage>> decode(Decoder&);
+};
+#endif
 
 } // namespace IPC
 
@@ -332,5 +410,8 @@ template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 template<> bool isValidOptionSet<OptionSetEnumFirstCondition>(OptionSet<OptionSetEnumFirstCondition>);
 template<> bool isValidOptionSet<OptionSetEnumLastCondition>(OptionSet<OptionSetEnumLastCondition>);
 template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetEnumAllCondition>);
+#if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
+template<> bool isValidEnum<EnumNamespace::InnerEnumType, void>(uint8_t);
+#endif
 
 } // namespace WTF

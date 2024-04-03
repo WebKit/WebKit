@@ -38,6 +38,7 @@
 #include "WorkerThread.h"
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
+#include <wtf/Identified.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
@@ -47,9 +48,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(BroadcastChannel);
 
 static Lock allBroadcastChannelsLock;
-static HashMap<BroadcastChannelIdentifier, BroadcastChannel*>& allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
+static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
 {
-    static NeverDestroyed<HashMap<BroadcastChannelIdentifier, BroadcastChannel*>> map;
+    static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>> map;
     return map;
 }
 
@@ -67,7 +68,7 @@ static PartitionedSecurityOrigin partitionedSecurityOriginFromContext(ScriptExec
     return { WTFMove(topOrigin), WTFMove(securityOrigin) };
 }
 
-class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
+class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main>, public Identified<BroadcastChannelIdentifier> {
 public:
     static Ref<MainThreadBridge> create(BroadcastChannel& channel, const String& name)
     {
@@ -80,7 +81,6 @@ public:
     void detach() { m_broadcastChannel = nullptr; }
 
     String name() const { return m_name.isolatedCopy(); }
-    BroadcastChannelIdentifier identifier() const { return m_identifier; }
 
 private:
     MainThreadBridge(BroadcastChannel&, const String& name);
@@ -88,14 +88,12 @@ private:
     void ensureOnMainThread(Function<void(Page*)>&&);
 
     WeakPtr<BroadcastChannel, WeakPtrImplWithEventTargetData> m_broadcastChannel;
-    const BroadcastChannelIdentifier m_identifier;
     const String m_name; // Main thread only.
     PartitionedSecurityOrigin m_origin; // Main thread only.
 };
 
 BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, const String& name)
     : m_broadcastChannel(channel)
-    , m_identifier(BroadcastChannelIdentifier::generate())
     , m_name(name.isolatedCopy())
     , m_origin(partitionedSecurityOriginFromContext(*channel.protectedScriptExecutionContext()).isolatedCopy())
 {
@@ -112,7 +110,6 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
         return;
     ASSERT(context->isContextThread());
 
-    Ref protectedThis { *this };
     if (auto* document = dynamicDowncast<Document>(*context)) {
         task(document->protectedPage().get());
         return;
@@ -122,7 +119,7 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
     if (!workerLoaderProxy)
         return;
 
-    workerLoaderProxy->postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
+    workerLoaderProxy->postTaskToLoader([task = WTFMove(task)](auto& context) {
         task(downcast<Document>(context).protectedPage().get());
     });
 }
@@ -131,8 +128,8 @@ void BroadcastChannel::MainThreadBridge::registerChannel()
 {
     ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto* page) mutable {
         if (page)
-            page->broadcastChannelRegistry().registerChannel(m_origin, m_name, m_identifier);
-        channelToContextIdentifier().add(m_identifier, contextIdentifier);
+            page->protectedBroadcastChannelRegistry()->registerChannel(m_origin, m_name, identifier());
+        channelToContextIdentifier().add(identifier(), contextIdentifier);
     });
 }
 
@@ -140,8 +137,8 @@ void BroadcastChannel::MainThreadBridge::unregisterChannel()
 {
     ensureOnMainThread([this](auto* page) {
         if (page)
-            page->broadcastChannelRegistry().unregisterChannel(m_origin, m_name, m_identifier);
-        channelToContextIdentifier().remove(m_identifier);
+            page->protectedBroadcastChannelRegistry()->unregisterChannel(m_origin, m_name, identifier());
+        channelToContextIdentifier().remove(identifier());
     });
 }
 
@@ -152,7 +149,7 @@ void BroadcastChannel::MainThreadBridge::postMessage(Ref<SerializedScriptValue>&
             return;
 
         auto blobHandles = message->blobHandles();
-        page->broadcastChannelRegistry().postMessage(m_origin, m_name, m_identifier, WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
+        page->protectedBroadcastChannelRegistry()->postMessage(m_origin, m_name, identifier(), WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
             // Keeps Blob data inside messageData alive until the message has been delivered.
         });
     });
@@ -165,7 +162,7 @@ BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, const String
     Ref mainThreadBridge = m_mainThreadBridge;
     {
         Locker locker { allBroadcastChannelsLock };
-        allBroadcastChannels().add(mainThreadBridge->identifier(), this);
+        allBroadcastChannels().add(mainThreadBridge->identifier(), *this);
     }
     mainThreadBridge->registerChannel();
 }
@@ -237,7 +234,7 @@ void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdent
         RefPtr<BroadcastChannel> channel;
         {
             Locker locker { allBroadcastChannelsLock };
-            channel = allBroadcastChannels().get(channelIdentifier);
+            channel = allBroadcastChannels().get(channelIdentifier).get();
         }
         if (channel)
             channel->dispatchMessage(WTFMove(message));

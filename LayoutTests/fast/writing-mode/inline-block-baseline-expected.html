@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+</head>
+<body>
+Left side of a japanese character "国" should vertically align with baseline of "a".
+<div style="writing-mode: vertical-rl; font-size: 4em">
+<span>a
+<div style="background-color: green; display: inline-block">a<br>国</div><span style="visibility: hidden">あ</span>
+</span>
+<br>
+<span>a
+<ruby style="background-color: green;">国<rt style="background-color: red; opacity: 0.5">くに</rt></ruby><span style="visibility: hidden">あ</span>
+</span>
+</div>
+</body>
+</html>

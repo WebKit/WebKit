@@ -30,6 +30,7 @@
         run('video.autoplay = true');
         await waitFor(source, 'sourceopen');
         waitFor(video, 'error').then(failTest);
+        const playingPromise = waitFor(video, 'playing', true);
 
         run('sourceBuffer = source.addSourceBuffer(loader.type())');
         run('sourceBuffer.appendBuffer(loader.initSegment())');
@@ -42,8 +43,12 @@
         await waitFor(sourceBuffer, 'update');
         run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
         await waitFor(sourceBuffer, 'update');
+        testExpected('video.buffered.length', 1);
+        await playingPromise;
 
-        await sleepFor(3000);
+        await waitFor(video, 'waiting');
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+
         sourceBuffer.timestampOffset = -0.5;
 
         // Again, buffer a minimum of 3s, see reasons above.

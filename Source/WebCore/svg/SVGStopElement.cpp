@@ -54,9 +54,9 @@ void SVGStopElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     if (name == SVGNames::offsetAttr) {
         if (newValue.endsWith('%'))
-            m_offset->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
+            Ref { m_offset }->setBaseValInternal(newValue.string().left(newValue.length() - 1).toFloat() / 100.0f);
         else
-            m_offset->setBaseValInternal(newValue.toFloat());
+            Ref { m_offset }->setBaseValInternal(newValue.toFloat());
     }
 
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -86,14 +86,16 @@ bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
 
 Color SVGStopElement::stopColorIncludingOpacity() const
 {
+    // Return initial value 'black' as per web specification below:
+    // https://svgwg.org/svg2-draft/pservers.html#StopColorProperties
     if (!renderer())
-        return Color::transparentBlack;
+        return Color::black;
 
     auto& style = renderer()->style();
-    auto& svgStyle = style.svgStyle();
-    auto stopColor = style.colorResolvingCurrentColor(svgStyle.stopColor());
+    Ref svgStyle = style.svgStyle();
+    auto stopColor = style.colorResolvingCurrentColor(svgStyle->stopColor());
 
-    return stopColor.colorWithAlphaMultipliedBy(svgStyle.stopOpacity());
+    return stopColor.colorWithAlphaMultipliedBy(svgStyle->stopOpacity());
 }
 
 }

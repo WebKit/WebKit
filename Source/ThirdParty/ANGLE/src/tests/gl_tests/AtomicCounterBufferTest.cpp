@@ -34,7 +34,7 @@ TEST_P(AtomicCounterBufferTest, AtomicCounterBufferBindings)
 {
     ASSERT_EQ(3, getClientMajorVersion());
     GLBuffer atomicCounterBuffer;
-    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer.get());
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
     if (getClientMinorVersion() < 1)
     {
         EXPECT_GL_ERROR(GL_INVALID_ENUM);
@@ -446,7 +446,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of counter 'ac' is 3u.
     unsigned int bufferData[3] = {11u, 3u, 1u};
@@ -456,7 +456,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterRead)
 
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
 
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
@@ -484,7 +484,7 @@ TEST_P(AtomicCounterBufferTest31, DependentAtomicCounterBufferChange)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of counter 'ac' is 3u.
     unsigned int bufferDataLeft[3] = {11u, 3u, 1u};
@@ -495,13 +495,13 @@ TEST_P(AtomicCounterBufferTest31, DependentAtomicCounterBufferChange)
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
     // Draw left quad
     glViewport(0, 0, getWindowWidth() / 2, getWindowHeight());
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
     // Draw right quad
     unsigned int bufferDataRight[3] = {11u, 19u, 1u};
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferDataRight), bufferDataRight,
                  GL_STATIC_DRAW);
     glViewport(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight());
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, 0, GLColor::red);
@@ -533,7 +533,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRangeRead)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of counter 'ac' is 3u.
     unsigned int bufferData[]     = {0u, 0u, 0u, 0u, 0u, 11u, 3u, 1u};
@@ -553,7 +553,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRangeRead)
                           sizeof(bufferData) - kOffset);
     }
 
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
@@ -581,7 +581,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     constexpr int32_t kBufferCount = 16;
     // The initial value of counter 'ac' is 3u.
@@ -625,7 +625,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
 
     // Bind atomicCounterBuffer[0] to slot 0 and verify result
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer[0]);
-    drawQuad(program.get(), essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
@@ -645,7 +645,7 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterIncrementAndDecrement)
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of 'ac[0]' is 3u, 'ac[1]' is 1u.
     unsigned int bufferData[3] = {11u, 3u, 1u};
@@ -833,7 +833,7 @@ void main()
     ANGLE_SKIP_TEST_IF(static_cast<uint32_t>(maxAtomicCounters) < kAtomicCounterCount);
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     // The initial value of atomic counters is 0, 1, 2, ...
     unsigned int bufferData[kAtomicCounterCount] = {};

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 209: "This empties a row (the second). "
           text run at (209,0) width 141: "It should be removed. "
         RenderInline {B} at (0,0) size 768x35
-          RenderText {#text} at (350,0) size 768x35
+          RenderText {#text} at (0,0) size 768x35
             text run at (350,0) width 418: "This demonstrates a bug: the two cells that contained the ends"
             text run at (0,18) width 645: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
       RenderBlock {DIV} at (0,52) size 784x52

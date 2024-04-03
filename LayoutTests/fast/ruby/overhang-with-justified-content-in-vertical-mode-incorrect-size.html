@@ -1,0 +1,18 @@
+<style>
+div {
+  writing-mode: vertical-lr;
+  text-align: justify;
+  font-size: 20px;
+  font-family: Ahem;
+  height: 150px;
+  color: green;
+}
+span {
+  color: transparent;
+}
+rt {
+  font-size: 10px;
+}
+</style>
+<!-- PASS if ruby annotation and content after ruby do not overlap -->
+<div>X<ruby>X<rt>XXXX</rt></ruby>X <span>XX XX</span></div>

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-attribute-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection-disconnected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/aria-element-reflection.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-embedded.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-forms-weekmonth.js

@@ -37,7 +37,6 @@ class GraphicsContext;
 
 namespace WebKit {
 
-class ShareableBitmap;
 struct UpdateInfo;
 
 class DrawingAreaCoordinatedGraphics final : public DrawingArea {
@@ -64,6 +63,7 @@ private:
     void deviceOrPageScaleFactorChanged() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
     bool enterAcceleratedCompositingModeIfNeeded() override;
+    void backgroundColorDidChange() override;
 #endif
 
 #if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)

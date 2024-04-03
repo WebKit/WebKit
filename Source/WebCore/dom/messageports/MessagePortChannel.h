@@ -67,6 +67,8 @@ public:
 private:
     MessagePortChannel(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
 
+    CheckedRef<MessagePortChannelRegistry> checkedRegistry() const;
+
     MessagePortIdentifier m_ports[2];
     bool m_isClosed[2] { false, false };
     std::optional<ProcessIdentifier> m_processes[2];

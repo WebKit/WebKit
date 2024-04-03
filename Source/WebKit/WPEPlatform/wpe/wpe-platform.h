@@ -42,6 +42,8 @@
 #include <wpe/WPEKeymapXKB.h>
 #include <wpe/WPEKeysyms.h>
 #include <wpe/WPEKeysyms.h>
+#include <wpe/WPEMonitor.h>
+#include <wpe/WPERectangle.h>
 #include <wpe/WPEVersion.h>
 #include <wpe/WPEView.h>
 

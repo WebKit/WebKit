@@ -26,11 +26,13 @@
 #include "Document.h"
 #include "ImageBuffer.h"
 #include "LegacyRenderSVGResourceClipper.h"
+#include "RenderElementInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGLayerTransformComputation.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "StyleResolver.h"
@@ -72,6 +74,12 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
 
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            if (CheckedPtr renderer = this->renderer())
+                renderer->repaintClientsOfReferencedSVGResources();
+            return;
+        }
+
         updateSVGRendererForElementChange();
         return;
     }
@@ -86,19 +94,23 @@ void SVGClipPathElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr renderer = this->renderer())
+            renderer->repaintClientsOfReferencedSVGResources();
+        return;
+    }
+
     updateSVGRendererForElementChange();
 }
 
 RenderPtr<RenderElement> SVGClipPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGResourceClipper>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGResourceClipper>(*this, WTFMove(style));
 }
 
-SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
+RefPtr<SVGGraphicsElement> SVGClipPathElement::shouldApplyPathClipping() const
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
     if (renderer() && renderer()->style().clipPath())
@@ -109,13 +121,13 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
         if (is<RenderSVGText>(renderer))
             return true;
         auto& style = renderer.style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             return false;
         // Current shape in clip-path gets clipped too. Fall back to masking.
         return style.clipPath();
     };
 
-    SVGGraphicsElement* useGraphicsElement = nullptr;
+    RefPtr<SVGGraphicsElement> useGraphicsElement;
 
     // If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible
     // shapes don't affect the clipping and can be ignored. If clip-path contains more than one
@@ -123,10 +135,10 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
     // as well as NonZero can cause self-clipping of the elements.
     // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
     for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
-        auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
+        RefPtr graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
         if (!graphicsElement)
             continue;
-        auto* renderer = graphicsElement->renderer();
+        CheckedPtr renderer = graphicsElement->renderer();
         if (!renderer)
             continue;
         if (rendererRequiresMaskClipping(*renderer))
@@ -136,13 +148,13 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
             return nullptr;
 
         // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
-        if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement)) {
-            auto* clipChildRenderer = useElement->rendererClipChild();
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(*graphicsElement)) {
+            CheckedPtr clipChildRenderer = useElement->rendererClipChild();
             if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
                 return nullptr;
         }
 
-        useGraphicsElement = graphicsElement;
+        useGraphicsElement = WTFMove(graphicsElement);
     }
 
     return useGraphicsElement;
@@ -150,18 +162,36 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
 
 FloatRect SVGClipPathElement::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
+    ASSERT(renderer());
+    auto transformationMatrixFromChild = [&](const RenderLayerModelObject& child) -> std::optional<AffineTransform> {
+        if (!document().settings().layerBasedSVGEngineEnabled())
+            return std::nullopt;
+
+        if (!(renderer()->isTransformed() || child.isTransformed()) || !child.hasLayer())
+            return std::nullopt;
+
+        ASSERT(child.isSVGLayerAwareRenderer());
+        ASSERT(!child.isRenderSVGRoot());
+
+        auto transform = SVGLayerTransformComputation(child).computeAccumulatedTransform(downcast<RenderLayerModelObject>(renderer()), TransformState::TrackSVGCTMMatrix);
+        return transform.isIdentity() ? std::nullopt : std::make_optional(WTFMove(transform));
+    };
+
     FloatRect clipContentRepaintRect;
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
     for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
-        auto* renderer = childNode->renderer();
+        CheckedPtr renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
         if (!renderer->isRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         auto& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             continue;
-        clipContentRepaintRect.unite(renderer->repaintRectInLocalCoordinates(repaintRectCalculation));
+        auto r = renderer->repaintRectInLocalCoordinates(repaintRectCalculation);
+        if (auto transform = transformationMatrixFromChild(downcast<RenderLayerModelObject>(*renderer)))
+            r = transform->mapRect(r);
+        clipContentRepaintRect.unite(r);
     }
     return clipContentRepaintRect;
 }

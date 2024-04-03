@@ -141,7 +141,7 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
         // RadicalDegreeBottomRaisePercent: Suggested value is 60%.
         parameters.ruleThickness = ruleThicknessFallback();
         if (style().mathStyle() == MathStyle::Normal)
-            parameters.verticalGap = parameters.ruleThickness + style().metricsOfPrimaryFont().xHeight() / 4;
+            parameters.verticalGap = parameters.ruleThickness + style().metricsOfPrimaryFont().xHeight().value_or(0) / 4;
         else
             parameters.verticalGap = 5 * parameters.ruleThickness / 4;
 
@@ -272,7 +272,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLRow::paint(info, paintOffset);
 
-    if (!firstChild() || info.context().paintingDisabled() || style().visibility() != Visibility::Visible || !isValid())
+    if (!firstChild() || info.context().paintingDisabled() || style().usedVisibility() != Visibility::Visible || !isValid())
         return;
 
     // We draw the radical operator.

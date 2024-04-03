@@ -239,11 +239,12 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         issue._keywords = []  # We don't yet have a defined idiom for "keywords" in GitHub Issues
         issue._classification = ''  # We don't yet have a defined idiom for "classification" in GitHub issues
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
+        if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
             response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 issue._title = response['title']
                 issue._timestamp = int(calendar.timegm(datetime.strptime(response['created_at'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+                issue._modified = int(calendar.timegm(datetime.strptime(response['updated_at'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
                 issue._creator = self.user(username=response['user']['login']) if response.get('user') else None
                 issue._description = response['body']
                 issue._opened = response['state'] != 'closed'

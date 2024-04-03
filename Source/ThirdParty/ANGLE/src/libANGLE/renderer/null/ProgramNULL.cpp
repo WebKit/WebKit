@@ -21,7 +21,7 @@ class LinkTaskNULL : public LinkTask
     ~LinkTaskNULL() override = default;
     std::vector<std::shared_ptr<LinkSubTask>> link(const gl::ProgramLinkedResources &resources,
                                                    const gl::ProgramMergedVaryings &mergedVaryings,
-                                                   bool *areSubTasksOptionalOut) override
+                                                   bool *canSubTasksRunPostLinkOut) override
     {
         return {};
     }
@@ -39,10 +39,10 @@ ProgramNULL::~ProgramNULL() {}
 angle::Result ProgramNULL::load(const gl::Context *context,
                                 gl::BinaryInputStream *stream,
                                 std::shared_ptr<LinkTask> *loadTaskOut,
-                                bool *successOut)
+                                egl::CacheGetResult *resultOut)
 {
     *loadTaskOut = {};
-    *successOut  = true;
+    *resultOut   = egl::CacheGetResult::Success;
     return angle::Result::Continue;
 }
 

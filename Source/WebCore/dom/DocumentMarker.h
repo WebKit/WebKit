@@ -25,6 +25,7 @@
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ namespace WebCore {
 // It optionally includes a description that could be displayed in the user interface.
 class DocumentMarker : public CanMakeWeakPtr<DocumentMarker> {
 public:
-    enum class Type : uint16_t {
+    enum class Type : uint32_t {
         Spelling = 1 << 0,
         Grammar = 1 << 1,
         TextMatch = 1 << 2,
@@ -82,6 +83,9 @@ public:
         // This marker maintains state for the platform text checker.
         PlatformTextChecking = 1 << 15,
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        UnifiedTextReplacement = 1 << 16,
+#endif
     };
 
     static constexpr OptionSet<Type> allMarkers();
@@ -97,6 +101,21 @@ public:
     };
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    struct UnifiedTextReplacementData {
+        enum class State: uint8_t {
+            Pending,
+            Committed,
+            Reverted
+        };
+
+        String originalText;
+        WTF::UUID uuid;
+        WTF::UUID sessionUUID;
+        State state { State::Pending };
+    };
+#endif
+
     using Data = std::variant<
         String
         , DictationData // DictationAlternatives
@@ -108,6 +127,9 @@ public:
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         , PlatformTextCheckingData // PlatformTextChecking
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        , UnifiedTextReplacementData // UnifiedTextReplacement
+#endif
     >;
 
     DocumentMarker(Type, OffsetRange, Data&& = { });
@@ -116,7 +138,7 @@ public:
     unsigned startOffset() const { return m_range.start; }
     unsigned endOffset() const { return m_range.end; }
 
-    const String& description() const;
+    String description() const;
 
     const Data& data() const { return m_data; }
     void clearData() { m_data = String { }; }
@@ -158,6 +180,9 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<Type>
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
         Type::PlatformTextChecking,
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        Type::UnifiedTextReplacement,
+#endif
     };
 }
 
@@ -174,9 +199,17 @@ inline void DocumentMarker::shiftOffsets(int delta)
     m_range.end += delta;
 }
 
-inline const String& DocumentMarker::description() const
+inline String DocumentMarker::description() const
 {
-    return std::holds_alternative<String>(m_data) ? std::get<String>(m_data) : emptyString();
+    if (auto* description = std::get_if<String>(&m_data))
+        return *description;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (auto* data = std::get_if<DocumentMarker::UnifiedTextReplacementData>(&m_data))
+        return makeString("('", data->originalText, "', state: ", enumToUnderlyingType(data->state), ")");
+#endif
+
+    return emptyString();
 }
 
 } // namespace WebCore

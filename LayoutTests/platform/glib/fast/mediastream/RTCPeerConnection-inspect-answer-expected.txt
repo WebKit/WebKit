@@ -20,17 +20,8 @@ a=mid:{mid:OK}
 a=setup:active
 a=rtpmap:96 OPUS/48000/2
 a=rtcp-fb:96 transport-cc
-a=rtcp-mux
-a=rtcp-rsize
-a=rtcp-fb:8 transport-cc
-a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=fingerprint:sha-256 {fingerprint:OK}
-a=rtcp-mux-only
-a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
-a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
-a=extmap:3 urn:ietf:params:rtp-hdrext:ssrc-audio-level
 a=fmtp:96 minptime=10;useinbandfec=1
-a=sendrecv
+a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 ===
 
@@ -58,9 +49,8 @@ a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
-a=extmap:3 urn:ietf:params:rtp-hdrext:ssrc-audio-level
 a=fmtp:96 minptime=10;useinbandfec=1
-a=sendrecv
+a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 m=video 9 UDP/TLS/RTP/SAVPF 97
 c=IN IP4 0.0.0.0
@@ -73,20 +63,8 @@ a=rtpmap:97 H264/90000
 a=rtcp-fb:97 nack pli
 a=rtcp-fb:97 ccm fir
 a=rtcp-fb:97 transport-cc
-a=rtcp-mux
-a=rtcp-rsize
-a=rtcp-fb:109 transport-cc
-a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
-a=ssrc-group:{semantics:OK} {ssrc-id:OK}
-a=fingerprint:sha-256 {fingerprint:OK}
-a=rtcp-mux-only
-a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
-a=extmap:2 http://www.webrtc.org/experiments/rtp-hdrext/color-space
-a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid
-a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
-a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=fmtp:97 packetization-mode=1;level-asymmetry-allowed=1
-a=sendrecv
+a=recvonly
 a=fingerprint:sha-256 {fingerprint:OK}
 ===
 

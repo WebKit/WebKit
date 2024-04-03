@@ -14,56 +14,58 @@
 <x-custom></x-custom>
 
 <script>
-  class XTarget extends HTMLElement {
+class XTarget extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let target = document.createElement("div");
-      target.id = "innertarget";
-      target.textContent = "Target 3";
-      target.ariaFlowToElements = [flow3];
-      this.shadowRoot.appendChild(target);
+        super();
+        this.attachShadow({ mode: "open" });
+        let target = document.createElement("div");
+        target.id = "innertarget";
+        target.textContent = "Target 3";
+        target.ariaFlowToElements = [flow3];
+        this.shadowRoot.appendChild(target);
     }
-  }
-  customElements.define("x-target", XTarget);
+}
+customElements.define("x-target", XTarget);
 
-  class XCustom extends HTMLElement {
+class XCustom extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let flow = document.createElement("div");
-      flow.id = "flow5";
-      flow.textContent = "Fifth flow";
-      let target = document.createElement("div");
-      target.id = "target5";
-      target.textContent = "Target 5";
-      this.shadowRoot.appendChild(flow);
-      this.shadowRoot.appendChild(target);
-      target.ariaFlowToElements = [flow];
-      document.body.appendChild(flow);
+        super();
+        this.attachShadow({ mode: "open" });
+        let flow = document.createElement("div");
+        flow.id = "flow5";
+        flow.textContent = "Fifth flow";
+        let target = document.createElement("div");
+        target.id = "target5";
+        target.textContent = "Target 5";
+        this.shadowRoot.appendChild(flow);
+        this.shadowRoot.appendChild(target);
+        target.ariaFlowToElements = [flow];
+        document.body.appendChild(flow);
     }
-  }
-  customElements.define("x-custom", XCustom);
+}
+customElements.define("x-custom", XCustom);
 
-  description("Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElements'");
-  if (!window.accessibilityController) {
-    debug("This test requires accessibilityController");
-  } else {
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElements'\n\n";
+
+if (window.accessibilityController) {
     window.jsTestIsAsync = true
-    var output = "";
+
     var axFlow1, axTarget1, axTarget2, axFlow2, axFlow3, axInnerTarget, axFlow4, axTarget4, wrapper;
-    setTimeout(function() {
+    setTimeout(async function() {
         target1.ariaFlowToElements = [flow1];
         axFlow1 = accessibilityController.accessibleElementById("flow1");
         axTarget1 = accessibilityController.accessibleElementById("target1");
+        await waitFor(() => axTarget1.ariaFlowToElementAtIndex(0));
         output += expect("axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1)", "true");
 
         target2.ariaFlowToElements = [document.getElementsByClassName("flow")[0]];
         wrapper = accessibilityController.accessibleElementById("wrapper");
         axFlow2 = wrapper.childAtIndex(0);
         axTarget2 = accessibilityController.accessibleElementById("target2");
+        await waitFor(() => axTarget2.ariaFlowToElementAtIndex(0));
         output += expect("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2)", "true");
         target2.setAttribute("aria-flowto", "flow1");
+        await waitFor(() => axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1));
         output += expect("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1)", "true");
 
         axFlow3 = accessibilityController.accessibleElementById("flow3");
@@ -71,6 +73,7 @@
         output += expect("axInnerTarget.ariaFlowToElementAtIndex(0).isEqual(axFlow3)", "true");
 
         target2.ariaFlowToElements = [flow1, document.getElementsByClassName("flow")[0], flow3];
+        await waitFor(() => axTarget2.ariaFlowToElementAtIndex(2));
         output += expect("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1)", "true");
         output += expect("axTarget2.ariaFlowToElementAtIndex(1).isEqual(axFlow2)", "true");
         output += expect("axTarget2.ariaFlowToElementAtIndex(2).isEqual(axFlow3)", "true");
@@ -79,13 +82,15 @@
         flow4.id = "flow4-new";
         axFlow4 = accessibilityController.accessibleElementById("flow4-new");
         axTarget4 = accessibilityController.accessibleElementById("target4");
+        await waitFor(() => axTarget4.ariaFlowToElementAtIndex(0));
         output += expect("axTarget4.ariaFlowToElementAtIndex(0).isEqual(axFlow4)", "true");
 
         axFlow5 = accessibilityController.accessibleElementById("flow5");
         axTarget5 = accessibilityController.accessibleElementById("target5");
         output += expect("axTarget5.ariaFlowToElementAtIndex(0).isEqual(axFlow5)", "true");
+
         debug(output);
         finishJSTest();
     }, 0);    
-  }
+}
 </script>

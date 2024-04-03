@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (10,10) size 101x52
           RenderTableRow {TR} at (0,10) size 101x22
             RenderTableCell {TD} at (10,15) size 36x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 32x18
+              RenderText {#text} at (2,7) size 32x18
                 text run at (2,2) width 32: "cell1"
             RenderTableCell {TD} at (55,10) size 36x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (10,10) size 101x84
           RenderTableRow {TR} at (0,10) size 101x22
             RenderTableCell {TD} at (10,15) size 36x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 32x18
+              RenderText {#text} at (2,7) size 32x18
                 text run at (2,2) width 32: "cell1"
             RenderTableCell {TD} at (55,10) size 36x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x18
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 32x18
                 text run at (2,2) width 32: "cell1"
             RenderTableCell {TD} at (55,15) size 36x22 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 32x18
+              RenderText {#text} at (2,7) size 32x18
                 text run at (2,2) width 32: "cell2"
           RenderTableRow {TR} at (0,42) size 101x0
           RenderTableRow {TR} at (0,52) size 101x22

@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkSocketChannel NotRefCounted {
-    SendString(IPC::DataReference message) -> ()
-    SendData(IPC::DataReference data) -> ()
+    SendString(std::span<const uint8_t> message) -> ()
+    SendData(std::span<const uint8_t> data) -> ()
     Close(int32_t code, String reason)
 }

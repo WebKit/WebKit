@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>BrowserBench.org &mdash; Announcements</title>
+    <link rel="stylesheet" href="/resources/main.css">
+
+    <meta itemprop="name" content="Announcing Speedometer 3.0: A Shared Browser Benchmark for Web Application Responsiveness">
+    <meta itemprop="description" content="Speedometer 3.0 is a step forward in web browser performance testing: with a more representative set of tests that reflect the modern Web, and shared ownership between major engines.">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:src" content="https://browserbench.org/announcements/speedometer3/preview.png">
+    <meta name="twitter:title" content="Announcing Speedometer 3.0: A Shared Browser Benchmark for Web Application Responsiveness">
+    <meta name="twitter:description" content="Speedometer 3.0 is a step forward in web browser performance testing: with a more representative set of tests that reflect the modern Web, and shared ownership between major engines.">
+    
+    <meta property="og:title" content="Announcing Speedometer 3.0: A Shared Browser Benchmark for Web Application Responsiveness">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://browserbench.org/announcements/speedometer3">
+    <meta property="og:description" content="Speedometer 3.0 is a step forward in web browser performance testing: with a more representative set of tests that reflect the modern Web, and shared ownership between major engines (Blink, Gecko, and WebKit).">
+    <meta property="og:site_name" content="BrowerBench.org">
+
+</head>
+<body>
+<main>
+
+<div id="logo">
+<a href="/"><span class="light">browser</span><span class="normal">bench</span><span class="highlight">.</span><span class="light">org</span></a>
+</div>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+<article>
+
+<h1>Announcing Speedometer 3.0: A Shared Browser Benchmark for Web Application Responsiveness</h1>
+<div class="byline">
+    <span class="author">by contributors from Apple, Google, Microsoft, and Mozilla</span>
+    <span class="date">March 11, 2024</span>
+</div>
+
+<p>Since the initial version of the Speedometer benchmark was released in 2014 by the WebKit team, it has become a key tool for browser engines to drive performance optimizations as users and developers continue to demand richer and smoother experiences online.</p>
+
+<p>We&rsquo;re proud to release Speedometer 3.0 today as a collaborative effort between the three major browser engines: Blink, Gecko, and WebKit. Like previous releases (<a href="https://webkit.org/blog/8063/speedometer-2-0-a-benchmark-for-modern-web-app-responsiveness/">Speedometer 2 in 2018</a> and <a href="https://webkit.org/blog/3395/speedometer-benchmark-for-web-app-responsiveness/">Speedometer 1 in 2014</a>), it&rsquo;s designed to measure web application responsiveness by simulating user interactions on real web pages. Today&rsquo;s release of Speedometer 3.0 marks a major step forward in web browser performance testing: it introduces a better way of measuring performance and a more representative set of tests that reflect the modern Web.</p>
+
+<h2>A New Governance Model</h2>
+
+<p>This is the first time the Speedometer benchmark, or any major browser benchmark, has been developed through a cross-industry collaboration supported by each major browser engine: Blink/V8, Gecko/SpiderMonkey, and WebKit/JavaScriptCore. It&rsquo;s been developed under a new governance model, driven by consensus, and is hosted in a <a href="https://github.com/WebKit/Speedometer/">shared repository</a> that&rsquo;s open to contribution. This new structure involves a lot of collective effort: discussions, research, debates, decisions, and hundreds of PRs since we announced the project in December 2022. </p>
+
+<h2>A Broader Range of User Experiences</h2>
+
+<p>Speedometer 3 adds many new tests. We started designing this new benchmark by identifying some key scenarios and user interactions that we felt were important for browsers to optimize.</p>
+
+<p>In particular, we added new tests that simulate rendering canvas and SVG charts (React Stockcharts, Chart.js, Perf Dashboard, and Observable Plot), code editing (CodeMirror), WYSIWYG editing (TipTap), and reading news sites (Next.js and Nuxt.js).</p>
+
+<p>We&rsquo;ve also improved the TodoMVC tests: updating the code to adapt to the most common versions of the most popular frameworks based on data from the the HTTP Archive. The following frameworks and libraries are included: Angular, Backbone, jQuery, Lit, Preact, React, React+Redux, Svelte, and Vue; along with vanilla JavaScript implementations targeting ES5 and ES6, and a Web Components version. We also introduced more complex versions of these tests which are embedded into a bigger DOM tree with many complex CSS rules that more closely emulate the page weight and structure from popular webapps today.</p>
+
+<p>Taken together these exercise a more broad and representative cross section of the engine, providing new opportunities to optimize JS, Layout, CSS, Graphics, and DOM APIs in order to improve user experience on the Web. Take a look at <a href="https://www.browserbench.org/Speedometer3.0/about.html">this page</a> for more details about the tests themselves.</p>
+
+<h2>Improvements to the Test Runner</h2>
+
+<p>The test runner itself in Speedometer 3 has been improved to measure more of the work the browser does in response to user actions, such as painting and asynchronous tasks. Speedometer 2.0 measured the time to run a test script synchronously as "sync" time, as well as any additional work before a 0 second timer fires as "async" time. However, this missed some work browser engines have to do to update the rendering of a web page.</p>
+
+<p>In Speedometer 3.0, we are able to measure this previously-missing rendering work, which creates more opportunities to optimize real-world content. To do this, we measure a test script within a requestAnimationFrame callback as "sync" time, and a 0 second timer scheduled in a second requestAnimationFrame fires as "async" time. This async time is guaranteed to include work from timers in the test itself, as well as page rendering by the browser engine. These changes greatly improve the accuracy of the benchmark, and translate into real-world improvements for users as engines optimize this previously-missing work.</p>
+
+<p>There are some more behind the scenes improvements as well. There&rsquo;s improved developer tooling so browser engineers can better understand results, profile, and customize the test. We redesigned the test runner architecture to make it easier to write and maintain complex test cases. And there are many code quality improvements and migrations to modern features that weren&rsquo;t broadly available when Speedometer 2.0 was released, such as native promises, async / await, classes, and modules.</p>
+
+<h2>Improving Web Performance</h2>
+
+<p>The <a href="https://github.com/WebKit/Speedometer/?tab=readme-ov-file#what-is-speedometer">primary goal</a> of Speedometer 3 is to reflect the real-world Web as much as possible, so that users benefit when a browser improves its score on the benchmark. It has already had some success at this before publicly launching, with core optimizations in each major engine throughout the last year turning into responsiveness improvements for users across the Web.</p>
+
+</article>
+
+<hr>
+
+<div class="navigation"><a href="/announcements">&lsaquo; Back to BrowserBench.org Announcements</a></p>
+
+</main>
+</body>
+</html>

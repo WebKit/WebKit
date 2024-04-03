@@ -22,10 +22,19 @@
 
 #if USE(CF)
 
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCFType()] CFTypeRef wrapped by WebKit::CoreIPCCFType {
+}
+
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->data()] CFDataRef wrapped by WebKit::CoreIPCData {
 }
 
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+}
+
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFArray()] CFArrayRef wrapped by WebKit::CoreIPCCFArray {
+}
+
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDictionary()] CFDictionaryRef wrapped by WebKit::CoreIPCCFDictionary {
 }
 
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
@@ -40,7 +49,42 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
 }
 
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCFObject()] CFNullRef wrapped by WebKit::CoreIPCNull {
+}
+
+#if HAVE(SEC_ACCESS_CONTROL)
+
+additional_forward_declaration: typedef struct __SecAccessControl *SecAccessControlRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecAccessControl()] SecAccessControlRef wrapped by WebKit::CoreIPCSecAccessControl {
+}
+
 #endif
+
+additional_forward_declaration: typedef struct __SecCertificate *SecCertificateRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecCertificate()] SecCertificateRef wrapped by WebKit::CoreIPCSecCertificate {
+}
+
+#if HAVE(SEC_KEYCHAIN)
+
+additional_forward_declaration: typedef struct __SecKeychainItem *SecKeychainItemRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecKeychainItem()] SecKeychainItemRef wrapped by WebKit::CoreIPCSecKeychainItem {
+}
+
+#endif
+
+additional_forward_declaration: typedef struct __CVBuffer *CVPixelBufferRef
+[WebKitPlatform, CustomHeader,  AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->toCF()] CVPixelBufferRef wrapped by WebKit::CoreIPCCVPixelBufferRef {
+}
+
+additional_forward_declaration: typedef struct __SecTrust *SecTrustRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createSecTrust()] SecTrustRef wrapped by WebKit::CoreIPCSecTrust {
+}
+
+additional_forward_declaration: typedef const struct CF_BRIDGED_TYPE(NSCharacterSet) __CFCharacterSet * CFCharacterSetRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] CFCharacterSetRef wrapped by WebKit::CoreIPCCFCharacterSet {
+}
+
+#endif // USE(CF)
 
 #if USE(CG)
 
@@ -48,4 +92,9 @@ additional_forward_declaration: typedef struct CGColor *CGColorRef
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebCore::Color::createAndPreserveColorSpace, ToCFMethod=WebCore::cachedCGColor(*result)] CGColorRef wrapped by WebCore::Color {
 }
 
+additional_forward_declaration: typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] CGColorSpaceRef wrapped by WebKit::CoreIPCCGColorSpace {
+}
+
 #endif
+

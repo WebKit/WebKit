@@ -104,11 +104,10 @@
 }
 
 .content-view.audit-test-case > header > .metadata > .duration {
-    display: inline-block;
     min-width: var(--metadata-width);
     margin-inline-start: var(--audit-test-horizontal-space);
     font-size: 12px;
-    text-align: center;
+    text-align: end;
     font-weight: bold;
 }
 

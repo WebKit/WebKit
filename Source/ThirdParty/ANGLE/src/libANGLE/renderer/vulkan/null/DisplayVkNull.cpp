@@ -10,9 +10,9 @@
 #include "DisplayVkNull.h"
 
 #include "libANGLE/Display.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -33,11 +33,6 @@ SurfaceImpl *DisplayVkNull::createWindowSurfaceVk(const egl::SurfaceState &state
 const char *DisplayVkNull::getWSIExtension() const
 {
     return nullptr;
-}
-
-bool DisplayVkNull::isUsingSwapchain() const
-{
-    return false;
 }
 
 egl::ConfigSet DisplayVkNull::generateConfigs()

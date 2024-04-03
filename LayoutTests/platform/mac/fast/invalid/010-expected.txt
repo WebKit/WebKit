@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 341x18
           text run at (0,0) width 341: "The style rule on this page should be totally ignored. "
-        RenderInline {A} at (0,0) size 84x18
+        RenderInline {A} at (340,0) size 84x18
           RenderText {#text} at (340,0) size 84x18
             text run at (340,0) width 84: "here is a link"
         RenderText {#text} at (0,0) size 0x0
@@ -18,19 +18,19 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 32x18
             text run at (0,0) width 32: "issue"
         RenderBR {BR} at (32,0) size 0x18
-        RenderInline {SPAN} at (0,0) size 22x18
+        RenderInline {SPAN} at (0,18) size 22x18
           RenderText {#text} at (0,18) size 22x18
             text run at (0,18) width 22: "fail"
         RenderBR {BR} at (21,18) size 1x18
-        RenderInline {A} at (0,0) size 124x18
+        RenderInline {A} at (0,36) size 124x18
           RenderText {#text} at (0,36) size 124x18
             text run at (0,36) width 124: "here is another link"
         RenderBR {BR} at (123,36) size 1x18
-        RenderInline {SPAN} at (0,0) size 20x18
+        RenderInline {SPAN} at (0,54) size 20x18
           RenderText {#text} at (0,54) size 20x18
             text run at (0,54) width 20: "n/a"
         RenderBR {BR} at (19,54) size 1x18
-        RenderInline {SPAN} at (0,0) size 28x18
+        RenderInline {SPAN} at (0,72) size 28x18
           RenderText {#text} at (0,72) size 28x18
             text run at (0,72) width 28: "pass"
         RenderBR {BR} at (27,72) size 1x18

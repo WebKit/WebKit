@@ -39,7 +39,7 @@ layer at (0,0) size 785x680
         RenderText {#text} at (0,0) size 285x18
           text run at (0,0) width 285: "Using <wbr> within <nobr> to break words."
       RenderBlock {DIV} at (0,270) size 302x20 [border: (1px solid #0000FF)]
-        RenderInline {NOBR} at (0,0) size 484x18
+        RenderInline {NOBR} at (1,1) size 484x18
           RenderText {#text} at (1,1) size 228x18
             text run at (1,1) width 228: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
           RenderWordBreak {WBR} at (0,0) size 0x0
@@ -49,7 +49,7 @@ layer at (0,0) size 785x680
         RenderTableSection {TBODY} at (0,0) size 769x20
           RenderTableRow {TR} at (0,0) size 769x20
             RenderTableCell {TD} at (0,0) size 486x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {NOBR} at (0,0) size 484x18
+              RenderInline {NOBR} at (1,1) size 484x18
                 RenderText {#text} at (1,1) size 228x18
                   text run at (1,1) width 228: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 RenderWordBreak {WBR} at (0,0) size 0x0
@@ -85,7 +85,7 @@ layer at (0,0) size 785x680
         RenderText {#text} at (0,0) size 321x18
           text run at (0,0) width 321: "Using <wbr> within <nobr> to break three words."
       RenderBlock {DIV} at (0,542) size 302x20 [border: (1px solid #0000FF)]
-        RenderInline {NOBR} at (0,0) size 533x18
+        RenderInline {NOBR} at (1,1) size 533x18
           RenderText {#text} at (1,1) size 171x18
             text run at (1,1) width 171: "aaaaaaaaaaaaaaaaaaaaaaaa"
           RenderWordBreak {WBR} at (0,0) size 0x0
@@ -98,7 +98,7 @@ layer at (0,0) size 785x680
         RenderTableSection {TBODY} at (0,0) size 769x20
           RenderTableRow {TR} at (0,0) size 769x20
             RenderTableCell {TD} at (0,0) size 535x20 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {NOBR} at (0,0) size 533x18
+              RenderInline {NOBR} at (1,1) size 533x18
                 RenderText {#text} at (1,1) size 171x18
                   text run at (1,1) width 171: "aaaaaaaaaaaaaaaaaaaaaaaa"
                 RenderWordBreak {WBR} at (0,0) size 0x0

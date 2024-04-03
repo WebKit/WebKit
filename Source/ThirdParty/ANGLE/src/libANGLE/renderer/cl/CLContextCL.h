@@ -36,7 +36,6 @@ class CLContextCL : public CLContextImpl
                                      CLCommandQueueImpl::Ptr *commandQueueOut) override;
 
     angle::Result createBuffer(const cl::Buffer &buffer,
-                               size_t size,
                                void *hostPtr,
                                CLMemoryImpl::Ptr *bufferOut) override;
 

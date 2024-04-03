@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 775x36
-          RenderInline {A} at (0,0) size 312x18 [color=#0000EE]
+          RenderInline {A} at (53,0) size 312x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 312x18
               text run at (53,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=18818"
-          RenderText {#text} at (364,0) size 775x36
+          RenderText {#text} at (0,0) size 775x36
             text run at (364,0) width 5: " "
             text run at (368,0) width 407: "REGRESSION (3.1.1-TOT): Character order (float:left ordered"
             text run at (0,18) width 126: "after the first letter)"

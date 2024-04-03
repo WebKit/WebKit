@@ -75,6 +75,8 @@ struct Capabilities {
     std::optional<PageLoadStrategy> pageLoadStrategy;
     std::optional<UnhandledPromptBehavior> unhandledPromptBehavior;
     std::optional<Proxy> proxy;
+    std::optional<String> targetAddr;
+    std::optional<int> targetPort;
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<String> browserBinary;
     std::optional<Vector<String>> browserArguments;
@@ -82,10 +84,6 @@ struct Capabilities {
 #endif
 #if PLATFORM(GTK)
     std::optional<bool> useOverlayScrollbars;
-#endif
-#if USE(INSPECTOR_SOCKET_SERVER)
-    std::optional<String> targetAddr;
-    std::optional<int> targetPort;
 #endif
 };
 

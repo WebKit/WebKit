@@ -355,10 +355,12 @@ PASS picture.tabIndex: setAttribute() to "\f7"
 PASS picture.tabIndex: setAttribute() to " 7"
 PASS picture.tabIndex: setAttribute() to "\n7"
 PASS picture.tabIndex: setAttribute() to "\r7"
+PASS picture.tabIndex: setAttribute() to "7\v"
 PASS picture.tabIndex: setAttribute() to 1.5
 PASS picture.tabIndex: setAttribute() to "5%"
 PASS picture.tabIndex: setAttribute() to "+100"
 PASS picture.tabIndex: setAttribute() to object "2"
+PASS picture.tabIndex: setAttribute() to object "3"
 PASS picture.tabIndex: IDL set to -36
 PASS picture.tabIndex: IDL set to -1
 PASS picture.tabIndex: IDL set to 0
@@ -679,10 +681,12 @@ PASS img.tabIndex: setAttribute() to "\f7"
 PASS img.tabIndex: setAttribute() to " 7"
 PASS img.tabIndex: setAttribute() to "\n7"
 PASS img.tabIndex: setAttribute() to "\r7"
+PASS img.tabIndex: setAttribute() to "7\v"
 PASS img.tabIndex: setAttribute() to 1.5
 PASS img.tabIndex: setAttribute() to "5%"
 PASS img.tabIndex: setAttribute() to "+100"
 PASS img.tabIndex: setAttribute() to object "2"
+PASS img.tabIndex: setAttribute() to object "3"
 PASS img.tabIndex: IDL set to -36
 PASS img.tabIndex: IDL set to -1
 PASS img.tabIndex: IDL set to 0
@@ -1296,6 +1300,8 @@ PASS img.hspace: setAttribute() to 2147483648
 PASS img.hspace: setAttribute() to 4294967295
 PASS img.hspace: setAttribute() to 4294967296
 PASS img.hspace: setAttribute() to ""
+PASS img.hspace: setAttribute() to "-"
+PASS img.hspace: setAttribute() to "+"
 PASS img.hspace: setAttribute() to "-1"
 PASS img.hspace: setAttribute() to "-0"
 PASS img.hspace: setAttribute() to "0"
@@ -1325,6 +1331,12 @@ PASS img.hspace: setAttribute() to " 7"
 PASS img.hspace: setAttribute() to " 7"
 PASS img.hspace: setAttribute() to " 7"
 PASS img.hspace: setAttribute() to "　7"
+PASS img.hspace: setAttribute() to "\t\v7"
+PASS img.hspace: setAttribute() to "\n\v7"
+PASS img.hspace: setAttribute() to "\f\v7"
+PASS img.hspace: setAttribute() to "\r\v7"
+PASS img.hspace: setAttribute() to " \v7"
+PASS img.hspace: setAttribute() to "7\v"
 PASS img.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS img.hspace: setAttribute() to undefined
 PASS img.hspace: setAttribute() to 1.5
@@ -1361,6 +1373,8 @@ PASS img.vspace: setAttribute() to 2147483648
 PASS img.vspace: setAttribute() to 4294967295
 PASS img.vspace: setAttribute() to 4294967296
 PASS img.vspace: setAttribute() to ""
+PASS img.vspace: setAttribute() to "-"
+PASS img.vspace: setAttribute() to "+"
 PASS img.vspace: setAttribute() to "-1"
 PASS img.vspace: setAttribute() to "-0"
 PASS img.vspace: setAttribute() to "0"
@@ -1390,6 +1404,12 @@ PASS img.vspace: setAttribute() to " 7"
 PASS img.vspace: setAttribute() to " 7"
 PASS img.vspace: setAttribute() to " 7"
 PASS img.vspace: setAttribute() to "　7"
+PASS img.vspace: setAttribute() to "\t\v7"
+PASS img.vspace: setAttribute() to "\n\v7"
+PASS img.vspace: setAttribute() to "\f\v7"
+PASS img.vspace: setAttribute() to "\r\v7"
+PASS img.vspace: setAttribute() to " \v7"
+PASS img.vspace: setAttribute() to "7\v"
 PASS img.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS img.vspace: setAttribute() to undefined
 PASS img.vspace: setAttribute() to 1.5
@@ -1808,10 +1828,12 @@ PASS iframe.tabIndex: setAttribute() to "\f7"
 PASS iframe.tabIndex: setAttribute() to " 7"
 PASS iframe.tabIndex: setAttribute() to "\n7"
 PASS iframe.tabIndex: setAttribute() to "\r7"
+PASS iframe.tabIndex: setAttribute() to "7\v"
 PASS iframe.tabIndex: setAttribute() to 1.5
 PASS iframe.tabIndex: setAttribute() to "5%"
 PASS iframe.tabIndex: setAttribute() to "+100"
 PASS iframe.tabIndex: setAttribute() to object "2"
+PASS iframe.tabIndex: setAttribute() to object "3"
 PASS iframe.tabIndex: IDL set to -36
 PASS iframe.tabIndex: IDL set to -1
 PASS iframe.tabIndex: IDL set to 0
@@ -2801,10 +2823,12 @@ PASS embed.tabIndex: setAttribute() to "\f7"
 PASS embed.tabIndex: setAttribute() to " 7"
 PASS embed.tabIndex: setAttribute() to "\n7"
 PASS embed.tabIndex: setAttribute() to "\r7"
+PASS embed.tabIndex: setAttribute() to "7\v"
 PASS embed.tabIndex: setAttribute() to 1.5
 PASS embed.tabIndex: setAttribute() to "5%"
 PASS embed.tabIndex: setAttribute() to "+100"
 PASS embed.tabIndex: setAttribute() to object "2"
+PASS embed.tabIndex: setAttribute() to object "3"
 PASS embed.tabIndex: IDL set to -36
 PASS embed.tabIndex: IDL set to -1
 PASS embed.tabIndex: IDL set to 0
@@ -3359,10 +3383,12 @@ PASS object.tabIndex: setAttribute() to "\f7"
 PASS object.tabIndex: setAttribute() to " 7"
 PASS object.tabIndex: setAttribute() to "\n7"
 PASS object.tabIndex: setAttribute() to "\r7"
+PASS object.tabIndex: setAttribute() to "7\v"
 PASS object.tabIndex: setAttribute() to 1.5
 PASS object.tabIndex: setAttribute() to "5%"
 PASS object.tabIndex: setAttribute() to "+100"
 PASS object.tabIndex: setAttribute() to object "2"
+PASS object.tabIndex: setAttribute() to object "3"
 PASS object.tabIndex: IDL set to -36
 PASS object.tabIndex: IDL set to -1
 PASS object.tabIndex: IDL set to 0
@@ -3770,6 +3796,8 @@ PASS object.hspace: setAttribute() to 2147483648
 PASS object.hspace: setAttribute() to 4294967295
 PASS object.hspace: setAttribute() to 4294967296
 PASS object.hspace: setAttribute() to ""
+PASS object.hspace: setAttribute() to "-"
+PASS object.hspace: setAttribute() to "+"
 PASS object.hspace: setAttribute() to "-1"
 PASS object.hspace: setAttribute() to "-0"
 PASS object.hspace: setAttribute() to "0"
@@ -3799,6 +3827,12 @@ PASS object.hspace: setAttribute() to " 7"
 PASS object.hspace: setAttribute() to " 7"
 PASS object.hspace: setAttribute() to " 7"
 PASS object.hspace: setAttribute() to "　7"
+PASS object.hspace: setAttribute() to "\t\v7"
+PASS object.hspace: setAttribute() to "\n\v7"
+PASS object.hspace: setAttribute() to "\f\v7"
+PASS object.hspace: setAttribute() to "\r\v7"
+PASS object.hspace: setAttribute() to " \v7"
+PASS object.hspace: setAttribute() to "7\v"
 PASS object.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS object.hspace: setAttribute() to undefined
 PASS object.hspace: setAttribute() to 1.5
@@ -3873,6 +3907,8 @@ PASS object.vspace: setAttribute() to 2147483648
 PASS object.vspace: setAttribute() to 4294967295
 PASS object.vspace: setAttribute() to 4294967296
 PASS object.vspace: setAttribute() to ""
+PASS object.vspace: setAttribute() to "-"
+PASS object.vspace: setAttribute() to "+"
 PASS object.vspace: setAttribute() to "-1"
 PASS object.vspace: setAttribute() to "-0"
 PASS object.vspace: setAttribute() to "0"
@@ -3902,6 +3938,12 @@ PASS object.vspace: setAttribute() to " 7"
 PASS object.vspace: setAttribute() to " 7"
 PASS object.vspace: setAttribute() to " 7"
 PASS object.vspace: setAttribute() to "　7"
+PASS object.vspace: setAttribute() to "\t\v7"
+PASS object.vspace: setAttribute() to "\n\v7"
+PASS object.vspace: setAttribute() to "\f\v7"
+PASS object.vspace: setAttribute() to "\r\v7"
+PASS object.vspace: setAttribute() to " \v7"
+PASS object.vspace: setAttribute() to "7\v"
 PASS object.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS object.vspace: setAttribute() to undefined
 PASS object.vspace: setAttribute() to 1.5
@@ -4358,10 +4400,12 @@ PASS param.tabIndex: setAttribute() to "\f7"
 PASS param.tabIndex: setAttribute() to " 7"
 PASS param.tabIndex: setAttribute() to "\n7"
 PASS param.tabIndex: setAttribute() to "\r7"
+PASS param.tabIndex: setAttribute() to "7\v"
 PASS param.tabIndex: setAttribute() to 1.5
 PASS param.tabIndex: setAttribute() to "5%"
 PASS param.tabIndex: setAttribute() to "+100"
 PASS param.tabIndex: setAttribute() to object "2"
+PASS param.tabIndex: setAttribute() to object "3"
 PASS param.tabIndex: IDL set to -36
 PASS param.tabIndex: IDL set to -1
 PASS param.tabIndex: IDL set to 0
@@ -4834,10 +4878,12 @@ PASS video.tabIndex: setAttribute() to "\f7"
 PASS video.tabIndex: setAttribute() to " 7"
 PASS video.tabIndex: setAttribute() to "\n7"
 PASS video.tabIndex: setAttribute() to "\r7"
+PASS video.tabIndex: setAttribute() to "7\v"
 PASS video.tabIndex: setAttribute() to 1.5
 PASS video.tabIndex: setAttribute() to "5%"
 PASS video.tabIndex: setAttribute() to "+100"
 PASS video.tabIndex: setAttribute() to object "2"
+PASS video.tabIndex: setAttribute() to object "3"
 PASS video.tabIndex: IDL set to -36
 PASS video.tabIndex: IDL set to -1
 PASS video.tabIndex: IDL set to 0
@@ -5160,6 +5206,8 @@ PASS video.width: setAttribute() to 2147483648
 PASS video.width: setAttribute() to 4294967295
 PASS video.width: setAttribute() to 4294967296
 PASS video.width: setAttribute() to ""
+PASS video.width: setAttribute() to "-"
+PASS video.width: setAttribute() to "+"
 PASS video.width: setAttribute() to "-1"
 PASS video.width: setAttribute() to "-0"
 PASS video.width: setAttribute() to "0"
@@ -5189,6 +5237,12 @@ PASS video.width: setAttribute() to " 7"
 PASS video.width: setAttribute() to " 7"
 PASS video.width: setAttribute() to " 7"
 PASS video.width: setAttribute() to "　7"
+PASS video.width: setAttribute() to "\t\v7"
+PASS video.width: setAttribute() to "\n\v7"
+PASS video.width: setAttribute() to "\f\v7"
+PASS video.width: setAttribute() to "\r\v7"
+PASS video.width: setAttribute() to " \v7"
+PASS video.width: setAttribute() to "7\v"
 PASS video.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS video.width: setAttribute() to undefined
 PASS video.width: setAttribute() to 1.5
@@ -5225,6 +5279,8 @@ PASS video.height: setAttribute() to 2147483648
 PASS video.height: setAttribute() to 4294967295
 PASS video.height: setAttribute() to 4294967296
 PASS video.height: setAttribute() to ""
+PASS video.height: setAttribute() to "-"
+PASS video.height: setAttribute() to "+"
 PASS video.height: setAttribute() to "-1"
 PASS video.height: setAttribute() to "-0"
 PASS video.height: setAttribute() to "0"
@@ -5254,6 +5310,12 @@ PASS video.height: setAttribute() to " 7"
 PASS video.height: setAttribute() to " 7"
 PASS video.height: setAttribute() to " 7"
 PASS video.height: setAttribute() to "　7"
+PASS video.height: setAttribute() to "\t\v7"
+PASS video.height: setAttribute() to "\n\v7"
+PASS video.height: setAttribute() to "\f\v7"
+PASS video.height: setAttribute() to "\r\v7"
+PASS video.height: setAttribute() to " \v7"
+PASS video.height: setAttribute() to "7\v"
 PASS video.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS video.height: setAttribute() to undefined
 PASS video.height: setAttribute() to 1.5
@@ -5673,10 +5735,12 @@ PASS audio.tabIndex: setAttribute() to "\f7"
 PASS audio.tabIndex: setAttribute() to " 7"
 PASS audio.tabIndex: setAttribute() to "\n7"
 PASS audio.tabIndex: setAttribute() to "\r7"
+PASS audio.tabIndex: setAttribute() to "7\v"
 PASS audio.tabIndex: setAttribute() to 1.5
 PASS audio.tabIndex: setAttribute() to "5%"
 PASS audio.tabIndex: setAttribute() to "+100"
 PASS audio.tabIndex: setAttribute() to object "2"
+PASS audio.tabIndex: setAttribute() to object "3"
 PASS audio.tabIndex: IDL set to -36
 PASS audio.tabIndex: IDL set to -1
 PASS audio.tabIndex: IDL set to 0
@@ -6299,10 +6363,12 @@ PASS source.tabIndex: setAttribute() to "\f7"
 PASS source.tabIndex: setAttribute() to " 7"
 PASS source.tabIndex: setAttribute() to "\n7"
 PASS source.tabIndex: setAttribute() to "\r7"
+PASS source.tabIndex: setAttribute() to "7\v"
 PASS source.tabIndex: setAttribute() to 1.5
 PASS source.tabIndex: setAttribute() to "5%"
 PASS source.tabIndex: setAttribute() to "+100"
 PASS source.tabIndex: setAttribute() to object "2"
+PASS source.tabIndex: setAttribute() to object "3"
 PASS source.tabIndex: IDL set to -36
 PASS source.tabIndex: IDL set to -1
 PASS source.tabIndex: IDL set to 0
@@ -6819,10 +6885,12 @@ PASS track.tabIndex: setAttribute() to "\f7"
 PASS track.tabIndex: setAttribute() to " 7"
 PASS track.tabIndex: setAttribute() to "\n7"
 PASS track.tabIndex: setAttribute() to "\r7"
+PASS track.tabIndex: setAttribute() to "7\v"
 PASS track.tabIndex: setAttribute() to 1.5
 PASS track.tabIndex: setAttribute() to "5%"
 PASS track.tabIndex: setAttribute() to "+100"
 PASS track.tabIndex: setAttribute() to object "2"
+PASS track.tabIndex: setAttribute() to object "3"
 PASS track.tabIndex: IDL set to -36
 PASS track.tabIndex: IDL set to -1
 PASS track.tabIndex: IDL set to 0
@@ -7398,10 +7466,12 @@ PASS canvas.tabIndex: setAttribute() to "\f7"
 PASS canvas.tabIndex: setAttribute() to " 7"
 PASS canvas.tabIndex: setAttribute() to "\n7"
 PASS canvas.tabIndex: setAttribute() to "\r7"
+PASS canvas.tabIndex: setAttribute() to "7\v"
 PASS canvas.tabIndex: setAttribute() to 1.5
 PASS canvas.tabIndex: setAttribute() to "5%"
 PASS canvas.tabIndex: setAttribute() to "+100"
 PASS canvas.tabIndex: setAttribute() to object "2"
+PASS canvas.tabIndex: setAttribute() to object "3"
 PASS canvas.tabIndex: IDL set to -36
 PASS canvas.tabIndex: IDL set to -1
 PASS canvas.tabIndex: IDL set to 0
@@ -7421,6 +7491,8 @@ PASS canvas.width: setAttribute() to 2147483648
 PASS canvas.width: setAttribute() to 4294967295
 PASS canvas.width: setAttribute() to 4294967296
 PASS canvas.width: setAttribute() to ""
+PASS canvas.width: setAttribute() to "-"
+PASS canvas.width: setAttribute() to "+"
 PASS canvas.width: setAttribute() to "-1"
 PASS canvas.width: setAttribute() to "-0"
 PASS canvas.width: setAttribute() to "0"
@@ -7450,6 +7522,12 @@ PASS canvas.width: setAttribute() to " 7"
 PASS canvas.width: setAttribute() to " 7"
 PASS canvas.width: setAttribute() to " 7"
 PASS canvas.width: setAttribute() to "　7"
+PASS canvas.width: setAttribute() to "\t\v7"
+PASS canvas.width: setAttribute() to "\n\v7"
+PASS canvas.width: setAttribute() to "\f\v7"
+PASS canvas.width: setAttribute() to "\r\v7"
+PASS canvas.width: setAttribute() to " \v7"
+PASS canvas.width: setAttribute() to "7\v"
 PASS canvas.width: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS canvas.width: setAttribute() to undefined
 PASS canvas.width: setAttribute() to 1.5
@@ -7484,6 +7562,8 @@ PASS canvas.height: setAttribute() to 2147483648
 PASS canvas.height: setAttribute() to 4294967295
 PASS canvas.height: setAttribute() to 4294967296
 PASS canvas.height: setAttribute() to ""
+PASS canvas.height: setAttribute() to "-"
+PASS canvas.height: setAttribute() to "+"
 PASS canvas.height: setAttribute() to "-1"
 PASS canvas.height: setAttribute() to "-0"
 PASS canvas.height: setAttribute() to "0"
@@ -7513,6 +7593,12 @@ PASS canvas.height: setAttribute() to " 7"
 PASS canvas.height: setAttribute() to " 7"
 PASS canvas.height: setAttribute() to " 7"
 PASS canvas.height: setAttribute() to "　7"
+PASS canvas.height: setAttribute() to "\t\v7"
+PASS canvas.height: setAttribute() to "\n\v7"
+PASS canvas.height: setAttribute() to "\f\v7"
+PASS canvas.height: setAttribute() to "\r\v7"
+PASS canvas.height: setAttribute() to " \v7"
+PASS canvas.height: setAttribute() to "7\v"
 PASS canvas.height: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS canvas.height: setAttribute() to undefined
 PASS canvas.height: setAttribute() to 1.5
@@ -7848,10 +7934,12 @@ PASS map.tabIndex: setAttribute() to "\f7"
 PASS map.tabIndex: setAttribute() to " 7"
 PASS map.tabIndex: setAttribute() to "\n7"
 PASS map.tabIndex: setAttribute() to "\r7"
+PASS map.tabIndex: setAttribute() to "7\v"
 PASS map.tabIndex: setAttribute() to 1.5
 PASS map.tabIndex: setAttribute() to "5%"
 PASS map.tabIndex: setAttribute() to "+100"
 PASS map.tabIndex: setAttribute() to object "2"
+PASS map.tabIndex: setAttribute() to object "3"
 PASS map.tabIndex: IDL set to -36
 PASS map.tabIndex: IDL set to -1
 PASS map.tabIndex: IDL set to 0
@@ -8210,10 +8298,12 @@ PASS area.tabIndex: setAttribute() to "\f7"
 PASS area.tabIndex: setAttribute() to " 7"
 PASS area.tabIndex: setAttribute() to "\n7"
 PASS area.tabIndex: setAttribute() to "\r7"
+PASS area.tabIndex: setAttribute() to "7\v"
 PASS area.tabIndex: setAttribute() to 1.5
 PASS area.tabIndex: setAttribute() to "5%"
 PASS area.tabIndex: setAttribute() to "+100"
 PASS area.tabIndex: setAttribute() to object "2"
+PASS area.tabIndex: setAttribute() to object "3"
 PASS area.tabIndex: IDL set to -36
 PASS area.tabIndex: IDL set to -1
 PASS area.tabIndex: IDL set to 0

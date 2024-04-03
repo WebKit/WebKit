@@ -1,11 +1,16 @@
 include(platform/Adwaita.cmake)
-include(platform/Cairo.cmake)
-include(platform/FreeType.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+    include(platform/FreeType.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
+endif ()
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
@@ -52,6 +57,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/gbm/PlatformDisplayGBM.h
 
     platform/graphics/gtk/GdkCairoUtilities.h
+    platform/graphics/gtk/GdkSkiaUtilities.h
 
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
@@ -122,6 +128,20 @@ if (ENABLE_SPEECH_SYNTHESIS)
     )
 endif ()
 
+if (USE_SKIA)
+    # When building with Skia we don't build Cairo sources, but since
+    # Cairo is still needed in the UI process API we need to include
+    # here the Cairo sources required.
+    list(APPEND WebCore_SOURCES
+        platform/graphics/cairo/IntRectCairo.cpp
+        platform/graphics/cairo/RefPtrCairo.cpp
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/cairo/RefPtrCairo.h
+    )
+endif ()
+
 include_directories(SYSTEM
     ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}
 )
@@ -173,11 +193,7 @@ if (USE_ATSPI)
 endif ()
 
 if (USE_GBM)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WebCore_LIBRARIES
-        GBM::GBM
-        ${LIBDRM_LIBRARIES}
-    )
+    list(APPEND WebCore_LIBRARIES GBM::GBM)
+elseif (USE_LIBDRM)
+    list(APPEND WebCore_LIBRARIES LibDRM::LibDRM)
 endif ()

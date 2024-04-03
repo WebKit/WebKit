@@ -34,9 +34,9 @@
 
 namespace WebGPU {
 
-Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor)
+Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor, const Instance& instance)
 {
-    auto presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(surfaceDescriptor));
+    auto presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(surfaceDescriptor, instance));
 
     ASSERT(surfaceDescriptor.nextInChain);
     ASSERT(surfaceDescriptor.nextInChain->sType == static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking));
@@ -50,8 +50,14 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
     return presentationContextIOSurface;
 }
 
-PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&)
+PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance& instance)
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    : m_webProcessID(instance.webProcessID())
+#endif
 {
+#if !(HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN))
+    UNUSED_PARAM(instance);
+#endif
 }
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
@@ -59,6 +65,15 @@ PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface *> *ioSurfaces)
 {
     m_ioSurfaces = ioSurfaces;
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    if (m_webProcessID) {
+        mach_port_t webProcessID = m_webProcessID->sendRight();
+        if (webProcessID) {
+            for (IOSurface *surface in ioSurfaces)
+                IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
+        }
+    }
+#endif
     m_renderBuffers.clear();
 }
 
@@ -74,20 +89,24 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 {
     m_renderBuffers.clear();
     m_currentIndex = 0;
+    m_invalidTexture = Texture::createInvalid(device);
 
     if (descriptor.nextInChain)
         return;
 
-    if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
-        return;
-
-    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage))
-        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
-
     m_device = &device;
+    auto allowedFormat = ^(WGPUTextureFormat format) {
+        return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
+    };
 
-    auto width = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.width);
-    auto height = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.height);
+    auto allowedViewFormat = ^(WGPUTextureFormat format) {
+        return allowedFormat(Texture::removeSRGBSuffix(format));
+    };
+
+    auto& limits = device.limits();
+    auto width = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.width);
+    auto height = std::min<uint32_t>(limits.maxTextureDimension2D, descriptor.height);
+    auto effectiveFormat = allowedFormat(descriptor.format) ? descriptor.format : WGPUTextureFormat_BGRA8Unorm;
     WGPUTextureDescriptor wgpuTextureDescriptor = {
         nullptr,
         descriptor.label,
@@ -97,34 +116,110 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
             height,
             1,
         },
-        descriptor.format,
+        effectiveFormat,
         1,
         1,
-        1,
-        &descriptor.format,
+        descriptor.viewFormats.size() ?: 1,
+        descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
-    WGPUTextureViewDescriptor wgpuTextureViewDescriptor = {
-        nullptr,
-        descriptor.label,
-        descriptor.format,
-        WGPUTextureViewDimension_2D,
-        0,
-        1,
-        0,
-        1,
-        WGPUTextureAspect_All,
-    };
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:width height:height mipmapped:NO];
-    textureDescriptor.usage = Texture::usage(descriptor.usage, descriptor.format);
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
+    textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);
+    bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
-        id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
+        if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
+            return device.generateAValidationError("Invalid surface size"_s);
+    }
+
+    if (!allowedFormat(descriptor.format)) {
+        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
+        return;
+    }
+
+    if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
+        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
+        return;
+    }
+
+    for (auto viewFormat : descriptor.viewFormats) {
+        if (!allowedViewFormat(viewFormat)) {
+            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            return;
+        }
+    }
+
+    Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
+    if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
+        device.generateAValidationError(error);
+        return;
+    }
+
+    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+        return;
+    }
+
+    for (IOSurface *iosurface in m_ioSurfaces) {
+        RefPtr<Texture> parentLuminanceClampTexture;
+        if (textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float) {
+            auto existingUsage = textureDescriptor.usage;
+            textureDescriptor.usage |= MTLTextureUsageShaderRead;
+            id<MTLTexture> luminanceClampTexture = device.newTextureWithDescriptor(textureDescriptor);
+            luminanceClampTexture.label = fromAPI(descriptor.label);
+            auto viewFormats = descriptor.viewFormats;
+            parentLuminanceClampTexture = Texture::create(luminanceClampTexture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+            parentLuminanceClampTexture->makeCanvasBacking();
+            textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
+            wgpuTextureDescriptor.format = WGPUTextureFormat_BGRA8Unorm;
+            textureDescriptor.usage = existingUsage | MTLTextureUsageShaderWrite;
+            needsLuminanceClampFunction = true;
+        }
+
+        id<MTLTexture> texture = device.newTextureWithDescriptor(textureDescriptor, bridge_cast(iosurface));
         texture.label = fromAPI(descriptor.label);
-        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
+        auto viewFormats = descriptor.viewFormats;
         auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
         parentTexture->makeCanvasBacking();
-        m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { width, height, 1 } }, parentTexture, device) });
+        m_renderBuffers.append({ parentTexture, parentLuminanceClampTexture });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+
+    if (needsLuminanceClampFunction) {
+        NSError *error = nil;
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        id<MTLDevice> device = m_device->device();
+        /* NOLINT */ id<MTLLibrary> library = [device newLibraryWithSource:@R"(
+    using namespace metal;
+    constant float3x3 rgbToYCbCr = float3x3(
+        float3(0.2126, 0.7152, 0.0722),
+        float3(-0.1146, -0.3854, 0.5),
+        float3(0.5, -0.4542, -0.0458));
+    constant float3x3 yCbCrToRGB = float3x3(
+        float3(1, 0, 1.5748),
+        float3(1, -0.1873, -0.4681),
+        float3(1, 1.8556, 0));
+    kernel void luminanceClamp(texture2d<float, access::read>  inTexture  [[texture(0)]],
+        texture2d<float, access::write> outTexture [[texture(1)]],
+        uint2 gid [[thread_position_in_grid]])
+    {
+        if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height())
+            return;
+
+        float4 inColor  = inTexture.read(gid);
+        float3 yCbCr = rgbToYCbCr * inColor.rgb;
+        yCbCr.x = clamp(yCbCr.x, 0., 1.);
+        float3 outColor = yCbCrToRGB * yCbCr;
+        outTexture.write(float4(outColor, 1), gid);
+    })" /* NOLINT */ options:options error:&error];
+        if (error) {
+            WTFLogAlways("%@", error);
+            return;
+        }
+        m_luminanceClampFunction = [library newFunctionWithName:@"luminanceClamp"];
+        m_computePipelineState = [device newComputePipelineStateWithFunction:m_luminanceClampFunction error:&error];
+    }
 }
 
 void PresentationContextIOSurface::unconfigure()
@@ -137,13 +232,45 @@ void PresentationContextIOSurface::unconfigure()
 
 void PresentationContextIOSurface::present()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    if (m_ioSurfaces.count != m_renderBuffers.size())
+        return;
+
+    auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
+    if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
+        MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
+        descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
+        id<MTLCommandBuffer> commandBuffer = m_device->getQueue().commandBufferWithDescriptor(descriptor);
+        MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
+        computeDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+        id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
+        [computeEncoder setComputePipelineState:m_computePipelineState];
+        id<MTLTexture> inputTexture = texturePtr->texture();
+        [computeEncoder setTexture:inputTexture atIndex:0];
+        [computeEncoder setTexture:m_renderBuffers[m_currentIndex].texture->texture() atIndex:1];
+        auto threadgroupSize = MTLSizeMake(16, 16, 1);
+
+        MTLSize threadgroupCount;
+        threadgroupCount.width  = (inputTexture.width  + threadgroupSize.width -  1) / threadgroupSize.width;
+        threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
+        threadgroupCount.depth = 1;
+        [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
+        [computeEncoder endEncoding];
+        m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
+    }
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
+        return m_invalidTexture.get();
+
+    auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
+    if (texturePtr.get()) {
+        texturePtr->recreateIfNeeded();
+        return texturePtr.get();
+    }
     auto& texture = m_renderBuffers[m_currentIndex].texture;
     texture->recreateIfNeeded();
     return texture.ptr();
@@ -151,8 +278,8 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
-    return m_renderBuffers[m_currentIndex].textureView.ptr();
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace WebGPU

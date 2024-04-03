@@ -28,13 +28,17 @@
 
 #if HAVE(APP_SSO)
 
+#import "APIFrameHandle.h"
 #import "APINavigationAction.h"
-#import "DataReference.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/ContentSecurityPolicy.h>
+#import <WebCore/HTTPParsers.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -71,7 +75,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidCancelMessageToParent), strlen(soAuthorizationPostDidCancelMessageToParent) });
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(span8(soAuthorizationPostDidCancelMessageToParent)));
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
@@ -84,11 +88,11 @@ void SubFrameSOAuthorizationSession::abortInternal()
 void SubFrameSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d", response.httpStatusCode());
-    if (response.httpStatusCode() != 200) {
+    if (response.httpStatusCode() != httpStatus200OK) {
         fallBackToWebPathInternal();
         return;
     }
-    appendRequestToLoad(URL(response.url()), Vector { reinterpret_cast<const uint8_t*>(data.bytes), data.length });
+    appendRequestToLoad(URL(response.url()), makeVector(data));
 }
 
 void SubFrameSOAuthorizationSession::beforeStart()
@@ -97,7 +101,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
     // Cancelled the current load before loading the data to post SOAuthorizationDidStart to the parent frame.
     invokeCallback(true);
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector { reinterpret_cast<const uint8_t*>(soAuthorizationPostDidStartMessageToParent), strlen(soAuthorizationPostDidStartMessageToParent) });
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(span8(soAuthorizationPostDidStartMessageToParent)));
 }
 
 void SubFrameSOAuthorizationSession::didFinishLoad()
@@ -129,7 +133,7 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         auto& url = m_requestsToLoad.first().first;
         WTF::switchOn(m_requestsToLoad.first().second, [&](const Vector<uint8_t>& data) {
-            frame->loadData(IPC::DataReference(data), "text/html"_s, "UTF-8"_s, url);
+            frame->loadData(data, "text/html"_s, "UTF-8"_s, url);
         }, [&](const String& referrer) {
             frame->loadURL(url, referrer);
         });

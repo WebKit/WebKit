@@ -60,11 +60,11 @@ public:
     void updatePipelineState(GstState);
 
     void durationChanged() override;
-    MediaTime durationMediaTime() const override;
+    MediaTime duration() const override;
 
     const PlatformTimeRanges& buffered() const override;
-    MediaTime maxMediaTimeSeekable() const override;
-    bool currentMediaTimeMayProgress() const override;
+    MediaTime maxTimeSeekable() const override;
+    bool timeIsProgressing() const override;
     void notifyActiveSourceBuffersChanged() final;
 
     void sourceSetup(GstElement*) override;
@@ -99,6 +99,8 @@ private:
     friend class SourceBufferPrivateGStreamer;
     friend class MediaSourcePrivateGStreamer;
 
+    size_t extraMemoryCost() const override;
+
     void updateStates() override;
 
     // FIXME: Implement videoPlaybackQualityMetrics.
@@ -110,7 +112,6 @@ private:
 
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
-    bool m_isPipelinePlaying = true;
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
 
     bool m_isWaitingForPreroll = true;

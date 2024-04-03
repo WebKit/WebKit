@@ -25,22 +25,23 @@
 
 messages -> MediaPlayerPrivateRemote NotRefCounted {
     NetworkStateChanged(struct WebKit::RemoteMediaPlayerState state)
-    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state)
+    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state, WebCore::MediaPlayer::ReadyState readyStat)
     FirstVideoFrameAvailable()
     VolumeChanged(double volume)
     MuteChanged(bool mute)
-    Seeked(MediaTime mediaTime)
-    TimeChanged(struct WebKit::RemoteMediaPlayerState state)
+    Seeked(struct WebKit::MediaTimeUpdateData timeData)
+    TimeChanged(struct WebKit::RemoteMediaPlayerState state, struct WebKit::MediaTimeUpdateData timeData)
     DurationChanged(struct WebKit::RemoteMediaPlayerState state)
-    RateChanged(double rate)
-    PlaybackStateChanged(bool paused, MediaTime mediaTime, MonotonicTime wallTime)
+    RateChanged(double rate, struct WebKit::MediaTimeUpdateData timeData)
+    PlaybackStateChanged(bool paused, struct WebKit::MediaTimeUpdateData timeData)
     EngineFailedToLoad(int64_t platformErrorCode)
     UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
+    UpdatePlaybackQualityMetrics(struct WebCore::VideoPlaybackQualityMetrics metrics);
     CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
     SizeChanged(WebCore::FloatSize naturalSize)
     RenderingModeChanged()
 
-    CurrentTimeChanged(MediaTime mediaTime, MonotonicTime wallTime, bool timeIsProgressing)
+    CurrentTimeChanged(struct WebKit::MediaTimeUpdateData timeData)
 
     AddRemoteAudioTrack(struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
     RemoveRemoteAudioTrack(WebCore::TrackID trackID)
@@ -55,10 +56,10 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     RemoteTextTrackConfigurationChanged(WebCore::TrackID trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
 
     ParseWebVTTFileHeader(WebCore::TrackID trackID, String header)
-    ParseWebVTTCueData(WebCore::TrackID trackID, IPC::DataReference data)
+    ParseWebVTTCueData(WebCore::TrackID trackID, std::span<const uint8_t> data)
     ParseWebVTTCueDataStruct(WebCore::TrackID trackID, WebCore::ISOWebVTTCue cueData)
 
-    AddDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, IPC::DataReference data)
+    AddDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, std::span<const uint8_t> data)
 #if ENABLE(DATACUE_VALUE)
     AddDataCueWithType(WebCore::TrackID trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData, String type)
     UpdateDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
@@ -78,11 +79,11 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
 #if ENABLE(ENCRYPTED_MEDIA)
     WaitingForKeyChanged(bool waitingForKey)
-    InitializationDataEncountered(String initDataType, IPC::DataReference initData)
+    InitializationDataEncountered(String initDataType, std::span<const uint8_t> initData)
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    MediaPlayerKeyNeeded(IPC::DataReference message)
+    MediaPlayerKeyNeeded(std::span<const uint8_t> message)
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -94,9 +95,11 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 #endif
 
 #if PLATFORM(COCOA)
-    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
+    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, struct WebKit::RemoteVideoFrameProxyProperties frameProperties);
     LayerHostingContextIdChanged(std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId, WebCore::FloatSize presentationSize);
 #endif
+
+    CommitAllTransactions() -> ()
 }
 
 #endif

@@ -57,12 +57,12 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
     }
 }
 
-String generateMetalCode(CallGraph& callGraph)
+String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());
 
-    Metal::emitMetalFunctions(stringBuilder, callGraph);
+    Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues);
 
     dumpMetalCodeIfNeeded(stringBuilder);
 

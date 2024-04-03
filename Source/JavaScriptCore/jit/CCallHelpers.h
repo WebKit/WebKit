@@ -811,8 +811,10 @@ public:
         preserved.add(temp1, IgnoreVectors);
         GPRReg temp2 = selectScratchGPR(preserved);
         preserved.add(temp2, IgnoreVectors);
+#if CPU(ARM64E)
         GPRReg temp3 = selectScratchGPR(preserved);
-
+        preserved.add(temp3, IgnoreVectors);
+#endif
         ASSERT(!preserved.numberOfSetFPRs());
 
         GPRReg newFramePointer = temp1;
@@ -861,22 +863,20 @@ public:
             mul32(TrustedImm32(sizeof(Register)), newFrameSizeGPR, newFrameSizeGPR);
         }
 
-        GPRReg tempGPR = temp3;
-        ASSERT(tempGPR != newFramePointer && tempGPR != newFrameSizeGPR);
-
         // We don't need the current frame beyond this point. Masquerade as our
         // caller.
 #if CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
         loadPtr(Address(framePointerRegister, CallFrame::returnPCOffset()), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #if CPU(ARM64E)
+        GPRReg tempGPR = temp3;
+        ASSERT(tempGPR != newFramePointer && tempGPR != newFrameSizeGPR);
         addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister, tempGPR);
         untagPtr(tempGPR, linkRegister);
         validateUntaggedPtr(linkRegister, tempGPR);
 #endif
 #elif CPU(X86_64)
-        loadPtr(Address(framePointerRegister, sizeof(void*)), tempGPR);
-        push(tempGPR);
+        push(Address(framePointerRegister, sizeof(void*)));
         subPtr(TrustedImm32(sizeof(void*)), newFrameSizeGPR);
 #else
         UNREACHABLE_FOR_PLATFORM();
@@ -884,19 +884,66 @@ public:
         subPtr(newFrameSizeGPR, newFramePointer);
         loadPtr(Address(framePointerRegister), framePointerRegister);
 
-
         // We need to move the newFrameSizeGPR slots above the stack pointer by
         // newFramePointer registers. We use pointer-sized chunks.
         MacroAssembler::Label copyLoop(label());
 
         subPtr(TrustedImm32(sizeof(void*)), newFrameSizeGPR);
-        loadPtr(BaseIndex(stackPointerRegister, newFrameSizeGPR, TimesOne), tempGPR);
-        storePtr(tempGPR, BaseIndex(newFramePointer, newFrameSizeGPR, TimesOne));
-
+        transferPtr(BaseIndex(stackPointerRegister, newFrameSizeGPR, TimesOne), BaseIndex(newFramePointer, newFrameSizeGPR, TimesOne));
         branchTest32(MacroAssembler::NonZero, newFrameSizeGPR).linkTo(copyLoop, this);
 
         // Ready for a jump!
         move(newFramePointer, stackPointerRegister);
+    }
+
+    static Address addressOfCalleeCalleeFromCallerPerspective(int offset)
+    {
+        CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, 0);
+        return calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register)))
+            // calleeFrame is from the caller's perspective
+            .withOffset(-safeCast<int>(sizeof(CallerFrameAndPC)))
+            .withOffset(PayloadOffset)
+            .withOffset(offset);
+    }
+
+    // This function is used to store the wasm callee in case this function hasn't tiered up yet.
+    // The LLInt/IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
+    void storeWasmCalleeCallee(RegisterID value, int offset = 0)
+    {
+        JIT_COMMENT(*this, "< Store Callee's wasm callee");
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
+#if USE(JSVALUE64)
+        storePtr(value, addr);
+#elif USE(JSVALUE32_64)
+        store32(value, addr.withOffset(PayloadOffset));
+        store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
+#else
+#error "Unsupported configuration"
+#endif
+    }
+
+    void storeWasmCalleeCallee(const uintptr_t* boxedWasmCalleeLoadLocation)
+    {
+        ASSERT(boxedWasmCalleeLoadLocation);
+        JIT_COMMENT(*this, "> ", RawHex(*boxedWasmCalleeLoadLocation));
+        move(TrustedImmPtr(*boxedWasmCalleeLoadLocation), scratchRegister());
+        storeWasmCalleeCallee(scratchRegister());
+    }
+
+    DataLabelPtr storeWasmCalleeCalleePatchable()
+    {
+        JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
+        auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
+        auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(0);
+#if USE(JSVALUE64)
+        storePtr(scratchRegister(), addr);
+#elif USE(JSVALUE32_64)
+        store32(scratchRegister(), addr.withOffset(PayloadOffset));
+        store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
+#else
+#error "Unsupported configuration"
+#endif
+        return patch;
     }
     
     // These operations clobber all volatile registers. They assume that there is room on the top of

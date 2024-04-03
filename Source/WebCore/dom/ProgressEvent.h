@@ -34,7 +34,7 @@ class ProgressEvent : public Event {
 public:
     static Ref<ProgressEvent> create(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)
     {
-        return adoptRef(*new ProgressEvent(type, lengthComputable, loaded, total));
+        return adoptRef(*new ProgressEvent(EventInterfaceType::ProgressEvent, type, lengthComputable, loaded, total));
     }
 
     struct Init : EventInit {
@@ -45,18 +45,16 @@ public:
 
     static Ref<ProgressEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new ProgressEvent(type, initializer, isTrusted));
+        return adoptRef(*new ProgressEvent(EventInterfaceType::ProgressEvent, type, initializer, isTrusted));
     }
 
     bool lengthComputable() const { return m_lengthComputable; }
     unsigned long long loaded() const { return m_loaded; }
     unsigned long long total() const { return m_total; }
 
-    EventInterface eventInterface() const override;
-
 protected:
-    ProgressEvent(const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
-    ProgressEvent(const AtomString&, const Init&, IsTrusted);
+    ProgressEvent(enum EventInterfaceType, const AtomString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total);
+    ProgressEvent(enum EventInterfaceType, const AtomString&, const Init&, IsTrusted);
 
 private:
     bool m_lengthComputable;

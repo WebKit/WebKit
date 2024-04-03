@@ -7,8 +7,8 @@
           },
  "doc_root": "%DOC_ROOT%",
  "check_subdomains": false,
- "log_level":"debug",
- "bind_hostname": true,
+ "logging": { "level": "debug" },
+ "bind_address": true,
  "ssl": {"type": "openssl",
          "encrypt_after_connect": false,
          "openssl": {

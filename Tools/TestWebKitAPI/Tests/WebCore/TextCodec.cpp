@@ -34,9 +34,9 @@ namespace TestWebKitAPI {
 
 // Expects hex bytes with optional spaces between them.
 // Returns an empty vector if it encounters non-hex-digit characters.
-static Vector<char> decodeHexTestBytes(const char* input)
+static Vector<uint8_t> decodeHexTestBytes(const char* input)
 {
-    Vector<char> result;
+    Vector<uint8_t> result;
     for (size_t i = 0; input[i]; ) {
         if (!isASCIIHexDigit(input[i]))
             return { };
@@ -94,7 +94,7 @@ static const char* testDecode(const char* encodingName, std::initializer_list<co
         auto vector = decodeHexTestBytes(inputs.begin()[i]);
         bool last = i == size - 1;
         bool sawError = false;
-        resultBuilder.append(escapeNonASCIIPrintableCharacters(codec->decode(vector.data(), vector.size(), last, false, sawError)));
+        resultBuilder.append(escapeNonASCIIPrintableCharacters(codec->decode(vector.span(), last, false, sawError)));
         if (sawError)
             resultBuilder.append(" ERROR");
     }

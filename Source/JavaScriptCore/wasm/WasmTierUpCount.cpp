@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmTierUpCount.h"
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "WasmOSREntryData.h"
 #include <wtf/TZoneMallocInlines.h>

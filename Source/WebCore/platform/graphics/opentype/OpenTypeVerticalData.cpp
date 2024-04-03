@@ -503,7 +503,7 @@ float OpenTypeVerticalData::advanceHeight(const Font* font, Glyph glyph) const
     }
 
     // No vertical info in the font file; use height as advance.
-    return font->fontMetrics().height();
+    return font->fontMetrics().intHeight();
 }
 
 void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, const Glyph* glyphs, size_t count, float* outXYArray) const
@@ -512,7 +512,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, co
     ASSERT(countWidths > 0);
     const FontMetrics& metrics = font->fontMetrics();
     float sizePerUnit = font->sizePerUnit();
-    float ascent = metrics.ascent();
+    float ascent = metrics.intAscent();
     bool useVORG = hasVORG();
     size_t countTopSideBearings = m_topSideBearings.size();
     float defaultVertOriginY = std::numeric_limits<float>::quiet_NaN();

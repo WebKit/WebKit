@@ -36,9 +36,11 @@
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Document.h>
+#import <WebCore/FrameTree.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
+#import <WebCore/RemoteFrame.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 
@@ -57,11 +59,17 @@ namespace ax = WebCore::Accessibility;
     if (!page)
         return nullptr;
 
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
-    if (!localMainFrame || !localMainFrame->document())
-        return nullptr;
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame())) {
+        if (auto* document = localMainFrame->document())
+            return document->axObjectCache();
+    } else if (auto* remoteMainFrame = dynamicDowncast<WebCore::RemoteFrame>(page->mainFrame())) {
+        auto& tree = remoteMainFrame->tree();
+        auto* firstFrame = dynamicDowncast<WebCore::LocalFrame>(tree.firstChild());
+        auto* document = firstFrame ? firstFrame->document() : nullptr;
+        return document ? document->axObjectCache() : nullptr;
+    }
 
-    return localMainFrame->document()->axObjectCache();
+    return nullptr;
 }
 
 - (id)accessibilityPluginObject
@@ -150,6 +158,17 @@ namespace ax = WebCore::Accessibility;
 {
     ASSERT(isMainRunLoop());
     m_hasMainFramePlugin = hasPlugin;
+}
+
+- (void)setRemoteFrameOffset:(WebCore::IntPoint)offset
+{
+    ASSERT(isMainRunLoop());
+    m_remoteFrameOffset = offset;
+}
+
+- (WebCore::IntPoint)accessibilityRemoteFrameOffset
+{
+    return m_remoteFrameOffset;
 }
 
 - (void)setRemoteParent:(id)parent

@@ -1,0 +1,78 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/selection/Document-open.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-00.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-04.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-08.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-12.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-16.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-20.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-24.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-28.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-32.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-36.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-40.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-44.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-48.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-52.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange-56.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange.htm
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange.js
+/LayoutTests/imported/w3c/web-platform-tests/selection/addRange.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-00.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-15.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-30.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-45.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse.htm
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse.js
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapseToStartEnd.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/common.js
+/LayoutTests/imported/w3c/web-platform-tests/selection/deleteFromDocument.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/drag-disabled-textarea-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/extend-00.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/extend-20.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/extend-40.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/extend-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/extend.js
+/LayoutTests/imported/w3c/web-platform-tests/selection/getRangeAt.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/getSelection.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/selection/isCollapsed.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/modify-extend-word-trailing-inline-block.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/modify-line-flex-column.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/modify-line-flex-row.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/modify-line-grid-basic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/modify.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/move-selection-range-into-different-root.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/removeAllRanges.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/removeRange.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/script-and-style-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/select-end-of-line-image.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selectAllChildren.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-after-editinghost-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-after-textcontrol-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-in-shadow-after-the-shadow-removed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-shadow-dom-crash-print-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-shadow-dom-crash-print.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/setBaseAndExtent.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/stringifier.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/test-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/toString-ff-bug-001.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/type.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/user-select-on-input-and-contenteditable.html

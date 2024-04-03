@@ -280,7 +280,7 @@ enum {
 
 - (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
-    Class retVal = [[self class] _viewClassForMIMEType:MIMEType allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
+    Class retVal = [[self class] _viewClassForMIMEType:MIMEType allowingPlugins:NO];
 
 #if PLATFORM(IOS_FAMILY)   
     if ([retVal respondsToSelector:@selector(_representationClassForWebFrame:)])

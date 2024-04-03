@@ -48,6 +48,11 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+#import "WebExtensionController.h"
+#import "_WKWebExtensionController.h"
+#endif
+
 static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 
 @interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate, WKInspectorWKWebViewDelegate>
@@ -123,6 +128,13 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 
     [inspectorSchemeHandler setAllowedURLSchemesForCSP:allowedURLSchemes.get()];
     [configuration setURLSchemeHandler:inspectorSchemeHandler.get() forURLScheme:WKInspectorResourceScheme];
+
+#if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
+    if (RefPtr page = _inspectedPage.get()) {
+        if (RefPtr webExtensionController = page->webExtensionController())
+            configuration.get()._webExtensionController = webExtensionController->wrapper();
+    }
+#endif
 
     WKPreferences *preferences = configuration.get().preferences;
     preferences._allowFileAccessFromFileURLs = YES;

@@ -34,4 +34,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-http-windows-1250-at-charset-windows-1253.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-no-decl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1251-css-utf8-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/page-windows-1252-http-windows-1251-css-utf8-bom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset/xml-stylesheet-page-windows-1251-charset-attribute-windows-1250.xhtml

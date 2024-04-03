@@ -87,6 +87,9 @@ struct AccessibilityPreferences {
 #endif
     bool imageAnimationEnabled { true };
     bool enhanceTextLegibilityOverall { false };
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    bool prefersNonBlinkingCursor { false };
+#endif
 };
 
 } // namespace WebKit

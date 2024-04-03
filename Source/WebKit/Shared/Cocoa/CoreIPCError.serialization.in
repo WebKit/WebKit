@@ -22,7 +22,7 @@
 
 #if PLATFORM(COCOA)
 
-webkit_platform_headers: "CoreIPCError.h" "ArgumentCodersCF.h"
+webkit_platform_headers: "CoreIPCError.h"
 
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCError {
     String domain();

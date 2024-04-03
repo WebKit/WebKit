@@ -53,12 +53,14 @@ struct InteractionRegion {
         MinXMaxYCorner = 1 << 2,
         MaxXMaxYCorner = 1 << 3
     };
+    enum class ContentHint : bool { Default, Photo };
 
     Type type;
     ElementIdentifier elementIdentifier;
     FloatRect rectInLayerCoordinates;
     float cornerRadius { 0 };
     OptionSet<CornerMask> maskedCorners { };
+    ContentHint contentHint { ContentHint::Default };
     std::optional<Path> clipPath { std::nullopt };
 
     WEBCORE_EXPORT ~InteractionRegion();
@@ -68,6 +70,7 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
 {
     return a.type == b.type
         && a.elementIdentifier == b.elementIdentifier
+        && a.contentHint == b.contentHint
         && a.rectInLayerCoordinates == b.rectInLayerCoordinates
         && a.cornerRadius == b.cornerRadius
         && a.maskedCorners == b.maskedCorners
@@ -84,4 +87,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 namespace WTF {
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<WebCore::InteractionRegion::Type> : IntHash<WebCore::InteractionRegion::Type> { };
+template<> struct DefaultHash<WebCore::InteractionRegion::ContentHint> : IntHash<WebCore::InteractionRegion::ContentHint> { };
 }

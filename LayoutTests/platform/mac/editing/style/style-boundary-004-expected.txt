@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
             RenderBR {BR} at (183,0) size 1x28
             RenderText {#text} at (0,28) size 432x28
               text run at (0,28) width 432: "Should see this content in the red box below:"
-            RenderInline {B} at (0,0) size 0x28
+            RenderInline {B} at (431,28) size 0x28
           RenderBlock (anonymous) at (0,56) size 756x56
             RenderBlock {DIV} at (0,0) size 756x28
               RenderText {#text} at (0,0) size 12x28

@@ -32,7 +32,48 @@
 #include "Logging.h"
 #include <Metal/Metal.h>
 #include <pal/spi/cocoa/MetalSPI.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/darwin/WeakLinking.h>
+
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION)
+#include <CompositorServices/CompositorServices_Private.h>
+
+SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, CompositorServices)
+
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, CP_OBJECT_cp_proxy_process_rasterization_rate_map)
+typedef CP_OBJECT_cp_proxy_process_rasterization_rate_map* cp_proxy_process_rasterization_rate_map_t;
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_create, cp_proxy_process_rasterization_rate_map_t, (id<MTLDevice> device, cp_layer_renderer_layout layout, size_t view_count), (device, layout, view_count))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_create, cp_proxy_process_rasterization_rate_map_t, (id<MTLDevice> device, cp_layer_renderer_layout layout, size_t view_count), (device, layout, view_count))
+#define cp_proxy_process_rasterization_rate_map_create softLink_CompositorServices_cp_proxy_process_rasterization_rate_map_create
+
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CompositorServices, cp_rasterization_rate_map_update_shared_from_layered_descriptor, void, (cp_proxy_process_rasterization_rate_map_t proxy_map, MTLRasterizationRateMapDescriptor* descriptor), (proxy_map, descriptor))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_rasterization_rate_map_update_shared_from_layered_descriptor, void, (cp_proxy_process_rasterization_rate_map_t proxy_map, MTLRasterizationRateMapDescriptor* descriptor), (proxy_map, descriptor))
+#define cp_rasterization_rate_map_update_shared_from_layered_descriptor softLink_CompositorServices_cp_rasterization_rate_map_update_shared_from_layered_descriptor
+
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_get_metal_maps, NSArray<id<MTLRasterizationRateMap>>*, (cp_proxy_process_rasterization_rate_map_t proxy_map), (proxy_map))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_get_metal_maps, NSArray<id<MTLRasterizationRateMap>>*, (cp_proxy_process_rasterization_rate_map_t proxy_map), (proxy_map))
+#define cp_proxy_process_rasterization_rate_map_get_metal_maps softLink_CompositorServices_cp_proxy_process_rasterization_rate_map_get_metal_maps
+
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_get_metal_descriptors, NSArray<MTLRasterizationRateMapDescriptor*>*, (cp_proxy_process_rasterization_rate_map_t proxy_map), (proxy_map))
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CompositorServices, cp_rasterization_rate_map_update_from_descriptor, void, (cp_proxy_process_rasterization_rate_map_t proxy_map, __unsafe_unretained MTLRasterizationRateMapDescriptor* descriptors[2]), (proxy_map, descriptors))
+SOFT_LINK_CLASS_FOR_SOURCE(WebCore, CompositorServices, CP_OBJECT_cp_proxy_process_rasterization_rate_map)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_drawable_get_layer_renderer_layout, cp_layer_renderer_layout_private, (cp_drawable_t drawable), (drawable))
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_proxy_process_rasterization_rate_map_get_metal_descriptors, NSArray<MTLRasterizationRateMapDescriptor*>*, (cp_proxy_process_rasterization_rate_map_t proxy_map), (proxy_map))
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_rasterization_rate_map_update_from_descriptor, void, (cp_proxy_process_rasterization_rate_map_t proxy_map, __unsafe_unretained MTLRasterizationRateMapDescriptor* descriptors[2]), (proxy_map, descriptors))
+
+#define cp_proxy_process_rasterization_rate_map_get_metal_descriptors softLink_CompositorServices_cp_proxy_process_rasterization_rate_map_get_metal_descriptors
+#define cp_proxy_process_rasterization_rate_map_get_metal_descriptors softLink_CompositorServices_cp_proxy_process_rasterization_rate_map_get_metal_descriptors
+#define cp_rasterization_rate_map_update_from_descriptor softLink_CompositorServices_cp_rasterization_rate_map_update_from_descriptor
+#define cp_drawable_get_layer_renderer_layout softLink_CompositorServices_cp_drawable_get_layer_renderer_layout
+
+#endif
 
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
@@ -78,6 +119,62 @@ void destroyPbufferAndDetachIOSurface(EGLDisplay display, void* handle)
 {
     EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
     EGL_DestroySurface(display, handle);
+}
+
+RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay display, IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight)
+{
+    EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
+        return nullptr;
+
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(device, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return nullptr;
+
+    UNUSED_PARAM(physicalSizeLeft);
+    UNUSED_PARAM(physicalSizeRight);
+
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(VISION)
+    RetainPtr<MTLRasterizationRateMapDescriptor> descriptor = adoptNS([MTLRasterizationRateMapDescriptor new]);
+    id<MTLRasterizationRateMapDescriptorSPI> descriptor_spi = (id<MTLRasterizationRateMapDescriptorSPI>)descriptor.get();
+        descriptor_spi.skipSampleValidationAndApplySampleAtTileGranularity = YES;
+    descriptor_spi.mutability = MTLMutabilityDefault;
+    descriptor_spi.minFactor  = 0.01;
+
+    auto mtlScreenSize = MTLSizeMake(screenSize.width(), screenSize.height(), 0);
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorLeft = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:mtlScreenSize];
+    RetainPtr<MTLRasterizationRateLayerDescriptor> layerDescriptorRight = [[MTLRasterizationRateLayerDescriptor alloc] initWithSampleCount:mtlScreenSize];
+
+    if (horizontalSamplesLeft.size() > mtlScreenSize.width || horizontalSamplesRight.size() > mtlScreenSize.width || verticalSamples.size() > mtlScreenSize.height || !layerDescriptorLeft.get() || !layerDescriptorRight.get())
+        return nullptr;
+
+    memcpy([layerDescriptorLeft horizontalSampleStorage], horizontalSamplesLeft.data(), horizontalSamplesLeft.size_bytes());
+    memcpy([layerDescriptorLeft verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
+    [layerDescriptorLeft setSampleCount:MTLSizeMake(horizontalSamplesLeft.size(), verticalSamples.size(), 0)];
+
+    memcpy([layerDescriptorRight horizontalSampleStorage], horizontalSamplesRight.data(), horizontalSamplesRight.size_bytes());
+    memcpy([layerDescriptorRight verticalSampleStorage], verticalSamples.data(), verticalSamples.size_bytes());
+    [layerDescriptorRight setSampleCount:MTLSizeMake(horizontalSamplesRight.size(), verticalSamples.size(), 0)];
+
+    [descriptor setScreenSize:mtlScreenSize];
+    [descriptor layers][0] = layerDescriptorLeft.get();
+    [descriptor layers][1] = layerDescriptorRight.get();
+
+    auto rateMap = cp_proxy_process_rasterization_rate_map_create(mtlDevice, cp_layer_renderer_layout_shared, 2);
+    cp_rasterization_rate_map_update_shared_from_layered_descriptor(rateMap, descriptor.get());
+
+    RetainPtr<MTLRasterizationRateMap> rasterizationRateMap = cp_proxy_process_rasterization_rate_map_get_metal_maps(rateMap).firstObject;
+#else
+    RetainPtr<MTLRasterizationRateMap> rasterizationRateMap;
+    UNUSED_PARAM(display);
+    UNUSED_PARAM(physicalSizeLeft);
+    UNUSED_PARAM(physicalSizeRight);
+    UNUSED_PARAM(screenSize);
+    UNUSED_PARAM(horizontalSamplesLeft);
+    UNUSED_PARAM(verticalSamples);
+    UNUSED_PARAM(horizontalSamplesRight);
+#endif
+    return rasterizationRateMap;
 }
 
 RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay display, mach_port_t machPort)

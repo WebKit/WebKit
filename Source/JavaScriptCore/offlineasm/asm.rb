@@ -226,7 +226,7 @@ class Assembler
         @lastlabel = ""
     end
 
-    def putsLabel(labelName, isGlobal, isAligned)
+    def putsLabel(labelName, isGlobal, isExport, isAligned)
         raise unless @state == :asm
         @deferredNextLabelActions.each {
             | action |
@@ -240,9 +240,17 @@ class Assembler
         if isGlobal
             if !$emitWinAsm
                 if isAligned
-                    @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+                    if isExport
+                        @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_EXPORT_LABEL(#{labelName})", lastComment))
+                    else
+                        @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+                    end
                 else
-                    @outp.puts(formatDump("OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(#{labelName})", lastComment))
+                    if isExport
+                        @outp.puts(formatDump("OFFLINE_ASM_UNALIGNED_GLOBAL_EXPORT_LABEL(#{labelName})", lastComment))
+                    else
+                        @outp.puts(formatDump("OFFLINE_ASM_UNALIGNED_GLOBAL_LABEL(#{labelName})", lastComment))
+                    end
                 end
             else
                 putsProc(labelName, lastComment)

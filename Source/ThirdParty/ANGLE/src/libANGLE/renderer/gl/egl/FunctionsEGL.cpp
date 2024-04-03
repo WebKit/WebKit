@@ -16,6 +16,14 @@
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/egl/functionsegl_typedefs.h"
 
+#if defined(ANGLE_HAS_LIBDRM)
+// clang-format off
+#include <fcntl.h>
+#include <unistd.h>
+#include <xf86drm.h>
+// clang-format on
+#endif  // defined(ANGLE_HAS_LIBDRM)
+
 namespace
 {
 
@@ -231,13 +239,26 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->surfaceAttribPtr, eglSurfaceAttrib);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
 
-    if (IsValidPlatformTypeForPlatformDisplayConnection(platformType))
+    // Querying EGL_EXTENSIONS string and loading it into the mExtensions
+    // vector will at this point retrieve the client extensions since mEGLDisplay is still
+    // EGL_NO_DISPLAY. This is desired, and mExtensions will later be reinitialized with the display
+    // extensions once the display is created and initialized.
+    queryExtensions();
+
+#if defined(ANGLE_HAS_LIBDRM)
+    mEGLDisplay = getPreferredDisplay(&majorVersion, &minorVersion);
+#endif  // defined(ANGLE_HAS_LIBDRM)
+
+    if (mEGLDisplay == EGL_NO_DISPLAY)
     {
-        mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
-    }
-    else
-    {
-        mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
+        if (IsValidPlatformTypeForPlatformDisplayConnection(platformType))
+        {
+            mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
+        }
+        else
+        {
+            mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
+        }
     }
 
     if (mEGLDisplay != EGL_NO_DISPLAY &&
@@ -269,12 +290,10 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
 
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getCurrentContextPtr, eglGetCurrentContext);
 
-    const char *extensions = queryString(EGL_EXTENSIONS);
-    if (!extensions)
+    if (!queryExtensions())
     {
         return egl::Error(mFnPtrs->getErrorPtr(), "Failed to query extensions in system egl");
     }
-    angle::SplitStringAlongWhitespace(extensions, &mExtensions);
 
     if (hasExtension("EGL_KHR_image_base"))
     {
@@ -371,20 +390,22 @@ egl::Error FunctionsEGL::terminate()
     return egl::Error(mFnPtrs->getErrorPtr());
 }
 
-EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
-                                            EGLNativeDisplayType nativeDisplay)
+bool FunctionsEGL::queryExtensions()
 {
-    // As in getNativeDisplay(), querying EGL_EXTENSIONS string and loading it into the mExtensions
-    // vector will at this point retrieve the client extensions since mEGLDisplay is still
-    // EGL_NO_DISPLAY. This is desired, and mExtensions will later be reinitialized with the display
-    // extensions once the display is created and initialized.
     const char *extensions = queryString(EGL_EXTENSIONS);
     if (!extensions)
     {
-        return EGL_NO_DISPLAY;
+        return false;
     }
+
     angle::SplitStringAlongWhitespace(extensions, &mExtensions);
 
+    return true;
+}
+
+EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
+                                            EGLNativeDisplayType nativeDisplay)
+{
     PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
     if (!hasExtension("EGL_EXT_platform_base") ||
         !SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
@@ -408,24 +429,35 @@ EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
                                     reinterpret_cast<void *>(nativeDisplay), nullptr);
 }
 
+std::vector<EGLDeviceEXT> FunctionsEGL::queryDevices(int *major, int *minor)
+{
+    // Only called after confirming we have the necessary extension.
+    PFNEGLQUERYDEVICESEXTPROC queryDevicesEXTPtr;
+    if (!SetPtr(&queryDevicesEXTPtr, getProcAddress("eglQueryDevicesEXT")))
+    {
+        return {};
+    }
+
+    // Get a list of native device objects.
+    const EGLint kMaxDevices = 32;
+    EGLint numDevices        = 0;
+    std::vector<EGLDeviceEXT> devices(kMaxDevices, EGL_NO_DEVICE_EXT);
+    if (!queryDevicesEXTPtr(kMaxDevices, devices.data(), &numDevices))
+    {
+        return {};
+    }
+
+    devices.resize(numDevices);
+    return devices;
+}
+
 EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)
 {
-    // We haven't queried extensions yet since some platforms require a display
-    // to do so. We'll query them now since we need some for this fallback, and
-    // then re-query them again later once we have the display.
-    const char *extensions = queryString(EGL_EXTENSIONS);
-    if (!extensions)
-    {
-        return EGL_NO_DISPLAY;
-    }
-    angle::SplitStringAlongWhitespace(extensions, &mExtensions);
-
     // This fallback mechanism makes use of:
     // - EGL_EXT_device_enumeration or EGL_EXT_device_base for eglQueryDevicesEXT
     // - EGL_EXT_platform_base for eglGetPlatformDisplayEXT
     // - EGL_EXT_platform_device for EGL_PLATFORM_DEVICE_EXT
-    PFNEGLQUERYDEVICESEXTPROC queryDevices;
-    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay;
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
     bool hasQueryDevicesEXT =
         hasExtension("EGL_EXT_device_enumeration") || hasExtension("EGL_EXT_device_base");
     bool hasPlatformBaseEXT   = hasExtension("EGL_EXT_platform_base");
@@ -434,30 +466,24 @@ EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)
     {
         return EGL_NO_DISPLAY;
     }
-    if (!SetPtr(&queryDevices, getProcAddress("eglQueryDevicesEXT")) ||
-        !SetPtr(&getPlatformDisplay, getProcAddress("eglGetPlatformDisplayEXT")))
+
+    if (!SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
     {
         return EGL_NO_DISPLAY;
     }
 
-    // Get a list of native device objects.
-    const EGLint kMaxDevices = 32;
-    EGLDeviceEXT eglDevices[kMaxDevices];
-    EGLint numDevices = 0;
-    if (!queryDevices(kMaxDevices, eglDevices, &numDevices))
+    std::vector<EGLDeviceEXT> devices = queryDevices(major, minor);
+    if (devices.size() == 0)
     {
         return EGL_NO_DISPLAY;
     }
 
     // Look for the first native device that gives us a valid display.
-    for (EGLint i = 0; i < numDevices; i++)
+    for (const EGLDeviceEXT device : devices)
     {
-        EGLDisplay display = getPlatformDisplay(EGL_PLATFORM_DEVICE_EXT, eglDevices[i], nullptr);
-        if (mFnPtrs->getErrorPtr() != EGL_SUCCESS)
-        {
-            continue;
-        }
-        if (mFnPtrs->initializePtr(display, major, minor) == EGL_TRUE)
+        EGLDisplay display = getPlatformDisplayEXTPtr(EGL_PLATFORM_DEVICE_EXT, device, nullptr);
+        if (mFnPtrs->getErrorPtr() == EGL_SUCCESS &&
+            mFnPtrs->initializePtr(display, major, minor) == EGL_TRUE)
         {
             return display;
         }
@@ -465,6 +491,103 @@ EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)
 
     return EGL_NO_DISPLAY;
 }
+
+#if defined(ANGLE_HAS_LIBDRM)
+EGLDeviceEXT FunctionsEGL::getPreferredEGLDevice(const std::vector<EGLDeviceEXT> &devices)
+{
+    // Only called after confirming we have the necessary extension.
+    PFNEGLQUERYDEVICESTRINGEXTPROC queryDeviceStringEXTPtr;
+    if (!SetPtr(&queryDeviceStringEXTPtr, getProcAddress("eglQueryDeviceStringEXT")))
+    {
+        return EGL_NO_DEVICE_EXT;
+    }
+
+    std::map<EGLDeviceEXT, std::string> device_drivers;
+    for (const EGLDeviceEXT device : devices)
+    {
+        const char *filename = queryDeviceStringEXTPtr(device, EGL_DRM_DEVICE_FILE_EXT);
+        if (!filename)
+        {
+            continue;
+        }
+
+        int fd = open(filename, O_RDWR);
+        if (!fd)
+        {
+            continue;
+        }
+
+        drmVersionPtr version = drmGetVersion(fd);
+        if (version)
+        {
+            const std::string driver_name(version->name, version->name_len);
+            device_drivers.insert({device, driver_name});
+        }
+
+        drmFreeVersion(version);
+        close(fd);
+    }
+
+    const char *preferred_drivers[3] = {"i915", "amdgpu", "virtio_gpu"};
+    for (const char *preferred_driver : preferred_drivers)
+    {
+        for (const EGLDeviceEXT device : devices)
+        {
+            const auto driver = device_drivers.find(device);
+            if (driver != device_drivers.end() && driver->second == preferred_driver)
+            {
+                return device;
+            }
+        }
+    }
+
+    return EGL_NO_DEVICE_EXT;
+}
+
+EGLDisplay FunctionsEGL::getPreferredDisplay(int *major, int *minor)
+{
+    // This  mechanism makes use of:
+    // - EGL_EXT_device_enumeration or EGL_EXT_device_base for eglQueryDevicesEXT
+    // - EGL_EXT_platform_base for eglGetPlatformDisplayEXT
+    // - EGL_EXT_platform_device for EGL_PLATFORM_DEVICE_EXT
+    // - EGL_EXT_device_query for eglQueryDeviceStringEXT
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
+    bool hasQueryDevicesEXT =
+        hasExtension("EGL_EXT_device_enumeration") || hasExtension("EGL_EXT_device_base");
+    bool hasPlatformBaseEXT   = hasExtension("EGL_EXT_platform_base");
+    bool hasPlatformDeviceEXT = hasExtension("EGL_EXT_platform_device");
+    bool hasDeviceQueryEXT    = hasExtension("EGL_EXT_device_query");
+    if (!hasQueryDevicesEXT || !hasPlatformBaseEXT || !hasPlatformDeviceEXT || !hasDeviceQueryEXT)
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    if (!SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    std::vector<EGLDeviceEXT> devices = queryDevices(major, minor);
+    if (devices.size() == 0)
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    EGLDeviceEXT device = getPreferredEGLDevice(devices);
+    if (device == EGL_NO_DEVICE_EXT)
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    EGLDisplay display = getPlatformDisplayEXTPtr(EGL_PLATFORM_DEVICE_EXT, device, nullptr);
+    if (mFnPtrs->getErrorPtr() == EGL_SUCCESS)
+    {
+        return display;
+    }
+
+    return EGL_NO_DISPLAY;
+}
+#endif  // defined(ANGLE_HAS_LIBDRM)
 
 class FunctionsGLEGL : public FunctionsGL
 {

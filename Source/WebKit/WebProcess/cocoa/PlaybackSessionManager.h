@@ -87,6 +87,7 @@ private:
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
     void isPictureInPictureSupportedChanged(bool) final;
+    void isInWindowFullscreenActiveChanged(bool) final;
 
     PlaybackSessionInterfaceContext(PlaybackSessionManager&, PlaybackSessionContextIdentifier);
 
@@ -146,6 +147,7 @@ private:
     void mutedChanged(PlaybackSessionContextIdentifier, bool);
     void volumeChanged(PlaybackSessionContextIdentifier, double);
     void isPictureInPictureSupportedChanged(PlaybackSessionContextIdentifier, bool);
+    void isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier, bool);
 
     // Messages from PlaybackSessionManagerProxy
     void play(PlaybackSessionContextIdentifier);
@@ -163,12 +165,19 @@ private:
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);
+    void toggleFullscreen(PlaybackSessionContextIdentifier);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);
+    void enterFullscreen(PlaybackSessionContextIdentifier);
+    void toggleInWindow(PlaybackSessionContextIdentifier);
     void toggleMuted(PlaybackSessionContextIdentifier);
     void setMuted(PlaybackSessionContextIdentifier, bool muted);
     void setVolume(PlaybackSessionContextIdentifier, double volume);
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    void setSpatialTrackingLabel(PlaybackSessionContextIdentifier, const String&);
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
@@ -178,7 +187,7 @@ private:
 #endif
 
     WeakPtr<WebPage> m_page;
-    WeakHashSet<WebCore::HTMLMediaElement, WebCore::WeakPtrImplWithEventTargetData> m_mediaElements;
+    WeakHashSet<WebCore::HTMLMediaElement> m_mediaElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;

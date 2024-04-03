@@ -137,7 +137,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     // First step in drawing the link drag image width.
     TextRun labelRun(label);
     TextRun urlRun(urlString);
-    IntSize labelSize(labelFont.width(labelRun), labelFont.metricsOfPrimaryFont().ascent() + labelFont.metricsOfPrimaryFont().descent());
+    IntSize labelSize(labelFont.width(labelRun), labelFont.metricsOfPrimaryFont().intAscent() + labelFont.metricsOfPrimaryFont().intDescent());
 
     if (labelSize.width() > MaxDragLabelStringWidth) {
         labelSize.setWidth(MaxDragLabelStringWidth);
@@ -149,7 +149,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
 
     if (drawURLString) {
         urlStringSize.setWidth(urlFont.width(urlRun));
-        urlStringSize.setHeight(urlFont.metricsOfPrimaryFont().ascent() + urlFont.metricsOfPrimaryFont().descent()); 
+        urlStringSize.setHeight(urlFont.metricsOfPrimaryFont().intAscent() + urlFont.metricsOfPrimaryFont().intDescent());
         imageSize.setHeight(imageSize.height() + urlStringSize.height());
         if (urlStringSize.width() > MaxDragLabelStringWidth) {
             imageSize.setWidth(MaxDragLabelWidth);
@@ -185,7 +185,7 @@ DragImageRef createDragImageForLink(Element&, URL& url, const String& inLabel, T
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DragLabelBorderX * 2.0f), urlFont);
-        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont.metricsOfPrimaryFont().descent()));
+        IntPoint textPos(DragLabelBorderX, imageSize.height() - (LabelBorderYOffset + urlFont.metricsOfPrimaryFont().intDescent()));
         WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, urlFont, topColor, bottomColor);
     }
     

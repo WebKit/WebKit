@@ -48,7 +48,7 @@ RemotePipelineLayout::~RemotePipelineLayout() = default;
 
 void RemotePipelineLayout::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemotePipelineLayout::stopListeningForIPC()

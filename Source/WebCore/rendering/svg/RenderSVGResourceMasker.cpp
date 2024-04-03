@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderSVGResourceMasker.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Element.h"
 #include "ElementIterator.h"
 #include "FloatPoint.h"
@@ -33,11 +32,11 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGContainerLayout.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
-#include "SVGRenderingContext.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -81,8 +80,13 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     ASSERT(layer()->isSelfPaintingLayer());
     ASSERT(targetRenderer.hasLayer());
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
@@ -106,15 +110,13 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto maskColorSpace = DestinationColorSpace::SRGB();
     auto drawColorSpace = DestinationColorSpace::SRGB();
 
-    const auto& svgStyle = style().svgStyle();
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
+    Ref svgStyle = style().svgStyle();
+    if (svgStyle->colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
         maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
         drawColorSpace = DestinationColorSpace::LinearSRGB();
     }
-#endif
 
     // FIXME: try to use GraphicsContext::createScaledImageBuffer instead.
     auto maskImage = createImageBuffer(repaintBoundingBox, absoluteTransform, maskColorSpace, &context);
@@ -124,8 +126,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     context.setCompositeOperation(CompositeOperator::DestinationIn);
     context.beginTransparencyLayer(1);
 
-    auto& maskImageContext = maskImage->context();
-    layer()->paintSVGResourceLayer(maskImageContext, stateSaver, contentTransform);
+    layer()->paintSVGResourceLayer(maskImage->context(), contentTransform);
 
 #if !USE(CG)
     maskImage->transformToColorSpace(drawColorSpace);
@@ -133,7 +134,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     UNUSED_PARAM(drawColorSpace);
 #endif
 
-    if (svgStyle.maskType() == MaskType::Luminance)
+    if (svgStyle->maskType() == MaskType::Luminance)
         maskImage->convertToLuminanceMask();
 
     context.setCompositeOperation(CompositeOperator::SourceOver);
@@ -149,27 +150,28 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     auto targetBoundingBox = object.objectBoundingBox();
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return targetBoundingBox;
 
-    SVGHitTestCycleDetectionScope queryScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    auto& maskElement = this->maskElement();
-
-    auto maskRect = maskElement.calculateMaskContentRepaintRect(repaintRectCalculation);
-    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    Ref maskElement = this->maskElement();
+    auto maskRect = maskElement->calculateMaskContentRepaintRect(repaintRectCalculation);
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());
         contentTransform.scale(targetBoundingBox.size());
         maskRect = contentTransform.mapRect(maskRect);
     }
 
-    auto maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement, maskElement.maskUnits(), targetBoundingBox);
+    auto maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(maskElement.ptr(), maskElement->maskUnits(), targetBoundingBox);
     maskRect.intersect(maskBoundaries);
+    if (maskRect.isEmpty())
+        return targetBoundingBox;
     return maskRect;
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

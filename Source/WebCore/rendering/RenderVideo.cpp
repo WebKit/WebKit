@@ -67,7 +67,7 @@ void RenderVideo::willBeDestroyed()
 {
     visibleInViewportStateChanged();
 
-    if (auto player = videoElement().player())
+    if (RefPtr player = videoElement().player())
         player->renderVideoWillBeDestroyed();
 
     RenderMedia::willBeDestroyed();
@@ -97,7 +97,7 @@ void RenderVideo::intrinsicSizeChanged()
 bool RenderVideo::updateIntrinsicSize()
 {
     LayoutSize size = calculateIntrinsicSize();
-    size.scale(style().effectiveZoom());
+    size.scale(style().usedZoom());
 
     // Never set the element size to zero when in a media document.
     if (size.isEmpty() && document().isMediaDocument())
@@ -127,7 +127,7 @@ LayoutSize RenderVideo::calculateIntrinsicSizeInternal()
     // The intrinsic height of a video element's playback area is the intrinsic height 
     // of the video resource, if that is available; otherwise it is the intrinsic 
     // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
-    auto player = videoElement().player();
+    RefPtr player = videoElement().player();
     if (player && videoElement().readyState() >= HTMLVideoElement::HAVE_METADATA) {
         LayoutSize size(player->naturalSize());
         if (!size.isEmpty())
@@ -177,15 +177,9 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     updateIntrinsicSize();
 }
 
-static bool contentSizeAlmostEqualsFrameSize(const IntSize& frameContentsSize, const LayoutSize& contentSize, float deviceScaleFactor)
-{
-    LayoutUnit pointSizeLayoutUnits = LayoutUnit(deviceScaleFactor);
-    return absoluteValue(frameContentsSize.width() - contentSize.width()) <= pointSizeLayoutUnits && absoluteValue(frameContentsSize.height() - contentSize.height()) <= pointSizeLayoutUnits;
-}
-
 IntRect RenderVideo::videoBox() const
 {
-    auto mediaPlayer = videoElement().player();
+    RefPtr mediaPlayer = videoElement().player();
     if (mediaPlayer && mediaPlayer->shouldIgnoreIntrinsicSize())
         return snappedIntRect(contentBoxRect());
 
@@ -194,11 +188,7 @@ IntRect RenderVideo::videoBox() const
     if (videoElement().shouldDisplayPosterImage())
         intrinsicSize = m_cachedImageSize;
 
-    auto videoBoxRect = snappedIntRect(replacedContentRect(intrinsicSize));
-    if (!intrinsicSize.isEmpty() && inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
-        return snappedIntRect({ contentBoxLocation(), contentSize().fitToAspectRatio(intrinsicSize, AspectRatioFitGrow) });
-
-    return videoBoxRect;
+    return snappedIntRect(replacedContentRect(intrinsicSize));
 }
 
 bool RenderVideo::shouldDisplayVideo() const
@@ -213,7 +203,7 @@ bool RenderVideo::failedToLoadPosterImage() const
 
 void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    auto mediaPlayer = videoElement().player();
+    RefPtr mediaPlayer = videoElement().player();
     bool displayingPoster = videoElement().shouldDisplayPosterImage();
 
     if (!displayingPoster && !mediaPlayer) {
@@ -298,15 +288,6 @@ void RenderVideo::updateFromElement()
     updatePlayer();
 }
 
-bool RenderVideo::inElementOrVideoFullscreen() const
-{
-    bool result = videoElement().isFullscreen();
-#if ENABLE(FULLSCREEN_API)
-    result = result || document().fullscreenManager().isFullscreen();
-#endif
-    return result;
-}
-
 void RenderVideo::updatePlayer()
 {
     if (renderTreeBeingDestroyed())
@@ -316,16 +297,14 @@ void RenderVideo::updatePlayer()
     intrinsicSizeChanged = updateIntrinsicSize();
     ASSERT_UNUSED(intrinsicSizeChanged, !intrinsicSizeChanged || !view().frameView().layoutContext().isInRenderTreeLayout());
 
-    auto mediaPlayer = videoElement().player();
+    RefPtr mediaPlayer = videoElement().player();
     if (!mediaPlayer)
         return;
 
     if (videoElement().inActiveDocument())
         contentChanged(VideoChanged);
 
-    auto videoBoxSize = videoBox().size();
-    bool fitToFillInFullscreen = inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxSize, page().deviceScaleFactor());
-    videoElement().updateMediaPlayer(videoBoxSize, style().objectFit() != ObjectFit::Fill && !fitToFillInFullscreen);
+    videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
@@ -345,13 +324,12 @@ bool RenderVideo::supportsAcceleratedRendering() const
 
 void RenderVideo::acceleratedRenderingStateChanged()
 {
-    if (auto player = videoElement().player())
-        player->acceleratedRenderingStateChanged();
+    videoElement().acceleratedRenderingStateChanged();
 }
 
 bool RenderVideo::requiresImmediateCompositing() const
 {
-    auto player = videoElement().player();
+    RefPtr player = videoElement().player();
     return player && player->requiresImmediateCompositing();
 }
 
@@ -363,7 +341,7 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if (!videoBox().contains(enclosingIntRect(localRect)))
         return false;
 
-    if (auto player = videoElement().player())
+    if (RefPtr player = videoElement().player())
         return player->hasAvailableVideoFrame();
 
     return false;

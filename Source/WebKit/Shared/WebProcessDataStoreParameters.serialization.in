@@ -22,29 +22,26 @@
 
 [RValue] struct WebKit::WebProcessDataStoreParameters {
     PAL::SessionID sessionID;
-    String applicationCacheDirectory;
-    WebKit::SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
 #if !ENABLE(GPU_PROCESS)
-    WebKit::SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle mediaCacheDirectoryExtensionHandle;
 #endif
     String mediaKeyStorageDirectory;
-    WebKit::SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle mediaKeyStorageDirectoryExtensionHandle;
     FileSystem::Salt mediaKeysStorageSalt;
     String javaScriptConfigurationDirectory;
-    WebKit::SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle javaScriptConfigurationDirectoryExtensionHandle;
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode;
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
-    HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domainsWithStorageAccessQuirk;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainsWithStorageAccessQuirk;
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
-    WebKit::SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle modelElementCacheDirectoryExtensionHandle;
 #endif
 #if PLATFORM(IOS_FAMILY)
-    std::optional<WebKit::SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    std::optional<WebKit::SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    std::optional<WebKit::SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> cookieStorageDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> containerCachesDirectoryExtensionHandle;
+    std::optional<WebKit::SandboxExtensionHandle> containerTemporaryDirectoryExtensionHandle;
 #endif
     bool trackingPreventionEnabled;
 };

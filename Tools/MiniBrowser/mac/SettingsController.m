@@ -68,6 +68,7 @@ static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance
 static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
 static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 static NSString * const AttachmentElementEnabledPreferenceKey = @"AttachmentElementEnabled";
+static NSString * const AdvancedPrivacyProtectionsPreferenceKey = @"AdvancedPrivacyProtectionsEnabled";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -189,6 +190,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
     addItem(@"Enable Data Detectors", @selector(toggleDataDetectorsEnabled:));
     addItem(@"Use Mock Capture Devices", @selector(toggleUseMockCaptureDevices:));
+    addItem(@"Advanced Privacy Protections", @selector(toggleAdvancedPrivacyProtections:));
 
     NSMenu *attachmentElementMenu = addSubmenu(@"Enable Attachment Element");
     addItemToMenu(attachmentElementMenu, @"Disabled", @selector(changeAttachmentElementEnabled:), NO, AttachmentElementDisabledTag);
@@ -377,6 +379,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self dataDetectorsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseMockCaptureDevices:))
         [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAdvancedPrivacyProtections:))
+        [menuItem setState:[self advancedPrivacyProtectionsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
         [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -695,6 +699,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)useMockCaptureDevices
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseMockCaptureDevicesPreferenceKey];
+}
+
+- (void)toggleAdvancedPrivacyProtections:(id)sender
+{
+    [self _toggleBooleanDefault:AdvancedPrivacyProtectionsPreferenceKey];
+}
+
+- (BOOL)advancedPrivacyProtectionsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AdvancedPrivacyProtectionsPreferenceKey];
 }
 
 - (BOOL)nonFastScrollableRegionOverlayVisible

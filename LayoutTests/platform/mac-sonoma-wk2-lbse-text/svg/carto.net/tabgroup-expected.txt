@@ -67,7 +67,7 @@ layer at (39.64,1.41) size 66x34
     RenderSVGTSpan {tspan} at (0,0) size 67x17
       RenderSVGInlineText {#text} at (0,0) size 67x17
         chunk 1 (middle anchor) text run 1 at (39.65,15.00) startOffset 0 endOffset 8 width 66.71: "Download"
-    RenderSVGTSpan {tspan} at (0,0) size 43x18
+    RenderSVGTSpan {tspan} at (12,16) size 43x18
       RenderSVGInlineText {#text} at (12,16) size 43x17
         chunk 1 (middle anchor) text run 1 at (51.74,31.50) startOffset 0 endOffset 6 width 42.52: "Folder"
 layer at (10,44.13) size 260x266
@@ -82,7 +82,7 @@ layer at (10,44.13) size 188x28
   RenderSVGText {text} at (0,0) size 189x29 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 189x14
       chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 36 width 188.10: "This is oversize content that can be"
-    RenderSVGTSpan {tspan} at (0,0) size 117x14
+    RenderSVGTSpan {tspan} at (0,15) size 117x14
       RenderSVGInlineText {#text} at (0,15) size 117x14
         chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 20 width 116.10: "hidden on tab-change"
 layer at (0,0) size 301x200
@@ -93,10 +93,10 @@ layer at (145,0) size 64x35
   RenderSVGPath {path} at (145,0) size 64x35 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M 145 5 L 150 0 L 204 0 L 209 5 L 209 35 L 145 35 Z"]
 layer at (122.89,1.41) size 54x34
   RenderSVGText {text} at (122,1) size 56x34 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 32x17
+    RenderSVGTSpan {tspan} at (11,0) size 32x17
       RenderSVGInlineText {#text} at (11,0) size 32x17
         chunk 1 (middle anchor) text run 1 at (134.16,15.00) startOffset 0 endOffset 4 width 31.68: "Your"
-    RenderSVGTSpan {tspan} at (0,0) size 55x18
+    RenderSVGTSpan {tspan} at (0,16) size 55x18
       RenderSVGInlineText {#text} at (0,16) size 55x17
         chunk 1 (middle anchor) text run 1 at (122.90,31.50) startOffset 0 endOffset 7 width 54.20: "Account"
 layer at (0,0) size 301x200
@@ -107,10 +107,10 @@ layer at (209,0) size 49x35
   RenderSVGPath {path} at (209,0) size 49x35 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M 209 5 L 214 0 L 253 0 L 258 5 L 258 35 L 209 35 Z"]
 layer at (194.39,1.41) size 40x34
   RenderSVGText {text} at (194,1) size 40x34 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 32x17
+    RenderSVGTSpan {tspan} at (4,0) size 32x17
       RenderSVGInlineText {#text} at (4,0) size 31x17
         chunk 1 (middle anchor) text run 1 at (198.58,15.00) startOffset 0 endOffset 4 width 30.85: "Help"
-    RenderSVGTSpan {tspan} at (0,0) size 40x18
+    RenderSVGTSpan {tspan} at (0,16) size 40x18
       RenderSVGInlineText {#text} at (0,16) size 40x17
         chunk 1 (middle anchor) text run 1 at (194.40,31.50) startOffset 0 endOffset 6 width 39.19: "& Info"
 layer at (-23.78,0) size 324x200 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -124,7 +124,7 @@ layer at (-23.78,1.41) size 58x34 backgroundClip at (0,0) size 800x600 clip at (
     RenderSVGTSpan {tspan} at (0,0) size 58x17
       RenderSVGInlineText {#text} at (0,0) size 58x17
         chunk 1 (middle anchor) text run 1 at (-23.77,15.00) startOffset 0 endOffset 7 width 57.55: "Geodata"
-    RenderSVGTSpan {tspan} at (0,0) size 56x18
+    RenderSVGTSpan {tspan} at (1,16) size 56x18
       RenderSVGInlineText {#text} at (1,16) size 56x17
         chunk 1 (middle anchor) text run 1 at (-22.51,31.50) startOffset 0 endOffset 7 width 55.01: "Browser"
 layer at (10,44.13) size 271x44
@@ -133,10 +133,10 @@ layer at (10,44.13) size 269x43
   RenderSVGText {text} at (0,0) size 270x44 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 237x14
       chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 46 width 236.78: "This is a tabgroup with triangular tab corners"
-    RenderSVGTSpan {tspan} at (0,0) size 270x14
+    RenderSVGTSpan {tspan} at (0,15) size 270x14
       RenderSVGInlineText {#text} at (0,15) size 270x14
         chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 53 width 269.36: "and a double line tab. (use \"\\n\" as a line separator)"
-    RenderSVGTSpan {tspan} at (0,0) size 252x14
+    RenderSVGTSpan {tspan} at (0,30) size 252x14
       RenderSVGInlineText {#text} at (0,30) size 252x14
         chunk 1 text run 1 at (10.00,85.00) startOffset 0 endOffset 47 width 251.48: "Click on the second tab to see oversize content"
 layer at (0,0) size 300x200

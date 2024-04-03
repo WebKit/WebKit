@@ -25,9 +25,8 @@
 
 #pragma once
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
-#include "DataReference.h"
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameIdentifier.h"
@@ -36,6 +35,8 @@
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Connection;
@@ -70,14 +71,14 @@ private:
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void videoFrameAvailable(SharedVideoFrame&&);
-    void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
+    void fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaRecorderPrivateWriter> m_writer;
 
@@ -91,4 +92,4 @@ private:
 
 }
 
-#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)

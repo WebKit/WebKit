@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src=../../resources/testharness.js></script>
+    <script src=../../resources/testharnessreport.js></script>
+    <script type="text/javascript">
+promise_test(async (test) => {
+    const videoConfiguration = { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', bitrate: 800000, height: 1080, bitrate: 800000, width: 3180, framerate: 30 };
+    const result = await navigator.mediaCapabilities.decodingInfo({ type: 'file', video: videoConfiguration });
+    if (!result.supported)
+        return;
+
+    if (window.internals && internals.isHardwareVP9DecoderExpected())
+         assert_true(result.powerEfficient);
+}, "VP9 powerEfficient for file");
+
+promise_test(async (test) => {
+    const videoConfiguration = { contentType: 'video/vp9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    const result = await navigator.mediaCapabilities.decodingInfo({ type: 'webrtc', video: videoConfiguration });
+    if (!result.supported)
+        return;
+
+    if (window.internals && window.testRunner && testRunner.isWebKit2 && internals.isHardwareVP9DecoderExpected())
+        assert_true(result.powerEfficient);
+}, "VP9 powerEfficient for webrtc with hardware VP9 if any");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.disableWebRTCHardwareVP9();
+
+    const videoConfiguration = { contentType: 'video/vp9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    const result = await navigator.mediaCapabilities.decodingInfo({ type: 'webrtc', video: videoConfiguration });
+    if (!result.supported)
+        return;
+
+    assert_false(result.powerEfficient);
+}, "VP9 powerEfficient for webrtc without hardware VP9");
+    </script>
+</body>
+</html>

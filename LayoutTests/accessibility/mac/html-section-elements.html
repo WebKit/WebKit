@@ -12,15 +12,20 @@
 <nav>nav</nav>
 <aside>aside</aside>
 
-<article>
-<header>Should be IGNORED because it's inside an article, so it should not be a landmark</header>
-<footer>Should be IGNORED because it's inside an article, so it should not be a landmark</footer>
+<article id="article">
+<header id="article_header">Should be IGNORED because it's inside an article, so it should not be a landmark</header>
+<footer id="article_footer">Should be IGNORED because it's inside an article, so it should not be a landmark</footer>
 </article>
 
-<section>
-<header>Should be IGNORED because it's inside a section, so it should not be a landmark</header>
-<footer>Should be IGNORED because it's inside a section, so it should not be a landmark</footer>
+<section id="section">
+<header id="section_header">Should be IGNORED because it's inside a section, so it should not be a landmark</header>
+<footer id="section_footer">Should be IGNORED because it's inside a section, so it should not be a landmark</footer>
 </section>
+
+<main id="main">
+<header id="main_header">Should be IGNORED because it's inside a main, so it should not be a landmark</header>
+<footer id="main_footer">Should be IGNORED because it's inside a main, so it should not be a landmark</footer>
+</main>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -41,11 +46,33 @@
           shouldBe("body.childAtIndex(5).subrole", "'AXSubrole: AXLandmarkComplementary'");
 
           // When a header and footer are inside an article, they should not be landmarks.
+          shouldBe("body.childAtIndex(6).domIdentifier", "'article'");
+          shouldBe("body.childAtIndex(6).childAtIndex(0).domIdentifier", "'article_header'");
+          shouldBe("body.childAtIndex(6).childAtIndex(0).role", "'AXRole: AXGroup'");
           shouldBe("body.childAtIndex(6).childAtIndex(0).subrole", "'AXSubrole: '");
+          shouldBe("body.childAtIndex(6).childAtIndex(1).domIdentifier", "'article_footer'");
+          shouldBe("body.childAtIndex(6).childAtIndex(1).role", "'AXRole: AXGroup'");
+          shouldBe("body.childAtIndex(6).childAtIndex(1).subrole", "'AXSubrole: AXFooter'");
 
           // When a header and footer are inside a section, they should not be landmarks.
-          // Instead, expect only the static text inside to be exposed.
-          shouldBe("body.childAtIndex(7).role", "'AXRole: AXStaticText'");
+          shouldBe("body.childAtIndex(7).domIdentifier", "'section_header'");
+          shouldBe("body.childAtIndex(7).role", "'AXRole: AXGroup'");
+          shouldBe("body.childAtIndex(7).subrole", "'AXSubrole: '");
+
+          shouldBe("body.childAtIndex(8).domIdentifier", "'section_footer'");
+          shouldBe("body.childAtIndex(8).role", "'AXRole: AXGroup'");
+          // FIXME: AXSubrole of the footer should be empty.
+          shouldBe("body.childAtIndex(8).subrole", "'AXSubrole: AXFooter'");
+
+          // When a header and footer are inside a main, they should not be landmarks.
+          shouldBe("body.childAtIndex(9).domIdentifier", "'main'");
+          shouldBe("body.childAtIndex(9).childAtIndex(0).domIdentifier", "'main_header'");
+          shouldBe("body.childAtIndex(9).childAtIndex(0).role", "'AXRole: AXGroup'");
+          shouldBe("body.childAtIndex(9).childAtIndex(0).subrole", "'AXSubrole: '");
+          shouldBe("body.childAtIndex(9).childAtIndex(1).domIdentifier", "'main_footer'");
+          shouldBe("body.childAtIndex(9).childAtIndex(1).role", "'AXRole: AXGroup'");
+          // FIXME: AXSubrole of the footer should be empty.
+          shouldBe("body.childAtIndex(9).childAtIndex(1).subrole", "'AXSubrole: AXFooter'");
     }
 
 </script>

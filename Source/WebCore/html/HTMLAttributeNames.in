@@ -326,6 +326,7 @@ ontransitioncancel
 ontransitionend
 ontransitionrun
 ontransitionstart
+onuncapturederror
 onunhandledrejection
 onunload
 onvolumechange
@@ -384,8 +385,9 @@ scrolldelay
 scrolling
 select
 selected
-shadowrootmode
+shadowrootclonable
 shadowrootdelegatesfocus
+shadowrootmode
 shape
 size
 sizes
@@ -429,6 +431,7 @@ webkitdirectory
 webkitdropzone
 width
 wrap
+writingsuggestions
 x-apple-data-detectors
 x-apple-data-detectors-result
 x-apple-data-detectors-type

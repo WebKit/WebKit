@@ -158,15 +158,14 @@ void WebSocketDeflateFramer::enableDeflate(int windowBits, WebSocketDeflater::Co
 std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFrame& frame)
 {
     auto result = makeUnique<DeflateResultHolder>(*this);
-    if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payloadLength)
+    if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payload.size())
         return result;
-    if (!m_deflater->addBytes(frame.payload, frame.payloadLength) || !m_deflater->finish()) {
+    if (!m_deflater->addBytes(frame.payload) || !m_deflater->finish()) {
         result->fail("Failed to compress frame"_s);
         return result;
     }
     frame.compress = true;
-    frame.payload = m_deflater->data();
-    frame.payloadLength = m_deflater->size();
+    frame.payload = m_deflater->span();
     return result;
 }
 
@@ -189,13 +188,12 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
         result->fail("Received unexpected compressed frame"_s);
         return result;
     }
-    if (!m_inflater->addBytes(frame.payload, frame.payloadLength) || !m_inflater->finish()) {
+    if (!m_inflater->addBytes(frame.payload) || !m_inflater->finish()) {
         result->fail("Failed to decompress frame"_s);
         return result;
     }
     frame.compress = false;
-    frame.payload = m_inflater->data();
-    frame.payloadLength = m_inflater->size();
+    frame.payload = m_inflater->span();
     return result;
 }
 

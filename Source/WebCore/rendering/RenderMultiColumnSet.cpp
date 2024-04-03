@@ -55,8 +55,8 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
 RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
 {
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }
@@ -64,8 +64,8 @@ RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
 RenderMultiColumnSet* RenderMultiColumnSet::previousSiblingMultiColumnSet() const
 {
     for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto* multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }
@@ -787,6 +787,7 @@ LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
 
 void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
+    static constexpr size_t maximumNumberOfFragments = 2500000;
     // Let's start by introducing the different coordinate systems involved here. They are different
     // in how they deal with writing modes and columns. RenderLayer rectangles tend to be more
     // physical than the rectangles used in RenderObject & co.
@@ -902,7 +903,10 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // Flip it into more a physical (RenderLayer-style) rectangle.
         fragmentedFlow()->flipForWritingMode(flippedFragmentedFlowOverflowPortion);
         fragment.paginationClip = flippedFragmentedFlowOverflowPortion;
-        fragments.append(fragment);
+        if (fragments.size() < maximumNumberOfFragments)
+            fragments.append(fragment);
+        else
+            break;
     }
 }
 
@@ -952,9 +956,9 @@ void RenderMultiColumnSet::addOverflowFromChildren()
         addVisualOverflow(lastRect);
 }
 
-VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, const RenderFragmentContainer*)
+VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, HitTestSource source, const RenderFragmentContainer*)
 {
-    return multiColumnFlow()->positionForPoint(translateFragmentPointToFragmentedFlow(logicalPoint, ClampHitTestTranslationToColumns), this);
+    return multiColumnFlow()->positionForPoint(translateFragmentPointToFragmentedFlow(logicalPoint, ClampHitTestTranslationToColumns), source, this);
 }
 
 LayoutPoint RenderMultiColumnSet::translateFragmentPointToFragmentedFlow(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode clampMode) const
@@ -1045,10 +1049,10 @@ void RenderMultiColumnSet::updateHitTestResult(HitTestResult& result, const Layo
     
     // Note this does not work with column spans, but once we implement RenderPageSet, we can move this code
     // over there instead (and spans of course won't be allowed on pages).
-    if (auto* node = nodeForHitTest()) {
-        result.setInnerNode(node);
+    if (RefPtr node = nodeForHitTest()) {
+        result.setInnerNode(node.get());
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(node);
+            result.setInnerNonSharedNode(node.get());
         LayoutPoint adjustedPoint = translateFragmentPointToFragmentedFlow(point);
         view().offsetForContents(adjustedPoint);
         result.setLocalPoint(adjustedPoint);

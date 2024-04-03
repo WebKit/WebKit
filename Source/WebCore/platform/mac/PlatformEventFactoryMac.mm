@@ -700,6 +700,14 @@ UInt8 keyCharForEvent(NSEvent *event)
     return keyChar;
 }
 
+IntPoint unadjustedMovementForEvent(NSEvent *event)
+{
+    CGEventRef cgEvent = [event CGEvent];
+    auto dx = CGEventGetIntegerValueField(cgEvent, kCGEventUnacceleratedPointerMovementX);
+    auto dy = CGEventGetIntegerValueField(cgEvent, kCGEventUnacceleratedPointerMovementY);
+    return IntPoint(dx, dy);
+}
+
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
 public:
     PlatformMouseEventBuilder(NSEvent *event, NSEvent *correspondingPressureEvent, NSView *windowView)
@@ -729,6 +737,7 @@ public:
         m_buttons = currentlyPressedMouseButtons();
         m_clickCount = clickCountForEvent(event);
         m_movementDelta = IntPoint(event.deltaX, event.deltaY);
+        m_unadjustedMovementDelta = unadjustedMovementForEvent(event);
 
         m_force = 0;
         int stage = eventIsPressureEvent ? event.stage : correspondingPressureEvent.stage;

@@ -53,69 +53,19 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
+bool canUseForLineLayout(const RenderBlockFlow& flow)
 {
-    if (is<RenderText>(child)) {
-        if (child.isRenderSVGInlineText())
-            return AvoidanceReason::ContentIsSVG;
-        return { };
-    }
-
-    if (is<RenderLineBreak>(child))
-        return { };
-
-    auto& renderer = downcast<RenderElement>(child);
-    if (renderer.isRenderRubyRun())
-        return AvoidanceReason::ContentIsRuby;
-
-    if (is<RenderBlockFlow>(renderer)
-        || is<RenderGrid>(renderer)
-        || is<RenderFrameSet>(renderer)
-        || is<RenderFlexibleBox>(renderer)
-        || is<RenderDeprecatedFlexibleBox>(renderer)
-        || is<RenderReplaced>(renderer)
-        || is<RenderListItem>(renderer)
-        || is<RenderTable>(renderer)
-#if ENABLE(MATHML)
-        || is<RenderMathMLBlock>(renderer)
-#endif
-        || is<RenderListMarker>(renderer))
-        return { };
-
-    if (is<RenderInline>(renderer)) {
-        if (renderer.isRenderSVGInline())
-            return AvoidanceReason::ContentIsSVG;
-        if (renderer.isRenderRubyAsInline())
-            return AvoidanceReason::ContentIsRuby;
-        return { };
-    }
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow)
-{
-    if (!flow.document().settings().inlineFormattingContextIntegrationEnabled())
-        return AvoidanceReason::FeatureIsDisabled;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));
-        return AvoidanceReason::ContentIsSVG;
+        return false;
     }
-    if (flow.isRenderRubyText() || flow.isRenderRubyBase())
-        return AvoidanceReason::ContentIsRuby;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReason = canUseForChild(child))
-            return *childReason;
+        if (child.isRenderSVGInlineText() || child.isRenderSVGInline())
+            return false;
     }
-    return { };
-}
-
-bool canUseForLineLayout(const RenderBlockFlow& flow)
-{
-    return !canUseForLineLayoutWithReason(flow);
+    return true;
 }
 
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
@@ -128,6 +78,22 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
             continue;
         if (is<RenderInline>(renderer))
             continue;
+        if (renderer.isInFlow() && renderer.style().isHorizontalWritingMode() && renderer.style().logicalWidth().isFixed()) {
+            auto isNonSupportedFixedWidthContent = [&] {
+                // FIXME: Implement this image special in line builder.
+                auto allowImagesToBreak = !blockContainer.document().inQuirksMode() || !blockContainer.isRenderTableCell();
+                if (!allowImagesToBreak)
+                    return true;
+                // FIXME: See RenderReplaced::computePreferredLogicalWidths where m_minPreferredLogicalWidth is set to 0.
+                auto isReplacedWithSpecialIntrinsicWidth = is<RenderReplaced>(renderer) && renderer.style().logicalMaxWidth().isPercentOrCalculated();
+                if (isReplacedWithSpecialIntrinsicWidth)
+                    return true;
+                return false;
+            };
+            if (isNonSupportedFixedWidthContent())
+                return false;
+            continue;
+        }
         return false;
     }
     return true;
@@ -144,8 +110,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         if (is<RenderReplaced>(renderer))
             return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion;
-        if (is<RenderInline>(renderer))
-            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !downcast<RenderInline>(renderer).firstChild();
+        if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer))
+            return typeOfChange == TypeOfChangeForInvalidation::NodeInsertion && !inlineRenderer->firstChild();
         return false;
     };
     if (!isSupportedRendererWithChange(renderer))
@@ -164,8 +130,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     auto isBidiContent = [&] {
         if (lineLayout.contentNeedsVisualReordering())
             return true;
-        if (is<RenderText>(renderer))
-            return Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text());
+        if (auto* textRenderer = dynamicDowncast<RenderText>(renderer))
+            return Layout::TextUtil::containsStrongDirectionalityText(textRenderer->text());
         if (is<RenderInline>(renderer)) {
             auto& style = renderer.style();
             return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
@@ -187,12 +153,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     if (hasFirstLetter())
         return true;
 
-    if (lineLayout.isDamaged()) {
-        auto previousDamages = lineLayout.damageReasons();
-        if (previousDamages && previousDamages != Layout::InlineDamage::Reason::Append) {
-            // Only support subsequent append operations.
-            return true;
-        }
+    if (auto* previousDamage = lineLayout.damage(); previousDamage && (previousDamage->reasons() != Layout::InlineDamage::Reason::Append || !previousDamage->layoutStartPosition())) {
+        // Only support subsequent append operations where we managed to invalidate the content for partial layout.
+        return true;
     }
 
     bool shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;

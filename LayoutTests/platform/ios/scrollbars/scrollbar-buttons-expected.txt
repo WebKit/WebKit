@@ -53,7 +53,7 @@ layer at (8,8) size 200x200 clip at (8,8) size 183x200 scrollWidth 323 scrollHei
     RenderText {#text} at (0,300) size 36x19
       text run at (0,300) width 36: "Hello"
     RenderBR {BR} at (35,300) size 1x19
-    RenderInline {SPAN} at (0,0) size 324x19
+    RenderInline {SPAN} at (0,320) size 324x19
       RenderText {#text} at (0,320) size 324x19
         text run at (0,320) width 324: "Hello world this is a long string and will not wrap."
     RenderText {#text} at (0,340) size 36x19

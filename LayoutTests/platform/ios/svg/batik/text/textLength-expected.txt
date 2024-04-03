@@ -135,7 +135,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (200,8) size 50x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 27x14
             chunk 1 (middle anchor) text run 1 at (188.18,19.00) startOffset 0 endOffset 7 width 39.64: "Apache "
-          RenderSVGTSpan {tspan} at (0,0) size 19x14
+          RenderSVGTSpan {tspan} at (26,0) size 19x14
             RenderSVGInlineText {#text} at (26,0) size 18x14
               chunk 1 (middle anchor) text run 1 at (227.83,19.00) startOffset 0 endOffset 5 width 26.00: "Batik"
           RenderSVGInlineText {#text} at (44,0) size 6x14
@@ -153,12 +153,12 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (160,29) size 174x43 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 174x14
             chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 32 width 173.55: "lengthAdjust=\"spacingAndGlyphs\" "
-          RenderSVGTSpan {tspan} at (0,0) size 81x15
+          RenderSVGTSpan {tspan} at (0,14) size 81x15
             RenderSVGInlineText {#text} at (0,14) size 81x14
               chunk 1 text run 1 at (160.00,54.40) startOffset 0 endOffset 15 width 80.55: "textLength=\"25\""
           RenderSVGInlineText {#text} at (80,14) size 3x14
             chunk 1 text run 1 at (240.55,54.40) startOffset 0 endOffset 1 width 3.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 77x15
+          RenderSVGTSpan {tspan} at (0,28) size 77x15
             RenderSVGInlineText {#text} at (0,28) size 77x14
               chunk 1 text run 1 at (160.00,68.80) startOffset 0 endOffset 15 width 76.55: "font-size=\"100\""
     RenderSVGContainer {use} at (0,0) size 448x498

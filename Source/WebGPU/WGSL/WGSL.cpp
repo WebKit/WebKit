@@ -28,6 +28,7 @@
 
 #include "ASTIdentifierExpression.h"
 #include "AttributeValidator.h"
+#include "BoundsCheck.h"
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
@@ -42,24 +43,24 @@
 
 namespace WGSL {
 
-#define CHECK_PASS(pass) \
+#define CHECK_PASS(pass, ...) \
     dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
     auto maybe##pass##Failure = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        return pass(shaderModule); \
+        return pass(__VA_ARGS__); \
     }(); \
     if (maybe##pass##Failure) \
-        return *maybe##pass##Failure;
+        return { *maybe##pass##Failure };
 
 #define RUN_PASS(pass, ...) \
     do { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
-        dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+        dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
         pass(__VA_ARGS__); \
     } while (0)
 
 #define RUN_PASS_WITH_RESULT(name, pass, ...) \
-    dumpASTBetweenEachPassIfNeeded(ast, "AST before " # pass); \
+    dumpASTBetweenEachPassIfNeeded(shaderModule, "AST before " # pass); \
     auto name = [&]() { \
         PhaseTimer phaseTimer(#pass, phaseTimes); \
         return pass(__VA_ARGS__); \
@@ -70,10 +71,12 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
 
-    CHECK_PASS(parse);
-    CHECK_PASS(reorderGlobals);
-    CHECK_PASS(typeCheck);
-    CHECK_PASS(validateAttributes);
+    CHECK_PASS(parse, shaderModule);
+    CHECK_PASS(reorderGlobals, shaderModule);
+    CHECK_PASS(typeCheck, shaderModule);
+    CHECK_PASS(validateAttributes, shaderModule);
+    RUN_PASS(buildCallGraph, shaderModule);
+    CHECK_PASS(validateIO, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -89,41 +92,50 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    ShaderModule::Compilation compilation(ast);
+    CompilationScope compilationScope(shaderModule);
 
     PhaseTimes phaseTimes;
-    PrepareResult result;
-
-    {
+    auto result = [&]() -> std::variant<PrepareResult, Error> {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, result);
-        RUN_PASS(mangleNames, callGraph, result);
-        RUN_PASS(rewritePointers, callGraph);
-        RUN_PASS(rewriteEntryPoints, callGraph);
-        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
+        HashMap<String, Reflection::EntryPointInformation> entryPoints;
 
-        dumpASTAtEndIfNeeded(ast);
+        RUN_PASS(mangleNames, shaderModule);
+        RUN_PASS(rewritePointers, shaderModule);
+        RUN_PASS(insertBoundsChecks, shaderModule);
+        RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);
+        CHECK_PASS(rewriteGlobalVariables, shaderModule, pipelineLayouts, entryPoints);
 
-        {
-            PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
-            result.msl = Metal::generateMetalCode(callGraph);
-        }
-    }
+        dumpASTAtEndIfNeeded(shaderModule);
+
+        return { PrepareResult { WTFMove(entryPoints), WTFMove(compilationScope) } };
+    }();
 
     logPhaseTimes(phaseTimes);
 
     return result;
 }
 
-PrepareResult prepare(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
+String generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
+{
+    PhaseTimes phaseTimes;
+    String result;
+    {
+        PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
+        result = Metal::generateMetalCode(shaderModule, prepareResult, constantValues);
+    }
+    logPhaseTimes(phaseTimes);
+    return result;
+}
+
+std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
     return prepareImpl(ast, pipelineLayouts);
 }
 
-PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
+std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
 {
     HashMap<String, std::optional<PipelineLayout>> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
@@ -134,8 +146,9 @@ ConstantValue evaluate(const AST::Expression& expression, const HashMap<String, 
 {
     if (auto constantValue = expression.constantValue())
         return *constantValue;
-    ASSERT(is<const AST::IdentifierExpression>(expression));
-    return constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
+    auto constantValue = constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
+    const_cast<AST::Expression&>(expression).setConstantValue(constantValue);
+    return constantValue;
 }
 
 }

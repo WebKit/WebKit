@@ -159,7 +159,7 @@ public:
     static void* nullBasePointer();
 
 private:
-    using CagedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    using CagedMemory = CagedPtr<Gigacage::Primitive, void>;
 
     Lock m_lock;
     MemorySharingMode m_sharingMode { MemorySharingMode::Default };

@@ -92,14 +92,19 @@ WritableStream::WritableStream(Ref<InternalWritableStream>&& internalWritableStr
 {
 }
 
+void WritableStream::closeIfPossible()
+{
+    m_internalWritableStream->closeIfPossible();
+}
+
 JSC::JSValue JSWritableStream::abort(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)
 {
-    return wrapped().internalWritableStream().abort(globalObject, callFrame.argument(0));
+    return wrapped().internalWritableStream().abortForBindings(globalObject, callFrame.argument(0));
 }
 
 JSC::JSValue JSWritableStream::close(JSC::JSGlobalObject& globalObject, JSC::CallFrame&)
 {
-    return wrapped().internalWritableStream().close(globalObject);
+    return wrapped().internalWritableStream().closeForBindings(globalObject);
 }
 
 JSC::JSValue JSWritableStream::getWriter(JSC::JSGlobalObject& globalObject, JSC::CallFrame&)

@@ -108,7 +108,7 @@ TEST_P(RobustClientMemoryTest, TexImage2D)
         return;
     }
     GLTexture tex;
-    glBindTexture(GL_TEXTURE_2D, tex.get());
+    glBindTexture(GL_TEXTURE_2D, tex);
 
     GLsizei dataDimension = 1024;
     std::vector<GLubyte> rgbaData(dataDimension * dataDimension * 4);

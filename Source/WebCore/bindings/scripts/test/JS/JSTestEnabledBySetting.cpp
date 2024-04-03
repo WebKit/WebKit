@@ -286,12 +286,12 @@ void JSTestEnabledBySetting::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledBySettingConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEnabledBySettingPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestEnabledBySetting::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestEnabledBySetting::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestEnabledBySetting_TestSubObjEnabledBySettingConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestEnabledBySetting& thisObject)
@@ -489,7 +489,7 @@ void JSTestEnabledBySettingOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     auto* jsTestEnabledBySetting = static_cast<JSTestEnabledBySetting*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestEnabledBySetting->wrapped(), jsTestEnabledBySetting);
+    uncacheWrapper(world, jsTestEnabledBySetting->protectedWrapped().ptr(), jsTestEnabledBySetting);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

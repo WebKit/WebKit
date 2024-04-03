@@ -41,6 +41,7 @@
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKImageCG.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -324,8 +325,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     }
     
     [copiedConfiguration _setAllowTestOnlyIPC:options.allowTestOnlyIPC()];
+    [copiedConfiguration _setPortsForUpgradingInsecureSchemeForTesting:@[@(options.insecureUpgradePort()), @(options.secureUpgradePort())]];
 
-    m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
+    m_mainWebView = makeUnique<PlatformWebView>((__bridge WKPageConfigurationRef)copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);
 
     if (options.punchOutWhiteBackgroundsInDarkMode())
@@ -338,14 +340,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
 
-UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
+UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)
 {
-    auto newConfiguration = adoptNS([globalWebViewConfiguration() copy]);
-    if (parentView)
-        [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
-    if ([newConfiguration _relatedWebView])
-        [newConfiguration setWebsiteDataStore:[newConfiguration _relatedWebView].configuration.websiteDataStore];
-    auto view = makeUniqueRef<PlatformWebView>(newConfiguration.get(), options);
+    auto view = makeUniqueRef<PlatformWebView>(configuration, options);
     finishCreatingPlatformWebView(view.ptr(), options);
     return view;
 }
@@ -452,7 +449,9 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView _setGrammarCheckingEnabledForTesting:YES];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
-        [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
+
+        auto configuration = platformView.configuration;
+        configuration.preferences.textInteractionEnabled = options.textInteractionEnabled();
     }
 
     [LayoutTestSpellChecker uninstallAndReset];
@@ -460,6 +459,13 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 
     [globalWebsiteDataStoreDelegateClient() clearReportedWindowProxyAccessDomains];
+}
+
+void TestController::platformSetStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered, void* context, SetStatisticsCrossSiteLoadWithLinkDecorationCallBack callback)
+{
+    [m_mainWebView->platformView() _setStatisticsCrossSiteLoadWithLinkDecorationForTesting:toWTFString(fromHost) withToHost:toWTFString(toHost) withWasFiltered:wasFiltered withCompletionHandler:^{
+        callback(context);
+    }];
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)

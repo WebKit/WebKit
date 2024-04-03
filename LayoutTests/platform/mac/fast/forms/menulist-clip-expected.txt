@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 120x18
           text run at (0,0) width 120: "Rendering test for "
         RenderInline {I} at (0,0) size 775x36
-          RenderInline {A} at (0,0) size 306x18 [color=#0000EE]
+          RenderInline {A} at (119,0) size 306x18 [color=#0000EE]
             RenderText {#text} at (119,0) size 306x18
               text run at (119,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=15156"
-          RenderText {#text} at (424,0) size 775x36
+          RenderText {#text} at (0,0) size 775x36
             text run at (424,0) width 5: " "
             text run at (428,0) width 347: "REGRESSION (r24594-r24668): The bottom of styled"
             text run at (0,18) width 221: "<select> button text is clipped out"

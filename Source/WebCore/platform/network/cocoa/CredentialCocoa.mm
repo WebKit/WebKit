@@ -117,4 +117,20 @@ bool Credential::encodingRequiresPlatformData(NSURLCredential *credential)
     return !credential.user;
 }
 
+Credential Credential::fromIPCData(IPCData&& ipcData)
+{
+    return WTF::switchOn(WTFMove(ipcData), [](NonPlatformData&& data) {
+        return Credential { data.user, data.password, data.persistence };
+    }, [](RetainPtr<NSURLCredential>&& credential) {
+        return Credential { credential.get() };
+    });
+}
+
+auto Credential::ipcData() const -> IPCData
+{
+    if (encodingRequiresPlatformData())
+        return m_nsCredential;
+    return nonPlatformData();
+}
+
 } // namespace WebCore

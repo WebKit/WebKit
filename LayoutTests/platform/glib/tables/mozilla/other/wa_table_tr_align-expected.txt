@@ -23,37 +23,37 @@ layer at (0,0) size 785x1310
       RenderBlock (anonymous) at (0,187) size 769x73
         RenderText {#text} at (0,0) size 270x17
           text run at (0,0) width 270: "This acceptance test case tests the optional "
-        RenderInline {B} at (0,0) size 41x17
+        RenderInline {B} at (270,0) size 41x17
           RenderText {#text} at (270,0) size 41x17
             text run at (270,0) width 41: "<TR>"
         RenderText {#text} at (311,0) size 27x17
           text run at (311,0) width 27: " tag "
-        RenderInline {B} at (0,0) size 53x17
+        RenderInline {B} at (338,0) size 53x17
           RenderText {#text} at (338,0) size 53x17
             text run at (338,0) width 53: "ALIGN"
-        RenderText {#text} at (391,0) size 764x53
+        RenderText {#text} at (0,0) size 764x53
           text run at (391,0) width 179: " attribute which controls the "
           text run at (570,0) width 188: "horizontal alignment of all the"
           text run at (0,18) width 470: "cells in a row. This cause the contents of each cell in the row to be aligned "
           text run at (469,18) width 295: "either LEFT|CENTER|RIGHT with respect to"
           text run at (0,36) width 357: "the current left and right margins of the display window. "
           text run at (356,36) width 30: "The "
-        RenderInline {B} at (0,0) size 51x17
+        RenderInline {B} at (385,36) size 51x17
           RenderText {#text} at (385,36) size 51x17
             text run at (385,36) width 51: "Header"
         RenderText {#text} at (435,36) size 177x17
           text run at (435,36) width 177: " cells by default are aligned "
-        RenderInline {B} at (0,0) size 70x17
+        RenderInline {B} at (611,36) size 70x17
           RenderText {#text} at (611,36) size 70x17
             text run at (611,36) width 70: "CENTER"
         RenderText {#text} at (680,36) size 63x17
           text run at (680,36) width 63: " while the"
-        RenderInline {B} at (0,0) size 33x17
+        RenderInline {B} at (0,54) size 33x17
           RenderText {#text} at (0,54) size 33x17
             text run at (0,54) width 33: "Data"
         RenderText {#text} at (33,54) size 176x17
           text run at (33,54) width 176: " cells by default are aligned "
-        RenderInline {B} at (0,0) size 43x17
+        RenderInline {B} at (209,54) size 43x17
           RenderText {#text} at (209,54) size 43x17
             text run at (209,54) width 43: "LEFT"
         RenderText {#text} at (252,54) size 4x17
@@ -73,22 +73,22 @@ layer at (0,0) size 785x1310
             RenderTableSection {TBODY} at (0,0) size 715x70
               RenderTableRow {TR} at (0,2) size 715x32
                 RenderTableCell {TD} at (2,2) size 95x32 [r=0 c=0 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+                  RenderInline {A} at (7,7) size 81x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 81x17
                       text run at (7,7) width 81: "Test Case #1"
                 RenderTableCell {TD} at (98,2) size 615x32 [r=0 c=1 rs=1 cs=1]
-                  RenderInline {FONT} at (0,0) size 600x17 [color=#0000FF]
-                    RenderInline {B} at (0,0) size 600x17
+                  RenderInline {FONT} at (7,7) size 600x17 [color=#0000FF]
+                    RenderInline {B} at (7,7) size 600x17
                       RenderText {#text} at (7,7) size 600x17
                         text run at (7,7) width 600: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
               RenderTableRow {TR} at (0,36) size 715x32
                 RenderTableCell {TD} at (2,36) size 95x32 [r=1 c=0 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 81x17 [color=#0000EE]
+                  RenderInline {A} at (7,7) size 81x17 [color=#0000EE]
                     RenderText {#text} at (7,7) size 81x17
                       text run at (7,7) width 81: "Test Case #2"
                 RenderTableCell {TD} at (98,36) size 615x32 [r=1 c=1 rs=1 cs=1]
-                  RenderInline {FONT} at (0,0) size 594x17 [color=#0000FF]
-                    RenderInline {B} at (0,0) size 594x17
+                  RenderInline {FONT} at (7,7) size 594x17 [color=#0000FF]
+                    RenderInline {B} at (7,7) size 594x17
                       RenderText {#text} at (7,7) size 594x17
                         text run at (7,7) width 594: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
         RenderBlock {P} at (40,120) size 729x0
@@ -96,7 +96,7 @@ layer at (0,0) size 785x1310
           RenderListMarker at (-20,0) size 16x17: "2"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 130x17
+          RenderInline {B} at (281,0) size 130x17
             RenderText {#text} at (281,0) size 130x17
               text run at (281,0) width 130: "minimize/maximize"
           RenderText {#text} at (410,0) size 72x17
@@ -105,7 +105,7 @@ layer at (0,0) size 785x1310
           RenderListMarker at (-20,0) size 16x17: "3"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 122x17
+          RenderInline {B} at (281,0) size 122x17
             RenderText {#text} at (281,0) size 122x17
               text run at (281,0) width 122: "re-size left & right"
           RenderText {#text} at (402,0) size 72x17
@@ -114,7 +114,7 @@ layer at (0,0) size 785x1310
           RenderListMarker at (-20,0) size 16x17: "4"
           RenderText {#text} at (0,0) size 282x17
             text run at (0,0) width 282: "Verify that the table is maintained when you "
-          RenderInline {B} at (0,0) size 138x17
+          RenderInline {B} at (281,0) size 138x17
             RenderText {#text} at (281,0) size 138x17
               text run at (281,0) width 138: "re-size top & bottom"
           RenderText {#text} at (418,0) size 72x17
@@ -132,17 +132,17 @@ layer at (0,0) size 785x1310
           RenderTableSection {TBODY} at (1,1) size 767x60
             RenderTableRow {TR} at (0,2) size 767x56
               RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x17
+                RenderInline {A} at (15,11) size 0x17
                 RenderText {#text} at (15,11) size 95x17
                   text run at (15,11) width 95: "Test Case #1: "
-                RenderInline {FONT} at (0,0) size 601x17 [color=#0000FF]
+                RenderInline {FONT} at (109,11) size 601x17 [color=#0000FF]
                   RenderText {#text} at (109,11) size 601x17
                     text run at (109,11) width 601: "Table displaying Header \"CENTER \"& Data \"LEFT\" default horizontal row alignment"
                 RenderText {#text} at (709,11) size 5x17
                   text run at (709,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 395x31
-                  RenderInline {I} at (0,0) size 395x31
-                    RenderText {#text} at (713,13) size 395x31
+                RenderInline {FONT} at (353,13) size 395x31
+                  RenderInline {I} at (353,13) size 395x31
+                    RenderText {#text} at (353,13) size 395x31
                       text run at (713,13) width 35: "(using"
                       text run at (353,29) width 57: "<TR> tag)"
                 RenderText {#text} at (0,0) size 0x0
@@ -177,17 +177,17 @@ layer at (0,0) size 785x1310
           RenderTableSection {TBODY} at (1,1) size 767x60
             RenderTableRow {TR} at (0,2) size 767x56
               RenderTableCell {TH} at (2,2) size 763x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x17
+                RenderInline {A} at (18,11) size 0x17
                 RenderText {#text} at (18,11) size 95x17
                   text run at (18,11) width 95: "Test Case #2: "
-                RenderInline {FONT} at (0,0) size 595x17 [color=#0000FF]
+                RenderInline {FONT} at (112,11) size 595x17 [color=#0000FF]
                   RenderText {#text} at (112,11) size 595x17
                     text run at (112,11) width 595: "Tables displaying Header & Data \"LEFT|CENTER|RIGHT\" horizontal row alignment"
                 RenderText {#text} at (706,11) size 5x17
                   text run at (706,11) width 5: " "
-                RenderInline {FONT} at (0,0) size 484x31
-                  RenderInline {I} at (0,0) size 484x31
-                    RenderText {#text} at (710,13) size 484x31
+                RenderInline {FONT} at (261,13) size 484x31
+                  RenderInline {I} at (261,13) size 484x31
+                    RenderText {#text} at (261,13) size 484x31
                       text run at (710,13) width 35: "(using"
                       text run at (261,29) width 241: "<TR ALIGN=LEFT|CENTER|RIGHT> tag)"
                 RenderText {#text} at (0,0) size 0x0
@@ -224,10 +224,10 @@ layer at (0,0) size 785x1310
                     RenderInline {FONT} at (0,0) size 319x53 [color=#FF0000]
                       RenderText {#text} at (0,0) size 135x17
                         text run at (0,0) width 135: "Note: The attribute "
-                      RenderInline {FONT} at (0,0) size 105x17 [color=#0000FF]
+                      RenderInline {FONT} at (135,0) size 105x17 [color=#0000FF]
                         RenderText {#text} at (135,0) size 105x17
                           text run at (135,0) width 105: "ALIGN=LEFT"
-                      RenderText {#text} at (240,0) size 319x53
+                      RenderText {#text} at (0,0) size 319x53
                         text run at (240,0) width 48: " has no"
                         text run at (0,18) width 294: "special effect on the row data since it simply"
                         text run at (0,36) width 319: "reiterates the default horizontal row alignment!"
@@ -268,10 +268,10 @@ layer at (0,0) size 785x1310
                     RenderInline {FONT} at (0,0) size 319x53 [color=#FF0000]
                       RenderText {#text} at (0,0) size 135x17
                         text run at (0,0) width 135: "Note: The attribute "
-                      RenderInline {FONT} at (0,0) size 131x17 [color=#0000FF]
+                      RenderInline {FONT} at (135,0) size 131x17 [color=#0000FF]
                         RenderText {#text} at (135,0) size 131x17
                           text run at (135,0) width 131: "ALIGN=CENTER"
-                      RenderText {#text} at (266,0) size 319x53
+                      RenderText {#text} at (0,0) size 319x53
                         text run at (266,0) width 48: " has no"
                         text run at (0,18) width 297: "special effect on the row head since it simply"
                         text run at (0,36) width 319: "reiterates the default horizontal row alignment!"
@@ -310,7 +310,7 @@ layer at (0,0) size 785x1310
         RenderImage {IMG} at (0,1) size 13x13
         RenderText {#text} at (13,0) size 121x17
           text run at (13,0) width 121: " Created 9/9/96 by "
-        RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
+        RenderInline {A} at (134,0) size 82x17 [color=#0000EE]
           RenderText {#text} at (134,0) size 82x17
             text run at (134,0) width 82: "Ronald Greti"
         RenderBR {BR} at (216,0) size 0x17

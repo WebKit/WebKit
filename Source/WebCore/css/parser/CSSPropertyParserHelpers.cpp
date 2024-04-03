@@ -234,7 +234,7 @@ static RefPtr<CSSCalcValue> consumeCalcRawWithKnownTokenTypeFunction(CSSParserTo
     if (!CSSCalcValue::isCalcFunction(functionId))
         return nullptr;
 
-    auto calcValue = CSSCalcValue::create(functionId, consumeFunction(range), category, valueRange, symbolTable);
+    RefPtr calcValue = CSSCalcValue::create(functionId, consumeFunction(range), category, valueRange, symbolTable);
     if (calcValue && calcValue->category() == category)
         return calcValue;
 
@@ -269,7 +269,7 @@ struct IntegerTypeRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, { }, ValueRange::All)) {
             range = rangeCopy;
             // https://drafts.csswg.org/css-values-4/#integers
             // Rounding to the nearest integer requires rounding in the direction of +∞ when the fractional portion is exactly 0.5.
@@ -337,7 +337,7 @@ struct NumberRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Number, symbolTable, valueRange)) {
             if (auto validatedValue = validatedNumberRaw(value->doubleValue(), valueRange)) {
                 range = rangeCopy;
                 return validatedValue;
@@ -433,7 +433,7 @@ struct PercentRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Percent, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Percent, symbolTable, valueRange)) {
             range = rangeCopy;
 
             // FIXME: Should this validate the calc value as is done for the NumberRaw variant?
@@ -526,7 +526,7 @@ struct LengthRawKnownTokenTypeFunctionConsumer {
         ASSERT(range.peek().type() == FunctionToken);
 
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Length, symbolTable, valueRange)) {
             range = rangeCopy;
 
             // FIXME: Should this validate the calc value as is done for the NumberRaw variant?
@@ -547,7 +547,7 @@ struct LengthRawKnownTokenTypeDimensionConsumer {
         auto unitType = token.unitType();
         switch (unitType) {
         case CSSUnitType::CSS_QUIRKY_EM:
-            if (parserMode != UASheetMode)
+            if (!isUASheetBehavior(parserMode))
                 return std::nullopt;
             FALLTHROUGH;
         case CSSUnitType::CSS_EM:
@@ -675,7 +675,7 @@ struct AngleRawKnownTokenTypeFunctionConsumer {
     static std::optional<AngleRaw> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         auto rangeCopy = range;
-        if (auto value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, valueRange)) {
+        if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, CalculationCategory::Angle, symbolTable, valueRange)) {
             range = rangeCopy;
             return { { value->primitiveType(), value->doubleValue() } };
         }
@@ -857,7 +857,7 @@ struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
 
         auto rangeCopy = range;
         auto typeArg = consumeFunction(rangeCopy);
-        auto result = consumeString(typeArg);
+        RefPtr result = consumeString(typeArg);
 
         if (!result || !typeArg.atEnd())
             return nullptr;
@@ -1611,7 +1611,7 @@ RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange& range, Val
 
     switch (token.type()) {
     case FunctionToken:
-        if (auto value = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
+        if (RefPtr value = NumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid))
             return value;
         return PercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer::consume(range, { }, valueRange, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 
@@ -2045,7 +2045,7 @@ template<RGBFunctionMode Mode> static Color parseRGBParametersRaw(CSSParserToken
     auto args = consumeFunction(range);
 
     if constexpr (Mode == RGBFunctionMode::RGB) {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeRGBParametersRaw(args, context);
     }
     return parseNonRelativeRGBParametersRaw(args);
@@ -2166,7 +2166,7 @@ template<HSLFunctionMode Mode> static Color parseHSLParametersRaw(CSSParserToken
     auto args = consumeFunction(range);
 
     if constexpr (Mode == HSLFunctionMode::HSL) {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeHSLParametersRaw(args, context);
     }
 
@@ -2271,7 +2271,7 @@ static Color parseHWBParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeHWBParametersRaw(args, context);
     return parseNonRelativeHWBParametersRaw(args, context);
 }
@@ -2481,7 +2481,7 @@ static Color parseLabParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeLabParametersRaw<ColorType>(args, context);
     return parseNonRelativeLabParametersRaw<ColorType>(args);
 }
@@ -2572,7 +2572,7 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& range, const CSSParserCo
 
     auto args = consumeFunction(range);
 
-    if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+    if (args.peek().id() == CSSValueFrom)
         return parseRelativeLCHParametersRaw<ColorType>(args, context);
     return parseNonRelativeLCHParametersRaw<ColorType>(args, context);
 }
@@ -2764,7 +2764,7 @@ static Color parseColorFunctionParametersRaw(CSSParserTokenRange& range, const C
     auto args = consumeFunction(range);
 
     auto color = [&] {
-        if (context.relativeColorSyntaxEnabled && args.peek().id() == CSSValueFrom)
+        if (args.peek().id() == CSSValueFrom)
             return parseRelativeColorFunctionParameters(args, context);
         return parseNonRelativeColorFunctionParameters(args);
     }();
@@ -3020,9 +3020,6 @@ static Color parseColorMixFunctionParametersRaw(CSSParserTokenRange& range, cons
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
 
-    if (!context.colorMixEnabled)
-        return { };
-
     auto args = consumeFunction(range);
 
     if (args.peek().id() != CSSValueIn)
@@ -3066,9 +3063,6 @@ static std::optional<ColorOrUnresolvedColor> parseColorMixFunctionParameters(CSS
     // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
-
-    if (!context.colorMixEnabled)
-        return std::nullopt;
 
     auto args = consumeFunction(range);
 
@@ -3310,7 +3304,7 @@ Color consumeColorWorkerSafe(CSSParserTokenRange& range, const CSSParserContext&
         //        For now, we detect the system color, but then intentionally fail parsing.
         if (StyleColor::isSystemColorKeyword(keyword))
             return { };
-        if (!isValueAllowedInMode(keyword, context.mode))
+        if (!isColorKeywordAllowedInMode(keyword, context.mode))
             return { };
         result = StyleColor::colorFromKeyword(keyword, { });
         range.consumeIncludingWhitespace();
@@ -3331,7 +3325,7 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSPars
 {
     auto keyword = range.peek().id();
     if (StyleColor::isColorKeyword(keyword, allowedColorTypes)) {
-        if (!isValueAllowedInMode(keyword, context.mode))
+        if (!isColorKeywordAllowedInMode(keyword, context.mode))
             return nullptr;
         return consumeIdent(range);
     }
@@ -3656,11 +3650,6 @@ static std::optional<CSSGradientColorStopList> consumeDeprecatedGradientColorSto
     return { WTFMove(stops) };
 }
 
-static AlphaPremultiplication gradientAlphaPremultiplication(const CSSParserContext& context)
-{
-    return context.gradientPremultipliedAlphaInterpolationEnabled ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
-}
-
 static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (!consumeCommaIncludingWhitespace(range))
@@ -3690,7 +3679,7 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
             WTFMove(secondX),
             WTFMove(secondY)
         },
-        CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context)),
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
     );
 }
@@ -3740,7 +3729,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
             firstRadius.releaseNonNull(),
             secondRadius.releaseNonNull()
         },
-        CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context)),
+        CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied),
         WTFMove(*stops)
     );
 }
@@ -3882,16 +3871,13 @@ static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
     return CSSPrefixedRadialGradientValue::create({ WTFMove(gradientBox), WTFMove(position) },
         repeating, colorInterpolationMethod, WTFMove(*stops));
 }
 
-static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(const CSSParserContext& context, std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
+static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSSGradientColorStopList& stops)
 {
-    if (!context.gradientInterpolationColorSpacesEnabled)
-        return CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
-
     // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
     //  - A CSSValueID is always considered legacy since all keyword based colors are considered legacy by the spec.
     //  - An actual Color value is considered legacy if it is stored as 8-bit sRGB.
@@ -3917,14 +3903,14 @@ static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMeth
 
     switch (defaultColorInterpolationMethod) {
     case CSSGradientColorInterpolationMethod::Default::SRGB:
-        return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
+        return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
 
     case CSSGradientColorInterpolationMethod::Default::OKLab:
         return { { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
     }
 
     ASSERT_NOT_REACHED();
-    return { { ColorInterpolationMethod::SRGB { }, gradientAlphaPremultiplication(context) }, defaultColorInterpolationMethod };
+    return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
 }
 
 static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
@@ -3950,12 +3936,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     std::optional<CSSRadialGradientValue::ShapeKeyword> shape;
@@ -4014,12 +3998,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
         position = CSSGradientPosition { WTFMove(positionCoordinates->x), WTFMove(positionCoordinates->y) };
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if ((shape || size || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if ((shape || size || position || colorInterpolationMethod) && !consumeCommaIncludingWhitespace(range))
@@ -4029,7 +4011,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     CSSRadialGradientValue::Data data;
     if (shape) {
@@ -4172,7 +4154,7 @@ static RefPtr<CSSValue> consumePrefixedLinearGradient(CSSParserTokenRange& range
     if (!stops)
         return nullptr;
 
-    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(gradientAlphaPremultiplication(context));
+    auto colorInterpolationMethod = CSSGradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Premultiplied);
 
     return CSSPrefixedLinearGradientValue::create(
         CSSPrefixedLinearGradientValue::Data { gradientLine.value_or(std::monostate { }) },
@@ -4238,12 +4220,10 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     std::optional<CSSLinearGradientValue::GradientLine> gradientLine;
@@ -4257,12 +4237,10 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
         gradientLine = WTFMove(*keywordGradientLine);
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (gradientLine && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (gradientLine && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if (gradientLine || colorInterpolationMethod) {
@@ -4274,7 +4252,7 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     return CSSLinearGradientValue::create(
         CSSLinearGradientValue::Data { gradientLine.value_or(std::monostate { }) },
@@ -4293,12 +4271,10 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
 
     std::optional<ColorInterpolationMethod> colorInterpolationMethod;
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if (range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if (range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     RefPtr<CSSPrimitiveValue> angle;
@@ -4317,12 +4293,10 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
         position = CSSGradientPosition { WTFMove(positionCoordinate->x), WTFMove(positionCoordinate->y) };
     }
 
-    if (context.gradientInterpolationColorSpacesEnabled) {
-        if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
-            colorInterpolationMethod = consumeColorInterpolationMethod(range);
-            if (!colorInterpolationMethod)
-                return nullptr;
-        }
+    if ((angle || position) && !colorInterpolationMethod && range.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(range);
+        if (!colorInterpolationMethod)
+            return nullptr;
     }
 
     if (angle || position || colorInterpolationMethod) {
@@ -4334,7 +4308,7 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
     if (!stops)
         return nullptr;
 
-    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(context, colorInterpolationMethod, *stops);
+    auto computedColorInterpolationMethod = computeGradientColorInterpolationMethod(colorInterpolationMethod, *stops);
 
     return CSSConicGradientValue::create({
             CSSConicGradientValue::Angle { WTFMove(angle) },
@@ -4811,7 +4785,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSPar
     // case-insensitive match for "decimal", "disc", "square", "circle", "disclosure-open" and "disclosure-closed". No <counter-style-name>, prelude or not, may be an ASCII
     // case-insensitive match for "none".
     auto id = nameToken.id();
-    if (identMatches<CSSValueNone>(id) || (mode != CSSParserMode::UASheetMode && identMatches<CSSValueDecimal, CSSValueDisc, CSSValueCircle, CSSValueSquare, CSSValueDisclosureOpen, CSSValueDisclosureClosed>(id)))
+    if (identMatches<CSSValueNone>(id) || (!isUASheetBehavior(mode) && identMatches<CSSValueDecimal, CSSValueDisc, CSSValueCircle, CSSValueSquare, CSSValueDisclosureOpen, CSSValueDisclosureClosed>(id)))
         return AtomString();
     auto name = nameToken.value();
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
@@ -5159,7 +5133,7 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSSParserMode mode)
 
     auto allowsValue = [&](CSSValueID value) {
         bool isRuby = value == CSSValueRubyBase || value == CSSValueRubyText || value == CSSValueBlockRuby || value == CSSValueRuby;
-        return !isRuby || mode == CSSParserMode::UASheetMode;
+        return !isRuby || isUASheetBehavior(mode);
     };
 
     if (singleKeyword) {
@@ -8032,7 +8006,7 @@ RefPtr<CSSValue> consumeGridTrackList(CSSParserTokenRange& range, const CSSParse
     if (context.masonryEnabled && range.peek().id() == CSSValueMasonry)
         return consumeIdent(range);
     bool seenAutoRepeat = false;
-    if (trackListType == GridTemplate && context.subgridEnabled && range.peek().id() == CSSValueSubgrid) {
+    if (trackListType == GridTemplate && range.peek().id() == CSSValueSubgrid) {
         consumeIdent(range);
         CSSValueListBuilder values;
         while (!range.atEnd() && range.peek().type() != DelimiterToken) {
@@ -8443,6 +8417,15 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
 
     range = rangeCopy;
     return CSSOffsetRotateValue::create(WTFMove(modifier), WTFMove(angle));
+}
+
+RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
+{
+    if (auto noneValue = consumeIdent<CSSValueNone>(range))
+        return noneValue;
+    if (isAuto(range.peek().id()))
+        return nullptr;
+    return consumeCustomIdent(range);
 }
 
 // MARK: - @-rule descriptor consumers:

@@ -29,7 +29,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ArgumentCoders.h"
-#include "DataReference.h"
 
 namespace WebKit {
 
@@ -38,14 +37,14 @@ static size_t ruleListDataSize(size_t topURLFiltersBytecodeOffset, size_t topURL
     return topURLFiltersBytecodeOffset + topURLFiltersBytecodeSize;
 }
 
-std::optional<SharedMemoryHandle> WebCompiledContentRuleListData::createDataHandle(SharedMemory::Protection protection) const
+std::optional<WebCore::SharedMemoryHandle> WebCompiledContentRuleListData::createDataHandle(WebCore::SharedMemory::Protection protection) const
 {
     return data->createHandle(protection);
 }
 
-WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebKit::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
+WebCompiledContentRuleListData::WebCompiledContentRuleListData(String&& identifier, std::optional<WebCore::SharedMemoryHandle>&& dataHandle, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize)
     : identifier(WTFMove(identifier))
-    , data(dataHandle ? SharedMemory::map(WTFMove(*dataHandle), SharedMemory::Protection::ReadOnly) : nullptr)
+    , data(dataHandle ? WebCore::SharedMemory::map(WTFMove(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr)
     , actionsOffset(actionsOffset)
     , actionsSize(actionsSize)
     , urlFiltersBytecodeOffset(urlFiltersBytecodeOffset)

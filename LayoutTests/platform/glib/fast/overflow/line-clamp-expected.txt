@@ -36,7 +36,7 @@ layer at (8,44) size 102x74 clip at (9,45) size 100x72 scrollHeight 126
         text run at (0,72) width 80: "truncation of"
         text run at (0,90) width 60: "multi-line"
         text run at (0,108) width 27: "text."
-      RenderInline {A} at (0,0) size 34x17 [color=#0000EE]
+      RenderInline {A} at (27,108) size 34x17 [color=#0000EE]
         RenderText {#text} at (67,54) size 34x17
           text run at (67,54) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
@@ -50,7 +50,7 @@ layer at (114,98) size 102x20 clip at (115,99) size 100x18 scrollHeight 108
         text run at (0,54) width 55: "possible,"
         text run at (0,72) width 91: "truncating to 1"
         text run at (0,90) width 27: "line."
-      RenderInline {A} at (0,0) size 34x17 [color=#0000EE]
+      RenderInline {A} at (27,90) size 34x17 [color=#0000EE]
         RenderText {#text} at (61,0) size 34x17
           text run at (61,0) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
@@ -65,7 +65,7 @@ layer at (220,80) size 102x38 clip at (221,81) size 100x36 scrollHeight 108
         text run at (0,54) width 80: "truncation of"
         text run at (0,72) width 60: "multi-line"
         text run at (0,90) width 27: "text."
-      RenderInline {A} at (0,0) size 34x17 [color=#0000EE]
+      RenderInline {A} at (27,90) size 34x17 [color=#0000EE]
         RenderText {#text} at (60,18) size 34x17
           text run at (60,18) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
@@ -84,7 +84,7 @@ layer at (326,62) size 102x56 clip at (327,63) size 100x54 scrollHeight 162
         text run at (0,108) width 52: "on older"
         text run at (0,126) width 69: "versions of"
         text run at (0,144) width 53: "WebKit."
-      RenderInline {A} at (0,0) size 35x17 [color=#0000EE]
+      RenderInline {A} at (52,144) size 35x17 [color=#0000EE]
         RenderText {#text} at (66,36) size 34x17
           text run at (66,36) width 34: "More"
       RenderText {#text} at (0,0) size 0x0

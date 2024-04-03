@@ -64,7 +64,7 @@ private:
     {
     }
 
-    void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
+    void appendBytes(DocumentWriter&, std::span<const uint8_t>) final;
     void createDocumentStructure();
     static Ref<HTMLStyleElement> createStyleElement(Document&);
 
@@ -126,7 +126,7 @@ void PluginDocumentParser::createDocumentStructure()
     document.setHasVisuallyNonEmptyCustomContent();
 }
 
-void PluginDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
+void PluginDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 {
     if (m_embedElement)
         return;

@@ -67,7 +67,10 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
             continue;
-        auto isWhitespace = inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
+        auto isWhitespace = [&] {
+            auto* textItem = dynamicDowncast<InlineTextItem>(inlineItem);
+            return textItem && textItem->isWhitespace();
+        }();
         if (!isWhitespace)
             return false;
         hasWhitespace = true;
@@ -81,6 +84,8 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque())
+            continue;
+        if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem); inlineTextItem && inlineTextItem->isEmpty())
             continue;
         return false;
     }
@@ -235,11 +240,12 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
     // Now either wrap this content over to the next line or revert back to an earlier wrapping opportunity, or not wrap at all.
     auto shouldWrapUnbreakableContentToNextLine = [&] {
         // The individual runs in this continuous content don't break, let's check if we are allowed to wrap this content to next line (e.g. pre would prevent us from wrapping).
-        // Parent style drives the wrapping behavior here.
-        // e.g. <div style="white-space: nowrap">some text<div style="display: inline-block; white-space: pre-wrap"></div></div>.
-        // While the inline-block has pre-wrap which allows wrapping, the content lives in a nowrap context.
-        auto& parentLayoutBox = continuousContent.runs()[overflowingRunIndex].inlineItem.layoutBox().parent();
-        return TextUtil::isWrappingAllowed(parentLayoutBox.style());
+        // Parent style drives the wrapping behavior here in case of non-inline-box content.
+        // e.g. <div style="white-space: nowrap">no wrap<div style="display: inline-block; white-space: normal">yes wrap</div></div>.
+        // While the inline-block has pre-wrap which allows wrapping (for its own content), the content lives in a nowrap context.
+        auto& overflowingBox = continuousContent.runs()[overflowingRunIndex].inlineItem.layoutBox();
+        auto& styleToUse = overflowingBox.isInlineBox() ? overflowingBox.style() : overflowingBox.parent().style();
+        return TextUtil::isWrappingAllowed(styleToUse);
     };
     if (shouldWrapUnbreakableContentToNextLine())
         return { Result::Action::Wrap, IsEndOfLine::Yes };
@@ -665,14 +671,16 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         // FIXME: Maybe content across inline boxes should be hyphenated as well.
         if (inlineItem.isOpaque())
             continue;
-        if (!inlineItem.isText() || inlineItem.style().fontCascade() != style.fontCascade())
+        if (inlineItem.style().fontCascade() != style.fontCascade())
             return { };
 
-        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        if (inlineTextItem.isWhitespace())
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        if (!inlineTextItem)
             return { };
-        content.append(inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length()));
-        overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem.length() : 0;
+        if (inlineTextItem->isWhitespace())
+            return { };
+        content.append(inlineTextItem->inlineTextBox().content().substring(inlineTextItem->start(), inlineTextItem->length()));
+        overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem->length() : 0;
     }
     // Only non-whitespace text runs with same style.
     auto& fontCascade = style.fontCascade();
@@ -682,12 +690,12 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         return { };
 
     auto& overflowingRun = runs[overflowingRunIndex];
-    if (!is<InlineTextItem>(overflowingRun.inlineItem)) {
-        ASSERT_NOT_REACHED();
+    auto* textItem = dynamicDowncast<InlineTextItem>(overflowingRun.inlineItem);
+    ASSERT(textItem);
+    if (!textItem)
         return { };
-    }
     // Make sure we always hyphenate before the overflow.
-    auto overflowPositionWithHyphen = TextUtil::breakWord(downcast<InlineTextItem>(overflowingRun.inlineItem), fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
+    auto overflowPositionWithHyphen = TextUtil::breakWord(*textItem, fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
     auto hyphenLocation = hyphenPosition(content, overflowingRunStartPosition + overflowPositionWithHyphen, style);
     if (!hyphenLocation)
         return { };
@@ -758,9 +766,12 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     // before the whitespace content e.g.
     // <div style="line-break: after-white-space; word-wrap: break-word">before<span style="white-space: pre">   </span>after</div>
     // "before" content is not breakable sine it is _before_ the overflowing whitespace content.
-    auto isBreakingAllowedBeforeOverflowingRun = !is<InlineTextItem>(overflowingInlineItem)
-        || !downcast<InlineTextItem>(overflowingInlineItem).isWhitespace()
-        || overflowingInlineItem.style().lineBreak() != LineBreak::AfterWhiteSpace;
+    auto isBreakingAllowedBeforeOverflowingRun = [&] {
+        auto* textItem = dynamicDowncast<InlineTextItem>(overflowingInlineItem);
+        return !textItem
+            || !textItem->isWhitespace()
+            || textItem->style().lineBreak() != LineBreak::AfterWhiteSpace;
+    }();
     if (isBreakingAllowedBeforeOverflowingRun) {
         // We did not manage to break the run that overflows the line.
         // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.

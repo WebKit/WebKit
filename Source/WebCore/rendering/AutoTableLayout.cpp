@@ -52,17 +52,16 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* maxContributor = nullptr;
 
     for (auto& child : childrenOfType<RenderObject>(*m_table)) {
-        if (is<RenderTableCol>(child)) {
+        if (CheckedPtr column = dynamicDowncast<RenderTableCol>(child)) {
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
             // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
             // ancestors as dirty.
-            downcast<RenderTableCol>(child).clearPreferredLogicalWidthsDirtyBits();
-        } else if (is<RenderTableSection>(child)) {
-            auto& section = downcast<RenderTableSection>(child);
-            unsigned numRows = section.numRows();
+            column->clearPreferredLogicalWidthsDirtyBits();
+        } else if (CheckedPtr section = dynamicDowncast<RenderTableSection>(child)) {
+            unsigned numRows = section->numRows();
             for (unsigned i = 0; i < numRows; ++i) {
-                RenderTableSection::CellStruct current = section.cellAt(i, effCol);
-                RenderTableCell* cell = current.primaryCell();
+                auto current = section->cellAt(i, effCol);
+                auto* cell = current.primaryCell();
                 
                 if (current.inColSpan || !cell)
                     continue;
@@ -124,7 +123,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     default:
                         break;
                     }
-                } else if (!effCol || section.primaryCellAt(i, effCol - 1) != cell) {
+                } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
                     // This spanning cell originates in this column. Insert the cell into spanning cells list.
                     insertSpanCell(cell);
                 }
@@ -224,13 +223,13 @@ static bool shouldScaleColumnsForSelf(RenderTable* table)
                 containingBlock = containingBlock->containingBlock();
 
             table = nullptr;
-            if (is<RenderTableCell>(containingBlock)
+            CheckedPtr cell = dynamicDowncast<RenderTableCell>(containingBlock);
+            if (cell
                 && (containingBlock->style().width().isAuto() || containingBlock->style().width().isPercentOrCalculated())) {
-                RenderTableCell& cell = downcast<RenderTableCell>(*containingBlock);
-                if (cell.colSpan() > 1 || cell.table()->style().width().isAuto())
+                if (cell->colSpan() > 1 || cell->table()->style().width().isAuto())
                     scale = false;
                 else
-                    table = cell.table();
+                    table = cell->table();
             }
         }
         else

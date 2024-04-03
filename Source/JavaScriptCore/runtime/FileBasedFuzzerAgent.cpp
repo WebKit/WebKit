@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,8 +47,8 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     std::optional<SpeculatedType> generated = fuzzerPredictions.predictionFor(target.lookupKey);
 
     SourceProvider* provider = codeBlock->source().provider();
-    auto sourceUpToDivot = provider->source().substring(target.divot - target.startOffset, target.startOffset);
-    auto sourceAfterDivot = provider->source().substring(target.divot, target.endOffset);
+    auto sourceUpToDivot = provider->source().substring(target.info.divot - target.info.startOffset, target.info.startOffset);
+    auto sourceAfterDivot = provider->source().substring(target.info.divot, target.info.endOffset);
 
     switch (target.opcodeId) {
     // FIXME: these can not be targeted at all due to the bugs below
@@ -56,7 +56,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     case op_get_argument: // broken https://bugs.webkit.org/show_bug.cgi?id=203554
         return original;
 
-    // FIXME: the output of codeBlock->expressionRangeForBytecodeIndex() allows for some of
+    // FIXME: the output of codeBlock->expressionInfoForBytecodeIndex() allows for some of
     // these opcodes to have predictions, but not all instances can be reliably targeted.
     case op_get_from_scope: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203603
     case op_get_from_arguments: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203608
@@ -81,7 +81,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
                 return original;
             if (sourceUpToDivot == "..."_s)
                 return original;
-            if (!target.startOffset && !target.endOffset)
+            if (!target.info.startOffset && !target.info.endOffset)
                 return original;
         }
         break;
@@ -101,7 +101,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     }
     if (!generated) {
         if (Options::dumpFuzzerAgentPredictions())
-            dataLogLn(MAGENTA(BOLD(target.bytecodeIndex)), " ", BOLD(YELLOW(target.opcodeId)), " missing prediction for: ", RED(BOLD(target.lookupKey)), " ", GREEN(target.sourceFilename), ":", CYAN(target.line), ":", CYAN(target.column), " divot: ", target.divot, " -", target.startOffset, " +", target.endOffset, " name: '", YELLOW(codeBlock->inferredName()), "' source: '", BLUE(sourceUpToDivot), BLUE(BOLD(sourceAfterDivot)), "'");
+            dataLogLn(MAGENTA(BOLD(target.info.instPC)), " ", BOLD(YELLOW(target.opcodeId)), " missing prediction for: ", RED(BOLD(target.lookupKey)), " ", GREEN(target.sourceFilename), ":", CYAN(target.info.lineColumn.line), ":", CYAN(target.info.lineColumn.column), " divot: ", target.info.divot, " -", target.info.startOffset, " +", target.info.endOffset, " name: '", YELLOW(codeBlock->inferredName()), "' source: '", BLUE(sourceUpToDivot), BLUE(BOLD(sourceAfterDivot)), "'");
 
         RELEASE_ASSERT_WITH_MESSAGE(!Options::requirePredictionForFileBasedFuzzerAgent(), "Missing expected prediction in FuzzerAgent");
         return original;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Types.h"
 
+#include "ASTStringDumper.h"
 #include "ASTStructure.h"
 #include "TypeStore.h"
 #include <wtf/StdLibExtras.h>
@@ -57,8 +58,13 @@ void Type::dump(PrintStream& out) const
         },
         [&](const Array& array) {
             out.print("array<", *array.element);
-            if (array.size.has_value())
-                out.print(", ", *array.size);
+            WTF::switchOn(array.size,
+                [&](unsigned size) { out.print(", ", size); },
+                [&](std::monostate) { },
+                [&](AST::Expression* size) {
+                    out.print(", ");
+                    dumpNode(out, *size);
+                });
             out.print(">");
         },
         [&](const Struct& structure) {
@@ -316,7 +322,10 @@ unsigned Type::size() const
             return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
         },
         [&](const Array& array) -> unsigned {
-            return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+            unsigned size = 1;
+            if (auto* constantSize = std::get_if<unsigned>(&array.size))
+                size = *constantSize;
+            return size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
             return structure.structure.size();
@@ -428,6 +437,426 @@ unsigned Type::alignment() const
         [&](const Bottom&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         });
+}
+
+Packing Type::packing() const
+{
+    if (auto* referenceType = std::get_if<Types::Reference>(this))
+        return referenceType->element->packing();
+
+    if (auto* structType = std::get_if<Types::Struct>(this)) {
+        if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
+            return Packing::PackedStruct;
+    } else if (auto* vectorType = std::get_if<Types::Vector>(this)) {
+        if (vectorType->size == 3)
+            return Packing::PackedVec3;
+    } else if (auto* arrayType = std::get_if<Types::Array>(this))
+        return arrayType->element->packing();
+
+    return Packing::Unpacked;
+}
+
+// https://www.w3.org/TR/WGSL/#constructible-types
+bool Type::isConstructible() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+                return true;
+            case Types::Primitive::Void:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector&) -> bool {
+            return true;
+        },
+        [&](const Matrix&) -> bool {
+            return true;
+        },
+        [&](const Array& array) -> bool {
+            return array.isCreationFixed() && array.element->isConstructible();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->isConstructible())
+                    return false;
+            }
+            return true;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return true;
+        },
+
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TextureStorage&) -> bool {
+            return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Atomic&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+// https://www.w3.org/TR/WGSL/#storable
+bool Type::isStorable() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+                return true;
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector& vector) -> bool {
+            return vector.element->isStorable();
+        },
+        [&](const Matrix& matrix) -> bool {
+            return matrix.element->isStorable();
+        },
+        [&](const Array& array) -> bool {
+            return array.element->isStorable();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->isStorable())
+                    return false;
+            }
+            return true;
+        },
+        [&](const TextureStorage&) -> bool {
+            return true;
+        },
+        [&](const TextureDepth&) -> bool {
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+// https://www.w3.org/TR/WGSL/#host-shareable-types
+bool Type::isHostShareable() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+                return true;
+            case Types::Primitive::Bool:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector& vector) -> bool {
+            return vector.element->isHostShareable();
+        },
+        [&](const Matrix& matrix) -> bool {
+            return matrix.element->isHostShareable();
+        },
+        [&](const Array& array) -> bool {
+            return array.element->isHostShareable();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->isHostShareable())
+                    return false;
+            }
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const TextureStorage&) -> bool {
+            return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+// https://www.w3.org/TR/WGSL/#fixed-footprint
+bool Type::hasFixedFootprint() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+                return true;
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector&) -> bool {
+            return true;
+        },
+        [&](const Matrix&) -> bool {
+            return true;
+        },
+        [&](const Array& array) -> bool {
+            return !array.isRuntimeSized();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->hasFixedFootprint())
+                    return false;
+            }
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const TextureStorage&) -> bool {
+            return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+// https://www.w3.org/TR/WGSL/#creation-fixed-footprint
+bool Type::hasCreationFixedFootprint() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> bool {
+            switch (primitive.kind) {
+            case Types::Primitive::F16:
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+            case Types::Primitive::Bool:
+                return true;
+            case Types::Primitive::Sampler:
+            case Types::Primitive::SamplerComparison:
+            case Types::Primitive::TextureExternal:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Void:
+            case Types::Primitive::AccessMode:
+            case Types::Primitive::TexelFormat:
+            case Types::Primitive::AddressSpace:
+                return false;
+            }
+        },
+        [&](const Vector&) -> bool {
+            return true;
+        },
+        [&](const Matrix&) -> bool {
+            return true;
+        },
+        [&](const Array& array) -> bool {
+            return array.isCreationFixed();
+        },
+        [&](const Struct& structure) -> bool {
+            for (auto& member : structure.structure.members()) {
+                if (!member.type().inferredType()->hasCreationFixedFootprint())
+                    return false;
+            }
+            return true;
+        },
+        [&](const Atomic&) -> bool {
+            return true;
+        },
+
+        [&](const TextureStorage&) -> bool {
+            return false;
+        },
+        [&](const TextureDepth&) -> bool {
+            return false;
+        },
+        [&](const PrimitiveStruct&) -> bool {
+            return false;
+        },
+        [&](const Function&) -> bool {
+            return false;
+        },
+        [&](const Texture&) -> bool {
+            return false;
+        },
+        [&](const TypeConstructor&) -> bool {
+            return false;
+        },
+        [&](const Reference&) -> bool {
+            return false;
+        },
+        [&](const Pointer&) -> bool {
+            return false;
+        },
+        [&](const Bottom&) -> bool {
+            return true;
+        });
+}
+
+bool Type::containsRuntimeArray() const
+{
+    if (auto* array = std::get_if<Types::Array>(this))
+        return array->isRuntimeSized();
+    if (auto* structure = std::get_if<Types::Struct>(this))
+        return structure->structure.members().last().type().inferredType()->containsRuntimeArray();
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsRuntimeArray();
+    return false;
+}
+
+bool Type::containsOverrideArray() const
+{
+    if (auto* array = std::get_if<Types::Array>(this))
+        return array->isOverrideSized();
+    if (auto* structure = std::get_if<Types::Struct>(this))
+        return structure->structure.members().last().type().inferredType()->containsOverrideArray();
+    if (auto* reference = std::get_if<Types::Reference>(this))
+        return reference->element->containsOverrideArray();
+    return false;
+}
+
+bool Type::isTexture() const
+{
+    auto* primitive = std::get_if<Types::Primitive>(this);
+    if (primitive)
+        return primitive->kind == Types::Primitive::TextureExternal;
+    return std::holds_alternative<Types::Texture>(*this) || std::holds_alternative<Types::TextureStorage>(*this) || std::holds_alternative<Types::TextureDepth>(*this);
+}
+
+bool Type::isSampler() const
+{
+    auto* primitive = std::get_if<Types::Primitive>(this);
+    if (!primitive)
+        return false;
+    return primitive->kind == Types::Primitive::Sampler || primitive->kind == Types::Primitive::SamplerComparison;
 }
 
 bool isPrimitive(const Type* type, Primitive::Kind kind)

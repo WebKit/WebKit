@@ -30,8 +30,7 @@
 #include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "ProcessIdentity.h"
-#include <CoreGraphics/CGImage.h>
-#include <objc/objc.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)

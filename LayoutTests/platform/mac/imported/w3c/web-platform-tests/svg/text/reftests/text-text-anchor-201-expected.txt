@@ -21,17 +21,17 @@ layer at (0,0) size 800x600
             chunk 1 (end anchor) text run 1 at (95.95,114.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
     RenderSVGContainer {g} at (159,166) size 403x232
       RenderSVGText {text} at (95,100) size 242x139 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 133x19
+        RenderSVGTSpan {tspan} at (104,0) size 133x19
           RenderSVGInlineText {#text} at (104,0) size 133x19
             chunk 1 text run 1 at (200.00,114.80) startOffset 0 endOffset 17 width 132.50: "Lorem ipsum dolor"
         RenderSVGInlineText {#text} at (236,0) size 5x19
           chunk 1 text run 1 at (332.50,114.80) startOffset 0 endOffset 1 width 4.45: " "
-        RenderSVGTSpan {tspan} at (0,0) size 148x19
+        RenderSVGTSpan {tspan} at (28,60) size 148x19
           RenderSVGInlineText {#text} at (28,60) size 148x19
             chunk 1 (middle anchor) text run 1 at (123.97,174.80) startOffset 0 endOffset 21 width 147.62: "sit amet, consectetur"
         RenderSVGInlineText {#text} at (175,60) size 5x19
           chunk 1 text run 1 at (271.59,174.80) startOffset 0 endOffset 1 width 4.45: " "
-        RenderSVGTSpan {tspan} at (0,0) size 105x19
+        RenderSVGTSpan {tspan} at (0,120) size 105x19
           RenderSVGInlineText {#text} at (0,120) size 105x19
             chunk 1 (end anchor) text run 1 at (95.95,234.80) startOffset 0 endOffset 17 width 104.05: "adipisicing elit,"
         RenderSVGInlineText {#text} at (0,0) size 0x0

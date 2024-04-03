@@ -1,3 +1,0 @@
-Tests whether a compositing layer containing only canvas uses a standard DPI backing store.
-
-

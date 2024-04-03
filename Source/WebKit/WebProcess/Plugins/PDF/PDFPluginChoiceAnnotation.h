@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #include "PDFPluginAnnotation.h"
 
@@ -39,14 +39,14 @@ namespace WebKit {
 
 class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
 public:
-    static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFPluginBase*);
 
     void updateGeometry() override;
     void commit() override;
 
 private:
-    PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
-        : PDFPluginAnnotation(annotation, pdfLayerController, plugin)
+    PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
+        : PDFPluginAnnotation(annotation, plugin)
     {
     }
 
@@ -59,4 +59,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ImageBufferShareableBitmapBackend.h"
 
-#include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PixelBuffer.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
@@ -65,7 +65,7 @@ size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& 
     return ImageBufferBackend::calculateMemoryCost(parameters.backendSize, calculateBytesPerRow(parameters, parameters.backendSize));
 }
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext&)
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
     ASSERT(parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
 
@@ -76,7 +76,8 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     auto bitmap = ShareableBitmap::create({ backendSize, parameters.colorSpace });
     if (!bitmap)
         return nullptr;
-
+    if (creationContext.resourceOwner)
+        bitmap->setOwnershipOfMemory(creationContext.resourceOwner);
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return nullptr;
@@ -84,14 +85,9 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTFMove(context));
 }
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ShareableBitmap::Handle handle)
 {
-    if (!std::holds_alternative<ShareableBitmap::Handle>(handle)) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
-    auto bitmap = ShareableBitmap::create(WTFMove(std::get<ShareableBitmap::Handle>(handle)));
+    auto bitmap = ShareableBitmap::create(WTFMove(handle));
     if (!bitmap)
         return nullptr;
 
@@ -121,6 +117,12 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableBitmapBackend::creat
     return { };
 }
 
+void ImageBufferShareableBitmapBackend::transferToNewContext(const ImageBufferCreationContext& creationContext)
+{
+    if (creationContext.resourceOwner)
+        m_bitmap->setOwnershipOfMemory(creationContext.resourceOwner);
+}
+
 unsigned ImageBufferShareableBitmapBackend::bytesPerRow() const
 {
     return m_bitmap->bytesPerRow();
@@ -148,7 +150,7 @@ void ImageBufferShareableBitmapBackend::getPixelBuffer(const IntRect& srcRect, P
     ImageBufferBackend::getPixelBuffer(srcRect, m_bitmap->data(), destination);
 }
 
-void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
+void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, m_bitmap->data());
 }

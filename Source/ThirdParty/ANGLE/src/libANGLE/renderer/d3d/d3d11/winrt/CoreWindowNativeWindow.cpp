@@ -22,7 +22,7 @@ CoreWindowNativeWindow::~CoreWindowNativeWindow()
 bool CoreWindowNativeWindow::initialize(EGLNativeWindowType window, IPropertySet *propertySet)
 {
     ComPtr<IPropertySet> props = propertySet;
-    ComPtr<IInspectable> win   = window;
+    ComPtr<IInspectable> win   = reinterpret_cast<IInspectable *>(window);
     SIZE swapChainSize         = {};
     HRESULT result             = S_OK;
 
@@ -213,16 +213,20 @@ HRESULT GetCoreWindowSizeInPixels(const ComPtr<ABI::Windows::UI::Core::ICoreWind
 
 static float GetLogicalDpi()
 {
-    ComPtr<ABI::Windows::Graphics::Display::IDisplayPropertiesStatics> displayProperties;
+    ComPtr<ABI::Windows::Graphics::Display::IDisplayInformationStatics> displayInformationStatics;
+    ComPtr<ABI::Windows::Graphics::Display::IDisplayInformation> displayInformation;
 
     if (SUCCEEDED(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayProperties).Get(),
-            displayProperties.GetAddressOf())))
+            HStringReference(RuntimeClass_Windows_Graphics_Display_DisplayInformation).Get(),
+            displayInformationStatics.GetAddressOf())))
     {
-        float dpi = 96.0f;
-        if (SUCCEEDED(displayProperties->get_LogicalDpi(&dpi)))
+        if (SUCCEEDED(displayInformationStatics->GetForCurrentView(&displayInformation)))
         {
-            return dpi;
+            float dpi = 96.0f;
+            if (SUCCEEDED(displayInformation->get_LogicalDpi(&dpi)))
+            {
+                return dpi;
+            }
         }
     }
 

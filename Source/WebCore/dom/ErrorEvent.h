@@ -76,8 +76,6 @@ public:
     const JSValueInWrappedObject& originalError() const { return m_error; }
     SerializedScriptValue* serializedError() const { return m_serializedError.get(); }
 
-    EventInterface eventInterface() const override;
-
     RefPtr<SerializedScriptValue> trySerializeError(JSC::JSGlobalObject&);
 
 private:

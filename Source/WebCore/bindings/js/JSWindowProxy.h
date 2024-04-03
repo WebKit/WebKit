@@ -65,6 +65,7 @@ public:
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
+    Ref<DOMWrapperWorld> protectedWorld();
 
     void attachDebugger(JSC::Debugger*);
 

@@ -83,6 +83,17 @@ TileController::~TileController()
 #endif
 }
 
+
+void TileController::setClient(TiledBackingClient* client)
+{
+    if (client) {
+        m_client = *client;
+        return;
+    }
+
+    m_client = nullptr;
+}
+
 void TileController::tileCacheLayerBoundsChanged()
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
@@ -139,13 +150,23 @@ void TileController::setContentsScale(float contentsScale)
         tileGridsChanged();
     }
 
+    auto oldScale = tileGrid().scale();
     tileGrid().setScale(scale);
+
+    if (m_client && scale != oldScale)
+        m_client->tilingScaleFactorDidChange(scale);
+
     tileGrid().setNeedsDisplay();
 }
 
 float TileController::contentsScale() const
 {
     return tileGrid().scale() * m_deviceScaleFactor;
+}
+
+float TileController::tilingScaleFactor() const
+{
+    return tileGrid().scale();
 }
 
 float TileController::zoomedOutContentsScale() const
@@ -222,6 +243,11 @@ void TileController::setCoverageRect(const FloatRect& rect)
 
     m_coverageRect = rect;
     setNeedsRevalidateTiles();
+
+    if (!m_client)
+        return;
+
+    m_client->coverageRectDidChange(m_coverageRect);
 }
 
 bool TileController::tilesWouldChangeForCoverageRect(const FloatRect& rect) const
@@ -526,6 +552,33 @@ void TileController::didEndLiveResize()
 {
     m_inLiveResize = false;
     m_tileSizeLocked = false; // Let the end of a live resize update the tiles.
+}
+
+void TileController::willRepaintTile(TileGrid& tileGrid, TileIndex tileIndex, const FloatRect& tileClip, const FloatRect& paintDirtyRect)
+{
+    if (!m_client)
+        return;
+
+    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
+    m_client->willRepaintTile(gridIndex, tileIndex, tileClip, paintDirtyRect);
+}
+
+void TileController::willRemoveTile(TileGrid& tileGrid, TileIndex tileIndex)
+{
+    if (!m_client)
+        return;
+
+    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
+    m_client->willRemoveTile(gridIndex, tileIndex);
+}
+
+void TileController::willRepaintAllTiles(TileGrid& tileGrid)
+{
+    if (!m_client)
+        return;
+
+    unsigned gridIndex = &tileGrid == m_tileGrid.get() ? 0 : 1;
+    m_client->willRepaintAllTiles(gridIndex);
 }
 
 void TileController::notePendingTileSizeChange()

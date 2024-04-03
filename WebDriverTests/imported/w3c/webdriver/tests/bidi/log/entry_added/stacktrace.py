@@ -18,7 +18,7 @@ from . import assert_console_entry, assert_javascript_entry
     ],
 )
 async def test_console_entry_sync_callstack(
-    bidi_session, inline, top_context, wait_for_event, log_method, expect_stack
+    bidi_session, subscribe_events, inline, top_context, wait_for_event, wait_for_future_safe, log_method, expect_stack
 ):
     if log_method == "assert":
         # assert has to be called with a first falsy argument to trigger a log.
@@ -42,15 +42,15 @@ async def test_console_entry_sync_callstack(
             """
         )
 
-    await bidi_session.session.subscribe(events=["log.entryAdded"])
+    await subscribe_events(events=["log.entryAdded"])
 
     on_entry_added = wait_for_event("log.entryAdded")
 
     if expect_stack:
         expected_stack = [
-            {"columnNumber": 42, "functionName": "foo", "lineNumber": 4, "url": url},
-            {"columnNumber": 34, "functionName": "bar", "lineNumber": 5, "url": url},
-            {"columnNumber": 17, "functionName": "", "lineNumber": 6, "url": url},
+            {"columnNumber": 41, "functionName": "foo", "lineNumber": 4, "url": url},
+            {"columnNumber": 33, "functionName": "bar", "lineNumber": 5, "url": url},
+            {"columnNumber": 16, "functionName": "", "lineNumber": 6, "url": url},
         ]
     else:
         expected_stack = None
@@ -59,7 +59,7 @@ async def test_console_entry_sync_callstack(
         context=top_context["context"], url=url, wait="complete"
     )
 
-    event_data = await on_entry_added
+    event_data = await wait_for_future_safe(on_entry_added)
 
     assert_console_entry(
         event_data,
@@ -78,7 +78,7 @@ async def test_console_entry_sync_callstack(
 
 @pytest.mark.asyncio
 async def test_javascript_entry_sync_callstack(
-    bidi_session, inline, top_context, wait_for_event
+    bidi_session, subscribe_events, inline, top_context, wait_for_event, wait_for_future_safe
 ):
     url = inline(
         """
@@ -90,21 +90,21 @@ async def test_javascript_entry_sync_callstack(
         """
     )
 
-    await bidi_session.session.subscribe(events=["log.entryAdded"])
+    await subscribe_events(events=["log.entryAdded"])
 
     on_entry_added = wait_for_event("log.entryAdded")
 
     expected_stack = [
-        {"columnNumber": 36, "functionName": "foo", "lineNumber": 4, "url": url},
-        {"columnNumber": 30, "functionName": "bar", "lineNumber": 5, "url": url},
-        {"columnNumber": 13, "functionName": "", "lineNumber": 6, "url": url},
+        {"columnNumber": 35, "functionName": "foo", "lineNumber": 4, "url": url},
+        {"columnNumber": 29, "functionName": "bar", "lineNumber": 5, "url": url},
+        {"columnNumber": 12, "functionName": "", "lineNumber": 6, "url": url},
     ]
 
     await bidi_session.browsing_context.navigate(
         context=top_context["context"], url=url, wait="complete"
     )
 
-    event_data = await on_entry_added
+    event_data = await wait_for_future_safe(on_entry_added)
 
     assert_javascript_entry(
         event_data,

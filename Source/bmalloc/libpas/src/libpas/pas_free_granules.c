@@ -41,10 +41,15 @@ void pas_free_granules_compute_and_mark_decommitted(pas_free_granules* free_gran
     static const bool verbose = false;
     
     size_t granule_index;
+    uintptr_t granule_begin;
     
     PAS_ASSERT(num_granules >= 2); /* If there is only one granule then we don't have use counts. */
     PAS_ASSERT(num_granules <= PAS_MAX_GRANULES);
     
+    granule_begin = (uintptr_t)free_granules;
+    PAS_PROFILE(ZERO_FREE_GRANULES, granule_begin);
+    free_granules = (pas_free_granules*)granule_begin;
+
     pas_zero_memory(free_granules, sizeof(pas_free_granules));
 
     for (granule_index = num_granules; granule_index--;) {

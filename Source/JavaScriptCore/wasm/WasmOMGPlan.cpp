@@ -31,10 +31,10 @@
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
 #include "NativeCalleeRegistry.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmCallee.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmNameSection.h"
+#include "WasmOMGIRGenerator.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
@@ -114,7 +114,7 @@ void OMGPlan::work(CompilationEffort)
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileB3(context, callee.get(), function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
+    auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
@@ -123,7 +123,7 @@ void OMGPlan::work(CompilationEffort)
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, callee.ptr(), LinkBuffer::Profile::WasmOMG, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate())) {
         Locker locker { m_lock };
         Base::fail(makeString("Out of executable memory while tiering up function at index "_s, m_functionIndex));
@@ -138,7 +138,7 @@ void OMGPlan::work(CompilationEffort)
 
     dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
@@ -162,12 +162,16 @@ void OMGPlan::work(CompilationEffort)
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
+            Wasm::Callee* calleeCallee = nullptr;
             if (call.functionIndexSpace < m_module->moduleInformation().importFunctionCount())
                 entrypoint = m_calleeGroup->m_wasmToWasmExitStubs[call.functionIndexSpace].code();
-            else
+            else {
+                calleeCallee = &m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace);
                 entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
+            }
 
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
+            MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(calleeCallee));
         }
 
         m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());

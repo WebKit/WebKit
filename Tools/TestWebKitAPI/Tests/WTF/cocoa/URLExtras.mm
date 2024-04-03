@@ -296,13 +296,13 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
     EXPECT_STREQ([[url2 absoluteString] UTF8String], "http://%E2%89%A7%E2%88%AE%EF%B9%A3%D9%A1%DB%B1");
 
     std::array<UChar, 2> utf16 { 0xC2, 0xB6 };
-    WTF::URL url3 { String(utf16.data(), utf16.size()) };
+    WTF::URL url3 { String(utf16) };
     EXPECT_FALSE(url3.string().is8Bit());
     EXPECT_FALSE(url3.isValid());
     EXPECT_STREQ([[url3 absoluteString] UTF8String], "%C3%82%C2%B6");
     
     std::array<LChar, 2> latin1 { 0xC2, 0xB6 };
-    WTF::URL url4 { String(latin1.data(), 2) };
+    WTF::URL url4 { String(latin1) };
     EXPECT_FALSE(url4.isValid());
     EXPECT_TRUE(url4.string().is8Bit());
     EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C3%82%C2%B6");

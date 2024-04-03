@@ -44,11 +44,14 @@ enum class AXStreamOptions : uint8_t {
     OuterHTML = 1 << 4,
     DisplayContents = 1 << 5,
     Address = 1 << 6,
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    TextRuns = 1 << 7,
+#endif
 };
 
 #if !LOG_DISABLED
 
-class AXLogger {
+class AXLogger final {
 public:
     AXLogger() = default;
     AXLogger(const String& methodName);

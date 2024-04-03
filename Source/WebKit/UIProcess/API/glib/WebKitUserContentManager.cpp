@@ -478,7 +478,7 @@ void webkit_user_content_manager_unregister_script_message_handler(WebKitUserCon
  * webkit_user_content_manager_register_script_message_handler_with_reply:
  * @manager: A #WebKitUserContentManager
  * @name: Name of the script message channel
- * @world_name (nullable): the name of a #WebKitScriptWorld
+ * @world_name: (nullable): the name of a #WebKitScriptWorld
  *
  * Registers a new user script message handler in script world with name @world_name.
  *

@@ -29,6 +29,7 @@
 @implementation WKSnapshotConfiguration {
 #if PLATFORM(MAC)
     BOOL _includesSelectionHighlighting;
+    BOOL _usesContentsRect;
 #endif
     BOOL _usesTransparentBackground;
 }
@@ -43,6 +44,7 @@
 
 #if PLATFORM(MAC)
     self._includesSelectionHighlighting = YES;
+    self._usesContentsRect = NO;
 #endif
 
     return self;
@@ -81,6 +83,17 @@
 {
     _includesSelectionHighlighting = includesSelectionHighlighting;
 }
+
+- (BOOL)_usesContentsRect
+{
+    return _usesContentsRect;
+}
+
+- (void)_setUsesContentsRect:(BOOL)usesContentsRect
+{
+    _usesContentsRect = usesContentsRect;
+}
+
 #endif // PLATFORM(MAC)
 
 - (BOOL)_usesTransparentBackground

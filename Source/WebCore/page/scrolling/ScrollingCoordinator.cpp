@@ -98,7 +98,7 @@ bool ScrollingCoordinator::coordinatesScrollingForOverflowLayer(const RenderLaye
 
 ScrollingNodeID ScrollingCoordinator::scrollableContainerNodeID(const RenderObject&) const
 {
-    return 0;
+    return { };
 }
 
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const LocalFrame& frame) const
@@ -141,9 +141,10 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        if (!is<PluginViewBase>(widget))
+        auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget.get());
+        if (!pluginViewBase)
             continue;
-        if (!downcast<PluginViewBase>(widget.get()).wantsWheelEvents())
+        if (!pluginViewBase->wantsWheelEvents())
             continue;
         auto* renderWidget = RenderWidget::find(widget);
         if (!renderWidget)
@@ -247,6 +248,16 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(LocalFrameView& fra
 #endif
 }
 
+Page* ScrollingCoordinator::page() const
+{
+    return m_page.get();
+}
+
+RefPtr<Page> ScrollingCoordinator::protectedPage() const
+{
+    return m_page.get();
+}
+
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(LocalFrameView& frameView)
 {
     if (auto* renderView = frameView.frame().contentRenderer())
@@ -299,9 +310,10 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
         return false;
 
     for (auto& viewportConstrainedObject : *viewportConstrainedObjects) {
-        if (!is<RenderBoxModelObject>(viewportConstrainedObject) || !viewportConstrainedObject.hasLayer())
+        auto* viewportConstrainedBoxModelObject = dynamicDowncast<RenderBoxModelObject>(viewportConstrainedObject);
+        if (!viewportConstrainedBoxModelObject || !viewportConstrainedBoxModelObject->hasLayer())
             return true;
-        auto& layer = *downcast<RenderBoxModelObject>(viewportConstrainedObject).layer();
+        auto& layer = *viewportConstrainedBoxModelObject->layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
         if (!layer.isComposited() && layer.viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;
@@ -367,8 +379,7 @@ bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const Lo
 
 ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
 {
-    static ScrollingNodeID uniqueScrollingNodeID = 1;
-    return uniqueScrollingNodeID++;
+    return ScrollingNodeID::generate();
 }
 
 void ScrollingCoordinator::receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
@@ -388,7 +399,7 @@ void ScrollingCoordinator::deferWheelEventTestCompletionForReason(ScrollingNodeI
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+        monitor->deferForReason(nodeID, reason);
 }
 
 void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
@@ -398,7 +409,7 @@ void ScrollingCoordinator::removeWheelEventTestCompletionDeferralForReason(Scrol
         return;
 
     if (auto monitor = m_page->wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(nodeID), reason);
+        monitor->removeDeferralForReason(nodeID, reason);
 }
 
 String ScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const
@@ -431,6 +442,11 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
     }
 
     return String();
+}
+
+FrameIdentifier ScrollingCoordinator::mainFrameIdentifier() const
+{
+    return m_page->mainFrame().frameID();
 }
 
 } // namespace WebCore

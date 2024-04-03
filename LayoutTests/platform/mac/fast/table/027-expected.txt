@@ -10,27 +10,27 @@ layer at (0,0) size 800x585
               RenderText {#text} at (4,4) size 239x18
                 text run at (4,4) width 145: "   Join Now   Sign In   "
                 text run at (148,4) width 95: "   Personalize: "
-              RenderInline {A} at (0,0) size 53x18
+              RenderInline {A} at (242,4) size 53x18
                 RenderText {#text} at (242,4) size 53x18
                   text run at (242,4) width 53: "Settings"
               RenderText {#text} at (294,4) size 14x18
                 text run at (294,4) width 14: " \x{2022} "
-              RenderInline {A} at (0,0) size 52x18
+              RenderInline {A} at (307,4) size 52x18
                 RenderText {#text} at (307,4) size 52x18
                   text run at (307,4) width 52: "Content"
               RenderText {#text} at (358,4) size 15x18
                 text run at (358,4) width 15: " \x{2022} "
-              RenderInline {A} at (0,0) size 46x18
+              RenderInline {A} at (372,4) size 46x18
                 RenderText {#text} at (372,4) size 46x18
                   text run at (372,4) width 46: "Layout"
               RenderText {#text} at (417,4) size 14x18
                 text run at (417,4) width 14: " \x{2022} "
-              RenderInline {A} at (0,0) size 114x18
+              RenderInline {A} at (431,4) size 114x18
                 RenderText {#text} at (431,4) size 114x18
                   text run at (431,4) width 114: "Colors & Themes"
               RenderText {#text} at (544,4) size 15x18
                 text run at (544,4) width 15: " \x{2022} "
-              RenderInline {A} at (0,0) size 48x18
+              RenderInline {A} at (558,4) size 48x18
                 RenderText {#text} at (558,4) size 48x18
                   text run at (558,4) width 48: "Sign In"
               RenderText {#text} at (605,4) size 185x18
@@ -69,5 +69,5 @@ layer at (0,0) size 800x585
                                 text run at (2,272) width 37: "work."
                             RenderTableCell {TD} at (204,146) size 128x4 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
             RenderTableCell {TD} at (571,169) size 223x26 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (4,4) size 212x18
+              RenderImage {IMG} at (4,147) size 212x18
               RenderText {#text} at (0,0) size 0x0

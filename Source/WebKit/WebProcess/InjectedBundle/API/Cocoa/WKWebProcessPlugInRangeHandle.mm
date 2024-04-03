@@ -27,14 +27,11 @@
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 
 #import "InjectedBundleNodeHandle.h"
+#import "WKDataDetectorTypesInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/DataDetection.h>
 #import <WebCore/Range.h>
 #import <WebCore/WebCoreObjCExtras.h>
-
-#if ENABLE(DATA_DETECTION)
-#import "WKDataDetectorTypesInternal.h"
-#endif
 
 @implementation WKWebProcessPlugInRangeHandle {
     API::ObjectStorage<WebKit::InjectedBundleRangeHandle> _rangeHandle;

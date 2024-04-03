@@ -35,6 +35,8 @@ namespace WebKit {
 struct WebExtensionControllerParameters {
     WebExtensionControllerIdentifier identifier;
 
+    bool testingMode { false };
+
 #if PLATFORM(COCOA)
     Vector<WebExtensionContextParameters> contextParameters;
 #endif

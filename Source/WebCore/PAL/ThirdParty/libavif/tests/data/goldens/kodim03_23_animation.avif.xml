@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISOBaseMediaFileTrace>
+<!--MP4Box dump trace-->
+<IsoMediaFile xmlns="urn:mpeg:isobmff:schema:file:2016" Name="kodim03_23_animation.avif">
+<FileTypeBox Size="44" Type="ftyp" Specification="p12" Container="file otyp" MajorBrand="avis" MinorVersion="0">
+<BrandEntry AlternateBrand="avif"/>
+<BrandEntry AlternateBrand="avis"/>
+<BrandEntry AlternateBrand="msf1"/>
+<BrandEntry AlternateBrand="iso8"/>
+<BrandEntry AlternateBrand="mif1"/>
+<BrandEntry AlternateBrand="miaf"/>
+<BrandEntry AlternateBrand="MA1B"/>
+</FileTypeBox>
+<MetaBox Size="242" Type="meta" Version="0" Flags="0" Specification="p12" Container="file moov trak moof traf udta" >
+<HandlerBox Size="40" Type="hdlr" Version="0" Flags="0" Specification="p12" Container="mdia meta minf" hdlrType="pict" Name="libavif" reserved1="0" reserved2="data:application/octet-string,000000000000000000000000">
+</HandlerBox>
+<PrimaryItemBox Size="14" Type="pitm" Version="0" Flags="0" Specification="p12" Container="meta" item_ID="1">
+</PrimaryItemBox>
+<ItemLocationBox Size="30" Type="iloc" Version="0" Flags="0" Specification="p12" Container="meta" offset_size="4" length_size="4" base_offset_size="0" index_size="0">
+<ItemLocationEntry item_ID="1" data_reference_index="0" base_offset="0" construction_method="0">
+<ItemExtentEntry extent_offset="REDACTED" extent_length="REDACTED" extent_index="0" />
+</ItemLocationEntry>
+</ItemLocationBox>
+<ItemInfoBox Size="40" Type="iinf" Version="0" Flags="0" Specification="p12" Container="meta" >
+<ItemInfoEntryBox Size="26" Type="infe" Version="2" Flags="0" Specification="p12" Container="iinf" item_ID="1" item_protection_index="0" item_name="Color" content_type="(null)" content_encoding="(null)" item_type="av01">
+</ItemInfoEntryBox>
+</ItemInfoBox>
+<ItemPropertiesBox Size="106" Type="iprp" Specification="iff" Container="meta" >
+<ItemPropertyContainerBox Size="75" Type="ipco" Specification="iff" Container="iprp" >
+<ImageSpatialExtentsPropertyBox Size="20" Type="ispe" Version="0" Flags="0" Specification="iff" Container="ipco" image_width="768" image_height="512">
+</ImageSpatialExtentsPropertyBox>
+<PixelInformationPropertyBox Size="16" Type="pixi" Version="0" Flags="0" Specification="iff" Container="ipco" >
+<BitPerChannel bits_per_channel="8"/>
+<BitPerChannel bits_per_channel="8"/>
+<BitPerChannel bits_per_channel="8"/>
+</PixelInformationPropertyBox>
+<AV1ConfigurationBox>
+<AV1Config version="1" profile="0" level_idx0="4" tier="0" high_bitdepth="0" twelve_bit="0" monochrome="0" chroma_subsampling_x="1" chroma_subsampling_y="1" chroma_sample_position="0" initial_presentation_delay="1" OBUs_count="0">
+</AV1Config>
+</AV1ConfigurationBox>
+<ColourInformationBox Size="19" Type="colr" Specification="iff" Container="video_sample_entry ipco encv resv" colour_type="nclx" colour_primaries="1" transfer_characteristics="13" matrix_coefficients="6" full_range_flag="1">
+</ColourInformationBox>
+</ItemPropertyContainerBox>
+<ItemPropertyAssociationBox Size="23" Type="ipma" Version="0" Flags="0" Specification="iff" Container="iprp" entry_count="1">
+<AssociationEntry item_ID="1" association_count="4">
+<Property index="1" essential="0"/>
+<Property index="2" essential="0"/>
+<Property index="3" essential="1"/>
+<Property index="4" essential="0"/>
+</AssociationEntry>
+</ItemPropertyAssociationBox>
+</ItemPropertiesBox>
+</MetaBox>
+<MovieBox Size="717" Type="moov" Specification="p12" Container="file" >
+<MovieHeaderBox Size="120" Type="mvhd" Version="1" Flags="0" Specification="p12" Container="moov" CreationTime="REDACTED" ModificationTime="REDACTED" TimeScale="25" Duration="-1" NextTrackID="1">
+</MovieHeaderBox>
+<TrackBox Size="589" Type="trak" Specification="p12" Container="moov" >
+<TrackHeaderBox Size="104" Type="tkhd" Version="1" Flags="1" Specification="p12" Container="trak" CreationTime="REDACTED" ModificationTime="REDACTED" TrackID="1" Duration="-1" Width="768.00" Height="512.00">
+<Matrix m11="0x00010000" m12="0x00000000" m13="0x00000000" m21="0x00000000" m22="0x00010000" m23="0x00000000" m31="0x00000000" m32="0x00000000" m33="0x40000000"/>
+</TrackHeaderBox>
+<EditBox Size="44" Type="edts" Specification="p12" Container="trak" >
+<EditListBox Size="36" Type="elst" Version="1" Flags="1" Specification="p12" Container="edts" EntryCount="1">
+<EditListEntry Duration="2" MediaTime="0" MediaRate="1"/>
+</EditListBox>
+</EditBox>
+<MediaBox Size="433" Type="mdia" Specification="p12" Container="trak" >
+<MediaHeaderBox Size="44" Type="mdhd" Version="1" Flags="0" Specification="p12" Container="mdia" CreationTime="REDACTED" ModificationTime="REDACTED" TimeScale="25" Duration="2" LanguageCode="und">
+</MediaHeaderBox>
+<HandlerBox Size="40" Type="hdlr" Version="0" Flags="0" Specification="p12" Container="mdia meta minf" hdlrType="pict" Name="libavif" reserved1="0" reserved2="data:application/octet-string,000000000000000000000000">
+</HandlerBox>
+<MediaInformationBox Size="341" Type="minf" Specification="p12" Container="mdia" >
+<VideoMediaHeaderBox Size="20" Type="vmhd" Version="0" Flags="1" Specification="p12" Container="minf" >
+</VideoMediaHeaderBox>
+<DataInformationBox Size="36" Type="dinf" Specification="p12" Container="minf meta" >
+<DataReferenceBox Size="28" Type="dref" Version="0" Flags="0" Specification="p12" Container="dinf" >
+<URLDataEntryBox Size="12" Type="url " Version="0" Flags="1" Specification="p12" Container="dref" >
+<!--Data is contained in the movie file-->
+</URLDataEntryBox>
+</DataReferenceBox>
+</DataInformationBox>
+<SampleTableBox Size="277" Type="stbl" Specification="p12" Container="minf" >
+<SampleDescriptionBox Size="149" Type="stsd" Version="0" Flags="0" Specification="p12" Container="stbl" >
+<AV1SampleEntryBox Size="133" Type="av01" Specification="av1" Container="stsd"  DataReferenceIndex="1" Width="768" Height="512" XDPI="4718592" YDPI="4718592" BitDepth="24" CompressorName="AOM Coding"
+>
+<AV1ConfigurationBox>
+<AV1Config version="1" profile="0" level_idx0="4" tier="0" high_bitdepth="0" twelve_bit="0" monochrome="0" chroma_subsampling_x="1" chroma_subsampling_y="1" chroma_sample_position="0" initial_presentation_delay="1" OBUs_count="0">
+</AV1Config>
+</AV1ConfigurationBox>
+<ColourInformationBox Size="19" Type="colr" Specification="iff" Container="video_sample_entry ipco encv resv" colour_type="nclx" colour_primaries="1" transfer_characteristics="13" matrix_coefficients="6" full_range_flag="1">
+</ColourInformationBox>
+<CodingConstraintsBox Size="16" Type="ccst" Version="0" Flags="0" Specification="iff" Container="sample_entry" all_ref_pics_intra="0" intra_pred_used="1" max_ref_per_pic="15" reserved="0">
+</CodingConstraintsBox>
+</AV1SampleEntryBox>
+</SampleDescriptionBox>
+<TimeToSampleBox Size="24" Type="stts" Version="0" Flags="0" Specification="p12" Container="stbl" EntryCount="1">
+<TimeToSampleEntry SampleDelta="1" SampleCount="2"/>
+<!-- counted 2 samples in STTS entries -->
+</TimeToSampleBox>
+<SampleToChunkBox Size="28" Type="stsc" Version="0" Flags="0" Specification="p12" Container="stbl" EntryCount="1">
+<SampleToChunkEntry FirstChunk="1" SamplesPerChunk="2" SampleDescriptionIndex="1"/>
+<!-- counted 2 samples in STSC entries (could be less than sample count) -->
+</SampleToChunkBox>
+<SampleSizeBox Size="28" Type="stsz" Version="0" Flags="0" Specification="p12" Container="stbl" SampleCount="2">
+<SampleSizeEntry Size="REDACTED"/>
+<SampleSizeEntry Size="REDACTED"/>
+</SampleSizeBox>
+<ChunkOffsetBox Size="20" Type="stco" Version="0" Flags="0" Specification="p12" Container="stbl" EntryCount="1">
+<ChunkEntry offset="1011"/>
+</ChunkOffsetBox>
+<SyncSampleBox Size="20" Type="stss" Version="0" Flags="0" Specification="p12" Container="stbl" EntryCount="1">
+<SyncSampleEntry sampleNumber="1"/>
+</SyncSampleBox>
+</SampleTableBox>
+</MediaInformationBox>
+</MediaBox>
+</TrackBox>
+</MovieBox>
+<MediaDataBox Size="REDACTED" Type="mdat" Specification="p12" Container="file" dataSize="REDACTED">
+</MediaDataBox>
+</IsoMediaFile>
+<Tracks>
+<OBUTrack trackID="1" SampleCount="2" TimeScale="25">
+ <OBUConfig>
+ </OBUConfig>
+ <OBUSamples>
+  <Sample number="1" DTS="0" CTS="0" size="REDACTED" RAP="1" >
+   <OBU size="REDACTED" type="delimiter" header_size="2" has_size_field="1" has_ext="0" temporalID="0" spatialID="0" />
+   <OBU size="REDACTED" type="seq_header" header_size="2" has_size_field="1" has_ext="0" temporalID="0" spatialID="0" sequence_width="768" sequence_height="512" still_picture="0" OperatingPointIdc="0" profile="0" level="4" bit_depth="8" monochrome="0" color_description_present_flag="1" color_primaries="1" transfer_characteristics="13" matrix_coefficients="6" color_range="1" chroma_subsampling_x="1" chroma_subsampling_y="1" chroma_sample_position="0" film_grain_params_present="0" />
+   <OBU size="REDACTED" type="frame" header_size="4" has_size_field="1" has_ext="0" temporalID="0" spatialID="0" uncompressed_header_bytes="12" frame_type="key" refresh_frame_flags="255" show_frame="1" width="768" height="512" nb_tiles="1" >
+     <Tile number="0" start="16" size="REDACTED"/>
+   </OBU>
+  </Sample>
+
+  <Sample number="2" DTS="1" CTS="1" size="REDACTED" RAP="0" >
+   <OBU size="REDACTED" type="delimiter" header_size="2" has_size_field="1" has_ext="0" temporalID="0" spatialID="0" />
+   <OBU size="REDACTED" type="frame" header_size="4" has_size_field="1" has_ext="0" temporalID="0" spatialID="0" uncompressed_header_bytes="18" frame_type="inter" refresh_frame_flags="2" show_frame="1" width="768" height="512" nb_tiles="1" >
+     <Tile number="0" start="22" size="REDACTED"/>
+   </OBU>
+  </Sample>
+
+ </OBUSamples>
+</OBUTrack>
+</Tracks>
+</ISOBaseMediaFileTrace>

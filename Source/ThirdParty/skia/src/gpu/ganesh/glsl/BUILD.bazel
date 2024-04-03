@@ -1,0 +1,42 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+GLSL_FILES = [
+    "GrGLSLBlend.cpp",
+    "GrGLSLBlend.h",
+    "GrGLSLColorSpaceXformHelper.h",
+    "GrGLSLFragmentShaderBuilder.cpp",
+    "GrGLSLFragmentShaderBuilder.h",
+    "GrGLSLProgramBuilder.cpp",
+    "GrGLSLProgramBuilder.h",
+    "GrGLSLProgramDataManager.cpp",
+    "GrGLSLProgramDataManager.h",
+    "GrGLSLShaderBuilder.cpp",
+    "GrGLSLShaderBuilder.h",
+    "GrGLSLUniformHandler.cpp",
+    "GrGLSLUniformHandler.h",
+    "GrGLSLVarying.cpp",
+    "GrGLSLVarying.h",
+    "GrGLSLVertexGeoBuilder.cpp",
+    "GrGLSLVertexGeoBuilder.h",
+]
+
+split_srcs_and_hdrs(
+    name = "glsl",
+    files = GLSL_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":glsl_srcs"],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":glsl_hdrs"],
+    visibility = ["//src/gpu/ganesh:__pkg__"],
+)

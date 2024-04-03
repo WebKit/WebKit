@@ -1,14 +1,14 @@
 
-PASS <input dir=auto type=hidden> directionality
-PASS <input dir=auto type=text> directionality
-PASS <input dir=auto type=search> directionality
-PASS <input dir=auto type=tel> directionality
-PASS <input dir=auto type=url> directionality
-PASS <input dir=auto type=email> directionality
-PASS <input dir=auto type=password> directionality
-PASS <input dir=auto type=submit> directionality
-PASS <input dir=auto type=reset> directionality
-PASS <input dir=auto type=button> directionality
+FAIL <input dir=auto type=hidden> directionality assert_true: expected true got false
+FAIL <input dir=auto type=text> directionality assert_true: expected true got false
+FAIL <input dir=auto type=search> directionality assert_true: expected true got false
+FAIL <input dir=auto type=tel> directionality assert_true: expected true got false
+FAIL <input dir=auto type=url> directionality assert_true: expected true got false
+FAIL <input dir=auto type=email> directionality assert_true: expected true got false
+FAIL <input dir=auto type=password> directionality assert_true: expected true got false
+FAIL <input dir=auto type=submit> directionality assert_true: expected true got false
+FAIL <input dir=auto type=reset> directionality assert_true: expected true got false
+FAIL <input dir=auto type=button> directionality assert_true: expected true got false
 PASS <input dir=auto type=date> directionality
 PASS <input dir=auto type=month> directionality
 PASS <input dir=auto type=week> directionality

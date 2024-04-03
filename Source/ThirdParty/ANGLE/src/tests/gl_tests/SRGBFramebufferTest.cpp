@@ -90,13 +90,13 @@ TEST_P(SRGBFramebufferTest, BasicUsage)
     }
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
                  nullptr);
 
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     glUseProgram(mProgram);
     glUniform4fv(mColorLocation, 1, srgbColor.toNormalizedVector().data());
@@ -131,13 +131,13 @@ TEST_P(SRGBFramebufferTest, MultipleFramebuffers)
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGLES());
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
                  nullptr);
 
     GLFramebuffer framebuffer1;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     glUseProgram(mProgram);
     glUniform4fv(mColorLocation, 1, srgbColor.toNormalizedVector().data());
@@ -147,17 +147,17 @@ TEST_P(SRGBFramebufferTest, MultipleFramebuffers)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 
     GLFramebuffer framebuffer2;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
 
     glEnable(GL_FRAMEBUFFER_SRGB_EXT);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer1);
     drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2.get());
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
     drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
 }
@@ -176,12 +176,12 @@ TEST_P(SRGBFramebufferTest, NegativeAlreadyLinear)
     }
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     glUseProgram(mProgram);
     glUniform4fv(mColorLocation, 1, linearColor.toNormalizedVector().data());
@@ -213,13 +213,13 @@ TEST_P(SRGBFramebufferTest, NegativeLifetimeTracking)
     ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOpenGLES());
 
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
                  nullptr);
 
     GLFramebuffer framebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(), 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
     glUseProgram(mProgram);
     glUniform4fv(mColorLocation, 1, srgbColor.toNormalizedVector().data());
@@ -256,23 +256,21 @@ TEST_P(SRGBFramebufferTestES3, BlitFramebuffer)
     }
 
     GLTexture dstTexture;
-    glBindTexture(GL_TEXTURE_2D, dstTexture.get());
+    glBindTexture(GL_TEXTURE_2D, dstTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
                  nullptr);
     GLFramebuffer dstFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture.get(),
-                           0);
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
 
     GLTexture srcTexture;
-    glBindTexture(GL_TEXTURE_2D, srcTexture.get());
+    glBindTexture(GL_TEXTURE_2D, srcTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
                  nullptr);
 
     GLFramebuffer srcFramebuffer;
-    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer.get());
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTexture.get(),
-                           0);
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcTexture, 0);
 
     glUseProgram(mProgram);
     glUniform4fv(mColorLocation, 1, srgbColor.toNormalizedVector().data());
@@ -320,23 +318,22 @@ TEST_P(SRGBFramebufferTest, DrawToSmallFBOClearLargeFBO)
     constexpr GLsizei kDimensionsLarge[] = {2, 2};
     {
         GLTexture texture;
-        glBindTexture(GL_TEXTURE_2D, texture.get());
+        glBindTexture(GL_TEXTURE_2D, texture);
         glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, kDimensionsSmall[0], kDimensionsSmall[1]);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         GLFramebuffer framebuffer;
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(),
-                               0);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
         unsigned char vertexData[] = {0};
         GLBuffer vertexBuffer;
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(char), vertexData, GL_STATIC_DRAW);
 
         unsigned int indexData[] = {0};
         GLBuffer indexBuffer;
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int), indexData, GL_STATIC_DRAW);
 
         glUseProgram(mProgram);
@@ -347,14 +344,13 @@ TEST_P(SRGBFramebufferTest, DrawToSmallFBOClearLargeFBO)
     }
     {
         GLTexture texture;
-        glBindTexture(GL_TEXTURE_2D, texture.get());
+        glBindTexture(GL_TEXTURE_2D, texture);
         glTexStorage2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, kDimensionsLarge[0], kDimensionsLarge[1]);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         GLFramebuffer framebuffer;
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.get(),
-                               0);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
         // Vulkan validation happened to fail here with:
         // "Cannot execute a render pass with renderArea not within the bound of the framebuffer"

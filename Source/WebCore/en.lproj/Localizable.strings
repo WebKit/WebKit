@@ -85,14 +85,14 @@
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
 
+/* Codec Level (Codec Strings) */
+"%d.%d" = "%d.%d";
+
 /* label next to file upload control; parameters are the number of photos and the number of videos */
 "%lu photo(s) and %lu video(s)" = "%lu photo(s) and %lu video(s)";
 
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "%s %d×%d pixels" = "%s %d×%d pixels";
-
-/* Name of application's single WebCrypto master key in Keychain */
-"%s WebCrypto Master Key" = "%s WebCrypto Master Key";
 
 /* Present the number of selected <option> items in a <select multiple> element (iOS only) */
 "%zu Items" = "%zu Items";
@@ -121,14 +121,20 @@
 /* 2× media controls context menu playback speed label */
 "2× (Media Controls Menu Playback Speed)" = "2×";
 
-/* Name of application's single WebCrypto master key in Keychain */
-"<application> WebCrypto Master Key" = "<application> WebCrypto Master Key";
-
 /* window title for a standalone image (uses multiplication symbol, not x) */
 "<filename> %d×%d pixels" = "<filename> %d×%d pixels";
 
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
+
+/* Codec Strings */
+"AAC-LC Codec String" = "AAC-LC";
+
+/* Codec Strings */
+"AV1 (Codec String)" = "AV1";
+
+/* Codec Strings */
+"AVC (Codec String)" = "AVC";
 
 /* Actual Size context menu item */
 "Actual Size" = "Actual Size";
@@ -202,6 +208,15 @@
 /* Message for user microphone access prompt */
 "Allow “%@” to use your microphone?" = "Allow “%@” to use your microphone?";
 
+/* Informative text for requesting cross-site cookie and website data access for two or three sites. */
+"Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s and %s to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Informative text for requesting cross-site cookie and website data access for four or more sites. */
+"Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites." = "Using the same cookies and website data is required for %s, %s, and %lu other websites to work correctly, but could make it easier to track your browsing across these websites.";
+
+/* Label describing the list of related websites controlled by the same organization. */
+"Related %@ websites" = "Related %@ websites";
+
 /* WKWebExtensionErrorUnknown description */
 "An unknown error has occurred." = "An unknown error has occurred.";
 
@@ -219,6 +234,9 @@
 
 /* Label for the plain Apple Pay button. */
 "Apple Pay" = "Apple Pay";
+
+/* Message for requesting cross-site cookie and website data access. */
+"Allow related %@ websites to share cookies and website data?" = "Allow related %@ websites to share cookies and website data?";
 
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
@@ -240,6 +258,9 @@
 
 /* Back context menu item */
 "Back" = "Back";
+
+/* Codec Strings */
+"Baseline Profile (AVC Codec Profile)" = "Baseline Profile";
 
 /* Label text to be used if plugin is blocked by a page's Content Security Policy */
 "Blocked Plug-In (Blocked by page's Content Security Policy)" = "Blocked Plug-in";
@@ -373,6 +394,9 @@
 /* Title for Copy Link button */
 "Copy Link (ActionSheet)" = "Copy Link";
 
+/* Copy link to highlight context menu item */
+"Copy Link to Highlight" = "Copy Link to Highlight";
+
 /* Title for Copy Subject */
 "Copy Subject" = "Copy Subject";
 
@@ -424,14 +448,8 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
-/* Message for requesting cross-site cookie and website data access. */
-"Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?" = "Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?";
-
-/* Informative text for requesting cross-site cookie and website data access. */
-"Allowing access to website data is necessary for the website to work correctly." = "Allowing access to website data is necessary for the website to work correctly.";
-
-/* Accessory text for requesting cross-site cookie and website data access. */
-"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@" = "While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@";
+/* Codec Strings */
+"Dolby Vision Codec String" = "Dolby Vision";
 
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";
@@ -565,6 +583,9 @@
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
 
+/* Codec Strings */
+"Extended Profile (AVC Codec Profile)" = "Extended Profile";
+
 /* WKWebExtensionContextErrorAlreadyLoaded description */
 "Extension context is already loaded." = "Extension context is already loaded.";
 
@@ -585,6 +606,9 @@
 
 /* WKWebExtensionErrorInvalidIcon description for failing to load images */
 "Failed to load images in `icons` manifest entry." = "Failed to load images in `icons` manifest entry.";
+
+/* Media Element Source Type */
+"File (Media Element Source Type)" = "File";
 
 /* The requested file doesn't exist */
 "File does not exist" = "File does not exist";
@@ -634,6 +658,12 @@
 /* Inspector element selection tooltip text for items inside a Grid Container. */
 "Grid Item (Inspector Element Selection)" = "Grid Item";
 
+/* Codec Strings */
+"HEVC (Codec String)" = "HEVC";
+
+/* Media Element Source Type */
+"HLS (Media Element Source Type)" = "HLS";
+
 /* accessibility role description for web area */
 "HTML content" = "HTML content";
 
@@ -651,6 +681,24 @@
 
 /* menu item title */
 "Hide Substitutions" = "Hide Substitutions";
+
+/* Codec Strings */
+"High 10 Profile (AVC Codec Profile)" = "High 10 Profile";
+
+/* Codec Strings */
+"High 422 Profile (AVC Codec Profile)" = "High 422 Profile";
+
+/* Codec Strings */
+"High 444 Predictive Profile (AVC Codec Profile)" = "High 444 Predictive Profile";
+
+/* Codec Strings */
+"High Profile (AV1 Codec Profile)" = "High Profile, ";
+
+/* Codec Strings */
+"High Profile (AVC Codec Profile)" = "High Profile";
+
+/* Codec Strings */
+"High Tier (HEVC Codec Tier" = "High Tier";
 
 /* Phishing warning description */
 "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%." = "If you believe this website is safe, you can %report-an-error%. Or, if you understand the risks involved, you can %bypass-link%.";
@@ -675,6 +723,9 @@
 
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
+
+/* Message when a PDF fails to unlock with the given password */
+"Invalid Password" = "Invalid Password";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for commands */
 "Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
@@ -739,8 +790,92 @@
 /* Left to Right context menu item */
 "Left to Right" = "Left to Right";
 
+/* Level %d (AVC Codec Level) */
+"Level %d" = "Level %d";
+
+/* Level %d.%d (AVC Codec Level) */
+"Level %d.%d" = "Level %d.%d";
+
+/* Codec Strings */
+"Level 1b (AVC Codec Level)" = "Level 1b";
+
+/* Codec Strings */
+"Level 2.0 (AV1 Codec Level)" = "Level 2.0";
+
+/* Codec Strings */
+"Level 2.1 (AV1 Codec Level)" = "Level 2.1";
+
+/* Codec Strings */
+"Level 2.2 (AV1 Codec Level)" = "Level 2.2";
+
+/* Codec Strings */
+"Level 2.3 (AV1 Codec Level)" = "Level 2.3";
+
+/* Codec Strings */
+"Level 3.0 (AV1 Codec Level)" = "Level 3.0";
+
+/* Codec Strings */
+"Level 3.1 (AV1 Codec Level)" = "Level 3.1";
+
+/* Codec Strings */
+"Level 3.2 (AV1 Codec Level)" = "Level 3.2";
+
+/* Codec Strings */
+"Level 3.3 (AV1 Codec Level)" = "Level 3.3";
+
+/* Codec Strings */
+"Level 4.0 (AV1 Codec Level)" = "Level 4.0";
+
+/* Codec Strings */
+"Level 4.1 (AV1 Codec Level)" = "Level 4.1";
+
+/* Codec Strings */
+"Level 4.2 (AV1 Codec Level)" = "Level 4.2";
+
+/* Codec Strings */
+"Level 4.3 (AV1 Codec Level)" = "Level 4.3";
+
+/* Codec Strings */
+"Level 5.0 (AV1 Codec Level)" = "Level 5.0";
+
+/* Codec Strings */
+"Level 5.1 (AV1 Codec Level)" = "Level 5.1";
+
+/* Codec Strings */
+"Level 5.2 (AV1 Codec Level)" = "Level 5.2";
+
+/* Codec Strings */
+"Level 5.3 (AV1 Codec Level)" = "Level 5.3";
+
+/* Codec Strings */
+"Level 6.0 (AV1 Codec Level)" = "Level 6.0";
+
+/* Codec Strings */
+"Level 6.1 (AV1 Codec Level)" = "Level 6.1";
+
+/* Codec Strings */
+"Level 6.2 (AV1 Codec Level)" = "Level 6.2";
+
+/* Codec Strings */
+"Level 6.3 (AV1 Codec Level)" = "Level 6.3";
+
+/* Codec Strings */
+"Level 7.0 (AV1 Codec Level)" = "Level 7.0";
+
+/* Codec Strings */
+"Level 7.1 (AV1 Codec Level)" = "Level 7.1";
+
+/* Codec Strings */
+"Level 7.2 (AV1 Codec Level)" = "Level 7.2";
+
+/* Codec Strings */
+"Level 7.3 (AV1 Codec Level)" = "Level 7.3";
+
 /* Media controller status message when watching a live broadcast */
 "Live Broadcast" = "Live Broadcast";
+
+/* Media Element Source Type */
+"LiveStream (Media Element Source Type)" = "Live Stream";
 
 /* Load request cancelled */
 "Load request cancelled" = "Load request cancelled";
@@ -781,6 +916,27 @@
 /* Month label in date picker */
 "MONTH (Date picker for extra zoom mode)" = "MONTH";
 
+/* Codec Strings */
+"MP3 Codec String" = "MP3";
+
+/* Codec Strings */
+"MPEG-4 AAC Codec String" = "MPEG-4 AAC";
+
+/* Codec Strings */
+"Main 10 Profile (HEVC Codec Profile)" = "Main 10 Profile";
+
+/* Codec Strings */
+"Main Profile (AV1 Codec Profile)" = "Main Profile, ";
+
+/* Codec Strings */
+"Main Profile (AVC Codec Profile)" = "Main Profile";
+
+/* Codec Strings */
+"Main Profile (HEVC Codec Profile)" = "Main Profile";
+
+/* Codec Strings */
+"Main Tier (HEVC Codec Tier" = "Main Tier";
+
 /* Make Lower Case context menu item */
 "Make Lower Case" = "Make Lower Case";
 
@@ -789,6 +945,9 @@
 
 /* Malware warning title */
 "Malware Website Warning" = "Malware Website Warning";
+
+/* Media Element Source Type */
+"ManagedMediaSource (Media Element Source Type)" = "Managed Media Source";
 
 /* WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys */
 "Manifest `background` entry has missing or empty required key `scripts`, `page`, or `service_worker`." = "Manifest `background` entry has missing or empty required key `scripts`, `page`, or `service_worker`.";
@@ -802,6 +961,9 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
 "Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
 
+/* WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value */
+"Manifest `content_scripts` entry has unknown `world` value." = "Manifest `content_scripts` entry has unknown `world` value.";
+
 /* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
 "Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
 
@@ -813,6 +975,12 @@
 
 /* Validation message for input form controls requiring a constrained value according to pattern followed by a website-provided description of the pattern */
 "Match the requested format: %s" = "Match the requested format: %s";
+
+/* Media Element Source Type */
+"MediaSource (Media Element Source Type)" = "Media Source";
+
+/* Media Element Source Type */
+"MediaStream (Media Element Source Type)" = "Media Stream";
 
 /* Malware confirmation dialog */
 "Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
@@ -919,6 +1087,9 @@
 /* Open with Preview context menu item */
 "Open with Preview" = "Open with Preview";
 
+/* Codec Strings */
+"Opus Codec String" = "Opus";
+
 /* Label for the order with Apple Pay button. */
 "Order with Apple Pay" = "Order with Apple Pay";
 
@@ -976,6 +1147,9 @@
 /* Playback Speed media controls context menu title */
 "Playback Speed (Media Controls Menu)" = "Playback Speed";
 
+/* Subtitle when a PDF needs a password to be unlocked */
+"Please enter the password below." = "Please enter the password below.";
+
 /* Label text to be used when a plug-in was blocked from loading because it was too small */
 "Plug-In too small" = "Plug-In too small";
 
@@ -1001,7 +1175,13 @@
 "Previous Page" = "Previous Page";
 
 /* Title for the webarea while the accessibility tree is being built. */
-"Processing page" = "Processing page";
+"Processing page %@" = "Processing page %@";
+
+/* Codec Strings */
+"Professional Profile (AV1 Codec Profile)" = "Professional Profile, ";
+
+/* VP8/9 Codec Level & Profile (Codec Strings) */
+"Profile %d, Level %s" = "Profile %d, Level %s";
 
 /* Undo action name */
 "Raise Baseline (Undo action name)" = "Raise Baseline";
@@ -1044,9 +1224,6 @@
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
-
-/* Search in Spotlight context menu item */
-"Search in Spotlight" = "Search in Spotlight";
 
 /* Search the Web context menu item */
 "Search the Web" = "Search the Web";
@@ -1177,6 +1354,9 @@
 /* Stop speaking context menu item */
 "Stop Speaking" = "Stop Speaking";
 
+/* Media Element Source Type */
+"StoredStream (Media Element Source Type)" = "Stored Stream";
+
 /* Undo action name */
 "StrikeThrough (Undo action name)" = "StrikeThrough";
 
@@ -1215,6 +1395,9 @@
 
 /* Label for the support with Apple Pay button. */
 "Support with Apple Pay" = "Support with Apple Pay";
+
+/* Swap characters context menu item */
+"Swap characters" = "Swap characters";
 
 /* File Upload alert sheet camera button string for taking only photos */
 "Take Photo (file upload action sheet)" = "Take Photo";
@@ -1281,6 +1464,9 @@
 
 /* WKErrorMalformedCredential description */
 "This credential is malformed" = "This credential is malformed";
+
+/* Title when a PDF needs a password to be unlocked */
+"This document is password protected." = "This document is password protected.";
 
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
@@ -1426,6 +1612,12 @@
 /* The download was cancelled by the user */
 "User cancelled the download" = "User cancelled the download";
 
+/* Codec Strings */
+"VP8 (Codec String)" = "VP8";
+
+/* Codec Strings */
+"VP9 (Codec String)" = "VP9";
+
 /* Validation message for input form controls with value lower than allowed minimum */
 "Value must be greater than or equal to %@" = "Value must be greater than or equal to %@";
 
@@ -1437,6 +1629,9 @@
 
 /* Validation message for input form controls with value higher than allowed maximum */
 "Value must be less than or equal to %s" = "Value must be less than or equal to %s";
+
+/* Codec Strings */
+"Vorbis Codec String" = "Vorbis";
 
 /* Phishing warning description */
 "Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust." = "Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.";
@@ -1458,6 +1653,9 @@
 
 /* Unwanted software warning title */
 "Website With Harmful Software Warning" = "Website With Harmful Software Warning";
+
+/* Accessory text for requesting cross-site cookie and website data access. */
+"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@" = "While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@";
 
 /* Year label in date picker */
 "YEAR (Date picker for extra zoom mode)" = "YEAR";
@@ -1600,6 +1798,9 @@
 /* accessibility role description for a mark element */
 "highlighted" = "highlighted";
 
+/* accessibility label for hour fields. */
+"hour" = "hour";
+
 /* accessibility role description for image map */
 "image map" = "image map";
 
@@ -1629,6 +1830,15 @@
 
 /* An ARIA accessibility group that contains mathematical symbols. */
 "math" = "math";
+
+/* accessibility label for meridiem fields. */
+"meridiem" = "meridiem";
+
+/* accessibility label for milliseconds fields. */
+"milliseconds" = "milliseconds";
+
+/* accessibility label for minutes fields. */
+"minutes" = "minutes";
 
 /* accessibility label for a date field month input. */
 "month" = "month";
@@ -1719,6 +1929,9 @@
 
 /* An ARIA accessibility group that contains a search feature of a website. */
 "search" = "search";
+
+/* accessibility label for seconds fields. */
+"seconds" = "seconds";
 
 /* accessibility help text for jump back 30 seconds button */
 "seek movie back 30 seconds" = "seek movie back 30 seconds";

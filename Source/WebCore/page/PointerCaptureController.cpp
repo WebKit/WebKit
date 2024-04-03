@@ -124,7 +124,7 @@ bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, Point
     if (!m_haveAnyCapturingElement)
         return false;
 
-    auto capturingData = m_activePointerIdsToCapturingData.get(pointerId);
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     return capturingData && capturingData->pendingTargetOverride == capturingTarget;
 }
 
@@ -350,10 +350,12 @@ RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const M
 
     MouseButton newButton = mouseEvent.button();
     MouseButton previousMouseButton = capturingData ? capturingData->previousMouseButton : MouseButton::PointerHasNotChanged;
-    MouseButton button = [newButton, previousMouseButton, type = pointerEventType(type)] {
-        if (newButton == previousMouseButton)
-            return PointerEvent::buttonForType(type);
-        return PointerEvent::typeIsUpOrDown(type) ? newButton : MouseButton::PointerHasNotChanged;
+    MouseButton button = [&] {
+        if (!PointerEvent::typeIsUpOrDown(pointerEventType(type))) {
+            if (newButton == previousMouseButton || !pointerIsPressed)
+                return MouseButton::PointerHasNotChanged;
+        }
+        return newButton;
     }();
 
     // https://w3c.github.io/pointerevents/#chorded-button-interactions
@@ -507,10 +509,10 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
         if (capturingData->targetOverride)
             return capturingData->targetOverride;
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
         if (!localMainFrame)
             return nullptr;
-        return Ref(*localMainFrame)->eventHandler().hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
+        return localMainFrame->checkedEventHandler()->hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
     }();
 
     if (!target)

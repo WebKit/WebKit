@@ -38,6 +38,13 @@
 #include FT_MODULE_H
 #include <mutex>
 
+#ifdef HAVE_HB_FEATURES_H
+// Workaround https://github.com/harfbuzz/harfbuzz/commit/30c5402e3d0cc156fd5f04560864a88723173cf2
+#define HB_NO_SINGLE_HEADER_ERROR
+#include <hb-features.h>
+#undef HB_NO_SINGLE_HEADER_ERROR
+#endif
+
 namespace WebCore {
 
 static cairo_user_data_key_t freeTypeFaceKey;
@@ -132,7 +139,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -145,6 +152,11 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
         return nullptr;
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+{
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
@@ -166,10 +178,36 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
-bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology& technology)
 {
-    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
-    return true;
+#if USE(HARFBUZZ)
+    // https://harfbuzz.github.io/what-does-harfbuzz-do.html
+    // Many of these features *could* be disabled but hb doesn't easily expose
+    // this and it is unlikely.
+    switch (technology) {
+    case FontTechnology::ColorCbdt:
+    case FontTechnology::ColorColrv0:
+    case FontTechnology::ColorColrv1:
+    case FontTechnology::ColorSbix:
+    case FontTechnology::ColorSvg:
+    case FontTechnology::FeaturesAat:
+    case FontTechnology::FeaturesOpentype:
+    case FontTechnology::Palettes:
+    case FontTechnology::Variations:
+        return true;
+    case FontTechnology::Incremental:
+    case FontTechnology::Invalid:
+        return false;
+    case FontTechnology::FeaturesGraphite:
+#ifdef HB_HAS_GRAPHITE
+        return true;
+#else
+        return false;
+#endif
+    }
+#endif
+
+    return false;
 }
 
 }

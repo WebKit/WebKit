@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ShareableBitmapUtilities.h"
 
-#include "ShareableBitmap.h"
 #include <WebCore/CachedImage.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/GeometryUtilities.h>
@@ -38,6 +37,7 @@
 #include <WebCore/RenderElementInlines.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderVideo.h>
+#include <WebCore/ShareableBitmap.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -73,9 +73,8 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     }
 
 #if ENABLE(VIDEO)
-    if (is<RenderVideo>(renderImage)) {
-        auto& renderVideo = downcast<RenderVideo>(renderImage);
-        Ref video = renderVideo.videoElement();
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderImage)) {
+        Ref video = renderVideo->videoElement();
         auto image = video->nativeImageForCurrentTime();
         if (!image)
             return { };

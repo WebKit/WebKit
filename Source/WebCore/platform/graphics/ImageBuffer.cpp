@@ -47,6 +47,10 @@
 #if USE(CAIRO)
 #include "ImageBufferUtilitiesCairo.h"
 #endif
+#if USE(SKIA)
+#include "ImageBufferSkiaAcceleratedBackend.h"
+#include "ImageBufferUtilitiesSkia.h"
+#endif
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferIOSurfaceBackend.h"
@@ -76,6 +80,13 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         if (graphicsClient)
             creationContext.displayID = graphicsClient->displayID();
         if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
+            return imageBuffer;
+    }
+#endif
+
+#if USE(SKIA)
+    if (options.contains(ImageBufferOptions::Accelerated)) {
+        if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { }))
             return imageBuffer;
     }
 #endif
@@ -134,7 +145,7 @@ public:
         return m_buffer;
     }
 
-    size_t memoryCost() final
+    size_t memoryCost() const final
     {
         return m_buffer->memoryCost();
     }
@@ -261,7 +272,7 @@ void ImageBuffer::flushDrawingContext()
 
 bool ImageBuffer::flushDrawingContextAsync()
 {
-    // This function is only really useful for the Remote subclass, where the prefersPreparationForDisplay() == true.
+    // This function is only really useful for the Remote subclass.
     flushDrawingContext();
     return true;
 }
@@ -350,7 +361,7 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<vo
 
     if (filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext)) {
         ASSERT(targetSwitcher);
-        targetSwitcher->endDrawSourceImage(context());
+        targetSwitcher->endDrawSourceImage(context(), colorSpace());
         return copyImageBufferToNativeImage(*this, CopyBackingStore, PreserveResolution::No);
     }
 
@@ -482,9 +493,16 @@ bool ImageBuffer::setVolatile()
 
 SetNonVolatileResult ImageBuffer::setNonVolatile()
 {
+    auto result = SetNonVolatileResult::Valid;
     if (auto* backend = ensureBackend())
-        return backend->setNonVolatile();
-    return SetNonVolatileResult::Valid;
+        result = backend->setNonVolatile();
+
+    if (m_hasForcedPurgeForTesting) {
+        result = SetNonVolatileResult::Empty;
+        m_hasForcedPurgeForTesting = false;
+    }
+
+    return result;
 }
 
 VolatilityState ImageBuffer::volatilityState() const
@@ -498,6 +516,15 @@ void ImageBuffer::setVolatilityState(VolatilityState volatilityState)
 {
     if (auto* backend = ensureBackend())
         backend->setVolatilityState(volatilityState);
+}
+
+void ImageBuffer::setVolatileAndPurgeForTesting()
+{
+    releaseGraphicsContext();
+    context().clearRect(FloatRect(FloatPoint::zero(), logicalSize()));
+    releaseGraphicsContext();
+    setVolatile();
+    m_hasForcedPurgeForTesting = true;
 }
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()

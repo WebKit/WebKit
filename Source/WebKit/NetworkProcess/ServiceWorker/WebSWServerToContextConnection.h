@@ -58,9 +58,14 @@ class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
+    using WebCore::SWServerToContextConnection::weakPtrFactory;
+    using WebCore::SWServerToContextConnection::WeakValueType;
+    using WebCore::SWServerToContextConnection::WeakPtrImplType;
+
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 
+    Ref<IPC::Connection> protectedIPCConnection() const;
     IPC::Connection& ipcConnection() const;
 
     // IPC::MessageReceiver
@@ -115,8 +120,8 @@ private:
 
     void setInspectable(WebCore::ServiceWorkerIsInspectable) final;
 
-    NetworkConnectionToWebProcess& m_connection;
-    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
+    WeakRef<NetworkConnectionToWebProcess> m_connection;
+    HashMap<WebCore::FetchIdentifier, WeakRef<ServiceWorkerFetchTask>> m_ongoingFetches;
     HashMap<WebCore::FetchIdentifier, ThreadSafeWeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };
     WebPageProxyIdentifier m_webPageProxyID;

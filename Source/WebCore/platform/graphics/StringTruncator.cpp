@@ -195,7 +195,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
 static float stringWidth(const FontCascade& renderer, const UChar* characters, unsigned length)
 {
-    TextRun run(StringView(characters, length));
+    TextRun run(StringView { std::span { characters, length } });
     return renderer.width(run);
 }
 
@@ -291,7 +291,7 @@ static String truncateString(const String& string, float maxWidth, const FontCas
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer, shouldInsertEllipsis);
     }
     
-    return String(stringBuffer, truncatedLength);
+    return String({ stringBuffer, truncatedLength });
 }
 
 String StringTruncator::centerTruncate(const String& string, float maxWidth, const FontCascade& font)

@@ -41,27 +41,36 @@ extern "C" {
 #if HAVE(MACH_EXCEPTIONS)
 #include <dispatch/dispatch.h>
 #include <mach/mach.h>
+#include <mach/port.h>
+#include <mach/task.h>
 #include <mach/thread_act.h>
+#include <mach/thread_status.h>
 #endif
 
 #if OS(DARWIN)
 #include <mach/vm_param.h>
 #endif
 
+#include <unistd.h>
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PlatformRegisters.h>
+#include <wtf/Scope.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/Threading.h>
+#include <wtf/TranslatedProcess.h>
 #include <wtf/WTFConfig.h>
+
+#if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+#include <wtf/spi/darwin/SandboxSPI.h>
+#endif
+
 
 namespace WTF {
 
-#if HAVE(MACH_EXCEPTIONS)
-static exception_mask_t toMachMask(Signal);
-#endif
+Atomic<bool> fallbackToOldExceptions { false };
 
 void SignalHandlers::add(Signal signal, SignalHandler&& handler)
 {
@@ -110,8 +119,9 @@ inline void SignalHandlers::forEachHandler(Signal signal, const Func& func) cons
 // http://www.cs.cmu.edu/afs/cs/project/mach/public/doc/unpublished/mig.ps
 
 static constexpr size_t maxMessageSize = 1 * KB;
+uint32_t randomSigningKey = 0;
 
-void initMachExceptionHandlerThread(bool enable)
+void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_mask_t mask)
 {
     static std::once_flag once;
     std::call_once(once, [=] {
@@ -124,9 +134,15 @@ void initMachExceptionHandlerThread(bool enable)
         Config::AssertNotFrozenScope assertScope;
         SignalHandlers& handlers = g_wtfConfig.signalHandlers;
 
-        uint16_t flags = 0;
+        uint16_t flags = MPO_INSERT_SEND_RIGHT;
+
+// This provisional flag can be removed once macos sonoma is no longer supported
 #ifdef MPO_PROVISIONAL_ID_PROT_OPTOUT
         flags |= MPO_PROVISIONAL_ID_PROT_OPTOUT;
+#endif
+
+#if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+        flags |= MPO_EXCEPTION_PORT;
 #endif
         mach_port_options_t opts = {
             .flags = flags
@@ -134,8 +150,27 @@ void initMachExceptionHandlerThread(bool enable)
 
         kern_return_t kr = mach_port_construct(mach_task_self(), &opts, 0, &handlers.exceptionPort);
         RELEASE_ASSERT(kr == KERN_SUCCESS);
-        kr = mach_port_insert_right(mach_task_self(), handlers.exceptionPort, handlers.exceptionPort, MACH_MSG_TYPE_MAKE_SEND);
-        RELEASE_ASSERT(kr == KERN_SUCCESS);
+
+#if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+        uint64_t exceptionsAllowed = mask;
+        uint64_t behaviorsAllowed = EXCEPTION_STATE_IDENTITY_PROTECTED | MACH_EXCEPTION_CODES;
+        uint64_t flavorsAllowed = MACHINE_THREAD_STATE;
+
+        int ret = sandbox_check(getpid(), "user-preference-read", static_cast<sandbox_filter_type>(SANDBOX_CHECK_NO_REPORT | SANDBOX_FILTER_PREFERENCE_DOMAIN), "com.apple.webkit-new-sandbox-test");
+        if (ret == 1) {
+            fallbackToOldExceptions.store(true);
+        } else if (!ret) {
+            kr = task_register_hardened_exception_handler(current_task(), signingKey, exceptionsAllowed,
+                behaviorsAllowed, flavorsAllowed, handlers.exceptionPort);
+            if (kr != KERN_SUCCESS)
+                fallbackToOldExceptions.store(true);
+        } else
+            RELEASE_ASSERT_NOT_REACHED(ret);
+
+#else
+        UNUSED_PARAM(signingKey);
+        UNUSED_PARAM(mask);
+#endif
 
         dispatch_source_t source = dispatch_source_create(
             DISPATCH_SOURCE_TYPE_MACH_RECV, handlers.exceptionPort, 0, DISPATCH_TARGET_QUEUE_DEFAULT);
@@ -165,18 +200,6 @@ static Signal fromMachException(exception_type_t type)
     default: break;
     }
     return Signal::Unknown;
-}
-
-static exception_mask_t toMachMask(Signal signal)
-{
-    switch (signal) {
-    case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
-    case Signal::IllegalInstruction: return EXC_MASK_BAD_INSTRUCTION;
-    case Signal::FloatingPoint: return EXC_MASK_ARITHMETIC;
-    case Signal::Breakpoint: return EXC_MASK_BREAKPOINT;
-    default: break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 #if CPU(ARM64E) && OS(DARWIN)
@@ -222,6 +245,53 @@ kern_return_t catch_mach_exception_raise_state_identity(mach_port_t, mach_port_t
     return KERN_FAILURE;
 }
 
+static kern_return_t runSignalHandlers(Signal &signal, PlatformRegisters& registers, bool &didHandle, mach_msg_type_number_t dataCount, mach_exception_data_t exceptionData)
+{
+    SigInfo info;
+    SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    if (signal == Signal::AccessFault) {
+        ASSERT_UNUSED(dataCount, dataCount == 2);
+        info.faultingAddress = reinterpret_cast<void*>(exceptionData[1]);
+#if CPU(ADDRESS64)
+        // If the faulting address is out of the range of any valid memory, we would
+        // not have any reason to handle it. Just let the default handler take care of it.
+        static constexpr unsigned validAddressBits = OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
+        static constexpr uintptr_t invalidAddressMask = ~((1ull << validAddressBits) - 1);
+        if (bitwise_cast<uintptr_t>(info.faultingAddress) & invalidAddressMask)
+            return KERN_FAILURE;
+#endif
+    }
+
+    handlers.forEachHandler(signal, [&] (const SignalHandler& handler) {
+        SignalAction handlerResult = handler(signal, info, registers);
+        didHandle |= handlerResult == SignalAction::Handled;
+    });
+    return KERN_SUCCESS;
+}
+
+#if defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+
+kern_return_t catch_mach_exception_raise_state_identity_protected(
+    mach_port_t exceptionPort,
+    uint64_t threadID,
+    mach_port_t taskIDToken,
+    exception_type_t exceptionType,
+    mach_exception_data_t exceptionData,
+    mach_msg_type_number_t dataCount,
+    int* stateFlavor,
+    const thread_state_t inState,
+    mach_msg_type_number_t inStateCount,
+    thread_state_t outState,
+    mach_msg_type_number_t* outStateCount)
+{
+    UNUSED_PARAM(threadID);
+    UNUSED_PARAM(taskIDToken);
+    return catch_mach_exception_raise_state(exceptionPort, exceptionType, exceptionData,
+        dataCount, stateFlavor, inState, inStateCount, outState, outStateCount);
+}
+
+#endif // defined(EXCEPTION_STATE_IDENTITY_PROTECTED)
+
 kern_return_t catch_mach_exception_raise_state(
     mach_port_t port,
     exception_type_t exceptionType,
@@ -263,25 +333,10 @@ kern_return_t catch_mach_exception_raise_state(
     PlatformRegisters& registers = reinterpret_cast<arm_unified_thread_state*>(outState)->ts_32;
 #endif
 
-    SigInfo info;
-    if (signal == Signal::AccessFault) {
-        ASSERT_UNUSED(dataCount, dataCount == 2);
-        info.faultingAddress = reinterpret_cast<void*>(exceptionData[1]);
-#if CPU(ADDRESS64)
-        // If the faulting address is out of the range of any valid memory, we would
-        // not have any reason to handle it. Just let the default handler take care of it.
-        static constexpr unsigned validAddressBits = OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
-        static constexpr uintptr_t invalidAddressMask = ~((1ull << validAddressBits) - 1);
-        if (bitwise_cast<uintptr_t>(info.faultingAddress) & invalidAddressMask)
-            return KERN_FAILURE;
-#endif
-    }
-
     bool didHandle = false;
-    handlers.forEachHandler(signal, [&] (const SignalHandler& handler) {
-        SignalAction handlerResult = handler(signal, info, registers);
-        didHandle |= handlerResult == SignalAction::Handled;
-    });
+    kern_return_t kr = runSignalHandlers(signal, registers, didHandle, dataCount, exceptionData);
+    if (kr != KERN_SUCCESS)
+        return kr;
 
     if (didHandle) {
 #if CPU(ARM64E) && OS(DARWIN)
@@ -307,11 +362,21 @@ inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& t
 {
     UNUSED_PARAM(threadGroupLocker);
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-    kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.addedExceptions &activeExceptions, handlers.exceptionPort, EXCEPTION_STATE | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE);
-    if (result != KERN_SUCCESS) {
-        dataLogLn("thread set port failed due to ", mach_error_string(result));
-        CRASH();
+
+#if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+    // If we are a translated process in rosetta or failed to set up a hardened handler, use the old exception style
+    if (!WTF::isX86BinaryRunningOnARM() && !fallbackToOldExceptions.loadRelaxed()) {
+        // Otherwise use the new style
+        const exception_behavior_t newBehavior = MACH_EXCEPTION_CODES | EXCEPTION_STATE_IDENTITY_PROTECTED;
+        kern_return_t result = thread_adopt_exception_handler(thread.machThread(), handlers.exceptionPort, handlers.addedExceptions & activeExceptions, newBehavior, MACHINE_THREAD_STATE);
+        RELEASE_ASSERT_WITH_MESSAGE(result == KERN_SUCCESS, "thread adopt port failed due to %s", mach_error_string(result));
+        return;
     }
+#endif // CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+
+    const exception_behavior_t newBehavior = MACH_EXCEPTION_CODES | EXCEPTION_STATE;
+    kern_return_t result = thread_set_exception_ports(thread.machThread(), handlers.addedExceptions & activeExceptions, handlers.exceptionPort, newBehavior, MACHINE_THREAD_STATE);
+    RELEASE_ASSERT_WITH_MESSAGE(result == KERN_SUCCESS, "thread set port failed due to %s", mach_error_string(result));
 }
 
 static ThreadGroup& activeThreads()
@@ -418,10 +483,20 @@ void activateSignalHandlersFor(Signal signal)
     ASSERT(signal < Signal::Unknown);
     ASSERT(!handlers.useMach || signal != Signal::Usr);
 
+    if (handlers.useMach)
+        activeExceptions |= toMachMask(signal);
+#endif
+}
+
+
+void finalizeSignalHandlers()
+{
+#if HAVE(MACH_EXCEPTIONS)
+    const SignalHandlers& handlers = g_wtfConfig.signalHandlers;
+    RELEASE_ASSERT(handlers.initState >= SignalHandlers::InitState::InitializedHandlerThread);
+
     Locker locker { activeThreads().getLock() };
     if (handlers.useMach) {
-        activeExceptions |= toMachMask(signal);
-
         for (auto& thread : activeThreads().threads(locker))
             setExceptionPorts(locker, thread.get());
     }

@@ -34,6 +34,7 @@
 #import "EventHandler.h"
 #import "HTMLMediaElement.h"
 #import "HitTestResult.h"
+#import "LocalFrameView.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
 #import "SharedBuffer.h"
@@ -137,7 +138,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
     if (!range)
         return nullptr;
 
-    return RefPtr<Range> { createLiveRange(std::get<SimpleRange>(*range)) };
+    return RefPtr<Range> { createLiveRange(*range) };
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)
@@ -154,6 +155,16 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 
     NSScrollerStyle style = enabled ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
     [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
+
+    auto* document = contextDocument();
+    if (!document || !document->frame())
+        return;
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(document->frame()->mainFrame());
+    if (!localFrame)
+        return;
+
+    localFrame->view()->scrollbarStyleDidChange();
 }
 
 #endif
@@ -161,7 +172,7 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 #if ENABLE(VIDEO)
 double Internals::privatePlayerVolume(const HTMLMediaElement& element)
 {
-    auto corePlayer = element.player();
+    RefPtr corePlayer = element.player();
     if (!corePlayer)
         return 0;
     auto player = corePlayer->objCAVFoundationAVPlayer();
@@ -172,7 +183,7 @@ double Internals::privatePlayerVolume(const HTMLMediaElement& element)
 
 bool Internals::privatePlayerMuted(const HTMLMediaElement& element)
 {
-    auto corePlayer = element.player();
+    RefPtr corePlayer = element.player();
     if (!corePlayer)
         return false;
     auto player = corePlayer->objCAVFoundationAVPlayer();

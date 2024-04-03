@@ -77,8 +77,8 @@ size_t MediaSampleByteRange::sizeInBytes() const
 
 WebCore::FloatSize MediaSampleByteRange::presentationSize() const
 {
-    if (m_block.isVideo())
-        return downcast<const VideoInfo>(m_block.info())->displaySize;
+    if (auto* videoInfo = dynamicDowncast<VideoInfo>(m_block.info()))
+        return videoInfo->displaySize;
     return { };
 }
 

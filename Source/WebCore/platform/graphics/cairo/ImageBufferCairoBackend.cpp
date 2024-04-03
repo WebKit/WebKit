@@ -44,7 +44,6 @@ namespace WebCore {
 
 void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     if (m_parameters.colorSpace == newColorSpace)
         return;
 
@@ -78,11 +77,6 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
         }();
         platformTransformColorSpace(deviceRgbLUT);
     }
-#else
-    ASSERT(newColorSpace == DestinationColorSpace::SRGB());
-    ASSERT(m_parameters.colorSpace == DestinationColorSpace::SRGB());
-    UNUSED_PARAM(newColorSpace);
-#endif
 }
 
 } // namespace WebCore

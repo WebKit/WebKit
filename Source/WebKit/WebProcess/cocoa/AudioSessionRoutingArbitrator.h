@@ -43,7 +43,7 @@ public:
     explicit AudioSessionRoutingArbitrator(WebProcess&);
     virtual ~AudioSessionRoutingArbitrator();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 

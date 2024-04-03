@@ -108,7 +108,7 @@ ApplePayAMSUIPaymentHandler::ApplePayAMSUIPaymentHandler(Document& document, con
 
 Document& ApplePayAMSUIPaymentHandler::document() const
 {
-    ASSERT(is<Document>(scriptExecutionContext()));
+    ASSERT(scriptExecutionContext());
     return downcast<Document>(*scriptExecutionContext());
 }
 
@@ -128,11 +128,11 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::convertData(Document& document, J
     return { };
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::show(Document& document)
+ExceptionOr<void> ApplePayAMSUIPaymentHandler::show(Document&)
 {
     ASSERT(m_applePayAMSUIRequest);
 
-    if (!page().startApplePayAMSUISession(document.topDocument().url(), *this, *m_applePayAMSUIRequest))
+    if (!page().startApplePayAMSUISession(page().mainFrameURL(), *this, *m_applePayAMSUIRequest))
         return Exception { ExceptionCode::AbortError };
 
     return { };

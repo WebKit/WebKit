@@ -6,10 +6,10 @@ layer at (0,0) size 800x297
       RenderBlock {P} at (0,0) size 784x37
         RenderText {#text} at (0,1) size 491x18
           text run at (0,1) width 491: "There should be a solid blue line directly over every occurance of the word \""
-        RenderInline {SPAN} at (0,0) size 63x20 [border: (2px solid #0000FF) none]
+        RenderInline {SPAN} at (490,-1) size 63x20 [border: (2px solid #0000FF) none]
           RenderText {#text} at (490,1) size 63x18
             text run at (490,1) width 63: "HERE \x{21E7}"
-        RenderText {#text} at (552,1) size 769x36
+        RenderText {#text} at (0,1) size 769x36
           text run at (552,1) width 217: "\". (So there should be 8 blue lines"
           text run at (0,19) width 87: "on this page.)"
       RenderTable {TABLE} at (0,53) size 140x79
@@ -20,7 +20,7 @@ layer at (0,0) size 800x297
                 text run at (36,4) width 63: "HERE \x{21E7}"
           RenderTableRow {TR} at (0,27) size 140x50
             RenderTableCell {TD} at (2,40) size 64x24 [border: (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,3) size 62x20
+              RenderText {#text} at (1,17) size 62x19
                 text run at (1,4) width 62: "HERE \x{21E7}"
             RenderTableCell {TD} at (67,27) size 71x50 [border: (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (1,3) size 68x19

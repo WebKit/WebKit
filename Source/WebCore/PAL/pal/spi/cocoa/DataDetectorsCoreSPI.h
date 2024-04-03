@@ -30,6 +30,8 @@ typedef struct __DDResult *DDResultRef;
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <DataDetectorsCore/DDBinderKeys_Private.h>
+#import <DataDetectorsCore/DDScanQuery_Private.h>
+#import <DataDetectorsCore/DDScanner.h>
 #import <DataDetectorsCore/DDScannerResult.h>
 #import <DataDetectorsCore/DataDetectorsCore.h>
 
@@ -86,6 +88,14 @@ typedef enum __DDTextFragmentType {
     DDTextFragmentTypeIgnoreCRLF =  0x2,
 } DDTextFragmentMode;
 
+#if HAVE(DDSCANNER_QOS_CONFIGURATION)
+typedef enum __DDQOS {
+    DDQOSRegular = 0
+    DDQOSEnhanced = 2,
+    DDQOSHighest = 4,
+} DDQOS;
+#endif
+
 extern CFStringRef const DDBinderHttpURLKey;
 extern CFStringRef const DDBinderWebURLKey;
 extern CFStringRef const DDBinderMailURLKey;
@@ -97,6 +107,7 @@ extern CFStringRef const DDBinderParsecSourceKey;
 extern CFStringRef const DDBinderSignatureBlockKey;
 
 @interface DDScannerResult : NSObject <NSCoding, NSSecureCoding>
+@property (readonly, nonatomic) NSRange urlificationRange;
 + (NSArray *)resultsFromCoreResults:(CFArrayRef)coreResults;
 - (DDResultRef)coreResult;
 @end
@@ -113,12 +124,44 @@ typedef struct __DDQueryRange {
     DDQueryOffset end;
 } DDQueryRange;
 
+typedef struct __DDQueryFragment {
+    CFStringRef string;
+    void *identifier;
+    CFRange range;
+    CFIndex absoluteOffset;
+    CFIndex contextOffset:26;
+    DDTextCoalescingType coalescing:3;
+    DDTextFragmentMode mode:2;
+    Boolean lineBreakDoesNotCoalesce:1;
+} DDQueryFragment;
+
+struct __DDScanQuery {
+    uint8_t _cfBase[16]; // 16 bytes; the size of the real type, CFRuntimeBase.
+    DDQueryFragment *fragments;
+    CFIndex capacity;
+    CFIndex numberOfFragments;
+    void (*releaseCallBack)(void * context, void * identifier);
+    void *context;
+};
+
 #endif // !USE(APPLE_INTERNAL_SDK)
 
 static_assert(sizeof(DDQueryOffset) == 8, "DDQueryOffset is no longer 8 bytes. Update the definition of DDQueryOffset in this file to match the new size.");
 
 typedef struct __DDScanQuery *DDScanQueryRef;
 typedef struct __DDScanner *DDScannerRef;
+
+#if !USE(APPLE_INTERNAL_SDK)
+static inline DDQueryFragment *DDScanQueryGetFragmentAtIndex(DDScanQueryRef query, CFIndex anIndex)
+{
+    return &query->fragments[anIndex];
+}
+
+static inline CFIndex _DDScanQueryGetNumberOfFragments(DDScanQueryRef query)
+{
+    return query->numberOfFragments;
+}
+#endif
 
 typedef CFIndex DDScannerCopyResultsOptions;
 typedef CFIndex DDScannerOptions;
@@ -148,7 +191,11 @@ bool DDResultHasProperties(DDResultRef, CFIndex propertySet);
 CFArrayRef DDResultGetSubResults(DDResultRef);
 DDQueryRange DDResultGetQueryRangeForURLification(DDResultRef);
 void DDResultDisableURLSchemeChecking();
+
+#if HAVE(DDSCANNER_QOS_CONFIGURATION)
+void DDScannerSetQOS(DDScannerRef, DDQOS);
+#endif
+
 WTF_EXTERN_C_END
 
 #endif
-

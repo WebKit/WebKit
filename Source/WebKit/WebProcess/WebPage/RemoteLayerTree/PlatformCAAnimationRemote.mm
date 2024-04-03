@@ -27,6 +27,7 @@
 #import "PlatformCAAnimationRemote.h"
 
 #import "ArgumentCoders.h"
+#import "CAFrameRateRangeUtilities.h"
 #import "RemoteLayerTreeHost.h"
 #import "WKAnimationDelegate.h"
 #import "WebCoreArgumentCoders.h"
@@ -601,6 +602,12 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
 
         [caAnimation setDelegate:delegate.get()];
     }
+
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+    // Opt into a higher frame-rate for displays that support higher refresh rates.
+    [caAnimation setPreferredFrameRateRange:WebKit::highFrameRateRange()];
+    [caAnimation setHighFrameRateReason:WebKit::webAnimationHighFrameRateReason];
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
 
     return caAnimation;
 }

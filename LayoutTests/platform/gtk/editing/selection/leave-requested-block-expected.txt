@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 126x17
           text run at (0,0) width 126: "Test case for fix for "
-        RenderInline {A} at (0,0) size 344x17 [color=#0000EE]
+        RenderInline {A} at (125,0) size 344x17 [color=#0000EE]
           RenderText {#text} at (125,0) size 344x17
             text run at (125,0) width 344: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
         RenderText {#text} at (468,0) size 5x17

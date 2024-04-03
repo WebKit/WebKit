@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x500
+  RenderSVGRoot {svg} at (0,0) size 500x500
+layer at (0,0) size 500x500
+  RenderSVGViewportContainer at (0,0) size 500x500
+layer at (0,0) size 3x3
+  RenderSVGResourceMarker {marker} at (0,0) size 3x3
+layer at (0,-25) size 25x50 backgroundClip at (0,0) size 500x500 clip at (0,0) size 500x500
+  RenderSVGPath {path} at (0,-25) size 25x50 [fill={[type=SOLID] [color=#008000]}] [data="M 25 0 L 0 -25 L 0 25 Z"]
+layer at (40,40) size 380x380
+  RenderSVGPath {path} at (40,40) size 380x380 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 40 40 L 180 180 L 420 420"]
+layer at (40,200) size 200x200
+  RenderSVGPath {path} at (40,200) size 200x200 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 40 400 L 140 300 L 240 200"]
+layer at (160,40) size 40x40
+  RenderSVGPath {path} at (160,40) size 40x40 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 160 40 C 200 40 200 40 200 80"]
+layer at (260,39.98) size 200x201
+  RenderSVGPath {path} at (260,39.98) size 200x200.02 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 260 140 C 260 84.7715 304.772 40 360 40 C 415.228 40 460 84.7715 460 140 C 460 195.228 415.228 240 360 240"]
+layer at (340,100) size 50x50
+  RenderSVGPath {path} at (340,100) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=arrow] [middle marker=arrow] [end marker=arrow] [data="M 340 100 L 390 100 L 390 150 L 340 150 Z"]

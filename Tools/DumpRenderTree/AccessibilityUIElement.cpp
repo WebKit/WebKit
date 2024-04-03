@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 
 #include <JavaScriptCore/JSObjectRef.h>
@@ -2212,4 +2210,3 @@ JSClassRef AccessibilityUIElement::getJSClass()
     static JSClassRef accessibilityUIElementClass = JSClassCreate(&classDefinition);
     return accessibilityUIElementClass;
 }
-#endif

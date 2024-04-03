@@ -81,7 +81,7 @@ void GamepadLibWPE::absoluteAxisChanged(unsigned axis, double value)
     m_lastUpdateTime = MonotonicTime::now();
     m_axisValues[axis].setValue(value);
 
-    GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, GamepadProviderLibWPE::ShouldMakeGamepadsVisible::No);
+    GamepadProviderLibWPE::singleton().scheduleInputNotification(*this, GamepadProviderLibWPE::ShouldMakeGamepadsVisible::Yes);
 }
 
 } // namespace WebCore

@@ -54,10 +54,7 @@ static constexpr unsigned textPreviewLength = 500;
 
 static RefPtr<Node> findNodeByPathIndex(const Node& parent, unsigned pathIndex, const String& nodeName)
 {
-    if (!is<ContainerNode>(parent))
-        return nullptr;
-
-    for (RefPtr child = downcast<ContainerNode>(parent).firstChild(); child; child = child->nextSibling()) {
+    for (RefPtr child = parent.firstChild(); child; child = child->nextSibling()) {
         if (nodeName != child->nodeName())
             continue;
 
@@ -80,7 +77,8 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
         if (!nextNode)
             return { nullptr, currentPathIndex };
 
-        if (is<CharacterData>(*nextNode) && downcast<CharacterData>(*nextNode).data() != component.textData)
+        auto* chararacterData = dynamicDowncast<CharacterData>(*nextNode);
+        if (chararacterData && chararacterData->data() != component.textData)
             return { nullptr, currentPathIndex };
 
         currentNode = WTFMove(nextNode);
@@ -183,10 +181,12 @@ static unsigned computePathIndex(const Node& node)
 
 static AppHighlightRangeData::NodePathComponent createNodePathComponent(const Node& node)
 {
+    auto* element = dynamicDowncast<Element>(node);
+    auto* characterData = dynamicDowncast<CharacterData>(node);
     return {
-        is<Element>(node) ? downcast<Element>(node).getIdAttribute().string() : nullString(),
+        element ? element->getIdAttribute().string() : nullString(),
         node.nodeName(),
-        is<CharacterData>(node) ? downcast<CharacterData>(node).data() : nullString(),
+        characterData ? characterData->data() : nullString(),
         computePathIndex(node)
     };
 }

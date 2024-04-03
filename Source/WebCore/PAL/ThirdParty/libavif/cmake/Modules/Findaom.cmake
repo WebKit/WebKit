@@ -26,7 +26,7 @@ find_path(AOM_INCLUDE_DIR NAMES aom/aom.h PATHS ${_AOM_INCLUDEDIR})
 
 find_library(AOM_LIBRARY NAMES aom PATHS ${_AOM_LIBDIR})
 
-set(AOM_LIBRARIES ${AOM_LIBRARIES} ${AOM_LIBRARY} ${_AOM_LDFLAGS})
+set(AOM_LIBRARIES ${AOM_LIBRARIES} ${AOM_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
@@ -39,3 +39,13 @@ find_package_handle_standard_args(
 # show the AOM_INCLUDE_DIR, AOM_LIBRARY and AOM_LIBRARIES variables only
 # in the advanced view
 mark_as_advanced(AOM_INCLUDE_DIR AOM_LIBRARY AOM_LIBRARIES)
+
+if(AOM_LIBRARY)
+    if("${AOM_LIBRARY}" MATCHES "\\${CMAKE_STATIC_LIBRARY_SUFFIX}$")
+        add_library(aom STATIC IMPORTED GLOBAL)
+    else()
+        add_library(aom SHARED IMPORTED GLOBAL)
+    endif()
+    set_target_properties(aom PROPERTIES IMPORTED_LOCATION "${AOM_LIBRARY}")
+    target_include_directories(aom INTERFACE ${AOM_INCLUDE_DIR})
+endif()

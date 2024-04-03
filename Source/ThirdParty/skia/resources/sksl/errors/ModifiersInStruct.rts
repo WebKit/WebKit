@@ -1,0 +1,23 @@
+struct S {
+    const float a;
+    uniform int b;
+    flat half4 c;
+    noperspective float4 d;
+    inout bool e;
+    readonly bool f;
+    writeonly bool g;
+    buffer int h;
+    pixel_local float i;
+};
+
+/*%%*
+type 'bool' does not support qualifier 'readonly'
+type 'bool' does not support qualifier 'writeonly'
+modifier 'const' is not permitted on a struct field
+modifier 'uniform' is not permitted on a struct field
+modifier 'flat' is not permitted on a struct field
+modifier 'noperspective' is not permitted on a struct field
+modifier 'inout' is not permitted on a struct field
+modifier 'buffer' is not permitted on a struct field
+modifier 'pixel_local' is not permitted on a struct field
+*%%*/

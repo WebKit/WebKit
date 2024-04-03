@@ -88,7 +88,7 @@ void IDBStorageRegistry::unregisterTransaction(WebCore::IDBServer::UniqueIDBData
     m_transactions.remove(identifier);
 }
 
-WebCore::IDBServer::UniqueIDBDatabaseConnection* IDBStorageRegistry::connection(uint64_t identifier)
+WebCore::IDBServer::UniqueIDBDatabaseConnection* IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier)
 {
     return m_connections.get(identifier).get();
 }

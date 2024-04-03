@@ -40,7 +40,9 @@
 #include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
 #include "DeprecatedGlobalSettings.h"
+#include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "Editing.h"
@@ -53,12 +55,14 @@
 #include "FrameLoader.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
+#include "HTMLBaseElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLPictureElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -193,7 +197,6 @@ Ref<Page> createPageForSanitizingWebContent()
 #endif
     page->settings().setScriptEnabled(false);
     page->settings().setHTMLParserScriptingFlagPolicy(HTMLParserScriptingFlagPolicy::Enabled);
-    page->settings().setPluginsEnabled(false);
     page->settings().setAcceleratedCompositingEnabled(false);
     page->settings().setLinkPreloadEnabled(false);
 
@@ -331,10 +334,27 @@ public:
         return node.parentOrShadowHostNode();
     }
 
-    void prependMetaCharsetUTF8TagIfNonASCIICharactersArePresent()
+    void prependHeadIfNecessary(const HTMLBaseElement* baseElement)
     {
-        if (!containsOnlyASCII())
+#if PLATFORM(COCOA)
+        // On Cocoa platforms, this markup is eventually persisted to the pasteboard and read back as UTF-8 data,
+        // so this meta tag is needed for clients that read this data in the future from the pasteboard and load it.
+        bool shouldAppendMetaCharset = !containsOnlyASCII();
+#else
+        bool shouldAppendMetaCharset = false;
+#endif
+        if (!shouldAppendMetaCharset && !baseElement)
+            return;
+
+        m_reversedPrecedingMarkup.append("</head>"_s);
+        if (baseElement) {
+            StringBuilder markupForBase;
+            appendStartTag(markupForBase, *baseElement, false, DoesNotFullySelectNode);
+            m_reversedPrecedingMarkup.append(markupForBase.toString());
+        }
+        if (shouldAppendMetaCharset)
             m_reversedPrecedingMarkup.append("<meta charset=\"UTF-8\">"_s);
+        m_reversedPrecedingMarkup.append("<head>"_s);
     }
 
 private:
@@ -451,8 +471,8 @@ inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, c
 void StyledMarkupAccumulator::wrapWithNode(Node& node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
     StringBuilder markup;
-    if (is<Element>(node))
-        appendStartTag(markup, downcast<Element>(node), convertBlocksToInlines && isBlock(node), rangeFullySelectsNode);
+    if (RefPtr element = dynamicDowncast<Element>(node))
+        appendStartTag(markup, *element, convertBlocksToInlines && isBlock(node), rangeFullySelectsNode);
     else
         appendNonElementNode(markup, node, nullptr);
     m_reversedPrecedingMarkup.append(markup.toString());
@@ -589,8 +609,8 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
             appendAttribute(out, element, { webkitattachmentpathAttr, AtomString { file->path() } }, namespaces);
             appendAttribute(out, element, { webkitattachmentbloburlAttr, AtomString { file->url().string() } }, namespaces);
         }
-    } else if (is<HTMLImageElement>(element)) {
-        if (RefPtr attachment = downcast<HTMLImageElement>(element).attachmentElement())
+    } else if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(element)) {
+        if (RefPtr attachment = imgElement->attachmentElement())
             appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
     }
 #else
@@ -666,8 +686,8 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         if (replacementType == SpanReplacementType::Slot)
             newInlineStyle->addDisplayContents();
 
-        if (is<StyledElement>(element) && downcast<StyledElement>(element).inlineStyle())
-            newInlineStyle->overrideWithStyle(*downcast<StyledElement>(element).inlineStyle());
+        if (RefPtr styledElement = dynamicDowncast<StyledElement>(element); styledElement && styledElement->inlineStyle())
+            newInlineStyle->overrideWithStyle(*styledElement->inlineStyle());
 
 #if ENABLE(DATA_DETECTION)
         if (replacementType == SpanReplacementType::DataDetector && newInlineStyle->style())
@@ -743,7 +763,8 @@ RefPtr<Node> StyledMarkupAccumulator::traverseNodesForSerialization(Node& startN
                 return false;
         }
 
-        bool isDisplayContents = is<Element>(node) && downcast<Element>(node).hasDisplayContents();
+        RefPtr element = dynamicDowncast<Element>(node);
+        bool isDisplayContents = element && element->hasDisplayContents();
         if (!node.renderer() && !isDisplayContents && !enclosingElementWithTag(firstPositionInOrBeforeNode(&node), selectTag))
             return false;
 
@@ -914,12 +935,12 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
 
 static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
 {
-    if (!is<HTMLElement>(node))
+    RefPtr element = dynamicDowncast<HTMLElement>(node);
+    if (!element)
         return nullptr;
 
-    Ref element = downcast<HTMLElement>(node);
-    auto style = EditingStyle::create(element->inlineStyle());
-    style->mergeStyleFromRules(element);
+    Ref style = EditingStyle::create(element->inlineStyle());
+    style->mergeStyleFromRules(*element);
     return style;
 }
 
@@ -961,21 +982,24 @@ static RefPtr<Node> highestAncestorToWrapMarkup(const Position& start, const Pos
     // If two or more tabs are selected, commonAncestor will be the tab span.
     // In either case, if there is a specialCommonAncestor already, it will necessarily be above 
     // any tab span that needs to be included.
-    if (!specialCommonAncestor && isTabSpanTextNode(&commonAncestor))
+    if (!specialCommonAncestor && parentTabSpanNode(&commonAncestor))
         specialCommonAncestor = commonAncestor.parentNode();
-    if (!specialCommonAncestor && isTabSpanNode(&commonAncestor))
+    if (!specialCommonAncestor && tabSpanNode(&commonAncestor))
         specialCommonAncestor = &commonAncestor;
 
     if (RefPtr enclosingAnchor = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), aTag))
         specialCommonAncestor = WTFMove(enclosingAnchor);
 
+    if (RefPtr enclosingPicture = enclosingElementWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor.get() : &commonAncestor), pictureTag))
+        specialCommonAncestor = WTFMove(enclosingPicture);
+
     return specialCommonAncestor;
 }
 
 static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree, IgnoreUserSelectNone ignoreUserSelectNone,
-    AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode)
+    AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode, PreserveBaseElement preserveBaseElement)
 {
-    static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
+    static NeverDestroyed<const String> interchangeNewlineString { makeString("<br class=\"", AppleInterchangeNewline, "\">") };
 
     if (!(start < end))
         return emptyString();
@@ -1001,19 +1025,23 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     StyledMarkupAccumulator accumulator(start, end, nodes, resolveURLs, serializeComposedTree, ignoreUserSelectNone, annotate, standardFontFamilySerializationMode, msoListMode, needsPositionStyleConversion, specialCommonAncestor.get());
 
-    Position startAdjustedForInterchangeNewline = start;
+    Position adjustedStart = start;
+
+    if (RefPtr pictureElement = dynamicDowncast<HTMLPictureElement>(specialCommonAncestor))
+        adjustedStart = firstPositionInNode(pictureElement.get());
+
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
 
         accumulator.append(interchangeNewlineString.get());
-        startAdjustedForInterchangeNewline = visibleStart.next().deepEquivalent();
+        adjustedStart = visibleStart.next().deepEquivalent();
 
-        if (!(startAdjustedForInterchangeNewline < end))
+        if (!(adjustedStart < end))
             return interchangeNewlineString;
     }
 
-    RefPtr lastClosed = accumulator.serializeNodes(startAdjustedForInterchangeNewline, end);
+    RefPtr lastClosed = accumulator.serializeNodes(adjustedStart, end);
 
     if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
@@ -1062,11 +1090,8 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.append(interchangeNewlineString.get());
 
-#if PLATFORM(COCOA)
-    // On Cocoa platforms, this markup is eventually persisted to the pasteboard and read back as UTF-8 data,
-    // so this meta tag is needed for clients that read this data in the future from the pasteboard and load it.
-    accumulator.prependMetaCharsetUTF8TagIfNonASCIICharactersArePresent();
-#endif
+    RefPtr baseElement = preserveBaseElement == PreserveBaseElement::Yes ? document->firstBaseElement() : nullptr;
+    accumulator.prependHeadIfNecessary(baseElement.get());
 
     return accumulator.takeResults();
 }
@@ -1075,13 +1100,13 @@ String serializePreservingVisualAppearance(const SimpleRange& range, Vector<Ref<
 {
     return serializePreservingVisualAppearanceInternal(makeDeprecatedLegacyPosition(range.start), makeDeprecatedLegacyPosition(range.end),
         nodes, resolveURLs, SerializeComposedTree::No, IgnoreUserSelectNone::No,
-        annotate, convertBlocksToInlines, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve);
+        annotate, convertBlocksToInlines, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve, PreserveBaseElement::No);
 }
 
-String serializePreservingVisualAppearance(const VisibleSelection& selection, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree, IgnoreUserSelectNone ignoreUserSelectNone, Vector<Ref<Node>>* nodes)
+String serializePreservingVisualAppearance(const VisibleSelection& selection, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree, IgnoreUserSelectNone ignoreUserSelectNone, PreserveBaseElement preserveBaseElement, Vector<Ref<Node>>* nodes)
 {
     return serializePreservingVisualAppearanceInternal(selection.start(), selection.end(), nodes, resolveURLs, serializeComposedTree, ignoreUserSelectNone,
-        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve);
+        AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve, preserveBaseElement);
 }
 
 static bool shouldPreserveMSOLists(StringView markup)
@@ -1107,7 +1132,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
 
     // SerializeComposedTree::No because there can't be a shadow tree in the pasted fragment.
     auto result = serializePreservingVisualAppearanceInternal(firstPositionInNode(bodyElement.get()), lastPositionInNode(bodyElement.get()), nullptr,
-        ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::No, IgnoreUserSelectNone::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Strip, msoListMode);
+        ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::No, IgnoreUserSelectNone::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Strip, msoListMode, PreserveBaseElement::No);
 
     if (msoListMode != MSOListMode::Preserve)
         return result;
@@ -1232,11 +1257,8 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
 bool isPlainTextMarkup(Node* node)
 {
     ASSERT(node);
-    if (!is<HTMLDivElement>(*node))
-        return false;
-
-    Ref element = downcast<HTMLDivElement>(*node);
-    if (element->hasAttributes())
+    RefPtr element = dynamicDowncast<HTMLDivElement>(*node);
+    if (!element || element->hasAttributes())
         return false;
 
     RefPtr firstChild = element->firstChild();
@@ -1250,7 +1272,7 @@ bool isPlainTextMarkup(Node* node)
     if (secondChild->nextSibling())
         return false;
     
-    return isTabSpanTextNode(firstChild->protectedFirstChild().get()) && secondChild->isTextNode();
+    return parentTabSpanNode(firstChild->protectedFirstChild().get()) && is<Text>(secondChild);
 }
 
 static bool contextPreservesNewline(const SimpleRange& context)
@@ -1271,7 +1293,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
 
     auto createHTMLBRElement = [document]() {
         auto element = HTMLBRElement::create(document);
-        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline ""_s);
+        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
         return element;
     };
 
@@ -1452,9 +1474,9 @@ ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, co
     return fragment;
 }
 
-static inline bool hasOneTextChild(ContainerNode& node)
+static inline RefPtr<Text> singleTextChild(ContainerNode& node)
 {
-    return node.hasOneChild() && node.firstChild()->isTextNode();
+    return node.hasOneChild() ? dynamicDowncast<Text>(node.firstChild()) : nullptr;
 }
 
 static inline bool hasMutationEventListeners(const Document& document)
@@ -1482,15 +1504,13 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
 
     // We don't Use RefPtr here because canUseSetDataOptimization() below relies on the
     // containerChild's ref count.
-    WeakPtr containerChild = containerNode->firstChild();
+    auto* containerChild = dynamicDowncast<Text>(containerNode->firstChild());
     if (containerChild && !containerChild->nextSibling()) {
-        if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
-            Ref { downcast<Text>(*containerChild) }->setData(downcast<Text>(*fragment->firstChild()).data());
+        if (RefPtr fragmentChild = singleTextChild(fragment); fragmentChild && canUseSetDataOptimization(*containerChild, mutation)) {
+            Ref { *containerChild }->setData(fragmentChild->data());
             return { };
         }
-
-        Ref protectedContainerChild { *containerChild };
-        return containerNode->replaceChild(fragment, protectedContainerChild);
+        return containerNode->replaceChild(fragment, Ref { *containerChild });
     }
 
     containerNode->removeChildren();

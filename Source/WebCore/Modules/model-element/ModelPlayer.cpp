@@ -26,9 +26,20 @@
 #include "config.h"
 #include "ModelPlayer.h"
 
+#include "Color.h"
+#include "TransformationMatrix.h"
+
 namespace WebCore {
 
 ModelPlayer::~ModelPlayer() = default;
+
+void ModelPlayer::setBackgroundColor(Color)
+{
+}
+
+void ModelPlayer::setEntityTransform(TransformationMatrix)
+{
+}
 
 bool ModelPlayer::supportsMouseInteraction()
 {
@@ -38,6 +49,11 @@ bool ModelPlayer::supportsMouseInteraction()
 bool ModelPlayer::supportsDragging()
 {
     return true;
+}
+
+bool ModelPlayer::supportsTransform(TransformationMatrix)
+{
+    return false;
 }
 
 void ModelPlayer::setInteractionEnabled(bool)

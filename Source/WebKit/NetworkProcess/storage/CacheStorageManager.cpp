@@ -134,7 +134,7 @@ static std::optional<uint64_t> readSizeFile(const String& sizeDirectoryPath)
     if (!buffer)
         return std::nullopt;
 
-    return parseInteger<uint64_t>({ buffer->data(), static_cast<unsigned>(buffer->size()) });
+    return parseInteger<uint64_t>(buffer->span());
 }
 
 static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
@@ -144,7 +144,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, std::span(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, value.span()) != -1;
 }
 
 static String saltFilePath(const String& saltDirectory)

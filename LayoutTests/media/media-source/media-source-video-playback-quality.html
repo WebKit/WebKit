@@ -33,6 +33,11 @@
 
     function loadSample()
     {
+        run('quality = video.getVideoPlaybackQuality()');
+        testExpected('quality.totalVideoFrames', 0);
+        testExpected('quality.corruptedVideoFrames', 0);
+        testExpected('quality.droppedVideoFrames', 0);
+        testExpected('quality.totalFrameDelay', 0);
         samples = concatenateSamples([makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.NONE)]);
         waitForEventOn(sourceBuffer, 'updateend', loadMoreSamples, false, true);
         consoleWrite('Test that beginning a buffer with a non-sync sample results in that sample being dropped.')
@@ -67,7 +72,7 @@
         run('source.endOfStream()');
         run('video.play()');
         await waitFor(video, 'ended');
-        setTimeout(videoEnded, 50); // VideoPlaybackQuality is refreshed every 0.25s, wait a bit.
+        setTimeout(videoEnded, 300); // VideoPlaybackQuality is refreshed every 0.25s, wait a bit.
     }
 
     function videoEnded()

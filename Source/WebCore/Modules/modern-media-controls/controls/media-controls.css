@@ -86,7 +86,7 @@
     transform-origin: 0 0;
 }
 
-:host(:-webkit-animating-full-screen-transition) .media-controls {
+:host(:-internal-animating-fullscreen-transition) .media-controls {
     display: none;
 }
 

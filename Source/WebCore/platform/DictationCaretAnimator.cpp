@@ -282,7 +282,11 @@ FloatRoundedRect DictationCaretAnimator::expandedCaretRect(const FloatRect& rect
     auto pulseExpansion = 1.f;
     if (m_initialScale > 0.f)
         extraScaleFactor = 1.f + 1.4f * sinf(2.f * m_initialScale);
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    else if (!prefersNonBlinkingCursor())
+#else
     else
+#endif
         pulseExpansion = 0.75f * m_presentationProperties.opacity * extraScaleFactor;
 
     float horizontalPulseExpansion = 0.5f * pulseExpansion;

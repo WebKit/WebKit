@@ -101,6 +101,7 @@ public:
     const RuleDataVector& slottedPseudoElementRules() const { return m_slottedPseudoElementRules; }
     const RuleDataVector& partPseudoElementRules() const { return m_partPseudoElementRules; }
     const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
+    const RuleDataVector* rootElementRules() const { return &m_rootElementRules; }
     const RuleDataVector* universalRules() const { return &m_universalRules; }
 
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
@@ -118,6 +119,7 @@ public:
 
     bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
     Vector<const CQ::ContainerQuery*> containerQueriesFor(const RuleData&) const;
+    Vector<Ref<const StyleRuleContainer>> containerQueryRules() const;
 
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
@@ -162,7 +164,7 @@ private:
     };
 
     struct ContainerQueryAndParent {
-        Ref<StyleRuleContainer> containerRule;
+        Ref<const StyleRuleContainer> containerRule;
         ContainerQueryIdentifier parent;
     };
 
@@ -196,6 +198,7 @@ private:
     RuleDataVector m_slottedPseudoElementRules;
     RuleDataVector m_partPseudoElementRules;
     RuleDataVector m_focusPseudoClassRules;
+    RuleDataVector m_rootElementRules;
     RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
     RuleFeatureSet m_features;

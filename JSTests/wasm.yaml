@@ -62,7 +62,7 @@
 - path: wasm/gc-spec-tests
   cmd: runWebAssemblyGCSpecTest :normal
 - path: wasm/threads-spec-tests
-  cmd: if 'arm' == $architecture; skip; else runWebAssemblyThreadsSpecTest :normal; end
+  cmd: runWebAssemblyThreadsSpecTest :normal
 - path: wasm/tail-call-spec-tests
   cmd: skip
 - path: wasm/extended-const-spec-tests

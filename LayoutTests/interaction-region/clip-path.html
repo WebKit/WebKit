@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=1600">
+    <style>
+        body { margin: 0; }
+        #test {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            font-family: -apple-system;
+        }
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 250px;
+            text-align: center;
+        }
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 250px;
+            clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+        }
+        a > svg, a > img {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <section>
+        <a href="#">
+            <svg viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="myGradient">
+                        <stop offset="10%" stop-color="gold" />
+                        <stop offset="95%" stop-color="red" />
+                    </radialGradient>
+                </defs>
+                <circle cx="250" cy="250" r="200" fill="url(#myGradient)" />
+            </svg>
+        </a>
+    </section>
+    <section>
+        <a href="#">
+            <img src="../css3/blending/resources/ducky.png" alt="apple logo" />
+        </a>
+    </section>
+    <section>
+        <a style="background:purple;" href="#">
+            Just a link
+        </a>
+    </section>
+</div>
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (!window.internals)
+       return;
+
+   results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   document.getElementById('test').remove();
+};
+</script>
+</body>
+</html>

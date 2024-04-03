@@ -32,4 +32,6 @@ enum class Inspector::ExtensionError : uint8_t {
     NotImplemented,
 };
 
+enum class Inspector::ExtensionAppearance : bool;
+
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

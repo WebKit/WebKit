@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "ShareableResource.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -57,6 +58,15 @@ public:
     WEBCORE_EXPORT bool containsSingleFileMappedSegment() const;
     void append(const String&);
     void append(const FragmentedSharedBuffer&);
+
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    using IPCData = std::variant<ShareableResourceHandle, RefPtr<FragmentedSharedBuffer>>;
+#else
+    using IPCData = RefPtr<FragmentedSharedBuffer>;
+#endif
+
+    WEBCORE_EXPORT static std::optional<ScriptBuffer> fromIPCData(IPCData&&);
+    WEBCORE_EXPORT IPCData ipcData() const;
 
 private:
     SharedBufferBuilder m_buffer; // Contains the UTF-8 encoded script.

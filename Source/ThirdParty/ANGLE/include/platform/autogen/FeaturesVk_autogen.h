@@ -416,13 +416,6 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://anglebug.com/6574"
     };
 
-    FeatureInfo forceDelayedDeviceCreationForTesting = {
-        "forceDelayedDeviceCreationForTesting",
-        FeatureCategory::VulkanWorkarounds,
-        "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios",
-        &members, "https://anglebug.com/8300"
-    };
-
     FeatureInfo supportsShaderFloat16 = {
         "supportsShaderFloat16",
         FeatureCategory::VulkanFeatures,
@@ -659,13 +652,6 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_host_query_reset extension",
         &members, "http://anglebug.com/6692"
-    };
-
-    FeatureInfo supportsPipelineCreationCacheControl = {
-        "supportsPipelineCreationCacheControl",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports VK_EXT_pipeline_creation_cache_control extension",
-        &members, "http://anglebug.com/5881"
     };
 
     FeatureInfo supportsPipelineCreationFeedback = {
@@ -936,6 +922,13 @@ struct FeaturesVk : FeatureSetBase
         FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_KHR_fragment_shading_rate extension",
         &members, "http://anglebug.com/7172"
+    };
+
+    FeatureInfo supportsFoveatedRendering = {
+        "supportsFoveatedRendering",
+        FeatureCategory::VulkanFeatures,
+        "Use VK_KHR_fragment_shading_rate extension to implement QCOM foveated rendering extensions",
+        &members, "http://anglebug.com/8484"
     };
 
     FeatureInfo supportsFragmentShaderPixelInterlock = {
@@ -1321,11 +1314,35 @@ struct FeaturesVk : FeatureSetBase
         &members, "https://issuetracker.google.com/309028728"
     };
 
-    FeatureInfo forceSampleUsageForImageWithExternalFormat = {
-        "forceSampleUsageForImageWithExternalFormat",
+    FeatureInfo forceSampleUsageForAhbBackedImages = {
+        "forceSampleUsageForAhbBackedImages",
         FeatureCategory::VulkanAppWorkarounds,
-        "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for images with external format",
+        "Force enable VK_IMAGE_USAGE_SAMPLED_BIT usage for all AHB images",
         &members, "https://issuetracker.google.com/155487768"
+    };
+
+    FeatureInfo avoidOpSelectWithMismatchingRelaxedPrecision = {
+        "avoidOpSelectWithMismatchingRelaxedPrecision",
+        FeatureCategory::VulkanWorkarounds,
+        "On some drivers, the OpSelect SPIR-V instruction with arguments with mismatching "
+        "RelaxedPrecision decoration causes a crash",
+        &members, "http://anglebug.com/8503"
+    };
+
+    FeatureInfo clDumpVkSpirv = {
+        "clDumpVkSpirv",
+        FeatureCategory::VulkanFeatures,
+        "Enable SPIR-V dumping at runtime for OpenCL programs compiled with clspv",
+        &members,
+    };
+
+    FeatureInfo enableAdditionalBlendFactorsForDithering = {
+        "enableAdditionalBlendFactorsForDithering",
+        FeatureCategory::VulkanAppWorkarounds,
+        "Dithering darkens or brightens pixels depending on coordinates and when repeated "
+        "sufficient numbers of times this effect becomes visible to users. Conditionally "
+        "enable additional blend factors for dithering",
+        &members, "https://issuetracker.google.com/328837151"
     };
 
 };

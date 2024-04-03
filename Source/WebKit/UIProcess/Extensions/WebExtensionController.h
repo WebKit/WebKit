@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIHTTPCookieStore.h"
 #include "APIObject.h"
 #include "APIPageConfiguration.h"
 #include "MessageReceiver.h"
@@ -34,17 +35,21 @@
 #include "WebExtensionContextIdentifier.h"
 #include "WebExtensionControllerConfiguration.h"
 #include "WebExtensionControllerIdentifier.h"
+#include "WebExtensionDataType.h"
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
+#include <wtf/Identified.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
+OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
+OBJC_CLASS _WKWebExtensionControllerHelper;
 OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
@@ -55,11 +60,17 @@ namespace WebKit {
 
 class ContextMenuContextData;
 class WebExtensionContext;
+class WebExtensionDataRecord;
 class WebPageProxy;
 class WebProcessPool;
+class WebsiteDataStore;
 struct WebExtensionControllerParameters;
 
-class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver {
+#if ENABLE(INSPECTOR_EXTENSIONS)
+class WebInspectorUIProxy;
+#endif
+
+class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExtensionController>, public IPC::MessageReceiver, public Identified<WebExtensionControllerIdentifier> {
     WTF_MAKE_NONCOPYABLE(WebExtensionController);
 
 public:
@@ -68,6 +79,8 @@ public:
 
     explicit WebExtensionController(Ref<WebExtensionControllerConfiguration>);
     ~WebExtensionController();
+
+    using UniqueIdentifier = String;
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
@@ -78,17 +91,27 @@ public:
     using WebProcessPoolSet = WeakHashSet<WebProcessPool>;
     using WebPageProxySet = WeakHashSet<WebPageProxy>;
     using UserContentControllerProxySet = WeakHashSet<WebUserContentControllerProxy>;
+    using WebsiteDataStoreSet = WeakHashSet<WebsiteDataStore>;
 
     enum class ForPrivateBrowsing { No, Yes };
 
     WebExtensionControllerConfiguration& configuration() const { return m_configuration.get(); }
-    WebExtensionControllerIdentifier identifier() const { return m_identifier; }
     WebExtensionControllerParameters parameters() const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
 
+    bool inTestingMode() const { return m_testingMode; }
+    void setTestingMode(bool testingMode) { m_testingMode = testingMode; }
+
     bool storageIsPersistent() const { return m_configuration->storageIsPersistent(); }
-    String storageDirectory(WebExtensionContext&) const;
+
+    void getDataRecords(OptionSet<WebExtensionDataType>, CompletionHandler<void(Vector<Ref<WebExtensionDataRecord>>)>&&);
+    void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
+    void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
+    void removeData(OptionSet<WebExtensionDataType>, const WebExtensionContextSet&, CompletionHandler<void()>&&);
+
+    void calculateStorageSize(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(size_t)>&&);
+    void removeStorage(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void()>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
@@ -101,21 +124,27 @@ public:
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
 
-    WebPageProxySet allPages() const { return m_pages; }
+    const WebPageProxySet& allPages() const { return m_pages; }
+
+    const WebsiteDataStoreSet& allWebsiteDataStores() const { return m_websiteDataStores; }
+    WebsiteDataStore* websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
 
     // Includes both non-private and private browsing content controllers.
-    UserContentControllerProxySet allUserContentControllers() const { return m_allUserContentControllers; }
-    UserContentControllerProxySet allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
-    UserContentControllerProxySet allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allUserContentControllers() const { return m_allUserContentControllers; }
+    const UserContentControllerProxySet& allNonPrivateUserContentControllers() const { return m_allNonPrivateUserContentControllers; }
+    const UserContentControllerProxySet& allPrivateUserContentControllers() const { return m_allPrivateUserContentControllers; }
 
-    WebProcessPoolSet allProcessPools() const { return m_processPools; }
+    const WebProcessPoolSet& allProcessPools() const { return m_processPools; }
     WebProcessProxySet allProcesses() const;
 
     RefPtr<WebExtensionContext> extensionContext(const WebExtension&) const;
+    RefPtr<WebExtensionContext> extensionContext(const UniqueIdentifier&) const;
     RefPtr<WebExtensionContext> extensionContext(const URL&) const;
 
     const WebExtensionContextSet& extensionContexts() const { return m_extensionContexts; }
     WebExtensionSet extensions() const;
+
+    void cookiesDidChange(API::HTTPCookieStore&);
 
     template<typename T>
     void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
@@ -126,6 +155,17 @@ public:
 
     void handleContentRuleListNotification(WebPageProxyIdentifier, URL&, WebCore::ContentRuleListResults&);
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    void inspectorWillOpen(WebInspectorUIProxy&, WebPageProxy&);
+    void inspectorWillClose(WebInspectorUIProxy&, WebPageProxy&);
+#endif
+
+    void resourceLoadDidSendRequest(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceRequest&);
+    void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
+    void resourceLoadDidReceiveChallenge(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::AuthenticationChallenge&);
+    void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&);
+    void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, const ResourceLoadInfo&, const WebCore::ResourceResponse&, const WebCore::ResourceError&);
+
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
     _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }
@@ -135,11 +175,22 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void initializePlatform();
+
     void addProcessPool(WebProcessPool&);
     void removeProcessPool(WebProcessPool&);
 
     void addUserContentController(WebUserContentControllerProxy&, ForPrivateBrowsing);
     void removeUserContentController(WebUserContentControllerProxy&);
+
+    void addWebsiteDataStore(WebsiteDataStore&);
+    void removeWebsiteDataStore(WebsiteDataStore&);
+
+    String storageDirectory(const String& uniqueIdentifier) const;
+    String storageDirectory(WebExtensionContext&) const;
+
+    String stateFilePath(const String& uniqueIdentifier) const;
+    _WKWebExtensionStorageSQLiteStore* sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
@@ -148,20 +199,56 @@ private:
 
     void purgeOldMatchedRules();
 
-    Ref<WebExtensionControllerConfiguration> m_configuration;
-    WebExtensionControllerIdentifier m_identifier;
+    // Test APIs
+    void testResult(bool result, String message, String sourceURL, unsigned lineNumber);
+    void testEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
+    void testMessage(String message, String sourceURL, unsigned lineNumber);
+    void testYielded(String message, String sourceURL, unsigned lineNumber);
+    void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
+    class HTTPCookieStoreObserver : public API::HTTPCookieStore::Observer {
+        WTF_MAKE_FAST_ALLOCATED;
+
+    public:
+        explicit HTTPCookieStoreObserver(WebExtensionController& extensionController)
+            : m_extensionController(extensionController)
+        {
+        }
+
+    private:
+        void cookiesDidChange(API::HTTPCookieStore& cookieStore) final
+        {
+            // FIXME: <https://webkit.org/b/267514> Add support for changeInfo.
+
+            if (RefPtr extensionController = m_extensionController.get())
+                extensionController->cookiesDidChange(cookieStore);
+        }
+
+        WeakPtr<WebExtensionController> m_extensionController;
+    };
+
+    Ref<WebExtensionControllerConfiguration> m_configuration;
+
+    RetainPtr<_WKWebExtensionControllerHelper> m_webExtensionControllerHelper;
     WebExtensionContextSet m_extensionContexts;
     WebExtensionContextBaseURLMap m_extensionContextBaseURLMap;
     WebPageProxySet m_pages;
     WebProcessPoolSet m_processPools;
+    WebsiteDataStoreSet m_websiteDataStores;
     UserContentControllerProxySet m_allUserContentControllers;
     UserContentControllerProxySet m_allNonPrivateUserContentControllers;
     UserContentControllerProxySet m_allPrivateUserContentControllers;
     WebExtensionURLSchemeHandlerMap m_registeredSchemeHandlers;
-    bool m_freshlyCreated { true };
+
+    bool m_freshlyCreated : 1 { true };
+#ifdef NDEBUG
+    bool m_testingMode : 1 { false };
+#else
+    bool m_testingMode : 1 { true };
+#endif
 
     std::unique_ptr<WebCore::Timer> m_purgeOldMatchedRulesTimer;
+    std::unique_ptr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
 template<typename T>
@@ -169,7 +256,7 @@ void WebExtensionController::sendToAllProcesses(const T& message, const ObjectId
 {
     for (auto& process : allProcesses()) {
         if (process.canSendMessage())
-            process.send(T(message), destinationID.toUInt64());
+            process.send(T(message), destinationID);
     }
 }
 

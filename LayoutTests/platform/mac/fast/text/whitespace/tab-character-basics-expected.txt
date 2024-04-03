@@ -54,7 +54,7 @@ layer at (0,0) size 800x481
         RenderText {#text} at (0,0) size 433x41
           text run at (0,0) width 433: "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII "
           text run at (0,21) width 39: "JJJJ"
-        RenderInline {SPAN} at (0,0) size 270x20
+        RenderInline {SPAN} at (38,21) size 270x20
           RenderText {#text} at (38,21) size 270x20
             text run at (38,21) width 270: "\x{9}\x{9}\x{9}\x{9}"
         RenderText {#text} at (307,21) size 39x20

@@ -15,6 +15,10 @@
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
 
+#if WEBRTC_WEBKIT_BUILD
+#include "common_video/h265/h265_sps_parser.h"
+#endif
+
 namespace webrtc {
 
 H265VpsParser::VpsState::VpsState() = default;
@@ -46,6 +50,53 @@ absl::optional<H265VpsParser::VpsState> H265VpsParser::ParseInternal(
   if (!reader.Ok()) {
     return absl::nullopt;
   }
+
+#if WEBRTC_WEBKIT_BUILD
+  // vps_base_layer_internal_flag u(1)
+  reader.ConsumeBits(1);
+  // vps_base_layer_available_flag u(1)
+  reader.ConsumeBits(1);
+  // vps_max_layers_minus1 u(6)
+  vps.vps_max_sub_layers_minus1 = reader.ReadBits(6);
+
+  if (!reader.Ok() || (vps.vps_max_sub_layers_minus1 >= kMaxSubLayers)) {
+    return absl::nullopt;
+  }
+
+  //  vps_max_sub_layers_minus1 u(3)
+  reader.ConsumeBits(3);
+  //  vps_temporal_id_nesting_flag u(1)
+  reader.ConsumeBits(1);
+  //  vps_reserved_0xffff_16bits u(16)
+  reader.ConsumeBits(16);
+
+  auto profile_tier_level = H265SpsParser::ParseProfileTierLevel(true, vps.vps_max_sub_layers_minus1, reader);
+  if (!reader.Ok() || !profile_tier_level) {
+    return absl::nullopt;
+  }
+
+  bool vps_sub_layer_ordering_info_present_flag = reader.Read<bool>();
+  for (uint32_t i = (vps_sub_layer_ordering_info_present_flag != 0) ? 0 : vps.vps_max_sub_layers_minus1; i <= vps.vps_max_sub_layers_minus1; i++) {
+    // vps_max_dec_pic_buffering_minus1[ i ]: ue(v)
+    reader.ReadExponentialGolomb();
+    // vps_max_num_reorder_pics[ i ]: ue(v)
+    vps.vps_max_num_reorder_pics[i] = reader.ReadExponentialGolomb();
+    if (!reader.Ok() || (i > 0 && vps.vps_max_num_reorder_pics[i] < vps.vps_max_num_reorder_pics[i - 1])) {
+      return absl::nullopt;
+    }
+
+    // vps_max_latency_increase_plus1: ue(v)
+    reader.ReadExponentialGolomb();
+  }
+  if (!vps_sub_layer_ordering_info_present_flag) {
+    for (int i = 0; i < vps.vps_max_sub_layers_minus1; ++i) {
+      vps.vps_max_num_reorder_pics[i] = vps.vps_max_num_reorder_pics[vps.vps_max_sub_layers_minus1];
+    }
+  }
+  if (!reader.Ok() || !profile_tier_level) {
+    return absl::nullopt;
+  }
+#endif
 
   return vps;
 }

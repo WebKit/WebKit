@@ -47,9 +47,6 @@ public:
 private:
     ApplePayShippingMethodSelectedEvent(const AtomString& type, const ApplePayShippingMethod&);
 
-    // Event.
-    EventInterface eventInterface() const override;
-
     const ApplePayShippingMethod m_shippingMethod;
 };
 

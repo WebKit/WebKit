@@ -29,6 +29,7 @@
 
 #include "WebGPUColor.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <WebCore/WebGPULoadOp.h>
 #include <WebCore/WebGPUStoreOp.h>
 #include <optional>
@@ -40,6 +41,7 @@ namespace WebKit::WebGPU {
 
 struct RenderPassColorAttachment {
     WebGPUIdentifier view;
+    std::optional<WebCore::WebGPU::IntegerCoordinate> depthSlice;
     std::optional<WebGPUIdentifier> resolveTarget;
 
     std::optional<Color> clearValue;

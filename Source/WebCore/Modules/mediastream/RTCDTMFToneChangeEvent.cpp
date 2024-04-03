@@ -46,13 +46,13 @@ Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomString& typ
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const String& tone)
-    : Event(eventNames().tonechangeEvent, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::RTCDTMFToneChangeEvent, eventNames().tonechangeEvent, CanBubble::No, IsCancelable::No)
     , m_tone(tone)
 {
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::RTCDTMFToneChangeEvent, type, initializer, isTrusted)
     , m_tone(initializer.tone)
 {
 }
@@ -62,11 +62,6 @@ RTCDTMFToneChangeEvent::~RTCDTMFToneChangeEvent() = default;
 const String& RTCDTMFToneChangeEvent::tone() const
 {
     return m_tone;
-}
-
-EventInterface RTCDTMFToneChangeEvent::eventInterface() const
-{
-    return RTCDTMFToneChangeEventInterfaceType;
 }
 
 } // namespace WebCore

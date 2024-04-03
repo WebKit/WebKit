@@ -8,7 +8,7 @@ layer at (0,0) size 800x34
           RenderText {#text} at (0,0) size 132x18
             text run at (0,0) width 132: "This address should "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 572x18
+        RenderInline {SPAN} at (131,0) size 572x18
           RenderText {#text} at (131,0) size 572x18
             text run at (131,0) width 246: "have a green background because the "
             text run at (376,0) width 327: "selector in last rule does not apply to inner SPANs."

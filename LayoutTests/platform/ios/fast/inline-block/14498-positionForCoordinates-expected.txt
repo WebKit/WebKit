@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 96x19
           text run at (0,0) width 96: "This test is for "
-        RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+        RenderInline {A} at (95,0) size 305x19 [color=#0000EE]
           RenderText {#text} at (95,0) size 305x19
             text run at (95,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14498"
         RenderText {#text} at (399,0) size 5x19
@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 410x19
           text run at (0,0) width 410: "Click inside the right border. The caret should move after \x{201C}bar\x{201D}."
       RenderBlock (anonymous) at (0,72) size 784x20
-        RenderInline {SPAN} at (0,0) size 66x39 [border: (10px solid #0000FF)]
+        RenderInline {SPAN} at (0,-10) size 66x39 [border: (10px solid #0000FF)]
           RenderText {#text} at (0,0) size 0x0
           RenderBlock {DIV} at (10,0) size 22x20
             RenderText {#text} at (0,0) size 22x19
@@ -27,4 +27,3 @@ layer at (0,0) size 800x600
               text run at (0,0) width 21: "bar"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-caret: position 3 of child 0 {#text} of child 3 {DIV} of child 5 {SPAN} of body

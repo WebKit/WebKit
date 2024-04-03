@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ CSSCustomPropertiesAndValuesEnabled=true ] -->
+<!DOCTYPE html>
 <!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -84,11 +84,11 @@ test(function() {
 }, "Valid values can be set on inline styles");
 
 test(function() {
-  inlineStyle.setProperty('--b', ' 20px');
+  inlineStyle.setProperty('--b', '20px');
   inlineStyle.setProperty('--a', 'calc(var(--b) + 10px)');
-  assert_equals(inlineStyle.getPropertyValue('--b'), ' 20px');
+  assert_equals(inlineStyle.getPropertyValue('--b'), '20px');
   assert_equals(inlineStyle.getPropertyValue('--a'), 'calc(var(--b) + 10px)');
-  assert_equals(computedStyle.getPropertyValue('--b'), ' 20px');
+  assert_equals(computedStyle.getPropertyValue('--b'), '20px');
   assert_equals(computedStyle.getPropertyValue('--a'), '30px');
 }, "Var values are accepted");
 

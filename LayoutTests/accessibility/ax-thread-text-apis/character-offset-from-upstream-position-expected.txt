@@ -1,0 +1,10 @@
+This tests that CharacterOffset that comes from an upstream VisiblePosition is correct.
+
+First Line: Lorem ipsum vivamus nibh
+Second Line: urna mollis at aliquam taciti,
+[firstEnd, secondStart]: 'space'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor

@@ -44,13 +44,12 @@ ScrollingTreeOverflowScrollProxyNode::~ScrollingTreeOverflowScrollProxyNode() = 
 
 bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateOverflowScrollProxyNode>(stateNode))
+    auto* overflowProxyStateNode = dynamicDowncast<ScrollingStateOverflowScrollProxyNode>(stateNode);
+    if (!overflowProxyStateNode)
         return false;
 
-    const auto& overflowProxyStateNode = downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
-
-    if (overflowProxyStateNode.hasChangedProperty(ScrollingStateNode::Property::OverflowScrollingNode))
-        m_overflowScrollingNodeID = overflowProxyStateNode.overflowScrollingNode();
+    if (overflowProxyStateNode->hasChangedProperty(ScrollingStateNode::Property::OverflowScrollingNode))
+        m_overflowScrollingNodeID = overflowProxyStateNode->overflowScrollingNode();
 
     if (m_overflowScrollingNodeID) {
         auto& relatedNodes = scrollingTree().overflowRelatedNodes();
@@ -66,10 +65,8 @@ bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
 
 FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() const
 {
-    if (auto* node = scrollingTree().nodeForID(m_overflowScrollingNodeID)) {
-        if (is<ScrollingTreeOverflowScrollingNode>(node))
-            return downcast<ScrollingTreeOverflowScrollingNode>(*node).scrollDeltaSinceLastCommit();
-    }
+    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(m_overflowScrollingNodeID)))
+        return node->scrollDeltaSinceLastCommit();
 
     return { };
 }
@@ -77,12 +74,8 @@ FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() con
 FloatPoint ScrollingTreeOverflowScrollProxyNode::computeLayerPosition() const
 {
     FloatPoint scrollOffset;
-    if (auto* node = scrollingTree().nodeForID(m_overflowScrollingNodeID)) {
-        if (is<ScrollingTreeOverflowScrollingNode>(node)) {
-            auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
-            scrollOffset = overflowNode.currentScrollOffset();
-        }
-    }
+    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(m_overflowScrollingNodeID)))
+        scrollOffset = node->currentScrollOffset();
     return scrollOffset;
 }
 

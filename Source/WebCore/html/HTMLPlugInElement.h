@@ -75,7 +75,7 @@ public:
     WEBCORE_EXPORT bool isReplacementObscured();
 
 protected:
-    HTMLPlugInElement(const QualifiedName& tagName, Document&);
+    HTMLPlugInElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
 
     bool canContainRangeEndPoint() const override { return false; }
     void willDetachRenderers() override;

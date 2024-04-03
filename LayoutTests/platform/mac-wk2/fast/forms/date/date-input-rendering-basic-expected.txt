@@ -14,13 +14,13 @@ layer at (11,11) size 71x17
       RenderBlock {DIV} at (0,0) size 16x15
         RenderText {#text} at (1,1) size 14x13
           text run at (1,1) width 14: "04"
-      RenderInline {DIV} at (0,0) size 4x13
+      RenderInline {DIV} at (16,1) size 4x13
         RenderText {#text} at (16,1) size 4x13
           text run at (16,1) width 4: "/"
       RenderBlock {DIV} at (19,0) size 17x15
         RenderText {#text} at (1,1) size 14x13
           text run at (1,1) width 14: "01"
-      RenderInline {DIV} at (0,0) size 4x13
+      RenderInline {DIV} at (35,1) size 4x13
         RenderText {#text} at (35,1) size 4x13
           text run at (35,1) width 4: "/"
       RenderBlock {DIV} at (38,0) size 31x15
@@ -34,13 +34,13 @@ layer at (92,11) size 71x17
       RenderBlock {DIV} at (52,0) size 17x15
         RenderText {#text} at (1,1) size 14x13
           text run at (1,1) width 14: "04"
-      RenderInline {DIV} at (0,0) size 4x13
+      RenderInline {DIV} at (49,1) size 4x13
         RenderText {#text} at (49,1) size 4x13
           text run at (49,1) width 4 RTL: "/"
       RenderBlock {DIV} at (33,0) size 17x15
         RenderText {#text} at (1,1) size 14x13
           text run at (1,1) width 14: "01"
-      RenderInline {DIV} at (0,0) size 5x13
+      RenderInline {DIV} at (29,1) size 5x13
         RenderText {#text} at (29,1) size 5x13
           text run at (29,1) width 5 RTL: "/"
       RenderBlock {DIV} at (0,0) size 30x15

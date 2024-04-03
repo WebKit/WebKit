@@ -74,7 +74,7 @@ static CaptureSourceOrError initializeCoreAudioCaptureSource(Ref<CoreAudioCaptur
 {
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
     return CaptureSourceOrError(WTFMove(source));
 }
@@ -272,7 +272,7 @@ const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities()
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
         capabilities.setDeviceId(hashedId());
         capabilities.setEchoCancellation(RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
-        capabilities.setVolume(CapabilityRange(0.0, 1.0));
+        capabilities.setVolume({ 0.0, 1.0 });
         capabilities.setSampleRate(unit().sampleRateCapacities());
         m_capabilities = WTFMove(capabilities);
     }

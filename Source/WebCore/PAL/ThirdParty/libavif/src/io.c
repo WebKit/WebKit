@@ -44,7 +44,9 @@ static avifResult avifIOMemoryReaderRead(struct avifIO * io, uint32_t readFlags,
         size = (size_t)availableSize;
     }
 
-    out->data = reader->rodata.data + offset;
+    // Prevent the offset addition from triggering an undefined behavior
+    // sanitizer error if data is NULL (happens even with offset zero).
+    out->data = offset ? reader->rodata.data + offset : reader->rodata.data;
     out->size = size;
     return AVIF_RESULT_OK;
 }
@@ -57,6 +59,9 @@ static void avifIOMemoryReaderDestroy(struct avifIO * io)
 avifIO * avifIOCreateMemoryReader(const uint8_t * data, size_t size)
 {
     avifIOMemoryReader * reader = avifAlloc(sizeof(avifIOMemoryReader));
+    if (reader == NULL) {
+        return NULL;
+    }
     memset(reader, 0, sizeof(avifIOMemoryReader));
     reader->io.destroy = avifIOMemoryReaderDestroy;
     reader->io.read = avifIOMemoryReaderRead;
@@ -103,7 +108,7 @@ static avifResult avifIOFileReaderRead(struct avifIO * io, uint32_t readFlags, u
             return AVIF_RESULT_IO_ERROR;
         }
         if (reader->buffer.size < size) {
-            avifRWDataRealloc(&reader->buffer, size);
+            AVIF_CHECKRES(avifRWDataRealloc(&reader->buffer, size));
         }
         if (fseek(reader->f, (long)offset, SEEK_SET) != 0) {
             return AVIF_RESULT_IO_ERROR;
@@ -146,12 +151,20 @@ avifIO * avifIOCreateFileReader(const char * filename)
     fseek(f, 0, SEEK_SET);
 
     avifIOFileReader * reader = avifAlloc(sizeof(avifIOFileReader));
+    if (!reader) {
+        fclose(f);
+        return NULL;
+    }
     memset(reader, 0, sizeof(avifIOFileReader));
     reader->f = f;
     reader->io.destroy = avifIOFileReaderDestroy;
     reader->io.read = avifIOFileReaderRead;
     reader->io.sizeHint = (uint64_t)fileSize;
     reader->io.persistent = AVIF_FALSE;
-    avifRWDataRealloc(&reader->buffer, 1024);
+    if (avifRWDataRealloc(&reader->buffer, 1024) != AVIF_RESULT_OK) {
+        avifFree(reader);
+        fclose(f);
+        return NULL;
+    }
     return (avifIO *)reader;
 }

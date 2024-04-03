@@ -131,7 +131,9 @@ header
       AXRoleDescription: banner
 
 hgroup
-      Could not get AX element.
+      AXRole: AXGroup
+      AXSubrole: AXApplicationGroup
+      AXRoleDescription: group
 
 h1
       AXRole: AXHeading
@@ -209,9 +211,9 @@ input[type='checkbox']
       AXRoleDescription: checkbox
 
 input[type='date']
-      AXRole: AXTextField
+      AXRole: AXDateTimeArea
       AXSubrole:
-      AXRoleDescription: date field
+      AXRoleDescription: date time area
 
 input[type='datetime']
       AXRole: AXTextField
@@ -219,9 +221,9 @@ input[type='datetime']
       AXRoleDescription: text field
 
 input[type='datetime-local']
-      AXRole: AXTextField
+      AXRole: AXDateTimeArea
       AXSubrole:
-      AXRoleDescription: date and time field
+      AXRoleDescription: date time area
 
 input[type='email']
       AXRole: AXTextField
@@ -242,9 +244,9 @@ input[type='image']
       AXRoleDescription: button
 
 input[type='month']
-      AXRole: AXTextField
+      AXRole: AXDateTimeArea
       AXSubrole:
-      AXRoleDescription: month and year field
+      AXRoleDescription: date time area
 
 input[type='number']
       AXRole: AXTextField
@@ -292,9 +294,9 @@ input[type='text']
       AXRoleDescription: text field
 
 input[type='time']
-      AXRole: AXTextField
+      AXRole: AXDateTimeArea
       AXSubrole:
-      AXRoleDescription: time field
+      AXRoleDescription: date time area
 
 input[type='url']
       AXRole: AXTextField
@@ -302,9 +304,9 @@ input[type='url']
       AXRoleDescription: URL field
 
 input[type='week']
-      AXRole: AXTextField
+      AXRole: AXDateTimeArea
       AXSubrole:
-      AXRoleDescription: week and year field
+      AXRoleDescription: date time area
 
 ins:not([datetime])
       AXRole: AXGroup

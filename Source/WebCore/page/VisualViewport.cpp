@@ -45,17 +45,15 @@ VisualViewport::VisualViewport(LocalDOMWindow& window)
 {
 }
 
-EventTargetInterface VisualViewport::eventTargetInterface() const
+enum EventTargetInterfaceType VisualViewport::eventTargetInterface() const
 {
-    return VisualViewportEventTargetInterfaceType;
+    return EventTargetInterfaceType::VisualViewport;
 }
 
 ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
 {
-    auto window = this->window();
-    if (!window)
-        return nullptr;
-    return static_cast<ContextDestructionObserver*>(window)->scriptExecutionContext();
+    RefPtr window = this->window();
+    return window ? window->document() : nullptr;
 }
 
 bool VisualViewport::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

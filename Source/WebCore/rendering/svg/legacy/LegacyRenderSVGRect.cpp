@@ -58,7 +58,8 @@ void LegacyRenderSVGRect::updateShapeFromElement()
     m_strokeBoundingBox = std::nullopt;
     m_approximateStrokeBoundingBox = std::nullopt;
 
-    SVGLengthContext lengthContext(&rectElement());
+    Ref rectElement = this->rectElement();
+    SVGLengthContext lengthContext(rectElement.ptr());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
 
     // Spec: "A negative value is illegal. A value of zero disables rendering of the element."
@@ -187,6 +188,8 @@ bool LegacyRenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, 
 
 bool LegacyRenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
+    if (m_shapeType == ShapeType::Empty)
+        return false;
     if (m_shapeType != ShapeType::Rectangle)
         return LegacyRenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());

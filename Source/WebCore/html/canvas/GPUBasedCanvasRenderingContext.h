@@ -45,7 +45,7 @@ protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&);
 
     HTMLCanvasElement* htmlCanvas() const;
-    void notifyCanvasContentChanged();
+    void markCanvasChanged();
 };
     
 } // namespace WebCore

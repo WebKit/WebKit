@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,6 +18,8 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
+// https://w3c.github.io/uievents/#idl-keyboardevent
 
 [
     Exposed=Window
@@ -44,17 +47,16 @@
 
     // Everything below is legacy.
     readonly attribute [AtomString] DOMString keyIdentifier;
-    [ImplementedAs=location] readonly attribute unsigned long keyLocation;
-    readonly attribute boolean altGraphKey;
     readonly attribute unsigned long charCode;
     readonly attribute unsigned long keyCode;
-    readonly attribute unsigned long which;
 
     // FIXME: this does not match the version in the DOM spec.
     undefined initKeyboardEvent([AtomString] DOMString type, optional boolean canBubble = false, optional boolean cancelable = false,
         optional WindowProxy? view = null, optional [AtomString] DOMString keyIdentifier = "undefined", optional unsigned long location = 0,
-        optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false, optional boolean altGraphKey = false);
+        optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false);
 };
+
+// https://w3c.github.io/uievents/#idl-keyboardeventinit
 
 dictionary KeyboardEventInit : EventModifierInit {
     DOMString key = "";
@@ -66,7 +68,6 @@ dictionary KeyboardEventInit : EventModifierInit {
     // This members are not in the specification but are needed to initialize the corresponding legacy
     // attributes we still support on KeyboardEvent for backward compatibility.
     [AtomString] DOMString keyIdentifier = "";
-    unsigned long keyLocation;
     unsigned long charCode = 0;
     unsigned long keyCode = 0;
     unsigned long which = 0;

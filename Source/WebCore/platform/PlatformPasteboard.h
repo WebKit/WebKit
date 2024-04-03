@@ -38,6 +38,7 @@ OBJC_CLASS NSPasteboardItem;
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS UIPasteboard;
+OBJC_PROTOCOL(AbstractPasteboard);
 #endif
 
 #if USE(LIBWPE)
@@ -123,7 +124,7 @@ private:
     RetainPtr<NSPasteboard> m_pasteboard;
 #endif
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<id> m_pasteboard;
+    RetainPtr<AbstractPasteboard> m_pasteboard;
 #endif
 #if USE(LIBWPE)
     struct wpe_pasteboard* m_pasteboard;

@@ -73,9 +73,6 @@ enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
 enum class WillInternallyHandleFailure : bool { No, Yes };
 
-struct PolicyCheckIdentifierType;
-using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
-
 enum class ShouldContinuePolicyCheck : bool { No, Yes };
 
 enum class NewFrameOpenerPolicy : uint8_t {

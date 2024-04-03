@@ -62,12 +62,12 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(PAL::SessionID sessionI
     if (!storageSession)
         return completionHandler();
 
-    auto* nsCookieStorage = storageSession->nsCookieStorage();
+    RetainPtr nsCookieStorage = storageSession->nsCookieStorage();
     if (!nsCookieStorage)
         return completionHandler();
 
     CFHTTPCookieStorageSetCookieAcceptPolicy([nsCookieStorage _cookieStorage], toCFHTTPCookieStorageAcceptPolicy(policy));
-    saveCookies(nsCookieStorage, WTFMove(completionHandler));
+    saveCookies(nsCookieStorage.get(), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

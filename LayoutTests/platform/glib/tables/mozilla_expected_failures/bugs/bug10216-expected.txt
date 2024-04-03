@@ -32,7 +32,7 @@ layer at (0,0) size 785x708
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,218) size 78x125 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 78x72
-          RenderText {#text} at (5,0) size 78x71
+          RenderText {#text} at (0,0) size 78x71
             text run at (5,0) width 68: "The table's"
             text run at (14,18) width 50: "caption,"
             text run at (25,36) width 28: "with"
@@ -54,7 +54,7 @@ layer at (0,0) size 785x708
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,342) size 102x107 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,52) size 102x54
-          RenderText {#text} at (17,0) size 102x53
+          RenderText {#text} at (0,0) size 102x53
             text run at (17,0) width 68: "The table's"
             text run at (10,18) width 82: "caption, with"
             text run at (0,36) width 102: "align=\"bottom\"."
@@ -75,7 +75,7 @@ layer at (0,0) size 785x708
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,448) size 78x125 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 78x72
-          RenderText {#text} at (5,0) size 78x71
+          RenderText {#text} at (0,0) size 78x71
             text run at (5,0) width 68: "The table's"
             text run at (14,18) width 50: "caption,"
             text run at (25,36) width 28: "with"
@@ -97,7 +97,7 @@ layer at (0,0) size 785x708
                 text run at (2,2) width 30: "Data"
       RenderTable {TABLE} at (0,572) size 87x107 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 87x54
-          RenderText {#text} at (9,0) size 87x53
+          RenderText {#text} at (0,0) size 87x53
             text run at (9,0) width 69: "The table's"
             text run at (2,18) width 83: "caption, with"
             text run at (0,36) width 87: "align=\"right\"."

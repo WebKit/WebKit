@@ -30,6 +30,7 @@
 
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "Logging.h"
 #include "RenderBlock.h"
@@ -48,7 +49,7 @@ static RenderStyle cloneRenderStyleWithState(const RenderStyle& currentStyle)
     auto newStyle = RenderStyle::clone(currentStyle);
 
     // FIXME: This should probably handle at least ::first-line too.
-    if (auto* firstLetterStyle = currentStyle.getCachedPseudoStyle(PseudoId::FirstLetter))
+    if (auto* firstLetterStyle = currentStyle.getCachedPseudoStyle({ PseudoId::FirstLetter }))
         newStyle.addCachedPseudoStyle(makeUnique<RenderStyle>(RenderStyle::clone(*firstLetterStyle)));
 
     if (currentStyle.lastChildState())
@@ -136,12 +137,11 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             parentRenderer = parentRenderer->parent();
 
         // If we have a list we should resize ListMarkers separately.
-        if (is<RenderListMarker>(*parentRenderer->firstChild())) {
-            auto& listMarkerRenderer = downcast<RenderListMarker>(*parentRenderer->firstChild());
-            auto style = cloneRenderStyleWithState(listMarkerRenderer.style());
+        if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(*parentRenderer->firstChild())) {
+            auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
             style.fontCascade().update(&node->document().fontSelector());
-            listMarkerRenderer.setStyle(WTFMove(style));
+            listMarkerRenderer->setStyle(WTFMove(style));
         }
 
         // Resize the line height of the parent.
@@ -170,10 +170,10 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
     }
 
     for (auto& node : m_autoSizedNodes) {
-        auto& textRenderer = *node->renderer();
-        if (!is<RenderTextFragment>(textRenderer))
+        auto* textRenderer = dynamicDowncast<RenderTextFragment>(*node->renderer());
+        if (!textRenderer)
             continue;
-        auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
+        auto* block = textRenderer->blockForAccompanyingFirstLetter();
         if (!block)
             continue;
 
@@ -182,7 +182,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         block->getFirstLetter(firstLetterRenderer, dummy);
         if (firstLetterRenderer && firstLetterRenderer->parent() && firstLetterRenderer->parent()->parent()) {
             auto& parentStyle = firstLetterRenderer->parent()->parent()->style();
-            auto* firstLetterStyle = parentStyle.getCachedPseudoStyle(PseudoId::FirstLetter);
+            auto* firstLetterStyle = parentStyle.getCachedPseudoStyle({ PseudoId::FirstLetter });
             if (!firstLetterStyle)
                 continue;
             auto fontDescription = firstLetterStyle->fontDescription();

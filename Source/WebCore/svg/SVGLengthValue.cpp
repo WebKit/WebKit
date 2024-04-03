@@ -26,6 +26,7 @@
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
 #include "SVGParserUtilities.h"
+#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/TextStream.h>
@@ -67,31 +68,32 @@ template<typename CharacterType> static inline SVGLengthType parseLengthType(Str
     if (buffer.atEnd())
         return SVGLengthType::Number;
 
-    auto firstChar = *buffer++;
+    auto firstCharacterPosition = buffer.position();
+    buffer.advance();
 
     if (buffer.atEnd())
-        return firstChar == '%' ? SVGLengthType::Percentage : SVGLengthType::Unknown;
+        return *firstCharacterPosition == '%' ? SVGLengthType::Percentage : SVGLengthType::Unknown;
 
-    auto secondChar = *buffer++;
+    buffer.advance();
 
     if (!buffer.atEnd())
         return SVGLengthType::Unknown;
 
-    if (firstChar == 'e' && secondChar == 'm')
+    if (compareCharacters(firstCharacterPosition, 'e', 'm'))
         return SVGLengthType::Ems;
-    if (firstChar == 'e' && secondChar == 'x')
+    if (compareCharacters(firstCharacterPosition, 'e', 'x'))
         return SVGLengthType::Exs;
-    if (firstChar == 'p' && secondChar == 'x')
+    if (compareCharacters(firstCharacterPosition, 'p', 'x'))
         return SVGLengthType::Pixels;
-    if (firstChar == 'c' && secondChar == 'm')
+    if (compareCharacters(firstCharacterPosition, 'c', 'm'))
         return SVGLengthType::Centimeters;
-    if (firstChar == 'm' && secondChar == 'm')
+    if (compareCharacters(firstCharacterPosition, 'm', 'm'))
         return SVGLengthType::Millimeters;
-    if (firstChar == 'i' && secondChar == 'n')
+    if (compareCharacters(firstCharacterPosition, 'i', 'n'))
         return SVGLengthType::Inches;
-    if (firstChar == 'p' && secondChar == 't')
+    if (compareCharacters(firstCharacterPosition, 'p', 't'))
         return SVGLengthType::Points;
-    if (firstChar == 'p' && secondChar == 'c')
+    if (compareCharacters(firstCharacterPosition, 'p', 'c'))
         return SVGLengthType::Picas;
 
     return SVGLengthType::Unknown;
@@ -259,8 +261,8 @@ SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& va
 
 Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const Element* element) const
 {
-    if (auto* svgElement = dynamicDowncast<SVGElement>(element)) {
-        SVGLengthContext context { svgElement };
+    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element)) {
+        SVGLengthContext context { svgElement.get() };
         auto computedValue = context.convertValueToUserUnits(valueInSpecifiedUnits(), lengthType(), lengthMode());
         if (!computedValue.hasException())
             return CSSPrimitiveValue::create(computedValue.releaseReturnValue(), CSSUnitType::CSS_PX);

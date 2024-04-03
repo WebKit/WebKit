@@ -71,7 +71,7 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 {
     auto& node = jsCast<JSNode*>(handle.slot()->asCell())->wrapped();
     if (!node.isConnected()) {
-        if (GCReachableRefMap::contains(node)) {
+        if (GCReachableRefMap::contains(node) || node.isInCustomElementReactionQueue()) {
             if (UNLIKELY(reason))
                 *reason = "Node is scheduled to be used in an async script invocation)";
             return true;

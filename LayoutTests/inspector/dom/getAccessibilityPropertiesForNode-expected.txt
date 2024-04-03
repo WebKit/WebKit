@@ -312,13 +312,13 @@ Total elements to be tested: 123.
 
 <option>not selected</option>
     exists: true
-    label:
+    label: not selected
     role: option
     parentNodeId: exists
 
 <option selected="">selected</option>
     exists: true
-    label:
+    label: selected
     role: option
     parentNodeId: exists
     selected: true

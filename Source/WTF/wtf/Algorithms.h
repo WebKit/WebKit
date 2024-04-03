@@ -67,6 +67,14 @@ std::span<T> spanReinterpretCast(std::span<U> span)
     return std::span<T> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
 }
 
+template<typename T>
+bool equalSpans(std::span<T> a, std::span<T> b)
+{
+    if (a.size() != b.size())
+        return false;
+    return !memcmp(a.data(), b.data(), a.size() * sizeof(T));
+}
+
 template<typename T, typename U>
 void memcpySpan(std::span<T> destination, std::span<U> source)
 {
@@ -87,5 +95,6 @@ void memsetSpan(std::span<T> destination, uint8_t byte)
 } // namespace WTF
 
 using WTF::spanReinterpretCast;
+using WTF::equalSpans;
 using WTF::memcpySpan;
 using WTF::memsetSpan;

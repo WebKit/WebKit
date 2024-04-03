@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 80: "100 100 100"
                 text run at (2,20) width 80: "100 100 100"
             RenderTableCell {TD} at (108,11) size 104x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 70x18
+              RenderText {#text} at (2,11) size 70x18
                 text run at (2,2) width 70: "50% width"
       RenderBlock (anonymous) at (0,92) size 784x18
         RenderBR {BR} at (0,0) size 0x18
@@ -81,7 +81,7 @@ layer at (0,0) size 800x600
                 text run at (2,20) width 100: "oooooo oooooo"
                 text run at (2,38) width 48: "oooooo"
             RenderTableCell {TD} at (108,20) size 588x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x18
+              RenderText {#text} at (2,20) size 21x18
                 text run at (2,2) width 21: "bar"
       RenderBlock (anonymous) at (0,338) size 784x18
         RenderBR {BR} at (0,0) size 0x18
@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 118x18
                   RenderText {#text} at (0,0) size 118x18
                     text run at (0,0) width 118: "This is colspan=3"
-                RenderText {#text} at (117,0) size 370x36
+                RenderText {#text} at (0,0) size 370x36
                   text run at (117,0) width 163: " blah blah blah blah blah "
                   text run at (279,0) width 91: "blah blah blah"
                   text run at (0,18) width 217: "blah blah blah blah blah blah blah"
@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                 RenderInline {B} at (0,0) size 118x18
                   RenderText {#text} at (0,0) size 118x18
                     text run at (0,0) width 118: "This is colspan=2"
-                RenderText {#text} at (117,0) size 370x36
+                RenderText {#text} at (0,0) size 370x36
                   text run at (117,0) width 163: " blah blah blah blah blah "
                   text run at (279,0) width 91: "blah blah blah"
                   text run at (0,18) width 217: "blah blah blah blah blah blah blah"

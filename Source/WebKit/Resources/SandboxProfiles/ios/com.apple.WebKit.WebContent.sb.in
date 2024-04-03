@@ -37,6 +37,9 @@
 (allow process-info-codesignature)
 #endif
 
+(deny file-read-metadata
+    (literal "/private/var/db/MobileIdentityData/Version.plist"))
+
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -106,19 +109,6 @@
     (mobile-preferences-read
         "com.apple.mediaremote"
         "com.apple.mobileipod")
-)
-
-(define-once (media-capture-support)
-    ;; Media capture, microphone access
-    (with-filter (extension "com.apple.webkit.microphone")
-        (allow device-microphone))
-
-    ;; Media capture, camera access
-    (with-filter (extension "com.apple.webkit.camera")
-        (allow user-preference-read
-            (preference-domain "com.apple.coremedia"))
-        (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-        (allow device-camera))
 )
 
 (define-once (accessibility-support)
@@ -209,38 +199,6 @@
         "com.apple.opengl" ;; <rdar://problem/23321675>
     )
 )
-
-(define-once (internal-debugging-support)
-        (allow file-read* file-map-executable
-               (subpath "/Developer"))
-
-        (allow ipc-posix-shm*
-               (ipc-posix-name-prefix "stack-logs")
-               (ipc-posix-name-prefix "OA-")
-               (ipc-posix-name-prefix "/FSM-"))
-
-        (allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-unlink
-               (ipc-posix-name-regex #"^gdt-[A-Za-z0-9]+-(c|s)$"))
-
-        (with-filter (system-attribute apple-internal)
-            ;; <rdar://problem/8565035>
-            ;; <rdar://problem/23857452>
-            ;; <rdar://problem/72317112>
-            (allow file-read* file-map-executable
-                   (subpath "/AppleInternal")
-                   (subpath "/usr/local/lib")
-                   (subpath "/usr/appleinternal/lib")))
-            (with-elevated-precedence
-                (allow file-read* file-map-executable file-issue-extension
-                   (front-user-home-subpath "/XcodeBuiltProducts")))
-
-        ;; <rdar://problem/8107758>
-        (allow file-read* file-map-executable
-               (subpath "/System/Library/Frameworks")
-               (subpath "/System/Library/PrivateFrameworks"))
-
-        ;; <rdar://problem/32544921>
-        (mobile-preferences-read "com.apple.hangtracer"))
 
 (define-once (device-access)
     (deny file-read* file-write*
@@ -448,8 +406,7 @@
 )
 
 (with-filter (system-attribute apple-internal)
-    (internal-debugging-support)
-)
+    (internal-debugging-support))
 
 (allow file-read*
     required-etc-files
@@ -487,13 +444,6 @@
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
 
-(allow ipc-posix-sem-open (with telemetry)
-       (ipc-posix-name "containermanagerd.fb_check"))
-
-(with-filter (ipc-posix-name "purplebuddy.sentinel")
-    (deny ipc-posix-sem-create ipc-posix-sem-post ipc-posix-sem-unlink ipc-posix-sem-wait)
-    (allow ipc-posix-sem-open))
-
 (deny mach-lookup (with no-report)
     (global-name "com.apple.runningboard")
 )
@@ -511,10 +461,10 @@
     (allow sysctl-read sysctl-write
            (sysctl-name "vm.footprint_suspend")))
 
+(deny network-outbound)
 (with-filter (system-attribute apple-internal)
     (allow network-outbound
-        (literal "/private/var/run/syslog"))
-)
+        (literal "/private/var/run/syslog")))
 
 (define (notifyd-message-numbers) (message-number 1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))
 
@@ -527,16 +477,14 @@
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center"))
 
-(with-filter (webcontent-process-launched)
-    (apply-message-filter
-        (deny mach-message-send)
-        (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (with telemetry-backtrace) (notifyd-message-numbers))))
-
+#if ENABLE(NOTIFY_BLOCKING)
 (with-filter (state-flag "EnableExperimentalSandbox")
     (allow mach-lookup (global-name "com.apple.system.notification_center")
-        (apply-message-filter (deny mach-message-send))))
-
+        (apply-message-filter
+            (deny mach-message-send)
+            (deny mach-message-send (with no-report) (message-number 1023))
+            (deny mach-message-send (with telemetry-backtrace) (notifyd-message-numbers)))))
+#endif
 
 (managed-configuration-read-public)
 
@@ -882,6 +830,12 @@
 (deny mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))
 
+(allow mach-lookup (with telemetry)
+    (require-all
+        (require-not (webcontent-process-launched))
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.mobilegestalt.xpc")))
+
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
@@ -927,13 +881,13 @@
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
         (global-name "com.apple.diagnosticd")
+        ;; This is only added temporarily. See rdar://123786910.
+        (global-name "com.apple.analyticsd")
         (global-name "com.apple.osanalytics.osanalyticshelper")))
 
 (define (mach-extension-list)
     (global-name
-        "com.apple.iconservices"
-        "com.apple.mobileassetd.v2"
-        "com.apple.mobilegestalt.xpc"))
+        "com.apple.mobileassetd.v2"))
 
 (allow mach-lookup (with telemetry-backtrace)
     (require-all
@@ -982,8 +936,6 @@
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name-prefix "com.apple.AGXCompilerService")))
 #endif // HAVE(AGX_COMPILER_SERVICE)
-
-(media-capture-support)
 
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
@@ -1154,10 +1106,21 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-(with-filter (require-not (state-flag "EnableExperimentalSandbox"))
+
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+(with-filter (require-not (state-flag "EnableQuickLookSandboxResources"))
     (allow syscall-unix (with report) (with telemetry-backtrace)
         (syscall-unix-rarely-in-use)
         (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+(with-filter (state-flag "EnableQuickLookSandboxResources")
+    (allow syscall-unix
+        (syscall-unix-rarely-in-use)
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+#else
+(allow syscall-unix
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+#endif
 
 (deny syscall-unix (with no-report) (syscall-number
     SYS_connect
@@ -1211,20 +1174,6 @@
         (fcntl-command
             F_GETLK
             F_OFD_SETLK))
-
-    (define (appcache-fcntl-commands)
-        (fcntl-command
-            F_OFD_GETLK
-            F_OFD_SETLKWTIMEOUT))
-            
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (require-not (state-flag "AppCacheDisabled"))
-        (allow system-fcntl (appcache-fcntl-commands)))
-    (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands)))
-#else
-    (allow system-fcntl (appcache-fcntl-commands))
-#endif
 
     (allow system-fcntl
         (fcntl-command F_GETPROTECTIONCLASS)
@@ -1423,12 +1372,14 @@
 (define (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode)
     (kernel-mig-routine
         clock_get_time
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
         io_connect_add_client
         io_connect_async_method
         io_connect_map_memory_into_task ;; <rdar://88300200>
         io_connect_method
         io_connect_set_notification_port_64
         io_service_close
+#endif
         mach_exception_raise
         mach_vm_region
         task_threads_from_user))
@@ -1439,6 +1390,10 @@
         thread_info
         thread_policy
         thread_policy_set))
+
+; This rule is only temporary and should be removed shortly
+; See: rdar://125256111.
+(mobile-preferences-read "com.apple.webkit-new-sandbox-test")
     
 (allow mach-kernel-endpoint
     (apply-message-filter
@@ -1477,8 +1432,28 @@
 #endif
 #endif
 
+#if HAVE(HARDENED_MACH_EXCEPTIONS)
         (with-filter (require-not (lockdown-mode))
-            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+            (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+            (with-filter (require-not (webcontent-process-launched))
+                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler)))
+#else
+            (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))
+#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+        )
+#else
+        (with-filter (require-not (lockdown-mode))
+#if ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+            (with-filter (require-not (webcontent-process-launched))
+                (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+#else
+            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports))
+#endif ;; ENABLE(BLOCK_SET_EXCEPTION_PORTS)
+        )
+#endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
+
+
 
         (with-filter (lockdown-mode)
             (deny mach-message-send (with telemetry) (with message "Lockdown mode")
@@ -1494,6 +1469,35 @@
 (deny darwin-notification-post (with no-report))
 (allow darwin-notification-post
     (notification-name
+#if ENABLE(NOTIFY_BLOCKING)
+        "com.apple.WebKit.LibraryPathDiagnostics"
+        "com.apple.WebKit.deleteAllCode"
+        "com.apple.WebKit.dumpGCHeap"
+        "com.apple.WebKit.dumpUntrackedMallocs"
+        "com.apple.WebKit.fullGC"
+        "com.apple.WebKit.logMemStats"
+        "com.apple.WebKit.logPageState"
+        "com.apple.WebKit.showAllDocuments"
+        "com.apple.WebKit.showBackForwardCache"
+        "com.apple.WebKit.showGraphicsLayerTree"
+        "com.apple.WebKit.showLayerTree"
+        "com.apple.WebKit.showLayoutTree"
+        "com.apple.WebKit.showMemoryCache"
+        "com.apple.WebKit.showPaintOrderTree"
+        "com.apple.WebKit.showRenderTree"
+        "com.apple.language.changed"
+        "com.apple.mediaaccessibility.captionAppearanceSettingsChanged"
+        "com.apple.powerlog.state_changed"
+        "com.apple.system.lowpowermode"
+        "com.apple.system.timezone"
+        "com.apple.zoomwindow"
+        "org.WebKit.lowMemory"
+        "org.WebKit.lowMemory.begin"
+        "org.WebKit.lowMemory.end"
+        "org.WebKit.memoryWarning"
+        "org.WebKit.memoryWarning.begin"
+        "org.WebKit.memoryWarning.end"
+#endif
         "_AXNotification_AXSClassicInvertColorsPreference"
         "com.apple.WebContentFilter.remoteUI.WebContentAnalysisUI-com.apple.uikit.viewService.connectionRequest"
         "com.apple.accessibility.AirPodsSpatialAudioLockToDeviceChanged"

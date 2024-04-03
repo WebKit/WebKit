@@ -99,7 +99,8 @@ static std::optional<std::tuple<SVGFilterEffectsGraph, FilterEffectGeometryMap>>
     if (filterElement.countChildNodes() > maxCountChildNodes)
         return std::nullopt;
 
-    SVGFilterEffectsGraph graph(SourceGraphic::create(), SourceAlpha::create());
+    const auto colorSpace = filterElement.colorInterpolation() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB();
+    SVGFilterEffectsGraph graph(SourceGraphic::create(colorSpace), SourceAlpha::create(colorSpace));
     FilterEffectGeometryMap effectGeometryMap;
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
@@ -116,10 +117,8 @@ static std::optional<std::tuple<SVGFilterEffectsGraph, FilterEffectGeometryMap>>
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         if (effectElement.colorInterpolation() == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
-#endif
 
         graph.addNamedNode(AtomString { effectElement.result() }, { *effect });
         graph.setNodeInputs(*effect, WTFMove(*inputs));

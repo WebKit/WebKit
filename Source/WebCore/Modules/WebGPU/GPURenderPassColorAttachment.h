@@ -26,6 +26,7 @@
 #pragma once
 
 #include "GPUColorDict.h"
+#include "GPUIntegralTypes.h"
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTextureView.h"
@@ -41,16 +42,18 @@ struct GPURenderPassColorAttachment {
     {
         ASSERT(view);
         return {
-            view->backing(),
-            resolveTarget ? &resolveTarget->backing() : nullptr,
-            clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,
-            WebCore::convertToBacking(loadOp),
-            WebCore::convertToBacking(storeOp),
+            .view = view->backing(),
+            .depthSlice = depthSlice,
+            .resolveTarget = resolveTarget ? &resolveTarget->backing() : nullptr,
+            .clearValue = clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,
+            .loadOp = WebCore::convertToBacking(loadOp),
+            .storeOp = WebCore::convertToBacking(storeOp),
         };
     }
 
-    GPUTextureView* view { nullptr };
-    GPUTextureView* resolveTarget { nullptr };
+    WeakPtr<GPUTextureView> view;
+    std::optional<GPUIntegerCoordinate> depthSlice;
+    WeakPtr<GPUTextureView> resolveTarget;
 
     std::optional<GPUColor> clearValue;
     GPULoadOp loadOp { GPULoadOp::Load };

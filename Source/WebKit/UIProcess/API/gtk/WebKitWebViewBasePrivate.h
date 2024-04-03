@@ -30,7 +30,6 @@
 #include "APIPageConfiguration.h"
 #include "InputMethodState.h"
 #include "SameDocumentNavigationType.h"
-#include "ShareableBitmap.h"
 #include "ViewGestureController.h"
 #include "ViewSnapshotStore.h"
 #include "WebContextMenuProxyGtk.h"
@@ -44,6 +43,7 @@
 #include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
@@ -51,7 +51,11 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfigurati
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHitTestResultData::IsScrollbar);
+#if USE(GTK4)
+void webkitWebViewBaseProcessAcceleratorsForKeyPressEvent(WebKitWebViewBase*, GdkEvent*);
+#else
 void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase*, GdkEvent*);
+#endif
 void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 #if ENABLE(FULLSCREEN_API)
@@ -98,7 +102,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
 void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 
 #if ENABLE(DRAG_SUPPORT)
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebKit::ShareableBitmap>&&, WebCore::IntPoint&& dragImageHotspot);
+void webkitWebViewBaseStartDrag(WebKitWebViewBase*, WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&&, WebCore::IntPoint&& dragImageHotspot);
 void webkitWebViewBaseDidPerformDragControllerAction(WebKitWebViewBase*);
 #endif
 
@@ -137,3 +141,7 @@ void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase*, uint32_t, u
 void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase*, GdkMonitor*);
 
 void webkitWebViewBaseCallAfterNextPresentationUpdate(WebKitWebViewBase*, CompletionHandler<void()>&&);
+
+#if USE(GTK4)
+void webkitWebViewBaseSetPlugID(WebKitWebViewBase*, const String&);
+#endif

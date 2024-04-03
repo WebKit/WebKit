@@ -145,20 +145,20 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
 }
 
 
-static Ref<Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const std::optional<IDBKeyPath>& idbKeyPath)
+static Ref<Inspector::Protocol::IndexedDB::KeyPath> keyPathFromIDBKeyPath(const std::optional<IDBKeyPath>& idbKeyPath)
 {
     if (!idbKeyPath)
-        return Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::Null).release();
+        return Inspector::Protocol::IndexedDB::KeyPath::create().setType(Inspector::Protocol::IndexedDB::KeyPath::Type::Null).release();
 
     auto visitor = WTF::makeVisitor([](const String& string) {
-        auto keyPath = Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::String).release();
+        auto keyPath = Inspector::Protocol::IndexedDB::KeyPath::create().setType(Inspector::Protocol::IndexedDB::KeyPath::Type::String).release();
         keyPath->setString(string);
         return keyPath;
     }, [](const Vector<String>& vector) {
         auto array = JSON::ArrayOf<String>::create();
         for (auto& string : vector)
             array->addItem(string);
-        auto keyPath = Protocol::IndexedDB::KeyPath::create().setType(Protocol::IndexedDB::KeyPath::Type::Array).release();
+        auto keyPath = Inspector::Protocol::IndexedDB::KeyPath::create().setType(Inspector::Protocol::IndexedDB::KeyPath::Type::Array).release();
         keyPath->setArray(WTFMove(array));
         return keyPath;
     });
@@ -204,17 +204,17 @@ public:
             return;
     
         auto& databaseInfo = database.info();
-        auto objectStores = JSON::ArrayOf<Protocol::IndexedDB::ObjectStore>::create();
+        auto objectStores = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStore>::create();
         auto objectStoreNames = databaseInfo.objectStoreNames();
         for (auto& name : objectStoreNames) {
             auto* objectStoreInfo = databaseInfo.infoForExistingObjectStore(name);
             if (!objectStoreInfo)
                 continue;
 
-            auto indexes = JSON::ArrayOf<Protocol::IndexedDB::ObjectStoreIndex>::create();
+            auto indexes = JSON::ArrayOf<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
     
             for (auto& indexInfo : objectStoreInfo->indexMap().values()) {
-                auto objectStoreIndex = Protocol::IndexedDB::ObjectStoreIndex::create()
+                auto objectStoreIndex = Inspector::Protocol::IndexedDB::ObjectStoreIndex::create()
                     .setName(indexInfo.name())
                     .setKeyPath(keyPathFromIDBKeyPath(indexInfo.keyPath()))
                     .setUnique(indexInfo.unique())
@@ -223,7 +223,7 @@ public:
                 indexes->addItem(WTFMove(objectStoreIndex));
             }
     
-            auto objectStore = Protocol::IndexedDB::ObjectStore::create()
+            auto objectStore = Inspector::Protocol::IndexedDB::ObjectStore::create()
                 .setName(objectStoreInfo->name())
                 .setKeyPath(keyPathFromIDBKeyPath(objectStoreInfo->keyPath()))
                 .setAutoIncrement(objectStoreInfo->autoIncrement())
@@ -232,7 +232,7 @@ public:
             objectStores->addItem(WTFMove(objectStore));
         }
     
-        auto result = Protocol::IndexedDB::DatabaseWithObjectStores::create()
+        auto result = Inspector::Protocol::IndexedDB::DatabaseWithObjectStores::create()
             .setName(databaseInfo.name())
             .setVersion(databaseInfo.version())
             .setObjectStores(WTFMove(objectStores))
@@ -250,38 +250,38 @@ private:
 
 static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 {
-    auto typeString = key->getString(Protocol::IndexedDB::Key::typeKey);
+    auto typeString = key->getString(Inspector::Protocol::IndexedDB::Key::typeKey);
     if (!typeString)
         return nullptr;
 
-    auto type = Protocol::Helpers::parseEnumValueFromString<Protocol::IndexedDB::Key::Type>(typeString);
+    auto type = Inspector::Protocol::Helpers::parseEnumValueFromString<Inspector::Protocol::IndexedDB::Key::Type>(typeString);
     if (!type)
         return nullptr;
 
     switch (*type) {
-    case Protocol::IndexedDB::Key::Type::Number: {
-        auto number = key->getDouble(Protocol::IndexedDB::Key::numberKey);
+    case Inspector::Protocol::IndexedDB::Key::Type::Number: {
+        auto number = key->getDouble(Inspector::Protocol::IndexedDB::Key::numberKey);
         if (!number)
             return nullptr;
         return IDBKey::createNumber(*number);
     }
 
-    case Protocol::IndexedDB::Key::Type::String: {
-        auto string = key->getString(Protocol::IndexedDB::Key::stringKey);
+    case Inspector::Protocol::IndexedDB::Key::Type::String: {
+        auto string = key->getString(Inspector::Protocol::IndexedDB::Key::stringKey);
         if (!string)
             return nullptr;
         return IDBKey::createString(string);
     }
 
-    case Protocol::IndexedDB::Key::Type::Date: {
-        auto date = key->getDouble(Protocol::IndexedDB::Key::dateKey);
+    case Inspector::Protocol::IndexedDB::Key::Type::Date: {
+        auto date = key->getDouble(Inspector::Protocol::IndexedDB::Key::dateKey);
         if (!date)
             return nullptr;
         return IDBKey::createDate(*date);
     }
 
-    case Protocol::IndexedDB::Key::Type::Array: {
-        auto array = key->getArray(Protocol::IndexedDB::Key::arrayKey);
+    case Inspector::Protocol::IndexedDB::Key::Type::Array: {
+        auto array = key->getArray(Inspector::Protocol::IndexedDB::Key::arrayKey);
         if (!array)
             return nullptr;
 
@@ -303,24 +303,24 @@ static RefPtr<IDBKey> idbKeyFromInspectorObject(Ref<JSON::Object>&& key)
 static RefPtr<IDBKeyRange> idbKeyRangeFromKeyRange(JSON::Object& keyRange)
 {
     RefPtr<IDBKey> idbLower;
-    if (auto lower = keyRange.getObject(Protocol::IndexedDB::KeyRange::lowerKey)) {
+    if (auto lower = keyRange.getObject(Inspector::Protocol::IndexedDB::KeyRange::lowerKey)) {
         idbLower = idbKeyFromInspectorObject(lower.releaseNonNull());
         if (!idbLower)
             return nullptr;
     }
 
     RefPtr<IDBKey> idbUpper;
-    if (auto upper = keyRange.getObject(Protocol::IndexedDB::KeyRange::upperKey)) {
+    if (auto upper = keyRange.getObject(Inspector::Protocol::IndexedDB::KeyRange::upperKey)) {
         idbUpper = idbKeyFromInspectorObject(upper.releaseNonNull());
         if (!idbUpper)
             return nullptr;
     }
 
-    auto lowerOpen = keyRange.getBoolean(Protocol::IndexedDB::KeyRange::lowerOpenKey);
+    auto lowerOpen = keyRange.getBoolean(Inspector::Protocol::IndexedDB::KeyRange::lowerOpenKey);
     if (!lowerOpen)
         return nullptr;
 
-    auto upperOpen = keyRange.getBoolean(Protocol::IndexedDB::KeyRange::upperOpenKey);
+    auto upperOpen = keyRange.getBoolean(Inspector::Protocol::IndexedDB::KeyRange::upperOpenKey);
     if (!upperOpen)
         return nullptr;
 
@@ -391,7 +391,7 @@ public:
         if (!value)
             return;
 
-        auto dataEntry = Protocol::IndexedDB::DataEntry::create()
+        auto dataEntry = Inspector::Protocol::IndexedDB::DataEntry::create()
             .setKey(key.releaseNonNull())
             .setPrimaryKey(primaryKey.releaseNonNull())
             .setValue(value.releaseNonNull())
@@ -411,14 +411,14 @@ private:
         : EventListener(EventListener::CPPEventListenerType)
         , m_injectedScript(injectedScript)
         , m_requestCallback(WTFMove(requestCallback))
-        , m_result(JSON::ArrayOf<Protocol::IndexedDB::DataEntry>::create())
+        , m_result(JSON::ArrayOf<Inspector::Protocol::IndexedDB::DataEntry>::create())
         , m_skipCount(skipCount)
         , m_pageSize(pageSize)
     {
     }
     InjectedScript m_injectedScript;
     Ref<IndexedDBBackendDispatcherHandler::RequestDataCallback> m_requestCallback;
-    Ref<JSON::ArrayOf<Protocol::IndexedDB::DataEntry>> m_result;
+    Ref<JSON::ArrayOf<Inspector::Protocol::IndexedDB::DataEntry>> m_result;
     int m_skipCount;
     unsigned m_pageSize;
 };
@@ -516,17 +516,17 @@ void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(Inspector::Disconnec
     disable();
 }
 
-Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::enable()
 {
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorIndexedDBAgent::disable()
 {
     return { };
 }
 
-static Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
+static Inspector::Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
 {
     Document* document = frame ? frame->document() : nullptr;
     if (!document)
@@ -535,7 +535,7 @@ static Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFrame* frame)
     return document;
 }
 
-static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
+static Inspector::Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
 {
     auto* domWindow = document->domWindow();
     if (!domWindow)
@@ -550,13 +550,13 @@ static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* doc
 
 static bool getDocumentAndIDBFactoryFromFrameOrSendFailure(LocalFrame* frame, Document*& outDocument, IDBFactory*& outIDBFactory, BackendDispatcher::CallbackBase& callback)
 {
-    Protocol::ErrorStringOr<Document*> document = documentFromFrame(frame);
+    Inspector::Protocol::ErrorStringOr<Document*> document = documentFromFrame(frame);
     if (!document.has_value()) {
         callback.sendFailure(document.error());
         return false;
     }
 
-    Protocol::ErrorStringOr<IDBFactory*> idbFactory = IDBFactoryFromDocument(document.value());
+    Inspector::Protocol::ErrorStringOr<IDBFactory*> idbFactory = IDBFactoryFromDocument(document.value());
     if (!idbFactory.has_value()) {
         callback.sendFailure(idbFactory.error());
         return false;

@@ -84,6 +84,11 @@ inline bool JSFunction::isHostFunction() const
     return executable()->isHostFunction();
 }
 
+inline bool JSFunction::isNonBoundHostFunction() const
+{
+    return isHostFunction() && !inherits<JSBoundFunction>();
+}
+
 inline Intrinsic JSFunction::intrinsic() const
 {
     return executable()->intrinsic();
@@ -119,14 +124,6 @@ inline TaggedNativeFunction JSFunction::nativeConstructor()
 {
     ASSERT(isHostFunctionNonInline());
     return static_cast<NativeExecutable*>(executable())->constructor();
-}
-
-inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
-{
-    JSFunction* function = jsCast<JSFunction*>(getJSFunction(value));
-    if (!function || !function->isHostFunction())
-        return false;
-    return function->nativeFunction() == nativeFunction;
 }
 
 inline bool isRemoteFunction(JSValue value)
@@ -211,12 +208,10 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
 
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
-    if (isHostFunction()) {
-        // Bound functions are not eagerly generating name and length.
-        // Thus, we can use FunctionRareData's tracking. This is useful to optimize func.bind().bind() case.
-        if (!inherits<JSBoundFunction>())
-            return false;
-    }
+    // Bound functions are not eagerly generating name and length.
+    // Thus, we can use FunctionRareData's tracking. This is useful to optimize func.bind().bind() case.
+    if (isNonBoundHostFunction())
+        return false;
     FunctionRareData* rareData = this->rareData();
     if (!rareData)
         return true;

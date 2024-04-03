@@ -11,10 +11,10 @@ layer at (8,52) size 784x40
 layer at (8,52) size 784x40
   RenderBlock (relative positioned) zI: 1 {div} at (0,0) size 784x40 [color=#FF0000]
     RenderBlock {div} at (1,1) size 782x38
-      RenderInline {span} at (0,0) size 39x36
+      RenderInline {span} at (0,1) size 39x36
         RenderText {#text} at (0,1) size 39x36
           text run at (0,1) width 39: "a b"
-      RenderInline {span} at (0,0) size 39x36
+      RenderInline {span} at (38,1) size 39x36
         RenderText {#text} at (38,1) size 39x36
           text run at (38,1) width 39: "c d"
       RenderText {#text} at (0,0) size 0x0

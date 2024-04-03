@@ -31,16 +31,19 @@
 #include "PageClientImpl.h"
 #include <WebCore/PlatformEvent.h>
 
+#if USE(ATK)
+#include <atk/atk.h>
+#endif
+
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 #endif
 
-#if ENABLE(ACCESSIBILITY)
-#include <atk/atk.h>
+#if USE(GBM)
+#include "DMABufRendererBufferFormat.h"
 #endif
 
 #if USE(GBM) && ENABLE(WPE_PLATFORM)
-#include "DMABufRendererBufferFormat.h"
 #include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
 #endif
@@ -65,10 +68,12 @@ WPEView* WebPageProxy::wpeView() const
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
     auto* accessible = static_cast<PageClientImpl&>(pageClient()).accessible();
     atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
     atk_object_notify_state_change(accessible, ATK_STATE_TRANSIENT, FALSE);
+#else
+    UNUSED_PARAM(plugID);
 #endif
 }
 
@@ -174,6 +179,20 @@ OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifier
     return modifiers;
 #else
     return { };
+#endif
+}
+
+void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+    if (!hasRunningProcess() || !m_drawingArea) {
+        callback();
+        return;
+    }
+
+#if USE(COORDINATED_GRAPHICS)
+    static_cast<PageClientImpl&>(pageClient()).callAfterNextPresentationUpdate(WTFMove(callback));
+#else
+    callback();
 #endif
 }
 

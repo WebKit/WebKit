@@ -56,10 +56,12 @@ Ref<DateTimeDayFieldElement> DateTimeDayFieldElement::create(Document& document,
     return element;
 }
 
-void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeDayFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.dayOfMonth = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.dayOfMonth = placeholderValueAsInteger();
 }
 
 void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
@@ -79,15 +81,17 @@ Ref<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document& documen
     auto element = adoptRef(*new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditHourField());
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldHourText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
-void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
-    if (!hasValue())
+    if (!hasValue() && placeholderIfNoValue == DateTimePlaceholderIfNoValue::No)
         return;
 
-    int value = valueAsInteger();
+    int value = hasValue() ? valueAsInteger() : placeholderValueAsInteger();
 
     switch (maximum()) {
     case 11:
@@ -144,18 +148,41 @@ Ref<DateTimeMeridiemFieldElement> DateTimeMeridiemFieldElement::create(Document&
     auto element = adoptRef(*new DateTimeMeridiemFieldElement(document, fieldOwner, labels));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMeridiemField());
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
+    element->updateAriaValueAttributes();
     return element;
 }
 
-void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMeridiemFieldElement::updateAriaValueAttributes()
+{
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuenowAttr, AtomString::number(valueAsInteger()));
+    setAttributeWithoutSynchronization(HTMLNames::aria_valuetextAttr, AtomString { visibleValue() });
+}
+
+void DateTimeMeridiemFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.meridiem = valueAsInteger() ? DateTimeFieldsState::Meridiem::PM : DateTimeFieldsState::Meridiem::AM;
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.meridiem = placeholderValueAsInteger() ? DateTimeFieldsState::Meridiem::PM : DateTimeFieldsState::Meridiem::AM;
 }
 
 void DateTimeMeridiemFieldElement::setValueAsDate(const DateComponents& date)
 {
     setValueAsInteger(date.hour() >= 12 ? 1 : 0);
+    updateAriaValueAttributes();
+}
+
+void DateTimeMeridiemFieldElement::setValueAsInteger(int newSelectedIndex, EventBehavior eventBehavior)
+{
+    DateTimeSymbolicFieldElement::setValueAsInteger(newSelectedIndex, eventBehavior);
+    updateAriaValueAttributes();
+}
+
+void DateTimeMeridiemFieldElement::setEmptyValue(EventBehavior eventBehavior)
+{
+    DateTimeSymbolicFieldElement::setEmptyValue(eventBehavior);
+    updateAriaValueAttributes();
 }
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DateTimeMillisecondFieldElement);
@@ -170,13 +197,17 @@ Ref<DateTimeMillisecondFieldElement> DateTimeMillisecondFieldElement::create(Doc
     auto element = adoptRef(*new DateTimeMillisecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMillisecondField());
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldMillisecondText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
-void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMillisecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.millisecond = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.millisecond = placeholderValueAsInteger();
 }
 
 void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
@@ -196,13 +227,17 @@ Ref<DateTimeMinuteFieldElement> DateTimeMinuteFieldElement::create(Document& doc
     auto element = adoptRef(*new DateTimeMinuteFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditMinuteField());
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldMinuteText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
-void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMinuteFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.minute = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.minute = placeholderValueAsInteger();
 }
 
 void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
@@ -227,10 +262,12 @@ Ref<DateTimeMonthFieldElement> DateTimeMonthFieldElement::create(Document& docum
     return element;
 }
 
-void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.month = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.month = placeholderValueAsInteger();
 }
 
 void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
@@ -251,13 +288,17 @@ Ref<DateTimeSecondFieldElement> DateTimeSecondFieldElement::create(Document& doc
     auto element = adoptRef(*new DateTimeSecondFieldElement(document, fieldOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setUserAgentPart(UserAgentParts::webkitDatetimeEditSecondField());
+    element->setAttributeWithoutSynchronization(HTMLNames::aria_labelAttr, AtomString { AXTimeFieldSecondText() });
+    element->setAttributeWithoutSynchronization(HTMLNames::roleAttr, AtomString { "spinbutton"_s });
     return element;
 }
 
-void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeSecondFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.second = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.second = placeholderValueAsInteger();
 }
 
 void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
@@ -282,10 +323,12 @@ Ref<DateTimeSymbolicMonthFieldElement> DateTimeSymbolicMonthFieldElement::create
     return element;
 }
 
-void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeSymbolicMonthFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.month = valueAsInteger() + 1;
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.month = placeholderValueAsInteger() + 1;
 }
 
 void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& date)
@@ -310,10 +353,12 @@ Ref<DateTimeYearFieldElement> DateTimeYearFieldElement::create(Document& documen
     return element;
 }
 
-void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state)
+void DateTimeYearFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& state, DateTimePlaceholderIfNoValue placeholderIfNoValue)
 {
     if (hasValue())
         state.year = valueAsInteger();
+    else if (placeholderIfNoValue == DateTimePlaceholderIfNoValue::Yes)
+        state.year = placeholderValueAsInteger();
 }
 
 void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)

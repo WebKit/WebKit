@@ -8,6 +8,6 @@ layer at (0,0) size 800x600
           RenderDetailsMarker {DIV} at (0,4) size 11x11: down
           RenderText {#text} at (16,0) size 65x19
             text run at (16,0) width 65: "summary "
-          RenderInline {SPAN} at (0,0) size 185x19
+          RenderInline {SPAN} at (80,0) size 185x19
             RenderText {#text} at (80,0) size 185x19
               text run at (80,0) width 185: "shouldn't have any bold text."

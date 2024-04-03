@@ -62,9 +62,9 @@ NavigatorClipboard* NavigatorClipboard::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorClipboard::supplementName()
+ASCIILiteral NavigatorClipboard::supplementName()
 {
-    return "NavigatorClipboard";
+    return "NavigatorClipboard"_s;
 }
 
 }

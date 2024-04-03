@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum ChannelSelectorType {
+enum class ChannelSelectorType : uint8_t {
     CHANNEL_UNKNOWN = 0,
     CHANNEL_R = 1,
     CHANNEL_G = 2,
@@ -72,21 +72,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ChannelSelectorType> {
-    using values = EnumValues<
-        WebCore::ChannelSelectorType,
-
-        WebCore::CHANNEL_UNKNOWN,
-        WebCore::CHANNEL_R,
-        WebCore::CHANNEL_G,
-        WebCore::CHANNEL_B,
-        WebCore::CHANNEL_A
-    >;
-};
-
-} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEDisplacementMap)

@@ -86,6 +86,11 @@ CounterNode::~CounterNode()
     resetRenderers();
 }
 
+RenderElement& CounterNode::owner() const
+{
+    return m_owner.get();
+}
+
 Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
 {
     return adoptRef(*new CounterNode(owner, type, value));
@@ -158,15 +163,15 @@ void CounterNode::addRenderer(RenderCounter& renderer)
     ASSERT(!renderer.m_counterNode);
     ASSERT(!renderer.m_nextForSameCounter);
     renderer.m_nextForSameCounter = m_rootRenderer;
-    m_rootRenderer = &renderer;
-    renderer.m_counterNode = this;
+    m_rootRenderer = renderer;
+    renderer.m_counterNode = *this;
 }
 
 void CounterNode::removeRenderer(RenderCounter& renderer)
 {
     ASSERT(renderer.m_counterNode && renderer.m_counterNode == this);
     RenderCounter* previous = nullptr;
-    for (auto* current = m_rootRenderer; current; previous = current, current = current->m_nextForSameCounter) {
+    for (auto* current = m_rootRenderer.get(); current; previous = current, current = current->m_nextForSameCounter.get()) {
         if (current != &renderer)
             continue;
 
@@ -185,9 +190,9 @@ void CounterNode::resetRenderers()
 {
     if (!m_rootRenderer)
         return;
-    auto* current = m_rootRenderer;
+    auto* current = m_rootRenderer.get();
     while (current) {
-        auto* next = current->m_nextForSameCounter;
+        auto* next = current->m_nextForSameCounter.get();
         current->m_nextForSameCounter = nullptr;
         current->m_counterNode = nullptr;
         current->view().addCounterNeedingUpdate(*current);

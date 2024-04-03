@@ -1,0 +1,17 @@
+/*#pragma settings Default*/
+
+uniform half4 colorGreen, colorRed;
+
+inline half4 MakeTempVar(half4 c) {
+    {
+        half4 d = colorGreen;
+        c = d;
+    }
+    {
+        return c;
+    }
+}
+
+half4 main(float2 coords) {
+    return MakeTempVar(colorRed);
+}

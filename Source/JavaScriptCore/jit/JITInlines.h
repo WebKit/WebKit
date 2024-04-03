@@ -109,6 +109,19 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
     exceptionCheck();
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
+{
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+    emitPutVirtualRegister(dst, returnValueJSR);
+    return call;
+}
+
+ALWAYS_INLINE void JIT::appendCallSetJSValueResult(Address function, VirtualRegister dst)
+{
+    appendCallWithExceptionCheck(function);
+    emitPutVirtualRegister(dst, returnValueJSR);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const CodePtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
@@ -170,7 +183,8 @@ inline void JIT::emitJumpSlowToHotForCheckpoint(Jump jump)
 
     auto iter = m_checkpointLabels.find(m_bytecodeIndex);
     ASSERT(iter != m_checkpointLabels.end());
-    jump.linkTo(iter->value, this);
+    if (jump.isSet())
+        jump.linkTo(iter->value, this);
 }
 
 inline void JIT::setFastPathResumePoint()

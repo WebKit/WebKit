@@ -52,11 +52,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters&, RefPtr<API:
     return true;
 }
 
-void InjectedBundle::setBundleParameter(WTF::String const&, IPC::DataReference const&)
+void InjectedBundle::setBundleParameter(WTF::String const&, std::span<const uint8_t>)
 {
 }
 
-void InjectedBundle::setBundleParameters(const IPC::DataReference&)
+void InjectedBundle::setBundleParameters(std::span<const uint8_t>)
 {
 }
 

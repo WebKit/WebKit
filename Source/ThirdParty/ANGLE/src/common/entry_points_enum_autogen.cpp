@@ -538,6 +538,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glBindImageTexture";
         case EntryPoint::GLBindImageTextures:
             return "glBindImageTextures";
+        case EntryPoint::GLBindMetalRasterizationRateMapANGLE:
+            return "glBindMetalRasterizationRateMapANGLE";
         case EntryPoint::GLBindProgramPipeline:
             return "glBindProgramPipeline";
         case EntryPoint::GLBindProgramPipelineEXT:
@@ -1184,6 +1186,10 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glFogxv";
         case EntryPoint::GLFramebufferFetchBarrierEXT:
             return "glFramebufferFetchBarrierEXT";
+        case EntryPoint::GLFramebufferFoveationConfigQCOM:
+            return "glFramebufferFoveationConfigQCOM";
+        case EntryPoint::GLFramebufferFoveationParametersQCOM:
+            return "glFramebufferFoveationParametersQCOM";
         case EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE:
             return "glFramebufferMemorylessPixelLocalStorageANGLE";
         case EntryPoint::GLFramebufferParameteri:
@@ -2970,6 +2976,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glTextureBuffer";
         case EntryPoint::GLTextureBufferRange:
             return "glTextureBufferRange";
+        case EntryPoint::GLTextureFoveationParametersQCOM:
+            return "glTextureFoveationParametersQCOM";
         case EntryPoint::GLTextureParameterIiv:
             return "glTextureParameterIiv";
         case EntryPoint::GLTextureParameterIuiv:

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "testb3.h"
 
+#include "RegisterTZoneTypes.h"
+#include <wtf/TZoneMallocInitialization.h>
+
 #if ENABLE(B3_JIT) && !CPU(ARM)
 
 Lock crashLock;
@@ -935,8 +938,15 @@ extern const JSC::JITOperationAnnotation startOfJITOperationsInTestB3 __asm("sec
 extern const JSC::JITOperationAnnotation endOfJITOperationsInTestB3 __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
 
-int main(int argc, char** argv)
+int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 {
+#if USE(TZONE_MALLOC)
+    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
+    WTF_TZONE_INIT(boothash);
+    JSC::registerTZoneTypes();
+    WTF_TZONE_REGISTRATION_DONE();
+#endif
+
     TestConfig config;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-filter")) {

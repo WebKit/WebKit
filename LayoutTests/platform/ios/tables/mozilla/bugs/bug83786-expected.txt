@@ -20,7 +20,7 @@ layer at (0,0) size 266x136 clip at (3,3) size 260x130 scrollHeight 143
               text run at (0,90) width 63: "to______"
               text run at (0,103) width 63: "a_______"
               text run at (0,116) width 63: "line.___"
-            RenderInline {SPAN} at (0,0) size 57x12 [color=#FFFF00] [bgcolor=#FF0000]
+            RenderInline {SPAN} at (0,130) size 57x12 [color=#FFFF00] [bgcolor=#FF0000]
               RenderText {#text} at (0,130) size 57x12
                 text run at (0,130) width 57: "_FAIL!__"
             RenderText {#text} at (0,0) size 0x0

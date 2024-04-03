@@ -1,20 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ TabsToLinks=true ] -->
 <html>
-   <head>
-      <script>
-         function test()
-         {
-            document.getElementById("anch").focus();
-            if (window.testRunner) {
-                testRunner.dumpAsText();
-                eventSender.keyDown('s');
-            }
-         }
-      </script>
-   </head>
-   <body onload="test()">
-    This tests that focus() works on an empty anchor.<br>
-    <a id="anch" href="#" onkeydown="document.getElementById('console').innerText = 'TEST PASSED'"></a>
-    <br>
-    <pre id="console">TEST FAILED</pre>
-    </body>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body onload="test()">
+<a id="anch" href="#"></a>
+<a id="anch2" href="#"></a>
+<input>
+
+<script>
+description('This tests that focus() and sequential focus navigation work on empty anchors.');
+jsTestIsAsync = true;
+var emptyAnchor1 = document.getElementById("anch");
+var emptyAnchor2 = document.getElementById("anch2");
+function test() {
+    emptyAnchor1.focus();
+    shouldBe('document.activeElement', 'emptyAnchor1');
+
+    eventSender.keyDown('\t');
+    shouldBe('document.activeElement', 'emptyAnchor2');
+    finishJSTest();
+}
+</script>
+</body>
 </html>

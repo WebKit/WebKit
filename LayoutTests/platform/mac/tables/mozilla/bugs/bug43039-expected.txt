@@ -38,13 +38,13 @@ layer at (0,0) size 800x585
             RenderTableCell {TD} at (1680,9) size 64x0 [r=0 c=25 rs=1 cs=1]
           RenderTableRow {TR} at (0,18) size 16464x36
             RenderTableCell {TD} at (0,27) size 55x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 50x18
+              RenderText {#text} at (0,9) size 50x18
                 text run at (0,0) width 50: "Product"
             RenderTableCell {TD} at (54,27) size 56x18 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 56x18
+              RenderText {#text} at (0,9) size 56x18
                 text run at (0,0) width 56: "Contract"
             RenderTableCell {TD} at (109,27) size 71x18 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 53x18
+              RenderText {#text} at (0,9) size 53x18
                 text run at (0,0) width 53: "Belongs"
             RenderTableCell {TD} at (180,18) size 68x36 [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (0,0) size 57x36
@@ -55,13 +55,13 @@ layer at (0,0) size 800x585
                 text run at (0,0) width 55: "Last day"
                 text run at (0,18) width 14: "of"
             RenderTableCell {TD} at (318,27) size 93x18 [r=1 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 48x18
+              RenderText {#text} at (0,9) size 48x18
                 text run at (0,0) width 48: "Date of"
             RenderTableCell {TD} at (410,27) size 124x18 [r=1 c=6 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 118x18
+              RenderText {#text} at (0,9) size 118x18
                 text run at (0,0) width 118: "Settlement against"
             RenderTableCell {TD} at (533,27) size 59x18 [r=1 c=7 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 48x18
+              RenderText {#text} at (0,9) size 48x18
                 text run at (0,0) width 48: "Quoted"
             RenderTableCell {TD} at (592,36) size 1152x0 [r=1 c=8 rs=1 cs=18]
           RenderTableRow {TR} at (0,54) size 16464x18
@@ -96,26 +96,26 @@ layer at (0,0) size 800x585
                 text run at (0,0) width 49: "D0101-"
                 text run at (0,18) width 16: "00"
             RenderTableCell {TD} at (54,81) size 56x18 [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 16x18
+              RenderText {#text} at (0,9) size 16x18
                 text run at (0,0) width 16: "24"
             RenderTableCell {TD} at (109,72) size 71x36 [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 62x36
                 text run at (0,0) width 62: "Week 52-"
                 text run at (0,18) width 16: "99"
             RenderTableCell {TD} at (180,81) size 68x18 [r=3 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 57x18
+              RenderText {#text} at (0,9) size 57x18
                 text run at (0,0) width 57: "12/23/99"
             RenderTableCell {TD} at (248,81) size 71x18 [r=3 c=4 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 57x18
+              RenderText {#text} at (0,9) size 57x18
                 text run at (0,0) width 57: "12/30/99"
             RenderTableCell {TD} at (318,81) size 93x18 [r=3 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 41x18
+              RenderText {#text} at (0,9) size 41x18
                 text run at (0,0) width 41: "1/1/00"
             RenderTableCell {TD} at (410,72) size 124x36 [r=3 c=6 rs=1 cs=1]
               RenderText {#text} at (0,0) size 84x36
                 text run at (0,0) width 84: "System Price"
                 text run at (0,18) width 41: "Elspot"
             RenderTableCell {TD} at (533,81) size 59x18 [r=3 c=7 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 35x18
+              RenderText {#text} at (0,9) size 35x18
                 text run at (0,0) width 35: "NOK"
             RenderTableCell {TD} at (592,90) size 1152x0 [r=3 c=8 rs=1 cs=18]

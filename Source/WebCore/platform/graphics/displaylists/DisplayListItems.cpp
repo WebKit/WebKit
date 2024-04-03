@@ -276,7 +276,7 @@ NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) co
     ASSERT_NOT_REACHED();
 }
 
-void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results)
+void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results) const
 {
     context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
 }
@@ -296,7 +296,7 @@ DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGly
 
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(font.renderingResourceIdentifier())
-    , m_positionedGlyphs { { glyphs, count }, { advances, count }, localAnchor, smoothingMode }
+    , m_positionedGlyphs { Vector(std::span { glyphs, count }), Vector(std::span { advances, count }), localAnchor, smoothingMode }
 {
 }
 
@@ -663,6 +663,16 @@ void FillArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("path", path());
 }
 
+void FillClosedArc::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
+void FillClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("path", path());
+}
+
 void FillQuadCurve::apply(GraphicsContext& context) const
 {
     context.fillPath(path());
@@ -800,6 +810,16 @@ void StrokeArc::apply(GraphicsContext& context) const
 }
 
 void StrokeArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("path", path());
+}
+
+void StrokeClosedArc::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
+void StrokeClosedArc::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
     ts.dumpProperty("path", path());
 }

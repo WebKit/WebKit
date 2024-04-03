@@ -42,7 +42,7 @@ class TestRelationship(TestCase):
             ))
         )
         self.assertEqual(
-            ('original', ['123@main', '0123456789ab']), Relationship.parse(Commit(
+            ('original', ['0123456789ab', '123@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Cherry-pick 123@main (0123456789ab). <rdar://54321>',
             ))
@@ -80,7 +80,7 @@ class TestRelationship(TestCase):
 
     def test_revert(self):
         self.assertEqual(
-            ('reverts', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+            ('reverts', ['0123456789ab', '1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Reverts 1230@main (0123456789ab)',
             ))
@@ -94,7 +94,7 @@ class TestRelationship(TestCase):
 
     def test_follow_up(self):
         self.assertEqual(
-            ('follow-up to', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+            ('follow-up to', ['0123456789ab', '1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Fix following 1230@main (0123456789ab)',
             ))
@@ -120,7 +120,7 @@ class TestRelationship(TestCase):
 
     def test_double_revert(self):
         self.assertEqual(
-            ('original', ['1230@main', '0123456789ab']), Relationship.parse(Commit(
+            ('original', ['0123456789ab', '1230@main']), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Reverts "Revert 1230@main (0123456789ab)"',
             ))

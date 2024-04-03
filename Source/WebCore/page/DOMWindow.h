@@ -37,8 +37,10 @@ class Document;
 class Frame;
 class LocalDOMWindow;
 class Location;
+class PageConsoleClient;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
+class WindowProxy;
 enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
 class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
@@ -59,12 +61,25 @@ public:
     WEBCORE_EXPORT Location& location();
     virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState) = 0;
 
+    bool closed() const;
+    WEBCORE_EXPORT void close();
+    void close(Document&);
+    virtual void closePage() = 0;
+
+    PageConsoleClient* console() const;
+    CheckedPtr<PageConsoleClient> checkedConsole() const;
+
+    WindowProxy* opener() const;
+
+    WindowProxy* top() const;
+    WindowProxy* parent() const;
+
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&);
 
     ExceptionOr<RefPtr<SecurityOrigin>> createTargetOriginForPostMessage(const String&, Document&);
 
-    EventTargetInterface eventTargetInterface() const final { return LocalDOMWindowEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::LocalDOMWindow; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

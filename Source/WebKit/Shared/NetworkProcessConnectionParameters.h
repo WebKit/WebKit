@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "NetworkProcessPreferencesForWebProcess.h"
+
 namespace WebKit {
 
 struct NetworkProcessConnectionParameters {
@@ -32,6 +34,7 @@ struct NetworkProcessConnectionParameters {
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
+    NetworkProcessPreferencesForWebProcess preferencesForWebProcess;
 };
 
-}; // namespace WebKit
+} // namespace WebKit

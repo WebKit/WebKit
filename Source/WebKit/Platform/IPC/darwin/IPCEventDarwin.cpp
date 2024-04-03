@@ -73,21 +73,6 @@ void Signal::signal()
         RELEASE_LOG_ERROR(Process, "IPC::Signal::signal Could not send mach message, error %x", ret);
 }
 
-void Signal::encode(Encoder& encoder) &&
-{
-    encoder << WTFMove(m_sendRight);
-}
-
-std::optional<Signal> Signal::decode(Decoder& decoder)
-{
-    std::optional<MachSendRight> sendRight;
-    decoder >> sendRight;
-    if (!sendRight)
-        return std::nullopt;
-
-    return Signal(WTFMove(*sendRight));
-}
-
 std::optional<EventSignalPair> createEventSignalPair()
 {
     // Create the listening port.

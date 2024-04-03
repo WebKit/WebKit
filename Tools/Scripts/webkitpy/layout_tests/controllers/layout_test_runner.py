@@ -524,7 +524,14 @@ class TestShard(object):
                 expected_image_path=mutation(test_input.test.expected_image_path),
                 expected_checksum_path=mutation(test_input.test.expected_checksum_path),
                 expected_audio_path=mutation(test_input.test.expected_audio_path),
-                reference_files=None if test_input.test.reference_files is None else [mutation(file) for file in test_input.test.reference_files],
+                reference_files=(
+                    None
+                    if test_input.test.reference_files is None
+                    else tuple(
+                        (ref_type, mutation(ref_path))
+                        for ref_type, ref_path in test_input.test.reference_files
+                    )
+                ),
                 is_http_test=test_input.test.is_http_test,
                 is_websocket_test=test_input.test.is_websocket_test,
                 is_wpt_test=test_input.test.is_wpt_test,

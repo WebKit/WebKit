@@ -247,7 +247,7 @@ void MediaPlayerPrivateAVFoundation::pause()
     platformPause();
 }
 
-MediaTime MediaPlayerPrivateAVFoundation::durationMediaTime() const
+MediaTime MediaPlayerPrivateAVFoundation::duration() const
 {
     if (m_cachedDuration.isValid())
         return m_cachedDuration;
@@ -276,8 +276,8 @@ void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
         return;
 
     SeekTarget adjustedTarget = target;
-    if (target.time > durationMediaTime())
-        adjustedTarget.time = durationMediaTime();
+    if (target.time > duration())
+        adjustedTarget.time = duration();
 
     if (currentTextTrack())
         currentTextTrack()->beginSeeking();
@@ -415,7 +415,7 @@ const PlatformTimeRanges& MediaPlayerPrivateAVFoundation::buffered() const
     return platformBufferedTimeRanges();
 }
 
-MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
+MediaTime MediaPlayerPrivateAVFoundation::maxTimeSeekable() const
 {
     if (!metaDataAvailable())
         return MediaTime::zeroTime();
@@ -426,7 +426,7 @@ MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
     return m_cachedMaxTimeSeekable;
 }
 
-MediaTime MediaPlayerPrivateAVFoundation::minMediaTimeSeekable() const
+MediaTime MediaPlayerPrivateAVFoundation::minTimeSeekable() const
 {
     if (!metaDataAvailable())
         return MediaTime::zeroTime();
@@ -450,7 +450,7 @@ MediaTime MediaPlayerPrivateAVFoundation::maxTimeLoaded() const
 
 bool MediaPlayerPrivateAVFoundation::didLoadingProgress() const
 {
-    if (!durationMediaTime())
+    if (!duration())
         return false;
     MediaTime currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
@@ -527,11 +527,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                     } else
                         newNetworkState = MediaPlayer::NetworkState::Idle;
                 }
-            } else {
-                // FIX ME: fetch the error associated with the @"playable" key to distinguish between format 
-                // and network errors.
-                newNetworkState = MediaPlayer::NetworkState::FormatError;
-            }
+            } else
+                newNetworkState = assetStatus == MediaPlayerAVAssetStatusNetworkError ? MediaPlayer::NetworkState::NetworkError : MediaPlayer::NetworkState::FormatError;
         }
 
         if (!hasAvailableVideoFrame())
@@ -557,7 +554,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 break;
 
             case MediaPlayerAVPlayerItemStatusReadyToPlay:
-                if (m_readyState != MediaPlayer::ReadyState::HaveEnoughData && (!m_cachedHasVideo || m_haveReportedFirstVideoFrame) && maxTimeLoaded() > currentMediaTime())
+                if (m_readyState != MediaPlayer::ReadyState::HaveEnoughData && (!m_cachedHasVideo || m_haveReportedFirstVideoFrame) && maxTimeLoaded() > currentTime())
                     newReadyState = MediaPlayer::ReadyState::HaveFutureData;
                 break;
 
@@ -571,7 +568,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
             else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
                 newNetworkState = MediaPlayer::NetworkState::DecodeError;
             else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
-                newNetworkState = (maxTimeLoaded() >= durationMediaTime()) ? MediaPlayer::NetworkState::Loaded : MediaPlayer::NetworkState::Loading;
+                newNetworkState = (maxTimeLoaded() >= duration()) ? MediaPlayer::NetworkState::Loaded : MediaPlayer::NetworkState::Loading;
         }
     }
 
@@ -692,7 +689,7 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 {
     // Hang onto the current time and use it as duration from now on since we are definitely at
     // the end of the movie. Do this because the initial duration is sometimes an estimate.
-    MediaTime now = currentMediaTime();
+    MediaTime now = currentTime();
     ALWAYS_LOG(LOGIDENTIFIER, "currentTime: ", now, ", seeking: ", m_seeking);
     if (now > MediaTime::zeroTime() && !m_seeking)
         m_cachedDuration = now;
@@ -743,9 +740,7 @@ void MediaPlayerPrivateAVFoundation::configureInbandTracks()
 {
     RefPtr<InbandTextTrackPrivateAVF> trackToEnable;
     
-#if ENABLE(AVF_CAPTIONS)
     synchronizeTextTrackState();
-#endif
 
     // AVFoundation can only emit cues for one track at a time, so enable the first track that is showing, or the first that
     // is hidden if none are showing. Otherwise disable all tracks.
@@ -798,10 +793,8 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
     for (unsigned i = 0; i < trackCount; ++i) {
         RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
 
-#if ENABLE(AVF_CAPTIONS)
         if (track->textTrackCategory() == InbandTextTrackPrivateAVF::OutOfBand)
             continue;
-#endif
 
         track->setTextTrackIndex(inBandCount);
         ++inBandCount;
@@ -849,7 +842,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyURIArray)
         return false;
 
-    keyURI = String(reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short));
+    keyURI = String({ reinterpret_cast<UChar*>(keyURIArray->data()), keyURILength / sizeof(unsigned short) });
     offset += keyURILength;
 
     uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
@@ -861,7 +854,7 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
     if (!keyIDArray)
         return false;
 
-    keyID = String(reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short));
+    keyID = String({ reinterpret_cast<UChar*>(keyIDArray->data()), keyIDLength / sizeof(unsigned short) });
     offset += keyIDLength;
 
     uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);

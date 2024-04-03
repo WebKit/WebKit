@@ -23,7 +23,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
 #include "RenderSVGRoot.h"
 
@@ -38,6 +37,7 @@ public:
     RenderSVGViewportContainer(SVGSVGElement&, RenderStyle&&);
 
     SVGSVGElement& svgSVGElement() const;
+    Ref<SVGSVGElement> protectedSVGSVGElement() const;
     FloatRect viewport() const { return { { }, viewportSize() }; }
     FloatSize viewportSize() const { return m_viewport.size(); }
 
@@ -69,4 +69,3 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGViewportContainer, isRenderSVGViewportContainer())
 
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

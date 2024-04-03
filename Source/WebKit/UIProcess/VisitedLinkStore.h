@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "SharedStringHashStore.h"
+#include "VisitedLinkTableIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
@@ -38,7 +39,7 @@ namespace WebKit {
 
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkStore>, private SharedStringHashStore::Client {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, public IPC::MessageReceiver, public Identified<VisitedLinkTableIdentifier>, private SharedStringHashStore::Client {
 public:
     static Ref<VisitedLinkStore> create();
     VisitedLinkStore();

@@ -77,7 +77,7 @@ angle::MemoryBuffer ReadMetallibFromFile(const std::string &path)
 }
 
 // Generates a key for the BlobCache based on the specified params.
-egl::BlobCacheKey GenerateBlobCacheKeyForShaderLibrary(
+egl::BlobCache::Key GenerateBlobCacheKeyForShaderLibrary(
     const std::shared_ptr<const std::string> &source,
     const std::map<std::string, std::string> &macros,
     bool disableFastMath,
@@ -179,10 +179,8 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         auto cache_key =
             GenerateBlobCacheKeyForShaderLibrary(source, macros, disableFastMath, usesInvariance);
         egl::BlobCache::Value value;
-        size_t buffer_size;
         angle::ScratchBuffer scratch_buffer;
-        if (context->getDisplay()->getBlobCache()->get(&scratch_buffer, cache_key, &value,
-                                                       &buffer_size))
+        if (context->getDisplay()->getBlobCache()->get(&scratch_buffer, cache_key, &value))
         {
             entry.library = NewMetalLibraryFromMetallib(context, value.data(), value.size());
         }

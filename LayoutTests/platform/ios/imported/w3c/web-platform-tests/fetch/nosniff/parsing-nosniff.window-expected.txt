@@ -7,6 +7,7 @@ PASS X-Content-Type-Options%3A%20%40%23%24%23%25%25%26%5E%26%5E*()()11!%2Cnosnif
 PASS X-Content-Type-Options%3A%20nosniff%0D%0AX-Content-Type-Options%3A%20no
 PASS X-Content-Type-Options%3A%20no%0D%0AX-Content-Type-Options%3A%20nosniff
 PASS X-Content-Type-Options%3A%0D%0AX-Content-Type-Options%3A%20nosniff
+PASS X-Content-Type-Options%3A%20nosniff%0D%0AX-Content-Type-Options%3A%20nosniff
 PASS X-Content-Type-Options%3A%20%2Cnosniff
 PASS X-Content-Type-Options%3A%20nosniff%0C
 PASS X-Content-Type-Options%3A%20nosniff%0B

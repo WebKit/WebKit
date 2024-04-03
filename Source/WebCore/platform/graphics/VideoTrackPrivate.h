@@ -38,17 +38,14 @@ struct VideoInfo;
 
 class VideoTrackPrivate : public TrackPrivateBase {
 public:
-    void setClient(VideoTrackPrivateClient& client) { m_client = client; }
-    void clearClient() { m_client = nullptr; }
-    VideoTrackPrivateClient* client() const override { return m_client.get(); }
-
     virtual void setSelected(bool selected)
     {
         if (m_selected == selected)
             return;
         m_selected = selected;
-        if (m_client)
-            m_client->selectedChanged(m_selected);
+        notifyClients([selected](auto& client) {
+            downcast<VideoTrackPrivateClient>(client).selectedChanged(selected);
+        });
         if (m_selectedChangedCallback)
             m_selectedChangedCallback(*this, m_selected);
     }
@@ -70,8 +67,9 @@ public:
         if (configuration == m_configuration)
             return;
         m_configuration = WTFMove(configuration);
-        if (m_client)
-            m_client->configurationChanged(m_configuration);
+        notifyClients([configuration = m_configuration](auto& client) {
+            downcast<VideoTrackPrivateClient>(client).configurationChanged(configuration);
+        });
     }
     
     bool operator==(const VideoTrackPrivate& track) const
@@ -89,7 +87,6 @@ protected:
     VideoTrackPrivate() = default;
 
 private:
-    WeakPtr<VideoTrackPrivateClient> m_client { nullptr };
     bool m_selected { false };
     PlatformVideoTrackConfiguration m_configuration;
 

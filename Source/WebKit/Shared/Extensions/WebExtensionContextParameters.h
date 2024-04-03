@@ -41,14 +41,21 @@ struct WebExtensionContextParameters {
 
     URL baseURL;
     String uniqueIdentifier;
+    HashSet<String> unsupportedAPIs;
+
+    HashMap<String, WallTime> grantedPermissions;
 
     Ref<API::Data> localizationJSON;
     Ref<API::Data> manifestJSON;
 
-    double manifestVersion;
-    bool testingMode;
+    double manifestVersion { 0 };
+    bool isSessionStorageAllowedInContentScripts { false };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier;
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Vector<WebExtensionContext::PageIdentifierTuple> inspectorPageIdentifiers;
+    Vector<WebExtensionContext::PageIdentifierTuple> inspectorBackgroundPageIdentifiers;
+#endif
     Vector<WebExtensionContext::PageIdentifierTuple> popupPageIdentifiers;
     Vector<WebExtensionContext::PageIdentifierTuple> tabPageIdentifiers;
 };

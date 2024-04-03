@@ -42,16 +42,11 @@ Ref<ExtendableCookieChangeEvent> ExtendableCookieChangeEvent::create(const AtomS
 }
 
 ExtendableCookieChangeEvent::ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&& eventInitDict, IsTrusted isTrusted)
-    : ExtendableEvent(type, eventInitDict, isTrusted)
+    : ExtendableEvent(EventInterfaceType::ExtendableCookieChangeEvent, type, eventInitDict, isTrusted)
     , m_changed(WTFMove(eventInitDict.changed))
     , m_deleted(WTFMove(eventInitDict.deleted))
 { }
 
 ExtendableCookieChangeEvent::~ExtendableCookieChangeEvent() = default;
-
-EventInterface ExtendableCookieChangeEvent::eventInterface() const
-{
-    return ExtendableCookieChangeEventInterfaceType;
-}
 
 } // namespace WebCore

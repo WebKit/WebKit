@@ -41,32 +41,24 @@ public:
         : m_isFirstLine(true)
         , m_isLastLine(false)
         , m_isEmpty(true)
-        , m_previousLineBrokeCleanly(true)
-        , m_floatPaginationStrut(0)
         , m_runsFromLeadingWhitespace(0)
     { }
 
     bool isFirstLine() const { return m_isFirstLine; }
     bool isLastLine() const { return m_isLastLine; }
     bool isEmpty() const { return m_isEmpty; }
-    bool previousLineBrokeCleanly() const { return m_previousLineBrokeCleanly; }
-    LayoutUnit floatPaginationStrut() const { return m_floatPaginationStrut; }
     unsigned runsFromLeadingWhitespace() const { return m_runsFromLeadingWhitespace; }
     void resetRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace = 0; }
     void incrementRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace++; }
 
     void setFirstLine(bool firstLine) { m_isFirstLine = firstLine; }
     void setLastLine(bool lastLine) { m_isLastLine = lastLine; }
-    void setEmpty(bool empty, RenderBlock* block = 0, LineWidth* lineWidth = 0);
-    void setPreviousLineBrokeCleanly(bool previousLineBrokeCleanly) { m_previousLineBrokeCleanly = previousLineBrokeCleanly; }
-    void setFloatPaginationStrut(LayoutUnit strut) { m_floatPaginationStrut = strut; }
+    void setEmpty(bool);
 
 private:
     bool m_isFirstLine;
     bool m_isLastLine;
     bool m_isEmpty;
-    bool m_previousLineBrokeCleanly;
-    LayoutUnit m_floatPaginationStrut;
     unsigned m_runsFromLeadingWhitespace;
 };
 

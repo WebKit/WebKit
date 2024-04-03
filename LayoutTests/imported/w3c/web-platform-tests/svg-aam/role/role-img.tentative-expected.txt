@@ -1,0 +1,12 @@
+Currently tentative due to SVG-AAM #32: SVG image role should align with HTML on missing versus empty alt.
+
+
+
+PASS Label: el-image (empty label due to missing image>title element)
+PASS Label: el-image (label from w/ aria-label)
+FAIL Label: el-image (label from image>title element) assert_equals: <img data-testname="el-image (label from image>title element)" data-expectedrole="image" data-expectedlabel="x" class="ex-role-label ex-label-only ex-role-only"> expected "x" but got ""
+FAIL Role: el-image (empty label due to missing image>title element) assert_equals: <img data-testname="el-image (empty label due to missing image>title element)" data-expectedrole="image" data-expectedlabel="" class="ex-role-label ex-label-only ex-role-only"> expected "image" but got "none"
+PASS Role: el-image (label from w/ aria-label)
+FAIL Role: el-image (label from image>title element) assert_equals: <img data-testname="el-image (label from image>title element)" data-expectedrole="image" data-expectedlabel="x" class="ex-role-label ex-label-only ex-role-only"> expected "image" but got "none"
+PASS el-image (generic, explicitly empty image>title element)
+

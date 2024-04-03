@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c11"
             RenderTableCell {TD} at (31,15) size 57x24 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=2]
-              RenderText {#text} at (2,2) size 20x19
+              RenderText {#text} at (2,15) size 20x19
                 text run at (2,2) width 20: "X1"
             RenderTableCell {TD} at (89,2) size 28x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 23x19
                 text run at (2,2) width 23: "c11"
             RenderTableCell {TD} at (31,15) size 57x24 [border: (1px inset #808080)] [r=0 c=1 rs=2 cs=2]
-              RenderText {#text} at (2,2) size 20x19
+              RenderText {#text} at (2,15) size 20x19
                 text run at (2,2) width 20: "X1"
             RenderTableCell {TD} at (89,2) size 28x24 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19

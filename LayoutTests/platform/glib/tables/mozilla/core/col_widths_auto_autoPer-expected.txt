@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
                 text run at (11,11) width 29: "10%"
                 text run at (11,29) width 29: "10%"
             RenderTableCell {TD} at (95,19) size 677x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (11,11) size 27x17
+              RenderText {#text} at (11,20) size 27x17
                 text run at (11,11) width 27: "auto"
       RenderBlock (anonymous) at (0,162) size 784x18
         RenderText {#text} at (0,0) size 391x17

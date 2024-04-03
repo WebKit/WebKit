@@ -190,6 +190,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUVertexFormat.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUVertexState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUVertexStepMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/NavigatorGPU.idl
+$(PROJECT_DIR)/Modules/WebGPU/WGSLLanguageFeatures.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPU.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUAdapter.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUAdapterInfo.idl
@@ -334,6 +335,7 @@ $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUVertexFormat.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUVertexState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUVertexStepMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/NavigatorGPU.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/WGSLLanguageFeatures.idl
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 $(PROJECT_DIR)/Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayAutomaticReloadPaymentRequest.idl
@@ -345,6 +347,7 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayCouponCodeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponents.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponentsRange.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDeferredPaymentRequest.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayDisbursementPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
@@ -500,6 +503,11 @@ $(PROJECT_DIR)/Modules/geolocation/PositionErrorCallback.idl
 $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
 $(PROJECT_DIR)/Modules/highlight/HighlightRegistry.idl
+$(PROJECT_DIR)/Modules/identity/DigitalCredential.idl
+$(PROJECT_DIR)/Modules/identity/DigitalCredentialRequestOptions.idl
+$(PROJECT_DIR)/Modules/identity/IdentityCredentialProtocol.idl
+$(PROJECT_DIR)/Modules/identity/IdentityRequestProvider.idl
+$(PROJECT_DIR)/Modules/identity/Navigator+Identity.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorWithValue.idl
@@ -557,6 +565,7 @@ $(PROJECT_DIR)/Modules/mediasource/DOMURL+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedMediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedSourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl
+$(PROJECT_DIR)/Modules/mediasource/MediaSourceHandle.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBufferList.idl
 $(PROJECT_DIR)/Modules/mediasource/TextTrack+MediaSource.idl
@@ -574,6 +583,7 @@ $(PROJECT_DIR)/Modules/mediastream/MediaSettingsRange.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStream.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrack.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackEvent.idl
+$(PROJECT_DIR)/Modules/mediastream/MediaStreamTrackProcessor.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackCapabilities.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackConstraints.idl
 $(PROJECT_DIR)/Modules/mediastream/MediaTrackSupportedConstraints.idl
@@ -977,7 +987,6 @@ $(PROJECT_DIR)/Modules/webauthn/AuthenticatorAttestationResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorResponse.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticatorTransport.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredential.idl
-$(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialClientCapabilities.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialDescriptor.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
@@ -1213,6 +1222,7 @@ $(PROJECT_DIR)/css/CSSPseudoSelectors.json
 $(PROJECT_DIR)/css/CSSRule.idl
 $(PROJECT_DIR)/css/CSSRuleList.idl
 $(PROJECT_DIR)/css/CSSScopeRule.idl
+$(PROJECT_DIR)/css/CSSStartingStyleRule.idl
 $(PROJECT_DIR)/css/CSSStyleDeclaration.idl
 $(PROJECT_DIR)/css/CSSStyleRule.idl
 $(PROJECT_DIR)/css/CSSStyleSheet.idl
@@ -1265,7 +1275,6 @@ $(PROJECT_DIR)/css/process-css-properties.py
 $(PROJECT_DIR)/css/process-css-pseudo-selectors.py
 $(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
-$(PROJECT_DIR)/css/ruby.css
 $(PROJECT_DIR)/css/svg.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
@@ -1326,6 +1335,9 @@ $(PROJECT_DIR)/dom/ClipboardEvent.idl
 $(PROJECT_DIR)/dom/Comment.idl
 $(PROJECT_DIR)/dom/CompositionEvent.idl
 $(PROJECT_DIR)/dom/ContentVisibilityAutoStateChangeEvent.idl
+$(PROJECT_DIR)/dom/CreateHTMLCallback.idl
+$(PROJECT_DIR)/dom/CreateScriptCallback.idl
+$(PROJECT_DIR)/dom/CreateScriptURLCallback.idl
 $(PROJECT_DIR)/dom/CustomElementRegistry.idl
 $(PROJECT_DIR)/dom/CustomEvent.idl
 $(PROJECT_DIR)/dom/CustomStateSet.idl
@@ -1423,6 +1435,7 @@ $(PROJECT_DIR)/dom/OverflowEvent.idl
 $(PROJECT_DIR)/dom/PageTransitionEvent.idl
 $(PROJECT_DIR)/dom/ParentNode.idl
 $(PROJECT_DIR)/dom/PointerEvent.idl
+$(PROJECT_DIR)/dom/PointerLockOptions.idl
 $(PROJECT_DIR)/dom/PopStateEvent.idl
 $(PROJECT_DIR)/dom/ProcessingInstruction.idl
 $(PROJECT_DIR)/dom/ProgressEvent.idl
@@ -1456,6 +1469,12 @@ $(PROJECT_DIR)/dom/TouchEvent.idl
 $(PROJECT_DIR)/dom/TouchList.idl
 $(PROJECT_DIR)/dom/TransitionEvent.idl
 $(PROJECT_DIR)/dom/TreeWalker.idl
+$(PROJECT_DIR)/dom/TrustedHTML.idl
+$(PROJECT_DIR)/dom/TrustedScript.idl
+$(PROJECT_DIR)/dom/TrustedScriptURL.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicy.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicyFactory.idl
+$(PROJECT_DIR)/dom/TrustedTypePolicyOptions.idl
 $(PROJECT_DIR)/dom/UIEvent.idl
 $(PROJECT_DIR)/dom/UIEventInit.idl
 $(PROJECT_DIR)/dom/ValidityStateFlags.idl
@@ -1463,6 +1482,7 @@ $(PROJECT_DIR)/dom/ViewTransition.idl
 $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
+$(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
 $(PROJECT_DIR)/dom/make-event-names.py
 $(PROJECT_DIR)/dom/make_event_factory.pl
@@ -1615,7 +1635,6 @@ $(PROJECT_DIR)/html/canvas/CanvasTextBaseline.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextDrawingStyles.idl
 $(PROJECT_DIR)/html/canvas/CanvasTransform.idl
 $(PROJECT_DIR)/html/canvas/CanvasUserInterface.idl
-$(PROJECT_DIR)/html/canvas/EXTBlendFuncExtended.idl
 $(PROJECT_DIR)/html/canvas/EXTBlendMinMax.idl
 $(PROJECT_DIR)/html/canvas/EXTClipControl.idl
 $(PROJECT_DIR)/html/canvas/EXTColorBufferFloat.idl
@@ -1658,6 +1677,7 @@ $(PROJECT_DIR)/html/canvas/Path2D.idl
 $(PROJECT_DIR)/html/canvas/PredefinedColorSpace.idl
 $(PROJECT_DIR)/html/canvas/WebGL2RenderingContext.idl
 $(PROJECT_DIR)/html/canvas/WebGLActiveInfo.idl
+$(PROJECT_DIR)/html/canvas/WebGLBlendFuncExtended.idl
 $(PROJECT_DIR)/html/canvas/WebGLBuffer.idl
 $(PROJECT_DIR)/html/canvas/WebGLClipCullDistance.idl
 $(PROJECT_DIR)/html/canvas/WebGLColorBufferFloat.idl
@@ -1725,6 +1745,7 @@ $(PROJECT_DIR)/inspector/InspectorAuditAccessibilityObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditDOMObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditResourcesObject.idl
 $(PROJECT_DIR)/inspector/InspectorFrontendHost.idl
+$(PROJECT_DIR)/inspector/RTCLogsCallback.idl
 $(PROJECT_DIR)/loader/COEPInheritenceViolationReportBody.idl
 $(PROJECT_DIR)/loader/CORPViolationReportBody.idl
 $(PROJECT_DIR)/loader/appcache/DOMApplicationCache.idl
@@ -1847,7 +1868,6 @@ $(PROJECT_DIR)/storage/StorageEvent.idl
 $(PROJECT_DIR)/svg/Document+SVG.idl
 $(PROJECT_DIR)/svg/SVGAElement.idl
 $(PROJECT_DIR)/svg/SVGAngle.idl
-$(PROJECT_DIR)/svg/SVGAnimateColorElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateMotionElement.idl
 $(PROJECT_DIR)/svg/SVGAnimateTransformElement.idl

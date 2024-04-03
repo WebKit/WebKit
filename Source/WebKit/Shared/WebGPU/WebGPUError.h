@@ -27,13 +27,14 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "WebGPUInternalError.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUValidationError.h"
 #include <variant>
 
 namespace WebKit::WebGPU {
 
-using Error = std::variant<OutOfMemoryError, ValidationError>;
+using Error = std::variant<OutOfMemoryError, ValidationError, InternalError>;
 
 } // namespace WebKit::WebGPU
 

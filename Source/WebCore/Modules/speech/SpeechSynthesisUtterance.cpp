@@ -26,12 +26,12 @@
 #include "config.h"
 #include "SpeechSynthesisUtterance.h"
 
+#if ENABLE(SPEECH_SYNTHESIS)
+
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "SpeechSynthesisErrorEvent.h"
 #include "SpeechSynthesisEvent.h"
-
-#if ENABLE(SPEECH_SYNTHESIS)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

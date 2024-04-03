@@ -59,7 +59,7 @@ Ref<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagNam
 
 RenderPtr<RenderElement> HTMLProgressElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    if (!style.hasEffectiveAppearance())
+    if (!style.hasUsedAppearance())
         return RenderElement::createFor(*this, WTFMove(style));
 
     return createRenderer<RenderProgress>(*this, WTFMove(style));
@@ -74,7 +74,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (auto* renderProgress = dynamicDowncast<RenderProgress>(renderer()))
         return renderProgress;
-    return downcast<RenderProgress>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
+    return downcast<RenderProgress>(descendantsOfType<Element>(*protectedUserAgentShadowRoot()).first()->renderer());
 }
 
 void HTMLProgressElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

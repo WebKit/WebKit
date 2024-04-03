@@ -83,9 +83,10 @@ class NetworkResourceLoader final
     , public WebCore::CrossOriginAccessControlCheckDisabler
 #if ENABLE(CONTENT_FILTERING)
     , public WebCore::ContentFilterClient
+#else
+    , public CanMakeWeakPtr<NetworkResourceLoader>
 #endif
-    , public WebCore::ReportingClient
-    , public CanMakeWeakPtr<NetworkResourceLoader> {
+    , public WebCore::ReportingClient {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&& reply = nullptr)
     {
@@ -273,6 +274,8 @@ private:
     void startRequest(const WebCore::ResourceRequest&);
     bool abortIfServiceWorkersOnly();
 
+    bool shouldSendResourceLoadMessages() const;
+
     NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;
@@ -310,7 +313,7 @@ private:
     std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
-    std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
+    RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
     MonotonicTime m_workerStart;
     NetworkResourceLoadIdentifier m_resourceLoadID;

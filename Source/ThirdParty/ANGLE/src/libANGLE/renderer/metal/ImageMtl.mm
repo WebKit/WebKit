@@ -20,37 +20,79 @@
 namespace rx
 {
 
+namespace
+{
+angle::FormatID intendedFormatForMTLTexture(id<MTLTexture> texture,
+                                            const egl::AttributeMap &attribs)
+{
+    angle::FormatID angleFormatId;
+    GLenum internalFormat =
+        static_cast<GLenum>(attribs.get(EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_NONE));
+    if (internalFormat != GL_NONE)
+    {
+        // If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is provided for eglCreateImageKHR(),
+        // the provided format will be used for mFormat and intendedFormat.
+        GLenum type                = gl::GetSizedInternalFormatInfo(internalFormat).type;
+        GLenum sizedInternalFormat = gl::Format(internalFormat, type).info->sizedInternalFormat;
+        angleFormatId              = angle::Format::InternalFormatToID(sizedInternalFormat);
+    }
+    else
+    {
+        angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
+    }
+    return angleFormatId;
+}
+}  // anonymous namespace
+
 // TextureImageSiblingMtl implementation
-TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer)
-    : mBuffer(buffer), mGLFormat(GL_NONE)
+TextureImageSiblingMtl::TextureImageSiblingMtl(EGLClientBuffer buffer,
+                                               const egl::AttributeMap &attribs)
+    : mBuffer(buffer), mAttribs(attribs), mGLFormat(GL_NONE)
 {}
 
 TextureImageSiblingMtl::~TextureImageSiblingMtl() {}
 
 // Static
-bool TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *display, EGLClientBuffer buffer)
+egl::Error TextureImageSiblingMtl::ValidateClientBuffer(const DisplayMtl *display,
+                                                        EGLClientBuffer buffer,
+                                                        const egl::AttributeMap &attribs)
 {
     id<MTLTexture> texture = (__bridge id<MTLTexture>)(buffer);
     if (!texture || texture.device != display->getMetalDevice())
     {
-        return false;
+        return egl::EglBadAttribute();
     }
 
-    if (texture.textureType != MTLTextureType2D && texture.textureType != MTLTextureTypeCube)
+    if (texture.textureType != MTLTextureType2D && texture.textureType != MTLTextureTypeCube &&
+        texture.textureType != MTLTextureType2DArray)
     {
-        return false;
+        return egl::EglBadAttribute();
     }
 
-    angle::FormatID angleFormatId = mtl::Format::MetalToAngleFormatID(texture.pixelFormat);
+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(texture, attribs);
     const mtl::Format &format     = display->getPixelFormat(angleFormatId);
     if (!format.valid())
     {
-        ERR() << "Unrecognized format";
-        // Not supported
-        return false;
+        return egl::EglBadAttribute() << "Unrecognized format";
+    }
+    
+    if (format.metalFormat != texture.pixelFormat)
+    {
+        return egl::EglBadAttribute() << "Incompatible format";
     }
 
-    return true;
+    unsigned textureArraySlice =
+        static_cast<unsigned>(attribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
+    if (texture.textureType != MTLTextureType2DArray && textureArraySlice > 0)
+    {
+        return egl::EglBadAttribute() << "Invalid texture type for non-zero texture array slice";
+    }
+    if (textureArraySlice >= texture.arrayLength)
+    {
+        return egl::EglBadAttribute() << "Invalid texture array slice: " << textureArraySlice;
+    }
+
+    return egl::NoError();
 }
 
 egl::Error TextureImageSiblingMtl::initialize(const egl::Display *display)
@@ -68,9 +110,17 @@ angle::Result TextureImageSiblingMtl::initImpl(DisplayMtl *displayMtl)
 {
     mNativeTexture = mtl::Texture::MakeFromMetal((__bridge id<MTLTexture>)(mBuffer));
 
-    angle::FormatID angleFormatId =
-        mtl::Format::MetalToAngleFormatID(mNativeTexture->pixelFormat());
-    mFormat = displayMtl->getPixelFormat(angleFormatId);
+    if (mNativeTexture->textureType() == MTLTextureType2DArray)
+    {
+        mtl::TextureRef baseTexture = std::move(mNativeTexture);
+        unsigned textureArraySlice =
+            static_cast<unsigned>(mAttribs.getAsInt(EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, 0));
+        mNativeTexture =
+            baseTexture->createSliceMipView(textureArraySlice, mtl::kZeroNativeMipLevel);
+    }
+
+    angle::FormatID angleFormatId = intendedFormatForMTLTexture(mNativeTexture->get(), mAttribs);
+    mFormat                       = displayMtl->getPixelFormat(angleFormatId);
 
     if (mNativeTexture)
     {
@@ -153,6 +203,7 @@ egl::Error ImageMtl::initialize(const egl::Display *display)
         switch (mNativeTexture->textureType())
         {
             case MTLTextureType2D:
+            case MTLTextureType2DArray:
                 mImageTextureType = gl::TextureType::_2D;
                 break;
             case MTLTextureTypeCube:

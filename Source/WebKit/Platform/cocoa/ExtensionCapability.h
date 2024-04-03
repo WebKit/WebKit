@@ -28,19 +28,46 @@
 #if ENABLE(EXTENSION_CAPABILITIES)
 
 #include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
+OBJC_CLASS BEProcessCapability;
+#if USE(LEGACY_EXTENSIONKIT_SPI)
 OBJC_CLASS _SECapability;
+#endif
 
 namespace WebKit {
+
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+using PlatformCapability = std::variant<RetainPtr<BEProcessCapability>, RetainPtr<_SECapability>>;
+#else
+using PlatformCapability = RetainPtr<BEProcessCapability>;
+#endif
 
 class ExtensionCapability {
 public:
     virtual ~ExtensionCapability() = default;
     virtual String environmentIdentifier() const = 0;
-    virtual RetainPtr<_SECapability> platformCapability() const = 0;
+    const PlatformCapability& platformCapability() const { return m_platformCapability; }
+
+    bool hasPlatformCapability() const { return platformCapabilityIsValid(m_platformCapability); }
+
+    static bool platformCapabilityIsValid(const PlatformCapability& platformCapability)
+    {
+#if USE(LEGACY_EXTENSIONKIT_SPI)
+        return WTF::switchOn(platformCapability, [] (auto& capability) {
+            return !!capability;
+        });
+#else
+        return !!platformCapability;
+#endif
+    }
 
 protected:
     ExtensionCapability() = default;
+    void setPlatformCapability(PlatformCapability&& capability) { m_platformCapability = WTFMove(capability); }
+
+private:
+    PlatformCapability m_platformCapability;
 };
 
 } // namespace WebKit

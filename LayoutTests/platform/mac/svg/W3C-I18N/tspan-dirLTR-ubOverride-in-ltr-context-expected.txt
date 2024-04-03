@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (81,133) size 298x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 160x21
           chunk 1 (middle anchor) text run 1 at (81.32,150.00) startOffset 0 endOffset 19 width 159.44: "dirLTR ubOverride \""
-        RenderSVGTSpan {tspan} at (0,0) size 127x21
+        RenderSVGTSpan {tspan} at (159,0) size 127x21
           RenderSVGInlineText {#text} at (159,0) size 127x21
             chunk 1 (middle anchor) text run 1 at (240.76,150.00) startOffset 0 endOffset 17 width 126.54: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
         RenderSVGInlineText {#text} at (285,0) size 12x21

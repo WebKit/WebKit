@@ -246,11 +246,11 @@ IndexedDB::IndexRecordType IDBRequest::requestedIndexRecordType() const
     return m_requestedIndexRecordType;
 }
 
-EventTargetInterface IDBRequest::eventTargetInterface() const
+enum EventTargetInterfaceType IDBRequest::eventTargetInterface() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    return IDBRequestEventTargetInterfaceType;
+    return EventTargetInterfaceType::IDBRequest;
 }
 
 const char* IDBRequest::activeDOMObjectName() const

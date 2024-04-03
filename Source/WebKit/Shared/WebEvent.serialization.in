@@ -158,6 +158,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     TwoFingerTap
 };
 
+enum class WebKit::GestureWasCancelled : bool;
+
 class WebKit::WebMouseEvent : WebKit::WebEvent {
     WebKit::WebMouseEventButton button();
     unsigned short buttons();
@@ -181,6 +183,7 @@ class WebKit::WebMouseEvent : WebKit::WebEvent {
     String pointerType();
 #endif
     WebKit::GestureWasCancelled gestureWasCancelled();
+    WebCore::IntPoint unadjustedMovementDelta();
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

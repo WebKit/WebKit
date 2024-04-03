@@ -106,7 +106,7 @@ public:
     friend class CaptionUserPreferencesTestingModeToken;
     UniqueRef<CaptionUserPreferencesTestingModeToken> createTestingModeToken() { return makeUniqueRef<CaptionUserPreferencesTestingModeToken>(*this); }
     
-    PageGroup& pageGroup() const { return m_pageGroup; }
+    PageGroup& pageGroup() const;
 
 protected:
     explicit CaptionUserPreferences(PageGroup&);
@@ -128,7 +128,7 @@ private:
     void notify();
     Page* currentPage() const;
 
-    PageGroup& m_pageGroup;
+    WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;
     Timer m_timer;
     String m_userPreferredLanguage;

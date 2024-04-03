@@ -36,6 +36,7 @@ fast/css/ios [ Skip ]
 fast/css/mac [ Skip ]
 fast/css/watchos [ Skip ]
 fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Skip ]
+fast/element-targeting [ Skip ]
 fast/forms/date/date-editable-components [ Skip ]
 fast/forms/datetimelocal/datetimelocal-editable-components [ Skip ]
 fast/forms/month/month-editable-components [ Skip ]
@@ -49,11 +50,13 @@ fast/images/mac [ Skip ]
 fast/sandbox/ios [ Skip ]
 fast/sandbox/mac [ Skip ]
 fast/text/data-detectors/ios [ Skip ]
+fast/text-extraction [ Skip ]
 fast/viewport/watchos [ Skip ]
 fast/visual-viewport/watchos [ Skip ]
 fast/visual-viewport/tiled-drawing [ Skip ]
 swipe [ Skip ]
 view-gestures [ Skip ]
+http/tests/pdf [ Skip ]
 http/tests/swipe [ Skip ]
 fast/zooming/ios [ Skip ]
 fast/forms/ios [ Skip ]
@@ -102,6 +105,8 @@ fast/dom/Range/mac [ Skip ]
 remote-layer-tree [ Skip ]
 inspector/page/setScreenSizeOverride.html [ Skip ]
 interaction-region [ Skip ]
+overlay-region [ Skip ]
+pdf/unifiedpdf [ Skip ]
 ipc/restrictedendpoints/mac [ Skip ]
 
 # Requires async overflow scrolling
@@ -202,7 +207,6 @@ quicklook [ Skip ]
 http/tests/quicklook [ Skip ]
 
 # These tests are WebKit2-only
-http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]
 http/tests/misc/will-send-request-with-client-provided-http-body.html [ Skip ]
 http/tests/loading/resourceLoadStatistics/ [ Skip ]
 http/tests/resourceLoadStatistics/ [ Skip ]
@@ -292,6 +296,9 @@ http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-privat
 http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html [ Skip ]
 media/deactivate-audio-session.html [ Skip ]
 
+# To be removed after AccessibilityThreadTextApisEnabled is enabled by default.
+accessibility/ax-thread-text-apis [ Skip ]
+
 # ApplePay is only available on iOS (greater than iOS 10) and macOS (greater than macOS 10.12) and only for WebKit2.
 fast/css/appearance-apple-pay-button.html [ Skip ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Skip ]
@@ -373,6 +380,8 @@ imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
 imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
 imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-in-textarea-in-editor-and-undo-on-error-events.html [ Skip ]
+imported/w3c/web-platform-tests/selection/anonymous/details-ancestor.html [ Pass Failure ]
+imported/w3c/web-platform-tests/selection/caret/move-around-contenteditable-false.html [ Pass Failure ]
 
 # This test hits a debug assertion in WebKit
 webkit.org/b/266465 imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Skip ]
@@ -453,6 +462,20 @@ imported/w3c/web-platform-tests/server-timing/test_server_timing.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/test_server_timing.https.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
+
+# These need test devlopment to populate clientDataJSON in AuthenticatorResponseData
+webkit.org/b/269751 http/wpt/webauthn/ctap-hid-success.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/idl.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-ccid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-create-success-u2f.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-cross-origin.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-ccid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Crash ]
+webkit.org/b/269751 http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Crash ]
 
 # Console log lines may appear in a different order so we silence them.
 http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
@@ -707,17 +730,16 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/audio-controls-001.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/loop-from-ended.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-selection-task-order.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-change-src.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigate_history_go_forward.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/srcdoc_change_hash.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/natural-size-orientation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-bom.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/referrer-policies.sub.html [ Skip ]
@@ -827,8 +849,6 @@ imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-page/bo
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/input-image-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-empty.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.tentative.html [ Failure ]
-imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/anonymous-button-content-box.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/inline-level.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
@@ -1047,7 +1067,6 @@ imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ 
 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.html [ Pass Failure ]
-imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Failure ]
 
 # textarea.animate is not supported
 imported/w3c/web-platform-tests/css/css-ui/caret-color-018.html [ Skip ]
@@ -1306,6 +1325,10 @@ http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Fa
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.large.html [ Skip ]
 
+# MSE in worker is only supported on platform with the GPU process active and where MSE is enabled by default
+# (this excludes iPhone (no MediaSource) and Linux/Windows (no GPUP))
+imported/w3c/web-platform-tests/media-source/dedicated-worker [ Skip ]
+
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Skip ]
 
@@ -1485,10 +1508,6 @@ webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
 css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
 
-webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html [ Skip ]
-webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html [ Skip ]
-webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.html [ Skip ]
-
 webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
 
 webkit.org/b/169075 editing/selection/extend-by-character-007.html [ Failure ]
@@ -1526,7 +1545,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyF
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-015.html [ ImageOnlyFailure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/210243 imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html [ Failure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-no-margin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/fieldset-baseline-alignment.html [ ImageOnlyFailure ]
@@ -1765,7 +1783,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablel
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/op-dict-8.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/op-dict-9.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/painting-stretchy-operator-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/mover-accent-dynamic-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/mprescripts-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/none-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-stretchy-001.html [ ImageOnlyFailure ]
@@ -1891,57 +1908,10 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/l
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-networkState.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/play-in-detached-document.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-hidden.optional.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/src-empty-string.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-remove-cue.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable-fragment.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-missed.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-sorted-before-dispatch.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-default-attribute.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled-addcue.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change-error.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-insert-after-load.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-large-timestamp.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-error-readyState.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-element-readyState.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-not-changed-by-new-track.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-triggers-loading.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-active-cue.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-insert-ready-state.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track-inband.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-alignment.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-blank-lines.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-bom.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-class-markup.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-identifiers.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-no-id.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-recovery.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size-align.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-degenerate-cues.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-empty-cue.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-entities.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-interspersed-non-cue.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-markup.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-newlines.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-no-timings.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-positioning.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-settings.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timestamp.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-whitespace.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-unsupported-markup.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-valign.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-voice.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/src-repeated-in-ancestor.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-iframe.html [ Skip ]
@@ -1974,7 +1944,6 @@ webkit.org/b/137883 transitions/cubic-bezier-overflow-svg-length.html [ Pass Fai
 webkit.org/b/137883 transitions/cubic-bezier-overflow-transform.html [ Pass Failure ]
 webkit.org/b/137883 transitions/delay.html [ Pass Failure ]
 webkit.org/b/137883 transitions/equivalent-background-image-no-transition.html [ Pass Failure ]
-webkit.org/b/137883 transitions/flex-transitions.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-transform-transition.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupt-zero-duration.html [ Pass Failure ]
 webkit.org/b/137883 transitions/interrupted-accelerated-transition.html [ Pass Failure ]
@@ -2107,6 +2076,8 @@ webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 webkit.org/b/139639 [ Debug ] cssom/non-subpixel-scroll-top-left-values.html [ Slow ]
 
 [ Debug ] fast/workers/worker-cloneport.html [ Slow ]
+[ Debug ] fast/webgpu/present-without-compute-pipeline.html [ Slow ]
+[ Debug ] fast/webgpu/multidimensional-texture-bounds.html [ Slow ]
 
 # Imported W3C HTML/DOM ref tests that are failing.
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-N-between-Rs.html [ ImageOnlyFailure ]
@@ -2235,8 +2206,6 @@ webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
-webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass Failure ]
-
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
@@ -2248,7 +2217,6 @@ http/tests/contentextensions [ Skip ]
 http/tests/inspector/network/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/wpt/beacon/contentextensions [ Skip ]
-webkit.org/b/143085 media/track/track-mode.html [ Pass Timeout ]
 
 # In ES6, Object type restrictions on a first parameter of several Object.* functions are relaxed.
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.2-1.html [ Failure ]
@@ -2316,8 +2284,6 @@ fast/images/animated-jpegxl-loop-count.html [ Skip ]
 # Experimental H265 support.
 webrtc/h265.html [ Pass Failure ]
 
-webrtc/vp9-vtb.html [ Skip ]
-
 webrtc/h264-baseline.html [ Slow ]
 webrtc/h264-high.html [ Slow ]
 
@@ -2344,6 +2310,7 @@ imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html
 
 # Missing API support.
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-codec.html [ Skip ]
 
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
@@ -2521,7 +2488,6 @@ fast/text/user-installed-fonts/extended-character-with-user-font.html [ Pass Ima
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-disconnect.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
-webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 
 webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
 
@@ -2555,7 +2521,6 @@ webkit.org/b/153160 http/tests/security/contentSecurityPolicy/plugin-in-iframe-w
 webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing-scheme-partial.html [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.py [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.py [ Failure ]
-webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-overrides-xfo.html
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
 webkit.org/b/158480 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ]
 
@@ -2651,11 +2616,6 @@ fast/scrolling/rtl-scrollbars-animation-property.html [ Failure ]
 webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeout ]
 
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
-
-http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/404-resource-with-slow-main-resource.py [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
 
 # PiP tests are only relevant on macOS Sierra and newer.
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]
@@ -2847,6 +2807,12 @@ http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-i
 # text-spacing: These tests generate a bunch of render tree dumps
 imported/w3c/web-platform-tests/css/css-text/text-spacing-trim [ Skip ]
 
+# invokers v2: These tests cover additions to the invokers API which aren't specced yet
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-fullscreen-behavior.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-audio-behavior.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-video-behavior.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-behavior.tentative.html [ Skip ]
+
 # text-transform: full-width
 # no full width mapping for characters ( and )
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-001.xht [ ImageOnlyFailure ]
@@ -2864,9 +2830,9 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shapin
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-004.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-005.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-010.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-inline-bound-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-005.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ ImageOnlyFailure ]
@@ -2996,41 +2962,26 @@ imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-r
 imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-vlr.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-004.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-005.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justifyall-006.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-join-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-tatweel-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-tatweel-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-indent/text-indent-tab-positions-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-flex-item-001.html [ ImageOnlyFailure ]
 webkit.org/b/240837 imported/w3c/web-platform-tests/css/css-text/text-indent/anonymous-grid-item-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-018.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-020.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-002.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-002a.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-003.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-005.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-006.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-018.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-019.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-020.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-021.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-103.html [ ImageOnlyFailure Pass ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-104.html [ ImageOnlyFailure Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-033.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-028.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-tailoring-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-006.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-003.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.html [ ImageOnlyFailure ]
@@ -3057,7 +3008,6 @@ webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/ful
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-018.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-019.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/tab-bidi-001.html [ ImageOnlyFailure ]
-webkit.org/b/257049 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-line-clamp-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/text-wrap-balance-float-003.html [ ImageOnlyFailure ]
@@ -3093,14 +3043,14 @@ imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-eth
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-063.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-manual-001.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-004.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-020.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-023.html [ ImageOnlyFailure ]
 webkit.org/b/197430 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-024.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-003.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-006.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-my-000.html [ ImageOnlyFailure ]
-webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-tdd-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-my-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-tdd-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-003.html [ ImageOnlyFailure ]
@@ -3331,7 +3281,7 @@ webkit.org/b/176183 fast/block/inside-inlines/opacity-on-inline.html [ ImageOnly
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
 
-# WPT css/css-pseudo import (webkit.org/b/235197)
+# WPT css/css-pseudo import (webkit.org/b/235197, webkit.org/b/266986)
 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/cascade-highlight-005.html [ ImageOnlyFailure ]
@@ -3340,14 +3290,16 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ ImageOnly
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-hi-002.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-with-preceding-new-line.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-line-line-height-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-cascade-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-properties-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-text-shadow-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-painting-text-shadow-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-explicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/highlight-currentcolor-root-implicit-default-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-soft-hyphens-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-004.html [ ImageOnlyFailure ]
@@ -3356,6 +3308,14 @@ imported/w3c/web-platform-tests/css/css-pseudo/highlight-styling-002.html [ Imag
 imported/w3c/web-platform-tests/css/css-pseudo/marker-text-transform-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-fill-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-thumb-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/slider/slider-track-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/svg-text-selection-002.html [ ImageOnlyFailure ]
 # WPT support ::target-text (webkit.org/b/236817)
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-002.html [ ImageOnlyFailure ]
@@ -3364,6 +3324,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/target-text-004.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-009.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo/target-text-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-003.html [ ImageOnlyFailure ]
@@ -3400,9 +3362,7 @@ webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
 webkit.org/b/184453 imported/w3c/web-platform-tests/workers/name-property.html [ Pass Failure ]
 
 webkit.org/b/48451 animations/combo-transform-translate+scale.html [ Pass Failure ]
-webkit.org/b/48451 animations/play-state.html [ Pass Failure ]
 webkit.org/b/48451 animations/suspend-resume-animation.html [ Pass Failure ]
-webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/184800 http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Timeout ]
 
@@ -3805,9 +3765,6 @@ webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-posi
 # wpt css-transitions and css-animations failures and flakiness
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure ]
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html [ ImageOnlyFailure ]
-webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
-webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
-webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Pass Failure ]
 webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Failure Pass Timeout ]
 
 # wpt css-values failures
@@ -4181,7 +4138,6 @@ webgl/2.0.y/conformance/reading [ Pass ]
 webgl/2.0.y/conformance/renderbuffers [ Pass ]
 webgl/2.0.y/conformance/rendering [ Pass ]
 webgl/2.0.y/conformance/textures/canvas/ [ Pass ]
-webgl/2.0.y/conformance2/extensions/ext-blend-func-extended.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-conservative-depth.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
@@ -4190,6 +4146,7 @@ webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/oes-sample-variables.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/oes-shader-multisample-interpolation.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
+webgl/2.0.y/conformance2/extensions/webgl-blend-func-extended.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-clip-cull-distance.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/webgl-provoking-vertex.html [ Pass ]
@@ -4600,9 +4557,6 @@ webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-017.html [ ImageOnlyFailure ]
 webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-heights-018.html [ ImageOnlyFailure ]
 
-# Static position alignment in Flexbox.
-webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-safe-001.html [ ImageOnlyFailure ]
-
 # Tables as flex items.
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
 
@@ -4740,6 +4694,9 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
 
 # currentColor support in relative color syntax.
+# webkit.org/b/271775(REGRESSION:(276695@main) imported/w3c/web-platform-t ests/css/css-color/parsing/ color* (layout-tests) are constant text failures (271775))
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure Crash ]
+webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure Crash ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-displayp3-01.html [ ImageOnlyFailure ]
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-hsl-01.html [ ImageOnlyFailure ]
@@ -4941,16 +4898,6 @@ webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-col
 
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative.html [ ImageOnlyFailure ]
 
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-06.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-18.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-24.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-30.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-33.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-34.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-38.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-39.html [ ImageOnlyFailure ]
-webkit.org/b/251953 imported/w3c/web-platform-tests/shadow-dom/directionality/dir-shadow-41.html [ ImageOnlyFailure ]
-
 # WebKit2 only.
 js/throw-large-string-oom.html [ Skip ]
 
@@ -5032,9 +4979,29 @@ webkit.org/b/220325 http/wpt/css/css-highlight-api/highlight-text-cascade.html [
 
 # Tests need updating relating to Highlight Spec
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/css-target-text-decoration-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-container-metrics-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-dynamic-container-metrics-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-dynamic-container-metrics-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-dynamic-container-metrics-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-dynamic-font-metrics-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-dynamic-logical-metrics-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-font-metrics-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-logical-metrics-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-logical-metrics-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-below-selection-transparency.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-below-target-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-inheritance-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-inheritance-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-vertical-writing-mode-001.html [ ImageOnlyFailure ]
 
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
 http/tests/webgl/2.0.y/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Skip ]
@@ -5066,6 +5033,8 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-004.h
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue.html [ Skip ]
+webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-009.html [ Pass ImageOnlyFailure ]
+webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-010.html [ ImageOnlyFailure ]
 webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
 
 # Flaky css-contain test
@@ -5286,12 +5255,15 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-fixed-clip.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-isolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/blur-clip-stacking-context-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/blur-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/clip-under-filter-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-contrast.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-invert.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-lighting-no-light.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-cb-abspos-inline-001.html [ ImageOnlyFailure ]
@@ -5341,7 +5313,6 @@ imported/w3c/web-platform-tests/css/filter-effects/tainting-feoffset-002.html [ 
 imported/w3c/web-platform-tests/css/filter-effects/tainting-fespecularlighting-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/tainting-fespecularlighting-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/tainting-fetile-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-reference-filter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html [ ImageOnlyFailure ]
@@ -5364,6 +5335,8 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-external-filter-resource.
 imported/w3c/web-platform-tests/css/filter-effects/svg-mutation-filter-used-by-mask.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip.html [ ImageOnlyFailure ]
 
+[ Release ] imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002.html [ ImageOnlyFailure ]
+webkit.org/b/149460 [ Debug ] imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002.html [ Crash ]
 
 imported/w3c/web-platform-tests/content-security-policy/script-src/ [ DumpJSConsoleLogInStdErr ]
 
@@ -5392,6 +5365,10 @@ webkit.org/b/239959 ipc/stream-sync-crash-no-timeout.html [ Skip ]
 
 # The test invokes random messages, potentially produces random results.
 ipc/start-message-testing.html [ Skip ]
+
+# Fixing timeouts is tracked by https://bugs.webkit.org/show_bug.cgi?id=267714 (rdar://120486467)
+ipc/invalid-fullscreen-enum.html [ Pass Timeout ]
+ipc/invalid-message-to-addTrackBuffer.html [ Pass Timeout ]
 
 # Test is crashing in Debug builds since import.
 webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
@@ -5490,6 +5467,16 @@ webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/heu
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/zero-scroll-offset.html [ Skip ]
 webkit.org/b/261849 imported/w3c/web-platform-tests/css/css-scroll-anchoring/start-edge-in-block-layout-direction.html [ Skip ]
 
+# Trusted Types aren't fully implemented yet
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-event-handlers.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-svg-script.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/require-trusted-types-for-report-only.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-no-unsafe-eval.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/trusted-types-eval-reporting-report-only.html [ Skip ]
+webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Pass Failure ]
+
 # These tests are image failures
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-000.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001.html [ Skip ]
@@ -5519,11 +5506,6 @@ fast/text/install-font-style-recalc.html [ Failure ]
 imported/w3c/web-platform-tests/web-locks/bfcache
 
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
-
-# Mismatching line wrapping when -webkit-hyphen is auto.
-webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
-webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
 
 # Incorrect expectation (test leads to timeout)
 webkit.org/b/246584 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
@@ -6071,17 +6053,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/cors-crossorigin-requests.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
 
-# Disable ShadowRealm (while running to ensure we do not crash)
-imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/encoding/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/hr-time/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/dom/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html [ Pass Failure ]
-imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html [ Pass Failure ]
-
 # modulepreload is not supported
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
@@ -6265,11 +6236,9 @@ imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds.html [ S
 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-out-of-bounds-translate.html [ Skip ]
 imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-visibility.html [ Skip ]
 imported/w3c/web-platform-tests/paint-timing/fcp-only/svg-in-iframe.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/allowpayment/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/allowpayment/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/allowpayment/removing-allowpaymentrequest.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/allowpayment/setting-allowpaymentrequest.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/delegate-request.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-request-disallowed-when-hidden.https.html [ Skip ]
 imported/w3c/web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html [ Skip ]
 imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html [ Skip ]
@@ -6342,13 +6311,12 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Failure
 
 webkit.org/b/258192 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Pass Failure ]
 
-# These tests crash in debug since their import.
+# These tests crash in debug since their import (webkit.org/b/268217).
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_entities01.html?run_type=write_single [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_html5test-com.html?run_type=write_single [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_plain-text-unsafe.html?run_type=write_single [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests2.html?run_type=write_single [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests24.html?run_type=write_single [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit01.html?run_type=write_single [ Skip ]
 
 # These tests are timing out since their import.
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?indexed [ Skip ]
@@ -6558,10 +6526,6 @@ imported/w3c/web-platform-tests/css/css-tables/whitespace-001.html [ ImageOnlyFa
 imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-fixed-layout-1.html [ Pass Failure ]
-
-# This test started failing when we started supporting passing a Range to the Highlight constructor.
-# We used to only support StaticRange objects and thus ignore the passed in parameter, which
-# caused the test to pass by luck.
 
 # New failures after re-importing css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/margin-block-end-scroll-area-001.html [ Skip ]
@@ -6777,8 +6741,6 @@ imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-do
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html [ Skip ]
 
-webkit.org/b/263413 media/media-source/media-source-first-sample-pts-non-zero-canplay-without-renderer.html [ Timeout ]
-
 # webkit.org/b/263870 [scroll-animations] some WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/css/deferred-timeline-composited.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-update-reversed-animation.html [ Skip ]
@@ -6865,12 +6827,15 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-proper
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ ImageOnlyFailure ]
 
 # webkit.org/b/229520 CSS @scope unimplemented
-imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 
+# :is(:host) https://bugs.webkit.org/show_bug.cgi?id=264628
 imported/w3c/web-platform-tests/css/css-nesting/host-nesting-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/host-nesting-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-nesting/host-nesting-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scoping/host-is-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scoping/host-is-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scoping/host-is-005.html [ ImageOnlyFailure ]
 
 webkit.org/b/263923 animations/transition-and-animation-2.html [ Failure Pass ]
 
@@ -6881,49 +6846,63 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 
 # Navigation API is not yet fully implemented
 webkit.org/b/258384 imported/w3c/web-platform-tests/navigation-api [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/ [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/ [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/history-back-same-doc.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-back-forward-same-doc.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-preventDefault.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-replace-same-doc.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/commit-behavior/after-transition-uncancelable.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigate-from-initial-about-blank-same-doc-popup.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/currententrychange-event/not-on-load.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-destination-getState-back-forward.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-back-noop.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document-in-iframe.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/currententrychange-event/navigation-navigate-same-doc.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-to-javascript.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigatesuccess-cross-document.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-in-unload-then-remove-iframe.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-cross-document.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-same-document.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/click-crossdocument-crossorigin.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/location-crossdocument-crossorigin.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/open-crossdocument-crossorigin.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/submit-crossdocument-crossorigin.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-across-origins.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-blank-navigation-from-cross-origin.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-canceled-event.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-after-dispatch.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-array-equality.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-in-new-srcdoc-iframe.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-reload-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/opaque-origin.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/opaque-origin-data-url.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/sameDocument-after-navigate.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-location-replace-cross-origin.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-gc.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-cross-document.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-intercept-handler-modifies.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-relative-url.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-out-of-bounds.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-initial-about-blank.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-invalid-key.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-rejection-order-invalidurl-unserializablestate.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-push-javascript-url.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-opaque-origin.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-initial-about-blank.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-invalid-url.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/reload-base-url.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/sandboxing-navigate-sibling.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-cross-document.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
-imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-document-away-and-back-location-api.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-away-and-back.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-location-api.html [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/location-reload.html [ Pass ]
 
 # -- View Transitions -- #
 # Reftest failures:
-imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/backdrop-filter-animated.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/block-with-overflowing-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-offscreen-child-translated.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-hidden-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/content-smaller-than-box-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-child-with-transparent-background.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-clip-root.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/content-with-clip.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/content-with-inline-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-transform-old-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/content-with-transparent-background.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/css-tags-paint-order-with-entry.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/css-tags-paint-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/css-tags-shared-element.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation.html [ ImageOnlyFailure ]
@@ -6934,8 +6913,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-ove
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-shadow-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-shadow-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element-from-point.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/inline-child-with-filter.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/inline-element-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/inline-with-offset-from-containing-block.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-left-of-viewport-offscreen-new.html [ ImageOnlyFailure ]
@@ -6946,60 +6923,32 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-a
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-offscreen-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/multiline-span-with-overflowing-text-and-box-decorations.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-clip-path.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-opacity.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-positioned-spans.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-container-writing-modes.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-element-writing-modes.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-is-inline.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-fit-none.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-scaling.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-object-view-box.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-element-on-start.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-new-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-clip-path.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-different-size.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-element-writing-modes.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-has-scrollbars.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-intrinsic-aspect-ratio.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-is-inline.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-object-fit-none.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-object-view-box-clip-path-reference.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-object-view-box-clip-path.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-object-view-box-overflow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-root-vertical-writing-mode.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-captured-as-different-tag.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-scrollbar-with-fixed-background.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-style-change-during-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-end.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-incoming.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/root-to-shared-animation-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/set-universal-specificity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-absolute.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-includes-scrollbar-gutter.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text-and-box-decorations.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/transform-origin-view-transition-group.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-grouping.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/writing-mode-container-resize.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/break-inside-avoid-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-offscreen-child.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-visibility-auto-shared-element.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-transform-new-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/element-with-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/exit-transition-with-anonymous-layout-object.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/far-away-capture.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/fractional-box-with-overflow-children-new.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unpainted-element.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/hit-test-unrelated-element.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ ImageOnlyFailure ]
@@ -7012,36 +6961,41 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-o
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-root.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/fragmented-at-start-ignored.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/set-current-time-transform.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/set-current-time.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-is-empty-div.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-is-inline.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-fit-fill.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-view-box-clip-path-reference.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-view-box-clip-path.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-view-box-overflow-clipped.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-object-view-box-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-overflow.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/new-root-vertical-writing-mode.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-root.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-container-writing-modes.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-is-empty-div.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-object-fit-fill.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-object-view-box.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overflow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-rendering-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-static.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/span-with-overflowing-text-hidden.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/fractional-translation-from-position.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/named-element-with-fix-pos-child-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child-abspos.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/scroller-child.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-element-writing-modes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/class-specificity.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-entry.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-exit.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-ident.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple-wildcard.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-multiple.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-match-wildard.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-multiple-vt-classes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-new-with-class-old-without.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-group.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-view-transition-image-pair.html [ ImageOnlyFailure ]
+
 
 # Timeouts
 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-get-computed-style.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-computed-style-stays-in-sync-with-new-element.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/web-animation-pseudo-incorrect-name.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/fragmented-during-transition-skips.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/root-element-display-none-during-transition-crash.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition-destroyed-document-crash.html [ Skip ]
 
 # Flakes
 imported/w3c/web-platform-tests/css/css-view-transitions/synchronous-callback-skipped-before-run.html [ Failure Pass ]
@@ -7420,11 +7374,19 @@ imported/w3c/web-platform-tests/css/css-break/flexbox/flexbox-fragmentation-layo
 # css/css-break missing ref
 imported/w3c/web-platform-tests/css/css-break/chrome-bug-1289999-crash.https.html [ Skip ]
 
+webkit.org/b/264830 [ Debug ] fast/rendering/render-list-marker-select.html [ Skip ]
+
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
 
+imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002.html [ ImageOnlyFailure ]
+
 http/tests/site-isolation/touch-events [ Skip ]
+
+# CSS syntax
+imported/w3c/web-platform-tests/css/css-nesting/has-nesting.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scoping/scoped-reference-animation-002.html [ ImageOnlyFailure ]
 
 # CSS Ruby
 # inline boxes (e.g. ruby base) are not supposed to get stretched by their content (needs clarification)
@@ -7434,6 +7396,8 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ Ima
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ ImageOnlyFailure ]
 # <rt> is not a block so should not respect ::first-letter (needs clarification)
 imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
+# <rb> <rbc> inline boxes are not recognized as ruby base boxes.
+imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/266537 [ Debug ] imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ Skip ]
 
@@ -7444,7 +7408,35 @@ http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
 
 webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
 
-webkit.org/b/266986 imported/w3c/web-platform-tests/css/css-pseudo/highlight-pseudos-computed.html [ Failure ]
+webkit.org/b/271428 fast/text/bidi-text-and-partial-layout-crash.html [ Skip ]
 
 # At the time of writing this test consumes all available IOSurfaces. If the next test is image-buffer-backend-variants.html, that will fail.
 fast/canvas/2d.context.many.small.html [ Slow Skip ]
+
+webkit.org/b/268995 [ Debug ] fast/misc/out-of-flow-position-inside-mathml-crash.html [ Skip ]
+
+webkit.org/b/261557 media/video-remove-insert-repaints.html [ Pass Crash ]
+
+# web-platform-tests/html/dom/elements/global-attributes failures
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-06.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-36.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-38.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-39.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ ImageOnlyFailure ]
+webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ ImageOnlyFailure ]
+
+webkit.org/b/250795 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusability.html [ Skip ]
+
+# web-platform-tests/svg/painting/reftests failures
+imported/w3c/web-platform-tests/svg/painting/reftests/fallback-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-implicit-subpaths.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-003.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-013.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-non-scaling-stroke.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ Failure ]
+
+# re-import css/css-align WPT failure
+webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]

@@ -29,10 +29,10 @@
 #if ENABLE(WPE_PLATFORM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wpe/wpe-platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -47,9 +47,13 @@ AcceleratedBackingStoreDMABuf::AcceleratedBackingStoreDMABuf(WebPageProxy& webPa
     : m_webPage(webPage)
     , m_wpeView(view)
 {
-    g_signal_connect(m_wpeView.get(), "buffer-rendered", G_CALLBACK(+[](WPEView*, WPEBuffer* buffer, gpointer userData) {
+    g_signal_connect(m_wpeView.get(), "buffer-rendered", G_CALLBACK(+[](WPEView*, WPEBuffer*, gpointer userData) {
         auto& backingStore = *static_cast<AcceleratedBackingStoreDMABuf*>(userData);
         backingStore.bufferRendered();
+    }), this);
+    g_signal_connect(m_wpeView.get(), "buffer-released", G_CALLBACK(+[](WPEView*, WPEBuffer* buffer, gpointer userData) {
+        auto& backingStore = *static_cast<AcceleratedBackingStoreDMABuf*>(userData);
+        backingStore.bufferReleased(buffer);
     }), this);
 }
 
@@ -68,7 +72,6 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
             frameDone();
             m_pendingBuffer = nullptr;
         }
-        m_committedBuffer = nullptr;
         m_buffers.clear();
         m_bufferIDs.clear();
         m_webPage.process().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surfaceID);
@@ -82,20 +85,18 @@ void AcceleratedBackingStoreDMABuf::updateSurfaceID(uint64_t surfaceID)
 
 void AcceleratedBackingStoreDMABuf::didCreateBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, Vector<WTF::UnixFileDescriptor>&& fds, Vector<uint32_t>&& offsets, Vector<uint32_t>&& strides, uint64_t modifier)
 {
-    auto* display = wpe_view_get_display(m_wpeView.get());
     Vector<int> fileDescriptors;
     fileDescriptors.reserveInitialCapacity(fds.size());
     for (auto& fd : fds)
         fileDescriptors.append(fd.release());
-    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_dma_buf_new(display, size.width(), size.height(), format, fds.size(), fileDescriptors.data(), offsets.data(), strides.data(), modifier)));
+    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_dma_buf_new(m_wpeView.get(), size.width(), size.height(), format, fds.size(), fileDescriptors.data(), offsets.data(), strides.data(), modifier)));
     m_bufferIDs.add(buffer.get(), id);
     m_buffers.add(id, WTFMove(buffer));
 }
 
-void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBitmap::Handle&& handle)
+void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, WebCore::ShareableBitmap::Handle&& handle)
 {
-    auto* display = wpe_view_get_display(m_wpeView.get());
-    auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
+    auto bitmap = WebCore::ShareableBitmap::create(WTFMove(handle), WebCore::SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return;
 
@@ -104,10 +105,10 @@ void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBit
     auto dataSize = bitmap->sizeInBytes();
     auto stride = bitmap->bytesPerRow();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, dataSize, [](gpointer userData) {
-        delete static_cast<ShareableBitmap*>(userData);
+        delete static_cast<WebCore::ShareableBitmap*>(userData);
     }, bitmap.leakRef()));
 
-    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(display, size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get(), stride)));
+    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(m_wpeView.get(), size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get(), stride)));
     m_bufferIDs.add(buffer.get(), id);
     m_buffers.add(id, WTFMove(buffer));
 }
@@ -142,15 +143,14 @@ void AcceleratedBackingStoreDMABuf::frameDone()
 
 void AcceleratedBackingStoreDMABuf::bufferRendered()
 {
-    if (m_pendingBuffer) {
-        if (m_committedBuffer) {
-            if (auto id = m_bufferIDs.get(m_committedBuffer.get()))
-                m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
-        }
-        m_committedBuffer = WTFMove(m_pendingBuffer);
-    }
-
     frameDone();
+    m_pendingBuffer = nullptr;
+}
+
+void AcceleratedBackingStoreDMABuf::bufferReleased(WPEBuffer* buffer)
+{
+    if (auto id = m_bufferIDs.get(buffer))
+        m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::ReleaseBuffer(id), m_surfaceID);
 }
 
 } // namespace WebKit

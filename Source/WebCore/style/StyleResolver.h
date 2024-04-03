@@ -81,6 +81,8 @@ struct ResolutionContext {
     bool isSVGUseTreeRoot { false };
 };
 
+using KeyframesRuleMap = HashMap<AtomString, RefPtr<StyleRuleKeyframes>>;
+
 class Resolver : public RefCounted<Resolver>, public CanMakeSingleThreadWeakPtr<Resolver> {
     WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
@@ -116,6 +118,8 @@ public:
     std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&);
     bool isAnimationNameValid(const String&);
 
+    void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
+
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
     enum CSSRuleFilter {
         UAAndUserCSSRules   = 1 << 1,
@@ -125,7 +129,7 @@ public:
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
     Vector<RefPtr<const StyleRule>> styleRulesForElement(const Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    Vector<RefPtr<const StyleRule>> pseudoStyleRulesForElement(const Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<const StyleRule>> pseudoStyleRulesForElement(const Element*, const std::optional<Style::PseudoElementRequest>&, unsigned rulesToInclude = AllButEmptyCSSRules);
 
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
@@ -133,6 +137,8 @@ public:
     bool hasViewportDependentMediaQueries() const;
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
+    static KeyframesRuleMap& userAgentKeyframes();
+    static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&) const;
 
@@ -164,7 +170,6 @@ private:
 
     ScopeRuleSets m_ruleSets;
 
-    typedef HashMap<AtomString, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
     MQ::MediaQueryEvaluator m_mediaQueryEvaluator;

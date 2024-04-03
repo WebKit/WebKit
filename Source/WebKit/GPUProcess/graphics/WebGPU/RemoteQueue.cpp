@@ -48,7 +48,7 @@ RemoteQueue::~RemoteQueue() = default;
 
 void RemoteQueue::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteQueue::stopListeningForIPC()
@@ -61,7 +61,7 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
     Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>> convertedCommandBuffers;
     convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
     for (WebGPUIdentifier identifier : commandBuffers) {
-        auto convertedCommandBuffer = m_objectHeap.convertCommandBufferFromBacking(identifier);
+        auto convertedCommandBuffer = m_objectHeap->convertCommandBufferFromBacking(identifier);
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
             return;
@@ -82,7 +82,7 @@ void RemoteQueue::writeBuffer(
     WebCore::WebGPU::Size64 bufferOffset,
     Vector<uint8_t>&& data)
 {
-    auto convertedBuffer = m_objectHeap.convertBufferFromBacking(buffer);
+    auto convertedBuffer = m_objectHeap->convertBufferFromBacking(buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -96,11 +96,11 @@ void RemoteQueue::writeTexture(
     const WebGPU::ImageDataLayout& dataLayout,
     const WebGPU::Extent3D& size)
 {
-    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedDataLayout = m_objectHeap.convertFromBacking(dataLayout);
+    auto convertedDataLayout = m_objectHeap->convertFromBacking(dataLayout);
     ASSERT(convertedDestination);
-    auto convertedSize = m_objectHeap.convertFromBacking(size);
+    auto convertedSize = m_objectHeap->convertFromBacking(size);
     ASSERT(convertedSize);
     if (!convertedDestination || !convertedDestination || !convertedSize)
         return;
@@ -113,11 +113,11 @@ void RemoteQueue::copyExternalImageToTexture(
     const WebGPU::ImageCopyTextureTagged& destination,
     const WebGPU::Extent3D& copySize)
 {
-    auto convertedSource = m_objectHeap.convertFromBacking(source);
+    auto convertedSource = m_objectHeap->convertFromBacking(source);
     ASSERT(convertedSource);
-    auto convertedDestination = m_objectHeap.convertFromBacking(destination);
+    auto convertedDestination = m_objectHeap->convertFromBacking(destination);
     ASSERT(convertedDestination);
-    auto convertedCopySize = m_objectHeap.convertFromBacking(copySize);
+    auto convertedCopySize = m_objectHeap->convertFromBacking(copySize);
     ASSERT(convertedCopySize);
     if (!convertedDestination || !convertedDestination || !convertedCopySize)
         return;

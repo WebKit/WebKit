@@ -91,7 +91,6 @@ WK_EXPORT bool WKBundlePageHasLocalDataForURL(WKBundlePageRef page, WKURLRef url
 WK_EXPORT bool WKBundlePageCanHandleRequest(WKURLRequestRef request);
 
 WK_EXPORT bool WKBundlePageFindString(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
-WK_EXPORT void WKBundlePageFindStringMatches(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
 WK_EXPORT void WKBundlePageReplaceStringMatches(WKBundlePageRef page, WKArrayRef matchIndices, WKStringRef replacementText, bool selectionOnly);
 
 WK_EXPORT WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef page, WKRect rect, WKSnapshotOptions options);
@@ -108,7 +107,9 @@ WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLayoutMilestones milestones);
 
-WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageShowInspectorForTest(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageCloseInspectorForTest(WKBundlePageRef page);
+WK_EXPORT void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKStringRef script);
 
 WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
 
@@ -119,6 +120,8 @@ WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef page,
 WK_EXPORT WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageSetSkipDecidePolicyForResponseIfPossible(WKBundlePageRef page, bool skip);
+
+WK_EXPORT WKStringRef WKBundlePageCopyFrameTextForTesting(WKBundlePageRef page, bool includeSubframes);
 
 typedef void (*WKBundlePageTestNotificationCallback)(void* context);
 // Returns true  if the callback function will be called, else false.

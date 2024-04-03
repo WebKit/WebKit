@@ -52,10 +52,6 @@ operator :'&', {
     must_use: true,
     const: 'constantBitwiseAnd',
 
-    # unary
-    # FIXME: move this out of here
-    [AS, T, AM].(ref[AS, T, AM]) => ptr[AS, T, AM],
-
     # binary
     [].(bool, bool) => bool,
     [N].(vec[N][bool], vec[N][bool]) => vec[N][bool],
@@ -97,10 +93,6 @@ operator :+, {
 operator :*, {
     must_use: true,
     const: "constantMultiply",
-
-    # unary
-    # FIXME: move this out of here
-    [AS, T, AM].(ptr[AS, T, AM]) => ref[AS, T, AM],
 
     # binary
     [T < Number].(T, T) => T,
@@ -1075,9 +1067,17 @@ function :textureLoad, {
     must_use: true,
 
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_1d[S], T, U) => vec4[S],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_1d[F, read], T) => vec4[ChannelFormat[F]],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_1d[F, read_write], T) => vec4[ChannelFormat[F]],
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_2d[S], vec2[T], U) => vec4[S],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_2d[F, read], T) => vec4[ChannelFormat[F]],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_2d[F, read_write], T) => vec4[ChannelFormat[F]],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_2d_array[F, read], T) => vec4[ChannelFormat[F]],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_2d_array[F, read_write], T) => vec4[ChannelFormat[F]],
     [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_2d_array[S], vec2[T], V, U) => vec4[S],
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_3d[S], vec3[T], U) => vec4[S],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_3d[F, read], T) => vec4[ChannelFormat[F]],
+    [F, T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_storage_3d[F, read_write], T) => vec4[ChannelFormat[F]],
     [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(texture_multisampled_2d[S], vec2[T], U) => vec4[S],
 
 
@@ -1098,6 +1098,28 @@ function :textureLoad, {
     [T < ConcreteInteger, U < ConcreteInteger].(texture_depth_multisampled_2d, vec2[T], U) => f32,
 
     [T < ConcreteInteger].(texture_external, vec2[T]) => vec4[f32],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_2d<F,AM>, coords: vec2<C>) -> vec4<CF>
+    [F, AM, T < ConcreteInteger].(texture_storage_2d[F, AM], vec2[T]) => vec4[ChannelFormat[F]],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # A is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_2d_array<F,AM>, coords: vec2<C>, array_index: A) -> vec4<CF>
+    [F, AM, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, AM], vec2[T], S) => vec4[ChannelFormat[F]],
+
+    # F is a texel format
+    # AM is the access mode
+    # C is i32, or u32
+    # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
+    # fn textureLoad(t: texture_storage_3d<F,AM>, coords: vec2<C>) -> vec4<CF>
+    [F, AM, T < ConcreteInteger].(texture_storage_3d[F, AM], vec3[T]) => vec4[ChannelFormat[F]],
 }
 
 # 16.7.5
@@ -1346,12 +1368,14 @@ function :textureStore, {
     # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
     # fn textureStore(t: texture_storage_1d<F,write>, coords: C, value: vec4<CF>)
     [F, T < ConcreteInteger].(texture_storage_1d[F, write], T, vec4[ChannelFormat[F]]) => void,
+    [F, T < ConcreteInteger].(texture_storage_1d[F, read_write], T, vec4[ChannelFormat[F]]) => void,
 
     # F is a texel format
     # C is i32, or u32
     # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
     # fn textureStore(t: texture_storage_2d<F,write>, coords: vec2<C>, value: vec4<CF>)
     [F, T < ConcreteInteger].(texture_storage_2d[F, write], vec2[T], vec4[ChannelFormat[F]]) => void,
+    [F, T < ConcreteInteger].(texture_storage_2d[F, read_write], vec2[T], vec4[ChannelFormat[F]]) => void,
 
     # F is a texel format
     # C is i32, or u32
@@ -1359,12 +1383,14 @@ function :textureStore, {
     # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
     # fn textureStore(t: texture_storage_2d_array<F,write>, coords: vec2<C>, array_index: A, value: vec4<CF>)
     [F, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, write], vec2[T], S, vec4[ChannelFormat[F]]) => void,
+    [F, T < ConcreteInteger, S < ConcreteInteger].(texture_storage_2d_array[F, read_write], vec2[T], S, vec4[ChannelFormat[F]]) => void,
 
     # F is a texel format
     # C is i32, or u32
     # CF depends on the storage texel format F. See the texel format table for the mapping of texel format to channel format.
     # fn textureStore(t: texture_storage_3d<F,write>, coords: vec3<C>, value: vec4<CF>)
     [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
+    [F, T < ConcreteInteger].(texture_storage_3d[F, read_write], vec3[T], vec4[ChannelFormat[F]]) => void,
 }
 
 # 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
@@ -1553,6 +1579,14 @@ function :storageBarrier, {
 }
 
 # 16.11.2.
+function :textureBarrier, {
+    stage: :compute,
+
+    # fn textureBarrier()
+    [].() => void,
+}
+
+# 16.11.3.
 function :workgroupBarrier, {
     stage: :compute,
 
@@ -1560,7 +1594,7 @@ function :workgroupBarrier, {
     [].() => void,
 }
 
-# 16.11.3.
+# 16.11.4.
 function :workgroupUniformLoad, {
     must_use: true,
     stage: :compute,

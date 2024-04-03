@@ -78,7 +78,7 @@ PASS inbound-rtp's codecId
 PASS inbound-rtp's timestamp
 PASS inbound-rtp's type
 PASS inbound-rtp's id
-FAIL outbound-rtp's rtxSsrc assert_true: Is rtxSsrc present expected true got false
+PASS outbound-rtp's rtxSsrc
 PASS outbound-rtp's mediaSourceId
 FAIL outbound-rtp's senderId assert_true: Is senderId present expected true got false
 PASS outbound-rtp's remoteId
@@ -187,7 +187,7 @@ PASS peer-connection's type
 PASS peer-connection's id
 PASS data-channel's label
 PASS data-channel's protocol
-FAIL data-channel's dataChannelIdentifier assert_true: Is dataChannelIdentifier present expected true got false
+PASS data-channel's dataChannelIdentifier
 PASS data-channel's state
 PASS data-channel's messagesSent
 PASS data-channel's bytesSent

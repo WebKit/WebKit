@@ -59,6 +59,10 @@ struct WorkerOptions;
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
+    using AbstractWorker::weakPtrFactory;
+    using AbstractWorker::WeakValueType;
+    using AbstractWorker::WeakPtrImplType;
+
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, WorkerOptions&&);
     virtual ~Worker();
 
@@ -88,7 +92,7 @@ public:
 private:
     Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
 
-    EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Worker; }
 
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void notifyFinished() final;

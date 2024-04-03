@@ -40,7 +40,6 @@
 #include <WebKit/WKBundleBackForwardList.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundleFramePrivate.h>
-#include <WebKit/WKBundleInspector.h>
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
@@ -257,8 +256,13 @@ void TestRunner::notifyDone()
     if (!injectedBundle.isTestRunning())
         return;
 
+    bool mainFrameIsRemote = WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef()));
+    if (mainFrameIsRemote) {
+        setWaitUntilDone(false);
+        return postPageMessage("NotifyDone");
+    }
     if (shouldWaitUntilDone() && !injectedBundle.topLoadingFrame())
-        injectedBundle.page()->dump();
+        injectedBundle.page()->dump(m_forceRepaint);
 
     // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
     // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
@@ -274,7 +278,7 @@ void TestRunner::forceImmediateCompletion()
         return;
 
     if (shouldWaitUntilDone() && injectedBundle.page())
-        injectedBundle.page()->dump();
+        injectedBundle.page()->dump(m_forceRepaint);
 
     setWaitUntilDone(false);
 }
@@ -352,8 +356,12 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
 
 void TestRunner::findStringMatchesInPage(JSStringRef target, JSValueRef optionsArrayAsValue)
 {
-    if (auto options = findOptionsFromArray(optionsArrayAsValue))
-        WKBundlePageFindStringMatches(page(), toWK(target).get(), *options);
+    if (auto options = findOptionsFromArray(optionsArrayAsValue)) {
+        postPageMessage("FindStringMatches", createWKDictionary({
+            { "String", toWK(target) },
+            { "FindOptions", toWK(*options) },
+        }));
+    }
 }
 
 void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)
@@ -390,31 +398,6 @@ void TestRunner::syncLocalStorage()
     postSynchronousMessage("SyncLocalStorage", true);
 }
 
-void TestRunner::clearAllApplicationCaches()
-{
-    WKBundlePageClearApplicationCache(page());
-}
-
-void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
-{
-    WKBundlePageClearApplicationCacheForOrigin(page(), toWK(origin).get());
-}
-
-void TestRunner::setAppCacheMaximumSize(uint64_t size)
-{
-    WKBundlePageSetAppCacheMaximumSize(page(), size);
-}
-
-long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
-{
-    return WKBundlePageGetAppCacheUsageForOrigin(page(), toWK(origin).get());
-}
-
-void TestRunner::disallowIncreaseForApplicationCacheQuota()
-{
-    m_disallowIncreaseForApplicationCacheQuota = true;
-}
-
 static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef strings)
 {
     const size_t count = WKArrayGetSize(strings);
@@ -424,11 +407,6 @@ static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef string
         JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, toJS(stringRef).get()), nullptr);
     }
     return array;
-}
-
-JSValueRef TestRunner::originsWithApplicationCache()
-{
-    return stringArrayToJS(mainFrameJSContext(), adoptWK(WKBundlePageCopyOriginsWithApplicationCache(page())).get());
 }
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
@@ -541,17 +519,17 @@ void TestRunner::makeWindowObject(JSContextRef context)
 
 void TestRunner::showWebInspector()
 {
-    WKBundleInspectorShow(WKBundlePageGetInspector(page()));
+    WKBundlePageShowInspectorForTest(page());
 }
 
 void TestRunner::closeWebInspector()
 {
-    WKBundleInspectorClose(WKBundlePageGetInspector(page()));
+    WKBundlePageCloseInspectorForTest(page());
 }
 
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
-    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(page()), toWK(script).get());
+    WKBundlePageEvaluateScriptInInspectorForTest(page(), toWK(script).get());
 }
 
 using WorldMap = WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef>>;
@@ -1565,11 +1543,12 @@ void TestRunner::setStatisticsTopFrameUniqueRedirectFrom(JSStringRef hostName, J
     }));
 }
 
-void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost)
+void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost, bool wasFiltered)
 {
     postSynchronousMessage("SetStatisticsCrossSiteLoadWithLinkDecoration", createWKDictionary({
         { "FromHost", toWK(fromHost) },
         { "ToHost", toWK(toHost) },
+        { "WasFiltered", adoptWK(WKBooleanCreate(wasFiltered)) },
     }));
 }
 
@@ -1867,10 +1846,16 @@ static JSValueRef makeDomainsValue(const Vector<String>& domains)
     builder.append(']');
     return JSValueMakeFromJSONString(mainFrameJSContext(), createJSString(builder.toString().utf8().data()).get());
 }
+
 void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains)
 {
     auto result = makeDomainsValue(domains);
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
+}
+
+void TestRunner::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
+{
+    postSynchronousPageMessage("SetRequestStorageAccessThrowsExceptionUntilReload", enabled);
 }
 
 void TestRunner::loadedSubresourceDomains(JSValueRef callback)
@@ -1903,6 +1888,9 @@ void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label,
 static WKRetainPtr<WKDictionaryRef> captureDeviceProperties(JSValueRef properties)
 {
     auto context = mainFrameJSContext();
+
+    if (JSValueGetType(context, properties) == kJSTypeUndefined)
+        return { };
 
     Vector<WKRetainPtr<WKStringRef>> strings;
     Vector<WKStringRef> keys;

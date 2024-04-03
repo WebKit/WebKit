@@ -41,14 +41,13 @@ static Vector<uint8_t> dataFromPushMessageDataInit(PushMessageDataInit& data)
     return WTF::switchOn(data, [](RefPtr<JSC::ArrayBuffer>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return { reinterpret_cast<const uint8_t*>(value->data()), value->byteLength() };
+        return value->span();
     }, [](RefPtr<JSC::ArrayBufferView>& value) -> Vector<uint8_t> {
         if (!value)
             return { };
-        return { reinterpret_cast<const uint8_t*>(value->baseAddress()), value->byteLength() };
+        return value->span();
     }, [](String& value) -> Vector<uint8_t> {
-        auto utf8 = value.utf8();
-        return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() };
+        return value.utf8().span();
     });
 }
 
@@ -73,13 +72,11 @@ static inline RefPtr<PushMessageData> pushMessageDataFromOptionalVector(std::opt
 }
 
 PushEvent::PushEvent(const AtomString& type, ExtendableEventInit&& eventInit, std::optional<Vector<uint8_t>>&& data, IsTrusted isTrusted)
-    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
+    : ExtendableEvent(EventInterfaceType::PushEvent, type, WTFMove(eventInit), isTrusted)
     , m_data(pushMessageDataFromOptionalVector(WTFMove(data)))
 {
 }
 
-PushEvent::~PushEvent()
-{
-}
+PushEvent::~PushEvent() = default;
 
 } // namespace WebCore

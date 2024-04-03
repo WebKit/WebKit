@@ -38,9 +38,6 @@ struct WebProcessDataStoreParameters {
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     PAL::SessionID sessionID;
-    String applicationCacheDirectory;
-    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
 #if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
@@ -52,7 +49,7 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
-    HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
+    HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;

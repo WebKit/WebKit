@@ -598,6 +598,7 @@ class FrameCaptureShared final : angle::NonCopyable
                             bool coherent);
 
     void trackTextureUpdate(const gl::Context *context, const CallCapture &call);
+    void trackImageUpdate(const gl::Context *context, const CallCapture &call);
     void trackDefaultUniformUpdate(const gl::Context *context, const CallCapture &call);
     void trackVertexArrayUpdate(const gl::Context *context, const CallCapture &call);
 
@@ -759,7 +760,6 @@ class FrameCaptureShared final : angle::NonCopyable
     void scanSetupCalls(std::vector<CallCapture> &setupCalls);
 
     std::vector<CallCapture> mFrameCalls;
-    gl::ContextID mLastContextId;
 
     // We save one large buffer of binary data for the whole CPP replay.
     // This simplifies a lot of file management.
@@ -838,6 +838,16 @@ void CaptureGLCallToFrameCapture(CaptureFuncT captureFunc,
     frameCaptureShared->captureCall(context, std::move(call), isCallValid);
 }
 
+template <typename FirstT, typename... OthersT>
+egl::Display *GetEGLDisplayArg(FirstT display, OthersT... others)
+{
+    if constexpr (std::is_same<egl::Display *, FirstT>::value)
+    {
+        return display;
+    }
+    return nullptr;
+}
+
 template <typename CaptureFuncT, typename... ArgsT>
 void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
                                   bool isCallValid,
@@ -847,7 +857,21 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
     gl::Context *context = thread->getContext();
     if (!context)
     {
-        return;
+        // Get a valid context from the display argument if no context is associated with this
+        // thread
+        egl::Display *display = GetEGLDisplayArg(captureParams...);
+        if (display)
+        {
+            for (const auto &contextIter : display->getState().contextMap)
+            {
+                context = contextIter.second;
+                break;
+            }
+        }
+        if (!context)
+        {
+            return;
+        }
     }
     std::lock_guard<egl::ContextMutex> lock(context->getContextMutex());
 

@@ -38,10 +38,12 @@
 
 typedef struct CGFont* CGFontRef;
 typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
-#else
+#elif USE(CAIRO)
 #include "RefPtrCairo.h"
 
 typedef struct FT_FaceRec_*  FT_Face;
+#elif USE(SKIA)
+#include <skia/core/SkTypeface.h>
 #endif
 
 namespace WebCore {
@@ -54,10 +56,21 @@ enum class FontTechnology : uint8_t;
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
+#if USE(CORE_TEXT)
+struct FontCustomPlatformSerializedData {
+    Vector<uint8_t> fontFaceData;
+    String itemInCollection;
+    RenderingResourceIdentifier renderingResourceIdentifier;
+};
+#endif
+
 struct FontCustomPlatformData : public RefCounted<FontCustomPlatformData> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, const String&);
+    WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> createMemorySafe(SharedBuffer&, const String&);
+
 #if PLATFORM(WIN)
     FontCustomPlatformData(const String& name, FontPlatformData::CreationData&&);
 #elif USE(CORE_TEXT)
@@ -67,13 +80,19 @@ public:
         , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
     {
     }
-#else
+#elif USE(CAIRO)
     FontCustomPlatformData(FT_Face, FontPlatformData::CreationData&&);
+#elif USE(SKIA)
+    FontCustomPlatformData(sk_sp<SkTypeface>&&, FontPlatformData::CreationData&&);
 #endif
     WEBCORE_EXPORT ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
+#if USE(CORE_TEXT)
+    WEBCORE_EXPORT FontCustomPlatformSerializedData serializedData() const;
+    WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&);
+#endif
     static bool supportsFormat(const String&);
     static bool supportsTechnology(const FontTechnology&);
 
@@ -81,14 +100,14 @@ public:
     String name;
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
-#else
+#elif USE(CAIRO)
     RefPtr<cairo_font_face_t> m_fontFace;
+#elif USE(SKIA)
+    sk_sp<SkTypeface> m_typeface;
 #endif
     FontPlatformData::CreationData creationData;
 
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
-
-WEBCORE_EXPORT RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
 
 } // namespace WebCore

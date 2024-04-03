@@ -59,7 +59,7 @@ public:
     static HashSet<CanvasRenderingContext*>& instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
-    void ref();
+    WEBCORE_EXPORT void ref();
     WEBCORE_EXPORT void deref();
 
     CanvasBase& canvasBase() const { return m_canvas; }
@@ -97,6 +97,12 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
     void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }
 
+    // Returns true if there are pending deferred operations that might consume memory.
+    virtual bool hasDeferredOperations() const { return false; }
+
+    // Called periodically if needsFlush() was true when canvas change happened.
+    virtual void flushDeferredOperations() { }
+
     virtual bool compositingResultsNeedUpdating() const { return false; }
     virtual bool needsPreparationForDisplay() const { return false; }
     // Swaps the current drawing buffer to display buffer.
@@ -105,6 +111,9 @@ public:
     virtual PixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;
     virtual OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions> bufferOptions) { return bufferOptions; }
+
+    void setIsInPreparationForDisplayOrFlush(bool flag) { m_isInPreparationForDisplayOrFlush = flag; }
+    bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
 
 protected:
     explicit CanvasRenderingContext(CanvasBase&);
@@ -125,6 +134,7 @@ protected:
     void checkOrigin(const URL&);
     void checkOrigin(const CSSStyleImageValue&);
 
+    bool m_isInPreparationForDisplayOrFlush { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
 
 private:

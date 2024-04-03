@@ -26,6 +26,7 @@
 #pragma once
 
 namespace WTF {
+class ASCIILiteral;
 class PrintStream;
 class String;
 }
@@ -103,13 +104,19 @@ namespace WGSL {
     value(F16, f16, 1 << 0) \
 
 #define ENUM_LanguageFeature(value) \
-    value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 0)
+    value(Packed4x8IntegerDotProduct, packed_4x8_integer_dot_product, 1 << 0) \
+    value(PointerCompositeAccess, pointer_composite_access, 1 << 1) \
+    value(ReadonlyAndReadwriteStorageTextures, readonly_and_readwrite_storage_textures, 1 << 2) \
+    value(UnrestrictedPointerParameters, unrestricted_pointer_parameters, 1 << 3) \
 
 #define ENUM_DECLARE_VALUE(__value, _, ...) \
     __value __VA_OPT__(=) __VA_ARGS__,
 
 #define ENUM_DECLARE_PRINT_INTERNAL(__name) \
     void printInternal(WTF::PrintStream& out, __name)
+
+#define ENUM_DECLARE_TO_STRING(__name) \
+    WTF::ASCIILiteral toString(__name)
 
 #define ENUM_DECLARE_PARSE(__name) \
     const __name* parse##__name(const WTF::String&)
@@ -119,6 +126,7 @@ namespace WGSL {
     ENUM_##__name(ENUM_DECLARE_VALUE) \
     }; \
     ENUM_DECLARE_PRINT_INTERNAL(__name); \
+    ENUM_DECLARE_TO_STRING(__name); \
     ENUM_DECLARE_PARSE(__name);
 
 ENUM_DECLARE(AddressSpace);

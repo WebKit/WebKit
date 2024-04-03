@@ -36,7 +36,6 @@ struct ResourceLoadStatisticsParameters {
     String directory;
     SandboxExtension::Handle directoryExtensionHandle;
     bool enabled { false };
-    bool isTrackingPreventionStateExplicitlySet { false };
     bool enableLogTestingEvent { false };
     bool shouldIncludeLocalhost { true };
     bool enableDebugMode { false };

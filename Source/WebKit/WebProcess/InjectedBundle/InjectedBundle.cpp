@@ -53,8 +53,6 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <WebCore/ApplicationCache.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
@@ -327,7 +325,7 @@ Ref<API::Data> InjectedBundle::createWebDataFromUint8Array(JSContextRef context,
     JSC::JSGlobalObject* globalObject = toJS(context);
     JSLockHolder lock(globalObject);
     RefPtr<Uint8Array> arrayData = WebCore::toUnsharedUint8Array(globalObject->vm(), toJS(globalObject, data));
-    return API::Data::create(static_cast<unsigned char*>(arrayData->baseAddress()), arrayData->byteLength());
+    return API::Data::create(arrayData->span());
 }
 
 InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool excludeDocumentsInPageGroupPages)

@@ -54,10 +54,8 @@ void WebExtensionAPIWebNavigationEvent::invokeListenersWithArgument(id argument,
     }
 }
 
-void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
+void WebExtensionAPIWebNavigationEvent::addListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSString **outExceptionString)
 {
-    ASSERT(page);
-
     _WKWebExtensionWebNavigationURLFilter *parsedFilter;
     if (filter) {
         parsedFilter = [[_WKWebExtensionWebNavigationURLFilter alloc] initWithDictionary:filter outErrorMessage:outExceptionString];
@@ -65,16 +63,14 @@ void WebExtensionAPIWebNavigationEvent::addListener(WebPage* page, RefPtr<WebExt
             return;
     }
 
-    m_pageProxyIdentifier = page->webPageProxyIdentifier();
+    m_pageProxyIdentifier = page.webPageProxyIdentifier();
     m_listeners.append({ listener, parsedFilter });
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(m_pageProxyIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
 
-void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<WebExtensionCallbackHandler> listener)
+void WebExtensionAPIWebNavigationEvent::removeListener(WebPage& page, RefPtr<WebExtensionCallbackHandler> listener)
 {
-    ASSERT(page);
-
     auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
         return entry.first->callbackFunction() == listener->callbackFunction();
     });
@@ -82,7 +78,7 @@ void WebExtensionAPIWebNavigationEvent::removeListener(WebPage* page, RefPtr<Web
     if (!removedCount)
         return;
 
-    ASSERT(page->webPageProxyIdentifier() == m_pageProxyIdentifier);
+    ASSERT(page.webPageProxyIdentifier() == m_pageProxyIdentifier);
 
     WebProcess::singleton().send(Messages::WebExtensionContext::RemoveListener(m_pageProxyIdentifier, m_type, contentWorldType(), removedCount), extensionContext().identifier());
 }

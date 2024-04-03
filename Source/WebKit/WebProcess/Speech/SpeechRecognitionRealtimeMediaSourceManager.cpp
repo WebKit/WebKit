@@ -110,7 +110,6 @@ private:
             m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format), 0);
         }
 
-        ASSERT(is<WebAudioBufferList>(audioData));
         m_ringBuffer->store(downcast<WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
         m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteAudioSamplesAvailable(m_identifier, time, numberOfFrames), 0);
 #else

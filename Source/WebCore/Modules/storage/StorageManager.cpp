@@ -74,15 +74,15 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
     RefPtr origin = context->securityOrigin();
     ASSERT(origin);
 
-    if (is<Document>(context)) {
-        if (RefPtr connection = downcast<Document>(context)->storageConnection())
-            return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        if (RefPtr connection = document->storageConnection())
+            return ConnectionInfo { *connection, { document->topOrigin().data(), origin->data() } };
 
         return Exception { ExceptionCode::InvalidStateError, "Connection is invalid"_s };
     }
 
-    if (is<WorkerGlobalScope>(context))
-        return ConnectionInfo { downcast<WorkerGlobalScope>(context)->storageConnection(), { context->topOrigin().data(), origin->data() } };
+    if (RefPtr globalScope = dynamicDowncast<WorkerGlobalScope>(context))
+        return ConnectionInfo { globalScope->storageConnection(), { globalScope->topOrigin().data(), origin->data() } };
 
     return Exception { ExceptionCode::NotSupportedError };
 }

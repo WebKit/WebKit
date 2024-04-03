@@ -2,34 +2,34 @@ This test ensures a role=button element with aria-pressed has the right attribut
 
 #button1: AXRole: AXCheckBox
 #button1: AXSubrole: AXToggle
-#button1: AXValue: 1
+#button1: AXTitle: Foo
 #button1: AXARIAPressedIsPresent: true
 
 #button2: AXRole: AXCheckBox
 #button2: AXSubrole: AXToggle
-#button2: AXValue: 0
+#button2: AXTitle: Bar
 #button2: AXARIAPressedIsPresent: true
 
 #button-without-initial-press: AXRole: AXButton
 #button-without-initial-press: AXSubrole:
-#button-without-initial-press: AXValue:
+#button-without-initial-press: AXTitle: Baz
 #button-without-initial-press: AXARIAPressedIsPresent: false
 
 Toggling aria-pressed state on both buttons.
 
 #button1: AXRole: AXCheckBox
 #button1: AXSubrole: AXToggle
-#button1: AXValue: 0
+#button1: AXTitle: Foo
 #button1: AXARIAPressedIsPresent: true
 
 #button2: AXRole: AXCheckBox
 #button2: AXSubrole: AXToggle
-#button2: AXValue: 1
+#button2: AXTitle: Bar
 #button2: AXARIAPressedIsPresent: true
 
 #button-without-initial-press: AXRole: AXButton
 #button-without-initial-press: AXSubrole:
-#button-without-initial-press: AXValue:
+#button-without-initial-press: AXTitle: Baz
 #button-without-initial-press: AXARIAPressedIsPresent: true
 
 

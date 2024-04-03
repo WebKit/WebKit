@@ -228,9 +228,9 @@ FormControlState FormAssociatedCustomElement::saveFormControlState() const
     // https://bugs.webkit.org/show_bug.cgi?id=249895
     bool didLogMessage = false;
     auto logUnsupportedFileWarning = [&](RefPtr<File>) {
-        auto& document = asHTMLElement().document();
-        if (document.frame() && !didLogMessage) {
-            document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_s);
+        Ref document = asHTMLElement().document();
+        if (document->frame() && !didLogMessage) {
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "File isn't currently supported when saving / restoring state."_s);
             didLogMessage = true;
         }
     };

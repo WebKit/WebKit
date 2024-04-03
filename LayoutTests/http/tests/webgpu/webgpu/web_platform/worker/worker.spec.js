@@ -1,36 +1,66 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ export const description = `
-Tests WebGPU is available in a worker.
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/export const description = `
+Tests WebGPU is available in a dedicated worker and a shared worker.
 
-Note: The CTS test can be run in a worker by passing in worker=1 as
-a query parameter. This test is specifically to check that WebGPU
-is available in a worker.
-`;
-import { Fixture } from '../../../common/framework/fixture.js';
+Note: The CTS test can be run respectively in a dedicated worker and a shared worker by
+passing in worker=dedicated and worker=shared as a query parameter. These tests
+are specifically to check that WebGPU is available in a dedicated worker and a shared worker.
+
+TODO[2]: Figure out how to make these tests run in service workers (not actually
+important unless service workers gain the ability to launch other workers).
+`;import { Fixture } from '../../../common/framework/fixture.js';
 import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { assert } from '../../../common/util/util.js';
 
 export const g = makeTestGroup(Fixture);
 
-function isNode() {
-  return typeof process !== 'undefined' && process?.versions?.node !== undefined;
-}
+const isNode = typeof process !== 'undefined' && process?.versions?.node !== undefined;
 
-g.test('worker')
-  .desc(`test WebGPU is available in DedicatedWorkers and check for basic functionality`)
-  .fn(async t => {
-    if (isNode()) {
-      t.skip('node does not support 100% compatible workers');
-      return;
-    }
-    // Note: we load worker_launcher dynamically because ts-node support
-    // is using commonjs which doesn't support import.meta. Further,
-    // we need to put the url in a string add pass the string to import
-    // otherwise typescript tries to parse the file which again, fails.
-    // worker_launcher.js is excluded in node.tsconfig.json.
-    const url = './worker_launcher.js';
-    const { launchWorker } = await import(url);
-    const result = await launchWorker();
-    assert(result.error === undefined, `should be no error from worker but was: ${result.error}`);
-  });
+// [1]: we load worker_launcher dynamically because ts-node support
+// is using commonjs which doesn't support import.meta. Further,
+// we need to put the url in a string and pass the string to import
+// otherwise typescript tries to parse the file which again, fails.
+// worker_launcher.js is excluded in node.tsconfig.json.
+
+// [2]: That hack does not work in Service Workers.
+const isServiceWorker = globalThis.constructor.name === 'ServiceWorkerGlobalScope';
+
+g.test('dedicated_worker').
+desc(`test WebGPU is available in dedicated workers and check for basic functionality`).
+fn(async (t) => {
+  t.skipIf(isNode, 'node does not support 100% compatible workers');
+
+  t.skipIf(isServiceWorker, 'Service workers do not support this import() hack'); // [2]
+  const url = './worker_launcher.js';
+  const { launchDedicatedWorker } = await import(url); // [1]
+
+  const result = await launchDedicatedWorker();
+  assert(result.error === undefined, `should be no error from worker but was: ${result.error}`);
+});
+
+g.test('shared_worker').
+desc(`test WebGPU is available in shared workers and check for basic functionality`).
+fn(async (t) => {
+  t.skipIf(isNode, 'node does not support 100% compatible workers');
+
+  t.skipIf(isServiceWorker, 'Service workers do not support this import() hack'); // [2]
+  const url = './worker_launcher.js';
+  const { launchSharedWorker } = await import(url); // [1]
+
+  const result = await launchSharedWorker();
+  assert(result.error === undefined, `should be no error from worker but was: ${result.error}`);
+});
+
+g.test('service_worker').
+desc(`test WebGPU is available in service workers and check for basic functionality`).
+fn(async (t) => {
+  t.skipIf(isNode, 'node does not support 100% compatible workers');
+
+  t.skipIf(isServiceWorker, 'Service workers do not support this import() hack'); // [2]
+  const url = './worker_launcher.js';
+  const { launchServiceWorker } = await import(url); // [1]
+
+  const result = await launchServiceWorker();
+  assert(result.error === undefined, `should be no error from worker but was: ${result.error}`);
+});

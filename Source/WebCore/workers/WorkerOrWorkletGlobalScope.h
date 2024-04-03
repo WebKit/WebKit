@@ -39,7 +39,7 @@ class WorkerInspectorController;
 class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
-class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCounted<WorkerOrWorkletGlobalScope>, public EventTarget {
+class WorkerOrWorkletGlobalScope : public RefCounted<WorkerOrWorkletGlobalScope>, public ScriptExecutionContext, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
 public:
@@ -74,6 +74,8 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
+    using RefCounted::refAllowingPartiallyDestroyed;
+    using RefCounted::derefAllowingPartiallyDestroyed;
 
     virtual void suspend() { }
     virtual void resume() { }
@@ -94,8 +96,6 @@ private:
     // ScriptExecutionContext.
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;
-    void refScriptExecutionContext() final { ref(); }
-    void derefScriptExecutionContext() final { deref(); }
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final { return const_cast<WorkerOrWorkletGlobalScope*>(this); }
@@ -121,5 +121,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WorkerOrWorkletGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isWorkerGlobalScope() || context.isWorkletGlobalScope(); }
+    static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isWorkerOrWorkletGlobalScope(); }
 SPECIALIZE_TYPE_TRAITS_END()

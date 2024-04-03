@@ -110,7 +110,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
-    auto* device = GBMDevice::singleton().device();
+    auto* device = GBMDevice::singleton().device(GBMDevice::Type::Render);
     if (!device) {
         LOG(WebGL, "Warning: Unable to access the GBM device, we fallback to common GL images, they require a copy, that causes a performance penalty.");
         return false;
@@ -288,6 +288,17 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
 
     GL_BindTexture(textureTarget, m_texture);
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
+}
+
+bool GraphicsContextGLGBM::createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
+{
+    return false;
+}
+void GraphicsContextGLGBM::enableFoveation(GCGLuint)
+{
+}
+void GraphicsContextGLGBM::disableFoveation()
+{
 }
 
 GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)

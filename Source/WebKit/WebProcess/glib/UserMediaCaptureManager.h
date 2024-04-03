@@ -36,6 +36,8 @@ class CaptureDevice;
 struct CaptureDeviceWithCapabilities;
 struct MediaDeviceHashSalts;
 struct MediaStreamRequest;
+
+enum class MediaConstraintType : uint8_t;
 }
 
 namespace WebKit {
@@ -49,14 +51,14 @@ public:
     explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
 
-    static const char* supplementName() { return "UserMediaCaptureManager"; }
+    static ASCIILiteral supplementName() { return "UserMediaCaptureManager"_s; }
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages::UserMediaCaptureManager
-    using ValidateUserMediaRequestConstraintsCallback = CompletionHandler<void(std::optional<String> invalidConstraint, Vector<WebCore::CaptureDevice>& audioDevices, Vector<WebCore::CaptureDevice>& videoDevices)>;
+    using ValidateUserMediaRequestConstraintsCallback = CompletionHandler<void(std::optional<WebCore::MediaConstraintType> invalidConstraint, Vector<WebCore::CaptureDevice>& audioDevices, Vector<WebCore::CaptureDevice>& videoDevices)>;
     void validateUserMediaRequestConstraints(WebCore::MediaStreamRequest, WebCore::MediaDeviceHashSalts&&, ValidateUserMediaRequestConstraintsCallback&&);
     ValidateUserMediaRequestConstraintsCallback m_validateUserMediaRequestConstraintsCallback;
 

@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="webgl/resources/webgl-fingerprinting-support.js"></script>
 </head>
 <body>
 <img src="resources/background.png" id="img">
@@ -91,6 +92,16 @@
         document.body.removeChild(canvas);
 
         canvas = document.createElement("canvas");
+        if (noiseInjectionEnabled)
+            internals.setCanvasNoiseInjectionSalt(canvas, 0);
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext("2d");
+        ctx.setFillColor("blue", .9);
+        ctx.fillText("This is text", 10, 10);
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), true, "Canvas2D dataURL with noise value 0 should be identical");
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
         if (noiseInjectionEnabled)
@@ -123,6 +134,34 @@
         else
             expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage after fillText should not require noise injection when noise injection is not enabled");
 
+        let canvas2 = document.createElement("canvas");
+        canvas2.width = canvas.width + 2;
+        canvas2.height = canvas.height + 2;
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas2);
+
+        let ctx2 = canvas2.getContext("2d");
+        ctx2.drawImage(canvas, 0, 0);
+        if (noiseInjectionEnabled) {
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "drawImage with detached Canvas source should not apply noise");
+            expectTrue(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should add dirty rect and not apply noise");
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with detached Canvas source should not require noise injection when noise injection is not enabled");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled");
+        }
+
+        document.body.appendChild(canvas2);
+
+        ctx2.drawImage(canvas, 0, 0);
+        if (noiseInjectionEnabled) {
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "drawImage with attached Canvas source should not apply noise");
+            expectTrue(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should add dirty rect and not apply noise");
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with attached Canvas source should not require noise injection when noise injection is not enabled");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled");
+        }
+        document.body.removeChild(canvas2);
+
         imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         if (noiseInjectionEnabled)
             expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should apply all required noise");
@@ -140,6 +179,57 @@
             dataURLMsg = "data: url after fillRect should be equal";
         }
         setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), !noiseInjectionEnabled, dataURLMsg);
+
+        ctx2.drawImage(canvas, 0, 0);
+        if (noiseInjectionEnabled) {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with detached Canvas source should not have pending noise");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not add dirty rect");
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with detached Canvas source should not require noise injection when noise injection is not enabled");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled");
+        }
+
+        document.body.appendChild(canvas2);
+
+        ctx2.drawImage(canvas, 0, 0);
+        if (noiseInjectionEnabled) {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with attached Canvas source should not have pending noise");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not add dirty rect");
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage with attached Canvas source should not require noise injection when noise injection is not enabled");
+            expectFalse(hasPendingCanvasNoiseInjection(canvas2), "drawImage with attached Canvas destination should not require noise injection when noise injection is not enabled");
+        }
+
+        document.body.removeChild(canvas2);
+
+        canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        if (noiseInjectionEnabled)
+            internals.setCanvasNoiseInjectionSalt(canvas, 0);
+        ctx = canvas.getContext("2d");
+        ctx.setFillColor("blue", .9);
+        ctx.fillText("This is text", 10, 10);
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), true, "dataURL with noise value 0 should be identical");
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas);
+
+        main(canvas);
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), false, "WebGL dataURL with noise should not be identical");
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        if (noiseInjectionEnabled)
+            internals.setCanvasNoiseInjectionSalt(canvas, 0);
+
+        main(canvas);
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), true, "WebGL dataURL with noise value 0 should be identical");
 
         document.body.removeChild(canvas);
     }

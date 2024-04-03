@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT <svg:a> click fires navigate event Test timed out
+FAIL <svg:a> click fires navigate event assert_true: expected true got false
 

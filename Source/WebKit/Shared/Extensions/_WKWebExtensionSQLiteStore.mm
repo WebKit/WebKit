@@ -32,6 +32,7 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
+#import "WebExtensionConstants.h"
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
 #import "_WKWebExtensionSQLiteRow.h"
@@ -77,9 +78,16 @@ using namespace WebKit;
     auto *database = _database;
     _database = nil;
 
-    dispatch_sync(_databaseQueue, ^{
-        [database close];
-    });
+    if (NSThread.isMainThread) {
+        dispatch_sync(_databaseQueue, ^{
+            [database close];
+        });
+
+        return;
+    }
+
+    dispatch_assert_queue(_databaseQueue);
+    [database close];
 }
 
 - (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString *errorMessage))completionHandler
@@ -116,6 +124,11 @@ using namespace WebKit;
 
 - (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString **)outErrorMessage
 {
+    return [self _openDatabaseIfNecessaryReturningErrorMessage:(NSString **)outErrorMessage createIfNecessary:YES];
+}
+
+- (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString **)outErrorMessage createIfNecessary:(BOOL)createIfNecessary
+{
     dispatch_assert_queue(_databaseQueue);
 
     if ([self _isDatabaseOpen]) {
@@ -123,11 +136,13 @@ using namespace WebKit;
         return YES;
     }
 
-    *outErrorMessage = [self _openDatabase:self._databaseURL deleteDatabaseFileOnError:YES];
+    auto accessType = createIfNecessary ? SQLiteDatabaseAccessTypeReadWriteCreate : SQLiteDatabaseAccessTypeReadWrite;
+
+    *outErrorMessage = [self _openDatabase:self._databaseURL withAccessType:accessType deleteDatabaseFileOnError:YES];
     return [self _isDatabaseOpen];
 }
 
-- (NSString *)_openDatabase:(NSURL *)databaseURL deleteDatabaseFileOnError:(BOOL)deleteDatabaseFileOnError
+- (NSString *)_openDatabase:(NSURL *)databaseURL withAccessType:(SQLiteDatabaseAccessType)accessType deleteDatabaseFileOnError:(BOOL)deleteDatabaseFileOnError
 {
     dispatch_assert_queue(_databaseQueue);
     ASSERT(![self _isDatabaseOpen]);
@@ -146,7 +161,13 @@ using namespace WebKit;
 
     // FIXME: rdar://87898825 (unlimitedStorage: Allow the SQLite database to be opened as SQLiteDatabaseAccessTypeReadOnly if the request is to calculate storage size).
     NSError *error;
-    if (![_database openWithAccessType:SQLiteDatabaseAccessTypeReadWriteCreate error:&error]) {
+    if (![_database openWithAccessType:accessType error:&error]) {
+        if (!error && accessType != SQLiteDatabaseAccessTypeReadWriteCreate) {
+            // The file didn't exist and we were not asked to create it.
+            _database = nil;
+            return nil;
+        }
+
         RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %{private}@: %{public}@", _uniqueIdentifier, privacyPreservingDescription(error));
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
@@ -205,11 +226,13 @@ using namespace WebKit;
         return @"Failed to delete extension storage database file.";
     }
 
-    if (!reopenDatabase)
+    if (!reopenDatabase) {
+        _database = nil;
         return errorMessage;
+    }
 
     // Only try to recover from errors opening the database by deleting the file once.
-    return [self _openDatabase:databaseURL deleteDatabaseFileOnError:NO];
+    return [self _openDatabase:databaseURL withAccessType:SQLiteDatabaseAccessTypeReadWriteCreate deleteDatabaseFileOnError:NO];
 }
 
 - (void)_deleteExtensionStorageFolderIfEmpty

@@ -1,6 +1,6 @@
 <style>
     body { background: green; color: white; }
-    document:-webkit-full-screen-document > body { background: red;  }
+    :root:has(:fullscreen) > body { background: red;  }
     span { text-decoration: underline; cursor: hand; }
     div {
         background: blue;

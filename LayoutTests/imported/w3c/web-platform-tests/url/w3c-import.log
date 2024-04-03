@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters-stripping.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-statics-canparse.any.js
+/LayoutTests/imported/w3c/web-platform-tests/url/url-statics-parse.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/url-tojson.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlencoded-parser.any.js
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.any.js

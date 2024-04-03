@@ -175,6 +175,19 @@ void ThreadableBlobRegistry::registerInternalBlobURLForSlice(const URL& newURL, 
     });
 }
 
+String ThreadableBlobRegistry::blobType(const URL& url)
+{
+    if (isMainThread())
+        return blobRegistry().blobType(url);
+
+    String result;
+    callOnMainThreadAndWait([url = url.isolatedCopy(), &result] {
+        result = blobRegistry().blobType(url).isolatedCopy();
+    });
+    return result;
+
+}
+
 unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 {
     if (isMainThread())

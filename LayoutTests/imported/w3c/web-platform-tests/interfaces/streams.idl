@@ -7,6 +7,8 @@
 interface ReadableStream {
   constructor(optional object underlyingSource, optional QueuingStrategy strategy = {});
 
+  static ReadableStream from(any asyncIterable);
+
   readonly attribute boolean locked;
 
   Promise<undefined> cancel(optional any reason);
@@ -68,12 +70,12 @@ interface mixin ReadableStreamGenericReader {
 interface ReadableStreamDefaultReader {
   constructor(ReadableStream stream);
 
-  Promise<ReadableStreamDefaultReadResult> read();
+  Promise<ReadableStreamReadResult> read();
   undefined releaseLock();
 };
 ReadableStreamDefaultReader includes ReadableStreamGenericReader;
 
-dictionary ReadableStreamDefaultReadResult {
+dictionary ReadableStreamReadResult {
   any value;
   boolean done;
 };
@@ -82,14 +84,13 @@ dictionary ReadableStreamDefaultReadResult {
 interface ReadableStreamBYOBReader {
   constructor(ReadableStream stream);
 
-  Promise<ReadableStreamBYOBReadResult> read(ArrayBufferView view);
+  Promise<ReadableStreamReadResult> read(ArrayBufferView view, optional ReadableStreamBYOBReaderReadOptions options = {});
   undefined releaseLock();
 };
 ReadableStreamBYOBReader includes ReadableStreamGenericReader;
 
-dictionary ReadableStreamBYOBReadResult {
-  (ArrayBufferView or undefined) value;
-  boolean done;
+dictionary ReadableStreamBYOBReaderReadOptions {
+  [EnforceRange] unsigned long long min = 1;
 };
 
 [Exposed=*]
@@ -177,6 +178,7 @@ dictionary Transformer {
   TransformerStartCallback start;
   TransformerTransformCallback transform;
   TransformerFlushCallback flush;
+  TransformerCancelCallback cancel;
   any readableType;
   any writableType;
 };
@@ -184,6 +186,7 @@ dictionary Transformer {
 callback TransformerStartCallback = any (TransformStreamDefaultController controller);
 callback TransformerFlushCallback = Promise<undefined> (TransformStreamDefaultController controller);
 callback TransformerTransformCallback = Promise<undefined> (any chunk, TransformStreamDefaultController controller);
+callback TransformerCancelCallback = Promise<undefined> (any reason);
 
 [Exposed=*]
 interface TransformStreamDefaultController {

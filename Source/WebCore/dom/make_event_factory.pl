@@ -98,12 +98,18 @@ sub generateImplementation()
     if ($factoryFunction eq "toNewlyCreated") {
         print F "JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<${namespace}>&& impl)\n";
         print F "{\n";
-        print F "    switch (impl->${interfaceMethodName}()) {\n";
+        print F "    switch (impl->interfaceType()) {\n";
+        print F "    case EventInterfaceType::Invalid:\n";
+        print F "        ASSERT_NOT_REACHED();\n";
+        print F "        break;\n";
     } else {
         print F "JSC::JSValue toJS(JSC::JSGlobalObject* state, JSDOMGlobalObject* globalObject, ${namespace}& impl)\n";
         print F "{\n";
         print F "    switch (impl.${interfaceMethodName}()) {\n";
-        print F "    case EventTargetInterfaceType:\n";
+        print F "    case ${namespace}InterfaceType::Invalid:\n";
+        print F "        ASSERT_NOT_REACHED();\n";
+        print F "        break;\n";
+        print F "    case ${namespace}InterfaceType::${namespace}:\n";
         print F "        break;\n";
     }
 
@@ -125,10 +131,11 @@ sub generateImplementation()
             my $conditionals = "#if ENABLE(" . join(") || ENABLE(", split("\\|", $conditional)) . ")";
             print F "$conditionals\n";
         }
-        print F "    case ${interfaceName}${suffix}InterfaceType:\n";
         if ($factoryFunction eq "toNewlyCreated") {
+            print F "    case ${namespace}InterfaceType::${interfaceName}:\n";
             print F "        return createWrapper<$interfaceName$suffix>(globalObject, WTFMove(impl));\n";
         } else {
+            print F "    case ${namespace}InterfaceType::${interfaceName}:\n";
             print F "        return toJS(state, globalObject, static_cast<$interfaceName&>(impl));\n";
         }
         print F "#endif\n" if $conditional;

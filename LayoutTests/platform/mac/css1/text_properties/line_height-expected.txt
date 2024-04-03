@@ -96,7 +96,7 @@ layer at (0,0) size 785x2619
         RenderText {#text} at (0,0) size 517x14
           text run at (0,0) width 517: "This sentence should have a normal line-height, because negative values are not permitted for this property."
       RenderBlock {P} at (0,1299) size 769x150
-        RenderInline {SPAN} at (0,0) size 759x89 [bgcolor=#C0C0C0]
+        RenderInline {SPAN} at (0,30) size 759x89 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,30) size 759x89
             text run at (0,30) width 759: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a background color of silver, but"
             text run at (0,105) width 693: "no padding or border. The background color has been set on an inline element and should therefore only cover the text, not the interline spacing."
@@ -105,12 +105,12 @@ layer at (0,0) size 785x2619
         RenderTableSection {TBODY} at (1,1) size 767x1140
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1114
             RenderTableCell {TD} at (0,570) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,548) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1114 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x48
@@ -173,7 +173,7 @@ layer at (0,0) size 785x2619
                 RenderText {#text} at (0,0) size 517x14
                   text run at (0,0) width 517: "This sentence should have a normal line-height, because negative values are not permitted for this property."
               RenderBlock {P} at (4,960) size 747x150
-                RenderInline {SPAN} at (0,0) size 741x89 [bgcolor=#C0C0C0]
+                RenderInline {SPAN} at (0,30) size 741x89 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,30) size 741x89
                     text run at (0,30) width 741: "This sentence should have a line-height of two centimeters, which should cause extra spacing between the lines. The text has a background color of silver,"
                     text run at (0,105) width 712: "but no padding or border. The background color has been set on an inline element and should therefore only cover the text, not the interline spacing."

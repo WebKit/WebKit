@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (16,32) size 404x234
+  RenderSVGTransformableContainer {g} at (16,32) size 403.80x233.53
+layer at (16,32) size 320x8
+  RenderSVGRect {rect} at (0,0) size 320x8 [fill={[type=SOLID] [color=#33CC33]}] [x=16.00] [y=32.00] [width=320.00] [height=8.00]
+layer at (16,48) size 320x8
+  RenderSVGRect {rect} at (0,16) size 320x8 [fill={[type=SOLID] [color=#99FF99]}] [x=16.00] [y=48.00] [width=320.00] [height=8.00]
+layer at (16,32) size 32x32
+  RenderSVGImage {image} at (0,0) size 32x32
+layer at (64,32) size 32x32
+  RenderSVGImage {image} at (48,0) size 32x32
+layer at (112,32) size 32x32
+  RenderSVGImage {image} at (96,0) size 32x32
+layer at (160,32) size 32x32
+  RenderSVGImage {image} at (144,0) size 32x32
+layer at (208,32) size 32x32
+  RenderSVGImage {image} at (192,0) size 32x32
+layer at (256,32) size 32x32
+  RenderSVGImage {image} at (240,0) size 32x32
+layer at (304,32) size 32x32
+  RenderSVGImage {image} at (288,0) size 32x32
+layer at (16,85.27) size 317x19
+  RenderSVGText {text} at (0,53) size 317x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 317x19
+      chunk 1 text run 1 at (16.00,100.00) startOffset 0 endOffset 45 width 316.60: "Greyscale, various bit depths, two with alpha"
+layer at (16,132) size 368x8
+  RenderSVGRect {rect} at (0,100) size 368x8 [fill={[type=SOLID] [color=#99FF99]}] [x=16.00] [y=132.00] [width=368.00] [height=8.00]
+layer at (16,148) size 368x8
+  RenderSVGRect {rect} at (0,116) size 368x8 [fill={[type=SOLID] [color=#33CC33]}] [x=16.00] [y=148.00] [width=368.00] [height=8.00]
+layer at (16,132) size 32x32
+  RenderSVGImage {image} at (0,100) size 32x32
+layer at (64,132) size 32x32
+  RenderSVGImage {image} at (48,100) size 32x32
+layer at (112,132) size 32x32
+  RenderSVGImage {image} at (96,100) size 32x32
+layer at (160,132) size 32x32
+  RenderSVGImage {image} at (144,100) size 32x32
+layer at (208,132) size 32x32
+  RenderSVGImage {image} at (192,100) size 32x32
+layer at (256,132) size 32x32
+  RenderSVGImage {image} at (240,100) size 32x32
+layer at (304,132) size 32x32
+  RenderSVGImage {image} at (288,100) size 32x32
+layer at (352,132) size 32x32
+  RenderSVGImage {image} at (336,100) size 32x32
+layer at (16,185.27) size 404x19
+  RenderSVGText {text} at (0,153) size 404x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 404x19
+      chunk 1 text run 1 at (16.00,200.00) startOffset 0 endOffset 57 width 403.79: "Truecolor and indexed, various bit depths, two with alpha"
+layer at (16,237.91) size 189x28
+  RenderSVGText {text} at (0,205) size 190x29 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 190x28
+      chunk 1 text run 1 at (16.00,260.00) startOffset 0 endOffset 17 width 189.43: "Interlaced images"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.2 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

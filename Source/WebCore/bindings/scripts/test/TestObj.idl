@@ -78,6 +78,7 @@ enum TestConfidence { "high", "kinda-low" };
     [LegacyLenientSetter] readonly attribute DOMString legacyLenientSetterTestAttr;
     [LegacyLenientThis] attribute TestObj lenientTestObjAttr;
     [LegacyUnforgeable] readonly attribute DOMString unforgeableAttr;
+    [ReturnsPromisePair] PromisePair returnsPromisePair();
     attribute [LegacyNullToEmptyString] DOMString stringAttrTreatingNullAsEmptyString;
     attribute [LegacyNullToEmptyString] USVString usvstringAttrTreatingNullAsEmptyString;
     attribute [LegacyNullToEmptyString] ByteString byteStringAttrTreatingNullAsEmptyString;
@@ -574,4 +575,9 @@ dictionary ChildDictionary : ParentDictionary {
     Conditional=Condition1|Condition2
 ] dictionary TestConditionalDictionaryC {
     DOMString stringWithoutDefault;
+};
+
+dictionary PromisePair {
+    Promise<undefined> promise1;
+    Promise<undefined> promise2;
 };

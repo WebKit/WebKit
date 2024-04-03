@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for element with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+
+
+PASS Same origin embed should get access to camera
+PASS Cross origin embed should not get access to camera
+

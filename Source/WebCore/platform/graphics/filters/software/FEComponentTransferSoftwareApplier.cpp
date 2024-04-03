@@ -107,7 +107,7 @@ FEComponentTransferSoftwareApplier::LookupTable FEComponentTransferSoftwareAppli
     };
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(function.type) < std::size(callEffect));
-    callEffect[function.type](table, function);
+    callEffect[static_cast<size_t>(function.type)](table, function);
 
     return table;
 }

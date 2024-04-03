@@ -76,10 +76,17 @@ public:
 
 private:
     RemoteVideoFrameProxy(IPC::Connection&, RemoteVideoFrameObjectHeapProxy&, Properties&&);
+
+    enum CloneConstructor { cloneConstructor };
+    RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&);
+
+    Ref<VideoFrame> clone() final;
+
     static inline Seconds defaultTimeout = 10_s;
 
-    const Ref<IPC::Connection> m_connection;
-    RemoteVideoFrameReferenceTracker m_referenceTracker;
+    const RefPtr<RemoteVideoFrameProxy> m_baseVideoFrame;
+    const RefPtr<IPC::Connection> m_connection;
+    std::optional<RemoteVideoFrameReferenceTracker> m_referenceTracker;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
     // FIXME: Remove this.

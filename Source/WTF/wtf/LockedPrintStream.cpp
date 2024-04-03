@@ -33,9 +33,7 @@ LockedPrintStream::LockedPrintStream(std::unique_ptr<PrintStream> target)
 {
 }
 
-LockedPrintStream::~LockedPrintStream()
-{
-}
+LockedPrintStream::~LockedPrintStream() = default;
 
 void LockedPrintStream::vprintf(const char* format, va_list args)
 {

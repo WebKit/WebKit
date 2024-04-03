@@ -172,12 +172,12 @@ void JSTestReadOnlySetLike::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestReadOnlySetLikePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestReadOnlySetLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestReadOnlySetLike::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestReadOnlySetLike_sizeGetter(JSGlobalObject& lexicalGlobalObject, JSTestReadOnlySetLike& thisObject)
@@ -303,7 +303,7 @@ void JSTestReadOnlySetLikeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     auto* jsTestReadOnlySetLike = static_cast<JSTestReadOnlySetLike*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestReadOnlySetLike->wrapped(), jsTestReadOnlySetLike);
+    uncacheWrapper(world, jsTestReadOnlySetLike->protectedWrapped().ptr(), jsTestReadOnlySetLike);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

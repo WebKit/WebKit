@@ -60,6 +60,7 @@ platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+platform/graphics/gstreamer/ImageGStreamerSkia.cpp
 platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
 platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
 platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
@@ -97,6 +98,14 @@ platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp @no-unify
 
 platform/gstreamer/GStreamerCodecUtilities.cpp
 platform/gstreamer/GStreamerElementHarness.cpp
+platform/gstreamer/GStreamerHolePunchQuirkBcmNexus.cpp
+platform/gstreamer/GStreamerHolePunchQuirkWesteros.cpp
+platform/gstreamer/GStreamerQuirkAmLogic.cpp
+platform/gstreamer/GStreamerQuirkBcmNexus.cpp
+platform/gstreamer/GStreamerQuirkBroadcom.cpp
+platform/gstreamer/GStreamerQuirkRealtek.cpp
+platform/gstreamer/GStreamerQuirkWesteros.cpp
+platform/gstreamer/GStreamerQuirks.cpp
 platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp
 platform/gstreamer/VideoEncoderPrivateGStreamer.cpp @no-unify
 platform/gstreamer/WebKitFliteSourceGStreamer.cpp @no-unify
@@ -119,6 +128,7 @@ platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerCapturer.cpp
 platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
 platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
+platform/mediastream/gstreamer/GStreamerIncomingTrackProcessor.cpp
 platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify

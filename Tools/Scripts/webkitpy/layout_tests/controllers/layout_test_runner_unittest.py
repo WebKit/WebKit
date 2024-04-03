@@ -27,20 +27,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import pickle
 import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
-from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.controllers.layout_test_runner import (
+    LayoutTestRunner,
+    Sharder,
+    TestRunInterruptedException,
+    TestShard,
+)
+from webkitpy.layout_tests.models import test_expectations, test_failures
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.port.test import TestPort
-
 
 TestExpectations = test_expectations.TestExpectations
 
@@ -117,7 +121,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
 
         runner._options.exit_after_n_crashes_or_timeouts = None
         runner._options.exit_after_n_failures = 10
-        exception = self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, run_results)
+        self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, run_results)
 
     def test_update_summary_with_result(self):
         # Reftests expected to be image mismatch should be respected when pixel_tests=False.
@@ -322,3 +326,34 @@ class SharderTests(unittest.TestCase):
              ('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
              ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
              ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
+
+
+class ShardTests(unittest.TestCase):
+    def test_pickle(self):
+        tests = [
+            Test(
+                test_path="failures/expected/empty.html",
+            ),
+            Test(
+                test_path="failures/expected/mismatch.html",
+                reference_files=(
+                    (
+                        "!=",
+                        "/test.checkout/LayoutTests/failures/expected/mismatch-expected-mismatch.html",
+                    ),
+                ),
+            ),
+            Test(
+                test_path="failures/expected/image.html",
+                expected_text_path="/test.checkout/LayoutTests/failures/expected/image-expected.txt",
+                expected_image_path="/test.checkout/LayoutTests/failures/expected/image-expected.png",
+            ),
+            Test(
+                test_path="failures/expected/audio.html",
+                expected_audio_path="/test.checkout/LayoutTests/failures/expected/audio-expected.wav",
+            ),
+        ]
+        test_inputs = [TestInput(t) for t in tests]
+        shard = TestShard("failures/expected", test_inputs)
+        reloaded_shard = pickle.loads(pickle.dumps(shard))
+        self.assertEqual(shard, reloaded_shard)

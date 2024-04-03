@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,28) size 650x22
             text run at (0,28) width 650: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well."
           RenderBR {BR} at (649,28) size 1x22
-          RenderInline {I} at (0,0) size 98x22
+          RenderInline {I} at (0,50) size 98x22
             RenderText {#text} at (0,50) size 98x22
               text run at (0,50) width 98: "For this test: "
           RenderText {#text} at (97,50) size 388x22
@@ -44,10 +44,10 @@ layer at (0,0) size 800x600
             text run at (0,28) width 700: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,50) width 48: "color)."
           RenderBR {BR} at (47,50) size 1x22
-          RenderInline {I} at (0,0) size 98x22
+          RenderInline {I} at (0,72) size 98x22
             RenderText {#text} at (0,72) size 98x22
               text run at (0,72) width 98: "For this test: "
-          RenderText {#text} at (97,72) size 736x44
+          RenderText {#text} at (0,72) size 736x44
             text run at (97,72) width 301: "Only selected content should get deleted. "
             text run at (397,72) width 339: "Surrounding content that is not selected should"
             text run at (0,94) width 199: "(obviously) not be affected."

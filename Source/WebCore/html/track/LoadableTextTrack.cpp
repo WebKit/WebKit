@@ -29,9 +29,9 @@
 
 #if ENABLE(VIDEO)
 
-#include "Document.h"
 #include "ElementInlines.h"
 #include "HTMLTrackElement.h"
+#include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
@@ -43,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
 LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
-    : TextTrack(&track.document(), kind, emptyAtom(), label, language, TrackElement)
+    : TextTrack(track.scriptExecutionContext(), kind, emptyAtom(), label, language, TrackElement)
     , m_trackElement(&track)
 {
 }
@@ -129,10 +129,8 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader& loader, bool loadin
 void LoadableTextTrack::newRegionsAvailable(TextTrackLoader& loader)
 {
     ASSERT_UNUSED(loader, m_loader.get() == &loader);
-    for (auto& newRegion : m_loader->getNewRegions()) {
-        newRegion->setTrack(this);
+    for (auto& newRegion : m_loader->getNewRegions())
         regions()->add(WTFMove(newRegion));
-    }
 }
 
 void LoadableTextTrack::newStyleSheetsAvailable(TextTrackLoader& loader)

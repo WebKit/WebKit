@@ -10,7 +10,7 @@ layer at (0,0) size 800x184
         RenderBlock (floating) {SPAN} at (3,3) size 45x30
           RenderText {#text} at (0,0) size 30x30
             text run at (0,0) width 30: "X"
-        RenderText {#text} at (48,3) size 90x45
+        RenderText {#text} at (3,3) size 90x45
           text run at (48,3) width 45: "x x"
           text run at (48,18) width 30: "xx"
           text run at (3,33) width 45: "x x"
@@ -18,7 +18,7 @@ layer at (0,0) size 800x184
         RenderBlock (floating) {SPAN} at (3,3) size 45x30 [bgcolor=#008000]
           RenderText {#text} at (0,0) size 30x30
             text run at (0,0) width 30: "X"
-        RenderText {#text} at (48,3) size 90x45
+        RenderText {#text} at (3,3) size 90x45
           text run at (48,3) width 45: "x x"
           text run at (48,18) width 30: "xx"
           text run at (3,33) width 45: "x x"

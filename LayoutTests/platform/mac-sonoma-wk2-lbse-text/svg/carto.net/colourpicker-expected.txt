@@ -208,7 +208,7 @@ layer at (500,305.52) size 311x37 backgroundClip at (0,0) size 800x600 clip at (
   RenderSVGText {text} at (10,115) size 312x38 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 291x18
       chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 290.80: "This colourPicker has a callBack function"
-    RenderSVGTSpan {tspan} at (0,0) size 312x19
+    RenderSVGTSpan {tspan} at (0,19) size 312x19
       RenderSVGInlineText {#text} at (0,19) size 312x18
         chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 311.33: "attached that changes the background color"
 layer at (500,200) size 300x90

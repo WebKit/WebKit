@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.setConsoleClearAPIEnabled");
+
+    suite.addTestCase({
+        name: "Console.setConsoleClearAPIEnabled.API.Disabled",
+        description: "Check that console.clear() doesn't clear the console when disallowed.",
+        async test() {
+            await ConsoleAgent.setConsoleClearAPIEnabled(false);
+
+            let cleared = false;
+            let clearedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, (event) => {
+                cleared = true;
+            });
+
+            let [messageAddedEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`console.clear(); console.log("Clear disabled.");`),
+            ]);
+
+            InspectorTest.expectFalse(cleared, "Should not clear console.");
+            InspectorTest.expectEqual(messageAddedEvent.data.message.messageText, "Clear disabled.", "Should not send a message.");
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, clearedListener);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.setConsoleClearAPIEnabled.API.Enabled",
+        description: "Check that console.clear() does clear the console when allowed.",
+        async test() {
+            await ConsoleAgent.setConsoleClearAPIEnabled(true);
+
+            let cleared = false;
+            let clearedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, (event) => {
+                cleared = true;
+            });
+
+            let [messageAddedEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`console.clear(); console.log("Clear enabled.");`),
+            ]);
+
+            InspectorTest.expectTrue(cleared, "Should clear console.");
+            InspectorTest.expectEqual(messageAddedEvent.data.message.messageText, "Clear enabled.", "Should not send a message.");
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, clearedListener);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.setConsoleClearAPIEnabled.Frontend.Disabled",
+        description: "Check that the frontend can still clear the console when console.clear() is disallowed.",
+        async test() {
+            await ConsoleAgent.setConsoleClearAPIEnabled(false);
+
+            let messageAdded = false;
+            let messageAddedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                messageAdded = true;
+            });
+
+            WI.consoleManager.requestClearMessages();
+            await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
+
+            InspectorTest.pass("Should clear console.");
+            InspectorTest.expectFalse(messageAdded, "Should not send a message.");
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, messageAddedListener);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Console.setConsoleClearAPIEnabled.Frontend.Enabled",
+        description: "Check that the frontend can still clear the console when console.clear() is allowed.",
+        async test() {
+            await ConsoleAgent.setConsoleClearAPIEnabled(true);
+
+            let messageAdded = false;
+            let messageAddedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                messageAdded = true;
+            });
+
+            WI.consoleManager.requestClearMessages();
+            await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
+
+            InspectorTest.pass("Should clear console.");
+            InspectorTest.expectFalse(messageAdded, "Should not send a message.");
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, messageAddedListener);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Console.setConsoleClearAPIEnabled.</p>
+</body>
+</html>

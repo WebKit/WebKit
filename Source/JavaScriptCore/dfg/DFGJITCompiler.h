@@ -255,7 +255,7 @@ public:
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
     
-    void addJSDirectCall(Label slowPath, OptimizingCallLinkInfo* info)
+    void addJSDirectCall(Label slowPath, DirectCallLinkInfo* info)
     {
         m_jsDirectCalls.append(JSDirectCallRecord(slowPath, info));
     }
@@ -442,14 +442,14 @@ protected:
     };
     
     struct JSDirectCallRecord {
-        JSDirectCallRecord(Label slowPath, OptimizingCallLinkInfo* info)
+        JSDirectCallRecord(Label slowPath, DirectCallLinkInfo* info)
             : slowPath(slowPath)
             , info(info)
         {
         }
         
         Label slowPath;
-        OptimizingCallLinkInfo* info;
+        DirectCallLinkInfo* info;
     };
     
     Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;

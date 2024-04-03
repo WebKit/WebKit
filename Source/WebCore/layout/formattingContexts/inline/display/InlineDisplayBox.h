@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GlyphDisplayListCacheRemoval.h"
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "TextFlags.h"
@@ -83,6 +84,7 @@ struct Box {
         Last  = 1 << 1
     };
     Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, OptionSet<PositionWithinInlineLevelBox> = { });
+    ~Box();
 
     bool isText() const { return m_type == Type::Text || isWordSeparator(); }
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
@@ -104,7 +106,8 @@ struct Box {
     inline bool isHorizontal() const;
 
     bool hasContent() const { return m_hasContent; }
-    bool isVisible() const { return !isFullyTruncated() && style().visibility() == Visibility::Visible; }
+    bool isVisible() const { return !isFullyTruncated() && style().usedVisibility() == Visibility::Visible; }
+    bool isVisibleIgnoringUsedVisibility() const { return !isFullyTruncated() && style().visibility() == Visibility::Visible; }
     bool isFullyTruncated() const { return m_isFullyTruncated; } 
 
     const FloatRect& visualRectIgnoringBlockDirection() const { return m_unflippedVisualRect; }
@@ -156,6 +159,9 @@ struct Box {
     void setIsFirstForLayoutBox(bool isFirstBox) { m_isFirstForLayoutBox = isFirstBox; }
     void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
+    void setIsInGlyphDisplayListCache() { m_isInGlyphDisplayListCache = true; }
+    void removeFromGlyphDisplayListCache();
+
 private:
     CheckedRef<const Layout::Box> m_layoutBox;
     FloatRect m_unflippedVisualRect;
@@ -173,6 +179,7 @@ private:
     bool m_isFirstForLayoutBox : 1 { false };
     bool m_isLastForLayoutBox : 1 { false };
     bool m_isFullyTruncated : 1 { false };
+    bool m_isInGlyphDisplayListCache : 1 { false };
 
     Text m_text;
 };
@@ -192,6 +199,12 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_isFullyTruncated(isFullyTruncated)
     , m_text(text ? WTFMove(*text) : Text { })
 {
+}
+
+inline Box::~Box()
+{
+    if (m_isInGlyphDisplayListCache)
+        removeBoxFromGlyphDisplayListCache(*this);
 }
 
 inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
@@ -277,6 +290,14 @@ inline void Box::setRect(const FloatRect& rect, const FloatRect& inkOverflow)
 {
     m_unflippedVisualRect = rect;
     m_inkOverflow = inkOverflow;
+}
+
+inline void Box::removeFromGlyphDisplayListCache()
+{
+    if (m_isInGlyphDisplayListCache) {
+        removeBoxFromGlyphDisplayListCache(*this);
+        m_isInGlyphDisplayListCache = false;
+    }
 }
 
 inline std::optional<size_t> Box::Text::partiallyVisibleContentLength() const

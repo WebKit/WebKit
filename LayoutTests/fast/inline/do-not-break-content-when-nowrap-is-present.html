@@ -1,0 +1,15 @@
+<meta charset="UTF-8">
+<style>
+div {
+  font-family: Monospace;
+  font-size: 20px;
+  width: 60px;
+  border: 1px solid green;
+}
+span {
+  white-space: nowrap;
+}
+</style>
+<!-- while there's a natural breaking position between 稲 and X, nowrap should prevent wrapping -->
+<div>X <span>稲X</span>X</div>
+

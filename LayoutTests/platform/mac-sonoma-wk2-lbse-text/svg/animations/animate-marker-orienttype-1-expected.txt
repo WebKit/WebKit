@@ -8,5 +8,9 @@ layer at (8,8) size 500x500
   RenderSVGRoot {svg} at (0,0) size 500x500
 layer at (8,8) size 500x500
   RenderSVGViewportContainer at (0,0) size 500x500
+layer at (8,8) size 10x10
+  RenderSVGResourceMarker {marker} at (0,0) size 10x10
+layer at (8,3) size 5x10 backgroundClip at (8,8) size 500x500 clip at (8,8) size 500x500
+  RenderSVGPath {path} at (0,-5) size 5x10 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [data="M 5 0 L 0 -5 L 0 5 Z"]
 layer at (28,28) size 60x60
   RenderSVGPath {path} at (20,20) size 60x60 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=arrow] [data="M 20 20 L 80 80"]

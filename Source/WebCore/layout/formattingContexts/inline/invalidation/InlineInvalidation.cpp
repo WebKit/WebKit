@@ -47,7 +47,7 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
     UNUSED_PARAM(layoutBox);
     UNUSED_PARAM(oldStyle);
 
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
+    m_inlineDamage.setDamageReason(InlineDamage::Reason::StyleChange);
 }
 
 struct DamagedContent {
@@ -60,11 +60,11 @@ struct DamagedContent {
     };
     Type type { Type::Insertion };
 };
-static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> damagedContent, const InlineDisplay::Boxes& displayBoxes)
+static std::optional<size_t> damagedLineIndex(const DamagedContent& damagedContent, const InlineDisplay::Boxes& displayBoxes)
 {
     ASSERT(!displayBoxes.isEmpty());
 
-    if (!damagedContent || displayBoxes.size() == 1) {
+    if (displayBoxes.size() == 1) {
         // Let's return the first line on empty content (when only root inline display box is present). 
         return displayBoxes.last().lineIndex();
     }
@@ -72,7 +72,7 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
     auto lastDisplayBoxIndexForLayoutBox = [&]() -> std::optional<size_t> {
         for (auto index = displayBoxes.size(); index--;) {
             auto& displayBox = displayBoxes[index];
-            if (&damagedContent->layoutBox == &displayBox.layoutBox())
+            if (&damagedContent.layoutBox == &displayBox.layoutBox())
                 return index;
         }
         // FIXME: When the damaged layout box does not generate even one display box (all collapsed), we should
@@ -91,28 +91,28 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
             return { };
         }
         auto& damagedDisplayBox = displayBoxes[damagedDisplayBoxIndex];
-        ASSERT(&damagedDisplayBox.layoutBox() == &damagedContent->layoutBox);
+        ASSERT(&damagedDisplayBox.layoutBox() == &damagedContent.layoutBox);
         // In case of content deletion, we may need to damage the "previous" line.
-        if (damagedContent->type == DamagedContent::Type::Insertion || !damagedDisplayBox.lineIndex())
+        if (damagedContent.type == DamagedContent::Type::Insertion || !damagedDisplayBox.lineIndex())
             return { damagedDisplayBox.lineIndex() };
         if (!displayBoxes[damagedDisplayBoxIndex - 1].isRootInlineBox()) {
             // There's more content in front, it's safe to stay on the current line.
             ASSERT(displayBoxes[damagedDisplayBoxIndex - 1].lineIndex() == damagedDisplayBox.lineIndex());
             return { damagedDisplayBox.lineIndex() };
         }
-        auto damagedContentIsFirstContentOnLine = !damagedDisplayBox.isText() || (damagedContent->offset && (!*damagedContent->offset || damagedDisplayBox.text().start() == *damagedContent->offset));
+        auto damagedContentIsFirstContentOnLine = !damagedDisplayBox.isText() || (damagedContent.offset && (!*damagedContent.offset || damagedDisplayBox.text().start() == *damagedContent.offset));
         return { damagedContentIsFirstContentOnLine ? damagedDisplayBox.lineIndex() - 1 : damagedDisplayBox.lineIndex() };
     };
 
     auto leadingIndexForDisplayBox = *lastDisplayBoxIndex;
-    if (damagedContent->layoutBox.isLineBreakBox() || damagedContent->layoutBox.isReplacedBox())
+    if (damagedContent.layoutBox.isLineBreakBox() || damagedContent.layoutBox.isReplacedBox())
         return candidateLineIndex(leadingIndexForDisplayBox);
 
-    if (is<InlineTextBox>(damagedContent->layoutBox)) {
-        if (!damagedContent->offset)
+    if (is<InlineTextBox>(damagedContent.layoutBox)) {
+        if (!damagedContent.offset)
             return candidateLineIndex(leadingIndexForDisplayBox);
 
-        if (damagedContent->offset > displayBoxes[leadingIndexForDisplayBox].text().end()) {
+        if (damagedContent.offset > displayBoxes[leadingIndexForDisplayBox].text().end()) {
             // Protect against text updater providing bogus damage offset (offset is _after_ the last display box here).
             // Let's just fallback to full invalidation.
             return { };
@@ -124,14 +124,14 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
                 // Multi line damage includes line leading root inline display boxes (and maybe line spanning inline boxes).
                 continue;
             }
-            if (&displayBoxes[index].layoutBox() != &damagedContent->layoutBox) {
+            if (&displayBoxes[index].layoutBox() != &damagedContent.layoutBox) {
                 // We should always be able to find the damaged offset within this layout box.
                 break;
             }
             ASSERT(displayBox.isTextOrSoftLineBreak());
             // Find out which display box has the damaged offset position.
             auto startOffset = displayBox.text().start();
-            if (startOffset <= *damagedContent->offset) {
+            if (startOffset <= *damagedContent.offset) {
                 // FIXME: Add support for leading inline box deletion too.
                 return candidateLineIndex(index);
             }
@@ -191,12 +191,10 @@ static std::optional<InlineItemPosition> inlineItemPositionForDisplayBox(const I
     auto startOffset = displayBox.text().start();
     while (true) {
         auto inlineTextItemRange = [&]() -> WTF::Range<unsigned> {
-            if (is<InlineTextItem>(inlineItemList[inlineItemIndex])) {
-                auto& inlineTextItem = downcast<InlineTextItem>(inlineItemList[inlineItemIndex]);
-                return { inlineTextItem.start(), inlineTextItem.end() };
-            }
-            if (is<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex])) {
-                auto startPosition = downcast<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex]).position();
+            if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItemList[inlineItemIndex]))
+                return { inlineTextItem->start(), inlineTextItem->end() };
+            if (auto* inlineSoftBreakItem = dynamicDowncast<InlineSoftLineBreakItem>(inlineItemList[inlineItemIndex])) {
+                auto startPosition = inlineSoftBreakItem->position();
                 return { startPosition, startPosition + 1 };
             }
             ASSERT_NOT_REACHED();
@@ -229,7 +227,8 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     }
 
     auto startPosition = [&](auto& inlineItem) {
-        return is<InlineTextItem>(inlineItem) ? downcast<InlineTextItem>(inlineItem).start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
+        auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
+        return inlineTextItem ? inlineTextItem->start() : downcast<InlineSoftLineBreakItem>(inlineItem).position();
     };
 
     auto contentOffset = startPosition(candidateInlineItem) + candidatePosition.offset;
@@ -256,55 +255,75 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     return { };
 }
 
-struct DamagedLine {
+static bool isValidInlineItemPositionForLine(const InlineItemPosition& inlineItemPosition, size_t lineIndex)
+{
+    // It's clearly not correct when starting position is 0 while the damaged line is not the first one.
+    if (!inlineItemPosition && lineIndex)
+        return false;
+    // FIXME: Consider checking for the case when we are on the first line with a non-zero inlineItemPosition.
+    return true;
+}
+
+static std::optional<InlineItemPosition> leadingInlineItemPositionOnLastLine(const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
+{
+    ASSERT(!displayBoxes.isEmpty());
+    auto lastLineIndex = displayBoxes.last().lineIndex();
+    auto leadingContentDisplayBoxOnInvalidatedLine = leadingContentDisplayForLineIndex(lastLineIndex, displayBoxes);
+    if (!leadingContentDisplayBoxOnInvalidatedLine)
+        return { };
+
+    auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnInvalidatedLine, inlineItemList);
+    if (!inlineItemPositionForLeadingDisplayBox)
+        return { };
+
+    if (!isValidInlineItemPositionForLine(*inlineItemPositionForLeadingDisplayBox, lastLineIndex)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    return InlineItemPosition { *inlineItemPositionForLeadingDisplayBox };
+}
+
+struct InvalidatedLine {
     size_t index { 0 };
     InlineItemPosition leadingInlineItemPosition { };
+    size_t damagedLineIndex { 0 };
 };
-static std::optional<DamagedLine> leadingInlineItemPositionForDamage(std::optional<DamagedContent> damagedContent, const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
+static std::optional<InvalidatedLine> invalidatedLineByDamagedBox(const DamagedContent& damagedContent, const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
 {
     ASSERT(!displayBoxes.isEmpty());
     // 1. Find the root inline box based on the damaged layout box (this is our damaged line)
     // 2. Find the first content display box on this damaged line
     // 3. Find the associated InlineItem with partial text offset if applicable
-    auto lineIndex = damagedLineIndex(damagedContent, displayBoxes);
-    if (!lineIndex)
+    auto damagedLine = damagedLineIndex(damagedContent, displayBoxes);
+    if (!damagedLine)
         return { };
-    auto leadingContentDisplayBoxOnDamagedLine = leadingContentDisplayForLineIndex(*lineIndex, displayBoxes);
-    if (!leadingContentDisplayBoxOnDamagedLine) {
+
+    // We can't be sure whether a newly inserted content introduces a new breaking opportunity, so let's just initiate layout from the previous line.
+    auto lineToInvalidate = damagedContent.type == DamagedContent::Type::Removal ? *damagedLine : !*damagedLine ? 0 : *damagedLine - 1;
+    auto leadingContentDisplayBoxOnInvalidatedLine = leadingContentDisplayForLineIndex(lineToInvalidate, displayBoxes);
+    if (!leadingContentDisplayBoxOnInvalidatedLine) {
         // This is a completely empty line (e.g. <div><span> </span></div> where the whitespace is collapsed).
         return { };
     }
-    if (auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnDamagedLine, inlineItemList)) {
-        if (*lineIndex && !*inlineItemPositionForLeadingDisplayBox) {
-            // This is clearly not correct (starting position is 0 while the damaged line is not the first one).
+    if (auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnInvalidatedLine, inlineItemList)) {
+        if (!isValidInlineItemPositionForLine(*inlineItemPositionForLeadingDisplayBox, lineToInvalidate)) {
             ASSERT_NOT_REACHED();
-            lineIndex = 0;
+            return { };
         }
-        if (!damagedContent)
-            return DamagedLine { *lineIndex, *inlineItemPositionForLeadingDisplayBox };
         // In some rare cases, the leading display box's inline item position is after the actual damage (e.g. when collapsed leading content is removed).
-        if (auto adjustedPosition = inlineItemPositionForDamagedContentPosition(*damagedContent, *inlineItemPositionForLeadingDisplayBox, inlineItemList))
-            return DamagedLine { *lineIndex, *adjustedPosition };
+        if (auto adjustedPosition = inlineItemPositionForDamagedContentPosition(damagedContent, *inlineItemPositionForLeadingDisplayBox, inlineItemList))
+            return InvalidatedLine { lineToInvalidate, *adjustedPosition, *damagedLine };
     }
     return { };
 }
 
-static std::optional<DamagedLine> leadingInlineItemPositionOnLastLine(const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
-{
-    return leadingInlineItemPositionForDamage({ }, inlineItemList, displayBoxes);
-}
-
-static std::optional<DamagedLine> leadingInlineItemPositionByDamagedBox(DamagedContent damagedContent, const InlineItemList& inlineItemList, const InlineDisplay::Boxes& displayBoxes)
-{
-    return leadingInlineItemPositionForDamage(damagedContent, inlineItemList, displayBoxes);
-}
-
-static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesForDamagedLines(size_t damagedLineIndex, const InlineDisplay::Content& displayContent)
+static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesAfterDamagedLine(size_t damagedLineIndex, const InlineDisplay::Content& displayContent)
 {
     auto trailingDisplayBoxes = InlineDamage::TrailingDisplayBoxList { };
     auto& lines = displayContent.lines;
     auto& boxes = displayContent.boxes;
-    for (size_t lineIndex = damagedLineIndex; lineIndex < lines.size(); ++lineIndex) {
+    for (size_t lineIndex = damagedLineIndex + 1; lineIndex < lines.size(); ++lineIndex) {
         auto lastDisplayBoxIndexForLine = lines[lineIndex].firstBoxIndex() + lines[lineIndex].boxCount() - 1;
         if (lastDisplayBoxIndexForLine >= boxes.size()) {
             ASSERT_NOT_REACHED();
@@ -314,29 +333,37 @@ static InlineDamage::TrailingDisplayBoxList trailingDisplayBoxesForDamagedLines(
     }
     return trailingDisplayBoxes;
 }
-void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::optional<InlineDamage::Reason> reason, std::optional<DamagedLine> damagedLine, ShouldApplyRangeLayout shouldApplyRangeLayout)
+
+bool InlineInvalidation::updateInlineDamage(const InvalidatedLine& invalidatedLine, InlineDamage::Reason reason, ShouldApplyRangeLayout shouldApplyRangeLayout, LayoutUnit pageTopAdjustment)
 {
-    if (type == InlineDamage::Type::Invalid || !damagedLine)
-        return m_inlineDamage.reset();
     auto isValidDamage = [&] {
         // Check for consistency.
-        if (!damagedLine->leadingInlineItemPosition) {
+        if (!invalidatedLine.leadingInlineItemPosition) {
             // We have to start at the first line if damage points to the leading inline item.
-            return !damagedLine->index;
+            return !invalidatedLine.index;
         }
         return true;
     };
     if (!isValidDamage()) {
         ASSERT_NOT_REACHED();
-        m_inlineDamage.reset();
-        return;
+        m_inlineDamage.resetLayoutPosition();
+        return false;
     }
 
-    m_inlineDamage.setDamageType(type);
-    m_inlineDamage.setDamageReason(*reason);
-    m_inlineDamage.setDamagedPosition({ damagedLine->index, damagedLine->leadingInlineItemPosition });
-    if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes) 
-        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesForDamagedLines(damagedLine->index, m_displayContent));
+    auto partialContentTop = LayoutUnit { invalidatedLine.index ? m_displayContent.lines[invalidatedLine.index - 1].lineBoxLogicalRect().maxY() : 0 } + pageTopAdjustment;
+
+    auto layoutStartPosition = InlineDamage::LayoutPosition {
+        invalidatedLine.index,
+        invalidatedLine.leadingInlineItemPosition,
+        partialContentTop
+    };
+
+    m_inlineDamage.setDamageReason(reason);
+    m_inlineDamage.setLayoutStartPosition(WTFMove(layoutStartPosition));
+
+    if (shouldApplyRangeLayout == ShouldApplyRangeLayout::Yes)
+        m_inlineDamage.setTrailingDisplayBoxes(trailingDisplayBoxesAfterDamagedLine(invalidatedLine.index, m_displayContent));
+    return true;
 }
 
 static bool isSupportedContent(const Box& layoutBox)
@@ -344,23 +371,23 @@ static bool isSupportedContent(const Box& layoutBox)
     return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox() || layoutBox.isReplacedBox() || layoutBox.isInlineBox();
 }
 
-bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)
+bool InlineInvalidation::setFullLayoutIfNeeded(const Box& layoutBox)
 {
     if (!isSupportedContent(layoutBox)) {
         ASSERT_NOT_REACHED();
-        updateInlineDamage(InlineDamage::Type::Invalid, { }, { });
+        m_inlineDamage.resetLayoutPosition();
         return true;
     }
 
     if (displayBoxes().isEmpty()) {
         ASSERT_NOT_REACHED();
-        updateInlineDamage(InlineDamage::Type::Invalid, { }, { });
+        m_inlineDamage.resetLayoutPosition();
         return true;
     }
 
     if (m_inlineItemList.isEmpty()) {
         // We must be under memory pressure.
-        updateInlineDamage(InlineDamage::Type::Invalid, { }, { });
+        m_inlineDamage.resetLayoutPosition();
         return true;
     }
 
@@ -369,25 +396,29 @@ bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)
 
 bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
 {
-    if (applyFullDamageIfNeeded(newOrDamagedInlineTextBox))
+    if (setFullLayoutIfNeeded(newOrDamagedInlineTextBox))
         return false;
 
-    auto damagedLine = std::optional<DamagedLine> { };
+    auto& displayBoxes = this->displayBoxes();
+    auto invalidatedLine = std::optional<InvalidatedLine> { };
     auto damageReason = offset ? InlineDamage::Reason::ContentChange : newOrDamagedInlineTextBox.nextInFlowSibling() ? InlineDamage::Reason::Insert : InlineDamage::Reason::Append;
     switch (damageReason) {
     case InlineDamage::Reason::ContentChange:
         // Existing text box got modified. Dirty all the way up to the damaged position's line.
-        damagedLine = leadingInlineItemPositionByDamagedBox({ newOrDamagedInlineTextBox, *offset }, m_inlineItemList, displayBoxes());
+        invalidatedLine = invalidatedLineByDamagedBox({ newOrDamagedInlineTextBox, *offset }, m_inlineItemList, displayBoxes);
         break;
     case InlineDamage::Reason::Append:
         // New text box got appended. Let's dirty the last line.
-        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes());
+        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes)) {
+            auto lastLineIndex = displayBoxes.last().lineIndex();
+            invalidatedLine = InvalidatedLine { lastLineIndex, *leadingInlineItemPosition, lastLineIndex };
+        }
         break;
     case InlineDamage::Reason::Insert: {
-        damagedLine = DamagedLine { };
+        invalidatedLine = InvalidatedLine { };
         // New text box got inserted. Let's damage existing content starting from the previous sibling.
         if (auto* previousSibling = newOrDamagedInlineTextBox.previousInFlowSibling())
-            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes());
+            invalidatedLine = invalidatedLineByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes);
         break;
         }
     default:
@@ -395,57 +426,78 @@ bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTex
         break;
     }
 
-    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damageReason, damagedLine, offset ? ShouldApplyRangeLayout::No : ShouldApplyRangeLayout::Yes);
-    return damagedLine.has_value();
+    if (invalidatedLine)
+        return updateInlineDamage(*invalidatedLine, damageReason, offset ? ShouldApplyRangeLayout::No : ShouldApplyRangeLayout::Yes);
+
+    m_inlineDamage.resetLayoutPosition();
+    return false;
 }
 
 bool InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
 {
-    if (applyFullDamageIfNeeded(damagedInlineTextBox))
+    if (setFullLayoutIfNeeded(damagedInlineTextBox))
         return false;
 
-    auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes());
-    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, InlineDamage::Reason::Remove, damagedLine, ShouldApplyRangeLayout::No);
-    return damagedLine.has_value();
+    if (auto invalidatedLine = invalidatedLineByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes()))
+        return updateInlineDamage(*invalidatedLine, InlineDamage::Reason::Remove, ShouldApplyRangeLayout::No);
+
+    m_inlineDamage.resetLayoutPosition();
+    return false;
 }
 
 bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
 {
-    if (applyFullDamageIfNeeded(layoutBox))
+    if (setFullLayoutIfNeeded(layoutBox))
         return false;
 
-    auto damagedLine = std::optional<DamagedLine> { };
+    auto& displayBoxes = this->displayBoxes();
+    auto invalidatedLine = std::optional<InvalidatedLine> { };
     if (!layoutBox.nextInFlowSibling()) {
         // New box got appended. Let's dirty the last line.
         if (m_inlineDamage.reasons() == InlineDamage::Reason::Append) {
             // Series of append operations always produces the same damage position.
-            return m_inlineDamage.type() != InlineDamage::Type::Invalid;
+            return m_inlineDamage.layoutStartPosition().has_value();
         }
         ASSERT(!m_inlineDamage.reasons());
-        damagedLine = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes());
+        if (auto leadingInlineItemPosition = leadingInlineItemPositionOnLastLine(m_inlineItemList, displayBoxes)) {
+            auto lastLineIndex = displayBoxes.last().lineIndex();
+            invalidatedLine = InvalidatedLine { lastLineIndex, *leadingInlineItemPosition, lastLineIndex };
+        }
     } else {
-        damagedLine = DamagedLine { };
+        invalidatedLine = InvalidatedLine { };
         // New box got inserted. Let's damage existing content starting from the previous sibling.
         if (auto* previousSibling = layoutBox.previousInFlowSibling())
-            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes());
+            invalidatedLine = invalidatedLineByDamagedBox({ *previousSibling }, m_inlineItemList, displayBoxes);
     }
-    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, !layoutBox.nextInFlowSibling() ? InlineDamage::Reason::Append : InlineDamage::Reason::Insert, damagedLine, ShouldApplyRangeLayout::Yes);
-    return damagedLine.has_value();
+    if (invalidatedLine)
+        return updateInlineDamage(*invalidatedLine, !layoutBox.nextInFlowSibling() ? InlineDamage::Reason::Append : InlineDamage::Reason::Insert, ShouldApplyRangeLayout::Yes);
+
+    m_inlineDamage.resetLayoutPosition();
+    return false;
 }
 
 bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
 {
-    if (applyFullDamageIfNeeded(layoutBox))
+    if (setFullLayoutIfNeeded(layoutBox))
         return false;
 
-    auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes());
-    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, InlineDamage::Reason::Remove, damagedLine, ShouldApplyRangeLayout::Yes);
-    return damagedLine.has_value();
+    if (auto invalidatedLine = invalidatedLineByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItemList, displayBoxes()))
+        return updateInlineDamage(*invalidatedLine, InlineDamage::Reason::Remove, ShouldApplyRangeLayout::Yes);
+
+    m_inlineDamage.resetLayoutPosition();
+    return false;
 }
 
-void InlineInvalidation::horizontalConstraintChanged()
+void InlineInvalidation::restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment)
 {
-    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsLineLayout);
+    auto leadingContentDisplayBoxOnDamagedLine = leadingContentDisplayForLineIndex(lineIndex, displayBoxes());
+    if (!leadingContentDisplayBoxOnDamagedLine)
+        return;
+    auto inlineItemPositionForLeadingDisplayBox = inlineItemPositionForDisplayBox(*leadingContentDisplayBoxOnDamagedLine, m_inlineItemList);
+    if (!leadingContentDisplayBoxOnDamagedLine)
+        return;
+
+    updateInlineDamage({ lineIndex, *inlineItemPositionForLeadingDisplayBox }, InlineDamage::Reason::Pagination, ShouldApplyRangeLayout::Yes, pageTopAdjustment);
 }
 
 }

@@ -167,6 +167,12 @@
 3297 WIN D3D11 : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_x_linear = FAIL
 3297 WIN D3D11 : dEQP-GLES3.functional.fbo.blit.rect.out_of_bounds_reverse_src_y_linear = FAIL
 
+// Blit related failures on D3D11 for NVIDIA
+3297 WIN D3D11 NVIDIA : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_dst_x = FAIL
+3297 WIN D3D11 NVIDIA : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_dst_y = FAIL
+3297 WIN D3D11 NVIDIA : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_src_x = FAIL
+3297 WIN D3D11 NVIDIA : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_src_y = FAIL
+
 // Simultaneous use of GL_CONSTANT_ALPHA/GL_ONE_MINUS_CONSTANT_ALPHA and GL_CONSTANT_COLOR/GL_ONE_MINUS_CONSTANT_COLOR as color factors
 4394 D3D11 : dEQP-GLES3.functional.draw_buffers_indexed.random.max_required_draw_buffers.4 = FAIL
 4394 D3D11 : dEQP-GLES3.functional.draw_buffers_indexed.random.max_required_draw_buffers.7 = FAIL
@@ -382,6 +388,16 @@
 // All the out of bounds variants fail.
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_mag_reverse_src_dst_y = FAIL
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_min_reverse_src_dst_y = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_dst_x = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_src_dst_x = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_src_dst_y = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_mag_reverse_src_x = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_min = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_min_reverse_dst_x = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_min_reverse_src_dst_x = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_min_reverse_src_dst_y = FAIL
+2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.blit.rect.nearest_consistency_out_of_bounds_min_reverse_src_x = FAIL
 // Fails for all integer formats
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.completeness.attachment_combinations.none_rbo_none_none = FAIL
 2137 MAC OPENGL INTEL : dEQP-GLES3.functional.fbo.completeness.attachment_combinations.none_tex_none_none = FAIL
@@ -684,8 +700,6 @@
 // New failures on MacBook Pro 2019 macOS 13.2.1
 8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_vertex = FAIL
 8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_vertex = FAIL
-8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_fragment = FAIL
-8091 MAC METAL AMD : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_vertex = FAIL
 
 // Test failures introduced by Apple's changes (anglebug.com/5505)
 6467 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_color = FAIL
@@ -736,7 +750,6 @@
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.linear_linear = FAIL
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.nearest_linear = FAIL
 7451 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL
-7838 MAC METAL INTEL : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 /////////////////////////////////////
 
@@ -769,6 +782,16 @@
 6678 UBSAN : dEQP-GLES3.functional.fragment_out.* = SKIP
 6678 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.* = SKIP
 
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.draw.random.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.instance_array_basic_type.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.multi_basic_types.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.multi_nested_struct.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.random.* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.single_nested_struct* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.ubo.single_struct_array* = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.*int2_10_10_10* = SKIP
+
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.blit.depth_stencil.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.invalidate.format.stencil_index8 = SKIP
@@ -800,6 +823,37 @@
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.shaders.random.swizzle.fragment.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.shaders.random.texture.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.shaders.random.trigonometric.fragment.* = SKIP
+
+// Snapdragon 8 Gen3 Mobile Reference Device
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.blit.depth_stencil.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.msaa.*_samples.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.render.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fbo.stencil.basic.*stencil* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.rasterization*line*wide = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackhalf2x16_fragment = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.fragdata.valid_dynamic_index = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_fragment = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.indexing.moredynamic.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.all_features.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.basic_expression.combined.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.basic_expression.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.comparison_ops.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.conditionals.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.exponential.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.scalar_conversion.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.swizzle.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.texture.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.random.trigonometric.fragment.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.shaders.texture_functions.texture*.*sampler3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*3d* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*cube* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.texture*mixed* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.array* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.basic_types* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.transform_feedback.random* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.assigned.* = SKIP
 
 // VK_EXT_transform_feedback doesn't support capturing array elements and a waiver exists
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = FAIL

@@ -37,7 +37,7 @@
         {
             "id": "ClearReason",
             "type": "string",
-            "enum": ["console-api", "main-frame-navigation"],
+            "enum": ["console-api", "frontend", "main-frame-navigation"],
             "description": "The reason the console is being cleared."
         },
         {
@@ -104,6 +104,13 @@
         {
             "name": "clearMessages",
             "description": "Clears console messages collected in the browser."
+        },
+        {
+           "name": "setConsoleClearAPIEnabled",
+           "description": "Control whether calling <code>console.clear()</code> has an effect in Web Inspector. Defaults to true.",
+           "parameters": [
+               { "name": "enable", "type": "boolean" }
+           ]
         },
         {
             "name": "getLoggingChannels",

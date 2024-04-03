@@ -30,7 +30,6 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "CachedImage.h"
-#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -71,6 +70,7 @@
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
+#include "WebGLBlendFuncExtended.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
@@ -135,7 +135,7 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
         return std::nullopt;
 
     // When adding extensions that use enableDraftExtensions, add them to the webgl-draft-extensions-flag.js test.
-    const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
+    [[maybe_unused]] const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral ## _s)) { \
@@ -149,7 +149,6 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
     }
 
     ENABLE_IF_REQUESTED(ANGLEInstancedArrays, m_angleInstancedArrays, "ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context));
-    ENABLE_IF_REQUESTED(EXTBlendFuncExtended, m_extBlendFuncExtended, "EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", EXTBlendMinMax::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control", EXTClipControl::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context));
@@ -162,7 +161,7 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
     ENABLE_IF_REQUESTED(EXTTextureCompressionBPTC, m_extTextureCompressionBPTC, "EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureFilterAnisotropic, m_extTextureFilterAnisotropic, "EXT_texture_filter_anisotropic", EXTTextureFilterAnisotropic::supported(*m_context));
-    ENABLE_IF_REQUESTED(EXTTextureMirrorClampToEdge, m_extTextureMirrorClampToEdge, "EXT_texture_mirror_clamp_to_edge", EXTTextureMirrorClampToEdge::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTTextureMirrorClampToEdge, m_extTextureMirrorClampToEdge, "EXT_texture_mirror_clamp_to_edge", EXTTextureMirrorClampToEdge::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTsRGB, m_extsRGB, "EXT_sRGB", EXTsRGB::supported(*m_context));
     ENABLE_IF_REQUESTED(KHRParallelShaderCompile, m_khrParallelShaderCompile, "KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context));
     ENABLE_IF_REQUESTED(OESElementIndexUint, m_oesElementIndexUint, "OES_element_index_uint", OESElementIndexUint::supported(*m_context));
@@ -173,6 +172,7 @@ std::optional<WebGLExtensionAny> WebGLRenderingContext::getExtension(const Strin
     ENABLE_IF_REQUESTED(OESTextureHalfFloat, m_oesTextureHalfFloat, "OES_texture_half_float", OESTextureHalfFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(OESTextureHalfFloatLinear, m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear", OESTextureHalfFloatLinear::supported(*m_context));
     ENABLE_IF_REQUESTED(OESVertexArrayObject, m_oesVertexArrayObject, "OES_vertex_array_object", OESVertexArrayObject::supported(*m_context));
+    ENABLE_IF_REQUESTED(WebGLBlendFuncExtended, m_webglBlendFuncExtended, "WEBGL_blend_func_extended", WebGLBlendFuncExtended::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLColorBufferFloat, m_webglColorBufferFloat, "WEBGL_color_buffer_float", WebGLColorBufferFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureASTC, m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureETC, m_webglCompressedTextureETC, "WEBGL_compressed_texture_etc", WebGLCompressedTextureETC::supported(*m_context));
@@ -198,14 +198,13 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 
     Vector<String> result;
 
-    const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
+    [[maybe_unused]] const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define APPEND_IF_SUPPORTED(nameLiteral, condition) \
     if (condition) \
         result.append(nameLiteral ## _s);
 
     APPEND_IF_SUPPORTED("ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_blend_minmax", EXTBlendMinMax::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
@@ -218,7 +217,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_filter_anisotropic", EXTTextureFilterAnisotropic::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_texture_mirror_clamp_to_edge", EXTTextureMirrorClampToEdge::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_texture_mirror_clamp_to_edge", EXTTextureMirrorClampToEdge::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_sRGB", EXTsRGB::supported(*m_context))
     APPEND_IF_SUPPORTED("KHR_parallel_shader_compile", KHRParallelShaderCompile::supported(*m_context))
     APPEND_IF_SUPPORTED("OES_element_index_uint", OESElementIndexUint::supported(*m_context))
@@ -229,6 +228,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("OES_texture_half_float", OESTextureHalfFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("OES_texture_half_float_linear", OESTextureHalfFloatLinear::supported(*m_context))
     APPEND_IF_SUPPORTED("OES_vertex_array_object", OESVertexArrayObject::supported(*m_context))
+    APPEND_IF_SUPPORTED("WEBGL_blend_func_extended", WebGLBlendFuncExtended::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_color_buffer_float", WebGLColorBufferFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_astc", WebGLCompressedTextureASTC::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_etc", WebGLCompressedTextureETC::supported(*m_context))

@@ -18,7 +18,7 @@ layer at (0,0) size 800x316
           RenderInline {SPAN} at (0,0) size 160x50 [bgcolor=#FFFFFF]
             RenderText {#text} at (0,0) size 50x50
               text run at (0,0) width 50: " "
-            RenderInline {SPAN} at (0,0) size 110x50
+            RenderInline {SPAN} at (50,0) size 110x50
               RenderText {#text} at (60,0) size 100x50
                 text run at (60,0) width 50: " "
                 text run at (110,0) width 50: " "
@@ -35,7 +35,7 @@ layer at (8,50) size 160x50
   RenderInline (relative positioned) {SPAN} at (0,0) size 160x50 [bgcolor=#FFFFFF]
     RenderText {#text} at (0,0) size 50x50
       text run at (0,0) width 50: " "
-    RenderInline {SPAN} at (0,0) size 110x50
+    RenderInline {SPAN} at (50,0) size 110x50
       RenderText {#text} at (60,0) size 100x50
         text run at (60,0) width 50: " "
         text run at (110,0) width 50: " "

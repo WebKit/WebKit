@@ -523,6 +523,55 @@ def collect_power(done_event, test_fixedtime, results):
     })
 
 
+def get_thermal_info():
+    out = run_adb_command('shell dumpsys android.hardware.thermal.IThermal/default').stdout
+    result = [l for l in out.splitlines() if ('VIRTUAL-SKIN' in l and 'ThrottlingStatus:' in l)]
+    if not result:
+        logging.error('Unexpected dumpsys IThermal response:\n%s', out)
+        raise RuntimeError('Unexpected dumpsys IThermal response, logged above')
+    return result
+
+
+def set_vendor_thermal_control(disabled=None):
+    if disabled:
+        # When disabling, first wait for vendor throttling to end to reset all state
+        waiting = True
+        while waiting:
+            waiting = False
+            for line in get_thermal_info():
+                is_charge = 'VIRTUAL-SKIN-CHARGE-' in line  # Only supposed to affect charging speed
+                if 'ThrottlingStatus: NONE' not in line and not is_charge:
+                    logging.info('Waiting for vendor throttling to finish: %s', line.strip())
+                    time.sleep(10)
+                    waiting = True
+                    break
+
+    run_adb_command('shell setprop persist.vendor.disable.thermal.control %d' % disabled)
+
+
+def sleep_until_temps_below(limit_temp):
+    waiting = True
+    while waiting:
+        waiting = False
+        for line in get_thermal_info():
+            v = float(line.split('CurrentValue:')[1].strip().split(' ')[0])
+            if v > limit_temp:
+                logging.info('Waiting for device temps below %.1f: %s', limit_temp, line.strip())
+                time.sleep(5)
+                waiting = True
+                break
+
+
+def sleep_until_battery_level(min_battery_level):
+    while True:
+        level = int(run_adb_command('shell dumpsys battery get level').stdout.strip())
+        if level >= min_battery_level:
+            break
+        logging.info('Waiting for device battery level to reach %d. Current level: %d',
+                     min_battery_level, level)
+        time.sleep(10)
+
+
 def drop_high_low_and_average(values):
     if len(values) >= 3:
         values.remove(min(values))
@@ -596,6 +645,14 @@ def main():
         '--device', help='Which device to run the tests on (use serial)', default='')
     parser.add_argument(
         '--sleep', help='Add a sleep of this many seconds between each test)', type=int, default=0)
+    parser.add_argument(
+        '--custom-throttling-temp',
+        help='Custom thermal throttling with limit set to this temperature (off by default)',
+        type=float)
+    parser.add_argument(
+        '--min-battery-level',
+        help='Sleep between tests if battery level drops below this value (off by default)',
+        type=int)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -616,8 +673,12 @@ def main():
     run_adb_command('root')
 
     try:
+        if args.custom_throttling_temp:
+            set_vendor_thermal_control(disabled=1)
         run_traces(args)
     finally:
+        if args.custom_throttling_temp:
+            set_vendor_thermal_control(disabled=0)
         # Clean up settings, including in case of exceptions (including Ctrl-C)
         run_adb_command('shell settings delete global angle_debug_package')
         run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
@@ -846,9 +907,15 @@ def run_traces(args):
                 # Early exit for testing
                 #exit()
 
-                # For unlocked clocks, try sleeping the same amount of time that the trace ran, to dissipate heat
+                # Depending on workload, sleeps might be needed to dissipate heat or recharge battery
                 if args.sleep != 0:
                     time.sleep(args.sleep)
+
+                if args.custom_throttling_temp:
+                    sleep_until_temps_below(args.custom_throttling_temp)
+
+                if args.min_battery_level:
+                    sleep_until_battery_level(args.min_battery_level)
 
     # Generate the SUMMARY output
 

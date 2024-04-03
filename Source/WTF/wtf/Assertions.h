@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -234,6 +234,8 @@ WTF_EXPORT_PRIVATE bool WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 
 WTF_EXPORT_PRIVATE NEVER_INLINE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefix(const char*);
+WTF_EXPORT_PRIVATE void WTFReportBacktraceWithStackDepth(int);
+WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndStackDepth(const char*, int);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
 #ifdef __cplusplus
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, const char*);
@@ -246,16 +248,70 @@ WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);
 
 WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 
+#if CPU(X86_64) || CPU(X86)
+
+#define WTF_FATAL_CRASH_INST "int3"
+
+// This ordering was chosen to be consistent with JSC's JIT asserts. We probably shouldn't change this ordering
+// since it would make tooling crash reports much harder. If, for whatever reason, we decide to change the ordering
+// here we should update the abortWithuint64_t functions.
+#define CRASH_ARG_GPR0 "rdi"
+#define CRASH_ARG_GPR1 "rsi"
+#define CRASH_ARG_GPR2 "rdx"
+#define CRASH_ARG_GPR3 "rcx"
+
+#define CRASH_GPR0 "r11"
+#define CRASH_GPR1 "r10"
+#define CRASH_GPR2 "r9"
+#define CRASH_GPR3 "r8"
+#define CRASH_GPR4 "r15"
+#define CRASH_GPR5 "r14"
+#define CRASH_GPR6 "r13"
+
+#elif CPU(ARM64)
+
+#if !defined(WTF_FATAL_CRASH_CODE)
+#if ASAN_ENABLED
+#define WTF_FATAL_CRASH_CODE 0x0
+#else
+#define WTF_FATAL_CRASH_CODE 0xc471
+#endif
+#endif
+
+#if !defined(WTF_FATAL_CRASH_INST)
+#if ASAN_ENABLED
+#define WTF_FATAL_CRASH_INST "brk #0x0"
+#else
+#define WTF_FATAL_CRASH_INST "brk #0xc471"
+#endif
+#endif
+
+// See comment above on the ordering.
+#define CRASH_ARG_GPR0 "x0"
+#define CRASH_ARG_GPR1 "x1"
+#define CRASH_ARG_GPR2 "x2"
+#define CRASH_ARG_GPR3 "x3"
+
+#define CRASH_GPR0 "x16"
+#define CRASH_GPR1 "x17"
+#define CRASH_GPR2 "x19" // We skip x18, which is reserved on ARM64 for platform use.
+#define CRASH_GPR3 "x20"
+#define CRASH_GPR4 "x21"
+#define CRASH_GPR5 "x22"
+#define CRASH_GPR6 "x23"
+
+#endif // CPU(ARM64)
+
 #if COMPILER(MSVC)
 #define WTFBreakpointTrap()  __debugbreak()
 #elif ASAN_ENABLED
 #define WTFBreakpointTrap()  __builtin_trap()
 #elif CPU(X86_64) || CPU(X86)
-#define WTFBreakpointTrap()  asm volatile ("int3")
+#define WTFBreakpointTrap()  asm volatile (WTF_FATAL_CRASH_INST)
 #elif CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  asm volatile ("bkpt #0")
 #elif CPU(ARM64)
-#define WTFBreakpointTrap()  asm volatile ("brk #0xc471")
+#define WTFBreakpointTrap()  asm volatile (WTF_FATAL_CRASH_INST)
 #else
 #define WTFBreakpointTrap() WTFCrash() // Not implemented.
 #endif
@@ -679,6 +735,12 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
         WTFLogAlways("%s", stream.release().utf8().data()); \
     } while (0)
 
+#define WTF_ALWAYS_LOG(commands) do { \
+        WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+        stream << commands; \
+        WTFLogAlways("%s", stream.release().utf8().data()); \
+    } while (0)
+
 /* RELEASE_ASSERT */
 
 #if !ASSERT_ENABLED
@@ -720,7 +782,11 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoI
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1);
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoImpl(int line, const char* file, const char* function, int counter, uint64_t reason);
+#if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
+NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char* file, const char* function, int counter);
+#else
 NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter);
+#endif
 
 template<typename T>
 ALWAYS_INLINE uint64_t wtfCrashArg(T* arg) { return reinterpret_cast<uintptr_t>(arg); }
@@ -770,6 +836,24 @@ NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char*
     WTFCrashWithInfoImpl(line, file, function, counter, wtfCrashArg(reason), wtfCrashArg(misc1), wtfCrashArg(misc2), wtfCrashArg(misc3), wtfCrashArg(misc4), wtfCrashArg(misc5), wtfCrashArg(misc6));
 }
 
+#if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
+
+NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char* file, const char* function, int counter)
+{
+    uint64_t x0Value = static_cast<uint64_t>(static_cast<int64_t>(line));
+    uint64_t x1Value = reinterpret_cast<uintptr_t>(file);
+    uint64_t x2Value = reinterpret_cast<uintptr_t>(function);
+    uint64_t x3Value = static_cast<uint64_t>(static_cast<int64_t>(counter));
+    register uint64_t x0GPR asm(CRASH_ARG_GPR0) = x0Value;
+    register uint64_t x1GPR asm(CRASH_ARG_GPR1) = x1Value;
+    register uint64_t x2GPR asm(CRASH_ARG_GPR2) = x2Value;
+    register uint64_t x3GPR asm(CRASH_ARG_GPR3) = x3Value;
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(x0GPR), "r"(x1GPR), "r"(x2GPR), "r"(x3GPR));
+    __builtin_trap();
+}
+
+#else
+
 inline void WTFCrashWithInfo(int, const char*, const char*, int)
 #if COMPILER(CLANG)
     __attribute__((optnone))
@@ -777,6 +861,8 @@ inline void WTFCrashWithInfo(int, const char*, const char*, int)
 {
     CRASH();
 }
+
+#endif
 
 namespace WTF {
 inline void isIntegralOrPointerType() { }

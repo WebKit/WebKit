@@ -53,6 +53,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include "TrustedType.h"
 #include "UserGestureIndicator.h"
 #include "WebCoreJITOperations.h"
 #include "WebCoreJSClientData.h"
@@ -184,8 +185,10 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto& promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    auto* promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    if (UNLIKELY(!promise))
+        return;
+    setupModuleScriptHandlers(moduleScript, *promise, world);
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
@@ -200,8 +203,10 @@ void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScrip
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto& promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
-    setupModuleScriptHandlers(moduleScript, promise, world);
+    auto* promise = JSExecState::loadModule(lexicalGlobalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    if (UNLIKELY(!promise))
+        return;
+    setupModuleScriptHandlers(moduleScript, *promise, world);
 }
 
 void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode)
@@ -824,16 +829,31 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     if (requesterSecurityOrigin && !requesterSecurityOrigin->isSameOriginDomain(ownerDocument->securityOrigin()))
         return;
 
-    if (!frame->page() || !ownerDocument->checkedContentSecurityPolicy()->allowJavaScriptURLs(ownerDocument->url().string(), eventHandlerPosition().m_line, url.string(), nullptr))
+    if (!frame->page())
         return;
 
-    const int javascriptSchemeLength = sizeof("javascript:") - 1;
-
     JSDOMGlobalObject* globalObject = jsWindowProxy(mainThreadNormalWorld()).window();
+
+    RefPtr scriptExecutionContext = globalObject->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return;
+
+    auto preNavigationCheckHolder = requireTrustedTypesForPreNavigationCheckPasses(*scriptExecutionContext, url.string());
+    if (preNavigationCheckHolder.hasException())
+        return;
+
+    auto preNavigationCheckURLString = preNavigationCheckHolder.releaseReturnValue();
+    if (preNavigationCheckURLString.isNull())
+        return;
+
+    if (!ownerDocument->checkedContentSecurityPolicy()->allowJavaScriptURLs(ownerDocument->url().string(), eventHandlerPosition().m_line, preNavigationCheckURLString, nullptr))
+        return;
+
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    String decodedURL = PAL::decodeURLEscapeSequences(url.string());
+    const int javascriptSchemeLength = sizeof("javascript:") - 1;
+    String decodedURL = PAL::decodeURLEscapeSequences(preNavigationCheckURLString);
     // FIXME: This probably needs to figure out if the origin is considered tanited.
     auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength), JSC::SourceTaintedOrigin::Untainted);
     RELEASE_ASSERT(&vm == &jsWindowProxy(mainThreadNormalWorld()).window()->vm());

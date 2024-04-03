@@ -73,7 +73,7 @@ static EvaluationResult evaluateLengthComparison(LayoutUnit size, const std::opt
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionSize = computeLength(comparison->value.get(), conversionData);
+    auto expressionSize = computeLength(RefPtr { comparison->value }.get(), conversionData);
     if (!expressionSize)
         return EvaluationResult::Unknown;
 
@@ -88,7 +88,7 @@ static EvaluationResult evaluateNumberComparison(double number, const std::optio
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->doubleValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->doubleValue();
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -101,7 +101,7 @@ static EvaluationResult evaluateIntegerComparison(int number, const std::optiona
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionNumber = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->intValue();
+    auto expressionNumber = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->intValue();
 
     auto left = side == Side::Left ? expressionNumber : number;
     auto right = side == Side::Left ? number : expressionNumber;
@@ -114,7 +114,7 @@ static EvaluationResult evaluateResolutionComparison(float resolution, const std
     if (!comparison)
         return EvaluationResult::True;
 
-    auto expressionResolution = dynamicDowncast<CSSPrimitiveValue>(comparison->value.get())->floatValue(CSSUnitType::CSS_DPPX);
+    auto expressionResolution = Ref { downcast<CSSPrimitiveValue>(*comparison->value) }->floatValue(CSSUnitType::CSS_DPPX);
 
     auto left = side == Side::Left ? expressionResolution : resolution;
     auto right = side == Side::Left ? resolution : expressionResolution;
@@ -138,7 +138,7 @@ static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optio
     if (!comparison)
         return EvaluationResult::True;
 
-    auto* ratioValue = dynamicDowncast<CSSAspectRatioValue>(comparison->value.get());
+    RefPtr ratioValue = dynamicDowncast<CSSAspectRatioValue>(comparison->value);
     if (!ratioValue)
         return EvaluationResult::Unknown;
 
@@ -170,8 +170,8 @@ EvaluationResult evaluateBooleanFeature(const Feature& feature, bool currentValu
     if (!feature.rightComparison)
         return toEvaluationResult(currentValue);
 
-    auto& value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
-    auto expectedValue = value.intValue();
+    Ref value = downcast<CSSPrimitiveValue>(*feature.rightComparison->value);
+    auto expectedValue = value->intValue();
 
     if (expectedValue && expectedValue != 1)
         return EvaluationResult::Unknown;

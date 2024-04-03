@@ -136,6 +136,9 @@ public:
     WEBCORE_EXPORT void setMouseMovedInContentArea(const MouseLocationState&);
     const MouseLocationState& mouseLocationState() const { return m_mouseLocationState; }
 
+    WEBCORE_EXPORT void setScrollbarLayoutDirection(UserInterfaceLayoutDirection);
+    UserInterfaceLayoutDirection scrollbarLayoutDirection() const { return m_scrollbarLayoutDirection; }
+
 protected:
     ScrollingStateScrollingNode(
         ScrollingNodeType,
@@ -165,6 +168,7 @@ protected:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        UserInterfaceLayoutDirection,
         RequestedKeyboardScrollData&&
     );
     ScrollingStateScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
@@ -204,6 +208,8 @@ private:
 #if ENABLE(SCROLLING_THREAD)
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
+    UserInterfaceLayoutDirection m_scrollbarLayoutDirection { UserInterfaceLayoutDirection::LTR };
+
     bool m_isMonitoringWheelEvents { false };
     bool m_mouseIsOverContentArea { false };
 

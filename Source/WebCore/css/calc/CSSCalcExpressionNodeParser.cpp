@@ -67,7 +67,7 @@ RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTo
             if (operationNode->isMinOrMaxNode())
                 operationNode->setAllowsNegativePercentageReference();
 
-            for (auto& child : operationNode->children())
+            for (Ref child : operationNode->children())
                 setAllowsNegativePercentageReferenceIfNeeded(child);
         }
     };
@@ -314,7 +314,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, CSSVal
     case IdentToken: {
         if (checkRoundKeyword(functionID, result, token.id()))
             return true;
-        auto value = m_symbolTable.get(token.id());
+        auto value = m_symbolTable->get(token.id());
         value = value ? value : getConstantTable().get(token.id());
         if (!value)
             return false;

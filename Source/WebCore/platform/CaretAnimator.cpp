@@ -31,6 +31,15 @@
 
 namespace WebCore {
 
+bool CaretAnimator::isBlinkingSuspended() const
+{
+#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    if (m_prefersNonBlinkingCursor)
+        return true;
+#endif
+    return m_isBlinkingSuspended;
+}
+
 Page* CaretAnimator::page() const
 {
     if (auto* document = m_client.document())

@@ -16,9 +16,9 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/ProgramExecutableVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/TransformFeedbackVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -32,7 +32,7 @@ class ProgramVk : public ProgramImpl
     angle::Result load(const gl::Context *context,
                        gl::BinaryInputStream *stream,
                        std::shared_ptr<LinkTask> *loadTaskOut,
-                       bool *successOut) override;
+                       egl::CacheGetResult *resultOut) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;

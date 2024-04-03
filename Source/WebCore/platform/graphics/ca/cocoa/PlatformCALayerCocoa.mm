@@ -310,7 +310,7 @@ void PlatformCALayerCocoa::commonInit()
         m_customSublayers = makeUnique<PlatformCALayerList>(tileController->containerLayers());
     }
 
-    if (m_owner && m_owner->platformCALayerUseCSS3DTransformInteroperability() && [m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
+    if ([m_layer respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
         [m_layer setUsesWebKitBehavior:YES];
         if (m_layerType == PlatformCALayer::LayerType::LayerTypeTransformLayer) {
             [m_layer setSortsSublayers:YES];
@@ -867,7 +867,7 @@ void PlatformCALayerCocoa::setOpacity(float value)
 
 void PlatformCALayerCocoa::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
+    PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters, m_owner->platformCALayerCSSUnprefixedBackdropFilterEnabled());
 }
 
 void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)

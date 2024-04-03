@@ -33,6 +33,7 @@
 
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKWebExtensionTabCreationOptions.h>
@@ -61,7 +62,11 @@
     _context = [[_WKWebExtensionContext alloc] initForExtension:extension];
     _controller = [[_WKWebExtensionController alloc] initWithConfiguration:configuration ?: _WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
-    _context._testingMode = YES;
+    // Grant all requested API permissions.
+    for (_WKWebExtensionPermission permission in _extension.requestedPermissions)
+        [_context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:permission];
+
+    _controller._testingMode = YES;
 
     // This should always be self. If you need the delegate, use the controllerDelegate property.
     // Delegate method calls will be forwarded to the controllerDelegate.
@@ -243,7 +248,7 @@
     _done = true;
 }
 
-- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestAssertionResult:(BOOL)result withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
+- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestAssertionResult:(BOOL)result withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     if (result)
         return;
@@ -254,7 +259,7 @@
     ::testing::internal::AssertHelper(::testing::TestPartResult::kNonFatalFailure, sourceURL.UTF8String, lineNumber, message.UTF8String) = ::testing::Message();
 }
 
-- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestEqualityResult:(BOOL)result expectedValue:(NSString *)expectedValue actualValue:(NSString *)actualValue withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
+- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestEqualityResult:(BOOL)result expectedValue:(NSString *)expectedValue actualValue:(NSString *)actualValue withMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     if (result)
         return;
@@ -268,18 +273,18 @@
         << "Expected: " << expectedValue.UTF8String;
 }
 
-- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
+- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     printf("\n%s:%u\n%s\n\n", sourceURL.UTF8String, lineNumber, message.UTF8String);
 }
 
-- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestYieldedWithMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
+- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestYieldedWithMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     _done = true;
     _yieldMessage = [message copy] ?: @"";
 }
 
-- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestFinishedWithResult:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context
+- (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestFinishedWithResult:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     _done = true;
 
@@ -327,6 +332,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         configuration._webExtensionController = extensionController;
         configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
         configuration.userContentController = userContentController(usingPrivateBrowsing);
+        configuration.preferences._developerExtrasEnabled = YES;
 
         _mainWebView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
         _mainWebView.navigationDelegate = self;
@@ -335,6 +341,24 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     }
 
     return self;
+}
+
+- (void)assignWindow:(TestWebExtensionWindow *)window
+{
+    _window = window;
+}
+
+- (void)setWindow:(TestWebExtensionWindow *)newWindow
+{
+    auto *oldWindow = _window;
+
+    _window = newWindow;
+
+    NSUInteger oldIndex = oldWindow ? [oldWindow removeTab:self] : NSNotFound;
+    if (newWindow)
+        [newWindow insertTab:self atIndex:newWindow.tabs.count];
+
+    [_extensionController didMoveTab:self fromIndex:oldIndex inWindow:oldWindow];
 }
 
 - (id<_WKWebExtensionWindow>)windowForWebExtensionContext:(_WKWebExtensionContext *)context
@@ -373,7 +397,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesLoading forTab:self];
 }
 
-- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+- (void)_webView:(WKWebView *)webView navigationDidFinishDocumentLoad:(WKNavigation *)navigation
 {
     [_extensionController didChangeTabProperties:_WKWebExtensionTabChangedPropertiesTitle | _WKWebExtensionTabChangedPropertiesURL forTab:self];
 }
@@ -627,6 +651,27 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         [_extensionController didActivateTab:_activeTab previousActiveTab:previousActiveTab];
 }
 
+- (NSUInteger)removeTab:(TestWebExtensionTab *)tab
+{
+    NSUInteger oldIndex = [_tabs indexOfObject:tab];
+    if (oldIndex == NSNotFound)
+        return oldIndex;
+
+    [_tabs removeObjectAtIndex:oldIndex];
+
+    if (_activeTab == tab)
+        _activeTab = _tabs.firstObject;
+
+    return oldIndex;
+}
+
+- (void)insertTab:(TestWebExtensionTab *)tab atIndex:(NSUInteger)index
+{
+    ASSERT(index <= _tabs.count);
+
+    [_tabs insertObject:tab atIndex:index];
+}
+
 - (TestWebExtensionTab *)openNewTab
 {
     return [self openNewTabAtIndex:_tabs.count];
@@ -705,7 +750,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         [oldWindow->_tabs removeObjectAtIndex:oldIndex];
         [_tabs insertObject:tab atIndex:newIndex];
 
-        tab.window = self;
+        [tab assignWindow:self];
 
         [_extensionController didMoveTab:tab fromIndex:oldIndex inWindow:oldWindow];
 
@@ -718,7 +763,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     [_tabs removeObjectAtIndex:oldIndex];
     [_tabs insertObject:tab atIndex:newIndex];
 
-    [_extensionController didMoveTab:tab fromIndex:oldIndex inWindow:nil];
+    [_extensionController didMoveTab:tab fromIndex:oldIndex inWindow:self];
 }
 
 - (NSArray<id<_WKWebExtensionTab>> *)tabsForWebExtensionContext:(_WKWebExtensionContext *)context

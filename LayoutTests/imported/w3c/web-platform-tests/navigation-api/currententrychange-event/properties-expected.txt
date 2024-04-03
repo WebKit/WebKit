@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT NavigationCurrentEntryChangeEvent's properties Test timed out
+PASS NavigationCurrentEntryChangeEvent's properties
 

@@ -95,7 +95,7 @@ static std::optional<std::string> computeSHA1HashStringForContext(CGContextRef b
 #endif
     {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            sha1.addBytes(bitmapData, 4 * pixelsWide);
+            sha1.addBytes(std::span { bitmapData, 4 * pixelsWide });
             bitmapData += bytesPerRow;
         }
     }

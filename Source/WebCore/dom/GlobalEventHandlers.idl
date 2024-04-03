@@ -112,8 +112,8 @@ interface mixin GlobalEventHandlers {
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchmove;
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchstart;
     [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledBySetting=TouchEventsEnabled] attribute EventHandler ontouchforcechange;
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
-    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable] attribute EventHandler onwebkitmouseforceup;
 };

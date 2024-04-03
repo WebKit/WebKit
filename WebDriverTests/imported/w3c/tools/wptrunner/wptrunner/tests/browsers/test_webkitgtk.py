@@ -7,9 +7,11 @@ import pytest
 
 from wptserve.config import ConfigBuilder
 from ..base import active_products
-from wptrunner import environment, products
+from wptrunner import environment, products, testloader, wptcommandline
 
-test_paths = {"/": {"tests_path": join(dirname(__file__), "..", "..", "..", "..", "..")}}  # repo root
+wpt_root = join(dirname(__file__), "..", "..", "..", "..")
+
+test_paths = {"/": wptcommandline.TestRoot(wpt_root, wpt_root)}
 environment.do_delayed_imports(None, test_paths)
 
 logger = logging.getLogger()
@@ -44,6 +46,7 @@ def test_webkitgtk_certificate_domain_list(product):
     kwargs["pause_after_test"] = False
     kwargs["pause_on_unexpected"] = False
     kwargs["debug_test"] = False
+    kwargs["subsuite"] = testloader.Subsuite("", config={})
     with ConfigBuilder(logger,
                        browser_host="example.net",
                        alternate_hosts={"alt": "example.org"},
@@ -62,13 +65,13 @@ def test_webkitgtk_certificate_domain_list(product):
                                                          MockEnvironment(env_config),
                                                          {},
                                                          **kwargs)
-        assert('capabilities' in executor_args)
-        assert('webkitgtk:browserOptions' in executor_args['capabilities'])
-        assert('certificates' in executor_args['capabilities']['webkitgtk:browserOptions'])
+        assert 'capabilities' in executor_args
+        assert 'webkitgtk:browserOptions' in executor_args['capabilities']
+        assert 'certificates' in executor_args['capabilities']['webkitgtk:browserOptions']
         cert_list = executor_args['capabilities']['webkitgtk:browserOptions']['certificates']
         for valid_domain in valid_domains_test:
-            assert(domain_is_inside_certificate_list_cert(valid_domain, cert_list, cert_file))
-            assert(not domain_is_inside_certificate_list_cert(valid_domain, cert_list, cert_file + ".backup_non_existent"))
+            assert domain_is_inside_certificate_list_cert(valid_domain, cert_list, cert_file)
+            assert not domain_is_inside_certificate_list_cert(valid_domain, cert_list, cert_file + ".backup_non_existent")
         for invalid_domain in invalid_domains_test:
-            assert(not domain_is_inside_certificate_list_cert(invalid_domain, cert_list, cert_file))
-            assert(not domain_is_inside_certificate_list_cert(invalid_domain, cert_list, cert_file + ".backup_non_existent"))
+            assert not domain_is_inside_certificate_list_cert(invalid_domain, cert_list, cert_file)
+            assert not domain_is_inside_certificate_list_cert(invalid_domain, cert_list, cert_file + ".backup_non_existent")

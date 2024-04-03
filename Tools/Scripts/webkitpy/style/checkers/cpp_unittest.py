@@ -2353,6 +2353,10 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('foo (Foo::*bar)(',
                          'Extra space before ( in function call'
                          '  [whitespace/parens] [4]')
+        self.assert_lint('void foo(int bar, Function<void (std::optional<double>)>&&);',
+                         '')
+        self.assert_lint('void foo(int bar, std::function<void (dummy)>&&);',
+                         '')
         self.assert_lint('typedef foo (Foo::*bar)(', '')
         self.assert_lint('(foo)(bar)', '')
         self.assert_lint('Foo (*foo)(bar)', '')
@@ -4786,7 +4790,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'foo.cpp')
         self.assert_multi_line_lint(
             'namespace IPC {\n'
-            'Decoder::Decoder(DataReference buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)\n'
+            'Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)\n'
             '    : m_buffer { buffer }\n'
             '    , m_bufferPosition { m_buffer.begin() }\n'
             '    , m_bufferDeallocator { WTFMove(bufferDeallocator) }\n'
@@ -6255,11 +6259,6 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('typedef struct _Eina_Rectangle Eina_Rectangle;', '')
         self.assert_lint('typedef struct _Evas_Object Evas_Object;', '')
         self.assert_lint('typedef struct _Ewk_History_Item Ewk_History_Item;', '')
-
-        # NPAPI functions that start with NPN_, NPP_ or NP_ are allowed.
-        self.assert_lint('void NPN_Status(NPP, const char*)', '')
-        self.assert_lint('NPError NPP_SetWindow(NPP instance, NPWindow *window)', '')
-        self.assert_lint('NPObject* NP_Allocate(NPP, NPClass*)', '')
 
         # const_iterator is allowed as well.
         self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')

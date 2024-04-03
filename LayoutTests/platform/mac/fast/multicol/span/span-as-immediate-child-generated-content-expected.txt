@@ -205,7 +205,7 @@ layer at (13,1362) size 367x700
       RenderInline {SPAN} at (0,0) size 43x18
         RenderText {#text} at (0,0) size 43x18
           text run at (0,0) width 43: "Lorem"
-      RenderText {#text} at (42,0) size 367x198
+      RenderText {#text} at (0,0) size 367x198
         text run at (42,0) width 322: " ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"
@@ -268,7 +268,7 @@ layer at (13,1814) size 367x702
       RenderInline {SPAN} at (0,0) size 43x18
         RenderText {#text} at (0,0) size 43x18
           text run at (0,0) width 43: "Lorem"
-      RenderText {#text} at (42,0) size 367x198
+      RenderText {#text} at (0,0) size 367x198
         text run at (42,0) width 322: " ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"

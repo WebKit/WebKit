@@ -85,11 +85,11 @@ fn testAbstractFloat()
 {
     // CHECK-L: value NaN cannot be represented as '<AbstractFloat>'
     _ = 42.0 % 0.0;
-    // CHECK-L: value NaN cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(0, NaN) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = 42.0 % vec2(1.0, 0.0);
-    // CHECK-L: value NaN cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(NaN, NaN) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = vec2(42.0) % 0.0;
-    // CHECK-L: value NaN cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(0, NaN) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = vec2(42.0) % vec2(1.0, 0.0);
 
     // CHECK-NOT-L: modulo by zero
@@ -123,11 +123,11 @@ fn testF32()
 {
     // CHECK-L: value NaN cannot be represented as 'f32'
     _ = 42f % 0f;
-    // CHECK-L: value NaN cannot be represented as 'f32'
+    // CHECK-L: value vec2(0f, NaN) cannot be represented as 'vec2<f32>'
     _ = 42f % vec2(1f, 0f);
-    // CHECK-L: value NaN cannot be represented as 'f32'
+    // CHECK-L: value vec2(NaN, NaN) cannot be represented as 'vec2<f32>'
     _ = vec2(42f) % 0f;
-    // CHECK-L: value NaN cannot be represented as 'f32'
+    // CHECK-L: value vec2(0f, NaN) cannot be represented as 'vec2<f32>'
     _ = vec2(42f) % vec2(1f, 0f);
 
     let x = 42f;

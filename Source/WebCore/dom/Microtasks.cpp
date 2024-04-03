@@ -115,4 +115,12 @@ void MicrotaskQueue::addCheckpointTask(std::unique_ptr<EventLoopTask>&& task)
     m_checkpointTasks.append(WTFMove(task));
 }
 
+bool MicrotaskQueue::hasMicrotasksForFullyActiveDocument() const
+{
+    return m_microtaskQueue.containsIf([](auto& task) {
+        auto group = task->group();
+        return group && !group->isStoppedPermanently() && !group->isSuspended();
+    });
+}
+
 } // namespace WebCore

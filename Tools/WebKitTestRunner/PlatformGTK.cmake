@@ -11,6 +11,8 @@ list(APPEND WebKitTestRunner_SOURCES
     gtk/TestControllerGtk.cpp
     gtk/UIScriptControllerGtk.cpp
     gtk/main.cpp
+
+    skia/TestInvocationSkia.cpp
 )
 
 list(APPEND WebKitTestRunner_PRIVATE_INCLUDE_DIRECTORIES

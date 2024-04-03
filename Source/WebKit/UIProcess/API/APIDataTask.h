@@ -31,8 +31,13 @@
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+class ResourceError;
+}
+
 namespace WebKit {
 class NetworkProcessProxy;
+class ProcessThrottlerActivity;
 class WebPageProxy;
 }
 
@@ -56,9 +61,10 @@ public:
     const DataTaskClient& client() const { return m_client.get(); }
     void setClient(Ref<DataTaskClient>&&);
     void networkProcessCrashed();
+    void didCompleteWithError(WebCore::ResourceError&&);
 
 private:
-    DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&);
+    DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&, bool shouldRunAtForegroundPriority);
 
     WebKit::DataTaskIdentifier m_identifier;
     WeakPtr<WebKit::WebPageProxy> m_page;
@@ -66,6 +72,7 @@ private:
     WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;
     std::optional<PAL::SessionID> m_sessionID;
     Ref<DataTaskClient> m_client;
+    std::unique_ptr<WebKit::ProcessThrottlerActivity> m_activity;
 };
 
 } // namespace API

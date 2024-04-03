@@ -43,7 +43,7 @@ layer at (0,0) size 785x1005
             text run at (5,0) width 699: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to gray."
         RenderListItem {LI} at (40,18) size 679x54 [bgcolor=#FFFFFF]
           RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (23,0) size 677x53
+          RenderText {#text} at (2,0) size 677x53
             text run at (23,0) width 656: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
             text run at (2,18) width 61: "checked. "
             text run at (62,18) width 617: "This list item has its right margin also set to 25 pixels, which should combine with the list's margin"
@@ -66,12 +66,12 @@ layer at (0,0) size 785x1005
         RenderTableSection {TBODY} at (1,1) size 767x434
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x408
             RenderTableCell {TD} at (0,217) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+              RenderText {#text} at (4,195) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x408 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18 [bgcolor=#C0C0C0]

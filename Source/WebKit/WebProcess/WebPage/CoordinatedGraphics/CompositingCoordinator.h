@@ -38,6 +38,7 @@
 #include <WebCore/NicosiaPlatformLayer.h>
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/NicosiaSceneIntegration.h>
+#include <wtf/WorkerPool.h>
 
 namespace Nicosia {
 class ImageBackingStore;
@@ -49,6 +50,7 @@ namespace WebCore {
 class GraphicsContext;
 class GraphicsLayer;
 class Image;
+class SkiaAcceleratedBufferPool;
 }
 
 namespace WebKit {
@@ -95,7 +97,12 @@ private:
     WebCore::FloatRect visibleContentsRect() const override;
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
+#if USE(CAIRO)
     Nicosia::PaintingEngine& paintingEngine() override;
+#elif USE(SKIA)
+    WebCore::SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const override { return m_skiaAcceleratedBufferPool.get(); }
+    WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
+#endif
     RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
 
     // GraphicsLayerFactory
@@ -125,7 +132,12 @@ private:
 
     HashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
 
+#if USE(CAIRO)
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
+#elif USE(SKIA)
+    std::unique_ptr<WebCore::SkiaAcceleratedBufferPool> m_skiaAcceleratedBufferPool;
+    RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
+#endif
     HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.

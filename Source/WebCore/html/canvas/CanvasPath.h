@@ -52,7 +52,7 @@ public:
     ExceptionOr<void> ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngled, bool anticlockwise);
     void rect(float x, float y, float width, float height);
     ExceptionOr<void> roundRect(float x, float y, float width, float height, const RadiusVariant& radii);
-    ExceptionOr<void> roundRect(float x, float y, float width, float height, const std::span<const RadiusVariant>& radii);
+    ExceptionOr<void> roundRect(float x, float y, float width, float height, std::span<const RadiusVariant> radii);
 
     float currentX() const;
     float currentY() const;

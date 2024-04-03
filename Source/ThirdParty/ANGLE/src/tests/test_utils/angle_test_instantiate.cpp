@@ -309,6 +309,11 @@ bool IsPixel6()
     return IsAndroidDevice("Pixel 6");
 }
 
+bool IsGalaxyS22()
+{
+    return IsAndroidDevice("SM-S901B");
+}
+
 bool IsNVIDIAShield()
 {
     return IsAndroidDevice("SHIELD Android TV");
@@ -467,6 +472,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
 
                         // Win ES emulation is currently only supported on NVIDIA.
                         return IsNVIDIA(vendorID);
+                    case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+                        return true;
                     default:
                         return false;
                 }
@@ -495,6 +502,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                 {
                     return false;
                 }
+                return true;
+            case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
                 return true;
             case EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE:
                 if (!IsMetalRendererAvailable())
@@ -571,6 +580,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
         switch (param.getRenderer())
         {
             case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
+                return true;
+            case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
                 return true;
             case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
                 // http://issuetracker.google.com/173004081
@@ -705,6 +716,12 @@ bool IsPlatformAvailable(const PlatformParameters &param)
 
         case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
 #if !defined(ANGLE_ENABLE_NULL)
+            return false;
+#else
+            break;
+#endif
+        case EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE:
+#if !defined(ANGLE_ENABLE_WGPU)
             return false;
 #else
             break;

@@ -31,6 +31,7 @@
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIAlertController_Private.h>
+#import <UIKit/UIApplication+iOSMac_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIBlurEffect_Private.h>
@@ -116,26 +117,6 @@
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDropInteraction.h>
 #import <UIKit/_UITextDragCaretView.h>
-#endif
-
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#import <UIKit/UIAsyncTextInput.h>
-#import <UIKit/UIAsyncTextInputClient.h>
-#import <UIKit/UIAsyncTextInteraction.h>
-#import <UIKit/UIKeyEventContext.h>
-#endif
-
-#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
-#import <UIKit/UIAsyncTextInteractionDelegate.h>
-#endif
-
-#if HAVE(UI_ASYNC_DRAG_INTERACTION)
-#import <UIKit/UIDragInteraction_AsyncSupport.h>
-#import <UIKit/_UIAsyncDragInteraction.h>
-#endif
-
-#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-#import <UIKit/_UIContextMenuAsyncConfiguration.h>
 #endif
 
 #if HAVE(UIFINDINTERACTION)
@@ -434,6 +415,7 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @class FBSDisplayConfiguration;
 @interface UIScreen ()
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
+@property (nonatomic, readonly) CGRect _referenceBounds;
 @end
 
 @interface UIScrollView ()
@@ -446,8 +428,10 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
 @property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
 @property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
+#if !HAVE(BROWSER_ENGINE_SUPPORTING_API)
 @property (nonatomic) BOOL bouncesHorizontally;
 @property (nonatomic) BOOL bouncesVertically;
+#endif
 @property (nonatomic, setter=_setAllowsParentToBeginHorizontally:) BOOL _allowsParentToBeginHorizontally;
 @property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
@@ -509,8 +493,6 @@ typedef enum {
 - (void)layoutHasChanged;
 @end
 
-@class UITextInputArrowKeyHistory;
-
 @protocol UITextInputPrivate <UITextInput, UITextInputTokenizer, UITextInputTraits_Private>
 @optional
 - (BOOL)requiresKeyEvents;
@@ -564,6 +546,13 @@ typedef enum {
 - (pid_t)_hostProcessIdentifier;
 @property (readonly) NSString *_hostApplicationBundleIdentifier;
 @end
+
+@interface UIViewController (Private)
+- (/* nullable */ UIPresentationController *)_existingPresentationControllerImmediate:(BOOL)immediate effective:(BOOL)effective;
+@end
+
+extern NSString * const UIPresentationControllerDismissalTransitionDidEndNotification;
+extern NSString * const UIPresentationControllerDismissalTransitionDidEndCompletedKey;
 
 @interface _UIViewControllerTransitionContext : NSObject <UIViewControllerContextTransitioning>
 @end
@@ -697,7 +686,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @interface UIWKTextInteractionAssistant ()
 - (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
-- (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
@@ -1027,6 +1015,10 @@ extern NSNotificationName const _UIWindowSceneDidEndLiveResizeNotification;
 
 #endif // HAVE(UI_WINDOW_SCENE_LIVE_RESIZE)
 
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+extern void _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor(UIUserInterfaceIdiom, CGFloat scaleFactor);
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
@@ -1203,55 +1195,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-
-@interface UIAsyncTextInteraction (Staging_117831560)
-
-- (void)presentEditMenuForSelection;
-- (void)dismissEditMenuForSelection;
-
-- (void)selectionChanged;
-- (void)editabilityChanged;
-
-@property (nonatomic, readonly) UITextSelectionDisplayInteraction *textSelectionDisplayInteraction;
-
-#if USE(UICONTEXTMENU)
-@property (nonatomic, weak) id<UIContextMenuInteractionDelegate> contextMenuInteractionDelegate;
-@property (nonatomic, readonly) UIContextMenuInteraction *contextMenuInteraction;
-#endif
-
-@end
-
-#if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
-
-typedef struct {
-    NSInteger offset;
-    NSInteger length;
-} UIDirectionalTextRange;
-
-#endif // !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
-
-@interface UIKeyEventContext (Staging_118307536)
-@property (nonatomic, assign, readwrite) BOOL shouldEvaluateForInputSystemHandling;
-@end
-
-@protocol UIAsyncTextInputDelegate_Staging<UIAsyncTextInputDelegate>
-- (void)deferReplaceTextActionToSystem:(id)sender; // Added in rdar://118307558.
-@end
-
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
-
-#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-
-@interface _UIContextMenuAsyncConfiguration (Staging_119442063)
-- (BOOL)fulfillUsingConfiguration:(UIContextMenuConfiguration *)configuration;
-@end
-
-#endif
-
 @interface UIResponder (Staging_118307086)
 
 - (void)addShortcut:(id)sender;
+- (void)lookup:(id)sender;
 - (void)define:(id)sender;
 - (void)promptForReplace:(id)sender;
 - (void)share:(id)sender;
@@ -1264,21 +1211,13 @@ typedef struct {
 
 @end
 
-#if !defined(UI_SHIFT_KEY_STATE_ENUM)
-
-typedef NS_ENUM(NSInteger, UIShiftKeyState) {
-    UIShiftKeyStateNone = 0,
-    UIShiftKeyStateShifted,
-    UIShiftKeyStateCapsLocked
-};
-
-#endif
-
 @interface UIResponder (Internal)
 - (BOOL)_requiresKeyboardWhenFirstResponder;
 - (BOOL)_requiresKeyboardResetOnReload;
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
 @end
+
+@class UITextInputArrowKeyHistory;
 
 WTF_EXTERN_C_BEGIN
 

@@ -1,0 +1,46 @@
+
+PASS Set attribute via attribute node on div.src.
+PASS Set attribute via attributenode.value on div.src.
+PASS Set attribute via NamedNodeMap.setNamedItem on div.src.
+PASS Set attribute via attribute node on div.srcdoc.
+PASS Set attribute via attributenode.value on div.srcdoc.
+PASS Set attribute via NamedNodeMap.setNamedItem on div.srcdoc.
+PASS Set attribute via attributenode.value on div.onclick.
+PASS Set attribute via NamedNodeMap.setNamedItem on div.onclick.
+PASS Set attribute via attribute node on div.bla.
+PASS Set attribute via attributenode.value on div.bla.
+PASS Set attribute via NamedNodeMap.setNamedItem on div.bla.
+PASS Set attribute via attribute node on script.src.
+PASS Set attribute via attributenode.value on script.src.
+PASS Set attribute via NamedNodeMap.setNamedItem on script.src.
+PASS Set attribute via attribute node on script.srcdoc.
+PASS Set attribute via attributenode.value on script.srcdoc.
+PASS Set attribute via NamedNodeMap.setNamedItem on script.srcdoc.
+PASS Set attribute via attributenode.value on script.onclick.
+PASS Set attribute via NamedNodeMap.setNamedItem on script.onclick.
+PASS Set attribute via attribute node on script.bla.
+PASS Set attribute via attributenode.value on script.bla.
+PASS Set attribute via NamedNodeMap.setNamedItem on script.bla.
+PASS Set attribute via attribute node on embed.src.
+PASS Set attribute via attributenode.value on embed.src.
+PASS Set attribute via NamedNodeMap.setNamedItem on embed.src.
+PASS Set attribute via attribute node on embed.srcdoc.
+PASS Set attribute via attributenode.value on embed.srcdoc.
+PASS Set attribute via NamedNodeMap.setNamedItem on embed.srcdoc.
+PASS Set attribute via attributenode.value on embed.onclick.
+PASS Set attribute via NamedNodeMap.setNamedItem on embed.onclick.
+PASS Set attribute via attribute node on embed.bla.
+PASS Set attribute via attributenode.value on embed.bla.
+PASS Set attribute via NamedNodeMap.setNamedItem on embed.bla.
+PASS Set attribute via attribute node on iframe.src.
+PASS Set attribute via attributenode.value on iframe.src.
+PASS Set attribute via NamedNodeMap.setNamedItem on iframe.src.
+PASS Set attribute via attribute node on iframe.srcdoc.
+PASS Set attribute via attributenode.value on iframe.srcdoc.
+PASS Set attribute via NamedNodeMap.setNamedItem on iframe.srcdoc.
+PASS Set attribute via attributenode.value on iframe.onclick.
+PASS Set attribute via NamedNodeMap.setNamedItem on iframe.onclick.
+PASS Set attribute via attribute node on iframe.bla.
+PASS Set attribute via attributenode.value on iframe.bla.
+PASS Set attribute via NamedNodeMap.setNamedItem on iframe.bla.
+

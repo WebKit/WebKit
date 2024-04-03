@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+let didFireTouchStartEvent = false;
+let didFireTouchEndEvent = false;
+
+description('This tests triggering touch event on an element after document.open. The element should receive touch event.')
+
+window.addEventListener('load', async () => {
+    let target = document.getElementById('target');
+    target.style = 'width: 200px; height: 200px; background-color: silver; margin:20px;'
+    let description = document.getElementById('description');
+    let console2 = document.getElementById('console');
+
+    target.addEventListener('touchstart', (event) => didFireTouchStartEvent = true, false);
+    target.addEventListener('touchend', (event) => didFireTouchEndEvent = true, false);
+    target.remove();
+
+    document.open();
+    document.write('<!DOCTYPE html><head><body>');
+    document.close();
+    document.body.append(target, description, console2);
+
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.activateElement(target);
+
+    shouldBeTrue('didFireTouchStartEvent');
+    shouldBeTrue('didFireTouchEndEvent');
+
+    finishJSTest();
+
+    // FIXME: This shouldn't be necessary but somehow it is.
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</head>
+<body>
+    <div id="target"></div>
+    <div id="console"></div>
+</body>
+</html>

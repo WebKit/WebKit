@@ -1,0 +1,82 @@
+Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
+Blocked access to external URL https://example.test/
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+hello
+hello
+
+hello
+
+
+PASS TT disabled: embed.src = TrustedScript on a connected element.
+PASS TT disabled: embed.src = TrustedScript on a non-connected element.
+PASS TT disabled: embed.src = String on a connected element.
+PASS TT disabled: embed.src = String on a non-connected element.
+PASS TT disabled: script.src = TrustedScript on a connected element.
+PASS TT disabled: script.src = TrustedScript on a non-connected element.
+PASS TT disabled: script.src = String on a connected element.
+PASS TT disabled: script.src = String on a non-connected element.
+PASS TT disabled: div.innerHTML = TrustedHTML on a connected element.
+PASS TT disabled: div.innerHTML = TrustedHTML on a non-connected element.
+PASS TT disabled: div.innerHTML = String on a connected element.
+PASS TT disabled: div.innerHTML = String on a non-connected element.
+PASS TT disabled: iframe.srcdoc = TrustedHTML on a connected element.
+PASS TT disabled: iframe.srcdoc = TrustedHTML on a non-connected element.
+PASS TT disabled: iframe.srcdoc = String on a connected element.
+PASS TT disabled: iframe.srcdoc = String on a non-connected element.
+PASS TT disabled: script.text = TrustedScript on a connected element.
+PASS TT disabled: script.text = TrustedScript on a non-connected element.
+PASS TT disabled: script.text = String on a connected element.
+PASS TT disabled: script.text = String on a non-connected element.
+PASS TT disabled: script.innerText = TrustedScript on a connected element.
+PASS TT disabled: script.innerText = TrustedScript on a non-connected element.
+PASS TT disabled: script.innerText = String on a connected element.
+PASS TT disabled: script.innerText = String on a non-connected element.
+PASS TT disabled: script.textContent = TrustedScript on a connected element.
+PASS TT disabled: script.textContent = TrustedScript on a non-connected element.
+PASS TT disabled: script.textContent = String on a connected element.
+PASS TT disabled: script.textContent = String on a non-connected element.
+PASS TT enabled: embed.src = TrustedScript on a connected element.
+PASS TT enabled: embed.src = TrustedScript on a non-connected element.
+PASS TT enabled: embed.src = String on a connected element.
+PASS TT enabled: embed.src = String on a non-connected element.
+PASS TT enabled: script.src = TrustedScript on a connected element.
+PASS TT enabled: script.src = TrustedScript on a non-connected element.
+PASS TT enabled: script.src = String on a connected element.
+PASS TT enabled: script.src = String on a non-connected element.
+PASS TT enabled: div.innerHTML = TrustedHTML on a connected element.
+PASS TT enabled: div.innerHTML = TrustedHTML on a non-connected element.
+PASS TT enabled: div.innerHTML = String on a connected element.
+PASS TT enabled: div.innerHTML = String on a non-connected element.
+PASS TT enabled: iframe.srcdoc = TrustedHTML on a connected element.
+PASS TT enabled: iframe.srcdoc = TrustedHTML on a non-connected element.
+PASS TT enabled: iframe.srcdoc = String on a connected element.
+PASS TT enabled: iframe.srcdoc = String on a non-connected element.
+PASS TT enabled: script.text = TrustedScript on a connected element.
+PASS TT enabled: script.text = TrustedScript on a non-connected element.
+PASS TT enabled: script.text = String on a connected element.
+PASS TT enabled: script.text = String on a non-connected element.
+PASS TT enabled: script.innerText = TrustedScript on a connected element.
+PASS TT enabled: script.innerText = TrustedScript on a non-connected element.
+FAIL TT enabled: script.innerText = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
+FAIL TT enabled: script.innerText = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
+PASS TT enabled: script.textContent = TrustedScript on a connected element.
+PASS TT enabled: script.textContent = TrustedScript on a non-connected element.
+FAIL TT enabled: script.textContent = String on a connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
+FAIL TT enabled: script.textContent = String on a non-connected element. assert_throws_js: function "_ => { elem[attr] = value; }" did not throw
+

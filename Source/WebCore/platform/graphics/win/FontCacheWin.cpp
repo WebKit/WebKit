@@ -412,7 +412,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return fontForPlatformData(platformData);
 }
 
-static LONG toGDIFontWeight(FontSelectionValue fontWeight)
+LONG toGDIFontWeight(FontSelectionValue fontWeight)
 {
     if (fontWeight < FontSelectionValue(150))
         return FW_THIN;
@@ -433,12 +433,12 @@ static LONG toGDIFontWeight(FontSelectionValue fontWeight)
     return FW_HEAVY;
 }
 
-static inline bool isGDIFontWeightBold(LONG gdiFontWeight)
+bool isGDIFontWeightBold(LONG gdiFontWeight)
 {
     return gdiFontWeight >= FW_SEMIBOLD;
 }
 
-static LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
+LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
 {
     if (equalLettersIgnoringASCIICase(family, "lucida grande"_s)) {
         if (gdiFontWeight == FW_NORMAL)
@@ -496,7 +496,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
     return 1;
 }
 
-static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, bool desiredItalic, int size)
+GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeight, bool desiredItalic, int size)
 {
     HWndDC hdc(0);
 
@@ -619,35 +619,6 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     });
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)
-{
-    LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
-    auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
-        fontDescription.computedSize() * cWindowsFontScaleFactor);
-
-    if (!hfont)
-        return nullptr;
-
-    LOGFONT logFont;
-    GetObject(hfont.get(), sizeof(LOGFONT), &logFont);
-
-    bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
-    bool synthesizeItalic = isItalic(fontDescription.italic()) && !logFont.lfItalic;
-
-    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
-
-    bool fontCreationFailed = !result->scaledFont();
-
-    if (fontCreationFailed) {
-        // The creation of the cairo scaled font failed for some reason. We already asserted in debug builds, but to make
-        // absolutely sure that we don't use this font, go ahead and return 0 so that we can fall back to the next
-        // font.
-        return nullptr;
-    }
-
-    return result;
-}
-
 std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
     switch (familyName.length()) {
@@ -677,4 +648,4 @@ void FontCache::platformInvalidate()
 {
 }
 
-}
+} // namespace WebCore

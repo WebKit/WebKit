@@ -29,7 +29,6 @@
 #include "ExceptionHelpers.h"
 #include "HashMapImpl.h"
 #include "JSObject.h"
-#include <wtf/JSValueMalloc.h>
 #include <wtf/MallocPtr.h>
 
 namespace JSC {
@@ -168,10 +167,10 @@ public:
         return bitwise_cast<BucketType*>(this);
     }
 
-    static MallocPtr<WeakMapBuffer, JSValueMalloc> create(uint32_t capacity)
+    static MallocPtr<WeakMapBuffer> create(uint32_t capacity)
     {
         size_t allocationSize = WeakMapBuffer::allocationSize(capacity);
-        auto buffer = MallocPtr<WeakMapBuffer, JSValueMalloc>::malloc(allocationSize);
+        auto buffer = MallocPtr<WeakMapBuffer>::malloc(allocationSize);
         buffer->reset(capacity);
         return buffer;
     }
@@ -408,7 +407,7 @@ private:
     template<typename Appender>
     void takeSnapshotInternal(unsigned limit, Appender);
 
-    MallocPtr<WeakMapBufferType, JSValueMalloc> m_buffer;
+    MallocPtr<WeakMapBufferType> m_buffer;
     uint32_t m_capacity { 0 };
     uint32_t m_keyCount { 0 };
     uint32_t m_deleteCount { 0 };

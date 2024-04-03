@@ -32,10 +32,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 154x28
+        RenderInline {SPAN} at (14,14) size 154x28
           RenderText {#text} at (14,14) size 70x28
             text run at (14,14) width 70: "here is "
-          RenderInline {I} at (0,0) size 43x28
+          RenderInline {I} at (83,14) size 43x28
             RenderText {#text} at (83,14) size 43x28
               text run at (83,14) width 43: "xxxx"
           RenderText {#text} at (125,14) size 43x28

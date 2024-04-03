@@ -17,8 +17,8 @@ layer at (0,0) size 800x266
           RenderText {#text} at (0,0) size 277x39
             text run at (0,0) width 277: "Inside this blue block on the right there"
             text run at (0,21) width 165: "should be a teal box. \x{21E8} "
-          RenderInline {SPAN} at (0,0) size 588x237 [color=#000080]
-            RenderText {#text} at (164,21) size 588x237
+          RenderInline {SPAN} at (0,21) size 588x237 [color=#000080]
+            RenderText {#text} at (0,21) size 588x237
               text run at (164,21) width 113: "FAIL FAIL FAIL"
               text run at (0,42) width 277: "FAIL FAIL FAIL FAIL FAIL FAIL FAIL"
               text run at (0,60) width 82: "FAIL FAIL "

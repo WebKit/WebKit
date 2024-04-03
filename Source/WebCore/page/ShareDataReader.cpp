@@ -80,7 +80,7 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
 
     RawFile file;
     file.fileName = fileName;
-    file.fileData = SharedBuffer::create(static_cast<const unsigned char*>(arrayBuffer->data()), arrayBuffer->byteLength());
+    file.fileData = SharedBuffer::create(arrayBuffer->span());
     m_shareData.files.append(WTFMove(file));
     m_filesReadSoFar++;
 

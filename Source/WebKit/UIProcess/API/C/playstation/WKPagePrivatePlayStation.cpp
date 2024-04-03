@@ -35,13 +35,17 @@
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
 #include <WebCore/Region.h>
-#include <cairo.h>
 #include <wpe/wpe.h>
+
+#if USE(CAIRO)
+#include <cairo.h>
+#endif
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"
 #endif
 
+#if USE(CAIRO)
 static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
 {
     if (!backgroundColor || backgroundColor.value().isVisible())
@@ -54,6 +58,7 @@ static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>
     cairo_set_operator(ctx, CAIRO_OPERATOR_OVER);
     cairo_fill(ctx);
 }
+#endif
 
 void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
 {
@@ -161,6 +166,7 @@ void WKPageHandleWheelEvent(WKPageRef pageRef, WKWheelEvent event)
 
 void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurfaceSize, WKRect wkPaintRect)
 {
+#if USE(CAIRO)
     auto surfaceSize = WebKit::toIntSize(wkSurfaceSize);
     auto paintRect = WebKit::toIntRect(wkPaintRect);
     if (!surfaceData || surfaceSize.isEmpty())
@@ -193,4 +199,7 @@ void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurface
 
     cairo_destroy(ctx);
     cairo_surface_destroy(surface);
+#else
+    // FIXME
+#endif
 }

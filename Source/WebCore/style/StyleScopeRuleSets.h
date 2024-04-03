@@ -60,6 +60,7 @@ public:
 
     bool isAuthorStyleDefined() const { return m_isAuthorStyleDefined; }
     RuleSet* userAgentMediaQueryStyle() const;
+    RuleSet* dynamicViewTransitionsStyle() const;
     RuleSet& authorStyle() const { return *m_authorStyle; }
     RuleSet* userStyle() const;
     RuleSet* styleForCascadeLevel(CascadeLevel);
@@ -75,6 +76,9 @@ public:
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
     const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
+    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
+
+    bool hasSelectorsForStyleAttribute() const;
     bool hasComplexSelectorsForStyleAttribute() const;
 
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }
@@ -93,6 +97,11 @@ public:
 
     RuleFeatureSet& mutableFeatures();
 
+    void setDynamicViewTransitionsStyle(RuleSet* ruleSet)
+    {
+        m_dynamicViewTransitionsStyle = ruleSet;
+    }
+
     bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
 
     bool hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>&);
@@ -104,6 +113,7 @@ private:
 
     RefPtr<RuleSet> m_authorStyle;
     mutable RefPtr<RuleSet> m_userAgentMediaQueryStyle;
+    mutable RefPtr<RuleSet> m_dynamicViewTransitionsStyle;
     RefPtr<RuleSet> m_userStyle;
 
     Resolver& m_styleResolver;
@@ -116,6 +126,8 @@ private:
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
     mutable HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
+
+    mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
 
     mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
 

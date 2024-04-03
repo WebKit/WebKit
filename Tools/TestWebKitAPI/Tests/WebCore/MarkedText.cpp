@@ -63,6 +63,10 @@ std::ostream& operator<<(std::ostream& os, MarkedText::Type type)
     case MarkedText::Type::AppHighlight:
         return os << "AppHighlight";
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    case MarkedText::Type::UnifiedTextReplacement:
+        return os << "UnifiedTextReplacement";
+#endif
     case MarkedText::Type::Unmarked:
         return os << "Unmarked";
     }

@@ -53,6 +53,68 @@ const gl::InternalFormat &GetReadAttachmentInfo(const gl::Context *context,
     return gl::GetSizedInternalFormatInfo(implFormat);
 }
 
+angle::Result CopyTextureSliceLevelToTempBuffer(const gl::Context *context,
+                                                const mtl::TextureRef &srcTexture,
+                                                const mtl::MipmapNativeLevel &mipNativeLevel,
+                                                uint32_t layerIndex,
+                                                mtl::BufferRef *outBuffer)
+{
+    ASSERT(outBuffer);
+
+    ContextMtl *contextMtl           = mtl::GetImpl(context);
+    auto formatId                    = mtl::Format::MetalToAngleFormatID(srcTexture->pixelFormat());
+    const mtl::Format &metalFormat   = contextMtl->getPixelFormat(formatId);
+    const angle::Format &angleFormat = metalFormat.actualAngleFormat();
+
+    uint32_t width       = srcTexture->width(mipNativeLevel);
+    uint32_t height      = srcTexture->height(mipNativeLevel);
+    uint32_t sizeInBytes = width * height * angleFormat.pixelBytes;
+
+    mtl::BufferRef tempBuffer;
+    ANGLE_TRY(mtl::Buffer::MakeBufferWithStorageMode(
+        contextMtl, mtl::Buffer::getStorageModeForSharedBuffer(contextMtl), sizeInBytes, nullptr,
+        &tempBuffer));
+
+    gl::Rectangle region(0, 0, width, height);
+    uint32_t bytesPerRow = angleFormat.pixelBytes * width;
+    uint32_t destOffset  = 0;
+    ANGLE_TRY(mtl::ReadTexturePerSliceBytesToBuffer(context, srcTexture, bytesPerRow, region,
+                                                    mipNativeLevel, layerIndex, destOffset,
+                                                    tempBuffer));
+
+    *outBuffer = tempBuffer;
+    return angle::Result::Continue;
+}
+
+angle::Result Copy2DTextureSlice0Level0ToTempTexture(const gl::Context *context,
+                                                     const mtl::TextureRef &srcTexture,
+                                                     mtl::TextureRef *outTexture)
+{
+    ASSERT(outTexture);
+
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    auto formatId          = mtl::Format::MetalToAngleFormatID(srcTexture->pixelFormat());
+    auto format            = contextMtl->getPixelFormat(formatId);
+
+    mtl::TextureRef tempTexture;
+    ANGLE_TRY(mtl::Texture::Make2DTexture(contextMtl, format, srcTexture->widthAt0(),
+                                          srcTexture->heightAt0(), srcTexture->mipmapLevels(),
+                                          false, true, &tempTexture));
+
+    auto *blitEncoder = contextMtl->getBlitCommandEncoder();
+    blitEncoder->copyTexture(srcTexture,
+                             0,                          // srcStartSlice
+                             mtl::MipmapNativeLevel(0),  // MipmapNativeLevel
+                             tempTexture,                // dst
+                             0,                          // dstStartSlice
+                             mtl::MipmapNativeLevel(0),  // dstStartLevel
+                             1,                          // sliceCount,
+                             1);                         // levelCount
+
+    *outTexture = tempTexture;
+    return angle::Result::Continue;
+}
+
 }  // namespace
 
 // FramebufferMtl implementation
@@ -1513,19 +1575,18 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
         // Reading a texture may be slow if it's an IOSurface because metal has to lock/unlock the
         // surface, whereas copying the texture to non IOSurface texture and then reading from that
         // may be fast depending on the GPU/driver.
-        ANGLE_TRY(contextMtl->copy2DTextureSlice0Level0ToWorkTexture(texture));
-        texture = contextMtl->getWorkTexture();
+        ANGLE_TRY(Copy2DTextureSlice0Level0ToTempTexture(context, texture, &texture));
     }
 
     if (features.copyTextureToBufferForReadOptimization.enabled)
     {
-        ANGLE_TRY(contextMtl->copyTextureSliceLevelToWorkBuffer(
-            context, texture, renderTarget->getLevelIndex(), renderTarget->getLayerIndex()));
+        mtl::BufferRef buffer;
+        ANGLE_TRY(CopyTextureSliceLevelToTempBuffer(context, texture, renderTarget->getLevelIndex(),
+                                                    renderTarget->getLayerIndex(), &buffer));
 
         int bufferRowPitch =
             texture->width(renderTarget->getLevelIndex()) * readAngleFormat.pixelBytes;
 
-        const mtl::BufferRef &buffer = contextMtl->getWorkBuffer();
         buffer->syncContent(contextMtl, contextMtl->getBlitCommandEncoder());
         const uint8_t *bufferData = buffer->mapReadOnly(contextMtl);
 

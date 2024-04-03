@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LayoutElementBox.h"
+#include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
@@ -38,7 +39,6 @@ namespace Layout {
 
 class BlockFormattingState;
 class BoxGeometry;
-class FlexFormattingState;
 class FormattingContext;
 class FormattingState;
 class InlineContentCache;
@@ -57,11 +57,9 @@ public:
 
     BlockFormattingState& ensureBlockFormattingState(const ElementBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ElementBox& formattingContextRoot);
-    FlexFormattingState& ensureFlexFormattingState(const ElementBox& formattingContextRoot);
 
     BlockFormattingState& formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const;
     TableFormattingState& formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const;
-    FlexFormattingState& formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const;
 
     FormattingState& formattingStateForFormattingContext(const ElementBox& formattingRoot) const;
 
@@ -85,6 +83,7 @@ public:
     bool inQuirksMode() const { return m_quirksMode == QuirksMode::Yes; }
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inStandardsMode() const { return m_quirksMode == QuirksMode::No; }
+    const SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
 
     const ElementBox& root() const { return m_rootContainer; }
 
@@ -93,12 +92,9 @@ private:
     BoxGeometry& ensureGeometryForBoxSlow(const Box&);
 
     HashMap<const ElementBox*, std::unique_ptr<InlineContentCache>> m_inlineContentCaches;
+
     HashMap<const ElementBox*, std::unique_ptr<BlockFormattingState>> m_blockFormattingStates;
     HashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
-    HashMap<const ElementBox*, std::unique_ptr<FlexFormattingState>> m_flexFormattingStates;
-
-    std::unique_ptr<InlineContentCache> m_rootInlineContentCacheForIntegration;
-    std::unique_ptr<FlexFormattingState> m_rootFlexFormattingStateForIntegration;
 
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
@@ -107,6 +103,7 @@ private:
     QuirksMode m_quirksMode { QuirksMode::No };
 
     CheckedRef<const ElementBox> m_rootContainer;
+    Ref<SecurityOrigin> m_securityOrigin;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const

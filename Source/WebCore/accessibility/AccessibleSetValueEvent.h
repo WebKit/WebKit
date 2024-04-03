@@ -44,9 +44,6 @@ public:
 private:
     AccessibleSetValueEvent(const AtomString& type, const AtomString& value);
 
-    // Event.
-    EventInterface eventInterface() const override { return AccessibleSetValueEventInterfaceType; }
-
     const AtomString m_value;
 };
 

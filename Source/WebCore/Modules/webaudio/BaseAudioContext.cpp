@@ -73,6 +73,7 @@
 #include "PannerNode.h"
 #include "PeriodicWave.h"
 #include "PeriodicWaveOptions.h"
+#include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "StereoPannerNode.h"
@@ -230,6 +231,7 @@ void BaseAudioContext::setState(State state)
     if (m_state != state) {
         m_state = state;
         queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
     }
 
     size_t stateIndex = static_cast<size_t>(state);
@@ -777,9 +779,9 @@ void BaseAudioContext::removeMarkedSummingJunction(AudioSummingJunction* summing
     m_dirtySummingJunctions.remove(summingJunction);
 }
 
-EventTargetInterface BaseAudioContext::eventTargetInterface() const
+enum EventTargetInterfaceType BaseAudioContext::eventTargetInterface() const
 {
-    return BaseAudioContextEventTargetInterfaceType;
+    return EventTargetInterfaceType::BaseAudioContext;
 }
 
 void BaseAudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)

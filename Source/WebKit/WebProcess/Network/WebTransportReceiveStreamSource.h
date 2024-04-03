@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-class WebTransportReceiveStreamSource : public WebCore::ReadableStreamSource {
+class WebTransportReceiveStreamSource : public WebCore::RefCountedReadableStreamSource {
 public:
     static Ref<WebTransportReceiveStreamSource> create() { return adoptRef(*new WebTransportReceiveStreamSource()); }
 

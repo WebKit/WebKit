@@ -34,6 +34,9 @@ typedef (
 #if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
     MediaSource or
 #endif
+#if defined(ENABLE_MEDIA_SOURCE_IN_WORKERS) && ENABLE_MEDIA_SOURCE_IN_WORKERS
+    MediaSourceHandle or
+#endif
     Blob) MediaProvider;
 
 [
@@ -99,9 +102,6 @@ typedef (
     attribute double volume;
     attribute boolean muted;
     [CEReactions=NotNeeded, Reflect=muted] attribute boolean defaultMuted;
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250871
-    [CEReactions=NotNeeded, ImplementedAs=preservesPitch] attribute boolean webkitPreservesPitch;
 
     // The number of bytes consumed by the media decoder.
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;

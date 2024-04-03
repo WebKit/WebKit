@@ -315,10 +315,12 @@ PASS marquee.tabIndex: setAttribute() to "\f7"
 PASS marquee.tabIndex: setAttribute() to " 7"
 PASS marquee.tabIndex: setAttribute() to "\n7"
 PASS marquee.tabIndex: setAttribute() to "\r7"
+PASS marquee.tabIndex: setAttribute() to "7\v"
 PASS marquee.tabIndex: setAttribute() to 1.5
 PASS marquee.tabIndex: setAttribute() to "5%"
 PASS marquee.tabIndex: setAttribute() to "+100"
 PASS marquee.tabIndex: setAttribute() to object "2"
+PASS marquee.tabIndex: setAttribute() to object "3"
 PASS marquee.tabIndex: IDL set to -36
 PASS marquee.tabIndex: IDL set to -1
 PASS marquee.tabIndex: IDL set to 0
@@ -415,6 +417,8 @@ PASS marquee.hspace: setAttribute() to 2147483648
 PASS marquee.hspace: setAttribute() to 4294967295
 PASS marquee.hspace: setAttribute() to 4294967296
 PASS marquee.hspace: setAttribute() to ""
+PASS marquee.hspace: setAttribute() to "-"
+PASS marquee.hspace: setAttribute() to "+"
 PASS marquee.hspace: setAttribute() to "-1"
 PASS marquee.hspace: setAttribute() to "-0"
 PASS marquee.hspace: setAttribute() to "0"
@@ -444,6 +448,12 @@ PASS marquee.hspace: setAttribute() to " 7"
 PASS marquee.hspace: setAttribute() to " 7"
 PASS marquee.hspace: setAttribute() to " 7"
 PASS marquee.hspace: setAttribute() to "　7"
+PASS marquee.hspace: setAttribute() to "\t\v7"
+PASS marquee.hspace: setAttribute() to "\n\v7"
+PASS marquee.hspace: setAttribute() to "\f\v7"
+PASS marquee.hspace: setAttribute() to "\r\v7"
+PASS marquee.hspace: setAttribute() to " \v7"
+PASS marquee.hspace: setAttribute() to "7\v"
 PASS marquee.hspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS marquee.hspace: setAttribute() to undefined
 PASS marquee.hspace: setAttribute() to 1.5
@@ -480,6 +490,8 @@ PASS marquee.scrollAmount: setAttribute() to 2147483648
 PASS marquee.scrollAmount: setAttribute() to 4294967295
 PASS marquee.scrollAmount: setAttribute() to 4294967296
 PASS marquee.scrollAmount: setAttribute() to ""
+PASS marquee.scrollAmount: setAttribute() to "-"
+PASS marquee.scrollAmount: setAttribute() to "+"
 PASS marquee.scrollAmount: setAttribute() to "-1"
 PASS marquee.scrollAmount: setAttribute() to "-0"
 PASS marquee.scrollAmount: setAttribute() to "0"
@@ -509,6 +521,12 @@ PASS marquee.scrollAmount: setAttribute() to " 7"
 PASS marquee.scrollAmount: setAttribute() to " 7"
 PASS marquee.scrollAmount: setAttribute() to " 7"
 PASS marquee.scrollAmount: setAttribute() to "　7"
+PASS marquee.scrollAmount: setAttribute() to "\t\v7"
+PASS marquee.scrollAmount: setAttribute() to "\n\v7"
+PASS marquee.scrollAmount: setAttribute() to "\f\v7"
+PASS marquee.scrollAmount: setAttribute() to "\r\v7"
+PASS marquee.scrollAmount: setAttribute() to " \v7"
+PASS marquee.scrollAmount: setAttribute() to "7\v"
 PASS marquee.scrollAmount: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS marquee.scrollAmount: setAttribute() to undefined
 PASS marquee.scrollAmount: setAttribute() to 1.5
@@ -545,6 +563,8 @@ PASS marquee.scrollDelay: setAttribute() to 2147483648
 PASS marquee.scrollDelay: setAttribute() to 4294967295
 PASS marquee.scrollDelay: setAttribute() to 4294967296
 PASS marquee.scrollDelay: setAttribute() to ""
+PASS marquee.scrollDelay: setAttribute() to "-"
+PASS marquee.scrollDelay: setAttribute() to "+"
 PASS marquee.scrollDelay: setAttribute() to "-1"
 PASS marquee.scrollDelay: setAttribute() to "-0"
 PASS marquee.scrollDelay: setAttribute() to "0"
@@ -574,6 +594,12 @@ PASS marquee.scrollDelay: setAttribute() to " 7"
 PASS marquee.scrollDelay: setAttribute() to " 7"
 PASS marquee.scrollDelay: setAttribute() to " 7"
 PASS marquee.scrollDelay: setAttribute() to "　7"
+PASS marquee.scrollDelay: setAttribute() to "\t\v7"
+PASS marquee.scrollDelay: setAttribute() to "\n\v7"
+PASS marquee.scrollDelay: setAttribute() to "\f\v7"
+PASS marquee.scrollDelay: setAttribute() to "\r\v7"
+PASS marquee.scrollDelay: setAttribute() to " \v7"
+PASS marquee.scrollDelay: setAttribute() to "7\v"
 PASS marquee.scrollDelay: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS marquee.scrollDelay: setAttribute() to undefined
 PASS marquee.scrollDelay: setAttribute() to 1.5
@@ -649,6 +675,8 @@ PASS marquee.vspace: setAttribute() to 2147483648
 PASS marquee.vspace: setAttribute() to 4294967295
 PASS marquee.vspace: setAttribute() to 4294967296
 PASS marquee.vspace: setAttribute() to ""
+PASS marquee.vspace: setAttribute() to "-"
+PASS marquee.vspace: setAttribute() to "+"
 PASS marquee.vspace: setAttribute() to "-1"
 PASS marquee.vspace: setAttribute() to "-0"
 PASS marquee.vspace: setAttribute() to "0"
@@ -678,6 +706,12 @@ PASS marquee.vspace: setAttribute() to " 7"
 PASS marquee.vspace: setAttribute() to " 7"
 PASS marquee.vspace: setAttribute() to " 7"
 PASS marquee.vspace: setAttribute() to "　7"
+PASS marquee.vspace: setAttribute() to "\t\v7"
+PASS marquee.vspace: setAttribute() to "\n\v7"
+PASS marquee.vspace: setAttribute() to "\f\v7"
+PASS marquee.vspace: setAttribute() to "\r\v7"
+PASS marquee.vspace: setAttribute() to " \v7"
+PASS marquee.vspace: setAttribute() to "7\v"
 PASS marquee.vspace: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS marquee.vspace: setAttribute() to undefined
 PASS marquee.vspace: setAttribute() to 1.5
@@ -1052,10 +1086,12 @@ PASS frameset.tabIndex: setAttribute() to "\f7"
 PASS frameset.tabIndex: setAttribute() to " 7"
 PASS frameset.tabIndex: setAttribute() to "\n7"
 PASS frameset.tabIndex: setAttribute() to "\r7"
+PASS frameset.tabIndex: setAttribute() to "7\v"
 PASS frameset.tabIndex: setAttribute() to 1.5
 PASS frameset.tabIndex: setAttribute() to "5%"
 PASS frameset.tabIndex: setAttribute() to "+100"
 PASS frameset.tabIndex: setAttribute() to object "2"
+PASS frameset.tabIndex: setAttribute() to object "3"
 PASS frameset.tabIndex: IDL set to -36
 PASS frameset.tabIndex: IDL set to -1
 PASS frameset.tabIndex: IDL set to 0
@@ -1452,10 +1488,12 @@ PASS frame.tabIndex: setAttribute() to "\f7"
 PASS frame.tabIndex: setAttribute() to " 7"
 PASS frame.tabIndex: setAttribute() to "\n7"
 PASS frame.tabIndex: setAttribute() to "\r7"
+PASS frame.tabIndex: setAttribute() to "7\v"
 PASS frame.tabIndex: setAttribute() to 1.5
 PASS frame.tabIndex: setAttribute() to "5%"
 PASS frame.tabIndex: setAttribute() to "+100"
 PASS frame.tabIndex: setAttribute() to object "2"
+PASS frame.tabIndex: setAttribute() to object "3"
 PASS frame.tabIndex: IDL set to -36
 PASS frame.tabIndex: IDL set to -1
 PASS frame.tabIndex: IDL set to 0
@@ -2093,10 +2131,12 @@ PASS dir.tabIndex: setAttribute() to "\f7"
 PASS dir.tabIndex: setAttribute() to " 7"
 PASS dir.tabIndex: setAttribute() to "\n7"
 PASS dir.tabIndex: setAttribute() to "\r7"
+PASS dir.tabIndex: setAttribute() to "7\v"
 PASS dir.tabIndex: setAttribute() to 1.5
 PASS dir.tabIndex: setAttribute() to "5%"
 PASS dir.tabIndex: setAttribute() to "+100"
 PASS dir.tabIndex: setAttribute() to object "2"
+PASS dir.tabIndex: setAttribute() to object "3"
 PASS dir.tabIndex: IDL set to -36
 PASS dir.tabIndex: IDL set to -1
 PASS dir.tabIndex: IDL set to 0
@@ -2456,10 +2496,12 @@ PASS font.tabIndex: setAttribute() to "\f7"
 PASS font.tabIndex: setAttribute() to " 7"
 PASS font.tabIndex: setAttribute() to "\n7"
 PASS font.tabIndex: setAttribute() to "\r7"
+PASS font.tabIndex: setAttribute() to "7\v"
 PASS font.tabIndex: setAttribute() to 1.5
 PASS font.tabIndex: setAttribute() to "5%"
 PASS font.tabIndex: setAttribute() to "+100"
 PASS font.tabIndex: setAttribute() to object "2"
+PASS font.tabIndex: setAttribute() to object "3"
 PASS font.tabIndex: IDL set to -36
 PASS font.tabIndex: IDL set to -1
 PASS font.tabIndex: IDL set to 0

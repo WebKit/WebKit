@@ -18,18 +18,10 @@ list(APPEND WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}
 )
 
-list(APPEND WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
-    ${WPEBACKEND_FDO_INCLUDE_DIRS}
-)
-
 list(APPEND WebKitGLibAPITestsCore_LIBRARIES
-    Cairo::Cairo
     WebKit::WPEToolingBackends
 )
 
 list(APPEND WebKitGLibAPITest_LIBRARIES
-    ${WPEBACKEND_FDO_LIBRARIES}
-    Cairo::Cairo
-    WPE::libwpe
     WebKit::WPEToolingBackends
 )

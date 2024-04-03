@@ -19,7 +19,10 @@
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
-    window.addEventListener('scroll', () => {
+    Promise.all([
+        new Promise((resolve) => addEventListener('scroll', resolve)),
+        new Promise((resolve) => addEventListener('load', resolve)),
+    ]).then(() => {
         testRunner.notifyDone();
     });
 }

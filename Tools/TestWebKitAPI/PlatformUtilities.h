@@ -40,6 +40,15 @@ OBJC_CLASS NSDictionary;
 typedef double NSTimeInterval;
 #endif
 
+#if PLATFORM(COCOA)
+OBJC_CLASS NSImage;
+OBJC_CLASS NSWindow;
+OBJC_CLASS UIImage;
+OBJC_CLASS UIWindow;
+struct CGImage;
+using CGImageRef = CGImage*;
+#endif
+
 namespace TestWebKitAPI {
 namespace Util {
 
@@ -86,8 +95,17 @@ static inline ::testing::AssertionResult assertWKStringEqual(const char* expecte
 #define EXPECT_WK_STREQ(expected, actual) \
     EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertWKStringEqual, expected, actual)
 
+#if PLATFORM(MAC)
+using PlatformImage = NSImage;
+using PlatformWindow = NSWindow;
+#elif PLATFORM(IOS_FAMILY)
+using PlatformImage = UIImage;
+using PlatformWindow = UIWindow;
+#endif
+
 #if PLATFORM(COCOA)
 extern NSString * const TestPlugInClassNameParameter;
+extern RetainPtr<CGImageRef> convertToCGImage(PlatformImage *);
 #endif
 
 } // namespace Util

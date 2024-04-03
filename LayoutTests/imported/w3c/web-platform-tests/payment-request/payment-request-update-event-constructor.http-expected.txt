@@ -1,3 +1,0 @@
-
-PASS PaymentRequestUpdateEvent constructor must not be exposed in insecure context
-

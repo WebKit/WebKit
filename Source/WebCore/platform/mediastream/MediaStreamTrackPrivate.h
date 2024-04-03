@@ -29,6 +29,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamTrackHintValue.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
@@ -41,6 +42,8 @@ class MediaSample;
 class MediaStreamTrackPrivateSourceObserver;
 class RealtimeMediaSourceCapabilities;
 class WebAudioSourceProvider;
+
+struct MediaStreamTrackDataHolder;
 
 class MediaStreamTrackPrivate final
     : public RefCounted<MediaStreamTrackPrivate>
@@ -63,6 +66,7 @@ public:
         virtual void readyStateChanged(MediaStreamTrackPrivate&) { };
     };
 
+    static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, std::function<void(Function<void()>&&)>&& postTask = { });
     static Ref<MediaStreamTrackPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&& postTask = { });
 
@@ -75,9 +79,8 @@ public:
 
     bool ended() const { return m_isEnded; }
 
-    enum class HintValue { Empty, Speech, Music, Motion, Detail, Text };
-    HintValue contentHint() const { return m_contentHint; }
-    void setContentHint(HintValue);
+    MediaStreamTrackHintValue contentHint() const { return m_contentHint; }
+    void setContentHint(MediaStreamTrackHintValue);
     
     void startProducingData();
     void stopProducingData();
@@ -98,6 +101,8 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     WEBCORE_EXPORT RealtimeMediaSource& source();
+    const RealtimeMediaSource& source() const;
+    RealtimeMediaSource& sourceForProcessor();
     bool hasSource(const RealtimeMediaSource*) const;
 
     RealtimeMediaSource::Type type() const { return m_type; }
@@ -120,7 +125,9 @@ public:
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);
 
+#if ENABLE(WEB_AUDIO)
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
+#endif
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
@@ -136,8 +143,14 @@ public:
 
     friend class MediaStreamTrackPrivateSourceObserver;
 
+    void initializeSettings(RealtimeMediaSourceSettings&& settings) { m_settings = WTFMove(settings); }
+    void initializeCapabilities(RealtimeMediaSourceCapabilities&& capabilities) { m_capabilities = WTFMove(capabilities); }
+
+    UniqueRef<MediaStreamTrackDataHolder> toDataHolder();
+
 private:
     MediaStreamTrackPrivate(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&, String&& id, std::function<void(Function<void()>&&)>&&);
+    MediaStreamTrackPrivate(Ref<const Logger>&&, UniqueRef<MediaStreamTrackDataHolder>&&, std::function<void(Function<void()>&&)>&&);
 
     void initialize();
 
@@ -175,7 +188,7 @@ private:
     bool m_isEnded { false };
     bool m_captureDidFail { false };
     bool m_hasStartedProducingData { false };
-    HintValue m_contentHint { HintValue::Empty };
+    MediaStreamTrackHintValue m_contentHint { MediaStreamTrackHintValue::Empty };
     Ref<const Logger> m_logger;
 #if !RELEASE_LOG_DISABLED
     const void* m_logIdentifier;

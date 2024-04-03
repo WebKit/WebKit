@@ -27,8 +27,6 @@
 
 #if USE(CF)
 
-#import "DataReference.h"
-
 #import <CoreFoundation/CoreFoundation.h>
 #import <wtf/RetainPtr.h>
 

@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 static String makeUTF16(std::vector<UChar> input)
 {
-    return { input.data(), static_cast<unsigned>(input.size()) };
+    return std::span<const UChar> { input };
 }
 
 TEST(WTF_TextBreakIterator, NumGraphemeClusters)
@@ -152,17 +152,17 @@ TEST(WTF_TextBreakIterator, Behaviors)
     {
         auto string = u"ぁぁ"_str;
         auto locale = AtomString("ja"_str);
-        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        CachedTextBreakIterator strictIterator({ string }, { }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
         EXPECT_EQ(strictIterator.following(0), 2);
-        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        CachedTextBreakIterator looseIterator({ string }, { }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
         EXPECT_EQ(looseIterator.following(0), 1);
     }
     {
         auto string = u"中〜"_str;
         auto locale = AtomString("zh-Hans"_str);
-        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        CachedTextBreakIterator strictIterator({ string }, { }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
         EXPECT_EQ(strictIterator.following(0), 2);
-        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        CachedTextBreakIterator looseIterator({ string }, { }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
         EXPECT_EQ(looseIterator.following(0), 1);
     }
 }
@@ -189,7 +189,7 @@ TEST(WTF_TextBreakIterator, ICULine)
     auto context = u"th"_str;
     auto string = u"is is some text"_str;
     ASSERT(!context.is8Bit());
-    WTF::TextBreakIteratorICU iterator(string, context.characters16(), context.length(), WTF::TextBreakIteratorICU::LineMode { WTF::TextBreakIteratorICU::LineMode::Behavior::Default }, AtomString("en_US"_str));
+    WTF::TextBreakIteratorICU iterator(string, context.span16(), WTF::TextBreakIteratorICU::LineMode { WTF::TextBreakIteratorICU::LineMode::Behavior::Default }, AtomString("en_US"_str));
 
     {
         unsigned wordBoundaries[] = { 3, 6, 11, 15 };
@@ -226,7 +226,7 @@ TEST(WTF_TextBreakIterator, ICULine)
         auto context = u"di"_str;
         auto string = u"ctionary order"_str;
         ASSERT(!context.is8Bit());
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         auto result = iterator.following(1);
         ASSERT_TRUE(result.has_value());
         EXPECT_EQ(*result, 9U);
@@ -235,12 +235,12 @@ TEST(WTF_TextBreakIterator, ICULine)
         auto context = u"a "_str;
         auto string = u"word"_str;
         ASSERT(!context.is8Bit());
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         ASSERT_TRUE(iterator.isBoundary(0));
     }
     {
         auto string = u"word"_str;
-        iterator.setText(string, nullptr, 0);
+        iterator.setText(string, { });
         ASSERT_TRUE(iterator.isBoundary(0));
     }
 }
@@ -249,7 +249,7 @@ TEST(WTF_TextBreakIterator, ICUCharacter)
 {
     auto context = u"==>"_str;
     auto string = u" कि <=="_str;
-    WTF::TextBreakIteratorICU iterator(string, context.characters16(), context.length(), WTF::TextBreakIteratorICU::CharacterMode { }, AtomString("hi_IN"_str));
+    WTF::TextBreakIteratorICU iterator(string, context.span16(), WTF::TextBreakIteratorICU::CharacterMode { }, AtomString("hi_IN"_str));
 
     {
         unsigned wordBoundaries[] = { 1, 3, 4, 5, 6, 7 };
@@ -280,7 +280,7 @@ TEST(WTF_TextBreakIterator, Line)
     auto context = u"th"_str;
     auto string = u"is is some text"_str;
     ASSERT(!context.is8Bit());
-    WTF::CachedTextBreakIterator iterator(string, context.characters16(), context.length(), WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en_US"_str));
+    WTF::CachedTextBreakIterator iterator(string, context.span16(), WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en_US"_str));
 
     {
         unsigned wordBoundaries[] = { 3, 6, 11, 15 };
@@ -365,7 +365,7 @@ TEST(WTF_TextBreakIterator, CFWord)
     {
         auto context = u"di"_str;
         auto string = u"ctionary order"_str;
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         auto result = iterator.following(1);
         ASSERT_TRUE(result.has_value());
         EXPECT_EQ(*result, 8U);
@@ -422,7 +422,7 @@ TEST(WTF_TextBreakIterator, CFLine)
     {
         auto context = u"di"_str;
         auto string = u"ctionary order"_str;
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         auto result = iterator.following(1);
         ASSERT_TRUE(result.has_value());
         EXPECT_EQ(*result, 9U);
@@ -430,12 +430,12 @@ TEST(WTF_TextBreakIterator, CFLine)
     {
         auto context = u"a "_str;
         auto string = u"word"_str;
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         ASSERT_TRUE(iterator.isBoundary(0));
     }
     {
         auto string = u"word"_str;
-        iterator.setText(string, nullptr, 0);
+        iterator.setText(string, { });
         ASSERT_TRUE(iterator.isBoundary(0));
     }
 }
@@ -480,7 +480,7 @@ TEST(WTF_TextBreakIterator, CFWordBoundary)
     {
         auto context = u"di"_str;
         auto string = u"ctionary order"_str;
-        iterator.setText(string, context.characters16(), context.length());
+        iterator.setText(string, context.span16());
         auto result = iterator.following(1);
         ASSERT_TRUE(result.has_value());
         EXPECT_EQ(*result, 8U);

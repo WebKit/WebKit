@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (50,50) size 340x260
+  RenderSVGTransformableContainer {g} at (50,50) size 340x260
+layer at (50,50) size 100x100
+  RenderSVGEllipse {circle} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#000000]}] [cx=100.00] [cy=100.00] [r=50.00]
+layer at (185,65) size 70x70
+  RenderSVGEllipse {circle} at (135,15) size 70x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [cx=220.00] [cy=100.00] [r=35.00]
+layer at (320,80) size 40x40
+  RenderSVGEllipse {circle} at (270,30) size 40x40 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=340.00] [cy=100.00] [r=20.00]
+layer at (80,240) size 40x40
+  RenderSVGEllipse {circle} at (30,190) size 40x40 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=100.00] [cy=260.00] [r=20.00]
+layer at (185,225) size 70x70
+  RenderSVGEllipse {circle} at (135,175) size 70x70 [fill={[type=SOLID] [color=#0000FF]}] [cx=220.00] [cy=260.00] [r=35.00]
+layer at (290,210) size 100x100
+  RenderSVGEllipse {circle} at (240,160) size 100x100 [stroke={[type=SOLID] [color=#008000] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

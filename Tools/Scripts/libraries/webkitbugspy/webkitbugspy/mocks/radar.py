@@ -116,37 +116,6 @@ class RadarModel(object):
             self.name = user.name
             self.email = user.email
 
-    class Milestone(object):
-        def __init__(
-            self, name,
-            isClosed=False,
-            isRestricted=False, restrictedAccessGroups=None,
-            isProtected=False, protectedAccessGroups=None,
-            isCategoryRequired=False, categories=None,
-            isEventRequired=False, events=None,
-            isTentpoleRequired=False, tentpoles=None,
-        ):
-            self.name = name
-            self.isClosed = isClosed
-            self.isRestricted = isRestricted
-            self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
-            self.isProtected = isProtected
-            self.protectedAccessGroups = [RadarModel.RadarGroup(name) for name in protectedAccessGroups or []]
-
-            self._isCategoryRequired = isCategoryRequired
-            self._categories = [RadarModel.Category(category) for category in (categories or [])]
-
-            self._isEventRequired = isEventRequired
-            self._events = [RadarModel.Event(event) for event in (events or [])]
-
-            self._isTentpoleRequired = isTentpoleRequired
-            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
-
-
-    class Category(object):
-        def __init__(self, name):
-            self.name = name
-
     class Event(object):
         def __init__(self, name):
             self.name = name
@@ -181,10 +150,12 @@ class RadarModel(object):
         self.id = issue['id']
         self.classification = issue.get('classification', 'Other Bug')
         self.createdAt = datetime.utcfromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds)
+        self.lastModifiedAt = datetime.utcfromtimestamp(issue['modified' if issue.get('modified') else 'timestamp'] - timedelta(hours=7).seconds)
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))
         self.state = 'Analyze' if issue['opened'] else 'Verify'
         self.duplicateOfProblemID = issue['original']['id'] if issue.get('original', None) else None
+        self.related = list()
         self.substate = 'Investigate' if issue['opened'] else None
         self.priority = 2
         self.resolution = 'Unresolved' if issue['opened'] else 'Software Changed'
@@ -200,12 +171,12 @@ class RadarModel(object):
             self.CCMembership(Radar.transform_user(watcher)) for watcher in issue.get('watchers', [])
         ])
 
-        self.milestone = self.Milestone(issue.get('milestone', '?'))
+        self.milestone = Radar.Milestone(issue.get('milestone', '?'))
         if self.client.parent.milestones:
             self.milestone = self.client.parent.milestones.get(self.milestone.name, self.milestone)
 
         category = issue.get('category')
-        self.category = RadarModel.Category(category) if category else None
+        self.category = Radar.Category(category) if category else None
         event = issue.get('event')
         self.event = RadarModel.Event(event) if event else None
         tentpole = issue.get('tentpole')
@@ -263,15 +234,29 @@ class RadarModel(object):
             self.client.parent.issues[self.id]['component'] = component
             self.client.parent.issues[self.id]['version'] = self.component.version
 
+        related = list(self.related)
+        for r in related:
+            if not self.client.parent.issues[self.id].get('related'):
+                self.client.parent.issues[self.id]['related'] = list()
+            r_dict = {'relationship': r.type, 'related_radar': r.related_radar_id}
+            self.client.parent.issues[self.id]['related'].append(r_dict)
+
+            inverse_r_dict = {'relationship': Radar.Relationship.inverse_map[r.type], 'related_radar': self.id}
+            if not self.client.parent.issues[r.related_radar_id].get('related'):
+                self.client.parent.issues[r.related_radar_id]['related'] = list()
+            self.client.parent.issues[r.related_radar_id]['related'].append(inverse_r_dict)
+
     def milestone_associations(self, milestone=None):
         return RadarModel.MilestoneAssociations(milestone or self.milestone)
 
     def relationships(self, relationships=None):
-        if not relationships or len(relationships) != 1:
-            raise ValueError('Invalid radarclient call')
-        if relationships[0] != Radar.Relationship.TYPE_ORIGINAL_OF:
-            raise ValueError("Unknown relationship type '{}'".format(relationships[0]))
+        if not relationships:
+            if not self.client.parent.issues[self.id].get('related'):
+                self.client.parent.issues[self.id]['related'] = list()
+            return [Radar.Relationship(r_dict['relationship'], self.client.radar_for_id(self.id), self.client.radar_for_id(r_dict['related_radar'])) for r_dict in self.client.parent.issues[self.id]['related']]
         result = []
+        if relationships[0] not in Radar.Relationship.TYPES:
+            raise ValueError("Unknown relationship type '{}'".format(r))
         for data in self.client.parent.issues.values():
             if (data.get('original') or {}).get('id') != self.id:
                 continue
@@ -280,6 +265,9 @@ class RadarModel(object):
                 self, RadarModel(self.client, data),
             ))
         return result
+
+    def add_relationship(self, relationship):
+        self.related.append(relationship)
 
     def remove_keyword(self, keyword):
         if keyword.name in self._issue.get('keywords') or []:
@@ -301,6 +289,24 @@ class RadarClient(object):
         if not found:
             return None
         return RadarModel(self, found)
+
+    def find_radars(self, query, return_find_results_directly=False):
+        result = []
+        for issue in self.parent.issues.values():
+            r = RadarModel(self, issue)
+
+            for key, value in query.items():
+                if key == 'state':
+                    if r.state != value:
+                        break
+                elif key == 'assignee':
+                    if r.assignee.dsid != value:
+                        break
+                elif issue.get(key, None) != value:
+                    break
+            else:
+                result.append(r)
+        return result
 
     def milestones_for_component(self, component, include_access_groups=False):
         return list(self.parent.milestones.values())
@@ -362,6 +368,7 @@ class RadarClient(object):
             id=id,
             title=request_data['title'],
             timestamp=int(time.time()),
+            modified=int(time.time()),
             opened=True,
             creator=user,
             assignee=user,
@@ -442,7 +449,29 @@ class Radar(Base, ContextStack):
             self.addedBy = addedBy
 
     class Relationship(object):
-        TYPE_ORIGINAL_OF = 'Original of'
+        TYPE_RELATED_TO = 'related-to'
+        TYPE_ORIGINAL_OF = 'original-of'
+        TYPE_DUPLICATE_OF = 'duplicate-of'
+        TYPE_CLONE_OF = 'clone-of'
+        TYPE_CLONED_TO = 'cloned-to'
+        TYPE_BLOCKED_BY = 'blocked-by'
+        TYPE_BLOCKING = 'blocking'
+        TYPE_PARENT_OF = 'parent-of'
+        TYPE_SUBTASK_OF = 'subtask-of'
+        TYPE_CAUSE_OF = 'cause-of'
+        TYPE_CAUSED_BY = 'caused-by'
+        TYPES = [TYPE_RELATED_TO, TYPE_BLOCKED_BY, TYPE_BLOCKING, TYPE_PARENT_OF, TYPE_SUBTASK_OF, TYPE_CAUSE_OF, TYPE_CAUSED_BY,
+                 TYPE_DUPLICATE_OF, TYPE_ORIGINAL_OF]
+
+        inverse_map = {
+            TYPE_RELATED_TO: TYPE_RELATED_TO,
+            TYPE_ORIGINAL_OF: TYPE_DUPLICATE_OF,
+            TYPE_CLONE_OF: TYPE_CLONED_TO,
+            TYPE_BLOCKING: TYPE_BLOCKED_BY,
+            TYPE_PARENT_OF: TYPE_SUBTASK_OF,
+            TYPE_CAUSE_OF: TYPE_CAUSED_BY,
+        }
+        inverse_map.update({v: k for k, v in list(inverse_map.items())})
 
         def __init__(self, type, radar, related_radar=None):
             self.type = type
@@ -456,6 +485,36 @@ class Radar(Base, ContextStack):
 
     class RetryPolicy(object):
         pass
+
+    class Milestone(object):
+        def __init__(
+            self, name,
+            isClosed=False,
+            isRestricted=False, restrictedAccessGroups=None,
+            isProtected=False, protectedAccessGroups=None,
+            isCategoryRequired=False, categories=None,
+            isEventRequired=False, events=None,
+            isTentpoleRequired=False, tentpoles=None,
+        ):
+            self.name = name['name'] if isinstance(name, dict) else name
+            self.isClosed = isClosed
+            self.isRestricted = isRestricted
+            self.restrictedAccessGroups = [RadarModel.RadarGroup(name) for name in restrictedAccessGroups or []]
+            self.isProtected = isProtected
+            self.protectedAccessGroups = [RadarModel.RadarGroup(name) for name in protectedAccessGroups or []]
+
+            self._isCategoryRequired = isCategoryRequired
+            self._categories = [Radar.Category(category) for category in (categories or [])]
+
+            self._isEventRequired = isEventRequired
+            self._events = [RadarModel.Event(event) for event in (events or [])]
+
+            self._isTentpoleRequired = isTentpoleRequired
+            self._tentpoles = [RadarModel.Tentpole(tentpole) for tentpole in (tentpoles or [])]
+
+    class Category(object):
+        def __init__(self, name):
+            self.name = name['name'] if isinstance(name, dict) else name
 
     @classmethod
     def transform_user(cls, user):
@@ -483,7 +542,7 @@ class Radar(Base, ContextStack):
             self.add(issue)
         self.milestones = {}
         for kwargs in milestones or []:
-            ms = RadarModel.Milestone(**kwargs)
+            ms = Radar.Milestone(**kwargs)
             self.milestones[ms.name] = ms
 
         self.AppleDirectoryQuery = AppleDirectoryQuery(self)

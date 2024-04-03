@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
-                   EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
+                   EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
@@ -67,8 +67,9 @@ from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
-# Prevent unit-tests from talking to live bugzilla server
+# Prevent unit-tests from talking to live bugzilla and github servers
 BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
+GitHubMixin.fetch_data_from_url_with_authentication_github = lambda x, y: None
 
 def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.logs = logs
@@ -1231,13 +1232,14 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'ios')
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1252,9 +1254,9 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('architecture', 'x86_64 arm64')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--architecture', 'x86_64 arm64', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release --architecture "x86_64 arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1268,7 +1270,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
                         )
@@ -1284,7 +1286,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
                         )
@@ -1295,13 +1297,14 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
         self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1328,13 +1331,14 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_success(self):
         self.setupStep(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'ios')
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --release -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES --ios-simulator 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1343,13 +1347,14 @@ class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_failure(self):
         self.setupStep(CompileWebKitWithoutChange())
+        self.setProperty('platform', 'mac')
         self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1467,13 +1472,14 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(CompileJSC())
-        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--release'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --release WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + 0,
         )
@@ -1482,13 +1488,14 @@ class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(CompileJSC())
-        self.setProperty('fullPlatform', 'jsc-only')
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-jsc --debug WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
@@ -1511,7 +1518,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--release'],
                         )
@@ -1526,7 +1533,7 @@ class TestCompileJSCWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('configuration', 'debug')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        timeout=1200,
+                        timeout=3600,
                         logEnviron=False,
                         command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
                         )
@@ -2487,14 +2494,14 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_run_subtest_tests_success(self):
@@ -2521,7 +2528,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test1.html', 'test2.html', 'test3.html', 'test4.html', 'test5.html'],
@@ -2530,7 +2537,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_run_subtest_tests_removes_skipped_that_fails(self):
@@ -2557,7 +2564,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test-was-skipped-patch-removed-expectation-but-still-fails.html'],
@@ -2566,7 +2573,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_run_subtest_tests_fail(self):
@@ -2593,7 +2600,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/',
                                  '--skipped=always',
                                  'test-fails-withpatch1.html', 'test-fails-withpatch2.html', 'test-pre-existent-failure1.html', 'test-pre-existent-failure2.html'],
@@ -2603,7 +2610,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_run_subtest_tests_limit_exceeded(self):
@@ -2631,14 +2638,14 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
                         )
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='layout-tests')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
@@ -2663,7 +2670,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
                                  '--builder-name', 'iOS-13-Simulator-WK2-Tests-EWS',
                                  '--build-number', '123',
                                  '--buildbot-worker', 'ews126',
-                                 '--buildbot-master', EWS_BUILD_HOSTNAME,
+                                 '--buildbot-master', EWS_BUILD_HOSTNAMES[0],
                                  '--report', 'https://results.webkit.org/'],
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
@@ -2671,7 +2678,7 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
 
@@ -2924,12 +2931,21 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
         return self.runStep()
 
-    def test_change_breaks_layout_tests(self):
+    def test_change_breaks_layout_tests1(self):
         self.configureStep()
         self.setProperty('first_run_failures', [])
         self.setProperty('second_run_failures', [])
         self.setProperty('clean_tree_run_failures', [])
         self.setProperty('clean_tree_run_status', SUCCESS)
+        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
+        return self.runStep()
+
+    def test_change_breaks_layout_tests2(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('second_run_failures', [])
+        self.setProperty('clean_tree_run_failures', [])
+        self.setProperty('clean_tree_run_status', WARNINGS)
         self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
         return self.runStep()
 
@@ -4255,7 +4271,7 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
                   'iOS-13-Build-EWS', 'iOS-13-Simulator-Build-EWS', 'iOS-13-Simulator-WK2-Tests-EWS',
                   'macOS-Catalina-Release-Build-EWS', 'macOS-Catalina-Release-WK2-Tests-EWS', 'macOS-Catalina-Debug-Build-EWS',
-                  'WinCairo-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS']
+                  'WinCairo-EWS', 'WPE-Build-EWS', 'WebKitPerl-Tests-EWS', 'WPE-Skia-Build-EWS']
         for queue in queues:
             self.setupStep(CheckChangeRelevance())
             self.setProperty('buildername', queue)
@@ -4449,7 +4465,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Downloaded built product')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
@@ -4467,7 +4483,7 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to download built product from S3')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_deployment_skipped(self):
@@ -4611,11 +4627,8 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self):
-        self.setupStep(GenerateS3URL())
-        self.setProperty('fullPlatform', 'mac-highsierra')
-        self.setProperty('configuration', 'release')
-        self.setProperty('architecture', 'x86_64')
+    def configureStep(self, identifier='mac-highsierra-x86_64-release', extension='zip', content_type=None):
+        self.setupStep(GenerateS3URL(identifier, extension=extension, content_type=content_type))
         self.setProperty('change_id', '1234')
 
     def disabled_test_success(self):
@@ -4625,30 +4638,51 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/generate-s3-url',
                                               '--change-id', '1234',
-                                              '--identifier', 'mac-highsierra-x86_64-release'
+                                              '--identifier', 'mac-highsierra-x86_64-release',
+                                              '--extension', 'zip',
                                               ])
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Generated S3 URL')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
-        self.configureStep()
-        self.setProperty('fullPlatform', 'ios-simulator-16')
-        self.setProperty('configuration', 'debug')
+        self.configureStep('ios-simulator-16-x86_64-debug')
         self.expectLocalCommands(
             ExpectMasterShellCommand(command=['python3',
                                               '../Shared/generate-s3-url',
                                               '--change-id', '1234',
                                               '--identifier', 'ios-simulator-16-x86_64-debug',
+                                              '--extension', 'zip',
                                               ])
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
 
         try:
-            with current_hostname(EWS_BUILD_HOSTNAME), open(os.devnull, 'w') as null:
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]), open(os.devnull, 'w') as null:
+                sys.stdout = null
+                return self.runStep()
+        finally:
+            sys.stdout = sys.__stdout__
+
+    def test_failure_with_extension(self):
+        self.configureStep('macos-arm64-release-compile-webkit', extension='txt', content_type='text/plain')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['python3',
+                                              '../Shared/generate-s3-url',
+                                              '--change-id', '1234',
+                                              '--identifier', 'macos-arm64-release-compile-webkit',
+                                              '--extension', 'txt',
+                                              '--content-type', 'text/plain',
+                                              ])
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to generate S3 URL')
+
+        try:
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]), open(os.devnull, 'w') as null:
                 sys.stdout = null
                 return self.runStep()
         finally:
@@ -4685,7 +4719,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Transferred archive to S3')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
@@ -4704,7 +4738,7 @@ class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to transfer archive to S3')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_skipped(self):
@@ -4726,24 +4760,42 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self):
-        self.setupStep(UploadFileToS3())
+    def configureStep(self, file='WebKitBuild/release.zip', content_type=None):
+        self.setupStep(UploadFileToS3(file, content_type=content_type))
         self.build.s3url = 'https://test-s3-url'
-        self.setProperty('configuration', 'release')
 
     def test_success(self):
         self.configureStep()
+        self.assertEqual(UploadFileToS3.haltOnFailure, True)
+        self.assertEqual(UploadFileToS3.flunkOnFailure, True)
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=1800,
+                        timeout=1860,
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='upload-file-to-s3')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded WebKitBuild/release.zip to S3')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
+
+    def test_success_content_type(self):
+        self.configureStep(file='build-log.txt', content_type='text/plain')
+        self.assertEqual(UploadFileToS3.haltOnFailure, True)
+        self.assertEqual(UploadFileToS3.flunkOnFailure, True)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        env=dict(UPLOAD_URL='https://test-s3-url'),
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'build-log.txt', '--content-type', 'text/plain'],
+                        timeout=1860,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded build-log.txt to S3')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
@@ -4753,23 +4805,22 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=1800,
+                        timeout=1860,
                         )
             + ExpectShell.log('stdio', stdout='''Uploading WebKitBuild/release.zip
 response: <Response [403]>, 403, Forbidden
 exit 1''')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='upload-file-to-s3 (failure)')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        self.expectOutcome(result=FAILURE, state_string='Failed to upload WebKitBuild/release.zip to S3. Please inform an admin.')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_skipped(self):
         self.configureStep()
-        self.expectOutcome(result=SKIPPED, state_string='upload-file-to-s3 (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped upload to S3')
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.runStep()
-
 
 
 class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
@@ -6525,11 +6576,11 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
                         command=['git', 'push', 'origin', 'HEAD:main']) +
-            ExpectShell.log('stdio', stdout=' 4c3bac1de151...b94dc426b331 \n') +
+            ExpectShell.log('stdio', stdout=' 4c3bac1de151...b94dc426b331 ') +
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
         self.assertEqual(self.getProperty('landed_hash'), 'b94dc426b331')
         return rc
@@ -6549,7 +6600,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
         self.assertEqual(self.getProperty('retry_count'), 1)
         self.assertEqual(self.getProperty('landed_hash'), None)
@@ -6570,7 +6621,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
         self.assertEqual(self.getProperty('comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
@@ -6591,7 +6642,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
         self.assertEqual(self.getProperty('comment_text'), 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
@@ -6700,7 +6751,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed 220797@main (14dbf1155cf5): <https://commits.webkit.org/220797@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
@@ -6722,7 +6773,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 249903@main')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Test gardening commit 249903@main (5dc27962b4c5): <https://commits.webkit.org/249903@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
@@ -6743,7 +6794,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed 220797@main (5dc27962b4c5): <https://commits.webkit.org/220797@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
@@ -6764,7 +6815,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
@@ -6785,7 +6836,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed 220797@main (5dc27962b4c5): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
@@ -6806,7 +6857,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                 1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
-            with current_hostname(EWS_BUILD_HOSTNAME):
+            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
                 yield self.runStep()
 
         self.assertEqual(self.getProperty('comment_text'), 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
@@ -7066,7 +7117,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=300,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
-            ExpectShell.log('stdio', stdout='Identifier: 233175@main\n') +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
@@ -7091,7 +7142,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=300,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
-            ExpectShell.log('stdio', stdout='Identifier: 233175@main\n') +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
@@ -7112,7 +7163,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=300,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/git-webkit', 'find', '51a6aec9f664']) +
-            ExpectShell.log('stdio', stdout='Identifier: 233175@main\n') +
+            ExpectShell.log('stdio', stdout='Identifier: 233175@main') +
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233175@main')
@@ -8295,7 +8346,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
         )
         self.expectOutcome(result=SUCCESS, state_string='Pushed to pull request branch')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
     def test_failure(self):
@@ -8314,7 +8365,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout="fatal: could not read Username for 'https://github.com': Device not configured\n"),
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to push to pull request branch')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             return self.runStep()
 
 
@@ -8392,7 +8443,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
 '''),
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
@@ -8451,7 +8502,7 @@ Date:   Thu Apr 21 00:25:03 2022 +0000
 '''),
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '239577')
             self.assertEqual(self.getProperty('is_test_gardening'), True)
@@ -8493,7 +8544,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
 '''),
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to update pull request')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
@@ -8652,7 +8703,7 @@ Date:   Tue Mar 29 16:04:35 2023 -0700
 '''),
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
-        with current_hostname(EWS_BUILD_HOSTNAME):
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
             rc = self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '248615')
             self.assertEqual(self.getProperty('is_test_gardening'), False)

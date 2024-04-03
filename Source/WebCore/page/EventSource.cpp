@@ -37,6 +37,7 @@
 #include "ContentSecurityPolicy.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "HTTPStatusCodes.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -174,7 +175,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     // Logs to the console as a side effect.
 
     // To keep the signal-to-noise ratio low, we don't log anything if the status code is not 200.
-    if (response.httpStatusCode() != 200)
+    if (response.httpStatusCode() != httpStatus200OK)
         return false;
 
     if (!equalLettersIgnoringASCIICase(response.mimeType(), "text/event-stream"_s)) {
@@ -224,7 +225,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     ASSERT(m_requestInFlight);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
 
-    append(m_receiveBuffer, m_decoder->decode(buffer.data(), buffer.size()));
+    append(m_receiveBuffer, m_decoder->decode(buffer.span()));
     parseEventStream();
 }
 
@@ -362,7 +363,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     if (fieldLength && !fieldLength.value())
         return;
 
-    StringView field { &m_receiveBuffer[position], fieldLength ? fieldLength.value() : lineLength };
+    StringView field { m_receiveBuffer.subspan(position, fieldLength ? fieldLength.value() : lineLength) };
 
     unsigned step;
     if (!fieldLength)
@@ -375,12 +376,12 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     unsigned valueLength = lineLength - step;
 
     if (field == "data"_s) {
-        m_data.append(&m_receiveBuffer[position], valueLength);
+        m_data.append(m_receiveBuffer.subspan(position, valueLength));
         m_data.append('\n');
     } else if (field == "event"_s)
         m_eventName = { &m_receiveBuffer[position], valueLength };
     else if (field == "id"_s) {
-        StringView parsedEventId = { &m_receiveBuffer[position], valueLength };
+        StringView parsedEventId = m_receiveBuffer.subspan(position, valueLength);
         constexpr UChar nullCharacter = '\0';
         if (!parsedEventId.contains(nullCharacter))
             m_currentlyParsedEventId = parsedEventId.toString();
@@ -388,7 +389,7 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
-            if (auto reconnectDelay = parseInteger<uint64_t>({ &m_receiveBuffer[position], valueLength }))
+            if (auto reconnectDelay = parseInteger<uint64_t>(m_receiveBuffer.subspan(position, valueLength)))
                 m_reconnectDelay = *reconnectDelay;
         }
     }
@@ -439,7 +440,7 @@ void EventSource::dispatchMessageEvent()
     ASSERT(!m_data.isEmpty());
 
     // Omit the trailing "\n" character.
-    String data(m_data.data(), m_data.size() - 1);
+    String data(m_data.subspan(0, m_data.size() - 1));
     m_data = { };
 
     dispatchEvent(MessageEvent::create(name, WTFMove(data), m_eventStreamOrigin, m_lastEventId));

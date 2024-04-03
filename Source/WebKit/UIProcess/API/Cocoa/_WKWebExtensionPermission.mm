@@ -28,7 +28,7 @@
 #endif
 
 #import "config.h"
-#import "_WKWebExtensionPermission.h"
+#import "_WKWebExtensionPermissionPrivate.h"
 
 _WKWebExtensionPermission const _WKWebExtensionPermissionActiveTab = @"activeTab";
 _WKWebExtensionPermission const _WKWebExtensionPermissionAlarms = @"alarms";
@@ -40,6 +40,7 @@ _WKWebExtensionPermission const _WKWebExtensionPermissionDeclarativeNetRequestFe
 _WKWebExtensionPermission const _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess = @"declarativeNetRequestWithHostAccess";
 _WKWebExtensionPermission const _WKWebExtensionPermissionMenus = @"menus";
 _WKWebExtensionPermission const _WKWebExtensionPermissionNativeMessaging = @"nativeMessaging";
+_WKWebExtensionPermission const _WKWebExtensionPermissionNotifications = @"notifications";
 _WKWebExtensionPermission const _WKWebExtensionPermissionScripting = @"scripting";
 _WKWebExtensionPermission const _WKWebExtensionPermissionStorage = @"storage";
 _WKWebExtensionPermission const _WKWebExtensionPermissionTabs = @"tabs";

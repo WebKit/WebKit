@@ -20,7 +20,6 @@
 #include "config.h"
 #include "SVGBoundingBoxComputation.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
@@ -32,6 +31,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
@@ -207,9 +207,7 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     if (options.contains(DecorationOption::IncludeClippers) && m_renderer.hasNonVisibleOverflow()) {
         ASSERT(m_renderer.hasLayer());
 
-        // FIXME: [LBSE] Upstream new RenderSVGResourceMarker implementation
-        // ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
-        ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGRoot>(m_renderer));
+        ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
 
         LayoutRect overflowClipRect;
         if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(m_renderer))
@@ -280,5 +278,3 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
 }
 
 }
-
-#endif

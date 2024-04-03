@@ -46,6 +46,7 @@ public:
 
     RenderBox* embeddedContentBox() const;
     LocalFrameView* frameView() const;
+    RefPtr<LocalFrameView> protectedFrameView() const;
 
     bool isSVGImage() const final { return true; }
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }

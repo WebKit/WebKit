@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate() should resolve urls relative to navigation object, not the caller Test timed out
+PASS navigate() should resolve urls relative to navigation object, not the caller
 

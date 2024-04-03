@@ -48,8 +48,6 @@ public:
 
     virtual ~PageTransitionEvent();
 
-    EventInterface eventInterface() const override;
-
     bool persisted() const { return m_persisted; }
 
 private:

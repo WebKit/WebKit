@@ -1,0 +1,24 @@
+<style>
+br, span, pre, a {
+  position: absolute;
+}
+</style>
+PASS if no crash or assert.
+<div id=container>
+  <meter id=meter>
+  <textarea id=textarea>foobar</textarea>
+</div>
+<meter id=mm></meter>
+<pre contenteditable="true">
+  <embed id=embed><span></span>
+</pre>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  embed.appendChild(meter);
+  textarea.setSelectionRange(1,0,"text");
+  container.appendChild(meter);
+  document.execCommand("selectAll", false);
+  document.execCommand("createLink", false, "#link");
+  document.execCommand("insertText", false, "text");
+</script>

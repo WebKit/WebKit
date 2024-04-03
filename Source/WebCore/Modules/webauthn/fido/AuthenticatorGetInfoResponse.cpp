@@ -35,6 +35,7 @@
 #include "CBORValue.h"
 #include "CBORWriter.h"
 #include "WebAuthenticationConstants.h"
+#include "WebAuthenticationUtils.h"
 
 namespace fido {
 
@@ -89,34 +90,6 @@ AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setRemainingDiscover
     return *this;
 }
 
-static String toString(WebCore::AuthenticatorTransport transport)
-{
-    switch (transport) {
-    case WebCore::AuthenticatorTransport::Usb:
-        return WebCore::authenticatorTransportUsb;
-        break;
-    case WebCore::AuthenticatorTransport::Nfc:
-        return WebCore::authenticatorTransportNfc;
-        break;
-    case WebCore::AuthenticatorTransport::Ble:
-        return WebCore::authenticatorTransportBle;
-        break;
-    case WebCore::AuthenticatorTransport::Internal:
-        return WebCore::authenticatorTransportInternal;
-        break;
-    case WebCore::AuthenticatorTransport::Cable:
-        return WebCore::authenticatorTransportCable;
-    case WebCore::AuthenticatorTransport::Hybrid:
-        return WebCore::authenticatorTransportHybrid;
-    case WebCore::AuthenticatorTransport::SmartCard:
-        return WebCore::authenticatorTransportSmartCard;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return nullString();
-}
-
 Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
 {
     using namespace cbor;
@@ -142,7 +115,7 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
     
     if (response.transports()) {
         auto transports = *response.transports();
-        deviceInfoMap.emplace(CBORValue(7), toArrayValue(transports.map(toString)));
+        deviceInfoMap.emplace(CBORValue(7), toArrayValue(transports.map(WebCore::toString)));
     }
 
     if (response.remainingDiscoverableCredentials())

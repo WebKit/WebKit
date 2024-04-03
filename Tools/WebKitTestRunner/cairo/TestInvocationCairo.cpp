@@ -29,6 +29,8 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#if USE(CAIRO)
+
 #include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
@@ -52,7 +54,7 @@ static void computeSHA1HashStringForCairoSurface(cairo_surface_t* surface, char 
     SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(cairo_image_surface_get_data(surface));
     for (size_t row = 0; row < pixelsHigh; ++row) {
-        sha1.addBytes(bitmapData, 4 * pixelsWide);
+        sha1.addBytes(std::span { bitmapData, 4 * pixelsWide });
         bitmapData += bytesPerRow;
     }
     SHA1::Digest hash;
@@ -66,7 +68,7 @@ static void computeSHA1HashStringForCairoSurface(cairo_surface_t* surface, char 
 static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned length)
 {
     Vector<unsigned char>* in = reinterpret_cast<Vector<unsigned char>*>(closure);
-    in->append(data, length);
+    in->append(std::span { data, length });
     return CAIRO_STATUS_SUCCESS;
 }
 
@@ -130,3 +132,5 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
 }
 
 } // namespace WTR
+
+#endif // USE(CAIRO)

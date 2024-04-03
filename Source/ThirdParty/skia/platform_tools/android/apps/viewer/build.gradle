@@ -1,0 +1,31 @@
+/*
+ * Copyright 2015 Google Inc.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+apply plugin: 'com.android.application'
+
+dependencies {
+    implementation 'com.android.support:support-v13:23.3.0'
+    implementation 'com.android.support:appcompat-v7:23.3.0'
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "27.0.3"
+    defaultConfig {
+        applicationId "org.skia.viewer"
+        minSdkVersion 26
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        signingConfig signingConfigs.debug
+    }
+    flavorDimensions "base"
+    sourceSets.main.jni.srcDirs = [] //disable automatic ndk-build call
+    sourceSets.main.jniLibs.srcDir "src/main/libs"
+    productFlavors { universal{}; arm {}; arm64 {}; x86 {}; x64 {}; arm64vulkan{}; }
+
+    setupSkiaLibraryBuild(project, applicationVariants, "libviewer")
+}

@@ -36,17 +36,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayPaymentMethodSelectedEvent);
 
 ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent(const AtomString& type, const PaymentMethod& paymentMethod)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::ApplePayPaymentMethodSelectedEvent, type, CanBubble::No, IsCancelable::No)
     , m_paymentMethod(paymentMethod.toApplePayPaymentMethod())
 {
 }
 
 ApplePayPaymentMethodSelectedEvent::~ApplePayPaymentMethodSelectedEvent() = default;
-
-EventInterface ApplePayPaymentMethodSelectedEvent::eventInterface() const
-{
-    return ApplePayPaymentMethodSelectedEventInterfaceType;
-}
 
 }
 

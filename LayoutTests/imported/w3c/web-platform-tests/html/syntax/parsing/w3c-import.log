@@ -62,6 +62,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_pending-spec-changes-plain-text-unsafe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_pending-spec-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_plain-text-unsafe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_quirks01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_ruby.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scriptdata01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scripted_adoption01.html

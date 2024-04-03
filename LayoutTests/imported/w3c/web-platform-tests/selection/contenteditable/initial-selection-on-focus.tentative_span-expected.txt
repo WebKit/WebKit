@@ -1,0 +1,54 @@
+[]abcdef
+
+PASS empty editor should set focus to start of it
+PASS editor should set selection to start of the text node
+PASS editor should set selection to before the <br> node
+PASS editor should set selection to before the first <br> node
+PASS editor should set selection to start of the text node in the <span> node
+PASS editor should set selection to before the <br> node in the <span> node
+PASS editor should set selection to before the first <br> node in the <span> node
+PASS editor should set selection to before the empty <span> node
+PASS editor should set selection to before the empty <b> node
+PASS editor should set selection to before the empty <i> node
+PASS editor should set selection to before the empty <u> node
+PASS editor should set selection to before the empty <s> node
+PASS editor should set selection to before the empty <code> node
+PASS editor should set selection to before the empty <a> node
+PASS editor should set selection to before the empty <foobar> node
+PASS editor should set selection to before the <input> node
+PASS editor should set selection to before the <img> node
+PASS editor should set selection to start of the text node in the second <span> node
+PASS editor should set selection to before the <br> node in the second <span> node
+PASS editor should set selection to start of the text node in the first <span> node #1
+PASS editor should set selection to start of the text node in the first <span> node #2
+PASS editor should set selection to before the <br> node in the first <span> node #1
+PASS editor should set selection to before the <br> node in the first <span> node #2
+PASS editor should set selection to start of the text node in the second <span> node since the text node in the first <span> node is only whitespaces
+PASS editor should set selection to before the <br> node in the second <span> node since the text node in the first <span> node is only whitespaces
+PASS editor should set selection to start of the text node in the second <span> node even if there is a whitespace only text node before the first <span> node
+PASS editor should set selection to before the <br> node in the second <span> node even if there is a whitespace only text node before the first <span> node
+PASS editor should collapse selection before the non-editable <span> node
+PASS editor should collapse selection before the non-editable <span> node even if it has a text node
+PASS editor should collapse selection before the non-editable <span> node even if it has a <br> node
+PASS editor should collapse selection before the non-editable empty <span> node followed by a text node
+PASS editor should collapse selection before the non-editable <span> node having a text node and followed by another text node
+PASS editor should collapse selection before the non-editable <span> node having a <br> node and followed by a text node
+PASS editor should collapse selection before the non-editable empty <span> node followed by a <br> node
+PASS editor should collapse selection before the non-editable <span> node having text node and followed by a <br> node
+PASS editor should collapse selection before the non-editable <span> node having a <br> node and followed by another <br> node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node before first editable text node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node having a text node before first editable text node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node having a <br> node before first editable text node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node before first editable <br> node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node having a text node before first editable <br> node
+PASS editor should collapse selection to start of itself when there is only empty inline elements before the non-editable node having a <br> node before first editable <br> node
+PASS editor should collapse selection to the first editable text node in the first <span> node even if followed by a non-editable node
+PASS editor should collapse selection to the first editable text node in the first <span> node even if followed by a non-editable node having another text node
+PASS editor should collapse selection to the first editable text node in the first <span> node even if followed by a non-editable node having a <br> node
+PASS editor should collapse selection to the first editable <br> node in the first <span> node even if followed by a non-editable node
+PASS editor should collapse selection to the first editable <br> node in the first <span> node even if followed by a non-editable node having a text node
+PASS editor should collapse selection to the first editable <br> node in the first <span> node even if followed by a non-editable node having a <br> node
+PASS editor should collapse selection to start of itself if first content is an input element
+PASS editor should collapse selection to start of itself if first content is an textarea element
+FAIL editor shouldn't reset selection when it gets focus again assert_equals: expected "<span>abc</span><span>[]def</span>" but got "<span>[]abc</span><span>def</span>"
+

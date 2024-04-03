@@ -68,6 +68,10 @@ static void configureSeparatedLayer(CALayer *) { }
     NSUInteger numOldSubviews = self.subviews.count;
     NSUInteger numNewSubviews = newSubviews.count;
 
+    // This method does not handle interleaved UIView and CALayer children of
+    // a UIView, so we must not have any non-UIView-backed CALayer children.
+    ASSERT(numOldSubviews == self.layer.sublayers.count);
+
     NSUInteger currIndex = 0;
     for (currIndex = 0; currIndex < numNewSubviews; ++currIndex) {
         UIView *currNewSubview = [newSubviews objectAtIndex:currIndex];
@@ -147,7 +151,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, LayerContentsType layerContentsType)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
         layer.position = CGPointMake(properties.position.x(), properties.position.y());
@@ -267,7 +271,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 
     if (properties.changedProperties & LayerChange::FiltersChanged)
-        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations());
+        PlatformCAFilters::setFiltersOnLayer(layer, properties.filters ? *properties.filters : FilterOperations(), layerTreeHost->cssUnprefixedBackdropFilterEnabled());
 
     if (properties.changedProperties & LayerChange::AnimationsChanged) {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -320,7 +324,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -338,7 +342,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 
 #if ENABLE(SCROLLING_THREAD)
     if (properties.changedProperties & LayerChange::ScrollingNodeIDChanged)
-        node.setScrollingNodeID(properties.scrollingNodeID);
+        node.setScrollingNodeID(properties.scrollingNodeID.value_or(ScrollingNodeID { }));
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -393,10 +397,6 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 #endif
         return childNode->layer();
     }).get();
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    node.updateInteractionRegionAfterHierarchyChange();
-#endif
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

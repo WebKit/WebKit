@@ -31,7 +31,6 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
 
         this.shouldRefreshChildren = true;
 
-        this._folderExpandedSettingMap = new Map;
         this._folderSettingsKey = "";
         this._folderTypeMap = new Map;
         this._folderizeSettingsMap = new Map;
@@ -75,7 +74,6 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
 
         this._clearNewChildQueue();
 
-        this._folderExpandedSettingMap.clear();
         this._folderTypeMap.clear();
 
         this._groupedIntoFolders = false;
@@ -275,21 +273,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
 
         console.assert(this._folderSettingsKey !== "");
 
-        function createFolderTreeElement(settings)
-        {
-            let folderTreeElement = new WI.FolderTreeElement(settings.displayName, settings.representedObject);
-            let folderExpandedSetting = new WI.Setting(settings.type + "-folder-expanded-" + this._folderSettingsKey, false);
-            this._folderExpandedSettingMap.set(folderTreeElement, folderExpandedSetting);
-
-            if (folderExpandedSetting.value)
-                folderTreeElement.expand();
-
-            folderTreeElement.onexpand = this._folderTreeElementExpandedStateChange.bind(this);
-            folderTreeElement.oncollapse = this._folderTreeElementExpandedStateChange.bind(this);
-            return folderTreeElement;
-        }
-
-        var settings = this._settingsForRepresentedObject(representedObject);
+        let settings = this._settingsForRepresentedObject(representedObject);
         if (!settings) {
             console.error("Unknown representedObject", representedObject);
             return this;
@@ -298,23 +282,15 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
         if (settings.topLevel)
             return this;
 
-        var folder = this._folderTypeMap.get(settings.type);
+        let folder = this._folderTypeMap.get(settings.type);
         if (folder)
             return folder;
 
-        folder = createFolderTreeElement.call(this, settings);
+        folder = new WI.FolderTreeElement(settings.displayName, settings.representedObject, {
+            id: `${settings.type}-${settings._folderSettingsKey}`,
+        });
         this._folderTypeMap.set(settings.type, folder);
         return folder;
-    }
-
-    _folderTreeElementExpandedStateChange(folderTreeElement)
-    {
-        let expandedSetting = this._folderExpandedSettingMap.get(folderTreeElement);
-        console.assert(expandedSetting, "No expanded setting for folderTreeElement", folderTreeElement);
-        if (!expandedSetting)
-            return;
-
-        expandedSetting.value = folderTreeElement.expanded;
     }
 
     _settingsForRepresentedObject(representedObject)

@@ -36,8 +36,8 @@ WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
 OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers;
-OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices;
-OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText;
+OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices -framework IOSurface -framework CoreVideo;
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText -framework IOSurface -framework CoreVideo;
 
 STRIP_STYLE = debugging;
 

@@ -7,8 +7,8 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
-var unexpectedMouseMove = false;
-var unexpectedMouseUp = false;
+var mouseMoveInOtherFrame = false;
+var mouseUpInOtherFrame = false;
 
 function log(msg) {
     var msgNode = document.createTextNode(msg);
@@ -40,7 +40,7 @@ window.onload = function() {
         eventSender.mouseMoveTo(endX, endY);
         eventSender.mouseUp();
     } finally {
-        if (unexpectedMouseUp || unexpectedMouseMove)
+        if (mouseUpInOtherFrame || mouseMoveInOtherFrame)
             log("FAIL! Received unexpected mouse event on other frame.");
         else
             log("PASS!");

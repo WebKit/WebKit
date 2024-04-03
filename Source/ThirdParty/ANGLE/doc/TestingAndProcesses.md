@@ -32,7 +32,7 @@ Handle a validation error by doing the following:
    `Hotlist-Wrangler` on the bug.
 2. Add the VVL error tag to the
    [kSkippedMessages](https://chromium.googlesource.com/angle/angle.git/+/8f8ca06dfb903fcc8517c69142c46c05e618f40d/src/libANGLE/renderer/vulkan/RendererVk.cpp#129)
-   array in `RendererVk.cpp` file.  Follow the pattern for adding a comment with the associated bug
+   array in `vk_renderer.cpp` file.  Follow the pattern for adding a comment with the associated bug
    in the line above the VVL tag.
 
 

@@ -60,14 +60,12 @@
 
 - (int)width
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->width();
+    return 0;
 }
 
 - (int)height
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->height();
+    return 0;
 }
 
 - (NSString *)dir

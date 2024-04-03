@@ -44,6 +44,7 @@
 #include "CSSShadowValue.h"
 #include "ColorFromPrimitiveValue.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "FilterOperationsBuilder.h"
 #include "FontCache.h"
@@ -141,15 +142,7 @@ std::optional<FilterOperations> BuilderState::createFilterOperations(const CSSVa
 
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)
 {
-    switch (value.valueID()) {
-    case CSSValueInternalDocumentTextColor:
-    case CSSValueWebkitLink:
-    case CSSValueWebkitActivelink:
-    case CSSValueCurrentcolor:
-        return true;
-    default:
-        return false;
-    }
+    return StyleColor::containsCurrentColor(value) || StyleColor::containsColorSchemeDependentColor(value);
 }
 
 StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink) const
@@ -161,7 +154,7 @@ StyleColor BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value,
 
 void BuilderState::registerContentAttribute(const AtomString& attributeLocalName)
 {
-    if (style().styleType() == PseudoId::Before || style().styleType() == PseudoId::After)
+    if (style().pseudoElementType() == PseudoId::Before || style().pseudoElementType() == PseudoId::After)
         m_registeredContentAttributes.append(attributeLocalName);
 }
 
@@ -225,7 +218,7 @@ void BuilderState::updateFontForTextSizeAdjust()
 
 void BuilderState::updateFontForZoomChange()
 {
-    if (m_style.effectiveZoom() == parentStyle().effectiveZoom() && m_style.textZoom() == parentStyle().textZoom())
+    if (m_style.usedZoom() == parentStyle().usedZoom() && m_style.textZoom() == parentStyle().textZoom())
         return;
 
     const auto& childFont = m_style.fontDescription();

@@ -68,6 +68,9 @@ public:
 #endif
 
     virtual void visibilityDidChange(bool) { }
+    virtual bool backgroundColorDidChange();
+
+    void clearIfNeeded();
 
 protected:
     AcceleratedSurface(WebPage&, Client&);
@@ -75,6 +78,7 @@ protected:
     WebPage& m_webPage;
     Client& m_client;
     WebCore::IntSize m_size;
+    std::atomic<bool> m_isOpaque { true };
 };
 
 } // namespace WebKit

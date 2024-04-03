@@ -87,7 +87,7 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, 
     , m_navigator(navigator)
 {
     // We should queue messages until the DOMContentLoaded event has fired or startMessages() has been called.
-    if (is<Document>(context) && downcast<Document>(*context).parsing())
+    if (RefPtr document = dynamicDowncast<Document>(context); document && document->parsing())
         m_shouldDeferMessageEvents = true;
 }
 
@@ -137,7 +137,6 @@ ServiceWorker* ServiceWorkerContainer::controller() const
 
 void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, const RegistrationOptions& options, Ref<DeferredPromise>&& promise)
 {
-    auto* context = scriptExecutionContext();
     if (m_isStopped) {
         promise->reject(Exception(ExceptionCode::InvalidStateError));
         return;
@@ -150,9 +149,11 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     ServiceWorkerJobData jobData(ensureSWClientConnection().serverConnectionIdentifier(), contextIdentifier());
 
-    jobData.scriptURL = context->completeURL(relativeScriptURL);
+    auto& context = *scriptExecutionContext();
+    jobData.scriptURL = context.completeURL(relativeScriptURL);
 
-    CheckedPtr contentSecurityPolicy = is<Document>(context) ? downcast<Document>(context)->contentSecurityPolicy() : nullptr;
+    RefPtr document = dynamicDowncast<Document>(context);
+    CheckedPtr contentSecurityPolicy = document ? document->contentSecurityPolicy() : nullptr;
     if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(jobData.scriptURL)) {
         promise->reject(Exception { ExceptionCode::SecurityError });
         return;
@@ -164,7 +165,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    Page* page = is<Document>(context) ? downcast<Document>(context)->page() : nullptr;
+    auto* page = document ? document->page() : nullptr;
     jobData.isFromServiceWorkerPage = page && page->isServiceWorkerPage();
     if (!jobData.scriptURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: Invalid scriptURL scheme is not HTTP or HTTPS");
@@ -180,7 +181,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     }
 
     if (!options.scope.isEmpty())
-        jobData.scopeURL = context->completeURL(options.scope);
+        jobData.scopeURL = context.completeURL(options.scope);
     else
         jobData.scopeURL = URL(jobData.scriptURL, "./"_s);
 
@@ -199,11 +200,11 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
     CONTAINER_RELEASE_LOG("addRegistration: Registering service worker. jobID=%" PRIu64, jobData.identifier().jobIdentifier.toUInt64());
 
-    jobData.clientCreationURL = context->url();
-    jobData.topOrigin = context->topOrigin().data();
+    jobData.clientCreationURL = context.url();
+    jobData.topOrigin = context.topOrigin().data();
     jobData.workerType = options.type;
     jobData.type = ServiceWorkerJobType::Register;
-    jobData.domainForCachePartition = context->domainForCachePartition();
+    jobData.domainForCachePartition = context.domainForCachePartition();
     jobData.registrationOptions = options;
 
     scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
@@ -211,8 +212,8 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
 
 void ServiceWorkerContainer::willSettleRegistrationPromise(bool success)
 {
-    auto* context = scriptExecutionContext();
-    Page* page = is<Document>(context) ? downcast<Document>(*context).page() : nullptr;
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    auto* page = document ? document->page() : nullptr;
     if (!page || !page->isServiceWorkerPage())
         return;
     
@@ -575,9 +576,9 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 {
     ASSERT(scriptExecutionContext());
     if (!m_swConnection || m_swConnection->isClosed()) {
-        auto& context = *scriptExecutionContext();
-        if (is<WorkerGlobalScope>(context))
-            m_swConnection = &downcast<WorkerGlobalScope>(context).swClientConnection();
+        // Using RefPtr here results in an m_adoptionIsRequired assert.
+        if (auto* workerGlobal = dynamicDowncast<WorkerGlobalScope>(*scriptExecutionContext()))
+            m_swConnection = &workerGlobal->swClientConnection();
         else
             m_swConnection = &mainThreadConnection();
     }
@@ -589,7 +590,7 @@ void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registra
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
     ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
-    m_registrations.add(registration.identifier(), &registration);
+    m_registrations.add(registration.identifier(), registration);
 }
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
@@ -694,8 +695,8 @@ ServiceWorkerOrClientIdentifier ServiceWorkerContainer::contextIdentifier()
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(scriptExecutionContext());
-    if (is<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
-        return downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext()).thread().identifier();
+    if (RefPtr serviceWorkerGlobal = dynamicDowncast<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
+        return serviceWorkerGlobal->thread().identifier();
     return scriptExecutionContext()->identifier();
 }
 

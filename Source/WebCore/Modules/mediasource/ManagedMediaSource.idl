@@ -32,8 +32,10 @@ enum PreferredQuality {
 [
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=ManagedMediaSourceEnabled,
-    Exposed=Window
+    EnabledForContext,
+    Exposed=(Window,DedicatedWorker)
 ] interface ManagedMediaSource : MediaSource {
     [CallWith=CurrentScriptExecutionContext] constructor();
 

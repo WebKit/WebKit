@@ -94,7 +94,7 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (50,330) size 170x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 129x12
           chunk 1 text run 1 at (50.00,340.00) startOffset 0 endOffset 26 width 129.00: "<tspan x=\"50 60 70 80 90\" "
-        RenderSVGTSpan {tspan} at (0,0) size 137x12
+        RenderSVGTSpan {tspan} at (33,11) size 137x12
           RenderSVGInlineText {#text} at (33,11) size 137x12
             chunk 1 text run 1 at (83.00,351.00) startOffset 0 endOffset 27 width 137.00: "dx=\"0 10 20 30 40\" y=\"320\">"
       RenderSVGText {text} at (240,298) size 133x28 contains 1 chunk(s)
@@ -108,7 +108,7 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (240,330) size 191x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 169x12
           chunk 1 text run 1 at (240.00,340.00) startOffset 0 endOffset 34 width 169.00: "<tspan x=\"240\" dx=\"0 10 10 10 10\" "
-        RenderSVGTSpan {tspan} at (0,0) size 158x12
+        RenderSVGTSpan {tspan} at (33,11) size 158x12
           RenderSVGInlineText {#text} at (33,11) size 158x12
             chunk 1 text run 1 at (273.00,351.00) startOffset 0 endOffset 34 width 158.00: "y=\"320\" style=\"letter-spacing:10\">"
       RenderSVGText {text} at (50,358) size 93x28 contains 1 chunk(s)
@@ -119,7 +119,7 @@ layer at (0,0) size 450x500
             chunk 1 text run 3 at (99.00,380.00) startOffset 2 endOffset 3 width 7.00: "t"
             chunk 1 text run 4 at (116.00,380.00) startOffset 3 endOffset 4 width 5.00: "i"
             chunk 1 text run 5 at (131.00,380.00) startOffset 4 endOffset 5 width 12.00: "k"
-        RenderSVGTSpan {tspan} at (0,0) size 0x1
+        RenderSVGTSpan {tspan} at (-50,-359) size 0x1
       RenderSVGText {text} at (50,390) size 94x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 94x12
           chunk 1 text run 1 at (50.00,400.00) startOffset 0 endOffset 20 width 93.63: "Empty Trailing tspan"

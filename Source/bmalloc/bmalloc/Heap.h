@@ -133,7 +133,7 @@ private:
     std::array<List<Chunk>, pageClassCount> m_freePages;
     std::array<List<Chunk>, pageClassCount> m_chunkCache;
 
-    Map<void*, size_t, LargeObjectHash> m_largeAllocated;
+    Map<void*, size_t, LargeObjectHash, AllowDeleting::DeletingAllowed> m_largeAllocated;
     LargeMap m_largeFree;
 
     ObjectTypeTable m_objectTypes;

@@ -38,7 +38,7 @@ Ref<AtomStringImpl> Identifier::add8(VM& vm, const UChar* s, int length)
     if (!length)
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
-    return *AtomStringImpl::add(s, length);
+    return *AtomStringImpl::add(std::span { s, static_cast<size_t>(length) });
 }
 
 Identifier Identifier::from(VM& vm, unsigned value)

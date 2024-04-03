@@ -11,6 +11,8 @@ list(APPEND WebKitTestRunner_SOURCES
     libwpe/PlatformWebViewClientLibWPE.cpp
     libwpe/PlatformWebViewLibWPE.cpp
 
+    skia/TestInvocationSkia.cpp
+
     wpe/EventSenderProxyClientWPE.cpp
     wpe/PlatformWebViewClientWPE.cpp
     wpe/TestControllerWPE.cpp
@@ -32,15 +34,12 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${LIBXKBCOMMON_INCLUDE_DIRS}
-    ${WPEBACKEND_FDO_INCLUDE_DIRS}
 )
 
-list(APPEND WebKitTestRunner_LIBRARIES
+list(APPEND WebKitTestRunner_PRIVATE_LIBRARIES
+    WebKit::WPEToolingBackends
     ${GLIB_LIBRARIES}
     ${LIBXKBCOMMON_LIBRARIES}
-    ${WPEBACKEND_FDO_LIBRARIES}
-    Cairo::Cairo
-    WebKit::WPEToolingBackends
 )
 
 if (ENABLE_WPE_PLATFORM)
@@ -51,7 +50,6 @@ endif ()
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}
-    Cairo::Cairo
 )
 
 list(APPEND TestRunnerInjectedBundle_SOURCES

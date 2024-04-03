@@ -1,0 +1,72 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "select_multi", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# In separate group for mapping to //gn/gpu.gni:skia_shared_gpu_sources.
+skia_filegroup(
+    name = "shared_public_hdrs",
+    srcs = [
+        "GpuTypes.h",
+        "MutableTextureState.h",
+        "ShaderErrorHandler.h",
+    ],
+)
+
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "GrBackendSemaphore.h",
+        "GrBackendSurface.h",
+        "GrContextOptions.h",
+        "GrContextThreadSafeProxy.h",
+        "GrDirectContext.h",
+        "GrDriverBugWorkarounds.h",
+        "GrDriverBugWorkaroundsAutogen.h",
+        "GrRecordingContext.h",
+        "GrTypes.h",
+        "GrYUVABackendTextures.h",
+        "//include/gpu/mock:public_hdrs",
+        # TODO(egdaniel, kjlubick) GrGLTypes.h is used unconditionally by GrBackendSemaphore.h
+        "//include/gpu/gl:public_hdrs",
+        ":shared_public_hdrs",
+        "//include/gpu/ganesh:public_hdrs",
+    ] + select_multi(
+        {
+            "//src/gpu:vulkan_ganesh": ["//include/gpu/vk:public_hdrs"],
+            "//src/gpu:metal_ganesh": ["//include/gpu/mtl:public_hdrs"],
+            # TODO(kjlubick) d3d backend
+        },
+    ),
+    visibility = ["//include:__pkg__"],
+)
+
+skia_filegroup(
+    name = "ganesh_hdrs",
+    srcs = [
+        "GrBackendSemaphore.h",
+        "GrBackendSurface.h",
+        "GrContextOptions.h",
+        "GrContextThreadSafeProxy.h",
+        "GrDirectContext.h",
+        "GrDriverBugWorkarounds.h",
+        "GrDriverBugWorkaroundsAutogen.h",
+        "GrRecordingContext.h",
+        "GrTypes.h",
+        "GrYUVABackendTextures.h",
+        ":shared_public_hdrs",
+    ],
+    visibility = ["//src/gpu/ganesh:__subpackages__"],
+)
+
+skia_filegroup(
+    name = "shared_gpu_hdrs",
+    srcs = [
+        "GpuTypes.h",
+        "GrTypes.h",  # TODO(kjlubick, egdaniel) Tesselation.h uses GR_MAKE_BITFIELD_CLASS_OPS
+        "MutableTextureState.h",
+        "ShaderErrorHandler.h",
+    ],
+    visibility = ["//src/gpu:__pkg__"],
+)

@@ -78,8 +78,6 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
             if (!remoteBackingStore->hasFrontBuffer() || !remoteBackingStore->supportsPartialRepaint())
                 remoteBackingStore->setNeedsDisplay();
 
-            remoteBackingStore->clearBackingStore();
-
             prepareBuffersData.append({
                 bufferSet,
                 remoteBackingStore->dirtyRegion(),
@@ -89,34 +87,21 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
             });
 
             backingStoreList.append(*remoteBackingStore);
-        } else
-            downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore).prepareToDisplay();
+        }
+
+        backingStore.prepareToDisplay();
     }
 
     if (prepareBuffersData.size()) {
-        remoteRenderingBackend.prepareImageBufferSetsForDisplay(WTFMove(prepareBuffersData), [backingStoreList = WTFMove(backingStoreList)](Vector<RemoteRenderingBackendProxy::SwapBuffersResult>&& swapResult) {
-            RELEASE_ASSERT(swapResult.size() == backingStoreList.size() || swapResult.isEmpty());
-            for (unsigned i = 0; i < swapResult.size(); ++i) {
-                auto& backingStoreSwapResult = swapResult[i];
-                auto& backingStore = backingStoreList[i];
-                if (!backingStore)
-                    continue;
-                if (backingStoreSwapResult.displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
-                    backingStore->setNeedsDisplay();
-                backingStore->setBufferCacheIdentifiers(WTFMove(backingStoreSwapResult.cacheIdentifiers));
-                backingStore->setBackendHandle(WTFMove(backingStoreSwapResult.backendHandle));
-            }
-        });
+        auto swapResult = remoteRenderingBackend.prepareImageBufferSetsForDisplay(WTFMove(prepareBuffersData));
+        RELEASE_ASSERT(swapResult.size() == backingStoreList.size() || swapResult.isEmpty());
+        for (unsigned i = 0; i < swapResult.size(); ++i) {
+            auto& backingStoreSwapResult = swapResult[i];
+            auto& backingStore = backingStoreList[i];
+            if (backingStoreSwapResult == SwapBuffersDisplayRequirement::NeedsFullDisplay)
+                backingStore->setNeedsDisplay();
+        }
     }
-}
-
-std::unique_ptr<RemoteLayerBackingStore> RemoteLayerBackingStoreCollection::createRemoteLayerBackingStore(PlatformCALayerRemote* layer)
-{
-    // We currently only create a single type of backing store based on the global setting, but
-    // it should be fine to mix both types in the same collection.
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
-        return makeUnique<RemoteLayerWithRemoteRenderingBackingStore>(layer);
-    return makeUnique<RemoteLayerWithInProcessRenderingBackingStore>(layer);
 }
 
 bool RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
@@ -155,11 +140,11 @@ void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTrans
     transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
 }
 
-Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackingStoreCollection::didFlushLayers(RemoteLayerTreeTransaction& transaction)
+Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStoreCollection::didFlushLayers(RemoteLayerTreeTransaction& transaction)
 {
     bool needToScheduleVolatilityTimer = false;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> flushers;
     for (auto& layer : transaction.changedLayers()) {
         if (layer->properties().changedProperties & LayerChange::BackingStoreChanged) {
             needToScheduleVolatilityTimer = true;
@@ -223,6 +208,52 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     m_liveBackingStore.add(backingStore);
     m_unparentedBackingStore.remove(backingStoreIter);
     return true;
+}
+
+void RemoteLayerBackingStoreCollection::purgeFrontBufferForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { }, true);
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front, true);
+    }
+}
+
+void RemoteLayerBackingStoreCollection::purgeBackBufferForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Back, BufferInSetType::SecondaryBack };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { }, true);
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Back, true);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+    }
+}
+
+void RemoteLayerBackingStoreCollection::markFrontBufferVolatileForTesting(RemoteLayerBackingStore& backingStore)
+{
+    if (auto* remoteBackingStore = dynamicDowncast<RemoteLayerWithRemoteRenderingBackingStore>(&backingStore)) {
+        if (RefPtr bufferSet = remoteBackingStore->protectedBufferSet()) {
+            Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>> identifiers;
+            OptionSet<BufferInSetType> bufferTypes { BufferInSetType::Front };
+            identifiers.append(std::make_pair(Ref { *bufferSet }, bufferTypes));
+            sendMarkBuffersVolatile(WTFMove(identifiers), [](bool) { });
+        }
+    } else {
+        auto& inProcessBackingStore = downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore);
+        inProcessBackingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front, false);
+    }
 }
 
 bool RemoteLayerBackingStoreCollection::markInProcessBackingStoreVolatile(RemoteLayerWithInProcessRenderingBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
@@ -295,15 +326,13 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<Vo
     auto now = MonotonicTime::now();
 
     for (auto& backingStore : m_liveBackingStore) {
-        if (is<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
-            continue;
-        successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore), liveBackingStoreMarkingBehavior, now);
+        if (auto* inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
+            successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, liveBackingStoreMarkingBehavior, now);
     }
 
     for (auto& backingStore : m_unparentedBackingStore) {
-        if (is<RemoteLayerWithRemoteRenderingBackingStore>(backingStore))
-            continue;
-        successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(downcast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore), unparentedBackingStoreMarkingBehavior, now);
+        if (auto* inProcessBackingStore = dynamicDowncast<RemoteLayerWithInProcessRenderingBackingStore>(backingStore))
+            successfullyMadeBackingStoreVolatile &= markInProcessBackingStoreVolatile(*inProcessBackingStore, unparentedBackingStoreMarkingBehavior, now);
     }
 
     return successfullyMadeBackingStoreVolatile;
@@ -427,20 +456,14 @@ bool RemoteLayerBackingStoreCollection::collectAllRemoteRenderingBufferIdentifie
 }
 
 
-void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& identifiers, CompletionHandler<void(bool)>&& completionHandler, bool forcePurge)
 {
     auto& remoteRenderingBackend = m_layerTreeContext.ensureRemoteRenderingBackendProxy();
 
     remoteRenderingBackend.markSurfacesVolatile(WTFMove(identifiers), [completionHandler = WTFMove(completionHandler)](bool markedAllVolatile) mutable {
         LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::sendMarkBuffersVolatile: marked all volatile " << markedAllVolatile);
         completionHandler(markedAllVolatile);
-    });
+    }, forcePurge);
 }
-
-void RemoteLayerBackingStoreCollection::backingStoreWillBeEncoded(const RemoteLayerBackingStore&)
-{
-    m_layerTreeContext.ensureRemoteRenderingBackendProxy().ensurePrepareCompleted();
-}
-
 
 } // namespace WebKit

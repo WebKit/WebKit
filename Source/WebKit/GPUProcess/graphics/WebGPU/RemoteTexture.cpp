@@ -59,16 +59,14 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
 {
     std::optional<WebCore::WebGPU::TextureViewDescriptor> convertedDescriptor;
     if (descriptor) {
-        auto resultDescriptor = m_objectHeap.convertFromBacking(*descriptor);
-        ASSERT(resultDescriptor);
+        auto resultDescriptor = m_objectHeap->convertFromBacking(*descriptor);
+        RELEASE_ASSERT(resultDescriptor);
         convertedDescriptor = WTFMove(resultDescriptor);
-        if (!convertedDescriptor)
-            return;
     }
-    ASSERT(convertedDescriptor);
-    auto textureView = m_backing->createView(*convertedDescriptor);
-    auto remoteTextureView = RemoteTextureView::create(textureView, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteTextureView);
+    auto textureView = m_backing->createView(convertedDescriptor);
+    RELEASE_ASSERT(textureView);
+    auto remoteTextureView = RemoteTextureView::create(textureView.releaseNonNull(), m_objectHeap, m_streamConnection.copyRef(), identifier);
+    m_objectHeap->addObject(identifier, remoteTextureView);
 }
 
 void RemoteTexture::destroy()
@@ -78,7 +76,7 @@ void RemoteTexture::destroy()
 
 void RemoteTexture::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteTexture::setLabel(String&& label)

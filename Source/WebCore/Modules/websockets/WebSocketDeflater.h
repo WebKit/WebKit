@@ -49,10 +49,11 @@ public:
     WEBCORE_EXPORT ~WebSocketDeflater();
 
     bool initialize();
-    bool addBytes(const uint8_t*, size_t);
+    bool addBytes(std::span<const uint8_t>);
     bool finish();
     const uint8_t* data() { return m_buffer.data(); }
     size_t size() const { return m_buffer.size(); }
+    std::span<const uint8_t> span() const { return m_buffer.span(); }
     void reset();
 
 private:
@@ -69,10 +70,11 @@ public:
     WEBCORE_EXPORT ~WebSocketInflater();
 
     bool initialize();
-    bool addBytes(const uint8_t*, size_t);
+    bool addBytes(std::span<const uint8_t>);
     bool finish();
-    const uint8_t* data() { return m_buffer.data(); }
+    const uint8_t* data() const { return m_buffer.data(); }
     size_t size() const { return m_buffer.size(); }
+    std::span<const uint8_t> span() const { return m_buffer.span(); }
     void reset();
 
 private:

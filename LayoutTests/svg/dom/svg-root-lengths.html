@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test.js"></script>
   </head>
   <body>
     <p id="description"></p>
@@ -17,42 +17,42 @@
         testRunner.dumpAsText();
       }
 
-      setTimeout(function () {
-        var div = document.getElementById('div');
-        var svg = document.getElementById('svg');
+      // Force layout
+      document.body.offsetTop;
 
-        description('This tests the behavior of root SVG length value resolution');
+      var div = document.getElementById('div');
+      var svg = document.getElementById('svg');
 
-        debug('Initial/default values:');
-        shouldBe('svg.width.baseVal.value', '200');
-        shouldBe('svg.height.baseVal.value', '200');
+      description('This tests the behavior of root SVG length value resolution');
 
-        svg.setAttribute('width', '50%');
-        svg.setAttribute('height', '10%');
-        debug('');
-        debug('Updated relative values:');
-        shouldBe('svg.width.baseVal.value', '100');
-        shouldBe('svg.height.baseVal.value', '20');
+      debug('Initial/default values:');
+      shouldBe('svg.width.baseVal.value', '200');
+      shouldBe('svg.height.baseVal.value', '200');
 
-        svg.setAttribute('width', '150');
-        svg.setAttribute('height', '50');
-        debug('');
-        debug('Updated fixed values:');
-        shouldBe('svg.width.baseVal.value', '150');
-        shouldBe('svg.height.baseVal.value', '50');
+      svg.setAttribute('width', '50%');
+      svg.setAttribute('height', '10%');
+      debug('');
+      debug('Updated relative values:');
+      shouldBe('svg.width.baseVal.value', '100');
+      shouldBe('svg.height.baseVal.value', '20');
 
-        svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '50%');
-        svg.setAttribute('viewBox', '0 0 800 600');
-        debug('');
-        debug('viewBox has no effect on top level length resolution.');
-        shouldBe('svg.width.baseVal.value', '200');
-        shouldBe('svg.height.baseVal.value', '100');
+      svg.setAttribute('width', '150');
+      svg.setAttribute('height', '50');
+      debug('');
+      debug('Updated fixed values:');
+      shouldBe('svg.width.baseVal.value', '150');
+      shouldBe('svg.height.baseVal.value', '50');
 
-        if (window.testRunner)
-          testRunner.notifyDone();
-      }, 0);
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '50%');
+      svg.setAttribute('viewBox', '0 0 800 600');
+      debug('');
+      debug('viewBox has no effect on top level length resolution.');
+      shouldBe('svg.width.baseVal.value', '200');
+      shouldBe('svg.height.baseVal.value', '100');
+
+      if (window.testRunner)
+        testRunner.notifyDone();
     </script>
-    <script src="../../resources/js-test-post.js"></script>
   </body>
 </html>

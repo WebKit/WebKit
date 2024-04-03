@@ -100,10 +100,14 @@ public:
 
     void cancelPicking();
 
-    RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer>, const CaptureDevice&, SCStreamConfiguration*, SCStreamDelegate*);
+    std::pair<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>> contentFilterAndSharingSessionFromCaptureDevice(const CaptureDevice&);
+    RefPtr<ScreenCaptureSessionSource> createSessionSourceForDevice(WeakPtr<ScreenCaptureSessionSource::Observer>, SCContentFilter*, SCContentSharingSession*, SCStreamConfiguration*, SCStreamDelegate*);
     void cancelPendingSessionForDevice(const CaptureDevice&);
 
     WEBCORE_EXPORT void promptForGetDisplayMedia(DisplayCapturePromptType, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
+    WEBCORE_EXPORT void cancelGetDisplayMediaPrompt();
+
+    void cleanupSharingSession(SCContentSharingSession*);
 
 private:
     void cleanupAllSessions();
@@ -112,14 +116,13 @@ private:
     bool promptWithSCContentSharingSession(DisplayCapturePromptType);
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
-    bool promptingInProgress() const { return !!m_completionHandler; }
+    bool promptingInProgress() const;
 
     void cleanupSessionSource(ScreenCaptureSessionSource&);
 
     WeakPtr<ScreenCaptureSessionSource> findActiveSource(SCContentSharingSession*);
 
     Vector<WeakPtr<ScreenCaptureSessionSource>> m_activeSources;
-    Vector<std::tuple<RetainPtr<SCContentFilter>, RetainPtr<SCContentSharingSession>>> m_pendingSessions;
 
     RetainPtr<SCContentSharingSession> m_pendingSession;
     RetainPtr<SCContentFilter> m_pendingContentFilter;

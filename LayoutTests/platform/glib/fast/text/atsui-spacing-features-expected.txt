@@ -7,10 +7,10 @@ layer at (0,0) size 800x372
         RenderText {#text} at (0,0) size 174x17
           text run at (0,0) width 174: "Test for regressions against "
         RenderInline {I} at (0,0) size 756x35
-          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+          RenderInline {A} at (173,0) size 349x17 [color=#0000EE]
             RenderText {#text} at (173,0) size 349x17
               text run at (173,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3922"
-          RenderText {#text} at (521,0) size 756x35
+          RenderText {#text} at (0,0) size 756x35
             text run at (521,0) width 235: " Variable word/letter spacing and full"
             text run at (0,18) width 321: "justification not supported for ATSUI-rendered text"
         RenderText {#text} at (320,18) size 5x17
@@ -34,7 +34,7 @@ layer at (0,0) size 800x372
             RenderTableCell {TD} at (2,24) size 204x180 [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 202x178
                 RenderBlock {DIV} at (0,0) size 202x56 [border: (1px solid #0000FF)]
-                  RenderText {#text} at (61,1) size 181x53
+                  RenderText {#text} at (20,1) size 181x53
                     text run at (61,1) width 31 RTL: "\x{5E1}\x{5B5}\x{5E4}\x{5B6}\x{5E8}"
                     text run at (101,1) width 5 RTL: " "
                     text run at (105,1) width 18 RTL: "\x{5DC}\x{5B0}\x{5DA}\x{5B8}"

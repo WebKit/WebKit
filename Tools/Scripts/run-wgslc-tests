@@ -28,4 +28,4 @@ LIT_TEST_DIR=$(mktemp -d)
 export LIT_TEST_DIR
 trap 'rm -rf -- "$LIT_TEST_DIR"' EXIT
 
-"$LIT" -v "$TESTS_PATH"
+"$LIT" -v "$TESTS_PATH" $*

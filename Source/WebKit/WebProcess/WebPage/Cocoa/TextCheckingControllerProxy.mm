@@ -73,7 +73,10 @@ static OptionSet<DocumentMarker::Type> relevantMarkerTypes()
 
 std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
-    auto& frameSelection = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame().selection();
+    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+    auto& frameSelection = focusedOrMainFrame->selection();
     auto selection = frameSelection.selection();
 
     RefPtr root = frameSelection.rootEditableElementOrDocumentElement();
@@ -96,7 +99,9 @@ std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControlle
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
-    Ref frame = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
     auto& frameSelection = frame->selection();
     if (!frameSelection.selection().isContentEditable())
         return;
@@ -158,7 +163,10 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState"_s;
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::Type::PlatformTextChecking;
-    RefPtr document = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame().document();
+    RefPtr focusedOrMainFrame = m_page.corePage()->checkedFocusController()->focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return;
+    RefPtr document = focusedOrMainFrame->document();
     document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!std::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return FilterMarkerResult::Keep;
@@ -179,17 +187,15 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    constexpr TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresWhiteSpaceAtEndOfRun };
-
-    for (TextIterator it(*entireRange, behaviors); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*entireRange); !it.atEnd(); it.advance()) {
         if (!it.text().length())
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
         auto range = it.range();
         for (auto& marker : range.start.document().markers().markersInRange(range, DocumentMarker::Type::PlatformTextChecking)) {
             auto& data = std::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
-            auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() }, behaviors);
-            auto attributeRange = characterRange(*entireRange, subrange, behaviors);
+            auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
+            auto attributeRange = characterRange(*entireRange, subrange);
             ASSERT(attributeRange.location + attributeRange.length <= [string length]);
             if (attributeRange.location + attributeRange.length <= [string length])
                 [string addAttribute:data.key value:data.value range:WTFMove(attributeRange)];

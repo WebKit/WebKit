@@ -1106,8 +1106,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig1010102Support)
     initializeDisplay();
     ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
 
-    EGLConfig config;
-    if (EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config) == EGL_FALSE)
+    if (EGLWindow::FindEGLConfig(mDisplay, configAttributes, &mConfig) == EGL_FALSE)
     {
         std::cout << "EGLConfig for a GL_RGB10_A2 surface is not supported, skipping test"
                   << std::endl;
@@ -1119,6 +1118,9 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig1010102Support)
         !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_gl_colorspace_bt2020_linear"));
     ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_gl_colorspace_bt2020_pq"));
 
+    initializeMainContext();
+    ASSERT_NE(mContext, EGL_NO_CONTEXT);
+
     constexpr std::array<EGLint, 3u> kBt2020Colorspaces = {EGL_GL_COLORSPACE_BT2020_HLG_EXT,
                                                            EGL_GL_COLORSPACE_BT2020_LINEAR_EXT,
                                                            EGL_GL_COLORSPACE_BT2020_PQ_EXT};
@@ -1128,7 +1130,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig1010102Support)
         winSurfaceAttribs.push_back(EGL_GL_COLORSPACE_KHR);
         winSurfaceAttribs.push_back(bt2020Colorspace);
 
-        initializeSurfaceWithAttribs(config, winSurfaceAttribs);
+        initializeWindowSurfaceWithAttribs(mConfig, winSurfaceAttribs, EGL_SUCCESS);
         ASSERT_EGL_SUCCESS();
         ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
@@ -1481,16 +1483,12 @@ class EGLSurfaceTestD3D11 : public EGLSurfaceTest
         //    - 0.5 is subtracted because gl_FragCoord gives the pixel center
         //    - Divided by the size to give a max value of 1
         std::stringstream fs;
-        fs << "precision mediump float;"
-           << "void main()"
-           << "{"
-           << "    float dimension = float(" << textureDimension << ");"
-           << "    float offset = float(" << offset << ");"
+        fs << "precision mediump float;" << "void main()" << "{" << "    float dimension = float("
+           << textureDimension << ");" << "    float offset = float(" << offset << ");"
            << "    gl_FragColor = vec4((gl_FragCoord.x + offset - 0.5) / dimension,"
            << "                        (gl_FragCoord.y + offset - 0.5) / dimension,"
            << "                         gl_FragCoord.z,"
-           << "                         gl_FragCoord.w);"
-           << "}";
+           << "                         gl_FragCoord.w);" << "}";
 
         GLuint program = createProgram(fs.str().c_str());
         ASSERT_NE(0u, program);

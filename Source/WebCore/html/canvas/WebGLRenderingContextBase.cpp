@@ -35,7 +35,6 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
-#include "EXTBlendFuncExtended.h"
 #include "EXTBlendMinMax.h"
 #include "EXTClipControl.h"
 #include "EXTColorBufferFloat.h"
@@ -99,6 +98,7 @@
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
+#include "WebGLBlendFuncExtended.h"
 #include "WebGLBuffer.h"
 #include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
@@ -471,7 +471,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
     : GPUBasedCanvasRenderingContext(canvas)
     , m_generatedImageCache(4)
     , m_attributes(WTFMove(attributes))
-    , m_creationAttributes(attributes)
+    , m_creationAttributes(m_attributes)
     , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
 {
 }
@@ -622,7 +622,7 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
     if (!canvas)
         return;
 
-    auto* page = canvas->document().page();
+    RefPtr page = canvas->document().page();
     if (!page)
         return;
 
@@ -630,16 +630,14 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
 
     // We won't get a state change right away, so
     // make sure the context knows if it visible or not.
-    m_context->setContextVisibility(page->isVisible());
+    protectedGraphicsContextGL()->setContextVisibility(page->isVisible());
 }
 
 void WebGLRenderingContextBase::removeActivityStateChangeObserver()
 {
     auto* canvas = htmlCanvas();
-    if (canvas) {
-        if (auto* page = canvas->document().page())
-            page->removeActivityStateChangeObserver(*this);
-    }
+    if (RefPtr page = canvas ? canvas->document().page() : nullptr)
+        page->removeActivityStateChangeObserver(*this);
 }
 
 WebGLRenderingContextBase::~WebGLRenderingContextBase()
@@ -696,23 +694,8 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLR
         return;
 
     m_compositingResultsNeedUpdating = true;
-
-    if (auto* canvas = htmlCanvas()) {
-        if (isAccelerated()) {
-            canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
-            RenderBox* renderBox = canvas->renderBox();
-            if (renderBox && renderBox->hasAcceleratedCompositing()) {
-                m_canvasBufferContents = std::nullopt;
-                canvas->clearCopiedImage();
-                renderBox->contentChanged(CanvasPixelsChanged);
-            }
-        }
-    }
-
-    if (m_canvasBufferContents.has_value()) {
-        m_canvasBufferContents = std::nullopt;
-        canvasBase().didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
-    }
+    m_canvasBufferContents = std::nullopt;
+    markCanvasChanged();
 }
 
 bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
@@ -1161,7 +1144,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
         return;
 
     std::visit([&](auto& data) {
-        m_context->bufferData(target, std::span(static_cast<const uint8_t*>(data->data()), data->byteLength()), usage);
+        m_context->bufferData(target, data->span(), usage);
     }, data.value());
 }
 
@@ -1178,7 +1161,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
     }
 
     std::visit([&](auto& data) {
-        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(static_cast<const uint8_t*>(data->data()), data->byteLength()));
+        m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->span());
     }, data);
 }
 
@@ -1265,7 +1248,7 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
         return;
     if (!validateCompressedTexFormat("compressedTexImage2D", internalformat))
         return;
-    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), std::span(static_cast<const uint8_t*>(data.baseAddress()), data.byteLength()));
+    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, data.byteLength(), data.span());
 }
 
 void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& data)
@@ -1276,7 +1259,7 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
         return;
     if (!validateCompressedTexFormat("compressedTexSubImage2D", format))
         return;
-    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), std::span(static_cast<const uint8_t*>(data.baseAddress()), data.byteLength()));
+    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), data.span());
 }
 
 bool WebGLRenderingContextBase::validateSettableTexInternalFormat(const char* functionName, GCGLenum internalFormat)
@@ -1381,7 +1364,7 @@ bool WebGLRenderingContextBase::deleteObject(const AbstractLocker& locker, WebGL
     if (object->object())
         // We need to pass in context here because we want
         // things in this context unbound.
-        object->deleteObject(locker, graphicsContextGL());
+        object->deleteObject(locker, protectedGraphicsContextGL().get());
     return true;
 }
 
@@ -1531,7 +1514,7 @@ void WebGLRenderingContextBase::detachShader(WebGLProgram& program, WebGLShader&
         return;
     }
     m_context->detachShader(program.object(), shader.object());
-    shader.onDetached(locker, graphicsContextGL());
+    shader.onDetached(locker, protectedGraphicsContextGL().get());
 }
 
 void WebGLRenderingContextBase::disable(GCGLenum cap)
@@ -2006,8 +1989,6 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-            return makeString("WebGL GLSL ES 1.0 (", m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION), ')');
         return "WebGL GLSL ES 1.0 (1.0)"_str;
     case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
@@ -2071,23 +2052,13 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
-        if (m_webglDebugRendererInfo) {
-#if !PLATFORM(IOS_FAMILY)
-            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-                return m_context->getString(GraphicsContextGL::RENDERER);
-#endif
+        if (m_webglDebugRendererInfo)
             return "Apple GPU"_str;
-        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
-        if (m_webglDebugRendererInfo) {
-#if !PLATFORM(IOS_FAMILY)
-            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
-                return m_context->getString(GraphicsContextGL::VENDOR);
-#endif
+        if (m_webglDebugRendererInfo)
             return "Apple Inc."_str;
-        }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
         return nullptr;
     case GraphicsContextGL::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
@@ -2137,10 +2108,10 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
             return getUnsignedIntParameter(pname);
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_clip_control not enabled");
         return nullptr;
-    case GraphicsContextGL::MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT: // EXT_blend_func_extended
-        if (m_extBlendFuncExtended)
+    case GraphicsContextGL::MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT: // WEBGL_blend_func_extended
+        if (m_webglBlendFuncExtended)
             return getUnsignedIntParameter(pname);
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_blend_func_extended not enabled");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_blend_func_extended not enabled");
         return nullptr;
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers || isWebGL2())
@@ -2546,28 +2517,28 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     switch (baseType) {
     case GraphicsContextGL::FLOAT: {
         GCGLfloat value[16] = {0};
-        m_context->getUniformfv(program.object(), location, std::span<GCGLfloat> { value, length });
+        m_context->getUniformfv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Float32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::INT: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Int32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::UNSIGNED_INT: {
         GCGLuint value[4] = {0};
-        m_context->getUniformuiv(program.object(), location, std::span<GCGLuint> { value, length });
+        m_context->getUniformuiv(program.object(), location, std::span { value, length });
         if (length == 1)
             return value[0];
         return Uint32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::BOOL: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span { value, length });
         if (length > 1) {
             Vector<bool> vector(length);
             for (unsigned j = 0; j < length; j++)
@@ -2690,7 +2661,6 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
         return variable != nullptr;
 
     CHECK_EXTENSION(m_angleInstancedArrays, "ANGLE_instanced_arrays");
-    CHECK_EXTENSION(m_extBlendFuncExtended, "EXT_blend_func_extended");
     CHECK_EXTENSION(m_extBlendMinMax, "EXT_blend_minmax");
     CHECK_EXTENSION(m_extClipControl, "EXT_clip_control");
     CHECK_EXTENSION(m_extColorBufferFloat, "EXT_color_buffer_float");
@@ -2723,6 +2693,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_oesTextureHalfFloat, "OES_texture_half_float");
     CHECK_EXTENSION(m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear");
     CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
+    CHECK_EXTENSION(m_webglBlendFuncExtended, "WEBGL_blend_func_extended");
     CHECK_EXTENSION(m_webglClipCullDistance, "WEBGL_clip_cull_distance");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc");
@@ -3000,7 +2971,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
         return;
     }
     clearIfComposited(CallerTypeOther);
-    std::span<uint8_t> data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
+    std::span data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
     m_context->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength);
 }
 
@@ -3289,7 +3260,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (m_unpackFlipY)
         adjustedSourceImageRect.setY(source.height() - adjustedSourceImageRect.maxY());
 
-    std::span<const uint8_t> imageData { source.data().data(), source.data().byteLength() };
+    std::span imageData { source.data().data(), source.data().byteLength() };
     Vector<uint8_t> data;
 
     // The data from ImageData is always of format RGBA8.
@@ -3303,7 +3274,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
             return { };
         }
-        imageData = std::span<const uint8_t> { data.data(), data.size() };
+        imageData = std::span { data.data(), data.size() };
     }
     ScopedTightUnpackParameters temporaryResetUnpack(*this);
     if (functionID == TexImageFunctionID::TexImage2D) {
@@ -3409,7 +3380,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, source.videoWidth(), source.videoHeight());
 
 #if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (auto player = source.player())
+    if (RefPtr player = source.player())
         player->willBeAskedToPaintGL();
 #endif
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
@@ -3420,7 +3391,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
         && type == GraphicsContextGL::UNSIGNED_BYTE
         && !level) {
-        if (auto player = source.player()) {
+        if (RefPtr player = source.player()) {
             if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
         }
@@ -3601,13 +3572,13 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
         return;
     }
 
-    std::span<const uint8_t> pixels { imagePixelData, imagePixelByteLength };
+    std::span pixels { imagePixelData, imagePixelByteLength };
     if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error");
             return;
         }
-        pixels = std::span<const uint8_t> { data.data(), data.size() };
+        pixels = std::span { data.data(), data.size() };
     }
 
     ScopedTightUnpackParameters temporaryResetUnpack(*this);
@@ -3928,7 +3899,7 @@ std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
     ASSERT(!offset.hasOverflowed()); // Checked already as part of `total.hasOverflowed()` check.
-    return std::span(static_cast<const uint8_t*>(pixels->baseAddress()) + offset.value(), dataLength);
+    return pixels->span().subspan(offset.value(), dataLength);
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID functionID,
@@ -4540,7 +4511,7 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 
     if (m_currentProgram != program) {
         if (m_currentProgram)
-            m_currentProgram->onDetached(locker, graphicsContextGL());
+            m_currentProgram->onDetached(locker, protectedGraphicsContextGL().get());
         m_currentProgram = program;
         m_context->useProgram(objectOrZero(program));
         if (program)
@@ -5145,7 +5116,7 @@ std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatr
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size");
         return { };
     }
-    return std::span<const T> { values.data() + srcOffset, static_cast<size_t>(actualSize) };
+    return std::span { values.data() + srcOffset, static_cast<size_t>(actualSize) };
 }
 
 template
@@ -5332,11 +5303,11 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 
 void WebGLRenderingContextBase::maybeRestoreContextSoon(Seconds timeout)
 {
-    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
 
-    m_restoreTimer = scriptExecutionContext->eventLoop().scheduleTask(timeout, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
+    m_restoreTimer = scriptExecutionContext->checkedEventLoop()->scheduleTask(timeout, TaskSource::WebGL, [weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
             protectedThis->m_restoreTimer = nullptr;
             protectedThis->maybeRestoreContext();
@@ -5352,7 +5323,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         return;
     }
 
-    auto scriptExecutionContext = canvasBase().scriptExecutionContext();
+    RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
     if (!scriptExecutionContext)
         return;
 
@@ -5374,7 +5345,11 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             canvasBase().dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
             // Notify the render layer to reconfigure the structure of the backing. This causes the backing to
             // start using the new layer contents display delegate from the new context.
-            notifyCanvasContentChanged();
+            if (auto* htmlCanvas = this->htmlCanvas()) {
+                CheckedPtr renderBox = htmlCanvas->renderBox();
+                if (renderBox && renderBox->hasAcceleratedCompositing())
+                    renderBox->contentChanged(CanvasChanged);
+            }
             return;
         }
         // Remove the possible objects added during the initialization.
@@ -5573,7 +5548,6 @@ template<typename T> void loseExtension(RefPtr<T> extension)
 void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
 {
     loseExtension(WTFMove(m_angleInstancedArrays));
-    loseExtension(WTFMove(m_extBlendFuncExtended));
     loseExtension(WTFMove(m_extBlendMinMax));
     loseExtension(WTFMove(m_extClipControl));
     loseExtension(WTFMove(m_extColorBufferFloat));
@@ -5606,6 +5580,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     loseExtension(WTFMove(m_oesTextureHalfFloat));
     loseExtension(WTFMove(m_oesTextureHalfFloatLinear));
     loseExtension(WTFMove(m_oesVertexArrayObject));
+    loseExtension(WTFMove(m_webglBlendFuncExtended));
     loseExtension(WTFMove(m_webglClipCullDistance));
     loseExtension(WTFMove(m_webglColorBufferFloat));
     loseExtension(WTFMove(m_webglCompressedTextureASTC));

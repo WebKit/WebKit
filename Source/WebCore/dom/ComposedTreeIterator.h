@@ -62,7 +62,7 @@ private:
     void traverseNextInShadowTree();
     void traverseNextLeavingContext();
     void traverseShadowRoot(ShadowRoot&);
-    bool advanceInSlot(int direction);
+    bool advanceInSlot(int direction, const HTMLSlotElement&);
     void traverseSiblingInSlot(int direction);
 
     struct Context {

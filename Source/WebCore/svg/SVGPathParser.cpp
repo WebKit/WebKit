@@ -70,12 +70,12 @@ void SVGPathParser::parseClosePathSegment()
     if (m_pathParsingMode == NormalizedParsing)
         m_currentPoint = m_subPathPoint;
     m_closePath = true;
-    m_consumer.closePath();
+    m_consumer->closePath();
 }
 
 bool SVGPathParser::parseMoveToSegment()
 {
-    auto result = m_source.parseMoveToSegment();
+    auto result = m_source->parseMoveToSegment();
     if (!result)
         return false;
 
@@ -85,16 +85,16 @@ bool SVGPathParser::parseMoveToSegment()
         else
             m_currentPoint = result->targetPoint;
         m_subPathPoint = m_currentPoint;
-        m_consumer.moveTo(m_currentPoint, m_closePath, AbsoluteCoordinates);
+        m_consumer->moveTo(m_currentPoint, m_closePath, AbsoluteCoordinates);
     } else
-        m_consumer.moveTo(result->targetPoint, m_closePath, m_mode);
+        m_consumer->moveTo(result->targetPoint, m_closePath, m_mode);
     m_closePath = false;
     return true;
 }
 
 bool SVGPathParser::parseLineToSegment()
 {
-    auto result = m_source.parseLineToSegment();
+    auto result = m_source->parseLineToSegment();
     if (!result)
         return false;
 
@@ -103,15 +103,15 @@ bool SVGPathParser::parseLineToSegment()
             m_currentPoint += result->targetPoint;
         else
             m_currentPoint = result->targetPoint;
-        m_consumer.lineTo(m_currentPoint, AbsoluteCoordinates);
+        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
     } else
-        m_consumer.lineTo(result->targetPoint, m_mode);
+        m_consumer->lineTo(result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseLineToHorizontalSegment()
 {
-    auto result = m_source.parseLineToHorizontalSegment();
+    auto result = m_source->parseLineToHorizontalSegment();
     if (!result)
         return false;
 
@@ -120,15 +120,15 @@ bool SVGPathParser::parseLineToHorizontalSegment()
             m_currentPoint.move(result->x, 0);
         else
             m_currentPoint.setX(result->x);
-        m_consumer.lineTo(m_currentPoint, AbsoluteCoordinates);
+        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
     } else
-        m_consumer.lineToHorizontal(result->x, m_mode);
+        m_consumer->lineToHorizontal(result->x, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseLineToVerticalSegment()
 {
-    auto result = m_source.parseLineToVerticalSegment();
+    auto result = m_source->parseLineToVerticalSegment();
     if (!result)
         return false;
 
@@ -137,15 +137,15 @@ bool SVGPathParser::parseLineToVerticalSegment()
             m_currentPoint.move(0, result->y);
         else
             m_currentPoint.setY(result->y);
-        m_consumer.lineTo(m_currentPoint, AbsoluteCoordinates);
+        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
     } else
-        m_consumer.lineToVertical(result->y, m_mode);
+        m_consumer->lineToVertical(result->y, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseCurveToCubicSegment()
 {
-    auto result = m_source.parseCurveToCubicSegment();
+    auto result = m_source->parseCurveToCubicSegment();
     if (!result)
         return false;
 
@@ -155,18 +155,18 @@ bool SVGPathParser::parseCurveToCubicSegment()
             result->point2 += m_currentPoint;
             result->targetPoint += m_currentPoint;
         }
-        m_consumer.curveToCubic(result->point1, result->point2, result->targetPoint, AbsoluteCoordinates);
+        m_consumer->curveToCubic(result->point1, result->point2, result->targetPoint, AbsoluteCoordinates);
 
         m_controlPoint = result->point2;
         m_currentPoint = result->targetPoint;
     } else
-        m_consumer.curveToCubic(result->point1, result->point2, result->targetPoint, m_mode);
+        m_consumer->curveToCubic(result->point1, result->point2, result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseCurveToCubicSmoothSegment()
 {
-    auto result = m_source.parseCurveToCubicSmoothSegment();
+    auto result = m_source->parseCurveToCubicSmoothSegment();
     if (!result)
         return false;
 
@@ -185,18 +185,18 @@ bool SVGPathParser::parseCurveToCubicSmoothSegment()
             result->targetPoint += m_currentPoint;
         }
 
-        m_consumer.curveToCubic(point1, result->point2, result->targetPoint, AbsoluteCoordinates);
+        m_consumer->curveToCubic(point1, result->point2, result->targetPoint, AbsoluteCoordinates);
 
         m_controlPoint = result->point2;
         m_currentPoint = result->targetPoint;
     } else
-        m_consumer.curveToCubicSmooth(result->point2, result->targetPoint, m_mode);
+        m_consumer->curveToCubicSmooth(result->point2, result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseCurveToQuadraticSegment()
 {
-    auto result = m_source.parseCurveToQuadraticSegment();
+    auto result = m_source->parseCurveToQuadraticSegment();
     if (!result)
         return false;
 
@@ -214,19 +214,19 @@ bool SVGPathParser::parseCurveToQuadraticSegment()
         point1.scale(gOneOverThree);
         point2.scale(gOneOverThree);
 
-        m_consumer.curveToCubic(point1, point2, result->targetPoint, AbsoluteCoordinates);
+        m_consumer->curveToCubic(point1, point2, result->targetPoint, AbsoluteCoordinates);
 
         if (m_mode == RelativeCoordinates)
             m_controlPoint += m_currentPoint;
         m_currentPoint = result->targetPoint;
     } else
-        m_consumer.curveToQuadratic(result->point1, result->targetPoint, m_mode);
+        m_consumer->curveToQuadratic(result->point1, result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
 {
-    auto result = m_source.parseCurveToQuadraticSmoothSegment();
+    auto result = m_source->parseCurveToQuadraticSmoothSegment();
     if (!result)
         return false;
 
@@ -249,18 +249,18 @@ bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
         point1.scale(gOneOverThree);
         point2.scale(gOneOverThree);
 
-        m_consumer.curveToCubic(point1, point2, result->targetPoint, AbsoluteCoordinates);
+        m_consumer->curveToCubic(point1, point2, result->targetPoint, AbsoluteCoordinates);
 
         m_controlPoint = cubicPoint;
         m_currentPoint = result->targetPoint;
     } else
-        m_consumer.curveToQuadraticSmooth(result->targetPoint, m_mode);
+        m_consumer->curveToQuadraticSmooth(result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parseArcToSegment()
 {
-    auto result = m_source.parseArcToSegment();
+    auto result = m_source->parseArcToSegment();
     if (!result)
         return false;
 
@@ -283,9 +283,9 @@ bool SVGPathParser::parseArcToSegment()
                 m_currentPoint += result->targetPoint;
             else
                 m_currentPoint = result->targetPoint;
-            m_consumer.lineTo(m_currentPoint, AbsoluteCoordinates);
+            m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
         } else
-            m_consumer.lineTo(result->targetPoint, m_mode);
+            m_consumer->lineTo(result->targetPoint, m_mode);
         return true;
     }
 
@@ -296,17 +296,17 @@ bool SVGPathParser::parseArcToSegment()
         m_currentPoint = result->targetPoint;
         return decomposeArcToCubic(result->angle, result->rx, result->ry, point1, result->targetPoint, result->largeArc, result->sweep);
     }
-    m_consumer.arcTo(result->rx, result->ry, result->angle, result->largeArc, result->sweep, result->targetPoint, m_mode);
+    m_consumer->arcTo(result->rx, result->ry, result->angle, result->largeArc, result->sweep, result->targetPoint, m_mode);
     return true;
 }
 
 bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
 {
     // Skip any leading spaces.
-    if (!m_source.moveToNextToken())
+    if (!m_source->moveToNextToken())
         return true;
 
-    auto parsedCommand = m_source.parseSVGSegmentType();
+    auto parsedCommand = m_source->parseSVGSegmentType();
     if (!parsedCommand)
         return false;
 
@@ -318,7 +318,7 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
 
     while (true) {
         // Skip spaces between command and first coordinate.
-        m_source.moveToNextToken();
+        m_source->moveToNextToken();
         m_mode = AbsoluteCoordinates;
         switch (command) {
         case SVGPathSegType::MoveToRel:
@@ -390,15 +390,15 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
         default:
             return false;
         }
-        if (!m_consumer.continueConsuming())
+        if (!m_consumer->continueConsuming())
             return true;
 
         m_lastCommand = command;
 
-        if (!m_source.hasMoreData())
+        if (!m_source->hasMoreData())
             return true;
 
-        command = m_source.nextCommand(command);
+        command = m_source->nextCommand(command);
 
         if (m_lastCommand != SVGPathSegType::CurveToCubicAbs
             && m_lastCommand != SVGPathSegType::CurveToCubicRel
@@ -410,7 +410,7 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
             && m_lastCommand != SVGPathSegType::CurveToQuadraticSmoothRel)
             m_controlPoint = m_currentPoint;
 
-        m_consumer.incrementPathSegmentCount();
+        m_consumer->incrementPathSegmentCount();
     }
 
     return false;
@@ -496,7 +496,7 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, FloatPo
         point2 = targetPoint;
         point2.move(t * sinEndTheta, -t * cosEndTheta);
 
-        m_consumer.curveToCubic(pointTransform.mapPoint(point1), pointTransform.mapPoint(point2),
+        m_consumer->curveToCubic(pointTransform.mapPoint(point1), pointTransform.mapPoint(point2),
                                  pointTransform.mapPoint(targetPoint), AbsoluteCoordinates);
     }
     return true;

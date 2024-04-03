@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 103x18
           text run at (0,0) width 103: "Repaint test for "
         RenderInline {I} at (0,0) size 777x36
-          RenderInline {A} at (0,0) size 306x18 [color=#0000EE]
+          RenderInline {A} at (102,0) size 306x18 [color=#0000EE]
             RenderText {#text} at (102,0) size 306x18
               text run at (102,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=15838"
-          RenderText {#text} at (407,0) size 777x36
+          RenderText {#text} at (0,0) size 777x36
             text run at (407,0) width 370: " Incomplete repaint toggling \"How you know this person\""
             text run at (0,18) width 84: "on Facebook"
         RenderText {#text} at (83,18) size 5x18

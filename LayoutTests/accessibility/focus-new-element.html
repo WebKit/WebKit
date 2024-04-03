@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+var output = "This test ensures that the accessiblity tree properly handles focus for an element who has not yet attached a renderer.\n\n";
+
+var axText, axButton;
+function verifyButton() {
+    output += expect("axButton && axButton.isValid", "true");
+    axText = platformTextAlternatives(axButton);
+    output += `${axText}\n`;
+    output += expect("axText.includes('BUTTON')", "true");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Ensure the AXObjectCache is created before issuing focus.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    let button = document.createElement("div");
+    button.setAttribute("id", "button"),
+    button.setAttribute("role", "button"),
+    button.setAttribute("tabindex", "0");
+    button.setAttribute("aria-label", "BUTTON");
+    button.innerHTML = "TEST";
+    document.getElementById("container").appendChild(button);
+    button.focus();
+
+    setTimeout(async function() {
+        await waitFor(() => {
+            axButton = accessibilityController.focusedElement;
+            return axButton && axButton.role.toLowerCase().includes("button");
+        });
+        verifyButton();
+
+        axButton = accessibilityController.accessibleElementById("button");
+        verifyButton();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

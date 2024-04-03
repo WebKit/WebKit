@@ -136,7 +136,7 @@ private:
     Notification(ScriptExecutionContext&, WTF::UUID, const String& title, Options&&, Ref<SerializedScriptValue>&&);
 
     NotificationClient* clientFromContext();
-    EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Notification; }
 
     void stopResourcesLoader();
 

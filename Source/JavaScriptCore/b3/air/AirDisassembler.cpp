@@ -113,6 +113,15 @@ void Disassembler::dump(Code& code, PrintStream& out, LinkBuffer& linkBuffer, co
     // this later if we find a strong use for it.
     out.print(tierName, "# Late paths\n");
     dumpAsmRange(m_latePathStart, m_latePathEnd);
+
+    {
+        CodeLocationLabel<DisassemblyPtrTag> start = linkBuffer.locationOf<DisassemblyPtrTag>(m_latePathEnd);
+        size_t dumpedSize = start.dataLocation<uintptr_t>() - linkBuffer.entrypoint<DisassemblyPtrTag>().dataLocation<uintptr_t>();
+        if (dumpedSize < linkBuffer.size()) {
+            out.print(tierName, "# Remaining\n");
+            disassemble(start, linkBuffer.size() - dumpedSize, codeStart, codeEnd, asmPrefix, out);
+        }
+    }
 }
 
 } } } // namespace JSC::B3::Air

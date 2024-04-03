@@ -37,7 +37,6 @@ public:
     static Ref<PushSubscriptionChangeEvent> create(const AtomString&, ExtendableEventInit&&, RefPtr<PushSubscription>&& newSubscription, RefPtr<PushSubscription>&& oldSubscription, IsTrusted);
     ~PushSubscriptionChangeEvent();
 
-    EventInterface eventInterface() const final { return PushSubscriptionChangeEventInterfaceType; }
     PushSubscription* newSubscription() { return m_newSubscription.get(); }
     PushSubscription* oldSubscription() { return m_oldSubscription.get(); }
 

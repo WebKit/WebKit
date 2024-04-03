@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests observing a custom element, which observes "style" content attribute, with a MutationObserver.');
+
+let attributeChanges = [];
+class SomeElement extends HTMLElement {
+    static observedAttributes = ["style"]; 
+    constructor() {
+        super();
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        attributeChanges.push({name, oldValue, newValue});
+    }
+};
+customElements.define('some-element', SomeElement);
+
+const observer = new MutationObserver((records) => { });
+shouldBe('observer.takeRecords().length', '0');
+shouldBe('attributeChanges.length', '0');
+evalAndLog('element = document.createElement("some-element"); observer.observe(element, {attributes: true});');
+evalAndLog('element.style.width = "100px";');
+shouldBe('records = observer.takeRecords(); records.length', '1');
+shouldBe('records[0].target', 'element');
+shouldBeEqualToString('records[0].type', 'attributes');
+shouldBe('records[0].oldValue', 'null');
+shouldBe('attributeChanges.length', '1');
+shouldBeEqualToString('attributeChanges[0].name', 'style');
+shouldBe('attributeChanges[0].oldValue', 'null');
+shouldBeEqualToString('attributeChanges[0].newValue', 'width: 100px;');
+evalAndLog('element.style.color = "red";');
+shouldBe('records = observer.takeRecords(); records.length', '1');
+shouldBe('records[0].target', 'element');
+shouldBeEqualToString('records[0].type', 'attributes');
+shouldBe('records[0].oldValue', 'null');
+shouldBe('attributeChanges.length', '2');
+shouldBeEqualToString('attributeChanges[1].name', 'style');
+shouldBeEqualToString('attributeChanges[1].oldValue', 'width: 100px;');
+shouldBeEqualToString('attributeChanges[1].newValue', 'width: 100px; color: red;');
+
+</script>
+</body>
+</html>

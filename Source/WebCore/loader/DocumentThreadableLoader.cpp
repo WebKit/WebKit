@@ -621,7 +621,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     ResourceResponse response;
     auto identifier = AtomicObjectIdentifier<ResourceLoader> { std::numeric_limits<uint64_t>::max() };
     if (RefPtr frame = m_document->frame()) {
-        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->protectedSecurityOrigin(), requestURL))
+        if (MixedContentChecker::shouldBlockRequestForRunnableContent(*frame, m_document->protectedSecurityOrigin(), requestURL, MixedContentChecker::ShouldLogWarning::Yes))
             return;
         CheckedRef frameLoader = frame->loader();
         identifier = frameLoader->loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);

@@ -26,14 +26,7 @@
             testExpected('window.getComputedStyle(target).transitionDuration', '30s');
             run('internals.setFullscreenAutoHideDuration(0)');
             testExpected('window.getComputedStyle(target).transitionDuration', '0s');
-            runWithKeyDown(() => {target.webkitRequestFullscreen() });
-            waitForEventOnce(document, 'webkitfullscreenchange', event => {
-                run('internals.setFullscreenControlsHidden(true)');
-                testExpected('document.querySelector("#target:-webkit-full-screen-controls-hidden")', target);
-                run('internals.setFullscreenControlsHidden(false)');
-                testExpected('document.querySelector("#target:-webkit-full-screen-controls-hidden")', null);
-                endTest();
-            });
+            endTest();
         });
     </script>
     <style>

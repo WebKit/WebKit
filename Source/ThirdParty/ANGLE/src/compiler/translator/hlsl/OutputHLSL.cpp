@@ -1154,22 +1154,19 @@ void OutputHLSL::header(TInfoSinkBase &out,
         std::ostringstream glBuiltinInitialization = sh::InitializeStream<std::ostringstream>();
 
         systemValueDeclaration << "\nstruct CS_INPUT\n{\n";
-        glBuiltinInitialization << "\nvoid initGLBuiltins(CS_INPUT input)\n"
-                                << "{\n";
+        glBuiltinInitialization << "\nvoid initGLBuiltins(CS_INPUT input)\n" << "{\n";
 
         if (mUsesWorkGroupID)
         {
             out << "static uint3 gl_WorkGroupID = uint3(0, 0, 0);\n";
-            systemValueDeclaration << "    uint3 dx_WorkGroupID : "
-                                   << "SV_GroupID;\n";
+            systemValueDeclaration << "    uint3 dx_WorkGroupID : " << "SV_GroupID;\n";
             glBuiltinInitialization << "    gl_WorkGroupID = input.dx_WorkGroupID;\n";
         }
 
         if (mUsesLocalInvocationID)
         {
             out << "static uint3 gl_LocalInvocationID = uint3(0, 0, 0);\n";
-            systemValueDeclaration << "    uint3 dx_LocalInvocationID : "
-                                   << "SV_GroupThreadID;\n";
+            systemValueDeclaration << "    uint3 dx_LocalInvocationID : " << "SV_GroupThreadID;\n";
             glBuiltinInitialization << "    gl_LocalInvocationID = input.dx_LocalInvocationID;\n";
         }
 
@@ -1184,8 +1181,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
         if (mUsesLocalInvocationIndex)
         {
             out << "static uint gl_LocalInvocationIndex = uint(0);\n";
-            systemValueDeclaration << "    uint dx_LocalInvocationIndex : "
-                                   << "SV_GroupIndex;\n";
+            systemValueDeclaration << "    uint dx_LocalInvocationIndex : " << "SV_GroupIndex;\n";
             glBuiltinInitialization
                 << "    gl_LocalInvocationIndex = input.dx_LocalInvocationIndex;\n";
         }
@@ -3105,17 +3101,8 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
         outputLineDirective(out, node->getLine().first_line);
     }
 
-    if (node->getBody())
-    {
-        // The loop body node will output braces.
-        node->getBody()->traverse(this);
-    }
-    else
-    {
-        // TODO(oetuaho): Check if the semicolon inside is necessary.
-        // It's there as a result of conservative refactoring of the output.
-        out << "{;}\n";
-    }
+    // The loop body node will output braces.
+    node->getBody()->traverse(this);
 
     outputLineDirective(out, node->getLine().first_line);
 
@@ -3389,10 +3376,7 @@ bool OutputHLSL::handleExcessiveLoop(TInfoSinkBase &out, TIntermLoop *node)
                 outputLineDirective(out, node->getLine().first_line);
                 out << "{\n";
 
-                if (node->getBody())
-                {
-                    node->getBody()->traverse(this);
-                }
+                node->getBody()->traverse(this);
 
                 outputLineDirective(out, node->getLine().first_line);
                 out << ";}\n";
@@ -3726,8 +3710,7 @@ TString OutputHLSL::addStructEqualityFunction(const TStructure &structure)
         fnOut << ")";
     }
 
-    fnOut << ";\n"
-          << "}\n";
+    fnOut << ";\n" << "}\n";
 
     function->functionDefinition = fnOut.c_str();
 
@@ -3908,9 +3891,7 @@ TString OutputHLSL::addFlatEvaluateFunction(const TType &type, const TType &para
     TInfoSinkBase fnOut;
     fnOut << typeName << " " << function.functionName << "(" << typeName << " i, "
           << parameterTypeName << " p)\n";
-    fnOut << "{\n"
-          << "    return i;\n"
-          << "}\n";
+    fnOut << "{\n" << "    return i;\n" << "}\n";
     function.functionDefinition = fnOut.c_str();
 
     mFlatEvaluateFunctions.push_back(function);

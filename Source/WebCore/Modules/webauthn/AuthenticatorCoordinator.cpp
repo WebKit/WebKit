@@ -34,13 +34,12 @@
 #include "AuthenticatorCoordinatorClient.h"
 #include "AuthenticatorResponseData.h"
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSPublicKeyCredentialClientCapabilities.h"
+#include "PermissionsPolicy.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
@@ -132,10 +131,6 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     // Step 8.
     if (!options.rp.id)
         options.rp.id = callerOrigin.domain();
-    else if (!callerOrigin.isMatchingRegistrableDomainSuffix(*options.rp.id)) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
-        return;
-    }
 
     // Step 9-11.
     // Most of the jobs are done by bindings.
@@ -158,19 +153,23 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
     AuthenticationExtensionsClientInputs extensionInputs = {
         String(),
         false,
+        std::nullopt,
         std::nullopt
     };
 
     if (auto extensions = options.extensions) {
         extensionInputs.credProps = extensions->credProps;
         extensionInputs.largeBlob = extensions->largeBlob;
+        extensionInputs.prf = extensions->prf;
     }
 
     options.extensions = extensionInputs;
-
-    // Step 14-16.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
-    auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
+    if (options.extensions && options.extensions->largeBlob) {
+        if (options.extensions->largeBlob->read || options.extensions->largeBlob->write) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Read and write may not be present in largeBlob for registration."_s });
+            return;
+        }
+    }
 
     // Step 4, 18-22.
     if (!m_client) {
@@ -178,22 +177,49 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    if (createOptions.signal) {
+        createOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
+            if (!weakThis)
+                return;
+            weakThis->m_isCancelling = true;
+            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+                if (!weakThis)
+                    return;
+                weakThis->m_isCancelling = false;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
+                    queuedRequest();
+            });
+        });
+    }
+
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
         promise.reject(exception.toException());
     };
+
+    if (m_isCancelling) {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, createOptions = WTFMove(createOptions), callback = WTFMove(callback)]() mutable {
+            if (!weakThis || !weakFrame)
+                return;
+            const auto options = createOptions.publicKey.value();
+            RefPtr frame = weakFrame.get();
+            if (!frame)
+                return;
+            weakThis->m_client->makeCredential(*weakFrame, options, createOptions.mediation, WTFMove(callback));
+        };
+        return;
+    }
     // Async operations are dispatched and handled in the messenger.
-    m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
+    m_client->makeCredential(*frame, options, createOptions.mediation, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)
@@ -208,7 +234,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
-    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::PublickeyCredentialsGetRule, document, LogFeaturePolicyFailure::No)) {
+    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::PublickeyCredentialsGetRule, document, LogPermissionsPolicyFailure::No)) {
         promise.reject(Exception { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
@@ -222,10 +248,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     // Step 7.
-    if (!options.rpId.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rpId)) {
-        promise.reject(Exception { ExceptionCode::SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
-        return;
-    }
     if (options.rpId.isEmpty())
         options.rpId = callerOrigin.domain();
 
@@ -241,9 +263,16 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         options.extensions->appid = appid;
     }
 
-    // Step 10-12.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin, scopeAndCrossOriginParent.first);
-    auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
+    if (options.extensions && options.extensions->largeBlob) {
+        if (!options.extensions->largeBlob->support.isEmpty()) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Support should not be present in largeBlob for assertion."_s });
+            return;
+        }
+        if (options.extensions->largeBlob->read && options.extensions->largeBlob->write) {
+            promise.reject(Exception { ExceptionCode::NotAllowedError, "Both read and write may not be present together in largeBlob."_s });
+            return;
+        }
+    }
 
     // Step 4, 14-19.
     if (!m_client) {
@@ -252,29 +281,48 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     if (requestOptions.signal) {
-        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
+        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) mutable {
             if (!weakThis)
                 return;
-            weakThis->m_client->cancel();
+            weakThis->m_isCancelling = true;
+            weakThis->m_client->cancel([weakThis = WTFMove(weakThis)] () mutable {
+                if (!weakThis)
+                    return;
+                weakThis->m_isCancelling = false;
+                if (auto queuedRequest = WTFMove(weakThis->m_queuedRequest))
+                    queuedRequest();
+            });
         });
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { ExceptionCode::AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
         promise.reject(exception.toException());
     };
+
+    if (m_isCancelling) {
+        m_queuedRequest = [weakThis = WeakPtr { *this }, weakFrame = WeakPtr { *frame }, requestOptions = WTFMove(requestOptions), scopeAndCrossOriginParent, callback = WTFMove(callback)]() mutable {
+            if (!weakThis || !weakFrame)
+                return;
+            const auto options = requestOptions.publicKey.value();
+            RefPtr frame = weakFrame.get();
+            if (!frame)
+                return;
+            weakThis->m_client->getAssertion(*weakFrame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+        };
+        return;
+    }
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
@@ -311,15 +359,14 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& d
     m_client->isConditionalMediationAvailable(document.securityOrigin(), WTFMove(completionHandler));
 }
 
-void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&& promise) const
+void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&& promise) const
 {
     if (!m_client)  {
         promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
         return;
     }
 
-    auto completionHandler = [promise = WTFMove(promise)] (HashMap<String, bool>&& resultMap) mutable {
-        auto result = PublicKeyCredentialClientCapabilities::create(WTFMove(resultMap));
+    auto completionHandler = [promise = WTFMove(promise)] (const Vector<KeyValuePair<String, bool>> result) mutable {
         promise.resolve(result);
     };
 

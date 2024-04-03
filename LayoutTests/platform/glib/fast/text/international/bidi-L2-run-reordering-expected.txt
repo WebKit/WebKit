@@ -17,7 +17,7 @@ layer at (0,0) size 800x105
             text run at (124,1) width 32: " def"
         RenderText {#text} at (156,1) size 6x17
           text run at (156,1) width 6: " "
-        RenderInline {SPAN} at (0,0) size 158x19 [border: (1px solid #008000)]
+        RenderInline {SPAN} at (161,0) size 158x19 [border: (1px solid #008000)]
           RenderText {#text} at (162,1) size 156x17
             text run at (162,1) width 35: "abc "
             text run at (196,1) width 29 RTL: " \x{5D3}\x{5D4}\x{5D5}"
@@ -26,7 +26,7 @@ layer at (0,0) size 800x105
             text run at (286,1) width 32: " def"
         RenderText {#text} at (318,1) size 6x17
           text run at (318,1) width 6: " "
-        RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #008000)]
+        RenderInline {SPAN} at (323,0) size 157x19 [border: (1px solid #008000)]
           RenderText {#text} at (324,1) size 155x17
             text run at (324,1) width 35: "abc "
             text run at (358,1) width 28 RTL: " \x{5D3}\x{5D4}\x{5D5}"

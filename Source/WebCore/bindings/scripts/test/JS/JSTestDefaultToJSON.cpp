@@ -251,12 +251,12 @@ void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestDefaultToJSON::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestDefaultToJSON::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestDefaultToJSON_longAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
@@ -304,7 +304,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_enabledByConditionalAttribute, (JSG
 static inline JSValue jsTestDefaultToJSON_eventHandlerAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSON& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().entHandlerAttributeEvent, worldForDOMObject(thisObject));
+    return eventHandlerAttribute(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, worldForDOMObject(thisObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSON_eventHandlerAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -316,7 +316,7 @@ static inline bool setJSTestDefaultToJSON_eventHandlerAttributeSetter(JSGlobalOb
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     UNUSED_PARAM(vm);
-    setEventHandlerAttribute<JSEventListener>(thisObject.wrapped(), eventNames().entHandlerAttributeEvent, value, thisObject);
+    setEventHandlerAttribute<JSEventListener>(thisObject.protectedWrapped(), eventNames().entHandlerAttributeEvent, value, thisObject);
     vm.writeBarrier(&thisObject, value);
     ensureStillAliveHere(value);
 
@@ -411,7 +411,7 @@ static inline bool setJSTestDefaultToJSON_thirdUnJSONableAttributeSetter(JSGloba
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "thirdUnJSONableAttribute", "TestException"); });
+    RefPtr nativeValue = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "thirdUnJSONableAttribute", "TestException"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setThirdUnJSONableAttribute(*nativeValue);
@@ -539,7 +539,7 @@ static inline bool setJSTestDefaultToJSON_seventhDirectlyToJSONableAttributeSett
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "seventhDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
+    RefPtr nativeValue = convert<IDLInterface<TestDefaultToJSONInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "seventhDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setSeventhDirectlyToJSONableAttribute(*nativeValue);
@@ -571,7 +571,7 @@ static inline bool setJSTestDefaultToJSON_eighthIndirectlyAttributeSetter(JSGlob
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "eighthIndirectlyAttribute", "TestDefaultToJSONIndirectInheritance"); });
+    RefPtr nativeValue = convert<IDLInterface<TestDefaultToJSONIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "eighthIndirectlyAttribute", "TestDefaultToJSONIndirectInheritance"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setEighthIndirectlyAttribute(*nativeValue);
@@ -603,10 +603,10 @@ static inline bool setJSTestDefaultToJSON_ninthOptionalDirectlyToJSONableAttribu
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "ninthOptionalDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
+    RefPtr nativeValue = convert<IDLNullable<IDLInterface<TestDefaultToJSONInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestDefaultToJSON", "ninthOptionalDirectlyToJSONableAttribute", "TestDefaultToJSONInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setNinthOptionalDirectlyToJSONableAttribute(WTFMove(nativeValue));
+        return impl.setNinthOptionalDirectlyToJSONableAttribute(nativeValue.get());
     });
     return true;
 }
@@ -842,7 +842,7 @@ void JSTestDefaultToJSONOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     auto* jsTestDefaultToJSON = static_cast<JSTestDefaultToJSON*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestDefaultToJSON->wrapped(), jsTestDefaultToJSON);
+    uncacheWrapper(world, jsTestDefaultToJSON->protectedWrapped().ptr(), jsTestDefaultToJSON);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

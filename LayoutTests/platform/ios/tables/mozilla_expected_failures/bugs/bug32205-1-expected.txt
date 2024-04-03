@@ -23,7 +23,7 @@ layer at (0,0) size 800x848
                 RenderTableSection {TBODY} at (1,1) size 263x188
                   RenderTableRow {TR} at (0,2) size 263x184
                     RenderTableCell {TD} at (2,82) size 259x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 255x19
+                      RenderText {#text} at (2,82) size 255x19
                         text run at (2,2) width 255: "outer table has height:200px on <table>"
       RenderBlock (anonymous) at (0,300) size 784x20
         RenderBR {BR} at (0,0) size 0x19
@@ -31,7 +31,7 @@ layer at (0,0) size 800x848
         RenderTableSection {TBODY} at (1,1) size 252x204
           RenderTableRow {TR} at (0,2) size 252x200
             RenderTableCell {TD} at (2,85) size 248x34 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 244x30 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (2,85) size 244x30 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 242x28
                   RenderTableRow {TR} at (0,2) size 242x24
                     RenderTableCell {TD} at (2,2) size 238x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -47,7 +47,7 @@ layer at (0,0) size 800x848
                 RenderTableSection {TBODY} at (1,1) size 245x194
                   RenderTableRow {TR} at (0,2) size 245x190
                     RenderTableCell {TD} at (2,85) size 241x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 237x19
+                      RenderText {#text} at (2,85) size 237x19
                         text run at (2,2) width 237: "outer table has height:200px on <td>"
       RenderBlock (anonymous) at (0,752) size 784x20
         RenderBR {BR} at (0,0) size 0x19

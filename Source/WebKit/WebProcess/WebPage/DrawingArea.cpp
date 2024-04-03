@@ -54,6 +54,10 @@ using namespace WebCore;
 
 std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPageCreationParameters& parameters)
 {
+#if PLATFORM(MAC)
+    SandboxExtension::consumePermanently(parameters.renderServerMachExtensionHandle);
+#endif
+
     switch (parameters.drawingAreaType) {
 #if PLATFORM(COCOA)
 #if !PLATFORM(IOS_FAMILY)

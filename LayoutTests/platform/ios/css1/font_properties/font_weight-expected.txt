@@ -64,7 +64,7 @@ layer at (0,0) size 800x1083
       RenderBlock {P} at (0,596) size 784x21
         RenderText {#text} at (0,0) size 498x19
           text run at (0,0) width 498: "This sentence should be bold, but the last word in the sentence should be "
-        RenderInline {SPAN} at (0,0) size 46x19
+        RenderInline {SPAN} at (497,0) size 46x19
           RenderText {#text} at (497,0) size 46x19
             text run at (497,0) width 46: "normal"
         RenderText {#text} at (542,0) size 5x19
@@ -73,12 +73,12 @@ layer at (0,0) size 800x1083
         RenderTableSection {TBODY} at (1,1) size 567x432
           RenderTableRow {TR} at (0,0) size 567x28
             RenderTableCell {TD} at (0,0) size 567x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 567x404
             RenderTableCell {TD} at (0,215) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,3) size 4x21
+              RenderText {#text} at (4,191) size 4x20
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 555x404 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 547x20
@@ -116,7 +116,7 @@ layer at (0,0) size 800x1083
               RenderBlock {P} at (4,379) size 547x21
                 RenderText {#text} at (0,0) size 498x19
                   text run at (0,0) width 498: "This sentence should be bold, but the last word in the sentence should be "
-                RenderInline {SPAN} at (0,0) size 46x19
+                RenderInline {SPAN} at (497,0) size 46x19
                   RenderText {#text} at (497,0) size 46x19
                     text run at (497,0) width 46: "normal"
                 RenderText {#text} at (542,0) size 5x19

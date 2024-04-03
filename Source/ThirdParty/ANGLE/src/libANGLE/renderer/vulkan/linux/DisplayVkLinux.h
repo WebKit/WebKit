@@ -30,8 +30,8 @@ class DisplayVkLinux : public DisplayVk
     std::vector<VkDrmFormatModifierPropertiesEXT> GetDrmModifiers(const DisplayVk *displayVk,
                                                                   VkFormat vkFormat);
     bool SupportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFormat);
-    std::vector<VkFormat> GetVkFormatsWithDrmModifiers(const RendererVk *rendererVk);
-    std::vector<EGLint> GetDrmFormats(const RendererVk *rendererVk);
+    std::vector<VkFormat> GetVkFormatsWithDrmModifiers(const vk::Renderer *renderer);
+    std::vector<EGLint> GetDrmFormats(const vk::Renderer *renderer);
     bool supportsDmaBufFormat(EGLint format) const override;
     egl::Error queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats) override;
     egl::Error queryDmaBufModifiers(EGLint format,

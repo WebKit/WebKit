@@ -1,0 +1,4 @@
+Quack, I want to be a duck!
+
+PASS document.write with html assigned via policy (successful transformation).
+

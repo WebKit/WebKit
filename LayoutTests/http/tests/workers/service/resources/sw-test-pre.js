@@ -86,3 +86,24 @@ function gc() {
     }
 }
 
+// Builds a hex string representation for an array-like input.
+// "bytes" can be an Array of bytes, an ArrayBuffer, or any TypedArray.
+// The output looks like this:
+//    ab034c99
+function bytesToHexString(bytes)
+{
+    if (!bytes)
+        return null;
+
+    bytes = new Uint8Array(bytes);
+    var hexBytes = [];
+
+    for (var i = 0; i < bytes.length; ++i) {
+        var byteString = bytes[i].toString(16);
+        if (byteString.length < 2)
+            byteString = "0" + byteString;
+        hexBytes.push(byteString);
+    }
+
+    return hexBytes.join("");
+}

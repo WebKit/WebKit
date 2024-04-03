@@ -36,7 +36,7 @@ namespace WebCore {
 class Document;
 class SpeechRecognitionResult;
 
-class SpeechRecognition : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
+class SpeechRecognition final : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
     WTF_MAKE_ISO_ALLOCATED(SpeechRecognition);
 public:
     static Ref<SpeechRecognition> create(Document&);
@@ -97,9 +97,10 @@ private:
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    EventTargetInterface eventTargetInterface() const final { return SpeechRecognitionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SpeechRecognition; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    bool virtualHasPendingActivity() const final;
 
     String m_lang;
     bool m_continuous { false };

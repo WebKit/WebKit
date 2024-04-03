@@ -10,6 +10,7 @@ PASS testDiv.childNodes[2]
 PASS testDiv.childNodes[3]
 PASS testDiv.childNodes[4]
 PASS testDiv.childNodes[5]
+PASS testDiv.childNodes[6]
 PASS testDiv.previousSibling
 PASS testDiv.nextSibling
 PASS testDiv.textContent
@@ -23,6 +24,7 @@ PASS testDiv.children[1]
 PASS testDiv.children[2]
 PASS testDiv.children[3]
 PASS testDiv.children[4]
+PASS testDiv.children[5]
 PASS testDiv.previousElementSibling
 PASS testDiv.childElementCount
 PASS testDiv.nodeName
@@ -698,4 +700,29 @@ PASS paras[4].firstElementChild
 PASS paras[4].firstChild
 PASS paras[4].lastChild
 PASS paras[4].hasChildNodes()
+PASS paras[5].nodeType
+PASS paras[5].ownerDocument
+PASS paras[5].parentNode
+PASS paras[5].parentElement
+PASS paras[5].childNodes.length
+PASS paras[5].previousSibling
+PASS paras[5].nextSibling
+PASS paras[5].textContent
+PASS paras[5].namespaceURI
+PASS paras[5].prefix
+PASS paras[5].localName
+PASS paras[5].tagName
+PASS paras[5].previousElementSibling
+PASS paras[5].nextElementSibling
+PASS paras[5].childElementCount
+PASS paras[5].nodeName
+PASS paras[5].nodeValue
+PASS paras[5].children.length
+PASS paras[5].id
+PASS paras[5].className
+PASS paras[5].lastElementChild
+PASS paras[5].firstElementChild
+PASS paras[5].firstChild
+PASS paras[5].lastChild
+PASS paras[5].hasChildNodes()
 

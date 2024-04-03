@@ -36,6 +36,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionConstants.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionUtilities.h"
@@ -53,7 +54,7 @@ static NSString * const scheduledTimeKey = @"scheduledTime";
 
 static NSString * const emptyAlarmName = @"";
 
-static inline NSDictionary *toAPI(const WebExtensionAlarmParameters& alarm)
+static inline NSDictionary *toWebAPI(const WebExtensionAlarmParameters& alarm)
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
 
@@ -62,21 +63,6 @@ static inline NSDictionary *toAPI(const WebExtensionAlarmParameters& alarm)
 
     if (alarm.repeatInterval)
         result[periodInMinutesKey] = @(alarm.repeatInterval.minutes());
-
-    return [result copy];
-}
-
-static inline NSDictionary *toAPI(const std::optional<WebExtensionAlarmParameters>& alarm)
-{
-    return alarm ? toAPI(alarm.value()) : nil;
-}
-
-static inline NSArray *toAPI(const Vector<WebExtensionAlarmParameters>& alarms)
-{
-    NSMutableArray *result = [NSMutableArray arrayWithCapacity:alarms.size()];
-
-    for (auto& alarm : alarms)
-        [result addObject:toAPI(alarm)];
 
     return [result copy];
 }
@@ -124,9 +110,9 @@ void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo,
     }
 
     if (!extensionContext().inTestingMode()) {
-        // Enforce a minimum of 1 minute intervals outside of testing.
-        initialInterval = std::max(initialInterval, 1_min);
-        repeatInterval = repeatInterval ? std::max(repeatInterval, 1_min) : 0_s;
+        // Enforce a minimum interval outside of testing.
+        initialInterval = std::max(initialInterval, webExtensionMinimumAlarmInterval);
+        repeatInterval = repeatInterval ? std::max(repeatInterval, webExtensionMinimumAlarmInterval) : 0_s;
     }
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AlarmsCreate(name ?: emptyAlarmName, initialInterval, repeatInterval), extensionContext().identifier());
@@ -136,9 +122,9 @@ void WebExtensionAPIAlarms::get(NSString *name, Ref<WebExtensionCallbackHandler>
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/get
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(name ?: emptyAlarmName), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionAlarmParameters> alarm) {
-        callback->call(toAPI(alarm));
-    }, extensionContext().identifier().toUInt64());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(name ?: emptyAlarmName), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionAlarmParameters>&& alarm) {
+        callback->call(toWebAPI(alarm));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIAlarms::getAll(Ref<WebExtensionCallbackHandler>&& callback)
@@ -146,8 +132,8 @@ void WebExtensionAPIAlarms::getAll(Ref<WebExtensionCallbackHandler>&& callback)
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/getAll
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGetAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionAlarmParameters> alarms) {
-        callback->call(toAPI(alarms));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(alarms));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIAlarms::clear(NSString *name, Ref<WebExtensionCallbackHandler>&& callback)
@@ -156,7 +142,7 @@ void WebExtensionAPIAlarms::clear(NSString *name, Ref<WebExtensionCallbackHandle
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(name ?: emptyAlarmName), [protectedThis = Ref { *this }, callback = WTFMove(callback)]() {
         callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback)
@@ -165,7 +151,7 @@ void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)]() {
         callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()
@@ -173,17 +159,18 @@ WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
 
     if (!m_onAlarm)
-        m_onAlarm = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::AlarmsOnAlarm);
+        m_onAlarm = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::AlarmsOnAlarm);
 
     return *m_onAlarm;
 }
 
 void WebExtensionContextProxy::dispatchAlarmsEvent(const WebExtensionAlarmParameters& alarm)
 {
-    auto *details = toAPI(alarm);
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
+
+    auto *details = toWebAPI(alarm);
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
-        // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/onAlarm
         namespaceObject.alarms().onAlarm().invokeListenersWithArgument(details);
     });
 }

@@ -13,7 +13,7 @@ layer at (0,0) size 785x2350
             RenderTableCell {TD} at (0,43) size 20x48 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {TR} at (20,0) size 20x100
             RenderTableCell {TD} at (20,10) size 20x81 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
-              RenderBlock {DIV} at (10,-10) size 0x100
+              RenderBlock {DIV} at (10,0) size 0x100
       RenderBlock {P} at (0,174) size 769x55
         RenderText {#text} at (0,0) size 148x17
           text run at (0,0) width 148: "The table height is: 100"
@@ -30,7 +30,7 @@ layer at (0,0) size 785x2350
             RenderTableCell {TD} at (0,210) size 20x380 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {TR} at (20,0) size 20x600
             RenderTableCell {TD} at (20,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
-              RenderBlock {DIV} at (10,-10) size 0x600
+              RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,870) size 769x55
         RenderText {#text} at (0,0) size 148x17
           text run at (0,0) width 148: "The table height is: 600"
@@ -53,7 +53,7 @@ layer at (0,0) size 785x2350
                 text run at (18,0) width 68: "preserved?"
           RenderTableRow {TR} at (36,0) size 20x600
             RenderTableCell {TD} at (36,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
-              RenderBlock {DIV} at (10,-10) size 0x600
+              RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,1566) size 769x55
         RenderText {#text} at (0,0) size 148x17
           text run at (0,0) width 148: "The table height is: 600"
@@ -67,12 +67,12 @@ layer at (0,0) size 785x2350
         RenderTableSection {TBODY} at (0,0) size 40x600
           RenderTableRow {TR} at (0,0) size 20x600
             RenderTableCell {TD} at (0,10) size 20x180 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (10,-10) size 0x100
+              RenderBlock {DIV} at (10,0) size 0x100
             RenderTableCell {TD} at (0,210) size 20x380 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (10,-10) size 0x250
+              RenderBlock {DIV} at (10,0) size 0x250
           RenderTableRow {TR} at (20,0) size 20x600
             RenderTableCell {TD} at (20,10) size 20x580 [bgcolor=#FFC0CB] [r=1 c=0 rs=1 cs=2]
-              RenderBlock {DIV} at (10,-10) size 0x600
+              RenderBlock {DIV} at (10,0) size 0x600
       RenderBlock {P} at (0,2262) size 769x55
         RenderText {#text} at (0,0) size 148x17
           text run at (0,0) width 148: "The table height is: 600"

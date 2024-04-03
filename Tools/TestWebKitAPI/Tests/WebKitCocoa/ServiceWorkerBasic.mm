@@ -98,6 +98,7 @@ static String retrievedString;
     NSString *_expectedMessage;
 }
 - (instancetype)initWithExpectedMessage:(NSString *)expectedMessage;
+- (void)resetExpectedMessage:(NSString *)expectedMessage;
 @end
 
 @interface SWMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
@@ -121,6 +122,11 @@ static String retrievedString;
     _expectedMessage = expectedMessage;
 
     return self;
+}
+
+- (void)resetExpectedMessage:(NSString *)expectedMessage
+{
+    _expectedMessage = expectedMessage;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -229,6 +235,18 @@ static constexpr auto scriptBytes = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {
     event.source.postMessage("ServiceWorker received: " + event.data);
+});
+
+)SWRESOURCE"_s;
+
+static constexpr auto scriptWithEvalBytes = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    if (event.data == "Hello from the web page") {
+        event.source.postMessage("ServiceWorker received: " + event.data);
+        return;
+    }
+    event.source.postMessage("Evaluation result: " + eval(event.data));
 });
 
 )SWRESOURCE"_s;
@@ -646,6 +664,164 @@ TEST(ServiceWorkers, RestoreFromDisk)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request("/second.html"_s)];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+static constexpr auto scriptBytesWithFetchSupport = R"SWRESOURCE(
+
+self.addEventListener("message", (event) => {
+    if (event.data = 'do-fetch') {
+        fetch("foo.txt").then((response) => {
+            event.source.postMessage("Load succeeded");
+        }).catch((err) => {
+            event.source.postMessage("Load failed");
+        });
+    }
+});
+
+)SWRESOURCE"_s;
+
+static constexpr auto mainRegisteringAlreadyExistingWorkerRequestFetchBytes = R"SWRESOURCE(
+<script>
+let activeServiceWorker = null;
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+addEventListener("message", function(event) {
+    if (event.data === "do-fetch") {
+        if (activeServiceWorker)
+            activeServiceWorker.postMessage("do-fetch");
+        else
+            log("FAIL: activeServiceWorker is null");
+    } else
+        log("FAIL: unrecognized command: " + event.data);
+});
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log("Message from worker: " + event.data);
+});
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.installing) {
+        log("FAIL: Registration had an installing worker");
+        return;
+    }
+    if (reg.active) {
+        if (reg.active.state == "activated") {
+            log("PASS: Registration already has an active worker");
+            activeServiceWorker = reg.active;
+        } else
+            log("FAIL: Registration has an active worker but its state is not activated");
+    } else
+        log("FAIL: Registration does not have an active worker");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE"_s;
+
+TEST(ServiceWorkers, ThirdPartyRestoredFromDisk)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/index.html"_s, { "<script>onload = () => { webkit.messageHandlers.sw.postMessage('LOADED'); }</script>"_s } },
+        { "/thirdPartyIframeWithSW.html"_s, { mainRegisteringWorkerBytes } },
+        { "/thirdPartyIframeWithSW2.html"_s, { mainRegisteringAlreadyExistingWorkerRequestFetchBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytesWithFetchSupport } },
+        { "/foo.txt"_s, { "FOO"_s } }
+    });
+
+    // Normally, service workers get terminated several seconds after their clients are gone.
+    // Disable this delay for the purpose of testing.
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    // Start with a clean slate data store
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+
+    RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"LOADED"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request("/index.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [messageHandler resetExpectedMessage:@"PASS: Registration was successful and service worker was activated"];
+
+    String thirdPartyIframeURL = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW.html"_s).URL).string();
+    String injectFrameScript = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL, "'; document.body.append(frame);");
+    bool addedIframe = false;
+    [webView evaluateJavaScript:(NSString *)injectFrameScript completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        addedIframe = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedIframe);
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+    done = false;
+
+    // Let the service worker process exit.
+    TestWebKitAPI::Util::runFor(1_s);
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"LOADED"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request("/index.html"_s)];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [messageHandler resetExpectedMessage:@"PASS: Registration already has an active worker"];
+
+    String thirdPartyIframeURL2 = URL(server.requestWithLocalhost("/thirdPartyIframeWithSW2.html"_s).URL).string();
+    String injectFrameScript2 = makeString("let frame = document.createElement('iframe'); frame.src = '", thirdPartyIframeURL2, "'; document.body.append(frame);");
+    addedIframe = false;
+    [webView evaluateJavaScript:(NSString *)injectFrameScript2 completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        addedIframe = true;
+    }];
+
+    TestWebKitAPI::Util::run(&addedIframe);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [messageHandler resetExpectedMessage:@"Message from worker: Load succeeded"];
+
+    bool requestedFetch = false;
+    [webView evaluateJavaScript:@"frames[0].postMessage('do-fetch', '*');" completionHandler: [&] (id, NSError *error) {
+        EXPECT_TRUE(!error);
+        requestedFetch = true;
+    }];
+    TestWebKitAPI::Util::run(&requestedFetch);
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -1739,6 +1915,89 @@ TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughInProcessServiceWorker
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
 
+TEST(ServiceWorkers, LockdownModeInServiceWorkerProcess)
+{
+    // Turn on lockdown mode globally.
+    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+    TestWebKitAPI::Util::spinRunLoop();
+
+    // Start with a clean slate data store.
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"Message from worker: ServiceWorker received: Hello from the web page"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptWithEvalBytes } }
+    });
+
+    RetainPtr processPool = retainPtr(configuration.get().processPool);
+
+    // Make sure that the service worker launches in its own process.
+    [processPool _setUseSeparateServiceWorkerProcess:YES];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        didFinishNavigationBoolean = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
+
+    // Check that JIT is disabled in the service worker process.
+    done = false;
+    [processPool _isJITDisabledInAllRemoteWorkerProcesses:^(BOOL isJITDisabled) {
+        EXPECT_TRUE(isJITDisabled);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto runJSCheck = [&](const String& jsToEvalInWorker) {
+        bool finishedRunningScript = false;
+        done = false;
+        String js = makeString("worker.postMessage('", jsToEvalInWorker,"');");
+        [webView evaluateJavaScript:js completionHandler:[&] (id result, NSError *error) {
+            EXPECT_NULL(error);
+            finishedRunningScript = true;
+        }];
+        TestWebKitAPI::Util::run(&finishedRunningScript);
+        TestWebKitAPI::Util::run(&done);
+    };
+
+    [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: true"];
+    runJSCheck("!!self.URL"_s);
+
+    // Check individual settings that are meant to be disabled in lockdown mode.
+    [messageHandler resetExpectedMessage:@"Message from worker: Evaluation result: false"];
+    runJSCheck("!!self.WebGL2RenderingContext"_s);
+    runJSCheck("!!self.FileSystemHandle"_s); // File System Access.
+#if ENABLE(NOTIFICATIONS)
+    runJSCheck("!!self.Notification"_s); // Notification API.
+#endif
+    runJSCheck("!!self.Cache"_s); // Cache API.
+    runJSCheck("!!self.CacheStorage"_s); // Cache API.
+    runJSCheck("!!self.FileReader"_s); // FileReader API.
+    runJSCheck("!!self.FileSystemFileHandle"_s); // File System Access API.
+    runJSCheck("!!self.PushManager"_s); // Push API.
+    runJSCheck("!!self.PushSubscription"_s); // Push API.
+    runJSCheck("!!self.PushSubscriptionOptions"_s); // Push API.
+    runJSCheck("!!self.LockManager"_s); // WebLockManager API.
+}
+
 enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
 void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess useSeparateServiceWorkerProcess)
 {
@@ -2764,7 +3023,7 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
     String filenameRequestedOverHTTP;
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([&, connection](Vector<char>&& bytes) mutable {
-            String requestString(bytes.data(), bytes.size());
+            String requestString(bytes.span());
             if (requestString.startsWithIgnoringASCIICase("OPTIONS"_s)) {
                 madeHTTPOptionsRequest = true;
                 connection.send(

@@ -57,6 +57,7 @@
 #include <WebCore/HTMLOptGroupElement.h>
 #include <WebCore/HTMLOptionElement.h>
 #include <WebCore/HTMLSelectElement.h>
+#include <WebCore/HitTestSource.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
@@ -622,8 +623,8 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
         return nullptr;
     }
 
-    if (is<WebCore::HTMLOptGroupElement>(element)) {
-        if (auto* parentElement = downcast<WebCore::HTMLOptGroupElement>(element).ownerSelectElement())
+    if (RefPtr optgroup = dynamicDowncast<WebCore::HTMLOptGroupElement>(element)) {
+        if (auto* parentElement = optgroup->ownerSelectElement())
             return parentElement;
 
         return nullptr;
@@ -745,7 +746,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
     }
 
     auto elementInViewCenterPoint = visiblePortionOfElementRect.center();
-    auto elementList = containerElement->treeScope().elementsFromPoint(elementInViewCenterPoint);
+    auto elementList = containerElement->treeScope().elementsFromPoint(elementInViewCenterPoint.x(), elementInViewCenterPoint.y(), WebCore::HitTestSource::User);
     auto index = elementList.findIf([containerElement] (auto& item) { return item.get() == containerElement; });
     if (elementList.isEmpty() || index == notFound) {
         // We hit this case if the element is visibility:hidden or opacity:0, in which case it will not hit test
@@ -868,23 +869,22 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
         return;
     }
 
-    WebCore::Element* coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement || !is<WebCore::HTMLInputElement>(coreElement) || !downcast<WebCore::HTMLInputElement>(*coreElement).isFileUpload()) {
+    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(elementForNodeHandle(*frame, nodeHandle));
+    if (!inputElement || !inputElement->isFileUpload()) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType);
         return;
     }
 
-    auto& inputElement = downcast<WebCore::HTMLInputElement>(*coreElement);
     Vector<Ref<WebCore::File>> fileObjects;
-    if (inputElement.multiple()) {
-        if (auto* files = inputElement.files())
+    if (inputElement->multiple()) {
+        if (auto* files = inputElement->files())
             fileObjects.appendVector(files->files());
     }
     fileObjects.appendContainerWithMapping(filenames, [&](auto& path) {
-        return WebCore::File::create(&inputElement.document(), path);
+        return WebCore::File::create(&inputElement->document(), path);
     });
-    inputElement.setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
+    inputElement->setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
 
     completionHandler(std::nullopt);
 }

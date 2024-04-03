@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (25,23) size 745x469
       RenderSVGContainer {g} at (58,23) size 684x43
         RenderSVGText {text} at (66,13) size 348x15 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 99x13
+          RenderSVGTSpan {tspan} at (0,1) size 99x13
             RenderSVGInlineText {#text} at (0,1) size 99x12
               chunk 1 (middle anchor) text run 1 at (66.80,25.00) startOffset 0 endOffset 22 width 98.94: "Testing pointer-events"
           RenderSVGInlineText {#text} at (98,0) size 248x14

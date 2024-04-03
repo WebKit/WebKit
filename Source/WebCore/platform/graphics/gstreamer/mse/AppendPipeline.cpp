@@ -582,10 +582,10 @@ void AppendPipeline::resetParserState()
     // Unlock the streaming thread.
     m_taskQueue.startAborting();
 
-    // Flush approach requires these GStreamer patches, scheduled to land on 1.23.1:
+    // Flush approach requires these GStreamer patches, shipped in 1.24:
     // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4101.
     // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/4199.
-    if (webkitGstCheckVersion(1, 23, 1)) {
+    if (webkitGstCheckVersion(1, 24, 0)) {
         GST_DEBUG_OBJECT(pipeline(), "Handling resetParserState() in AppendPipeline by flushing the pipeline");
         gst_element_send_event(m_appsrc.get(), gst_event_new_flush_start());
         gst_element_send_event(m_appsrc.get(), gst_event_new_flush_stop(true));

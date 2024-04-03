@@ -1,0 +1,6 @@
+half4 main(float2 coords) {
+    half r, g;
+    (true ? r : g) = 0;
+    (false ? r : g) = 1;
+    return half4(r, g, 0, 1);
+}

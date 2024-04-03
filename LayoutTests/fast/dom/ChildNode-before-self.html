@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests ChildNode's before function allows inserting "this" object.`);
+
+const testNode = document.createElement('div');
+container.appendChild(testNode);
+shouldBeTrue('testNode.before(testNode); testNode.isConnected');
+shouldBe('container.firstChild', 'testNode');
+
+</script>
+</body>
+</html>

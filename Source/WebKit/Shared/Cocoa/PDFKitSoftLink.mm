@@ -27,11 +27,13 @@
 
 #if HAVE(PDFKIT)
 
+#import "PDFKitSPI.h"
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, PDFKit)
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFActionResetForm)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFAnnotationButtonWidget)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFAnnotationChoiceWidget)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFAnnotationLink)
@@ -41,6 +43,9 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFAnnotationTextWidget)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFDocument)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFLayerController)
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PDFKit, PDFSelection)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, PDFKit, kPDFDestinationUnspecifiedValue, CGFloat)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, PDFKit, PDFViewCopyPermissionNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, PDFKit, PDFDocumentCreationDateAttribute, PDFDocumentAttribute)
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // HAVE(PDFKIT)

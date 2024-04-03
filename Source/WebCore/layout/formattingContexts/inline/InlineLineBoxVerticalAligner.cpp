@@ -49,14 +49,14 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
         if (rootBox().style().lineBoxContain() != RenderStyle::initialLineBoxContain())
             return false;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        if (!layoutState().inStandardsMode() || !rootInlineBox.isPreferredLineHeightFontMetricsBased() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
+        if (!layoutState().inStandardsMode() || rootInlineBox.verticalAlign().type != VerticalAlign::Baseline)
             return false;
-        if (rootInlineBox.hasAnnotation())
+        if (rootInlineBox.hasTextEmphasis())
             return false;
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             auto shouldUseSimplifiedAlignmentForInlineLevelBox = [&] {
-                if (inlineLevelBox.hasAnnotation())
+                if (inlineLevelBox.hasTextEmphasis())
                     return false;
                 if (inlineLevelBox.isAtomicInlineLevelBox()) {
                     // Baseline aligned, non-stretchy direct children are considered to be simple for now.
@@ -96,7 +96,7 @@ InlineLayoutUnit LineBoxVerticalAligner::computeLogicalHeightAndAlign(LineBox& l
 
     auto lineBoxHeight = lineBoxAlignmentContent.height();
     alignInlineLevelBoxes(lineBox, lineBoxHeight);
-    if (lineBoxAlignmentContent.hasAnnotation)
+    if (lineBoxAlignmentContent.hasTextEmphasis)
         lineBoxHeight = adjustForAnnotationIfNeeded(lineBox, lineBoxHeight);
     return lineBoxHeight;
 }
@@ -138,7 +138,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
     // 3. Finally align the inline level boxes using (mostly) normal inline level box geometries.
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto& formattingUtils = this->formattingUtils();
-    auto contentHasAnnotation = rootInlineBox.hasAnnotation();
+    auto contentHasTextEmphasis = rootInlineBox.hasTextEmphasis();
 
     // Line box height computation is based on the layout bounds of the inline boxes and not their logical (ascent/descent) dimensions.
     struct AbsoluteTopAndBottom {
@@ -158,7 +158,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
 
     Vector<InlineLevelBox*> lineBoxRelativeInlineLevelBoxes;
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        contentHasAnnotation = contentHasAnnotation || inlineLevelBox.hasAnnotation();
+        contentHasTextEmphasis = contentHasTextEmphasis || inlineLevelBox.hasTextEmphasis();
 
         if (inlineLevelBox.hasLineBoxRelativeAlignment()) {
             lineBoxRelativeInlineLevelBoxes.append(&inlineLevelBox);
@@ -179,7 +179,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
             logicalTop = parentInlineBoxAscent - layoutBounds.ascent;
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2;
+            auto logicalTopOffsetFromParentBaseline = layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2;
             logicalTop = parentInlineBoxAscent - logicalTopOffsetFromParentBaseline;
             break;
         }
@@ -250,7 +250,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         }
         ASSERT_NOT_REACHED();
     }
-    return { nonLineBoxRelativeAlignedBoxesMaximumHeight, { topAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight }, contentHasAnnotation };
+    return { nonLineBoxRelativeAlignedBoxesMaximumHeight, { topAlignedBoxesMaximumHeight, bottomAlignedBoxesMaximumHeight }, contentHasTextEmphasis };
 }
 
 void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineBox, const LineBoxAlignmentContent& lineBoxAlignmentContent) const
@@ -292,7 +292,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
             baselineOffsetFromParentBaseline = { };
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = (layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2);
+            auto logicalTopOffsetFromParentBaseline = (layoutBounds.height() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2);
             baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - layoutBounds.ascent;
             break;
         }
@@ -411,7 +411,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             logicalTop = parentInlineBox.ascent() - inlineLevelBox.ascent();
             break;
         case VerticalAlign::Middle: {
-            auto logicalTopOffsetFromParentBaseline = (inlineLevelBox.logicalHeight() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight() / 2);
+            auto logicalTopOffsetFromParentBaseline = (inlineLevelBox.logicalHeight() / 2 + parentInlineBox.primarymetricsOfPrimaryFont().xHeight().value_or(0) / 2);
             logicalTop = parentInlineBox.ascent() - logicalTopOffsetFromParentBaseline;
             break;
         }
@@ -498,14 +498,14 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
             case VerticalAlign::TextTop:
             case VerticalAlign::TextBottom:
             case VerticalAlign::Bottom:
-                if (auto aboveSpace = inlineLevelBox.annotationAbove())
+                if (auto aboveSpace = inlineLevelBox.textEmphasisAbove())
                     lineBoxTop = std::min(lineBoxTop, inlineBoxTop - *aboveSpace);
-                if (auto belowSpace = inlineLevelBox.annotationBelow())
+                if (auto belowSpace = inlineLevelBox.textEmphasisBelow())
                     lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + *belowSpace);
                 break;
             case VerticalAlign::Top: {
                 // FIXME: Check if horizontal vs. vertical writing mode should be taking into account.
-                auto annotationSpace = inlineLevelBox.annotationAbove().value_or(0.f) + inlineLevelBox.annotationBelow().value_or(0.f);
+                auto annotationSpace = inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineLevelBox.textEmphasisBelow().value_or(0.f);
                 lineBoxBottom = std::max(lineBoxBottom, inlineBoxBottom + annotationSpace);
                 break;
             }
@@ -537,12 +537,12 @@ InlineLayoutUnit LineBoxVerticalAligner::adjustForAnnotationIfNeeded(LineBox& li
                 switch (inlineLevelBox.verticalAlign().type) {
                 case VerticalAlign::Top: {
                     auto inlineBoxTop = inlineLevelBox.layoutBounds().ascent - inlineLevelBox.ascent();
-                    inlineLevelBox.setLogicalTop(inlineLevelBox.annotationAbove().value_or(0.f) + inlineBoxTop);
+                    inlineLevelBox.setLogicalTop(inlineLevelBox.textEmphasisAbove().value_or(0.f) + inlineBoxTop);
                     break;
                 }
                 case VerticalAlign::Bottom: {
                     auto inlineBoxTop = adjustedLineBoxHeight - (inlineLevelBox.layoutBounds().descent + inlineLevelBox.ascent());
-                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.annotationBelow().value_or(0.f));
+                    inlineLevelBox.setLogicalTop(inlineBoxTop - inlineLevelBox.textEmphasisBelow().value_or(0.f));
                     break;
                 }
                 default:

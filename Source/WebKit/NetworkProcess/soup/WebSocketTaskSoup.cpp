@@ -175,13 +175,14 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
 
     gsize dataSize;
     const auto* data = g_bytes_get_data(message, &dataSize);
+    std::span dataSpan { static_cast<const uint8_t*>(data), dataSize };
 
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        task->m_channel.didReceiveText(String::fromUTF8(static_cast<const char*>(data), dataSize));
+        task->m_channel.didReceiveText(String::fromUTF8(dataSpan));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
-        task->m_channel.didReceiveBinaryData(static_cast<const uint8_t*>(data), dataSize);
+        task->m_channel.didReceiveBinaryData(dataSpan);
         break;
     }
 }
@@ -234,7 +235,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     m_channel.didClose(code, reason);
 }
 
-void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendString(std::span<const uint8_t> utf8, CompletionHandler<void()>&& callback)
 {
     if (m_connection && soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN) {
 #if SOUP_CHECK_VERSION(2, 67, 3)
@@ -248,7 +249,7 @@ void WebSocketTask::sendString(const IPC::DataReference& utf8, CompletionHandler
     callback();
 }
 
-void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     if (m_connection && soup_websocket_connection_get_state(m_connection.get()) == SOUP_WEBSOCKET_STATE_OPEN)
         soup_websocket_connection_send_binary(m_connection.get(), data.data(), data.size());

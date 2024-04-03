@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TC);
 WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLCompressedTextureS3TC)
 {
-    auto* gcgl = context.graphicsContextGL();
+    RefPtr gcgl = context.graphicsContextGL();
     gcgl->ensureExtensionEnabled("GL_EXT_texture_compression_dxt1"_s);
     gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt3"_s);
     gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt5"_s);

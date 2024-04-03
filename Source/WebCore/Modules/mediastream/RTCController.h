@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,24 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "SecurityOrigin.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class Document;
 class RTCPeerConnection;
+class WeakPtrImplWithEventTargetData;
 
-class RTCController {
+#if USE(LIBWEBRTC)
+class LibWebRTCLogSink;
+#endif
+
+class RTCController : public CanMakeWeakPtr<RTCController> {
 public:
-    RTCController() = default;
+    RTCController();
 
 #if ENABLE(WEB_RTC)
     ~RTCController();
@@ -48,18 +55,30 @@ public:
     WEBCORE_EXPORT void disableICECandidateFilteringForDocument(Document&);
     WEBCORE_EXPORT void enableICECandidateFiltering();
 
-private:
+    using LogCallback = Function<void(String&& logType, String&& logMessage, String&& logLevel, RefPtr<RTCPeerConnection>&&)>;
+    void startGatheringLogs(Document&, LogCallback&&);
+    void stopGatheringLogs();
 
+private:
+    void startGatheringStatLogs(RTCPeerConnection&);
     bool shouldDisableICECandidateFiltering(Document&);
+
+    void stopLoggingLibWebRTCLogs();
 
     struct PeerConnectionOrigin {
         Ref<SecurityOrigin> topOrigin;
         Ref<SecurityOrigin> clientOrigin;
     };
     Vector<PeerConnectionOrigin> m_filteringDisabledOrigins;
-    Vector<std::reference_wrapper<RTCPeerConnection>> m_peerConnections;
+    WeakHashSet<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_peerConnections;
     bool m_shouldFilterICECandidates { true };
+
+    LogCallback m_callback;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_gatheringLogsDocument;
+#if USE(LIBWEBRTC)
+    std::unique_ptr<LibWebRTCLogSink> m_logSink;
 #endif
+#endif // ENABLE(WEB_RTC)
 };
 
 } // namespace WebCore

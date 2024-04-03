@@ -50,7 +50,7 @@ typedef struct _NSRect NSRect;
 typedef struct tagRECT RECT;
 #endif
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 #endif
 
@@ -198,7 +198,7 @@ public:
     WEBCORE_EXPORT operator RECT() const;
 #endif
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
     IntRect(const cairo_rectangle_int_t&);
     operator cairo_rectangle_int_t() const;
 #endif

@@ -1,9 +1,14 @@
-include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
-include(platform/FreeType.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/OpenSSL.cmake)
 include(platform/TextureMapper.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+    include(platform/FreeType.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
+endif ()
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform
@@ -15,24 +20,13 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    accessibility/playstation/AXObjectCachePlaystation.cpp
-    accessibility/playstation/AccessibilityObjectPlaystation.cpp
+    accessibility/playstation/AXObjectCachePlayStation.cpp
+    accessibility/playstation/AccessibilityObjectPlayStation.cpp
 
     editing/libwpe/EditorLibWPE.cpp
 
     page/playstation/ResourceUsageOverlayPlayStation.cpp
     page/playstation/ResourceUsageThreadPlayStation.cpp
-
-    page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
-    page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
-    page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
     platform/ScrollAnimationKinetic.cpp
     platform/ScrollAnimationSmooth.cpp
@@ -44,6 +38,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/egl/GLContext.cpp
     platform/graphics/egl/GLContextLibWPE.cpp
+    platform/graphics/egl/GLContextWrapper.cpp
 
     platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
@@ -66,8 +61,9 @@ list(APPEND WebCore_SOURCES
     platform/text/LocaleICU.cpp
 
     platform/unix/LoggingUnix.cpp
+    platform/unix/SharedMemoryUnix.cpp
 
-    rendering/RenderThemePlayStation.cpp
+    rendering/playstation/RenderThemePlayStation.cpp
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
@@ -126,7 +122,6 @@ endif ()
 set(WebCore_MODULES
     Brotli
     CURL
-    Cairo
     EGL
     Fontconfig
     Freetype
@@ -141,6 +136,14 @@ set(WebCore_MODULES
     WebKitRequirements
     WebP
 )
+
+if (USE_CAIRO)
+    list(APPEND WebCore_MODULES Cairo)
+endif ()
+
+if (USE_LCMS)
+    list(APPEND WebCore_MODULES LCMS2)
+endif ()
 
 if (USE_WPE_BACKEND_PLAYSTATION)
     list(APPEND WebCore_MODULES WPE)

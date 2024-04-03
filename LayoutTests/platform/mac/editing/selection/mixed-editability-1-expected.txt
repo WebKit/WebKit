@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
       RenderInline {SPAN} at (0,0) size 20x18
         RenderText {#text} at (0,0) size 20x18
           text run at (0,0) width 20: "On"
-      RenderText {#text} at (19,0) size 743x36
+      RenderText {#text} at (0,0) size 743x36
         text run at (19,0) width 476: "ly the first two letters of the first word in this sentence should be selected. "
         text run at (494,0) width 249: "To run this test manually, double click "
         text run at (0,18) width 417: "between the first two letters of the first word of the first sentence."

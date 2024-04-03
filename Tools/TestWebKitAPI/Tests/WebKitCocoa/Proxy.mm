@@ -40,15 +40,6 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
-// FIXME: Try to re-enable on the simulator after rdar://110076935 is resolved
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-#if HAVE(NW_PROXY_CONFIG)
-SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
-SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_http_connect, nw_proxy_config_t, __cdecl, (nw_endpoint_t, nw_protocol_options_t))
-SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_socksv5, nw_proxy_config_t, __cdecl, (nw_endpoint_t))
-#endif // HAVE(NW_PROXY_CONFIG)
-#endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
-
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
 @end
@@ -165,15 +156,9 @@ TEST(WebKit, SOCKS5)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 
-// FIXME: Try to re-enable on the simulator after rdar://110076935 is resolved
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
 #if HAVE(NW_PROXY_CONFIG)
 TEST(WebKit, HTTPSProxyAPI)
 {
-    auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
-    if (!createProxyConfig)
-        return;
-
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -194,13 +179,13 @@ TEST(WebKit, HTTPSProxyAPI)
     // 127.0.0.1:1 will never be reachable and will immediately timeout, causing
     // us to fallback to 127.0.0.1:<real port>
     auto endpoint1 = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
-    auto proxyConfig1 = adoptNS(createProxyConfig(endpoint1.get(), nil));
+    auto proxyConfig1 = adoptNS(nw_proxy_config_create_http_connect(endpoint1.get(), nil));
 
     auto endpoint2 = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxyServer1.port()).c_str()));
-    auto proxyConfig2 = adoptNS(createProxyConfig(endpoint2.get(), nil));
+    auto proxyConfig2 = adoptNS(nw_proxy_config_create_http_connect(endpoint2.get(), nil));
 
     auto endpoint3 = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxyServer2.port()).c_str()));
-    auto proxyConfig3 = adoptNS(createProxyConfig(endpoint3.get(), nil));
+    auto proxyConfig3 = adoptNS(nw_proxy_config_create_http_connect(endpoint3.get(), nil));
 
     // Proxy 1 should be ignored as it is unreachable.
     // Proxy 2 should be used.
@@ -229,12 +214,41 @@ TEST(WebKit, HTTPSProxyAPI)
     EXPECT_WK_STREQ([delegate waitForAlert], "non proxy success!");
 }
 
+TEST(WebKit, ProxyAfterNetworkProcessCrash)
+{
+    TestWebKitAPI::HTTPServer proxyServer1({
+        { "/"_s, { "<script>alert('proxy success!')</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxyServer1.port()).c_str()));
+    auto proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+
+    auto dataStore = WKWebsiteDataStore.nonPersistentDataStore;
+    dataStore.proxyConfigurations = @[ proxyConfig.get() ];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    auto delegate = adoptNS([ProxyDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    NSURLRequest *exampleRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]];
+    [webView loadRequest:exampleRequest];
+    EXPECT_WK_STREQ([delegate waitForAlert], "proxy success!");
+
+    pid_t originalNetworkProcessIdentifier = [dataStore _networkProcessIdentifier];
+    EXPECT_NE(originalNetworkProcessIdentifier, 0);
+    kill(originalNetworkProcessIdentifier, 9);
+    while ([dataStore _networkProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop();
+    [webView loadRequest:exampleRequest];
+    EXPECT_WK_STREQ([delegate waitForAlert], "proxy success!");
+    EXPECT_NE(originalNetworkProcessIdentifier, [dataStore _networkProcessIdentifier]);
+}
+
 TEST(WebKit, SOCKS5API)
 {
-    auto* createProxyConfig = nw_proxy_config_create_socksv5Ptr();
-    if (!createProxyConfig)
-        return;
-
     constexpr uint8_t socks5Version = 0x5; // https://tools.ietf.org/html/rfc1928#section-3
     constexpr uint8_t noAuthenticationRequired = 0x00; // https://tools.ietf.org/html/rfc1928#section-3
     constexpr uint8_t connect = 0x01; // https://tools.ietf.org/html/rfc1928#section-4
@@ -285,7 +299,7 @@ TEST(WebKit, SOCKS5API)
     });
 
     auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
-    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get()));
+    auto proxyConfig = adoptNS(nw_proxy_config_create_socksv5(endpoint.get()));
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfig.get() ];
@@ -294,7 +308,6 @@ TEST(WebKit, SOCKS5API)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 #endif // HAVE(NW_PROXY_CONFIG)
-#endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 static HTTPServer proxyAuthenticationServer()
 {

@@ -89,7 +89,7 @@ unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback, CallbackType 
     return callbackID;
 }
 
-void UIScriptContext::asyncTaskComplete(unsigned callbackID)
+void UIScriptContext::asyncTaskComplete(unsigned callbackID, std::initializer_list<JSValueRef> arguments)
 {
     Task task = m_callbacks.take(callbackID);
     ASSERT(task.callback);
@@ -100,7 +100,7 @@ void UIScriptContext::asyncTaskComplete(unsigned callbackID)
     m_currentScriptCallbackID = task.parentScriptCallbackID;
 
     exception = nullptr;
-    JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), 0, nullptr, &exception);
+    JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), arguments.size(), arguments.size() ? arguments.begin() : nullptr, &exception);
     JSValueUnprotect(m_context.get(), task.callback);
     
     tryToCompleteUIScriptForCurrentParentCallback();
@@ -164,7 +164,9 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
         return;
 
     JSStringRef result = m_uiScriptResultsPendingCompletion.take(m_currentScriptCallbackID);
-    String scriptResult(reinterpret_cast<const UChar*>(JSStringGetCharactersPtr(result)), JSStringGetLength(result));
+    String scriptResult({ reinterpret_cast<const UChar*>(JSStringGetCharactersPtr(result)), JSStringGetLength(result) });
+    if (result)
+        JSStringRelease(result);
 
     m_delegate.uiScriptDidComplete(scriptResult, m_currentScriptCallbackID);
     
@@ -174,8 +176,6 @@ void UIScriptContext::tryToCompleteUIScriptForCurrentParentCallback()
     });
     
     m_currentScriptCallbackID = 0;
-    if (result)
-        JSStringRelease(result);
 }
 
 JSObjectRef UIScriptContext::objectFromRect(const WebCore::FloatRect& rect) const

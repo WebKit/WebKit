@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FormattingContext.h"
+#include "LayoutBoxGeometry.h"
 
 namespace WebCore {
 namespace Layout {
@@ -35,7 +36,6 @@ struct ComputedVerticalMargin;
 class ElementBox;
 struct ContentHeightAndMargin;
 struct ContentWidthAndMargin;
-struct Edges;
 struct HorizontalGeometry;
 class LayoutState;
 struct OverriddenHorizontalValues;
@@ -61,8 +61,8 @@ public:
     ContentHeightAndMargin complicatedCases(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
     LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth) const;
 
-    Edges computedBorder(const Box&) const;
-    std::optional<Edges> computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
+    BoxGeometry::Edges computedBorder(const Box&) const;
+    BoxGeometry::Edges computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
 
     ComputedHorizontalMargin computedHorizontalMargin(const Box&, const HorizontalConstraints&) const;
     ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;
@@ -87,7 +87,6 @@ public:
     std::optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
     bool isBlockFormattingGeometry() const { return formattingContext().isBlockFormattingContext(); }
-    bool isFlexFormattingGeometry() const { return formattingContext().isFlexFormattingContext(); }
     bool isTableFormattingGeometry() const { return formattingContext().isTableFormattingContext(); }
 
 protected:

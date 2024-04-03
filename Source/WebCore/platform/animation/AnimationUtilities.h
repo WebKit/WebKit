@@ -52,6 +52,17 @@ struct BlendingContext {
     {
         return compositeOperation == CompositeOperation::Replace && iterationCompositeOperation == IterationCompositeOperation::Replace;
     }
+
+    void normalizeProgress()
+    {
+        // https://drafts.csswg.org/web-animations-1/#discrete
+        // The property's values cannot be meaningfully combined, thus it is not additive and
+        // interpolation swaps from Va to Vb at 50% (p=0.5).
+        if (isDiscrete) {
+            progress = progress < 0.5 ? 0 : 1;
+            compositeOperation = CompositeOperation::Replace;
+        }
+    }
 };
 
 inline int blend(int from, int to, const BlendingContext& context)

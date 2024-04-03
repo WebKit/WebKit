@@ -45,5 +45,11 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, SCContentSharingPickerConfiguration)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *)
 #define SCStreamFrameInfoStatus PAL::get_ScreenCaptureKit_SCStreamFrameInfoStatus()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoScaleFactor, NSString *)
+#define SCStreamFrameInfoScaleFactor PAL::get_ScreenCaptureKit_SCStreamFrameInfoScaleFactor()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentScale, NSString *)
+#define SCStreamFrameInfoContentScale PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentScale()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *)
+#define SCStreamFrameInfoContentRect PAL::get_ScreenCaptureKit_SCStreamFrameInfoContentRect()
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)

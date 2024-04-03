@@ -248,10 +248,10 @@ WTFLogChannel& MediaTrackReader::logChannel() const
     return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
-const void* MediaTrackReader::nextSampleCursorLogIdentifier(uint64_t cursorID) const
+const void* MediaTrackReader::nextSampleCursorLogIdentifier(MediaSampleCursorIdentifier cursorID) const
 {
     uint64_t trackID = reinterpret_cast<uint64_t>(m_logIdentifier) & 0xffffull;
-    uint64_t trackAndCursorID = trackID << 8 | (cursorID & 0xffull);
+    uint64_t trackAndCursorID = trackID << 8 | (cursorID.toUInt64() & 0xffull);
     return LoggerHelper::childLogIdentifier(m_logIdentifier, trackAndCursorID);
 }
 

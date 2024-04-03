@@ -45,9 +45,13 @@ public:
     size_t codeSize() const final;
     CompilationResult finalize() override;
 
+    CompilationPath compileSync(JITCompilationEffort);
+
 private:
+    CompilationPath compileInThreadImpl(JITCompilationEffort);
+
+
     BytecodeIndex m_loopOSREntryBytecodeIndex;
-    std::unique_ptr<LinkBuffer> m_linkBuffer;
     RefPtr<BaselineJITCode> m_jitCode;
 };
 

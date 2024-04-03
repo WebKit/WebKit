@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginPasswordField.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
@@ -41,9 +41,9 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFPluginBase* plugin)
 {
-    return adoptRef(*new PDFPluginPasswordField(pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginPasswordField(plugin));
 }
 
 PDFPluginPasswordField::~PDFPluginPasswordField()
@@ -61,14 +61,13 @@ Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 
 void PDFPluginPasswordField::updateGeometry()
 {
+    // Intentionally do not call the superclass.
 }
 
 bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
 {
-    if (event.isKeyboardEvent() && event.type() == eventNames().keyupEvent) {
-        auto& keyboardEvent = downcast<KeyboardEvent>(event);
-
-        if (keyboardEvent.keyIdentifier() == "Enter"_s) {
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && keyboardEvent->type() == eventNames().keyupEvent) {
+        if (keyboardEvent->keyIdentifier() == "Enter"_s) {
             plugin()->attemptToUnlockPDF(value());
             event.preventDefault();
             return true;
@@ -77,7 +76,12 @@ bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
 
     return false;
 }
+
+void PDFPluginPasswordField::resetField()
+{
+    setValue(""_s);
+}
     
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

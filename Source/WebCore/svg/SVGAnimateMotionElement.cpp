@@ -126,8 +126,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     bool foundMPath = false;
 
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
-        auto pathElement = mPath.pathElement();
-        if (pathElement) {
+        if (RefPtr pathElement = mPath.pathElement()) {
             m_animationPath = pathFromGraphicsElement(*pathElement);
             foundMPath = true;
             break;
@@ -254,16 +253,14 @@ void SVGAnimateMotionElement::applyResultsToTarget()
         return;
 
     auto updateTargetElement = [](SVGElement& element) {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (element.document().settings().layerBasedSVGEngineEnabled()) {
-            if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
+            if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(element.renderer()))
                 layerRenderer->updateHasSVGTransformFlags();
             // TODO: [LBSE] Avoid relayout upon transform changes (not possible in legacy, but should be in LBSE).
             element.updateSVGRendererForElementChange();
             return;
         }
-#endif
-        if (auto* renderer = element.renderer())
+        if (CheckedPtr renderer = element.renderer())
             renderer->setNeedsTransformUpdate();
         element.updateSVGRendererForElementChange();
     };
@@ -302,6 +299,25 @@ void SVGAnimateMotionElement::updateAnimationMode()
         setAnimationMode(AnimationMode::Path);
     else
         SVGAnimationElement::updateAnimationMode();
+}
+
+void SVGAnimateMotionElement::childrenChanged(const ChildChange& change)
+{
+    SVGElement::childrenChanged(change);
+    switch (change.type) {
+    case ChildChange::Type::ElementRemoved:
+    case ChildChange::Type::AllChildrenRemoved:
+    case ChildChange::Type::AllChildrenReplaced:
+        updateAnimationPath();
+        break;
+    case ChildChange::Type::ElementInserted:
+    case ChildChange::Type::TextInserted:
+    case ChildChange::Type::TextRemoved:
+    case ChildChange::Type::TextChanged:
+    case ChildChange::Type::NonContentsChildInserted:
+    case ChildChange::Type::NonContentsChildRemoved:
+        break;
+    }
 }
 
 }

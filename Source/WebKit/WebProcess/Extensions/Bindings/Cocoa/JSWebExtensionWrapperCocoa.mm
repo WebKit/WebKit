@@ -30,15 +30,18 @@
 #import "config.h"
 #import "JSWebExtensionWrapper.h"
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
 #import "CocoaHelpers.h"
-#import "JSWebExtensionWrappable.h"
 #import "Logging.h"
-#import "WebExtensionAPIRuntime.h"
 #import <JavaScriptCore/JSObjectRef.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "JSWebExtensionWrappable.h"
+#import "WebExtensionAPIRuntime.h"
+#endif
+
 namespace WebKit {
+
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 WebExtensionCallbackHandler::WebExtensionCallbackHandler(JSValue *callbackFunction)
     : m_callbackFunction(JSValueToObject(callbackFunction.context.JSGlobalContextRef, callbackFunction.JSValueRef, nullptr))
@@ -157,6 +160,8 @@ id WebExtensionCallbackHandler::call(id argumentOne, id argumentTwo, id argument
     });
 }
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
 id toNSObject(JSContextRef context, JSValueRef valueRef, Class containingObjectsOfClass)
 {
     ASSERT(context);
@@ -220,7 +225,7 @@ NSString *toNSString(JSContextRef context, JSValueRef value, NullStringPolicy nu
     }
 }
 
-NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValuePolicy nullPolicy)
+NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValuePolicy nullPolicy, ValuePolicy valuePolicy)
 {
     ASSERT(context);
 
@@ -248,12 +253,20 @@ NSDictionary *toNSDictionary(JSContextRef context, JSValueRef valueRef, NullValu
         if (nullPolicy == NullValuePolicy::NotAllowed && JSValueIsNull(context, item))
             continue;
 
+        auto *key = toNSString(propertyName.get());
         auto *itemValue = toJSValue(context, item);
+
+        if (valuePolicy == ValuePolicy::StopAtTopLevel) {
+            if (itemValue)
+                result[key] = itemValue;
+            continue;
+        }
+
         if (itemValue._isDictionary) {
             if (auto *itemDictionary = toNSDictionary(context, item, nullPolicy))
-                [result setObject:itemDictionary forKey:toNSString(propertyName.get())];
+                result[key] = itemDictionary;
         } else if (id value = toNSObject(context, item))
-            [result setObject:value forKey:toNSString(propertyName.get())];
+            result[key] = value;
     }
 
     JSPropertyNameArrayRelease(propertyNames);
@@ -283,10 +296,7 @@ JSValueRef toJSValueRef(JSContextRef context, NSURL *url, NullOrEmptyString null
     return toJSValueRef(context, url.absoluteURL.absoluteString, nullOrEmptyString);
 }
 
-NSString *toNSString(JSStringRef string)
-{
-    return string ? CFBridgingRelease(JSStringCopyCFString(nullptr, string)) : nil;
-}
+#if ENABLE(WK_WEB_EXTENSIONS)
 
 RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JSValueRef callbackValue, WebExtensionAPIRuntimeBase& runtime)
 {
@@ -303,6 +313,13 @@ RefPtr<WebExtensionCallbackHandler> toJSCallbackHandler(JSContextRef context, JS
         return nullptr;
 
     return WebExtensionCallbackHandler::create(context, callbackFunction, runtime);
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
+NSString *toNSString(JSStringRef string)
+{
+    return string ? CFBridgingRelease(JSStringCopyCFString(nullptr, string)) : nil;
 }
 
 JSValueRef deserializeJSONString(JSContextRef context, NSString *jsonString)
@@ -333,6 +350,8 @@ NSString *serializeJSObject(JSContextRef context, JSValueRef value, JSValueRef* 
 } // namespace WebKit
 
 using namespace WebKit;
+
+#if JSC_OBJC_API_ENABLED
 
 @implementation JSValue (WebKitExtras)
 
@@ -405,4 +424,4 @@ using namespace WebKit;
 
 @end
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // JSC_OBJC_API_ENABLED

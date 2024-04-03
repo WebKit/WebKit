@@ -772,8 +772,9 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
 {
     ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
 
-    const TVariable *clipDistanceVar =
-        &FindSymbolNode(root, ImmutableString("gl_ClipDistance"))->variable();
+    const TIntermSymbol *symbolNode = FindSymbolNode(root, ImmutableString("gl_ClipDistance"));
+    ASSERT(symbolNode != nullptr);
+    const TVariable *clipDistanceVar = &symbolNode->variable();
 
     const bool fragment = shaderType == GL_FRAGMENT_SHADER;
     if (fragment)
@@ -784,12 +785,6 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
 
         const TVariable *globalVar = new TVariable(symbolTable, ImmutableString("ClipDistance"),
                                                    globalType, SymbolType::AngleInternal);
-        if (!compiler->isClipDistanceRedeclared())
-        {
-            TIntermDeclaration *globalDecl = new TIntermDeclaration();
-            globalDecl->appendDeclarator(new TIntermSymbol(globalVar));
-            root->insertStatement(0, globalDecl);
-        }
 
         if (!ReplaceVariable(compiler, root, clipDistanceVar, globalVar))
         {
@@ -810,7 +805,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
             symbolTable, ImmutableString(name.str()), type, SymbolType::AngleInternal));
 
         TIntermDeclaration *varyingDecl = new TIntermDeclaration();
-        varyingDecl->appendDeclarator(varyingSym);
+        varyingDecl->appendDeclarator(varyingSym->deepCopy());
         root->insertStatement(index++, varyingDecl);
 
         TIntermTyped *arrayAccess = new TIntermBinary(EOpIndexDirect, arraySym, CreateIndexNode(i));
@@ -1468,7 +1463,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         return false;
     }
 
-    if (!SeparateCompoundStructDeclarations(*this, idGen, *root, &getSymbolTable()))
+    if (!SeparateCompoundStructDeclarations(*this, idGen, *root))
     {
         return false;
     }
@@ -1478,7 +1473,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         return false;
     }
 
-    if (!ReduceInterfaceBlocks(*this, *root, idGen, &getSymbolTable()))
+    if (!ReduceInterfaceBlocks(*this, *root, idGen))
     {
         return false;
     }

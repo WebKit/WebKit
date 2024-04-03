@@ -101,6 +101,8 @@ private:
 
     bool m_usesOverlayScrollbars { false };
 
+    std::optional<WebCore::ScrollbarStyle> m_scrollbarStyle;
+
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;
     std::optional<WebCore::FloatPoint> m_transientZoomOrigin;

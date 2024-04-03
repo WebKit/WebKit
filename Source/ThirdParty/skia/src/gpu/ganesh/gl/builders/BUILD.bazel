@@ -1,0 +1,29 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup", "split_srcs_and_hdrs")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+BUILDER_FILES = [
+    "GrGLProgramBuilder.cpp",
+    "GrGLProgramBuilder.h",
+    "GrGLShaderStringBuilder.cpp",
+    "GrGLShaderStringBuilder.h",
+]
+
+split_srcs_and_hdrs(
+    name = "builder",
+    files = BUILDER_FILES,
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [":builder_srcs"],
+    visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [":builder_hdrs"],
+    visibility = ["//src/gpu/ganesh/gl:__pkg__"],
+)

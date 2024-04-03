@@ -125,6 +125,7 @@ class WebDriverW3CExecutor(WdspecExecutor):
     def __init__(self, driver, server, env, timeout, expectations):
         WebKitDriverBrowser.test_env = env
         WebKitDriverBrowser.test_env.update(driver.browser_env())
+        WebKitDriverBrowser.test_env['WEBKIT_TLS_CAFILE_PEM'] = server.cacert_pem_file()
         server_config = {'browser_host': server.host(),
                          'domains': {'': {'': server.host()},
                                      'alt':{ '': '127.0.0.1'}},
@@ -179,7 +180,8 @@ class WebDriverW3CExecutor(WdspecExecutor):
                           'port': port,
                           'capabilities': capabilities,
                           'webdriver': {'binary': webdriver_binary},
-                          'wptserve': server_config
+                          'wptserve': server_config,
+                          'timeout_multiplier': 10,
                           }
                 with open(config_path, 'w') as f:
                     json.dump(config, f)

@@ -41,6 +41,7 @@ enum class FindOptions : uint16_t {
     DetermineMatchIndex = 1 << 8,
     NoIndexChange = 1 << 9,
     AtWordEnds = 1 << 10,
+    DoNotSetSelection = 1 << 11,
 };
 
 enum class FindDecorationStyle : uint8_t {

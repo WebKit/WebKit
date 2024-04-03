@@ -34,12 +34,12 @@ class FloatRect;
 class AlternativeTextUIController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT DictationContext addAlternatives(NSTextAlternatives *);
-    WEBCORE_EXPORT void replaceAlternatives(NSTextAlternatives *, DictationContext);
+    WEBCORE_EXPORT DictationContext addAlternatives(PlatformTextAlternatives *);
+    WEBCORE_EXPORT void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
     WEBCORE_EXPORT void removeAlternatives(DictationContext);
     WEBCORE_EXPORT void clear();
 
-    WEBCORE_EXPORT NSTextAlternatives *alternativesForContext(DictationContext);
+    WEBCORE_EXPORT PlatformTextAlternatives *alternativesForContext(DictationContext);
 
 #if USE(APPKIT)
     using AcceptanceHandler = void (^)(NSString *);
@@ -48,7 +48,7 @@ public:
 
 private:
 #if USE(APPKIT)
-    void handleAcceptedAlternative(NSString *, DictationContext, NSTextAlternatives *);
+    void handleAcceptedAlternative(NSString *, DictationContext, PlatformTextAlternatives *);
     void dismissAlternatives();
 #endif
 

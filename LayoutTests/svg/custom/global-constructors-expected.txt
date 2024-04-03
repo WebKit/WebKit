@@ -175,7 +175,6 @@ PASS SVGAnimateElement.toString() is "function SVGAnimateElement() {\n    [nativ
 PASS SVGSetElement.toString() is "function SVGSetElement() {\n    [native code]\n}"
 PASS SVGAnimateMotionElement.toString() is "function SVGAnimateMotionElement() {\n    [native code]\n}"
 PASS SVGMPathElement.toString() is "function SVGMPathElement() {\n    [native code]\n}"
-PASS SVGAnimateColorElement.toString() is "function SVGAnimateColorElement() {\n    [native code]\n}"
 PASS SVGAnimateTransformElement.toString() is "function SVGAnimateTransformElement() {\n    [native code]\n}"
 FAIL SVGFontElement.toString() should be function SVGFontElement() {
     [native code]
@@ -213,6 +212,7 @@ FAIL SVGDefinitionSrcElement.toString() should be function SVGDefinitionSrcEleme
 PASS SVGMetadataElement.toString() is "function SVGMetadataElement() {\n    [native code]\n}"
 PASS SVGForeignObjectElement.toString() is "function SVGForeignObjectElement() {\n    [native code]\n}"
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

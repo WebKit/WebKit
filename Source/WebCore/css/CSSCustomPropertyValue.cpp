@@ -107,7 +107,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const CSSValueID& value) {
             return nameString(value).string();
         }, [&](const Ref<CSSVariableData>& value) {
-            return value->tokenRange().serialize();
+            return value->serialize();
         }, [&](const SyntaxValue& syntaxValue) {
             return serializeSyntaxValue(syntaxValue);
         }, [&](const SyntaxValueList& syntaxValueList) {
@@ -185,6 +185,11 @@ bool CSSCustomPropertyValue::isCurrentColor() const
 
     // FIXME: This should probably check all tokens.
     return token.id() == CSSValueCurrentcolor;
+}
+
+bool CSSCustomPropertyValue::isAnimatable() const
+{
+    return std::holds_alternative<SyntaxValue>(m_value) || std::holds_alternative<SyntaxValueList>(m_value);
 }
 
 }

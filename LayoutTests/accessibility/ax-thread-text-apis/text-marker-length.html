@@ -1,0 +1,24 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- This should replace mac/text-marker-length.html when AccessibilityThreadTextApisEnabled is enabled by default, as this is the same testcase rewritten in a modern style. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text" tabindex="0">text block</div>
+
+<script>
+var output = "This tests basic LengthForTextMarkerRange.\n\n";
+
+if (window.accessibilityController) {
+    var root = accessibilityController.rootElement;
+    var textMarkerRange = root.textMarkerRangeForElement(accessibilityController.accessibleElementById("text"));
+    output += expect("root.textMarkerRangeLength(textMarkerRange)", "10");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

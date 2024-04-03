@@ -297,20 +297,12 @@ void webkit_dom_html_document_release_events(WebKitDOMHTMLDocument* self)
 
 glong webkit_dom_html_document_get_width(WebKitDOMHTMLDocument* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), 0);
-    WebCore::HTMLDocument* item = WebKit::core(self);
-    glong result = item->width();
-    return result;
+    return 0;
 }
 
 glong webkit_dom_html_document_get_height(WebKitDOMHTMLDocument* self)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), 0);
-    WebCore::HTMLDocument* item = WebKit::core(self);
-    glong result = item->height();
-    return result;
+    return 0;
 }
 
 gchar* webkit_dom_html_document_get_dir(WebKitDOMHTMLDocument* self)

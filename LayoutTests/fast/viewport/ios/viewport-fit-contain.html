@@ -10,7 +10,7 @@
             return `
             (function() {
                 uiController.setSafeAreaInsets(10, 20, 30, 40);
-                uiController.doAfterVisibleContentRectUpdate(function () {
+                uiController.doAfterNextVisibleContentRectAndStablePresentationUpdate(function () {
                     uiController.uiScriptComplete();
                 })
             })();`

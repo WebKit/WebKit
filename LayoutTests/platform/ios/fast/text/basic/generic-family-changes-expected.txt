@@ -23,21 +23,21 @@ layer at (0,0) size 800x317
           RenderText {#text} at (0,0) size 82x15
             text run at (0,0) width 82: "Should be 13px"
       RenderBlock {P} at (0,161) size 784x20
-        RenderInline {SPAN} at (0,0) size 82x15
+        RenderInline {SPAN} at (0,3) size 82x15
           RenderText {#text} at (0,3) size 82x15
             text run at (0,3) width 82: "Should be 13px"
       RenderBlock {P} at (0,197) size 784x20
-        RenderInline {TT} at (0,0) size 101x17
+        RenderInline {TT} at (0,2) size 101x17
           RenderInline {SPAN} at (0,0) size 101x19
             RenderText {#text} at (0,0) size 101x19
               text run at (0,0) width 101: "Should be 16px"
       RenderBlock {P} at (0,233) size 784x20
-        RenderInline {TT} at (0,0) size 101x14
+        RenderInline {TT} at (0,5) size 101x14
           RenderInline {SPAN} at (0,0) size 101x19
             RenderText {#text} at (0,0) size 101x19
               text run at (0,0) width 101: "Should be 16px"
       RenderBlock {P} at (0,269) size 784x24
-        RenderInline {TT} at (0,0) size 121x14
+        RenderInline {TT} at (0,8) size 121x14
           RenderInline {SPAN} at (0,0) size 121x23
             RenderText {#text} at (0,0) size 121x23
               text run at (0,0) width 121: "Should be 19px"

@@ -38,6 +38,9 @@ Imported Targets
 ``WebP::demux``
   The WebP demux library, if found.
 
+``WebP::mux``
+  The WebP mux library, if found.
+
 Result Variables
 ^^^^^^^^^^^^^^^^
 
@@ -114,6 +117,28 @@ if ("demux" IN_LIST WebP_FIND_COMPONENTS)
     endif ()
 endif ()
 
+if ("mux" IN_LIST WebP_FIND_COMPONENTS)
+    find_library(WebP_MUX_LIBRARY
+        NAMES ${WebP_MUX_NAMES} webpmux libwebpmux
+        HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
+    )
+
+    if (WebP_MUX_LIBRARY)
+        if (WebP_FIND_REQUIRED_mux)
+            list(APPEND WebP_LIBS_FOUND "mux (required): ${WebP_MUX_LIBRARY}")
+        else ()
+           list(APPEND WebP_LIBS_FOUND "mux (optional): ${WebP_MUX_LIBRARY}")
+        endif ()
+    else ()
+        if (WebP_FIND_REQUIRED_mux)
+           set(_WebP_REQUIRED_LIBS_FOUND OFF)
+           list(APPEND WebP_LIBS_NOT_FOUND "mux (required)")
+        else ()
+           list(APPEND WebP_LIBS_NOT_FOUND "mux (optional)")
+        endif ()
+    endif ()
+endif ()
+
 if (NOT WebP_FIND_QUIETLY)
     if (WebP_LIBS_FOUND)
         message(STATUS "Found the following WebP libraries:")
@@ -152,15 +177,27 @@ if (WebP_DEMUX_LIBRARY AND NOT TARGET WebP::demux)
         INTERFACE_COMPILE_OPTIONS "${WebP_COMPILE_OPTIONS}"
         INTERFACE_INCLUDE_DIRECTORIES "${WebP_INCLUDE_DIR}"
     )
+    target_link_libraries(WebP::demux INTERFACE WebP::libwebp)
+endif ()
+
+if (WebP_MUX_LIBRARY AND NOT TARGET WebP::mux)
+    add_library(WebP::mux UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(WebP::mux PROPERTIES
+        IMPORTED_LOCATION "${WebP_MUX_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${WebP_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${WebP_INCLUDE_DIR}"
+    )
+    target_link_libraries(WebP::mux INTERFACE WebP::libwebp)
 endif ()
 
 mark_as_advanced(
     WebP_INCLUDE_DIR
     WebP_LIBRARY
     WebP_DEMUX_LIBRARY
+    WebP_MUX_LIBRARY
 )
 
 if (WebP_FOUND)
-    set(WebP_LIBRARIES ${WebP_LIBRARY} ${WebP_DEMUX_LIBRARY})
+    set(WebP_LIBRARIES ${WebP_LIBRARY} ${WebP_DEMUX_LIBRARY} ${WebP_MUX_LIBRARY})
     set(WebP_INCLUDE_DIRS ${WebP_INCLUDE_DIR})
 endif ()

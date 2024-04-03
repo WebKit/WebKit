@@ -51,7 +51,7 @@ LegacyRenderSVGResourceFilter::~LegacyRenderSVGResourceFilter() = default;
 
 bool LegacyRenderSVGResourceFilter::isIdentity() const
 {
-    return SVGFilter::isIdentity(filterElement());
+    return SVGFilter::isIdentity(protectedFilterElement());
 }
 
 void LegacyRenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
@@ -67,7 +67,7 @@ void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client,
 {
     LOG(Filters, "LegacyRenderSVGResourceFilter %p removing client %p", this, &client);
     
-    auto findResult = m_rendererFilterDataMap.find(&client);
+    auto findResult = m_rendererFilterDataMap.find(client);
     if (findResult != m_rendererFilterDataMap.end()) {
         FilterData& filterData = *findResult->value;
         if (filterData.savedContext)
@@ -86,8 +86,8 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
 
     LOG(Filters, "LegacyRenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
 
-    if (m_rendererFilterDataMap.contains(&renderer)) {
-        FilterData* filterData = m_rendererFilterDataMap.get(&renderer);
+    if (m_rendererFilterDataMap.contains(renderer)) {
+        FilterData* filterData = m_rendererFilterDataMap.get(renderer);
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying) {
             filterData->state = FilterData::CycleDetected;
             return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
@@ -101,20 +101,21 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
         return true;
     }
 
-    auto addResult = m_rendererFilterDataMap.set(&renderer, makeUnique<FilterData>());
+    auto addResult = m_rendererFilterDataMap.set(renderer, makeUnique<FilterData>());
     auto filterData = addResult.iterator->value.get();
 
     auto targetBoundingBox = renderer.objectBoundingBox();
-    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
+    Ref filterElement = this->filterElement();
+    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.ptr(), filterElement->filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
-        m_rendererFilterDataMap.remove(&renderer);
+        m_rendererFilterDataMap.remove(renderer);
         return false;
     }
 
     // Determine absolute transformation matrix for filter.
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     if (!absoluteTransform.isInvertible()) {
-        m_rendererFilterDataMap.remove(&renderer);
+        m_rendererFilterDataMap.remove(renderer);
         return false;
     }
 
@@ -131,34 +132,34 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
+    filterData->filter = SVGFilter::create(filterElement, preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
     if (!filterData->filter) {
-        m_rendererFilterDataMap.remove(&renderer);
+        m_rendererFilterDataMap.remove(renderer);
         return false;
     }
 
     filterData->filter->clampFilterRegionIfNeeded();
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-    auto colorSpace = DestinationColorSpace::LinearSRGB();
-#else
+#if USE(CAIRO)
     auto colorSpace = DestinationColorSpace::SRGB();
+#else
+    auto colorSpace = DestinationColorSpace::LinearSRGB();
 #endif
 
     auto& results = filterData->filter->ensureResults([&]() {
         return makeUnique<FilterResults>();
     });
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &results);
+    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, Ref { *filterData->filter }, filterData->sourceImageRect, colorSpace, &results);
     if (!filterData->targetSwitcher) {
-        m_rendererFilterDataMap.remove(&renderer);
+        m_rendererFilterDataMap.remove(renderer);
         return false;
     }
     
     // If the sourceImageRect is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->sourceImageRect.isEmpty()) {
-        ASSERT(m_rendererFilterDataMap.contains(&renderer));
+        ASSERT(m_rendererFilterDataMap.contains(renderer));
         filterData->savedContext = context;
         return false;
     }
@@ -168,7 +169,7 @@ bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     filterData->savedContext = context;
     context = filterData->targetSwitcher->drawingContext(*context);
 
-    ASSERT(m_rendererFilterDataMap.contains(&renderer));
+    ASSERT(m_rendererFilterDataMap.contains(renderer));
     return true;
 }
 
@@ -177,7 +178,7 @@ void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, G
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
 
-    auto findResult = m_rendererFilterDataMap.find(&renderer);
+    auto findResult = m_rendererFilterDataMap.find(renderer);
     if (findResult == m_rendererFilterDataMap.end())
         return;
 
@@ -215,7 +216,7 @@ void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, G
 
     if (filterData.targetSwitcher) {
         filterData.state = FilterData::Built;
-        filterData.targetSwitcher->endDrawSourceImage(*context);
+        filterData.targetSwitcher->endDrawSourceImage(*context, DestinationColorSpace::LinearSRGB());
     }
 
     LOG_WITH_STREAM(Filters, stream << "LegacyRenderSVGResourceFilter " << this << " postApplyResource done\n");
@@ -223,7 +224,8 @@ void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, G
 
 FloatRect LegacyRenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
 {
-    return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
+    Ref filterElement = this->filterElement();
+    return SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement.ptr(), filterElement->filterUnits(), object.objectBoundingBox());
 }
 
 void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
@@ -236,7 +238,7 @@ void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
             continue;
 
         // Repaint the image on the screen.
-        markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
+        markClientForInvalidation(objectFilterDataPair.key, RepaintInvalidation);
 
         filterData->filter->clearEffectResult(effect);
     }
@@ -249,7 +251,7 @@ void LegacyRenderSVGResourceFilter::markFilterForRebuild()
     removeAllClientsFromCache();
 }
 
-FloatRect LegacyRenderSVGResourceFilter::drawingRegion(RenderObject* object) const
+FloatRect LegacyRenderSVGResourceFilter::drawingRegion(RenderObject& object) const
 {
     FilterData* filterData = m_rendererFilterDataMap.get(object);
     return filterData ? filterData->sourceImageRect : FloatRect();

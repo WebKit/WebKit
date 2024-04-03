@@ -91,7 +91,7 @@ protected:
     // For some reason friendship doesn't extend to parent classes...
     using Base::m_lock;
 
-    bool parseAndValidateModule(const uint8_t*, size_t);
+    bool parseAndValidateModule(std::span<const uint8_t>);
 
     const char* stateString(State);
     void moveToState(State);

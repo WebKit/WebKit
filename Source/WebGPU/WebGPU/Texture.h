@@ -38,6 +38,7 @@ struct WGPUTextureImpl {
 
 namespace WebGPU {
 
+class CommandEncoder;
 class Device;
 class TextureView;
 
@@ -60,10 +61,11 @@ public:
     void destroy();
     void setLabel(String&&);
 
-    bool isValid() const { return m_texture; }
+    bool isValid() const;
 
     static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels
+    static NSUInteger bytesPerRow(WGPUTextureFormat, uint32_t textureWidth);
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
     static uint32_t texelBlockSize(WGPUTextureFormat); // Bytes
@@ -71,7 +73,7 @@ public:
     static bool containsStencilAspect(WGPUTextureFormat);
     static bool isDepthOrStencilFormat(WGPUTextureFormat);
     static WGPUTextureFormat aspectSpecificFormat(WGPUTextureFormat, WGPUTextureAspect);
-    static bool validateImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
+    static NSString* errorValidatingImageCopyTexture(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool validateTextureCopyRange(const WGPUImageCopyTexture&, const WGPUExtent3D&);
     static bool refersToSingleAspect(WGPUTextureFormat, WGPUTextureAspect);
     static bool isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
@@ -115,6 +117,8 @@ public:
     static bool supportsBlending(WGPUTextureFormat, const Device&);
     void recreateIfNeeded();
     void makeCanvasBacking();
+    void setCommandEncoder(CommandEncoder&) const;
+    static const char* formatToString(WGPUTextureFormat);
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -144,6 +148,7 @@ private:
     Vector<WeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

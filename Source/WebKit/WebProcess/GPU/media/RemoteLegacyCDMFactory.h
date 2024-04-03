@@ -66,7 +66,7 @@ public:
 
     void registerFactory();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     GPUProcessConnection& gpuProcessConnection();
 

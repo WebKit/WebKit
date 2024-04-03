@@ -651,7 +651,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     auto expectedSourceBuffer = string.charactersWithNullTermination();
     if (!expectedSourceBuffer)
         return std::nullopt;
-    auto sourceBuffer = expectedSourceBuffer.value();
+    auto sourceBuffer = expectedSourceBuffer->span();
 
     UChar destinationBuffer[URLParser::hostnameBufferLength];
     UErrorCode uerror = U_ZERO_ERROR;
@@ -667,7 +667,7 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
     if (!decodeFunction && !allCharactersInAllowedIDNScriptList(destinationBuffer, numCharactersConverted) && !allCharactersAllowedByTLDRules(destinationBuffer, numCharactersConverted))
         return String();
 
-    return String(destinationBuffer, numCharactersConverted);
+    return String({ destinationBuffer, static_cast<size_t>(numCharactersConverted) });
 }
 
 using MappingRangesVector = std::optional<Vector<std::tuple<unsigned, unsigned, String>>>;

@@ -1,0 +1,13 @@
+اختبر
+اختبر
+
+PASS Slots: Directionality: dir=rtl on slot
+PASS Slots: Directionality: dir=rtl on host
+PASS Slots: Directionality: dir=auto on host with Arabic shadow tree content
+PASS Slots: Directionality: dir=auto in shadow tree with Arabic light tree content
+FAIL Slots: Directionality: dir=auto in shadow tree with Arabic shadow tree content assert_equals: expected "ltr" but got "rtl"
+FAIL Slots: Directionality: dir=auto on slot with Arabic light tree content assert_equals: expected "rtl" but got "ltr"
+FAIL slot provides its directionality (from host) to a dir=auto container assert_true: expected true got false
+PASS children with dir attribute are skipped by dir=auto
+PASS slot with dir attribute is skipped by dir=auto
+

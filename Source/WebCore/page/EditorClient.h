@@ -41,6 +41,10 @@ namespace WebCore {
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+enum class AttachmentAssociatedElementType : uint8_t;
+#endif
+
 class SharedBuffer;
 class Document;
 class DocumentFragment;
@@ -77,6 +81,7 @@ public:
     virtual bool shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
+    virtual bool shouldRemoveDictationAlternativesAfterEditing() const { return true; }
     
     virtual bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) = 0;
     virtual void didApplyStyle() = 0;
@@ -88,7 +93,7 @@ public:
     virtual void registerAttachments(Vector<SerializedAttachmentData>&&) { }
     virtual void registerAttachmentIdentifier(const String& /* identifier */) { }
     virtual void cloneAttachmentData(const String& /* fromIdentifier */, const String& /* toIdentifier */) { }
-    virtual void didInsertAttachmentWithIdentifier(const String& /* identifier */, const String& /* source */, bool /* hasEnclosingImage */) { }
+    virtual void didInsertAttachmentWithIdentifier(const String& /* identifier */, const String& /* source */, AttachmentAssociatedElementType /* associatedElementType */) { }
     virtual void didRemoveAttachmentWithIdentifier(const String&) { }
     virtual bool supportsClientSideAttachmentData() const { return false; }
     virtual Vector<SerializedAttachmentData> serializedAttachmentDataForIdentifiers(const Vector<String>&) { return { }; }

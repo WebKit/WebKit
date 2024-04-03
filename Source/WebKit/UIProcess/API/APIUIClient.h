@@ -89,6 +89,7 @@ class Dictionary;
 class NavigationAction;
 class Object;
 class OpenPanelParameters;
+class PageConfiguration;
 class SecurityOrigin;
 class WebAuthenticationPanel;
 
@@ -97,7 +98,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual void createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&&);
+    virtual void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, Ref<NavigationAction>&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&&);
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
@@ -137,11 +138,6 @@ public:
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
     virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, Function<void (unsigned long long)>&& completionHandler)
-    {
-        completionHandler(currentQuota);
-    }
-
-    virtual void reachedApplicationCacheOriginQuota(WebKit::WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t, Function<void (unsigned long long)>&& completionHandler)
     {
         completionHandler(currentQuota);
     }

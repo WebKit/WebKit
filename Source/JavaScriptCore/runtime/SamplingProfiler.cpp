@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -368,11 +368,11 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
 
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
-        std::optional<LockHolder> executableAllocatorLocker;
+        std::optional<Locker<Lock>> executableAllocatorLocker;
         if (Options::useJIT())
             executableAllocatorLocker.emplace(ExecutableAllocator::singleton().getLock());
 
-        std::optional<LockHolder> wasmCalleesLocker;
+        std::optional<Locker<Lock>> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
             wasmCalleesLocker.emplace(NativeCalleeRegistry::singleton().getLock());
@@ -492,11 +492,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 
         auto populateCodeLocation = [] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex, StackFrame::CodeLocation& location) {
             if (bytecodeIndex.offset() < codeBlock->instructionsSize()) {
-                unsigned divot;
-                unsigned startOffset;
-                unsigned endOffset;
-                codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset,
-                    location.lineNumber, location.columnNumber);
+                location.lineColumn = codeBlock->lineColumnForBytecodeIndex(bytecodeIndex);
                 location.bytecodeIndex = bytecodeIndex;
             }
             if (codeBlock->hasHash())
@@ -1098,7 +1094,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         result->setString("category"_s, tierName(stackFrame));
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = stackFrame.machineLocation) {
             auto inliner = JSON::Object::create();
-            inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName()));
+            inliner->setString("name"_s, String::fromUTF8(machineLocation->second->inferredName().span()));
             inliner->setString("location"_s, descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
             inliner->setString("category"_s, tierName(stackFrame));
             result->setValue("inliner"_s, WTFMove(inliner));

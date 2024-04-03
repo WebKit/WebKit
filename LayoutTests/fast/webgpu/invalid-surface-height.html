@@ -1,0 +1,89 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+
+onload = async () => {
+  try {
+    let adapter0 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+    let device0 = await adapter0.requestDevice(
+    {
+    label: '\u5b22',
+    requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+    maxColorAttachmentBytesPerSample: 48,
+    maxVertexAttributes: 17,
+    maxVertexBufferArrayStride: 18611,
+    maxStorageTexturesPerShaderStage: 41,
+    maxBindingsPerBindGroup: 7922,
+    maxTextureArrayLayers: 402,
+    maxTextureDimension1D: 12869,
+    maxTextureDimension2D: 8698,
+    maxVertexBuffers: 10,
+    minStorageBufferOffsetAlignment: 64,
+    minUniformBufferOffsetAlignment: 32,
+    },
+    }
+    );
+
+    let adapter1 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+    let offscreenCanvas3 = new OffscreenCanvas(605, 2935663512);
+
+    let gpuCanvasContext1 = offscreenCanvas3.getContext('webgpu');
+    gpuCanvasContext1.configure(
+    {
+    device: device0,
+    format: 'rgba8unorm',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_DST,
+    viewFormats: [
+    'astc-5x5-unorm',
+    'rg8sint',
+    'r16sint',
+    'bgra8unorm-srgb',
+    'etc2-rgb8a1unorm-srgb',
+    'rgba32float',
+    'astc-4x4-unorm',
+    'astc-8x6-unorm',
+    'astc-12x12-unorm'
+    ],
+    colorSpace: 'srgb',
+    alphaMode: 'premultiplied',
+    }
+    );
+    let device1 = await adapter1.requestDevice(
+    {
+    label: '\u0d54',
+    requiredLimits: {
+    maxColorAttachmentBytesPerSample: 61,
+    maxVertexAttributes: 18,
+    maxVertexBufferArrayStride: 51506,
+    maxStorageTexturesPerShaderStage: 26,
+    maxBindingsPerBindGroup: 9286,
+    maxTextureArrayLayers: 1815,
+    maxTextureDimension1D: 9422,
+    maxTextureDimension2D: 15639,
+    maxVertexBuffers: 12,
+    minStorageBufferOffsetAlignment: 32,
+    minUniformBufferOffsetAlignment: 64,
+    },
+    }
+    );
+  } catch (e) {
+
+  }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

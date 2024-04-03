@@ -46,6 +46,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/cocoa/SpanCocoa.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/cocoa/AVFoundationSoftLink.h>
@@ -75,14 +76,14 @@
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
 {
     UNUSED_PARAM(assetWriter);
-    m_writer->appendData(static_cast<const uint8_t*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
+    m_writer->appendData(span(fragmentedHeaderData));
 }
 
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
 {
     UNUSED_PARAM(assetWriter);
     UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(static_cast<const uint8_t*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
+    m_writer->appendData(span(fragmentedMediaData));
 }
 
 - (void)close
@@ -535,10 +536,10 @@ void MediaRecorderPrivateWriter::completeFetchData()
     m_fetchDataCompletionHandler(takeData(), currentTimeCode);
 }
 
-void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
+void MediaRecorderPrivateWriter::appendData(std::span<const uint8_t> data)
 {
     Locker locker { m_dataLock };
-    m_data.append(data, size);
+    m_data.append(data);
 }
 
 RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriter::takeData()

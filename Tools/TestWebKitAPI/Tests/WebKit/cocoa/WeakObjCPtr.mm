@@ -142,11 +142,11 @@ TEST(WebKit2_WeakObjCPtr, MoveConstructor)
     WeakObjCPtr<id> weak1(object);
     WeakObjCPtr<id> weak2(WTFMove(weak1));
 
-    EXPECT_EQ(weak1.get(), (void*)nil);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(weak1.get(), (void*)nil);
     EXPECT_EQ(weak2.get(), object);
 
     [object release];
 
-    EXPECT_EQ(weak1.get(), (void*)nil);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(weak1.get(), (void*)nil);
     EXPECT_EQ(weak2.get(), (void*)nil);
 }

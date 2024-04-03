@@ -69,20 +69,17 @@ void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier
 {
     ASSERT(isMainThread());
     ScriptExecutionContextIdentifier scriptExecutionContextIdentifier;
+    ThreadSafeWeakPtr<MessagePort> weakPort;
     {
         Locker locker { allMessagePortsLock };
         scriptExecutionContextIdentifier = portToContextIdentifier().get(identifier);
+        weakPort = allMessagePorts().get(identifier);
     }
     if (!scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::ensureOnContextThread(scriptExecutionContextIdentifier, [identifier](auto&) {
-        RefPtr<MessagePort> port;
-        {
-            Locker locker { allMessagePortsLock };
-            port = allMessagePorts().get(identifier).get();
-        }
-        if (port)
+    ScriptExecutionContext::ensureOnContextThread(scriptExecutionContextIdentifier, [weakPort = WTFMove(weakPort)](auto&) {
+        if (RefPtr port = weakPort.get())
             port->messageAvailable();
     });
 }
@@ -257,8 +254,7 @@ void MessagePort::dispatchMessages()
 
         LOG(MessagePorts, "MessagePort %s (%p) dispatching %zu messages", m_identifier.logString().utf8().data(), this, messages.size());
 
-        // Unable to protect the script execution context as it may have started destruction.
-        auto* context = scriptExecutionContext();
+        RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext();
         if (!context || !context->globalObject())
             return;
 

@@ -112,6 +112,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IntrinsicGetter) \
     macro(InHit) \
     macro(InMiss) \
+    macro(InMegamorphic) \
     macro(ArrayLength) \
     macro(StringLength) \
     macro(DirectArgumentsLength) \
@@ -202,7 +203,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(IndexedResizableTypedArrayFloat64InHit) \
     macro(IndexedStringInHit) \
     macro(IndexedNoIndexingInMiss) \
-
+    macro(IndexedMegamorphicIn) \
 
 class AccessCase : public ThreadSafeRefCounted<AccessCase> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AccessCase);
@@ -253,7 +254,6 @@ public:
             return m_structureID->previousID();
         return m_structureID.get();
     }
-    bool guardedByStructureCheck(const StructureStubInfo&) const;
 
     Structure* newStructure() const
     {
@@ -320,10 +320,13 @@ public:
 
     bool requiresIdentifierNameMatch() const;
     bool requiresInt32PropertyCheck() const;
-    bool needsScratchFPR() const;
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }
+    void updateIdentifier(CacheableIdentifier identifier)
+    {
+        m_identifier = identifier;
+    }
 
 #if ASSERT_ENABLED
     void checkConsistency(StructureStubInfo&);
@@ -376,6 +379,8 @@ protected:
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
     JSObject* alternateBaseImpl() const;
 
+    bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
+
 private:
     friend class CodeBlock;
     friend class PolymorphicAccess;
@@ -401,8 +406,6 @@ private:
     // was created. Returns a set of watchpoint sets that will need to be watched.
     Vector<WatchpointSet*, 2> commit(VM&);
 
-    bool guardedByStructureCheckSkippingConstantIdentifierCheck() const;
-
     AccessType m_type;
     State m_state { Primordial };
 protected:
@@ -426,5 +429,15 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::AccessCase::AccessType> : public IntHash<JSC::AccessCase::AccessType> { };
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::AccessCase::AccessType> : public StrongEnumHashTraits<JSC::AccessCase::AccessType> { };
+
+} // namespace WTF
 
 #endif

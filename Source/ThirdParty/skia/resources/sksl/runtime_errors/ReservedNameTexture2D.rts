@@ -1,0 +1,5 @@
+int texture2D;
+
+/*%%*
+expected an identifier, but found type 'texture2D'
+*%%*/

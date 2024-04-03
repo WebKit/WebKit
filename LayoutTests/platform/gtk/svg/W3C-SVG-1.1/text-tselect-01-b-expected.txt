@@ -25,17 +25,17 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 354.12: "However, these lines of text are achieved by using"
           RenderSVGInlineText {#text} at (354,0) size 4x18
             chunk 1 text run 1 at (379.12,190.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 347x18
+          RenderSVGTSpan {tspan} at (0,25) size 347x18
             RenderSVGInlineText {#text} at (0,25) size 347x18
               chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 347.00: "one 'tspan' per line, all contained within the same"
           RenderSVGInlineText {#text} at (347,25) size 4x18
             chunk 1 text run 1 at (372.00,215.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 340x18
+          RenderSVGTSpan {tspan} at (0,50) size 340x18
             RenderSVGInlineText {#text} at (0,50) size 340x18
               chunk 1 text run 1 at (25.00,240.00) startOffset 0 endOffset 51 width 340.00: "'text' element, so you should be able to select all"
           RenderSVGInlineText {#text} at (340,50) size 4x18
             chunk 1 text run 1 at (365.00,240.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 189x18
+          RenderSVGTSpan {tspan} at (0,75) size 189x18
             RenderSVGInlineText {#text} at (0,75) size 189x18
               chunk 1 text run 1 at (25.00,265.00) startOffset 0 endOffset 28 width 189.00: "four lines at the same time."
           RenderSVGInlineText {#text} at (0,0) size 0x0

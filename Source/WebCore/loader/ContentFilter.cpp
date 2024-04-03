@@ -92,7 +92,7 @@ ContentFilter::~ContentFilter()
 
 bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
 
     LOG(ContentFiltering, "ContentFilter received request for <%s> with redirect response from <%s>.\n", request.url().string().ascii().data(), redirectResponse.url().string().ascii().data());
 #if !LOG_DISABLED
@@ -130,7 +130,7 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
     LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", resource.url().string().ascii().data());
     m_state = State::Filtering;
     ASSERT(!m_mainResource);
-    m_mainResource = &resource;
+    m_mainResource = resource;
 }
 
 void ContentFilter::stopFilteringMainResource()
@@ -142,7 +142,7 @@ void ContentFilter::stopFilteringMainResource()
 
 bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& response)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
 
     if (m_state == State::Filtering) {
         LOG(ContentFiltering, "ContentFilter received response from <%s>.\n", response.url().string().ascii().data());
@@ -158,7 +158,7 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
 
 bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t encodedDataLength)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
 
     if (m_state == State::Filtering) {
         LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().ascii().data());
@@ -179,7 +179,7 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t e
 
 bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
 
     if (m_state == State::Filtering) {
         LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().ascii().data());
@@ -189,7 +189,7 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
         });
         if (m_state == State::Allowed) {
             ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-            if (auto* buffer = m_mainResource->resourceBuffer())
+            if (RefPtr buffer = m_mainResource->resourceBuffer())
                 deliverResourceData(buffer->makeContiguous());
         }
         return false;
@@ -200,7 +200,7 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
 
 bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
     ASSERT_UNUSED(resourceURL, resourceURL == m_mainResourceURL);
 
     if (m_state == State::Filtering) {
@@ -223,7 +223,7 @@ bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
 
 bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 {
-    Ref<ContentFilterClient> protectedClient { m_client };
+    Ref protectedClient { m_client.get() };
     ASSERT_UNUSED(resource, &resource == m_mainResource);
     if (m_mainResource->errorOccurred())
         return true;
@@ -236,7 +236,7 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 
         if (m_state != State::Blocked) {
             m_state = State::Allowed;
-            if (auto* buffer = m_mainResource->resourceBuffer()) {
+            if (RefPtr buffer = m_mainResource->resourceBuffer()) {
                 ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
                 deliverResourceData(buffer->makeContiguous());
             }
@@ -263,7 +263,7 @@ inline void ContentFilter::forEachContentFilterUntilBlocked(Function&& function)
 
         if (contentFilter->didBlockData()) {
             ASSERT(!m_blockingContentFilter);
-            m_blockingContentFilter = &contentFilter;
+            m_blockingContentFilter = contentFilter.get();
             didDecide(State::Blocked);
             return;
         } else if (contentFilter->needsMoreData())
@@ -286,14 +286,20 @@ void ContentFilter::didDecide(State state)
     if (m_state != State::Blocked)
         return;
 
-    m_blockedError = m_client.contentFilterDidBlock(m_blockingContentFilter->unblockHandler(), m_blockingContentFilter->unblockRequestDeniedScript());
-    m_client.cancelMainResourceLoadForContentFilter(m_blockedError);
+    Ref client = m_client.get();
+    m_blockedError = client->contentFilterDidBlock(m_blockingContentFilter->unblockHandler(), m_blockingContentFilter->unblockRequestDeniedScript());
+    client->cancelMainResourceLoadForContentFilter(m_blockedError);
+}
+
+Ref<ContentFilterClient> ContentFilter::protectedClient() const
+{
+    return m_client.get();
 }
 
 void ContentFilter::deliverResourceData(const SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(m_state == State::Allowed);
-    m_client.dataReceivedThroughContentFilter(buffer, encodedDataLength);
+    protectedClient()->dataReceivedThroughContentFilter(buffer, encodedDataLength);
 }
 
 URL ContentFilter::url()
@@ -343,11 +349,11 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
 {
     ASSERT(willHandleProvisionalLoadFailure(error));
 
-    RefPtr<FragmentedSharedBuffer> replacementData { m_blockingContentFilter->replacementData() };
+    RefPtr replacementData { m_blockingContentFilter->replacementData() };
     ResourceResponse response { URL(), "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };
     SubstituteData substituteData { WTFMove(replacementData), error.failingURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
     SetForScope loadingBlockedPage { m_isLoadingBlockedPage, true };
-    m_client.handleProvisionalLoadFailureFromContentFilter(blockedPageURL(), substituteData);
+    protectedClient()->handleProvisionalLoadFailureFromContentFilter(blockedPageURL(), substituteData);
 }
 
 void ContentFilter::deliverStoredResourceData()

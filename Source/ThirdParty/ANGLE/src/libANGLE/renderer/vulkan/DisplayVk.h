@@ -17,9 +17,7 @@
 
 namespace rx
 {
-class RendererVk;
-
-class DisplayVk : public DisplayImpl, public vk::Context
+class DisplayVk : public DisplayImpl, public vk::Context, public vk::GlobalOps
 {
   public:
     DisplayVk(const egl::DisplayState &state);
@@ -88,7 +86,6 @@ class DisplayVk : public DisplayImpl, public vk::Context
                                                          const egl::AttributeMap &attribs) override;
     virtual const char *getWSIExtension() const = 0;
     virtual const char *getWSILayer() const;
-    virtual bool isUsingSwapchain() const;
 
     // Determine if a config with given formats and sample counts is supported.  This callback may
     // modify the config to add or remove platform specific attributes such as nativeVisualID.  If
@@ -96,9 +93,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
     // surfaceType, which would still allow the config to be used for pbuffers.
     virtual void checkConfigSupport(egl::Config *config) = 0;
 
-    [[nodiscard]] bool getScratchBuffer(size_t requestedSizeBytes,
-                                        angle::MemoryBuffer **scratchBufferOut) const;
-    angle::ScratchBuffer *getScratchBuffer() const { return &mScratchBuffer; }
+    angle::ScratchBuffer *getScratchBuffer() { return &mScratchBuffer; }
 
     void handleError(VkResult result,
                      const char *file,
@@ -129,7 +124,14 @@ class DisplayVk : public DisplayImpl, public vk::Context
     bool isColorspaceSupported(VkColorSpaceKHR colorspace) const;
     void initSupportedSurfaceFormatColorspaces();
 
-    mutable angle::ScratchBuffer mScratchBuffer;
+    // vk::GlobalOps
+    void putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value) override;
+    bool getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut) override;
+    std::shared_ptr<angle::WaitableEvent> postMultiThreadWorkerTask(
+        const std::shared_ptr<angle::Closure> &task) override;
+    void notifyDeviceLost() override;
+
+    angle::ScratchBuffer mScratchBuffer;
 
     // Map of supported colorspace and associated surface format set.
     angle::HashMap<VkColorSpaceKHR, std::unordered_set<VkFormat>> mSupportedColorspaceFormatsMap;

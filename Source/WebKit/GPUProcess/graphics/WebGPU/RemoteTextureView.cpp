@@ -48,7 +48,7 @@ RemoteTextureView::~RemoteTextureView() = default;
 
 void RemoteTextureView::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteTextureView::stopListeningForIPC()

@@ -29,12 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionContext ()
 
-/*!
- @abstract Enables extra `browser.test` APIs and unsupported API stubs for testing.
- @discussion Defaults to `YES` in debug builds.
- */
-@property (nonatomic, getter=_inTestingMode, setter=_setTestingMode:) BOOL _testingMode;
-
 /*! @abstract The extension background view used for the extension, or `nil` if the extension does not have background content or it is currently unloaded. */
 @property (nonatomic, nullable, readonly) WKWebView *_backgroundWebView;
 

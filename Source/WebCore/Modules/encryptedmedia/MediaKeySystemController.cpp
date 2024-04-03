@@ -28,7 +28,6 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "HTMLIFrameElement.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -37,9 +36,9 @@
 
 namespace WebCore {
 
-const char* MediaKeySystemController::supplementName()
+ASCIILiteral MediaKeySystemController::supplementName()
 {
-    return "MediaKeySystemController";
+    return "MediaKeySystemController"_s;
 }
 
 MediaKeySystemController* MediaKeySystemController::from(Page* page)

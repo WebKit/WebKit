@@ -193,7 +193,7 @@ static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversio
     if (!value)
         return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 
-    return { convertToLength(conversionData, value->first()), convertToLength(conversionData, value->second()) };
+    return { convertToLength(conversionData, value->protectedFirst()), convertToLength(conversionData, value->protectedSecond()) };
 }
 
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, const CSSValue* value)
@@ -206,7 +206,7 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
         keyword = value->valueID();
     else if (value->isPair()) {
         keyword = value->first().valueID();
-        offset = convertToLength(conversionData, value->second());
+        offset = convertToLength(conversionData, value->protectedSecond());
     } else
         offset = convertToLength(conversionData, *value);
 
@@ -257,18 +257,18 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
 {
     if (auto* circleValue = dynamicDowncast<CSSCircleValue>(value)) {
         auto circle = BasicShapeCircle::create();
-        circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue->radius()));
-        circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue->centerX()));
-        circle->setCenterY(convertToCenterCoordinate(conversionData, circleValue->centerY()));
+        circle->setRadius(cssValueToBasicShapeRadius(conversionData, circleValue->protectedRadius().get()));
+        circle->setCenterX(convertToCenterCoordinate(conversionData, circleValue->protectedCenterX().get()));
+        circle->setCenterY(convertToCenterCoordinate(conversionData, circleValue->protectedCenterY().get()));
         circle->setPositionWasOmitted(!circleValue->centerX() && !circleValue->centerY());
         return circle;
     }
     if (auto* ellipseValue = dynamicDowncast<CSSEllipseValue>(value)) {
         auto ellipse = BasicShapeEllipse::create();
-        ellipse->setRadiusX(cssValueToBasicShapeRadius(conversionData, ellipseValue->radiusX()));
-        ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue->radiusY()));
-        ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue->centerX()));
-        ellipse->setCenterY(convertToCenterCoordinate(conversionData, ellipseValue->centerY()));
+        ellipse->setRadiusX(cssValueToBasicShapeRadius(conversionData, ellipseValue->protectedRadiusX().get()));
+        ellipse->setRadiusY(cssValueToBasicShapeRadius(conversionData, ellipseValue->protectedRadiusY().get()));
+        ellipse->setCenterX(convertToCenterCoordinate(conversionData, ellipseValue->protectedCenterX().get()));
+        ellipse->setCenterY(convertToCenterCoordinate(conversionData, ellipseValue->protectedCenterY().get()));
         ellipse->setPositionWasOmitted(!ellipseValue->centerX() && !ellipseValue->centerY());
         return ellipse;
     }
@@ -276,45 +276,45 @@ Ref<BasicShape> basicShapeForValue(const CSSToLengthConversionData& conversionDa
         auto polygon = BasicShapePolygon::create();
         polygon->setWindRule(polygonValue->windRule());
         for (unsigned i = 0; i < polygonValue->size(); i += 2)
-            polygon->appendPoint(convertToLength(conversionData, *polygonValue->item(i)), convertToLength(conversionData, *polygonValue->item(i + 1)));
+            polygon->appendPoint(convertToLength(conversionData, *polygonValue->protectedItem(i)), convertToLength(conversionData, *polygonValue->protectedItem(i + 1)));
         return polygon;
     }
     if (auto* rectValue = dynamicDowncast<CSSInsetShapeValue>(value)) {
         auto rect = BasicShapeInset::create();
-        rect->setTop(convertToLength(conversionData, rectValue->top()));
-        rect->setRight(convertToLength(conversionData, rectValue->right()));
-        rect->setBottom(convertToLength(conversionData, rectValue->bottom()));
-        rect->setLeft(convertToLength(conversionData, rectValue->left()));
-        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->topLeftRadius()));
-        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->topRightRadius()));
-        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->bottomRightRadius()));
-        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->bottomLeftRadius()));
+        rect->setTop(convertToLength(conversionData, rectValue->protectedTop()));
+        rect->setRight(convertToLength(conversionData, rectValue->protectedRight()));
+        rect->setBottom(convertToLength(conversionData, rectValue->protectedBottom()));
+        rect->setLeft(convertToLength(conversionData, rectValue->protectedLeft()));
+        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->protectedTopLeftRadius().get()));
+        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->protectedTopRightRadius().get()));
+        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->protectedBottomRightRadius().get()));
+        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
     if (auto* rectValue = dynamicDowncast<CSSXywhValue>(value)) {
         auto rect = BasicShapeXywh::create();
-        rect->setInsetX(convertToLength(conversionData, rectValue->insetX()));
-        rect->setInsetY(convertToLength(conversionData, rectValue->insetY()));
-        rect->setWidth(convertToLength(conversionData, rectValue->width()));
-        rect->setHeight(convertToLength(conversionData, rectValue->height()));
+        rect->setInsetX(convertToLength(conversionData, rectValue->protectedInsetX().get()));
+        rect->setInsetY(convertToLength(conversionData, rectValue->protectedInsetY().get()));
+        rect->setWidth(convertToLength(conversionData, rectValue->protectedWidth().get()));
+        rect->setHeight(convertToLength(conversionData, rectValue->protectedHeight().get()));
 
-        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->topLeftRadius()));
-        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->topRightRadius()));
-        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->bottomRightRadius()));
-        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->bottomLeftRadius()));
+        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->protectedTopLeftRadius().get()));
+        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->protectedTopRightRadius().get()));
+        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->protectedBottomRightRadius().get()));
+        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
     if (auto* rectValue = dynamicDowncast<CSSRectShapeValue>(value)) {
         auto rect = BasicShapeRect::create();
-        rect->setTop(convertToLengthOrAuto(conversionData, rectValue->top()));
-        rect->setRight(convertToLengthOrAuto(conversionData, rectValue->right()));
-        rect->setBottom(convertToLengthOrAuto(conversionData, rectValue->bottom()));
-        rect->setLeft(convertToLengthOrAuto(conversionData, rectValue->left()));
+        rect->setTop(convertToLengthOrAuto(conversionData, rectValue->protectedTop()));
+        rect->setRight(convertToLengthOrAuto(conversionData, rectValue->protectedRight()));
+        rect->setBottom(convertToLengthOrAuto(conversionData, rectValue->protectedBottom()));
+        rect->setLeft(convertToLengthOrAuto(conversionData, rectValue->protectedLeft()));
 
-        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->topLeftRadius()));
-        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->topRightRadius()));
-        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->bottomRightRadius()));
-        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->bottomLeftRadius()));
+        rect->setTopLeftRadius(convertToLengthSize(conversionData, rectValue->protectedTopLeftRadius().get()));
+        rect->setTopRightRadius(convertToLengthSize(conversionData, rectValue->protectedTopRightRadius().get()));
+        rect->setBottomRightRadius(convertToLengthSize(conversionData, rectValue->protectedBottomRightRadius().get()));
+        rect->setBottomLeftRadius(convertToLengthSize(conversionData, rectValue->protectedBottomLeftRadius().get()));
         return rect;
     }
     if (auto* pathValue = dynamicDowncast<CSSPathValue>(value)) {

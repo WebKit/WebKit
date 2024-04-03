@@ -44,7 +44,7 @@ public:
 
 private:
     static NavigatorClipboard* from(Navigator&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     RefPtr<Clipboard> m_clipboard;
     Navigator& m_navigator;

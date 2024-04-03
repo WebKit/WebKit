@@ -32,7 +32,6 @@
 #include "LayerTreeContext.h"
 #include "PageLoadState.h"
 #include "ProcessThrottler.h"
-#include "RemotePageProxyState.h"
 #include "ScrollingAccelerationCurve.h"
 #include "VisibleWebPageCounter.h"
 #include "WebColorPicker.h"
@@ -173,7 +172,6 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::LayoutSize baseLayoutViewportSize;
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingMouseEvents;
-    WebCore::ResourceRequest decidePolicyForResponseRequest;
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
     WebCore::IntSize fixedLayoutSize;
@@ -218,9 +216,8 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::IntRect visibleScrollerThumbRect;
     WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
-    PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
-
-    RemotePageProxyState remotePageProxyState;
+    std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
+    std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
 
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
@@ -335,6 +332,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
+    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
@@ -342,7 +340,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    void getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
+    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(MAC)
     NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;

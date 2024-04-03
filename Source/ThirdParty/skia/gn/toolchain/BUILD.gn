@@ -1,0 +1,467 @@
+if (is_wasm) {
+  import("wasm.gni")
+}
+if (is_fuchsia) {
+  import("//build/fuchsia/sdk.gni")
+}
+
+declare_args() {
+  host_ar = ar
+  host_cc = cc
+  host_cxx = cxx
+
+  if (is_android) {
+    _prefix = "$ndk/toolchains/llvm/prebuilt/$ndk_host/bin"
+    if (host_os == "win") {
+      target_ar = "$_prefix/llvm-ar.exe"
+      target_cc = "$_prefix/clang.exe --target=$ndk_target$ndk_api -fno-addrsig"
+      target_cxx =
+          "$_prefix/clang++.exe --target=$ndk_target$ndk_api -fno-addrsig"
+    } else {
+      target_ar = "$_prefix/llvm-ar"
+      target_cc = "$_prefix/$ndk_target$ndk_api-clang"
+      target_cxx = "$_prefix/$ndk_target$ndk_api-clang++"
+    }
+  } else if (is_fuchsia && using_fuchsia_sdk) {
+    target_ar = rebase_path("$fuchsia_toolchain_path/bin/llvm-ar")
+    target_cc = rebase_path("$fuchsia_toolchain_path/bin/clang")
+    target_cxx = rebase_path("$fuchsia_toolchain_path/bin/clang++")
+    cflags = "--sysroot=" +
+             rebase_path("$fuchsia_toolchain_path/$target_cpu/sysroot")
+    link = rebase_path("$fuchsia_toolchain_path/bin/ld.lld")
+  } else {
+    target_ar = ar
+    target_cc = cc
+    target_cxx = cxx
+  }
+
+  cc_wrapper = ""
+
+  # dsymutil seems to kill the machine when too many processes are run in
+  # parallel, so we need to use a pool to limit the concurrency when passing
+  # large -j to Ninja (e.g. Goma build). Unfortunately this is also one of the
+  # slowest steps in a build, so we don't want to limit too much. Use the number
+  # of CPUs as a default.
+  dlsymutil_pool_depth = exec_script("num_cpus.py", [], "value")
+
+  # Too many linkers running at once causes issues for some builders. Allow
+  # such builders to limit the number of concurrent link steps.
+  # link_pool_depth < 0 means no pool, 0 means cpu count, > 0 sets pool size.
+  link_pool_depth = -1
+}
+
+declare_args() {
+  host_link = host_cxx
+  target_link = target_cxx
+}
+
+# For 'shell' see https://ninja-build.org/manual.html#ref_rule_command
+if (host_os == "win") {
+  shell = "cmd.exe /c "
+  stamp = "$shell echo >"
+} else {
+  shell = ""
+  stamp = "touch"
+}
+
+if (current_toolchain == default_toolchain) {
+  pool("dsymutil_pool") {
+    depth = dlsymutil_pool_depth
+  }
+  if (0 <= link_pool_depth) {
+    pool("link_pool") {
+      if (link_pool_depth == 0) {
+        depth = exec_script("num_cpus.py", [], "value")
+      } else {
+        depth = link_pool_depth
+      }
+    }
+  }
+}
+
+template("msvc_toolchain") {
+  toolchain(target_name) {
+    toolchain_target_cpu = invoker.cpu
+    lib_switch = ""
+    lib_dir_switch = "/LIBPATH:"
+
+    bin = "$win_vc/Tools/MSVC/$win_toolchain_version/bin/HostX64/$toolchain_target_cpu"
+
+    env_setup = ""
+    if (toolchain_target_cpu == "x86") {
+      # Toolchain asset includes a script that configures for x86 building.
+      # We don't support x86 builds with local MSVC installations.
+      env_setup = "$shell $win_sdk/bin/SetEnv.cmd /x86 && "
+    } else if (toolchain_target_cpu == "arm64") {
+      # ARM64 compiler is incomplete - it relies on DLLs located in the host toolchain directory.
+      env_setup = "$shell set \"PATH=%PATH%;$win_vc\\Tools\\MSVC\\$win_toolchain_version\\bin\\HostX64\\x64\" && "
+    }
+
+    cl_m32_flag = ""
+
+    if (clang_win != "") {
+      if (toolchain_target_cpu == "x86") {
+        # cl.exe knows implicitly by the choice of executable that it's targeting
+        # x86, but clang-cl.exe needs to be told when targeting non-host
+        # platforms. (All our builders are x86-64, so x86 is always non-host.)
+        cl_m32_flag = "-m32"
+      }
+      if (host_os == "win") {
+        cl = "\"$clang_win/bin/clang-cl.exe\""
+        lib = "\"$clang_win/bin/lld-link.exe\" /lib"
+        link = "\"$clang_win/bin/lld-link.exe\""
+      } else {
+        cl = "\"$clang_win/bin/clang-cl\""
+        lib = "\"$clang_win/bin/lld-link\" /lib"
+        link = "\"$clang_win/bin/lld-link\""
+      }
+    } else {
+      cl = "\"$bin/cl.exe\""
+      lib = "\"$bin/lib.exe\""
+      link = "\"$bin/link.exe\""
+    }
+
+    tool("asm") {
+      _ml = "ml"
+      if (toolchain_target_cpu == "x64") {
+        _ml += "64"
+      }
+      command = "$env_setup \"$bin/$_ml.exe\" {{asmflags}} /nologo /c /Fo {{output}} {{source}}"
+      outputs = [
+        "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj",
+      ]
+      description = "assemble {{source}}"
+    }
+
+    tool("cc") {
+      precompiled_header_type = "msvc"
+      pdbname = "{{target_out_dir}}/{{label_name}}_c.pdb"
+
+      # Label names may have spaces so pdbname must be quoted.
+      command = "$env_setup $cc_wrapper $cl /nologo /showIncludes /FC {{defines}} {{include_dirs}} {{cflags}} $cl_m32_flag {{cflags_c}} /c {{source}} /Fo{{output}} /Fd\"$pdbname\""
+      depsformat = "msvc"
+      outputs = [
+        "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj",
+      ]
+      description = "compile {{source}}"
+    }
+
+    tool("cxx") {
+      precompiled_header_type = "msvc"
+      pdbname = "{{target_out_dir}}/{{label_name}}_c.pdb"
+
+      # Label names may have spaces so pdbname must be quoted.
+      command = "$env_setup $cc_wrapper $cl /nologo /showIncludes /FC {{defines}} {{include_dirs}} {{cflags}} $cl_m32_flag {{cflags_cc}} /c {{source}} /Fo{{output}} /Fd\"$pdbname\""
+      depsformat = "msvc"
+      outputs = [
+        "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj",
+      ]
+      description = "compile {{source}}"
+    }
+
+    tool("alink") {
+      rspfile = "{{output}}.rsp"
+
+      command = "$env_setup $lib /nologo /ignore:4221 {{arflags}} /OUT:{{output}} @$rspfile"
+      outputs = [
+        # Ignore {{output_extension}} and always use .lib, there's no reason to
+        # allow targets to override this extension on Windows.
+        "{{root_out_dir}}/{{target_output_name}}{{output_extension}}",
+      ]
+      default_output_extension = ".lib"
+      default_output_dir = "{{target_out_dir}}"
+
+      # inputs_newline works around a fixed per-line buffer size in the linker.
+      rspfile_content = "{{inputs_newline}}"
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("solink") {
+      dllname = "{{output_dir}}/{{target_output_name}}{{output_extension}}"
+      libname = "${dllname}.lib"
+      pdbname = "${dllname}.pdb"
+      rspfile = "${dllname}.rsp"
+
+      command = "$env_setup $link /nologo /IMPLIB:$libname /DLL /OUT:$dllname /PDB:$pdbname @$rspfile"
+      outputs = [
+        dllname,
+        libname,
+        pdbname,
+      ]
+      default_output_extension = ".dll"
+      default_output_dir = "{{root_out_dir}}"
+
+      link_output = libname
+      depend_output = libname
+      runtime_outputs = [
+        dllname,
+        pdbname,
+      ]
+
+      # I don't quite understand this.  Aping Chrome's toolchain/win/BUILD.gn.
+      restat = true
+
+      # inputs_newline works around a fixed per-line buffer size in the linker.
+      rspfile_content = "{{inputs_newline}} {{libs}} {{solibs}} {{ldflags}}"
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("link") {
+      exename = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      pdbname = "$exename.pdb"
+      rspfile = "$exename.rsp"
+
+      command = "$env_setup $link /nologo /OUT:$exename /PDB:$pdbname @$rspfile"
+      default_output_extension = ".exe"
+      default_output_dir = "{{root_out_dir}}"
+      outputs = [ exename ]
+
+      # inputs_newline works around a fixed per-line buffer size in the linker.
+      rspfile_content = "{{inputs_newline}} {{libs}} {{solibs}} {{ldflags}}"
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("stamp") {
+      command = "$stamp {{output}}"
+      description = "stamp {{output}}"
+    }
+
+    tool("copy") {
+      cp_py = rebase_path("../cp.py")
+      command = "$shell python3 \"$cp_py\" {{source}} {{output}}"
+      description = "copy {{source}} {{output}}"
+    }
+
+    toolchain_args = {
+      current_cpu = invoker.cpu
+      current_os = invoker.os
+    }
+  }
+}
+
+msvc_toolchain("msvc") {
+  cpu = current_cpu
+  os = current_os
+}
+
+msvc_toolchain("msvc_host") {
+  cpu = host_cpu
+  os = host_os
+}
+
+template("gcc_like_toolchain") {
+  toolchain(target_name) {
+    ar = invoker.ar
+    cc = invoker.cc
+    cxx = invoker.cxx
+    link = invoker.link
+    lib_switch = "-l"
+    lib_dir_switch = "-L"
+
+    tool("cc") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("cxx") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cxx -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("objc") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{framework_dirs}} {{cflags}} {{cflags_objc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("objcxx") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cxx -MD -MF $depfile {{defines}} {{include_dirs}} {{framework_dirs}} {{cflags}} {{cflags_objcc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("asm") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{asmflags}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "assemble {{source}}"
+    }
+
+    if (is_mac || is_ios) {
+      not_needed([ "ar" ])  # We use libtool instead.
+    }
+
+    tool("alink") {
+      if (is_mac || is_ios) {
+        command = "libtool -static -o {{output}} -no_warning_for_no_symbols {{inputs}}"
+      } else {
+        rspfile = "{{output}}.rsp"
+        rspfile_content = "{{inputs}}"
+        rm_py = rebase_path("../rm.py")
+        command = "$shell python3 \"$rm_py\" \"{{output}}\" && $ar rcs {{output}} @$rspfile"
+      }
+
+      outputs =
+          [ "{{root_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+      default_output_extension = ".a"
+      output_prefix = "lib"
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("solink") {
+      soname = "{{target_output_name}}{{output_extension}}"
+
+      rpath = "-Wl,-soname,$soname"
+      if (is_mac || is_ios) {
+        rpath = "-Wl,-install_name,@rpath/$soname"
+      }
+
+      rspfile = "{{output}}.rsp"
+      rspfile_content = "{{inputs}}"
+
+      # --start-group/--end-group let us link multiple .a {{inputs}}
+      # without worrying about their relative order on the link line.
+      #
+      # This is mostly important for traditional linkers like GNU ld and Gold.
+      # The Mac/iOS linker neither needs nor accepts these flags.
+      # LLD doesn't need these flags, but accepts and ignores them.
+      _start_group = "-Wl,--start-group"
+      _end_group = "-Wl,--end-group"
+      if (is_mac || is_ios || is_fuchsia) {
+        _start_group = ""
+        _end_group = ""
+      }
+
+      command = "$link -shared {{ldflags}} $_start_group @$rspfile {{frameworks}} {{solibs}} $_end_group {{libs}} $rpath -o {{output}}"
+      outputs = [ "{{root_out_dir}}/$soname" ]
+      output_prefix = "lib"
+      if (is_mac || is_ios) {
+        default_output_extension = ".dylib"
+      } else {
+        default_output_extension = ".so"
+      }
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("link") {
+      exe_name = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      rspfile = "$exe_name.rsp"
+      rspfile_content = "{{inputs}}"
+
+      # --start-group/--end-group let us link multiple .a {{inputs}}
+      # without worrying about their relative order on the link line.
+      #
+      # This is mostly important for traditional linkers like GNU ld and Gold.
+      # The Mac/iOS linker neither needs nor accepts these flags.
+      # LLD doesn't need these flags, but accepts and ignores them.
+      _start_group = "-Wl,--start-group"
+      _end_group = "-Wl,--end-group"
+      if (is_mac || is_ios || is_fuchsia) {
+        _start_group = ""
+        _end_group = ""
+      }
+      command = "$link {{ldflags}} $_start_group @$rspfile {{frameworks}} {{solibs}} $_end_group {{libs}} -o $exe_name"
+
+      outputs = [ "$exe_name" ]
+      description = "link {{output}}"
+      if (0 <= link_pool_depth) {
+        pool = ":link_pool($default_toolchain)"
+      }
+    }
+
+    tool("stamp") {
+      command = "$stamp {{output}}"
+      description = "stamp {{output}}"
+    }
+
+    tool("copy") {
+      cp_py = rebase_path("../cp.py")
+      command = "python3 \"$cp_py\" {{source}} {{output}}"
+      description = "copy {{source}} {{output}}"
+    }
+
+    tool("copy_bundle_data") {
+      cp_py = rebase_path("../cp.py")
+      command = "python3 \"$cp_py\" {{source}} {{output}}"
+      description = "copy_bundle_data {{source}} {{output}}"
+    }
+
+    # We don't currently have any xcasset files so make this a NOP
+    tool("compile_xcassets") {
+      command = "true"
+      description = "compile_xcassets {{output}}"
+    }
+
+    toolchain_args = {
+      current_cpu = invoker.cpu
+      current_os = invoker.os
+    }
+  }
+}
+
+gcc_like_toolchain("gcc_like") {
+  cpu = current_cpu
+  os = current_os
+  ar = target_ar
+  cc = target_cc
+  cxx = target_cxx
+  link = target_link
+}
+
+gcc_like_toolchain("gcc_like_host") {
+  cpu = host_cpu
+  os = host_os
+  ar = host_ar
+  cc = host_cc
+  cxx = host_cxx
+  link = host_link
+}
+
+# Only define this toolchain if actually building for wasm.
+if (is_wasm) {
+  gcc_like_toolchain("wasm") {
+    cpu = "wasm"
+    os = "wasm"
+    if (host_os == "win") {
+      ar = "$skia_emsdk_dir/upstream/emscripten/emar.bat"
+      cc = "$skia_emsdk_dir/upstream/emscripten/emcc.bat"
+      cxx = "$skia_emsdk_dir/upstream/emscripten/em++.bat"
+    } else {
+      ar = "$skia_emsdk_dir/upstream/emscripten/emar"
+      cc = "$skia_emsdk_dir/upstream/emscripten/emcc"
+      cxx = "$skia_emsdk_dir/upstream/emscripten/em++"
+    }
+    link = cxx
+  }
+}

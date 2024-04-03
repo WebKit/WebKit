@@ -34,6 +34,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/ThreadableWebSocketChannel.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -91,7 +92,7 @@ void WebSocketTask::readNextMessage()
         if (message.type == NSURLSessionWebSocketMessageTypeString)
             m_channel.didReceiveText(message.string);
         else
-            m_channel.didReceiveBinaryData(static_cast<const uint8_t*>(message.data.bytes), message.data.length);
+            m_channel.didReceiveBinaryData(span(message.data));
 
         readNextMessage();
     }).get()];
@@ -128,7 +129,7 @@ void WebSocketTask::didClose(unsigned short code, const String& reason)
     m_channel.didClose(code, reason);
 }
 
-void WebSocketTask::sendString(const IPC::DataReference& utf8String, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendString(std::span<const uint8_t> utf8String, CompletionHandler<void()>&& callback)
 {
     auto text = adoptNS([[NSString alloc] initWithBytes:utf8String.data() length:utf8String.size() encoding:NSUTF8StringEncoding]);
     if (!text) {
@@ -141,7 +142,7 @@ void WebSocketTask::sendString(const IPC::DataReference& utf8String, CompletionH
     }).get()];
 }
 
-void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<void()>&& callback)
+void WebSocketTask::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     auto nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData:nsData.get()]);

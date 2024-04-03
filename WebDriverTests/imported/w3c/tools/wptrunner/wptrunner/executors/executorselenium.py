@@ -194,6 +194,18 @@ class SeleniumCookiesProtocolPart(CookiesProtocolPart):
         self.logger.info("Deleting all cookies")
         return self.webdriver.delete_all_cookies()
 
+    def get_all_cookies(self):
+        self.logger.info("Getting all cookies")
+        return self.webdriver.get_all_cookies()
+
+    def get_named_cookie(self, name):
+        self.logger.info("Getting cookie named %s" % name)
+        try:
+            return self.webdriver.get_named_cookie(name)
+        except exceptions.NoSuchCookieException:
+            return None
+
+
 class SeleniumWindowProtocolPart(WindowProtocolPart):
     def setup(self):
         self.webdriver = self.parent.webdriver
@@ -206,6 +218,10 @@ class SeleniumWindowProtocolPart(WindowProtocolPart):
     def set_rect(self, rect):
         self.logger.info("Setting window rect")
         self.webdriver.window.rect = rect
+
+    def get_rect(self):
+        self.logger.info("Getting window rect")
+        return self.webdriver.window.rect
 
 class SeleniumSendKeysProtocolPart(SendKeysProtocolPart):
     def setup(self):
@@ -322,7 +338,7 @@ class SeleniumTestharnessExecutor(TestharnessExecutor):
 
     def __init__(self, logger, browser, server_config, timeout_multiplier=1,
                  close_after_done=True, capabilities=None, debug_info=None,
-                 supports_eager_pageload=True, **kwargs):
+                 **kwargs):
         """Selenium-based executor for testharness.js tests"""
         TestharnessExecutor.__init__(self, logger, browser, server_config,
                                      timeout_multiplier=timeout_multiplier,
@@ -332,7 +348,6 @@ class SeleniumTestharnessExecutor(TestharnessExecutor):
             self.script_resume = f.read()
         self.close_after_done = close_after_done
         self.window_id = str(uuid.uuid4())
-        self.supports_eager_pageload = supports_eager_pageload
 
     def is_alive(self):
         return self.protocol.is_alive()
@@ -370,9 +385,6 @@ class SeleniumTestharnessExecutor(TestharnessExecutor):
 
         protocol.base.load(url)
 
-        if not self.supports_eager_pageload:
-            self.wait_for_load(protocol)
-
         handler = CallbackHandler(self.logger, protocol, test_window)
         while True:
             result = protocol.base.execute_script(
@@ -381,29 +393,6 @@ class SeleniumTestharnessExecutor(TestharnessExecutor):
             if done:
                 break
         return rv
-
-    def wait_for_load(self, protocol):
-        # pageLoadStrategy=eager doesn't work in Chrome so try to emulate in user script
-        loaded = False
-        seen_error = False
-        while not loaded:
-            try:
-                loaded = protocol.base.execute_script("""
-var callback = arguments[arguments.length - 1];
-if (location.href === "about:blank") {
-  callback(false);
-} else if (document.readyState !== "loading") {
-  callback(true);
-} else {
-  document.addEventListener("readystatechange", () => {if (document.readyState !== "loading") {callback(true)}});
-}""", asynchronous=True)
-            except Exception:
-                # We can get an error here if the script runs in the initial about:blank
-                # document before it has navigated, with the driver returning an error
-                # indicating that the document was unloaded
-                if seen_error:
-                    raise
-                seen_error = True
 
 
 class SeleniumRefTestExecutor(RefTestExecutor):

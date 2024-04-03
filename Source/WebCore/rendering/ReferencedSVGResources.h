@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SVGNames.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -57,8 +58,8 @@ public:
     ReferencedSVGResources(RenderElement&);
     ~ReferencedSVGResources();
 
-    using QualifiedNames = Vector<QualifiedName>;
-    using SVGElementIdentifierAndTagPairs = Vector<std::pair<AtomString, QualifiedNames>>;
+    using SVGQualifiedNames = Vector<SVGQualifiedName>;
+    using SVGElementIdentifierAndTagPairs = Vector<std::pair<AtomString, SVGQualifiedNames>>;
 
     static SVGElementIdentifierAndTagPairs referencedSVGResourceIDs(const RenderStyle&, const Document&);
     void updateReferencedResources(TreeScope&, const SVGElementIdentifierAndTagPairs&);
@@ -69,17 +70,15 @@ public:
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // LBSE: All element based.
     static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
     static RefPtr<SVGMarkerElement> referencedMarkerElement(TreeScope&, const String&);
     static RefPtr<SVGMaskElement> referencedMaskElement(TreeScope&, const StyleImage&);
     static RefPtr<SVGElement> referencedPaintServerElement(TreeScope&, const String&);
-#endif
 
 private:
-    static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
-    static RefPtr<SVGElement> elementForResourceIDs(TreeScope&, const AtomString& resourceID, const QualifiedNames& tagNames);
+    static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const SVGQualifiedName& tagName);
+    static RefPtr<SVGElement> elementForResourceIDs(TreeScope&, const AtomString& resourceID, const SVGQualifiedNames& tagNames);
 
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(TreeScope&, const AtomString&);

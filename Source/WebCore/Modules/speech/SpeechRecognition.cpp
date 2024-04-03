@@ -29,9 +29,9 @@
 #include "ClientOrigin.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "Page.h"
+#include "PermissionsPolicy.h"
 #include "SpeechRecognitionError.h"
 #include "SpeechRecognitionErrorEvent.h"
 #include "SpeechRecognitionEvent.h"
@@ -78,7 +78,7 @@ ExceptionOr<void> SpeechRecognition::startRecognition()
         return Exception { ExceptionCode::UnknownError, "Recognition is not in a valid frame"_s };
 
     auto optionalFrameIdentifier = document->frameID();
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document.get(), LogFeaturePolicyFailure::No)) {
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document.get(), LogPermissionsPolicyFailure::No)) {
         didError({ SpeechRecognitionErrorType::NotAllowed, "Permission is denied"_s });
         return { };
     }
@@ -212,8 +212,11 @@ void SpeechRecognition::didEnd()
     queueTaskToDispatchEvent(*this, TaskSource::Speech, Event::create(eventNames().endEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-SpeechRecognition::~SpeechRecognition()
+SpeechRecognition::~SpeechRecognition() = default;
+
+bool SpeechRecognition::virtualHasPendingActivity() const
 {
+    return m_state != State::Inactive && hasEventListeners();
 }
 
 } // namespace WebCore

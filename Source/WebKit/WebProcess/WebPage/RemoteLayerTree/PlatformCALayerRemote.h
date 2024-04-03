@@ -45,6 +45,8 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
+using LayerHostingContextID = uint32_t;
+
 struct PlatformCALayerRemoteDelegatedContents {
     ImageBufferBackendHandle surface;
     RefPtr<WebCore::PlatformCALayerDelegatedContentsFence> finishedFence;
@@ -55,6 +57,7 @@ class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWea
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+    static Ref<PlatformCALayerRemote> create(LayerHostingContextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 #if ENABLE(MODEL_ELEMENT)
     static Ref<PlatformCALayerRemote> create(Ref<WebCore::Model>, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 #endif
@@ -93,7 +96,7 @@ public:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     void clearAcceleratedEffectsAndBaseValues() override;
-    void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, WebCore::AcceleratedEffectValues&) override;
+    void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&) override;
 #endif
 
     void setMaskLayer(RefPtr<WebCore::PlatformCALayer>&&) override;
@@ -247,9 +250,13 @@ public:
     void clearContext() { m_context = nullptr; }
     RemoteLayerTreeContext* context() const { return m_context; }
     
+    void markFrontBufferVolatileForTesting() override;
     virtual void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType);
 
     bool containsBitmapOnly() const;
+
+    void purgeFrontBufferForTesting() override;
+    void purgeBackBufferForTesting() override;
 
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);

@@ -86,13 +86,9 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
         using KeyDataResult = ExceptionOr<Vector<uint8_t>>;
         auto keyDataResult = WTF::switchOn(*options->applicationServerKey, [](RefPtr<JSC::ArrayBuffer>& value) -> KeyDataResult {
-            if (!value)
-                return Vector<uint8_t> { };
-            return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->data()), value->byteLength() };
+            return value ? value->toVector() : Vector<uint8_t>();
         }, [](RefPtr<JSC::ArrayBufferView>& value) -> KeyDataResult {
-            if (!value)
-                return Vector<uint8_t> { };
-            return Vector<uint8_t> { reinterpret_cast<const uint8_t*>(value->baseAddress()), value->byteLength() };
+            return value ? value->toVector() : Vector<uint8_t>();
         }, [](String& value) -> KeyDataResult {
             auto decoded = base64URLDecode(value);
             if (!decoded)

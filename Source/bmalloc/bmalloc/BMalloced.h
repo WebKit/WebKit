@@ -34,7 +34,7 @@ public: \
     \
     void* operator new(size_t size) \
     { \
-        return ::bmalloc::api::mallocOutOfLine(size); \
+        return ::bmalloc::api::mallocOutOfLine(size, CompactAllocationMode::NonCompact); \
     } \
     \
     void operator delete(void* p) \
@@ -44,7 +44,34 @@ public: \
     \
     void* operator new[](size_t size) \
     { \
-        return ::bmalloc::api::mallocOutOfLine(size); \
+        return ::bmalloc::api::mallocOutOfLine(size, CompactAllocationMode::NonCompact); \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        ::bmalloc::api::freeOutOfLine(p); \
+    } \
+private: \
+typedef int __thisIsHereToForceASemicolonAfterThisMacro BUNUSED_TYPE_ALIAS
+
+#define MAKE_COMPACT_BMALLOCED \
+public: \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        return ::bmalloc::api::mallocOutOfLine(size, CompactAllocationMode::Compact); \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        ::bmalloc::api::freeOutOfLine(p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        return ::bmalloc::api::mallocOutOfLine(size, CompactAllocationMode::Compact); \
     } \
     \
     void operator delete[](void* p) \

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Error: assert_equals: container(target) expected "absolute" but got "static"
+CONSOLE MESSAGE: Error: assert_equals: container(target) expected "multiply" but got "normal"
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 
 Harness Error (FAIL), message = Unhandled rejection: Type error

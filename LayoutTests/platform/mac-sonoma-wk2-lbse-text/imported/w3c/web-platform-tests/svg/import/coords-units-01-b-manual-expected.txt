@@ -1,0 +1,112 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 434x244
+  RenderSVGTransformableContainer {g} at (0,0) size 433.16x243.23
+layer at (0,0) size 434x244
+  RenderSVGTransformableContainer {g} at (0,0) size 433.16x243.23
+layer at (30,17.41) size 371x16
+  RenderSVGText {text} at (30,17) size 372x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 372x16
+      chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 59 width 371.23: "Bounding box relative coordinates (percentage and fraction)"
+layer at (0,0) size 134x59
+  RenderSVGTransformableContainer {g} at (0,0) size 133.16x58.23
+layer at (0,0) size 50x20
+  RenderSVGRect {rect} at (0,0) size 50x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=20.00]
+layer at (0,0) size 50x20
+  RenderSVGRect {rect} at (0,0) size 50x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=20.00]
+layer at (0,0) size 50x20
+  RenderSVGRect {rect} at (0,0) size 50x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=20.00]
+layer at (0,20) size 50x0
+  RenderSVGPath {line} at (0,20) size 50x0 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=20.00] [x2=50.00] [y2=20.00]
+layer at (0,40) size 50x0
+  RenderSVGPath {line} at (0,40) size 50x0 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=40.00] [x2=50.00] [y2=40.00]
+layer at (60,2.41) size 72x16
+  RenderSVGText {text} at (60,2) size 72x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 72x16
+      chunk 1 text run 1 at (60.00,15.00) startOffset 0 endOffset 10 width 71.61: "Percentage"
+layer at (60,22.41) size 51x16
+  RenderSVGText {text} at (60,22) size 51x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x16
+      chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 8 width 50.57: "Fraction"
+layer at (60,42.41) size 73x16
+  RenderSVGText {text} at (60,42) size 74x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 74x16
+      chunk 1 text run 1 at (60.00,55.00) startOffset 0 endOffset 10 width 73.14: "User Space"
+layer at (30,117.41) size 337x16
+  RenderSVGText {text} at (30,117) size 337x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 337x16
+      chunk 1 text run 1 at (30.00,130.00) startOffset 0 endOffset 54 width 337.00: "Bounding box relative length (percentage and fraction)"
+layer at (0,0) size 196x77
+  RenderSVGTransformableContainer {g} at (0,0) size 195.16x76.23
+layer at (0,0) size 60x60
+  RenderSVGRect {rect} at (0,0) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+layer at (0,0) size 60x60
+  RenderSVGRect {rect} at (0,0) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+layer at (0,0) size 60x60
+  RenderSVGRect {rect} at (0,0) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
+layer at (0,60.41) size 52x16
+  RenderSVGText {text} at (0,60) size 53x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x16
+      chunk 1 text run 1 at (0.00,73.00) startOffset 0 endOffset 8 width 52.14: "Percent."
+layer at (61,60.41) size 51x16
+  RenderSVGText {text} at (61,60) size 51x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x16
+      chunk 1 text run 1 at (61.00,73.00) startOffset 0 endOffset 8 width 50.57: "Fraction"
+layer at (122,60.41) size 73x16
+  RenderSVGText {text} at (122,60) size 74x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 74x16
+      chunk 1 text run 1 at (122.00,73.00) startOffset 0 endOffset 10 width 73.14: "User Space"
+layer at (0.25,0.25) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0.25,0.25) size 0.50x0.50
+layer at (0.25,0.25) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.50x0.50 [fill={[type=SOLID] [color=#FF00FF]}] [cx=0.50] [cy=0.50] [r=0.25]
+layer at (0.39,0.39) size 1x1
+  RenderSVGRect {rect} at (0.14,0.14) size 0.22x0.22 [fill={[type=SOLID] [color=#0000FF]}] [x=0.40] [y=0.40] [width=0.20] [height=0.20]
+layer at (0.25,0.25) size 1x1
+  RenderSVGHiddenContainer {pattern} at (0.25,0.25) size 0.50x0.50
+layer at (0.25,0.25) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 0.50x0.50 [fill={[type=SOLID] [color=#FF00FF]}] [cx=0.50] [cy=0.50] [r=0.25]
+layer at (0.39,0.39) size 1x1
+  RenderSVGRect {rect} at (0.14,0.14) size 0.22x0.22 [fill={[type=SOLID] [color=#0000FF]}] [x=0.40] [y=0.40] [width=0.20] [height=0.20]
+layer at (15,5) size 20x20
+  RenderSVGHiddenContainer {pattern} at (15,5) size 20x20
+layer at (15,5) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FF00FF]}] [cx=25.00] [cy=15.00] [r=10.00]
+layer at (20,12) size 10x6
+  RenderSVGRect {rect} at (5,7) size 10x6 [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=12.00] [width=10.00] [height=6.00]
+layer at (30,227.41) size 374x16
+  RenderSVGText {text} at (30,227) size 374x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 374x16
+      chunk 1 text run 1 at (30.00,240.00) startOffset 0 endOffset 60 width 373.57: "Bounding box relative width/height (percentage and fraction)"
+layer at (0,0) size 434x30
+  RenderSVGTransformableContainer {g} at (0,0) size 433.16x30
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (0,0) size 50x30
+  RenderSVGRect {rect} at (0,0) size 50x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
+layer at (60,7.41) size 72x16
+  RenderSVGText {text} at (60,7) size 72x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 72x16
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 10 width 71.61: "Percentage"
+layer at (210,7.41) size 51x16
+  RenderSVGText {text} at (210,7) size 51x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x16
+      chunk 1 text run 1 at (210.00,20.00) startOffset 0 endOffset 8 width 50.57: "Fraction"
+layer at (360,7.41) size 73x16
+  RenderSVGText {text} at (360,7) size 74x17 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 74x16
+      chunk 1 text run 1 at (360.00,20.00) startOffset 0 endOffset 10 width 73.14: "User Space"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

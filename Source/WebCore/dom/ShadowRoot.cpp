@@ -63,11 +63,11 @@ static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot sh
 static_assert(sizeof(WeakPtr<Element, WeakPtrImplWithEventTargetData>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
-ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, Cloneable cloneable, AvailableToElementInternals availableToElementInternals)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, Clonable clonable, AvailableToElementInternals availableToElementInternals)
     : DocumentFragment(document, TypeFlag::IsShadowRoot)
     , TreeScope(*this, document)
     , m_delegatesFocus(delegatesFocus == DelegatesFocus::Yes)
-    , m_isCloneable(cloneable == Cloneable::Yes)
+    , m_isClonable(clonable == Clonable::Yes)
     , m_availableToElementInternals(availableToElementInternals == AvailableToElementInternals::Yes)
     , m_mode(mode)
     , m_slotAssignmentMode(assignmentMode)
@@ -133,10 +133,8 @@ CheckedRef<Style::Scope> ShadowRoot::checkedStyleScope() const
 void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     DocumentFragment::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    if (removalType.disconnectedFromDocument) {
-        // Unable to ref the document as it may have started destruction.
-        document().didRemoveInDocumentShadowRoot(*this);
-    }
+    if (removalType.disconnectedFromDocument)
+        RefAllowingPartiallyDestroyed<Document> { document() }->didRemoveInDocumentShadowRoot(*this);
 }
 
 void ShadowRoot::childrenChanged(const ChildChange& childChange)
@@ -241,7 +239,7 @@ Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperati
     switch (type) {
     case CloningOperation::SelfWithTemplateContent:
         return create(targetDocument, m_mode, m_slotAssignmentMode, m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
-            m_isCloneable ? Cloneable::Yes : Cloneable::No, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
+            m_isClonable ? Clonable::Yes : Clonable::No, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
     case CloningOperation::OnlySelf:
     case CloningOperation::Everything:
         break;
@@ -411,7 +409,7 @@ Vector<Ref<ShadowRoot>> assignedShadowRootsIfSlotted(const Node& node)
 }
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
-HTMLVideoElement* ShadowRoot::pictureInPictureElement() const
+Element* ShadowRoot::pictureInPictureElement() const
 {
     notImplemented();
     return nullptr;

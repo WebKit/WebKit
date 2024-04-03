@@ -186,6 +186,7 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
 
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     testContext.baseURL = [NSURL URLWithString:@"test-extension://aaabbbcccddd"];
 
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);

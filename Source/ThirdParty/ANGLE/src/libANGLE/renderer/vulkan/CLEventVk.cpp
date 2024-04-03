@@ -12,15 +12,11 @@
 namespace rx
 {
 
-CLEventVk::CLEventVk(const cl::Event &event) : CLEventImpl(event) {}
+CLEventVk::CLEventVk(const cl::Event &event, const cl::EventPtrs &depEvents)
+    : CLEventImpl(event), mStatus(isUserEvent() ? CL_SUBMITTED : CL_QUEUED), mDepEvents(depEvents)
+{}
 
 CLEventVk::~CLEventVk() = default;
-
-angle::Result CLEventVk::getCommandExecutionStatus(cl_int &executionStatus)
-{
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
-}
 
 angle::Result CLEventVk::setUserEventStatus(cl_int executionStatus)
 {

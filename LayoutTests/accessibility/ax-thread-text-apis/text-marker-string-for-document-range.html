@@ -1,0 +1,44 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy of existing test. Remove after accessibilityThreadTextApisEnabled is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table>
+<tbody>
+<tr>
+<td>
+<table><tbody><tr><td>text</td></tr></tbody></table>
+<table><tbody><tr><td><p id="description"></p><div id="console"></div></td></tr></tbody></table>
+</td>
+</tr>
+</tbody>
+</table>
+
+<script>
+
+    description("This tests that we are getting the correct string for document range if the end visible position has after anchor type.");
+
+    if (window.accessibilityController) {
+
+          var body = accessibilityController.rootElement.childAtIndex(0);
+          var startMarker = body.startTextMarker;
+          var endMarker = body.endTextMarker;
+          var textMarkerRange = body.textMarkerRangeForMarkers(startMarker, endMarker);
+          // FIXME: We fail because we are missing a newline after "text". This happens because the table is considered
+          // a layout table (not an "exposed" AX data table), and thus the <tr> is ignored, thus not in the AX tree.
+          // This means we can't emit a newline when we "exit" the <tr> in the text traversal because it's not there.
+
+          // We also fail because we don't emit a newline after "...has after anchor type." TextIterator emits this newline
+          // as part of handling TextIterator::m_nodeForAdditionalNewline, which is only set when shouldEmitExtraNewlineForNode
+          // is true upon TextIterator::exitNode.
+          debug("String: \n" + body.stringForTextMarkerRange(textMarkerRange));
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

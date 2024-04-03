@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "CodeType.h"
 #include "DFGExitProfile.h"
 #include "ExecutionCounter.h"
-#include "ExpressionRangeInfo.h"
+#include "ExpressionInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
 #include "InstructionStream.h"
@@ -156,8 +156,7 @@ public:
     bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
     bool usesImportMeta() const { return m_features & ImportMetaFeature; }
 
-    bool hasExpressionInfo() { return m_expressionInfo.size(); }
-    const FixedVector<ExpressionRangeInfo>& expressionInfo() { return m_expressionInfo; }
+    bool hasExpressionInfo() { return !m_expressionInfo->isEmpty(); }
 
     bool hasCheckpoints() const { return m_hasCheckpoints; }
     void setHasCheckpoints() { m_hasCheckpoints = true; }
@@ -250,9 +249,8 @@ public:
 
     bool hasRareData() const { return m_rareData.get(); }
 
-    int lineNumberForBytecodeIndex(BytecodeIndex);
-
-    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
+    ExpressionInfo::Entry expressionInfoForBytecodeIndex(BytecodeIndex);
+    LineColumn lineColumnForBytecodeIndex(BytecodeIndex);
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
@@ -288,7 +286,7 @@ public:
         return m_rareData && !m_rareData->m_opProfileControlFlowBytecodeOffsets.isEmpty();
     }
 
-    void dumpExpressionRangeInfo(); // For debugging purpose only.
+    void dumpExpressionInfo(); // For debugging purpose only.
 
     bool wasCompiledWithDebuggingOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::Debugger); }
     bool wasCompiledWithTypeProfilerOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::TypeProfiler); }
@@ -390,9 +388,7 @@ private:
             m_rareData = makeUnique<RareData>();
     }
 
-    void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
     BytecodeLivenessAnalysis& livenessAnalysisSlow(CodeBlock*);
-
 
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
@@ -462,8 +458,6 @@ public:
         FixedVector<UnlinkedSimpleJumpTable> m_unlinkedSwitchJumpTables;
         FixedVector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
 
-        FixedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
-
         struct TypeProfilerExpressionRange {
             unsigned m_startDivot;
             unsigned m_endDivot;
@@ -498,7 +492,7 @@ private:
 
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
-    FixedVector<ExpressionRangeInfo> m_expressionInfo;
+    MallocPtr<ExpressionInfo> m_expressionInfo;
     BaselineExecutionCounter m_llintExecuteCounter;
     FixedVector<UnlinkedValueProfile> m_valueProfiles;
     FixedVector<UnlinkedArrayProfile> m_arrayProfiles;

@@ -219,7 +219,7 @@ static int windowsKeycodeWithLocation(WPARAM keycode, LPARAM keyData)
 
 static inline String singleCharacterString(UChar c)
 {
-    return String(&c, 1);
+    return span(c);
 }
 
 static WindowsKeyNames& windowsKeyNames()

@@ -67,7 +67,7 @@ public:
         m_position = position;
     }
 
-    StringView stringViewOfCharactersRemaining() const { return { m_position, lengthRemaining() }; }
+    StringView stringViewOfCharactersRemaining() const { return span(); }
 
     CharacterType consume()
     {
@@ -75,6 +75,16 @@ public:
         auto character = *m_position;
         ++m_position;
         return character;
+    }
+
+    std::span<const CharacterType> span() const { return { m_position, lengthRemaining() }; }
+
+    std::span<const CharacterType> consume(size_t count)
+    {
+        ASSERT(count <= lengthRemaining());
+        std::span result { m_position, count };
+        m_position += count;
+        return result;
     }
 
     CharacterType operator[](unsigned i) const

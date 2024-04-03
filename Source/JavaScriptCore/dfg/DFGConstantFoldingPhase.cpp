@@ -678,7 +678,8 @@ private:
                 break;
             }
 
-            case InByVal: {
+            case InByVal:
+            case InByValMegamorphic: {
                 AbstractValue& property = m_state.forNode(node->child2());
                 if (JSValue constant = property.value()) {
                     if (constant.isString()) {
@@ -688,7 +689,8 @@ private:
                             RELEASE_ASSERT(impl);
                             m_graph.freezeStrong(string);
                             m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
-                            node->convertToInById(CacheableIdentifier::createFromCell(string));
+                            m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
+                            node->convertToInByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                             changed = true;
                             break;
                         }
@@ -755,6 +757,15 @@ private:
 
             case ToPropertyKey: {
                 if (m_state.forNode(node->child1()).m_type & ~(SpecString | SpecSymbol))
+                    break;
+
+                node->convertToIdentity();
+                changed = true;
+                break;
+            }
+
+            case ToPropertyKeyOrNumber: {
+                if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecString | SpecSymbol))
                     break;
 
                 node->convertToIdentity();

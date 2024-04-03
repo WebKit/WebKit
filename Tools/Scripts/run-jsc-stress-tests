@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -171,6 +171,7 @@ $reportExecutionTime = false
 $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
+$maxTimeout = nil
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
 $gnuParallelChunkSize = 1
 $testsDebugStream = nil # set to $stderr for debugging
@@ -212,6 +213,7 @@ def usage
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
     puts "--report-execution-time     Print execution time for each test."
     puts "--child-processes    (-c)   Specify the number of child processes."
+    puts "--max-timeout               Specify a cap for the effective timeout"
     puts "--filter                    Only run tests whose name matches the given regular expression."
     puts "--help               (-h)   Print this message."
     puts "--env-vars                  Add a list of environment variables to set before running jsc."
@@ -257,6 +259,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--report-execution-time', GetoptLong::NO_ARGUMENT],
                ['--model', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
+               ['--max-timeout', GetoptLong::REQUIRED_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
@@ -343,6 +346,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--child-processes'
         $numChildProcesses = arg.to_i
         $numChildProcessesSetByUser = true
+    when '--max-timeout'
+        $maxTimeout = arg.to_i
     when '--filter'
         $filter = Regexp.new(arg)
     when '--arch'
@@ -663,13 +668,14 @@ class BasePlan
     attr_accessor :retryParameters
 
     @@index = 0
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters)
+    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters, expectCrash)
         @directory = directory
         @arguments = argumentsMapper(arguments)
         @family = family
         @name = name
         @outputHandler = outputHandler
         @errorHandler = errorHandler
+        @expectCrash = expectCrash
         # A plan for which @retryParameters is not nil is being
         # treated as potentially flaky.
         @retryParameters = retryParameters
@@ -678,13 +684,17 @@ class BasePlan
         @@index += 1
     end
     def self.mock(family, name, retryParameters=nil)
-        self.new("/none", [], family, name, nil, nil, retryParameters)
+        self.new("/none", [], family, name, nil, nil, retryParameters, false)
     end
     def self.create(directory, arguments, family, name, outputHandler, errorHandler)
-        if $runCommandOptions[:crashOK]
+        if $runCommandOptions[:mustCrash]
             outputHandler = noisyOutputHandler
         end
-        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky])
+        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky], $runCommandOptions[:mustCrash])
+    end
+
+    def expectCrash
+        @expectCrash
     end
     def argumentsMapper(args)
         args
@@ -905,9 +915,9 @@ def slow!
     skip() if ($mode == "quick")
 end
 
-def crashOK!
+def mustCrash!
     $testSpecificRequiredOptions += ["-s"]
-    $runCommandOptions[:crashOK] = true
+    $runCommandOptions[:mustCrash] = true
 end
 
 def serial!
@@ -1780,8 +1790,8 @@ def runWebAssembly
         run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
+        run("wasm-bbq", "-m", "--useWasmLLInt=false", *FTL_OPTIONS)
         if $isFTLPlatform
-            run("wasm-bbq", "-m", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-omg", "-m", "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
             run("wasm-simd", "-m", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-agressive-inline", "-m", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
@@ -1810,8 +1820,8 @@ def runWebAssemblyJetStream2
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
+        run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS)
         if $isFTLPlatform
-            run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
@@ -1837,8 +1847,8 @@ def runWebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isFTLPlatform
-            run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
             run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
@@ -1862,13 +1872,25 @@ def runV8WebAssemblySuite(*optionalTestSpecificOptions)
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isFTLPlatform
-            run("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions)) unless !$isSIMDPlatform
             run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
         end
     end
+end
+
+def runV8WebAssemblySuiteQuick(*optionalTestSpecificOptions)
+    return if !$jitTests
+    return if !$isWasmPlatform
+    prepareExtraAbsoluteFiles(Pathname.new(WASMTESTS_PATH).join("v8", "resources"), ["async-compile.js", "mjsunit.js", "trap-location.js", "user-properties-common.js", "wasm-module-builder.js"])
+    if optionalTestSpecificOptions[0] == :no_module
+      optionalTestSpecificOptions.shift
+    else
+      optionalTestSpecificOptions.unshift "-m"
+    end
+    run("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runHarnessTest(kind, *options)
@@ -1895,8 +1917,8 @@ def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
         runHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runHarnessTest("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        runHarnessTest("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         if $isFTLPlatform
-            runHarnessTest("wasm-bbq", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             runHarnessTest("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
             runHarnessTest("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             runHarnessTest("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
@@ -1918,8 +1940,8 @@ def runWebAssemblyEmscripten(mode)
         run("wasm-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-collect-continuously", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
+        run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
         if $isFTLPlatform
-            run("wasm-bbq", "--useWasmLLInt=false", *FTL_OPTIONS) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             run("wasm-omg", "--useWasmLLInt=true", "--useBBQJIT=false", *FTL_OPTIONS)
             run("wasm-simd", "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *FTL_OPTIONS) unless !$isSIMDPlatform
             run("wasm-agressive-inline", "--maximumWasmCalleeSizeForInlining=2147483647", "--maximumWasmCallerSizeForInlining=2147483647", "--maximumWasmDepthForInlining=5", *(FTL_OPTIONS + EAGER_OPTIONS))
@@ -1948,8 +1970,8 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
         runWithOutputHandler("wasm-no-cjit" + (postfix || ''), noisyOutputHandler, specHarnessJsPath,  *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
         runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
         runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
         if $isFTLPlatform
-            runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
             runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
             runWithOutputHandler("wasm-simd" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
@@ -2501,10 +2523,10 @@ def prepareBundle
             # Check for and copy JavaScriptCore.dll and WTF.dll for dynamic builds
             javaScriptCoreDLLPath = File.join(originalJSCDir, "JavaScriptCore.dll")
             wtfDLLPath = File.join(originalJSCDir, "WTF.dll")
-            if (File.exists?(javaScriptCoreDLLPath))
+            if (File.exist?(javaScriptCoreDLLPath))
                 source = source + [javaScriptCoreDLLPath]
             end
-            if (File.exists?(wtfDLLPath))
+            if (File.exist?(wtfDLLPath))
                 source = source + [wtfDLLPath]
             end
 
@@ -2910,15 +2932,19 @@ def getStatusMap(map={})
         # ignore any stale results from a previous run).
         forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
             copyRemoteResultToHost(host)
-            File.open(getLocalRemoteResultPath(host) + STATUS_FILE).each do |line|
-                processStatusLine(map, line.strip)
+            File.open(getLocalRemoteResultPath(host) + STATUS_FILE) do |f|
+                f.each do |line|
+                    processStatusLine(map, line.strip)
+                end
             end
             clearLocalRemoteResults(host)
         }
     else
         Dir.chdir($runnerDir) {
-            File.open(STATUS_FILE).each do |line|
-                processStatusLine(map, line.strip)
+            File.open(STATUS_FILE) do |f|
+                f.each do |line|
+                    processStatusLine(map, line.strip)
+                end
             end
         }
     end
@@ -3019,6 +3045,15 @@ if ENV["JSCTEST_timeout"]
     # In the worst case, the processors just interfere with each other.
     # Increase the timeout proportionally to the number of processors.
     ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
+    if not $maxTimeout.nil?
+        # The above adjustment can push the effective timeout over the timeout
+        # enforced by buildbot's ShellCommand. Tests that hang would then result
+        # in the whole run getting killed. Allow the user to cap the effective
+        # timeout.
+        if $maxTimeout < ENV["JSCTEST_timeout"].to_i
+            ENV["JSCTEST_timeout"] = $maxTimeout.to_s
+        end
+    end
 end
 
 # We do not adjust hardTimeout. If we are not producing any results during 1200 seconds, buildbot terminates the tests. So we should terminate hung tests.

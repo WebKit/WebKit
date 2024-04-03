@@ -101,7 +101,7 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
         if (!itemInCollection)
             return std::nullopt;
 
-        fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
+        fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData.value(), itemInCollection.value());
         if (!fontCustomPlatformData)
             return std::nullopt;
     }

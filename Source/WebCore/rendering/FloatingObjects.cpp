@@ -35,7 +35,6 @@ namespace WebCore {
 
 struct SameSizeAsFloatingObject {
     SingleThreadWeakPtr<RenderBox> renderer;
-    WeakPtr<LegacyRootInlineBox> originatingLine;
     LayoutRect rect;
     int paginationStrut;
     LayoutSize size;
@@ -276,15 +275,6 @@ FloatingObjects::FloatingObjects(const RenderBlockFlow& renderer)
 
 FloatingObjects::~FloatingObjects() = default;
 
-void FloatingObjects::clearLineBoxTreePointers()
-{
-    // Clear references to originating lines, since the lines are being deleted
-    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
-        ASSERT(!((*it)->originatingLine()) || &((*it)->originatingLine()->renderer()) == &renderer());
-        (*it)->clearOriginatingLine();
-    }
-}
-
 void FloatingObjects::clear()
 {
     m_set.clear();
@@ -300,7 +290,7 @@ void FloatingObjects::moveAllToFloatInfoMap(RendererToFloatInfoMap& map)
         // FIXME: The only reason it is safe to move these out of the set is that
         // we are about to clear it. Otherwise it would break the hash table invariant.
         // A clean way to do this would be to add a takeAll function to HashSet.
-        map.add(&renderer, WTFMove(*it));
+        map.add(renderer, WTFMove(*it));
     }
     clear();
 }
@@ -372,7 +362,6 @@ void FloatingObjects::remove(FloatingObject* floatingObject)
     ASSERT(floatingObject->isPlaced() || !floatingObject->isInPlacedTree());
     if (floatingObject->isPlaced())
         removePlacedObject(floatingObject);
-    ASSERT(!floatingObject->originatingLine());
     m_set.remove(floatingObject);
 }
 

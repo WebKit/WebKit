@@ -71,7 +71,6 @@ public:
     static LineLayout* containing(RenderObject&);
     static const LineLayout* containing(const RenderObject&);
 
-    static bool isEnabled(const Document&);
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);
@@ -81,10 +80,11 @@ public:
     void updateInlineContentDimensions();
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void updateOverflow();
+
     // Partial invalidation.
-    void insertedIntoTree(const RenderElement& parent, RenderObject& child);
-    void removedFromTree(const RenderElement& parent, RenderObject& child);
-    void updateTextContent(const RenderText&, size_t offset, int delta);
+    bool insertedIntoTree(const RenderElement& parent, RenderObject& child);
+    bool removedFromTree(const RenderElement& parent, RenderObject& child);
+    bool updateTextContent(const RenderText&, size_t offset, int delta);
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
@@ -99,6 +99,7 @@ public:
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
+    bool contains(const RenderElement& renderer) const;
 
     bool isPaginated() const;
     LayoutUnit contentBoxLogicalHeight() const;
@@ -129,8 +130,8 @@ public:
 
     // This is temporary, required by partial bailout check.
     bool contentNeedsVisualReordering() const;
-    bool isDamaged() const { return m_lineDamage && m_lineDamage->type() != Layout::InlineDamage::Type::Invalid; }
-    OptionSet<Layout::InlineDamage::Reason> damageReasons() const { return !m_lineDamage || m_lineDamage->type() == Layout::InlineDamage::Type::Invalid ? OptionSet<Layout::InlineDamage::Reason>() : m_lineDamage->reasons(); }
+    bool isDamaged() const { return !!m_lineDamage; }
+    const Layout::InlineDamage* damage() const { return m_lineDamage.get(); }
 #ifndef NDEBUG
     bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }
 #endif
@@ -138,7 +139,7 @@ public:
 private:
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
-    Vector<LineAdjustment> adjustContent(const Layout::BlockLayoutState&);
+    Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
     InlineContent& ensureInlineContent();

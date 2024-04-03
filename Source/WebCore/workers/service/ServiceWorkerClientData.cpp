@@ -39,16 +39,16 @@ namespace WebCore {
 
 static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecutionContext& context)
 {
-    if (!is<Document>(context))
+    auto* document = dynamicDowncast<Document>(context);
+    if (!document)
         return ServiceWorkerClientFrameType::None;
 
-    auto& document = downcast<Document>(context);
-    auto* frame = document.frame();
+    auto* frame = document->frame();
     if (!frame)
         return ServiceWorkerClientFrameType::None;
 
     if (frame->isMainFrame()) {
-        if (auto* window = document.domWindow()) {
+        if (auto* window = document->domWindow()) {
             if (window->opener())
                 return ServiceWorkerClientFrameType::Auxiliary;
         }

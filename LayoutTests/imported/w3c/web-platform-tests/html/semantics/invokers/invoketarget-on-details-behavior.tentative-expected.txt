@@ -2,8 +2,10 @@
 
 FAIL invoking closed details with auto action opens assert_true: expected true got false
 PASS invoking closed details with auto action and preventDefault does not open
-FAIL invoking open details with auto action opens assert_false: expected false got true
+FAIL invoking open details with auto action closes assert_false: expected false got true
 PASS invoking open details with auto action and preventDefault does not close
+FAIL invoking details with auto action where event listener opens leads to a closed details assert_false: expected false got true
+FAIL invoking open details with auto action where event listener closes leads to an open details assert_true: expected true got false
 FAIL invoking closed details with toggle action opens assert_true: expected true got false
 FAIL invoking closed details with toggle (case-insensitive) action opens assert_true: expected true got false
 PASS invoking closed details with toggle action and preventDefault does not open

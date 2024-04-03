@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (80,37.13) size 320x186
+  RenderSVGTransformableContainer {g} at (80,37.13) size 320x184.95
+layer at (199.97,122.09) size 82x36
+  RenderSVGHiddenContainer {defs} at (119.97,84.97) size 80.06x34.81
+layer at (199.97,122.09) size 80x35
+  RenderSVGText {text} at (0,0) size 81x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 81x35
+      chunk 1 (middle anchor) text run 1 at (199.98,150.00) startOffset 0 endOffset 4 width 80.04: "PASS"
+layer at (129.02,37.13) size 222x21
+  RenderSVGText {text} at (49,0) size 222x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 222x21
+      chunk 1 (middle anchor) text run 1 at (129.03,54.00) startOffset 0 endOffset 26 width 221.94: "feConvolveMatrix 'in1' DOM"
+layer at (80,100) size 100x101
+  RenderSVGImage {image} at (0,62.88) size 100x100
+layer at (190,100) size 100x101
+  RenderSVGImage {image} at (110,62.88) size 100x100
+layer at (300,100) size 100x101
+  RenderSVGImage {image} at (220,62.88) size 100x100
+layer at (80,100) size 100x101
+  RenderSVGRect {rect} at (0,62.88) size 100x100 [stroke={[type=SOLID] [color=#000000]}] [x=80.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (190,100) size 100x101
+  RenderSVGRect {rect} at (110,62.88) size 100x100 [stroke={[type=SOLID] [color=#0000FF]}] [x=190.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (300,100) size 100x101
+  RenderSVGRect {rect} at (220,62.88) size 100x100 [stroke={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (100.98,211.86) size 58x10
+  RenderSVGText {text} at (20,174) size 60x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 59x11
+      chunk 1 (middle anchor) text run 1 at (100.99,220.00) startOffset 0 endOffset 14 width 58.03: "Original image"
+layer at (211.23,211.86) size 58x10
+  RenderSVGText {text} at (131,174) size 58x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x11
+      chunk 1 (middle anchor) text run 1 at (211.24,220.00) startOffset 0 endOffset 15 width 57.52: "Animated filter"
+layer at (323.73,211.86) size 52x10
+  RenderSVGText {text} at (243,174) size 54x11 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x11
+      chunk 1 (middle anchor) text run 1 at (323.74,220.00) startOffset 0 endOffset 15 width 52.52: "Scripted filter"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

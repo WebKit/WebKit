@@ -613,11 +613,11 @@ bool isScriptElement(Element& element)
     return is<HTMLScriptElement>(element) || is<SVGScriptElement>(element);
 }
 
-ScriptElement& downcastScriptElement(Element& element)
+ScriptElement* dynamicDowncastScriptElement(Element& element)
 {
     if (auto* htmlElement = dynamicDowncast<HTMLScriptElement>(element))
-        return *htmlElement;
-    return downcast<SVGScriptElement>(element);
+        return htmlElement;
+    return dynamicDowncast<SVGScriptElement>(element);
 }
 
 }

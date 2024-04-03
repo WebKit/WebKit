@@ -86,7 +86,11 @@ public:
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+        , bool pageHasExtensionController
+#endif
         , bool linkPreconnectEarlyHintsEnabled
+        , bool shouldRecordFrameLoadForStorageAccess
     );
     
     std::optional<Vector<SandboxExtension::Handle>> sandboxExtensionsIfHttpBody() const;
@@ -133,7 +137,12 @@ public:
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    bool pageHasExtensionController { false };
+#endif
+
     bool linkPreconnectEarlyHintsEnabled { false };
+    bool shouldRecordFrameLoadForStorageAccess { false };
 };
 
 } // namespace WebKit

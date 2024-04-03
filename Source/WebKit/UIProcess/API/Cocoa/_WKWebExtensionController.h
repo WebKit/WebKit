@@ -28,12 +28,14 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/_WKWebExtensionControllerDelegate.h>
+#import <WebKit/_WKWebExtensionDataType.h>
 #import <WebKit/_WKWebExtensionTab.h>
 #import <WebKit/_WKWebExtensionWindow.h>
 
 @class _WKWebExtension;
 @class _WKWebExtensionContext;
 @class _WKWebExtensionControllerConfiguration;
+@class _WKWebExtensionDataRecord;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -122,6 +124,34 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 */
 @property (nonatomic, readonly, copy) NSSet<_WKWebExtensionContext *> *extensionContexts;
 
+/*! @abstract Returns a set of all available extension data types. */
+@property (class, nonatomic, readonly, copy) NSSet<_WKWebExtensionDataType> *allExtensionDataTypes;
+
+/*!
+  @abstract Fetches data records containing the given extension data types for all known extensions.
+  @param dataTypes The extension data types to fetch records for.
+  @param completionHandler A block to invoke when the data records have been fetched.
+  @note The extension does not need to be loaded to be included in the result.
+*/
+- (void)fetchDataRecordsOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes completionHandler:(void (^)(NSArray<_WKWebExtensionDataRecord *> *))completionHandler WK_SWIFT_ASYNC_NAME(dataRecords(ofTypes:));
+
+/*!
+  @abstract Fetches a data record containing the given extension data types for a specific known web extension context.
+  @param dataTypes The extension data types to fetch records for.
+  @param extensionContext The specific web extension context to fetch records for.
+  @param completionHandler A block to invoke when the data record has been fetched.
+  @note The extension does not need to be loaded to be included in the result.
+*/
+- (void)fetchDataRecordOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(_WKWebExtensionDataRecord * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(dataRecord(ofTypes:for:));
+
+/*!
+  @abstract Removes extension data of the given types for the given data records.
+  @param dataTypes The extension data types that should be removed.
+  @param dataRecords The extension data records to delete data for.
+  @param completionHandler A block to invoke when the data has been removed.
+*/
+- (void)removeDataOfTypes:(NSSet<_WKWebExtensionDataType> *)dataTypes forDataRecords:(NSArray<_WKWebExtensionDataRecord *> *)dataRecords completionHandler:(void (^)(void))completionHandler;
+
 /*!
  @abstract Should be called by the app when a new window is opened to fire appropriate events with all loaded web extensions.
  @param newWindow The newly opened window.
@@ -196,9 +226,10 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Should be called by the app when a tab is moved to fire appropriate events with all loaded web extensions.
  @param movedTab The tab that was moved.
  @param index The old index of the tab within the window.
- @param oldWindow The window that the tab was moved from, or \c nil if the window stayed the same.
+ @param oldWindow The window that the tab was moved from, or \c nil if the tab is moving from no open window.
  @discussion This method informs all loaded extensions of the movement of a tab, ensuring consistent understanding across extensions.
- If the intention is to inform only a specific extension, you should use the respective method on that extension's context instead.
+ If the window is staying the same, the current window should be specified. If the intention is to inform only a specific extension,
+ use the respective method on that extension's context instead.
  */
 - (void)didMoveTab:(id <_WKWebExtensionTab>)movedTab fromIndex:(NSUInteger)index inWindow:(nullable id <_WKWebExtensionWindow>)oldWindow NS_SWIFT_NAME(didMoveTab(_:from:in:));
 

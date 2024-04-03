@@ -32,6 +32,7 @@
 #import "LegacyCDM.h"
 #import "Logging.h"
 #import "MediaPlayer.h"
+#import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "SharedBuffer.h"
 #import "SourceBufferPrivateAVFObjC.h"
@@ -167,7 +168,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
     if (m_cdmVersion == 2)
         m_identifier = initData;
     else
-        m_initData = SharedBuffer::create(initData->data(), initData->length());
+        m_initData = SharedBuffer::create(initData->span());
 
     ASSERT(!m_certificate);
     String certificateString("certificate"_s);
@@ -209,7 +210,7 @@ void CDMSessionAVContentKeySession::releaseKeys()
             if (m_sessionId == String(playbackSessionIdValue)) {
                 ALWAYS_LOG(LOGIDENTIFIER, "found session, sending expiration message");
                 m_expiredSession = expiredSessionData;
-                m_client->sendMessage(Uint8Array::create(static_cast<const uint8_t*>([m_expiredSession bytes]), [m_expiredSession length]).ptr(), emptyString());
+                m_client->sendMessage(Uint8Array::create(span(m_expiredSession.get())).ptr(), emptyString());
                 break;
             }
         }
@@ -333,7 +334,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         }
 
         ALWAYS_LOG(LOGIDENTIFIER, "generated key request");
-        nextMessage = Uint8Array::tryCreate(static_cast<const uint8_t*>([requestData bytes]), [requestData length]);
+        nextMessage = Uint8Array::tryCreate(span(requestData.get()));
         return false;
     }
 
@@ -362,6 +363,29 @@ void CDMSessionAVContentKeySession::addParser(AVStreamDataParser* parser)
         [contentKeySession() addContentKeyRecipient:parser];
     else
         [contentKeySession() addStreamDataParser:parser];
+}
+
+bool CDMSessionAVContentKeySession::isAnyKeyUsable(const Keys& keys) const
+{
+    Keys requestKeys = CDMPrivateFairPlayStreaming::keyIDsForRequest(contentKeyRequest().get());
+    for (auto& requestKey : requestKeys) {
+        if (keys.findIf([&] (auto& key) {
+            return key.get() == requestKey.get();
+        }) != notFound)
+            return true;
+    }
+
+    return false;
+}
+
+void CDMSessionAVContentKeySession::attachContentKeyToSample(const MediaSampleAVFObjC& sample)
+{
+    AVContentKey *contentKey = [contentKeyRequest() contentKey];
+    ASSERT(contentKey);
+
+    NSError *error = nil;
+    if (!AVSampleBufferAttachContentKey(sample.platformSample().sample.cmSampleBuffer, contentKey, &error))
+        ERROR_LOG(LOGIDENTIFIER, "Failed to attach content key with error: %{public}@", error);
 }
 
 void CDMSessionAVContentKeySession::removeParser(AVStreamDataParser* parser)
@@ -399,24 +423,24 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyReleaseMessage(unsi
     errorCode = 0;
     systemCode = 0;
     m_expiredSession = [expiredSessions firstObject];
-    return Uint8Array::tryCreate(static_cast<const uint8_t*>([m_expiredSession bytes]), [m_expiredSession length]);
+    return Uint8Array::tryCreate(span(m_expiredSession.get()));
 }
 
 bool CDMSessionAVContentKeySession::hasContentKeyRequest() const
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     return m_keyRequest;
 }
 
-RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest()
+RetainPtr<AVContentKeyRequest> CDMSessionAVContentKeySession::contentKeyRequest() const
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     return RetainPtr { m_keyRequest.get() };
 }
 
 void CDMSessionAVContentKeySession::didProvideContentKeyRequest(AVContentKeyRequest *keyRequest)
 {
-    LockHolder holder { m_keyRequestLock };
+    Locker holder { m_keyRequestLock };
     m_keyRequest = keyRequest;
     m_hasKeyRequestSemaphore.signal();
 }

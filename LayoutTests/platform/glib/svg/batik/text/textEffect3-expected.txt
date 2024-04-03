@@ -24,60 +24,60 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (53,91) size 149x81 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,20) size 36x60
           chunk 1 (middle anchor) text run 1 at (53.00,160.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (89.00,140.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           chunk 1 (middle anchor) text run 1 at (107.00,140.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (140.00,140.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (151.00,140.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGText {text} at (263,91) size 149x81 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,20) size 36x60
           chunk 1 (middle anchor) text run 1 at (263.00,160.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (299.00,140.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           chunk 1 (middle anchor) text run 1 at (317.00,140.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (350.00,140.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (361.00,140.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGText {text} at (53,191) size 149x81 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,20) size 36x60
           chunk 1 (middle anchor) text run 1 at (53.00,260.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (89.00,240.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           chunk 1 (middle anchor) text run 1 at (107.00,240.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (140.00,240.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (151.00,240.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGText {text} at (263,191) size 149x81 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,20) size 36x60
           chunk 1 (middle anchor) text run 1 at (263.00,260.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (299.00,240.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           chunk 1 (middle anchor) text run 1 at (317.00,240.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (350.00,240.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (361.00,240.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -86,16 +86,16 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,20) size 36x60
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (49.40,305.76) size 43.20x71.50
           chunk 1 (middle anchor) text run 1 at (53.00,360.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (89.00,340.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (103.70,285.76) size 39.60x71.50
           chunk 1 (middle anchor) text run 1 at (107.00,340.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (140.00,340.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (151.00,340.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -105,16 +105,16 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,20) size 36x60
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (259.40,305.78) size 43.20x71.42
           chunk 1 (middle anchor) text run 1 at (263.00,360.00) startOffset 0 endOffset 1 width 36.00: "B"
-        RenderSVGTSpan {tspan} at (0,0) size 18x30
+        RenderSVGTSpan {tspan} at (36,24) size 18x30
           RenderSVGInlineText {#text} at (36,24) size 18x30
             chunk 1 (middle anchor) text run 1 at (299.00,340.00) startOffset 0 endOffset 1 width 18.00: "A"
         RenderSVGInlineText {#text} at (54,0) size 33x60
           [filter="dropShadow"] RenderSVGResourceFilter {filter} at (313.70,285.78) size 39.60x71.42
           chunk 1 (middle anchor) text run 1 at (317.00,340.00) startOffset 0 endOffset 1 width 33.00: "T"
-        RenderSVGTSpan {tspan} at (0,0) size 11x45
+        RenderSVGTSpan {tspan} at (87,12) size 11x45
           RenderSVGInlineText {#text} at (87,12) size 11x45
             chunk 1 (middle anchor) text run 1 at (350.00,340.00) startOffset 0 endOffset 1 width 11.00: "I"
-        RenderSVGTSpan {tspan} at (0,0) size 55x70
+        RenderSVGTSpan {tspan} at (94,2) size 55x70
           RenderSVGInlineText {#text} at (94,2) size 55x69
             chunk 1 (middle anchor) text run 1 at (361.00,340.00) startOffset 0 endOffset 1 width 36.00: "K"
         RenderSVGInlineText {#text} at (0,0) size 0x0

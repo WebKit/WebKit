@@ -19,8 +19,11 @@
 #include "config.h"
 #include "DOMParser.h"
 
-#include "DOMImplementation.h"
+#include "CommonAtomStrings.h"
+#include "HTMLDocument.h"
+#include "SVGDocument.h"
 #include "SecurityOriginPolicy.h"
+#include "XMLDocument.h"
 
 namespace WebCore {
 
@@ -37,11 +40,21 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
     return adoptRef(*new DOMParser(contextDocument));
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const AtomString& contentType)
 {
-    if (contentType != "text/html"_s && contentType != "text/xml"_s && contentType != "application/xml"_s && contentType != "application/xhtml+xml"_s && contentType != "image/svg+xml"_s)
+    RefPtr<Document> document;
+    if (contentType == textHTMLContentTypeAtom())
+        document = HTMLDocument::create(nullptr, m_settings, URL { });
+    else if (contentType == applicationXHTMLContentTypeAtom())
+        document = XMLDocument::createXHTML(nullptr, m_settings, URL { });
+    else if (contentType == imageSVGContentTypeAtom())
+        document = SVGDocument::create(nullptr, m_settings, URL { });
+    else if (contentType == textXMLContentTypeAtom() || contentType == applicationXMLContentTypeAtom()) {
+        document = XMLDocument::create(nullptr, m_settings, URL { });
+        document->overrideMIMEType(contentType);
+    } else
         return Exception { ExceptionCode::TypeError };
-    Ref document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
+
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
     document->setMarkupUnsafe(string, { });
@@ -49,7 +62,7 @@ ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, cons
         document->setURL(m_contextDocument->url());
         document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());
     }
-    return document;
+    return document.releaseNonNull();
 }
 
 } // namespace WebCore

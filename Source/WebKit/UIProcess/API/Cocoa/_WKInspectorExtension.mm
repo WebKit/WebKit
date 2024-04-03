@@ -138,15 +138,9 @@
 {
     std::optional<String> optionalUserAgent = userAgent ? std::make_optional(String(userAgent)) : std::nullopt;
     std::optional<String> optionalInjectedScript = injectedScript ? std::make_optional(String(injectedScript)) : std::nullopt;
-    _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
+    _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionVoidResult&& result) mutable {
         if (!result) {
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()) }]);
-            return;
-        }
-        
-        auto valueOrException = result.value();
-        if (!valueOrException) {
-            capturedBlock(nsErrorFromExceptionDetails(valueOrException.error()).get());
             return;
         }
 

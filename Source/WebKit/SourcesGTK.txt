@@ -63,7 +63,6 @@ Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 Platform/glib/ModuleGlib.cpp
 
 Platform/unix/LoggingUnix.cpp
-Platform/unix/SharedMemoryUnix.cpp
 
 Shared/API/c/cairo/WKImageCairo.cpp
 
@@ -75,13 +74,13 @@ Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
+Shared/API/c/skia/WKImageSkia.cpp
+
 Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 Shared/CoordinatedGraphics/SimpleViewportController.cpp
 
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-
-Shared/cairo/ShareableBitmapCairo.cpp
 
 Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
@@ -105,6 +104,8 @@ Shared/linux/WebMemorySamplerLinux.cpp
 
 Shared/soup/WebCoreArgumentCodersSoup.cpp
 Shared/soup/WebErrorsSoup.cpp
+
+Shared/skia/WebCoreArgumentCodersSkia.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp
 
@@ -228,8 +229,8 @@ UIProcess/API/gtk/WebKitWebViewGtk4.cpp @no-unify
 UIProcess/API/soup/HTTPCookieStoreSoup.cpp
 
 UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-
-UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
+UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp @no-unify
+UIProcess/Automation/skia/WebAutomationSessionSkia.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
@@ -257,12 +258,13 @@ UIProcess/linux/MemoryPressureMonitor.cpp
 UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
-UIProcess/cairo/BackingStore.cpp
+UIProcess/cairo/BackingStoreCairo.cpp
 
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp
 UIProcess/glib/DisplayVBlankMonitorDRM.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
+UIProcess/glib/ScreenManager.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
@@ -281,7 +283,7 @@ UIProcess/gtk/KeyBindingTranslator.cpp
 UIProcess/gtk/PointerLockManager.cpp @no-unify
 UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
 UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
-UIProcess/gtk/ScreenManager.cpp @no-unify
+UIProcess/gtk/ScreenManagerGtk.cpp @no-unify
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify

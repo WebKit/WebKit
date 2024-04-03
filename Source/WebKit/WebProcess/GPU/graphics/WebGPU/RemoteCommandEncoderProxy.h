@@ -72,8 +72,8 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    Ref<WebCore::WebGPU::RenderPassEncoder> beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor&) final;
-    Ref<WebCore::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>&) final;
+    RefPtr<WebCore::WebGPU::RenderPassEncoder> beginRenderPass(const WebCore::WebGPU::RenderPassDescriptor&) final;
+    RefPtr<WebCore::WebGPU::ComputePassEncoder> beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>&) final;
 
     void copyBufferToBuffer(
         const WebCore::WebGPU::Buffer& source,
@@ -115,7 +115,7 @@ private:
         const WebCore::WebGPU::Buffer& destination,
         WebCore::WebGPU::Size64 destinationOffset) final;
 
-    Ref<WebCore::WebGPU::CommandBuffer> finish(const WebCore::WebGPU::CommandBufferDescriptor&) final;
+    RefPtr<WebCore::WebGPU::CommandBuffer> finish(const WebCore::WebGPU::CommandBufferDescriptor&) final;
 
     void setLabelInternal(const String&) final;
 

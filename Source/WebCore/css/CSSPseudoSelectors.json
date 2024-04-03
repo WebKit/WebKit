@@ -35,19 +35,21 @@
     },
     "pseudo-classes": {
         "-apple-has-attachment": {
-            "aliases": [
-                "has-attachment"
-            ],
             "comment": "For use in Apple internal apps.",
             "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
             "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
-        "-internal-html-document": {},
-        "-webkit-animating-full-screen-transition": {
-            "comment": "For UA stylesheet use.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
+        "-internal-animating-fullscreen-transition": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
         },
+        "-internal-fullscreen-document": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-html-document": {},
+        "-internal-in-window-full-screen": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-media-document": {},
         "-webkit-any": {
             "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",
@@ -66,29 +68,7 @@
             "status": "non-standard"
         },
         "-webkit-drag": {
-            "aliases": [
-                "-khtml-drag"
-            ],
             "comment": "Currently has no standard equivalent.",
-            "status": "non-standard"
-        },
-        "-webkit-full-page-media": {
-            "comment": "For UA stylesheet use.",
-            "status": "non-standard"
-        },
-        "-webkit-full-screen-ancestor": {
-            "comment": "For compatibility.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
-        },
-        "-webkit-full-screen-document": {
-            "comment": "For UA stylesheet use.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
-        },
-        "-webkit-full-screen-controls-hidden": {
-            "comment": "For compatibility.",
-            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "active": {},
@@ -133,9 +113,7 @@
         "first-child": {},
         "first-of-type": {},
         "focus": {},
-        "focus-visible": {
-            "settings-flag": "focusVisibleEnabled"
-        },
+        "focus-visible": {},
         "focus-within": {},
         "fullscreen": {
             "aliases": [
@@ -147,8 +125,7 @@
             "conditional": "ENABLE(VIDEO)"
         },
         "has": {
-            "argument": "required",
-            "settings-flag": "hasPseudoClassEnabled"
+            "argument": "required"
         },
         "horizontal": {
             "comment": "For scrollbar styling.",

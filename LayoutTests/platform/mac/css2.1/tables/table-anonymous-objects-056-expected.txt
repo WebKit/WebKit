@@ -17,7 +17,7 @@ layer at (8,50) size 784x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"
       RenderBlock {div} at (1,104) size 780x39
@@ -25,7 +25,7 @@ layer at (8,50) size 784x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"
       RenderBlock {div} at (1,175) size 780x39
@@ -33,7 +33,7 @@ layer at (8,50) size 784x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"
 layer at (8,50) size 158x249
@@ -45,7 +45,7 @@ layer at (8,50) size 158x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"
       RenderBlock {div} at (1,104) size 154x39
@@ -53,7 +53,7 @@ layer at (8,50) size 158x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"
       RenderBlock {div} at (1,175) size 154x39
@@ -61,6 +61,6 @@ layer at (8,50) size 158x249
           RenderTableSection (anonymous) at (0,0) size 154x39
             RenderTableRow (anonymous) at (0,0) size 154x39
               RenderTableCell {span} at (0,0) size 154x39 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {b} at (0,0) size 152x37
+                RenderInline {b} at (1,1) size 152x37
                   RenderText {#text} at (1,1) size 152x37
                     text run at (1,1) width 152: "Hello Kitty"

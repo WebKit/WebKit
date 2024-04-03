@@ -81,24 +81,29 @@ void SVGDocumentExtensions::startAnimations()
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
     auto timeContainers = copyToVectorOf<Ref<SVGSVGElement>>(m_timeContainers);
     for (auto& element : timeContainers)
-        element->timeContainer().begin();
+        element->protectedTimeContainer()->begin();
 }
 
 void SVGDocumentExtensions::pauseAnimations()
 {
-    for (auto& container : m_timeContainers)
-        container.pauseAnimations();
+    for (Ref container : m_timeContainers)
+        container->pauseAnimations();
     m_areAnimationsPaused = true;
+}
+
+Ref<Document> SVGDocumentExtensions::protectedDocument() const
+{
+    return m_document.get();
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
     // If animations are paused at the document level, don't allow `this` to be unpaused.
-    if (animationsPausedForDocument(m_document))
+    if (animationsPausedForDocument(protectedDocument()))
         return;
 
-    for (auto& container : m_timeContainers)
-        container.unpauseAnimations();
+    for (Ref container : m_timeContainers)
+        container->unpauseAnimations();
     m_areAnimationsPaused = false;
 }
 
@@ -120,12 +125,12 @@ static void reportMessage(Document& document, MessageLevel level, const String& 
 
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
-    reportMessage(m_document, MessageLevel::Warning, "Warning: " + message);
+    reportMessage(protectedDocument(), MessageLevel::Warning, "Warning: " + message);
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
-    reportMessage(m_document, MessageLevel::Error, "Error: " + message);
+    reportMessage(protectedDocument(), MessageLevel::Error, "Error: " + message);
 }
 
 void SVGDocumentExtensions::addElementToRebuild(SVGElement& element)
@@ -147,7 +152,7 @@ void SVGDocumentExtensions::rebuildElements()
 
 void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElement)
 {
-    for (auto& element : referencedElement.referencingElements()) {
+    for (Ref element : referencedElement.referencingElements()) {
         m_rebuildElements.append(element.get());
         element->callClearTarget();
     }
@@ -155,7 +160,7 @@ void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElemen
 
 void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& referencedElement)
 {
-    for (auto& element : referencedElement.referencingElements())
+    for (Ref element : referencedElement.referencingElements())
         element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 

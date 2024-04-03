@@ -220,71 +220,77 @@ private:
 };
 
 class GstMappedFrame {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GstMappedFrame);
 public:
 
-    GstMappedFrame(GstBuffer* buffer, GstVideoInfo info, GstMapFlags flags)
+    GstMappedFrame(GstBuffer* buffer, GstVideoInfo* info, GstMapFlags flags)
     {
-        m_isValid = gst_video_frame_map(&m_frame, &info, buffer, flags);
+        m_isValid = gst_video_frame_map(&m_frame, info, buffer, flags);
     }
 
-    GstMappedFrame(GRefPtr<GstSample> sample, GstMapFlags flags)
+    GstMappedFrame(const GRefPtr<GstSample>& sample, GstMapFlags flags)
     {
         GstVideoInfo info;
 
-        if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get()))) {
-            m_isValid = false;
+        if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get())))
             return;
-        }
 
         m_isValid = gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
     }
 
     GstVideoFrame* get()
     {
-        if (!m_isValid) {
-            GST_INFO("Invalid frame, returning NULL");
-
-            return nullptr;
-        }
-
+        RELEASE_ASSERT(m_isValid);
         return &m_frame;
     }
 
-    uint8_t* ComponentData(int comp)
+    uint8_t* ComponentData(int comp) const
     {
+        RELEASE_ASSERT(m_isValid);
         return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
     }
 
-    int ComponentStride(int stride)
+    int ComponentStride(int stride) const
     {
+        RELEASE_ASSERT(m_isValid);
         return GST_VIDEO_FRAME_COMP_STRIDE(&m_frame, stride);
     }
 
     GstVideoInfo* info()
     {
-        if (!m_isValid) {
-            GST_INFO("Invalid frame, returning NULL");
-
-            return nullptr;
-        }
-
+        RELEASE_ASSERT(m_isValid);
         return &m_frame.info;
     }
 
-    int width()
+    int width() const
     {
-        return m_isValid ? GST_VIDEO_FRAME_WIDTH(&m_frame) : -1;
+        RELEASE_ASSERT(m_isValid);
+        return GST_VIDEO_FRAME_WIDTH(&m_frame);
     }
 
-    int height()
+    int height() const
     {
-        return m_isValid ? GST_VIDEO_FRAME_HEIGHT(&m_frame) : -1;
+        RELEASE_ASSERT(m_isValid);
+        return GST_VIDEO_FRAME_HEIGHT(&m_frame);
     }
 
-    int format()
+    int format() const
     {
-        return m_isValid ? GST_VIDEO_FRAME_FORMAT(&m_frame) : GST_VIDEO_FORMAT_UNKNOWN;
+        RELEASE_ASSERT(m_isValid);
+        return GST_VIDEO_FRAME_FORMAT(&m_frame);
+    }
+
+    void* planeData(uint32_t planeIndex) const
+    {
+        RELEASE_ASSERT(m_isValid);
+        return GST_VIDEO_FRAME_PLANE_DATA(&m_frame, planeIndex);
+    }
+
+    int planeStride(uint32_t planeIndex) const
+    {
+        RELEASE_ASSERT(m_isValid);
+        return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
     }
 
     ~GstMappedFrame()
@@ -294,7 +300,9 @@ public:
         m_isValid = false;
     }
 
+    bool isValid() const { return m_isValid; }
     explicit operator bool() const { return m_isValid; }
+    bool operator!() const { return !m_isValid; }
 
 private:
     GstVideoFrame m_frame;

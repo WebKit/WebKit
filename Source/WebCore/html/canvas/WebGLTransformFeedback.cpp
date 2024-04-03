@@ -39,7 +39,7 @@ namespace WebCore {
 
 RefPtr<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGL2RenderingContext& context)
 {
-    auto object = context.graphicsContextGL()->createTransformFeedback();
+    auto object = context.protectedGraphicsContextGL()->createTransformFeedback();
     if (!object)
         return nullptr;
     return adoptRef(*new WebGLTransformFeedback { context, object });

@@ -74,7 +74,7 @@ void SynchronousLoaderClient::didReceiveResponseAsync(ResourceHandle*, ResourceR
 
 void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const SharedBuffer& buffer, int /*encodedDataLength*/)
 {
-    m_data.append(buffer.data(), buffer.size());
+    m_data.append(buffer.span());
 }
 
 void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle, const NetworkLoadMetrics&)

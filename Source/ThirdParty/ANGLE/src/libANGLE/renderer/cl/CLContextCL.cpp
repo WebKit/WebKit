@@ -107,7 +107,6 @@ angle::Result CLContextCL::createCommandQueue(const cl::CommandQueue &commandQue
 }
 
 angle::Result CLContextCL::createBuffer(const cl::Buffer &buffer,
-                                        size_t size,
                                         void *hostPtr,
                                         CLMemoryImpl::Ptr *bufferOut)
 {
@@ -116,14 +115,14 @@ angle::Result CLContextCL::createBuffer(const cl::Buffer &buffer,
 
     if (buffer.getProperties().empty())
     {
-        nativeBuffer = mNative->getDispatch().clCreateBuffer(mNative, buffer.getFlags().get(), size,
-                                                             hostPtr, &errorCode);
+        nativeBuffer = mNative->getDispatch().clCreateBuffer(mNative, buffer.getFlags().get(),
+                                                             buffer.getSize(), hostPtr, &errorCode);
     }
     else
     {
         nativeBuffer = mNative->getDispatch().clCreateBufferWithProperties(
-            mNative, buffer.getProperties().data(), buffer.getFlags().get(), size, hostPtr,
-            &errorCode);
+            mNative, buffer.getProperties().data(), buffer.getFlags().get(), buffer.getSize(),
+            hostPtr, &errorCode);
     }
     ANGLE_CL_TRY(errorCode);
 

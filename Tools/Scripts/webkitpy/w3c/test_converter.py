@@ -42,13 +42,13 @@ else:
 _log = logging.getLogger(__name__)
 
 
-def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), webkit_test_runner_options=''):
+def convert_for_webkit(new_path, filename, reference_support_info, reference_file_renames, host=Host(), webkit_test_runner_options=''):
     """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
     Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
     contents = host.filesystem.read_text_file(filename)
 
-    converter = _W3CTestConverter(new_path, filename, reference_support_info, host, webkit_test_runner_options)
+    converter = _W3CTestConverter(new_path, filename, reference_support_info, reference_file_renames, host, webkit_test_runner_options)
     if filename.endswith('.css'):
         return converter.add_webkit_prefix_to_unprefixed_properties_and_values(contents)
     elif filename.endswith('.js'):
@@ -60,7 +60,7 @@ def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), 
 
 
 class _W3CTestConverter(HTMLParser):
-    def __init__(self, new_path, filename, reference_support_info, host=Host(), webkit_test_runner_options=''):
+    def __init__(self, new_path, filename, reference_support_info, reference_file_renames=[], host=Host(), webkit_test_runner_options=''):
         if sys.version_info > (3, 0):
             HTMLParser.__init__(self, convert_charrefs=False)
         else:
@@ -77,6 +77,7 @@ class _W3CTestConverter(HTMLParser):
         self.style_data = []
         self.filename = filename
         self.reference_support_info = reference_support_info
+        self.reference_file_renames = reference_file_renames
         self.webkit_test_runner_options = webkit_test_runner_options
         self.has_started = False
 
@@ -202,6 +203,9 @@ class _W3CTestConverter(HTMLParser):
             if attr[0] == 'style':
                 new_style = self.convert_style_data(attr[1])
                 converted = re.sub(re.escape(attr[1]), new_style, converted)
+            if attr[0] == 'name' and attr[1] == 'fuzzy' and tag == 'meta':
+                for rename in self.reference_file_renames:
+                    converted = re.sub(rename['src'], rename['dest'], converted)
 
         # Convert relative paths
         src_tags = ('script', 'style', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')

@@ -38,11 +38,11 @@ class JSGenericArrayBufferConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
 
-    static JSGenericArrayBufferConstructor* create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype, GetterSetter* speciesSymbol)
+    static JSGenericArrayBufferConstructor* create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype)
     {
         JSGenericArrayBufferConstructor* result =
             new (NotNull, allocateCell<JSGenericArrayBufferConstructor>(vm)) JSGenericArrayBufferConstructor(vm, structure);
-        result->finishCreation(vm, prototype, speciesSymbol);
+        result->finishCreation(vm, prototype);
         return result;
     }
 
@@ -55,7 +55,7 @@ public:
 
 private:
     JSGenericArrayBufferConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSArrayBufferPrototype*, GetterSetter* speciesSymbol);
+    void finishCreation(VM&, JSArrayBufferPrototype*);
 };
 
 using JSArrayBufferConstructor = JSGenericArrayBufferConstructor<ArrayBufferSharingMode::Default>;

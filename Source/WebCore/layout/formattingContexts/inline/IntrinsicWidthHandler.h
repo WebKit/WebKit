@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InlineContentCache.h"
 #include "LineLayoutResult.h"
 
 namespace WebCore {
@@ -32,21 +33,15 @@ namespace Layout {
 
 class AbstractLineBuilder;
 class InlineFormattingContext;
-class InlineContentCache;
-struct IntrinsicWidthConstraints;
 
 class IntrinsicWidthHandler {
 public:
-    IntrinsicWidthHandler(InlineFormattingContext&, const InlineItemList&, bool mayUseSimplifiedTextOnlyInlineLayout);
+    IntrinsicWidthHandler(InlineFormattingContext&, const InlineContentCache::InlineItems&);
 
     InlineLayoutUnit minimumContentSize();
     InlineLayoutUnit maximumContentSize();
 
-    struct LineBreakingResult {
-        InlineLayoutUnit constraint;
-        LineLayoutResult result;
-    };
-    std::optional<LineBreakingResult>& maximumIntrinsicWidthResult() { return m_maximumIntrinsicWidthResultForSingleLine; }
+    std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() { return m_maximumIntrinsicWidthResultForSingleLine; }
 
 private:
     enum class MayCacheLayoutResult : bool { No, Yes };
@@ -58,13 +53,16 @@ private:
     const InlineFormattingContext& formattingContext() const;
     const InlineContentCache& formattingState() const;
     const ElementBox& root() const;
+    const InlineItemList& inlineItemList() const { return m_inlineItems.content(); }
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;
-    const InlineItemList& m_inlineItemList;
-    const bool m_mayUseSimplifiedTextOnlyInlineLayout { false };
+    const InlineContentCache::InlineItems& m_inlineItems;
+    InlineItemRange m_inlineItemRange;
+    bool m_mayUseSimplifiedTextOnlyInlineLayoutInRange { false };
 
-    std::optional<LineBreakingResult> m_maximumIntrinsicWidthResultForSingleLine { };
+    std::optional<InlineLayoutUnit> m_maximumContentWidthBetweenLineBreaks { };
+    std::optional<LineLayoutResult> m_maximumIntrinsicWidthResultForSingleLine { };
 };
 
 }

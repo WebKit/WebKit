@@ -32,14 +32,14 @@
 #if HAVE(AVCONTENTKEYSESSION)
 
 #include <wtf/Assertions.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVContentKey;
 
 namespace WebCore {
 
-class ContentKeyGroupDataSource : public CanMakeCheckedPtr {
+class ContentKeyGroupDataSource : public CanMakeWeakPtr<ContentKeyGroupDataSource> {
 public:
     virtual ~ContentKeyGroupDataSource() = default;
 

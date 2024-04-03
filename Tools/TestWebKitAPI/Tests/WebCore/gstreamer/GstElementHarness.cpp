@@ -40,14 +40,14 @@ namespace TestWebKitAPI {
 TEST_F(GStreamerTest, harnessBasic)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, const auto&) { });
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, auto&&) { });
 
     // The identity element has a single source pad. Fetch the corresponding stream.
     ASSERT_FALSE(harness->outputStreams().isEmpty());
     auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
 
     // Push a sample and expect initial events and an output buffer.
@@ -78,28 +78,29 @@ TEST_F(GStreamerTest, harnessBasic)
     ASSERT_TRUE(gst_caps_is_equal(stream->outputCaps().get(), caps.get()));
 
     // The harnessed element is identity, so output buffers should be the same as input buffers.
-    auto outputBuffer = stream->pullBuffer();
-    GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
+    auto outputSample = stream->pullSample();
+    auto outputBuffer = gst_sample_get_buffer(outputSample.get());
+    GstMappedBuffer mappedOutputBuffer(outputBuffer, GST_MAP_READ);
     ASSERT_TRUE(mappedOutputBuffer);
     EXPECT_EQ(mappedOutputBuffer.size(), 64);
     EXPECT_EQ(memcmp(mappedInputBuffer.data(), mappedOutputBuffer.data(), 64), 0);
 
     // Harness is now empty.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
 }
 
 TEST_F(GStreamerTest, harnessManualStart)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, const auto&) { });
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [](auto&, auto&&) { });
 
     // The identity element has a single source pad. Fetch the corresponding stream.
     ASSERT_FALSE(harness->outputStreams().isEmpty());
     auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
 
     // Pushing a buffer before start is not allowed.
@@ -134,14 +135,15 @@ TEST_F(GStreamerTest, harnessManualStart)
     EXPECT_TRUE(harness->pushBuffer(GRefPtr<GstBuffer>(buffer.get())));
 
     // The harnessed element is identity, so output buffers should be the same as input buffers.
-    auto outputBuffer = stream->pullBuffer();
-    GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
+    auto outputSample = stream->pullSample();
+    auto outputBuffer = gst_sample_get_buffer(outputSample.get());
+    GstMappedBuffer mappedOutputBuffer(outputBuffer, GST_MAP_READ);
     ASSERT_TRUE(mappedOutputBuffer);
     EXPECT_EQ(mappedOutputBuffer.size(), 64);
     EXPECT_EQ(memcmp(mappedInputBuffer.data(), mappedOutputBuffer.data(), 64), 0);
 
     // Harness is now empty.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
 }
 
@@ -149,8 +151,9 @@ TEST_F(GStreamerTest, harnessBufferProcessing)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
     unsigned counter = 0;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, const auto& outputBuffer) mutable {
-        GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, auto&& outputSample) mutable {
+        auto outputBuffer = gst_sample_get_buffer(outputSample.get());
+        GstMappedBuffer mappedOutputBuffer(outputBuffer, GST_MAP_READ);
         ASSERT_TRUE(mappedOutputBuffer);
         EXPECT_EQ(mappedOutputBuffer.size(), 64);
         EXPECT_EQ(mappedOutputBuffer.data()[0], counter);
@@ -162,7 +165,7 @@ TEST_F(GStreamerTest, harnessBufferProcessing)
     auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
     ASSERT_EQ(counter, 0);
 
@@ -174,7 +177,7 @@ TEST_F(GStreamerTest, harnessBufferProcessing)
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
     }
-    harness->processOutputBuffers();
+    harness->processOutputSamples();
     ASSERT_EQ(counter, 3);
 }
 
@@ -182,8 +185,9 @@ TEST_F(GStreamerTest, harnessFlush)
 {
     GRefPtr<GstElement> element = gst_element_factory_make("identity", nullptr);
     unsigned counter = 0;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, const auto& outputBuffer) mutable {
-        GstMappedBuffer mappedOutputBuffer(outputBuffer.get(), GST_MAP_READ);
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&counter](auto&, auto&& outputSample) mutable {
+        auto outputBuffer = gst_sample_get_buffer(outputSample.get());
+        GstMappedBuffer mappedOutputBuffer(outputBuffer, GST_MAP_READ);
         ASSERT_TRUE(mappedOutputBuffer);
         EXPECT_EQ(mappedOutputBuffer.size(), 64);
         EXPECT_EQ(mappedOutputBuffer.data()[0], 2);
@@ -195,7 +199,7 @@ TEST_F(GStreamerTest, harnessFlush)
     auto& stream = harness->outputStreams().first();
 
     // Harness has not started processing data yet.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
     ASSERT_EQ(counter, 0);
 
@@ -208,14 +212,16 @@ TEST_F(GStreamerTest, harnessFlush)
         auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
         EXPECT_TRUE(harness->pushSample(WTFMove(sample)));
     }
-    auto firstOutputBuffer = stream->pullBuffer();
-    GstMappedBuffer mappedFirstOutputBuffer(firstOutputBuffer.get(), GST_MAP_READ);
+    auto firstOutputSample = stream->pullSample();
+    auto firstOutputBuffer = gst_sample_get_buffer(firstOutputSample.get());
+    GstMappedBuffer mappedFirstOutputBuffer(firstOutputBuffer, GST_MAP_READ);
     ASSERT_TRUE(mappedFirstOutputBuffer);
     EXPECT_EQ(mappedFirstOutputBuffer.size(), 64);
     EXPECT_EQ(mappedFirstOutputBuffer.data()[0], 0);
 
-    auto secondOutputBuffer = stream->pullBuffer();
-    GstMappedBuffer mappedSecondOutputBuffer(secondOutputBuffer.get(), GST_MAP_READ);
+    auto secondOutputSample = stream->pullSample();
+    auto secondOutputBuffer = gst_sample_get_buffer(secondOutputSample.get());
+    GstMappedBuffer mappedSecondOutputBuffer(secondOutputBuffer, GST_MAP_READ);
     ASSERT_TRUE(mappedSecondOutputBuffer);
     EXPECT_EQ(mappedSecondOutputBuffer.size(), 64);
     EXPECT_EQ(mappedSecondOutputBuffer.data()[0], 1);
@@ -224,7 +230,7 @@ TEST_F(GStreamerTest, harnessFlush)
     ASSERT_EQ(counter, 1);
 
     // Flushed harness is empty.
-    ASSERT_NULL(stream->pullBuffer());
+    ASSERT_NULL(stream->pullSample());
     ASSERT_NULL(stream->pullEvent());
 }
 
@@ -235,7 +241,7 @@ TEST_F(GStreamerTest, harnessParseMP4)
         uint64_t totalAudioBuffers { 0 };
         uint64_t totalVideoBuffers { 0 };
     } bufferTracker;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&bufferTracker](auto& stream, const auto&) mutable {
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&bufferTracker](auto& stream, auto&&) mutable {
         auto gstStream = adoptGRef(gst_pad_get_stream(stream.pad().get()));
         auto streamType = gst_stream_get_stream_type(gstStream.get());
         if (streamType == GST_STREAM_TYPE_AUDIO)
@@ -320,7 +326,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
     struct BufferTracker {
         uint64_t totalVideoBuffers { 0 };
     } bufferTracker;
-    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&bufferTracker](auto& stream, const auto&) mutable {
+    auto harness = WebCore::GStreamerElementHarness::create(WTFMove(element), [&bufferTracker](auto& stream, auto&&) mutable {
         auto gstStream = adoptGRef(gst_pad_get_stream(stream.pad().get()));
         auto streamType = gst_stream_get_stream_type(gstStream.get());
         if (streamType == GST_STREAM_TYPE_VIDEO)

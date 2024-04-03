@@ -42,23 +42,24 @@ void WebPluginInfoProvider::refreshPlugins()
 {
 }
 
-static Vector<WebCore::PluginInfo> pluginInfoVector()
+static Vector<WebCore::PluginInfo> pluginInfoVector(WebCore::Page& page)
 {
 #if ENABLE(PDF_PLUGIN)
-    return { PDFPluginBase::pluginInfo() };
-#else
-    return { };
+    auto& settings = page.settings();
+    if (settings.unifiedPDFEnabled() || settings.pdfPluginEnabled())
+        return { PDFPluginBase::pluginInfo() };
 #endif
+    return { };
 }
 
-Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&)
+Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& page, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&)
 {
-    return pluginInfoVector();
+    return pluginInfoVector(page);
 }
 
-Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(WebCore::Page&, const URL&)
+Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(WebCore::Page& page, const URL&)
 {
-    return pluginInfoVector();
+    return pluginInfoVector(page);
 }
 
 }

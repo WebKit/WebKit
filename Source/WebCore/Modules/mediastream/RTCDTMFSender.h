@@ -59,7 +59,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    EventTargetInterface eventTargetInterface() const final { return RTCDTMFSenderEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDTMFSender; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     bool virtualHasPendingActivity() const final { return m_isPendingPlayoutTask; }
 

@@ -7,6 +7,6 @@ layer at (0,0) size 800x201
         RenderText {#text} at (0,0) size 264x17
           text run at (0,0) width 264: "There should be no border around the cat:"
       RenderBlock {DIV} at (32,50) size 720x103 [color=#FF0000]
-        RenderInline {A} at (0,0) size 98x17 [color=#0000EE]
+        RenderInline {A} at (0,85) size 98x17 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 98x99
         RenderText {#text} at (0,0) size 0x0

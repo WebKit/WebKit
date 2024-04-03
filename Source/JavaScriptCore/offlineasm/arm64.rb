@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2024 Apple Inc. All rights reserved.
 # Copyright (C) 2014 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1255,7 +1255,7 @@ class Instruction
                 emitARM64Unflipped("blr", operands, :quad)
             end
         when "break"
-            $asm.puts "brk \#0xc471"
+            $asm.puts "brk \#\" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) \""
         when "ret"
             $asm.puts "ret"
         when "cieq", "cbeq"

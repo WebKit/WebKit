@@ -376,8 +376,11 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
     return true;
 }
 
-bool WebExtensionAPIWindows::isPropertyAllowed(ASCIILiteral name, WebPage*)
+bool WebExtensionAPIWindows::isPropertyAllowed(const ASCIILiteral& name, WebPage&)
 {
+    if (UNLIKELY(extensionContext().isUnsupportedAPI(propertyPath(), name)))
+        return false;
+
 #if PLATFORM(MAC)
     return true;
 #else
@@ -395,22 +398,17 @@ void WebExtensionAPIWindows::createWindow(NSDictionary *data, Ref<WebExtensionCa
     if (!parseWindowCreateOptions(data, parameters, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsCreate(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsCreate(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!windowParameters) {
-            callback->call();
-            return;
-        }
-
-        callback->call(toWebAPI(windowParameters.value()));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
-void WebExtensionAPIWindows::get(WebPage* page, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWindows::get(WebPage& page, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/get
 
@@ -423,22 +421,17 @@ void WebExtensionAPIWindows::get(WebPage* page, double windowID, NSDictionary *i
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page->webPageProxyIdentifier(), windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page.webPageProxyIdentifier(), windowIdentifer.value(), filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!windowParameters) {
-            callback->call();
-            return;
-        }
-
-        callback->call(toWebAPI(windowParameters.value()));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
-void WebExtensionAPIWindows::getCurrent(WebPage* page, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+void WebExtensionAPIWindows::getCurrent(WebPage& page, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/getCurrent
 
@@ -447,19 +440,14 @@ void WebExtensionAPIWindows::getCurrent(WebPage* page, NSDictionary *info, Ref<W
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page->webPageProxyIdentifier(), WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGet(page.webPageProxyIdentifier(), WebExtensionWindowConstants::CurrentIdentifier, filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!windowParameters) {
-            callback->call();
-            return;
-        }
-
-        callback->call(toWebAPI(windowParameters.value()));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIWindows::getLastFocused(NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -471,19 +459,14 @@ void WebExtensionAPIWindows::getLastFocused(NSDictionary *info, Ref<WebExtension
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetLastFocused(filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetLastFocused(filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!windowParameters) {
-            callback->call();
-            return;
-        }
-
-        callback->call(toWebAPI(windowParameters.value()));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIWindows::getAll(NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -495,18 +478,14 @@ void WebExtensionAPIWindows::getAll(NSDictionary *info, Ref<WebExtensionCallback
     if (!parseWindowGetOptions(info, populate, filter, @"info", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetAll(filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionWindowParameters> windows, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsGetAll(filter, populate), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<WebExtensionWindowParameters>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:windows.size()];
-        for (auto& windowParameters : windows)
-            [result addObject:toWebAPI(windowParameters)];
-
-        callback->call([result copy]);
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIWindows::update(double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -521,19 +500,14 @@ void WebExtensionAPIWindows::update(double windowID, NSDictionary *info, Ref<Web
     if (!parseWindowUpdateOptions(info, parameters, @"properties", outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsUpdate(windowIdentifer.value(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionWindowParameters> windowParameters, WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsUpdate(windowIdentifer.value(), WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<WebExtensionWindowParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
-        if (!windowParameters) {
-            callback->call();
-            return;
-        }
-
-        callback->call(toWebAPI(windowParameters.value()));
-    }, extensionContext().identifier().toUInt64());
+        callback->call(toWebAPI(result.value()));
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIWindows::remove(double windowID, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -544,14 +518,14 @@ void WebExtensionAPIWindows::remove(double windowID, Ref<WebExtensionCallbackHan
     if (!isValid(windowIdentifer, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsRemove(windowIdentifer.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionWindow::Error error) {
-        if (error) {
-            callback->reportError(error.value());
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WindowsRemove(windowIdentifer.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
             return;
         }
 
         callback->call();
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated()
@@ -559,7 +533,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onCreated()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onCreated
 
     if (!m_onCreated)
-        m_onCreated = WebExtensionAPIWindowsEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WindowsOnCreated);
+        m_onCreated = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnCreated);
 
     return *m_onCreated;
 }
@@ -569,7 +543,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onRemoved()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIWindowsEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WindowsOnRemoved);
+        m_onRemoved = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnRemoved);
 
     return *m_onRemoved;
 }
@@ -579,7 +553,7 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onFocusChanged
 
     if (!m_onFocusChanged)
-        m_onFocusChanged = WebExtensionAPIWindowsEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::WindowsOnFocusChanged);
+        m_onFocusChanged = WebExtensionAPIWindowsEvent::create(*this, WebExtensionEventListenerType::WindowsOnFocusChanged);
 
     return *m_onFocusChanged;
 }
@@ -606,7 +580,7 @@ void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerTyp
         case WebExtensionEventListenerType::WindowsOnCreated:
             // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows/onCreated
             ASSERT(windowParameters);
-            windowsObject.onCreated().invokeListenersWithArgument(toWebAPI(windowParameters.value()), filter);
+            windowsObject.onCreated().invokeListenersWithArgument(toWebAPI(windowParameters), filter);
             break;
 
         case WebExtensionEventListenerType::WindowsOnFocusChanged:

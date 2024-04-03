@@ -36,6 +36,7 @@
 #include "ContentRuleListResults.h"
 #include "DFABytecodeInterpreter.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "ExtensionStyleSheets.h"
 #include "LocalFrame.h"

@@ -94,10 +94,8 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
             frame->protectedDocument()->setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
         }
 
-        if (RefPtr parser = frame->document()->parser()) {
-            auto utf8Source = source.utf8();
-            parser->appendBytes(*this, reinterpret_cast<const uint8_t*>(utf8Source.data()), utf8Source.length());
-        }
+        if (RefPtr parser = frame->document()->parser())
+            parser->appendBytes(*this, source.utf8().span());
     }
 
     end();
@@ -317,7 +315,7 @@ void DocumentWriter::addData(const SharedBuffer& data)
         return;
     }
     ASSERT(m_parser);
-    protectedParser()->appendBytes(*this, data.data(), data.size());
+    protectedParser()->appendBytes(*this, data.span());
 }
 
 void DocumentWriter::insertDataSynchronously(const String& markup)

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
@@ -119,6 +120,12 @@ public:
     }
 
     template<typename T, typename Converter = DefaultConverter>
+    void addCharacters(std::span<const T> data)
+    {
+        addCharacters(data.data(), data.size());
+    }
+
+    template<typename T, typename Converter = DefaultConverter>
     void addCharacters(const T* data)
     {
         if (m_hasPendingCharacter && *data) {
@@ -139,9 +146,9 @@ public:
     }
 
     template<typename T, typename Converter = DefaultConverter>
-    ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    ALWAYS_INLINE static constexpr unsigned computeHashAndMaskTop8Bits(std::span<const T> data)
     {
-        return StringHasher::finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data, length));
+        return StringHasher::finalizeAndMaskTop8Bits(computeHashImpl<T, Converter>(data));
     }
 
     template<typename T, typename Converter = DefaultConverter>
@@ -151,9 +158,9 @@ public:
     }
 
     template<typename T, typename Converter = DefaultConverter>
-    static constexpr unsigned computeHash(const T* data, unsigned length)
+    static constexpr unsigned computeHash(std::span<const T> data)
     {
-        return StringHasher::finalize(computeHashImpl<T, Converter>(data, length));
+        return StringHasher::finalize(computeHashImpl<T, Converter>(data));
     }
 
     template<typename T, typename Converter = DefaultConverter>
@@ -217,19 +224,13 @@ private:
     }
 
     template<typename T, typename Converter>
-    static constexpr unsigned computeHashImpl(const T* characters, unsigned length)
+    static constexpr unsigned computeHashImpl(std::span<const T> characters)
     {
         unsigned result = stringHashingStartValue;
-        bool remainder = length & 1;
-        length >>= 1;
-
-        while (length--) {
-            result = calculateWithTwoCharacters(result, Converter::convert(characters[0]), Converter::convert(characters[1]));
-            characters += 2;
-        }
-
-        if (remainder)
-            return calculateWithRemainingLastCharacter(result, Converter::convert(characters[0]));
+        for (size_t i = 0; i + 1 < characters.size(); i += 2)
+            result = calculateWithTwoCharacters(result, Converter::convert(characters[i]), Converter::convert(characters[i + 1]));
+        if (characters.size() % 2)
+            return calculateWithRemainingLastCharacter(result, Converter::convert(characters.back()));
         return result;
     }
 

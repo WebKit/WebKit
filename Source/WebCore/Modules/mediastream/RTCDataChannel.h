@@ -100,7 +100,7 @@ private:
     void scheduleDispatchEvent(Ref<Event>&&);
     void removeFromDataChannelLocalMapIfNeeded();
 
-    EventTargetInterface eventTargetInterface() const final { return RTCDataChannelEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDataChannel; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void refEventTarget() final { ref(); }
@@ -114,7 +114,7 @@ private:
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
-    void didReceiveRawData(const uint8_t*, size_t) final;
+    void didReceiveRawData(std::span<const uint8_t>) final;
     void didDetectError(Ref<RTCError>&&) final;
     void bufferedAmountIsDecreasing(size_t) final;
 

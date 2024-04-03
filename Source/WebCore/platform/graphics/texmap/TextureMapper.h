@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class GraphicsLayer;
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
 class FilterOperations;

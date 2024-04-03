@@ -33,6 +33,7 @@
 
 #include "ContentRuleListResults.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
@@ -57,19 +58,15 @@ RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& 
 
 RefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext& context, WebSocketChannelClient& client, SocketProvider& provider)
 {
-    if (is<WorkerGlobalScope>(context)) {
-        WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
-        WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
+    if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(context)) {
+        WorkerRunLoop& runLoop = workerGlobalScope->thread().runLoop();
+        return WorkerThreadableWebSocketChannel::create(*workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
     }
 
     return create(downcast<Document>(context), client, provider);
 }
 
-ThreadableWebSocketChannel::ThreadableWebSocketChannel()
-    : m_identifier(WebSocketIdentifier::generate())
-{
-}
+ThreadableWebSocketChannel::ThreadableWebSocketChannel() = default;
 
 std::optional<ThreadableWebSocketChannel::ValidatedURL> ThreadableWebSocketChannel::validateURL(Document& document, const URL& requestedURL)
 {
@@ -123,7 +120,7 @@ std::optional<ResourceRequest> ThreadableWebSocketChannel::webSocketConnectReque
     auto httpURL = request.url();
     httpURL.setProtocol(url.protocolIs("ws"_s) ? "http"_s : "https"_s);
     auto requestOrigin = SecurityOrigin::create(httpURL);
-    if (document.settings().fetchMetadataEnabled() && requestOrigin->isPotentiallyTrustworthy() && !document.quirks().shouldDisableFetchMetadata()) {
+    if (requestOrigin->isPotentiallyTrustworthy() && !document.quirks().shouldDisableFetchMetadata()) {
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchDest, "websocket"_s);
         request.addHTTPHeaderField(HTTPHeaderName::SecFetchMode, "websocket"_s);
 

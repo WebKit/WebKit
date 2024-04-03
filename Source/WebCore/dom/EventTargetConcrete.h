@@ -45,7 +45,7 @@ public:
 private:
     explicit EventTargetConcrete(ScriptExecutionContext&);
 
-    EventTargetInterface eventTargetInterface() const final { return EventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventTarget; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     void refEventTarget() final { ref(); }

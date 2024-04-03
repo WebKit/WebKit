@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (8.03,169.08) size 223x113
+  RenderSVGTransformableContainer {g} at (8.03,169.08) size 222.94x112.92
+layer at (8.03,169.08) size 223x113
+  RenderSVGTransformableContainer {g} at (0,0) size 222.94x112.92
+layer at (96,169.08) size 54x14
+  RenderSVGText {text} at (87,0) size 55x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 54x14
+      chunk 1 text run 1 at (96.00,180.00) startOffset 0 endOffset 14 width 54.00: "m, l, l, l, z,"
+layer at (100,183.08) size 43x14
+  RenderSVGText {text} at (91,14) size 44x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 43x14
+      chunk 1 text run 1 at (100.00,194.00) startOffset 0 endOffset 7 width 42.70: "subpath"
+layer at (97,197.08) size 51x14
+  RenderSVGText {text} at (88,28) size 52x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x14
+      chunk 1 text run 1 at (97.00,208.00) startOffset 0 endOffset 13 width 50.67: "m, l, l, l, z"
+layer at (10.03,190) size 104x91
+  RenderSVGPath {path} at (2,20.92) size 103.94x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 190 L 113.962 280 L 10.0385 280 L 62 190 Z M 62 205 L 100.971 272.5 L 23.0589 272.5 L 62.03 205 Z"]
+layer at (60,188) size 5x5
+  RenderSVGRect {rect} at (51.97,18.92) size 4x4 [fill={[type=SOLID] [color=#40DD20]}] [x=60.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (111.95,278) size 5x5
+  RenderSVGRect {rect} at (103.92,108.92) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=111.96] [y=278.00] [width=4.00] [height=4.00]
+layer at (8.03,278) size 5x5
+  RenderSVGRect {rect} at (0,108.92) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=8.04] [y=278.00] [width=4.00] [height=4.00]
+layer at (60,203) size 5x5
+  RenderSVGRect {rect} at (51.97,33.92) size 4x4 [fill={[type=SOLID] [color=#40DD20]}] [x=60.00] [y=203.00] [width=4.00] [height=4.00]
+layer at (98.97,270.50) size 5x5
+  RenderSVGRect {rect} at (90.94,101.42) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=98.97] [y=270.50] [width=4.00] [height=4.00]
+layer at (21.02,270.50) size 5x5
+  RenderSVGRect {rect} at (12.98,101.42) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=21.03] [y=270.50] [width=4.00] [height=4.00]
+layer at (125.03,190) size 104x91
+  RenderSVGPath {path} at (117,20.92) size 103.94x90 [fill={[type=SOLID] [color=#006000] [fill rule=EVEN-ODD]}] [data="M 177 190 L 228.962 280 L 125.038 280 L 177 190 Z M 177 205 L 215.971 272.5 L 138.059 272.5 L 177.03 205 Z"]
+layer at (175,188) size 5x5
+  RenderSVGRect {rect} at (166.97,18.92) size 4x4 [fill={[type=SOLID] [color=#40DD20]}] [x=175.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (226.95,278) size 5x5
+  RenderSVGRect {rect} at (218.92,108.92) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=226.96] [y=278.00] [width=4.00] [height=4.00]
+layer at (123.03,278) size 5x5
+  RenderSVGRect {rect} at (115,108.92) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=123.04] [y=278.00] [width=4.00] [height=4.00]
+layer at (175,203) size 5x5
+  RenderSVGRect {rect} at (166.97,33.92) size 4x4 [fill={[type=SOLID] [color=#40DD20]}] [x=175.00] [y=203.00] [width=4.00] [height=4.00]
+layer at (213.97,270.50) size 5x5
+  RenderSVGRect {rect} at (205.94,101.42) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=213.97] [y=270.50] [width=4.00] [height=4.00]
+layer at (136.02,270.50) size 5x5
+  RenderSVGRect {rect} at (127.98,101.42) size 4.02x4 [fill={[type=SOLID] [color=#40DD20]}] [x=136.03] [y=270.50] [width=4.00] [height=4.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

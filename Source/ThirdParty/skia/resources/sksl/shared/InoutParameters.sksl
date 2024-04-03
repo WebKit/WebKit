@@ -1,0 +1,41 @@
+uniform half4 colorGreen;
+
+inline void outParameterWrite(out half4 x) {
+    x = colorGreen;
+}
+
+inline void outParameterWriteIndirect(out half4 c) {
+    outParameterWrite(c);
+}
+
+inline void inoutParameterWrite(inout half4 x) {
+    x *= x;
+}
+
+inline void inoutParameterWriteIndirect(inout half4 x) {
+    inoutParameterWrite(x);
+}
+
+inline void inoutParameterRead(inout half4 x) {
+    half4 scratch = x * x;
+}
+
+inline void inoutParameterIgnore(inout half4 x) {
+    half4 scratch = colorGreen * colorGreen;
+}
+
+half4 main(float2 coords) {
+    half4 c;
+
+    // These functions write to their `out` param.
+    outParameterWrite(c);
+    outParameterWriteIndirect(c);
+    inoutParameterWrite(c);
+    inoutParameterWriteIndirect(c);
+
+    // These functions don't write to their `out` param.
+    inoutParameterRead(c);
+    inoutParameterIgnore(c);
+
+    return c;
+}

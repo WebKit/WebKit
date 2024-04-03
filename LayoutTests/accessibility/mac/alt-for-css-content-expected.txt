@@ -39,6 +39,18 @@ AXDescription:
 AXTitle:
 AXValue: ALTERNATIVE CONTENT TEST6
 
+Test7 - alt on input element ::before
+AXRole: AXRadioButton
+AXDescription:
+AXTitle: test7 before alt
+AXValue: 0
+
+Test8 - alt on input element ::before that is the empty string
+AXRole: AXRadioButton
+AXDescription:
+AXTitle:
+AXValue: 0
+
 alt accessed through Javascript: "ALTERNATIVE CONTENT TEST2"
 PASS successfullyParsed is true
 

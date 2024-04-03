@@ -17,12 +17,12 @@ layer at (0,0) size 800x610
               text run at (0,0) width 24: "test"
           RenderText {#text} at (23,0) size 5x19
             text run at (23,0) width 5: " "
-          RenderInline {U} at (0,0) size 58x19
+          RenderInline {U} at (27,0) size 58x19
             RenderText {#text} at (27,0) size 58x19
               text run at (27,0) width 58: "non bold"
           RenderText {#text} at (84,0) size 5x19
             text run at (84,0) width 5: " "
-          RenderInline {I} at (0,0) size 34x19
+          RenderInline {I} at (88,0) size 34x19
             RenderText {#text} at (88,0) size 34x19
               text run at (88,0) width 34: "italic"
           RenderText {#text} at (121,0) size 27x19
@@ -40,7 +40,7 @@ layer at (0,0) size 800x610
           RenderInline {SPAN} at (0,0) size 57x19
             RenderText {#text} at (0,0) size 32x19
               text run at (0,0) width 32: "fifth "
-            RenderInline {B} at (0,0) size 26x19
+            RenderInline {B} at (31,0) size 26x19
               RenderText {#text} at (31,0) size 26x19
                 text run at (31,0) width 26: "line"
       RenderBlock {DIV} at (0,194) size 784x400

@@ -24,11 +24,11 @@
 
 [RValue] struct WebKit::GPUProcessSessionParameters {
     String mediaCacheDirectory;
-    WebKit::SandboxExtension::Handle mediaCacheDirectorySandboxExtensionHandle;
+    WebKit::SandboxExtensionHandle mediaCacheDirectorySandboxExtensionHandle;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     String mediaKeysStorageDirectory;
-    WebKit::SandboxExtension::Handle mediaKeysStorageDirectorySandboxExtensionHandle;
+    WebKit::SandboxExtensionHandle mediaKeysStorageDirectorySandboxExtensionHandle;
 #endif
 };
 

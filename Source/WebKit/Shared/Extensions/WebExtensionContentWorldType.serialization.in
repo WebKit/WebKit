@@ -28,6 +28,10 @@ enum class WebKit::WebExtensionContentWorldType : uint8_t {
     Main,
     ContentScript,
     Native,
+    WebPage,
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    Inspector,
+#endif
 }
 
 #endif

@@ -31,7 +31,6 @@
 
 #import "NetworkStorageSessionMap.h"
 #import "TestingFunctions.h"
-#import "WebApplicationCache.h"
 #import "WebFeature.h"
 #import "WebFrameNetworkingContext.h"
 #import "WebKitLogging.h"
@@ -417,17 +416,11 @@ public:
         @"1", WebKitPDFDisplayModePreferenceKey,
         @"0", WebKitPDFScaleFactorPreferenceKey,
         @(WebTextDirectionSubmenuAutomaticallyIncluded), WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
-        [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
 #endif
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitStorageTrackerEnabledPreferenceKey,
         @(static_cast<unsigned>(AudioSession::CategoryType::None)), WebKitAudioSessionCategoryOverride,
-
-        // Per-Origin Quota on iOS is 25MB. When the quota is reached for a particular origin
-        // the quota for that origin can be increased. See also webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded in WebUI/WebUIDelegate.m.
-        [NSNumber numberWithLongLong:(25 * 1024 * 1024)], WebKitApplicationCacheDefaultOriginQuota,
-
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         @(static_cast<int>(InterpolationQuality::Low)), WebKitInterpolationQualityPreferenceKey,
         @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
@@ -879,12 +872,11 @@ public:
 
 - (BOOL)arePlugInsEnabled
 {
-    return [self _boolValueForKey: WebKitPluginsEnabledPreferenceKey];
+    return NO;
 }
 
 - (void)setPlugInsEnabled:(BOOL)flag
 {
-    [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
 }
 
 - (BOOL)allowsAnimatedImages
@@ -1144,16 +1136,6 @@ public:
 - (void)setLocalFileContentSniffingEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitLocalFileContentSniffingEnabledPreferenceKey];
-}
-
-- (BOOL)offlineWebApplicationCacheEnabled
-{
-    return [self _boolValueForKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
-}
-
-- (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
 }
 
 - (BOOL)zoomsTextOnly
@@ -1421,29 +1403,6 @@ public:
     [self _setFloatValue:factor forKey:WebKitPDFScaleFactorPreferenceKey];
 }
 #endif
-
-- (int64_t)applicationCacheTotalQuota
-{
-    return [self _longLongValueForKey:WebKitApplicationCacheTotalQuota];
-}
-
-- (void)setApplicationCacheTotalQuota:(int64_t)quota
-{
-    [self _setLongLongValue:quota forKey:WebKitApplicationCacheTotalQuota];
-
-    // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
-    [WebApplicationCache setMaximumSize:quota];
-}
-
-- (int64_t)applicationCacheDefaultOriginQuota
-{
-    return [self _longLongValueForKey:WebKitApplicationCacheDefaultOriginQuota];
-}
-
-- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota
-{
-    [self _setLongLongValue:quota forKey:WebKitApplicationCacheDefaultOriginQuota];
-}
 
 #if !PLATFORM(IOS_FAMILY)
 - (PDFDisplayMode)PDFDisplayMode
@@ -2685,16 +2644,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitPictureInPictureAPIEnabledKey];
 }
 
-- (BOOL)constantPropertiesEnabled
-{
-    return [self _boolValueForKey:WebKitConstantPropertiesEnabledPreferenceKey];
-}
-
-- (void)setConstantPropertiesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitConstantPropertiesEnabledPreferenceKey];
-}
-
 - (BOOL)colorFilterEnabled
 {
     return [self _boolValueForKey:WebKitColorFilterEnabledPreferenceKey];
@@ -2936,26 +2885,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitWebAnimationsMutableTimelinesEnabledPreferenceKey];
 }
 
-- (BOOL)maskWebGLStringsEnabled
-{
-    return [self _boolValueForKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
-}
-
-- (void)setMaskWebGLStringsEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
-}
-
-- (BOOL)CSSCustomPropertiesAndValuesEnabled
-{
-    return [self _boolValueForKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
-}
-
-- (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
-}
-
 - (BOOL)privateClickMeasurementEnabled
 {
     return [self _boolValueForKey:WebKitPrivateClickMeasurementEnabledPreferenceKey];
@@ -3062,6 +2991,33 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)constantPropertiesEnabled
+{
+    return YES;
+}
+
+- (void)setConstantPropertiesEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)maskWebGLStringsEnabled
+{
+    return YES;
+}
+
+- (void)setMaskWebGLStringsEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)CSSCustomPropertiesAndValuesEnabled
+{
+    return YES;
+}
+
+- (void)setCSSCustomPropertiesAndValuesEnabled:(BOOL)flag
+{
+}
 
 - (BOOL)syntheticEditingCommandsEnabled
 {
@@ -3337,5 +3293,33 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setServerTimingEnabled:(BOOL)flag
 {
 }
+
+- (BOOL)offlineWebApplicationCacheEnabled
+{
+    return NO;
+}
+
+- (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
+{
+}
+
+- (int64_t)applicationCacheTotalQuota
+{
+    return 0;
+}
+
+- (void)setApplicationCacheTotalQuota:(int64_t)quota
+{
+}
+
+- (int64_t)applicationCacheDefaultOriginQuota
+{
+    return 0;
+}
+
+- (void)setApplicationCacheDefaultOriginQuota:(int64_t)quota
+{
+}
+
 
 @end

@@ -63,6 +63,9 @@ class FontDescription;
 class GlyphPage;
 
 struct GlyphData;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+struct MultiRepresentationHEICMetrics;
+#endif
 
 enum FontVariant : uint8_t { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch : uint8_t { UnknownPitch, FixedPitch, VariablePitch };
@@ -100,6 +103,7 @@ public:
 
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, IsInterstitial = IsInterstitial::No, Visibility = Visibility::Visible, IsOrientationFallback = IsOrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
     WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
+    WEBCORE_EXPORT static Ref<Font> create(WebCore::FontInternalAttributes&&, WebCore::FontPlatformData&&);
 
     WEBCORE_EXPORT ~Font();
 
@@ -211,6 +215,9 @@ public:
     bool supportsAllSmallCaps() const;
     bool supportsPetiteCaps() const;
     bool supportsAllPetiteCaps() const;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
+#endif
 #endif
 
     bool canRenderCombiningCharacterSequence(StringView) const;

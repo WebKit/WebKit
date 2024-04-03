@@ -68,6 +68,7 @@
 7566 SWIFTSHADER : KHR-GL46.texture_cube_map_array.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_filter_anisotropic.drawing = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_gather.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_lod_basic.lod_selection = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_size_promotion.functional = SKIP
 7566 SWIFTSHADER : KHR-GL46.texture_swizzle.* = SKIP
 7566 SWIFTSHADER : KHR-GL46.transform_feedback_overflow_query_ARB.* = SKIP

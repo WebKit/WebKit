@@ -5,25 +5,25 @@ test1:
 	AXTitle:
 	AXDescription: end
 	AXHelp: abc
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test2:
 	Expected name: end
 	AXTitle:
 	AXDescription: end
 	AXHelp:
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test3:
 	Expected name: end
 	AXTitle:
 	AXDescription: end
 	AXHelp: abc
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test4:
 	Expected name: end
 	AXTitle:
 	AXDescription: end
 	AXHelp:
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test5:
 	Expected name: hello
 	AXTitle:
@@ -137,7 +137,7 @@ test23:
 	AXTitle:
 	AXDescription: end
 	AXHelp:
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test24:
 	Expected
 	AXTitle:
@@ -179,7 +179,7 @@ test30:
 	AXTitle:
 	AXDescription: boulder
 	AXHelp:
-	AXTitleUIElement: null
+	AXTitleUIElement: non-null
 test31:
 	Expected name: stone
 	AXTitle:

@@ -49,7 +49,6 @@
 #import "WebResourceLoadDelegate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -372,7 +371,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (void)_makeRepresentation
 {
-    Class repClass = [[self class] _representationClassForMIMEType:[self _responseMIMEType] allowingPlugins:[[[self _webView] preferences] arePlugInsEnabled]];
+    Class repClass = [[self class] _representationClassForMIMEType:[self _responseMIMEType] allowingPlugins:NO];
 
 #if PLATFORM(IOS_FAMILY)
     if ([repClass respondsToSelector:@selector(_representationClassForWebFrame:)])

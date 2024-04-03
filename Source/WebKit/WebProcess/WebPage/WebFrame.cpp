@@ -45,7 +45,6 @@
 #include "WebChromeClient.h"
 #include "WebContextMenu.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebDocumentLoader.h"
 #include "WebEventConversion.h"
 #include "WebEventFactory.h"
 #include "WebImage.h"
@@ -173,10 +172,26 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
     WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
-WebLocalFrameLoaderClient* WebFrame::frameLoaderClient() const
+WebLocalFrameLoaderClient* WebFrame::localFrameLoaderClient() const
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    return localFrame ? static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client()) : nullptr;
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
+        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+    return nullptr;
+}
+WebRemoteFrameClient* WebFrame::remoteFrameClient() const
+{
+    if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(m_coreFrame.get()))
+        return static_cast<WebRemoteFrameClient*>(&remoteFrame->client());
+    return nullptr;
+}
+
+WebFrameLoaderClient* WebFrame::frameLoaderClient() const
+{
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get()))
+        return static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client());
+    if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(m_coreFrame.get()))
+        return static_cast<WebRemoteFrameClient*>(&remoteFrame->client());
+    return nullptr;
 }
 
 WebFrame::~WebFrame()
@@ -222,6 +237,11 @@ RefPtr<WebFrame> WebFrame::fromCoreFrame(const Frame& frame)
 WebCore::LocalFrame* WebFrame::coreLocalFrame() const
 {
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
+}
+
+RefPtr<WebCore::LocalFrame> WebFrame::protectedCoreLocalFrame() const
+{
+    return coreLocalFrame();
 }
 
 WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
@@ -306,11 +326,10 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier, WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
 {
     auto policyListenerID = generateListenerID();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
-        identifier,
         forNavigationAction,
         WTFMove(policyFunction)
     });
@@ -346,7 +365,7 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
         return;
     }
 
-    auto* frameLoaderClient = this->frameLoaderClient();
+    auto* frameLoaderClient = this->localFrameLoaderClient();
     if (!frameLoaderClient) {
         ASSERT_NOT_REACHED();
         return;
@@ -429,7 +448,7 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
 
     auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
-    auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
+    auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteFrame->opener());
     m_coreFrame = localFrame.ptr();
     remoteFrame->setView(nullptr);
     localFrame->init();
@@ -458,15 +477,18 @@ void WebFrame::invalidatePolicyListeners()
 
     auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
     for (auto& policyCheck : pendingPolicyChecks.values())
-        policyCheck.policyFunction(PolicyAction::Ignore, policyCheck.corePolicyIdentifier);
+        policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifier identifier, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
 {
+    if (m_page) {
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (m_page)
         m_page->setIsNavigatingToAppBoundDomain(policyDecision.isNavigatingToAppBoundDomain, Ref { *this });
 #endif
+        if (auto& message = policyDecision.consoleMessage)
+            m_page->addConsoleMessage(m_frameID, message->messageSource, message->messageLevel, message->message);
+    }
 
     if (!m_coreFrame)
         return;
@@ -475,33 +497,31 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyCheckIdentifi
     if (!policyCheck.policyFunction)
         return;
 
-    ASSERT(identifier == policyCheck.corePolicyIdentifier);
-
     FramePolicyFunction function = WTFMove(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
 
-    if (forNavigationAction && frameLoaderClient() && policyDecision.websitePoliciesData) {
+    if (forNavigationAction && localFrameLoaderClient() && policyDecision.websitePoliciesData) {
         ASSERT(page());
         if (page())
             page()->setAllowsContentJavaScriptFromMostRecentNavigation(policyDecision.websitePoliciesData->allowsContentJavaScript);
-        frameLoaderClient()->applyToDocumentLoader(WTFMove(*policyDecision.websitePoliciesData));
+        localFrameLoaderClient()->applyWebsitePolicies(WTFMove(*policyDecision.websitePoliciesData));
     }
 
     m_policyDownloadID = policyDecision.downloadID;
     if (policyDecision.navigationID) {
         auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-        if (RefPtr documentLoader = localFrame ? static_cast<WebDocumentLoader*>(localFrame->loader().policyDocumentLoader()) : nullptr)
+        if (RefPtr documentLoader = localFrame ? localFrame->loader().policyDocumentLoader() : nullptr)
             documentLoader->setNavigationID(policyDecision.navigationID);
     }
 
     if (policyDecision.policyAction == PolicyAction::Use && policyDecision.sandboxExtensionHandle) {
         if (auto* page = this->page()) {
             Ref mainWebFrame = page->mainWebFrame();
-            page->sandboxExtensionTracker().beginLoad(mainWebFrame.ptr(), WTFMove(*(policyDecision.sandboxExtensionHandle)));
+            page->sandboxExtensionTracker().beginLoad(WTFMove(*(policyDecision.sandboxExtensionHandle)));
         }
     }
 
-    function(policyDecision.policyAction, identifier);
+    function(policyDecision.policyAction);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)
@@ -570,7 +590,7 @@ String WebFrame::source() const
     RefPtr<FragmentedSharedBuffer> mainResourceData = documentLoader->mainResourceData();
     if (!mainResourceData)
         return String();
-    return decoder->encoding().decode(mainResourceData->makeContiguous()->data(), mainResourceData->size());
+    return decoder->encoding().decode(mainResourceData->makeContiguous()->span());
 }
 
 String WebFrame::contentsAsString() const 
@@ -698,15 +718,15 @@ String WebFrame::innerText() const
 
 RefPtr<WebFrame> WebFrame::parentFrame() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame || !localFrame->ownerElement())
-        return nullptr;
-
-    RefPtr frame = localFrame->ownerElement()->document().frame();
+    RefPtr frame = m_coreFrame.get();
     if (!frame)
         return nullptr;
 
-    return WebFrame::fromCoreFrame(*frame);
+    RefPtr parentFrame = frame->tree().parent();
+    if (!parentFrame)
+        return nullptr;
+
+    return WebFrame::fromCoreFrame(*parentFrame);
 }
 
 Ref<API::Array> WebFrame::childFrames()
@@ -1092,12 +1112,6 @@ void WebFrame::setTextDirection(const String& direction)
         localFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
-void WebFrame::documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess)
-{
-    if (auto* page = this->page(); page && !loadWillContinueInAnotherProcess)
-        page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
-}
-
 #if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules, const String& mainResourceFileName)
 {
@@ -1248,7 +1262,7 @@ WebCore::HandleUserInputEventResult WebFrame::handleMouseEvent(const WebMouseEve
 
         auto mousePressEventResult = coreLocalFrame->eventHandler().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
-        if (isContextClick(platformMouseEvent))
+        if (isContextClick(platformMouseEvent) && !mousePressEventResult.remoteUserInputEventData())
             mousePressEventResult.setHandled(handleContextMenuEvent(platformMouseEvent));
 #endif
         return mousePressEventResult;
@@ -1302,6 +1316,42 @@ bool WebFrame::isFocused() const
         return false;
 
     return m_coreFrame->page()->focusController().focusedFrame() == coreFrame();
+}
+
+String WebFrame::frameTextForTesting(bool includeSubframes)
+{
+    if (!m_coreFrame)
+        return { };
+
+    StringBuilder builder;
+
+    String text = innerText();
+    if (text.isNull())
+        return { };
+
+    // To keep things tidy, strip all trailing spaces: they are not a meaningful part of dumpAsText test output.
+    // Breaking the string up into lines lets us efficiently strip and has a side effect of adding a newline after the last line.
+    for (auto line : StringView(text).splitAllowingEmptyEntries('\n')) {
+        while (line.endsWith(' '))
+            line = line.left(line.length() - 1);
+        builder.append(line, '\n');
+    }
+
+    if (!includeSubframes)
+        return builder.toString();
+
+    for (auto* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        RefPtr childWebFrame = fromCoreFrame(*child);
+        if (!childWebFrame)
+            continue;
+        auto frameName = makeAtomString("\n--------\nFrame: '"_s, childWebFrame->name(), "'\n--------\n"_s);
+        if (is<RemoteFrame>(*child))
+            builder.append(frameName, m_page->sendSync(Messages::WebPageProxy::FrameTextForTesting(child->frameID())).takeReplyOr("Sending WebPageProxy::FrameTextForTesting failed"_s));
+        else if (!childWebFrame->innerText().isNull())
+            builder.append(frameName, childWebFrame->frameTextForTesting(includeSubframes));
+    }
+
+    return builder.toString();
 }
 
 } // namespace WebKit

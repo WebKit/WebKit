@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (50,83) size 700x451
-      RenderSVGRect {rect} at (50,83) size 150x167 [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=50.00] [width=90.00] [height=100.00]
+      RenderSVGRect {rect} at (50,83) size 150x167 [fill={[type=SOLID] [color=#FF0000]}] [x=30.00] [y=50.00] [width=90.00] [height=100.00]
       RenderSVGRect {rect} at (233,83) size 151x167 [fill={[type=SOLID] [color=#000000]}] [x=140.00] [y=50.00] [width=90.00] [height=100.00]
       RenderSVGRect {rect} at (416,83) size 151x167 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=50.00] [width=90.00] [height=100.00]
       RenderSVGRect {rect} at (600,83) size 150x167 [fill={[type=SOLID] [color=#000000]}] [x=360.00] [y=50.00] [width=90.00] [height=100.00]

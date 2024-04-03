@@ -13,14 +13,14 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/load_functions_table.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
 namespace
 {
-void FillTextureFormatCaps(RendererVk *renderer,
+void FillTextureFormatCaps(vk::Renderer *renderer,
                            angle::FormatID formatID,
                            gl::TextureCaps *outTextureCaps)
 {
@@ -65,7 +65,7 @@ void FillTextureFormatCaps(RendererVk *renderer,
     }
 }
 
-bool HasFullBufferFormatSupport(RendererVk *renderer, angle::FormatID formatID)
+bool HasFullBufferFormatSupport(vk::Renderer *renderer, angle::FormatID formatID)
 {
     // Note: GL_EXT_texture_buffer support uses the same vkBufferFormat that is determined by
     // Format::initBufferFallback, which uses this function.  That relies on the fact that formats
@@ -76,10 +76,10 @@ bool HasFullBufferFormatSupport(RendererVk *renderer, angle::FormatID formatID)
     return renderer->hasBufferFormatFeatureBits(formatID, VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT);
 }
 
-using SupportTest = bool (*)(RendererVk *renderer, angle::FormatID formatID);
+using SupportTest = bool (*)(vk::Renderer *renderer, angle::FormatID formatID);
 
 template <class FormatInitInfo>
-int FindSupportedFormat(RendererVk *renderer,
+int FindSupportedFormat(vk::Renderer *renderer,
                         const FormatInitInfo *info,
                         size_t skip,
                         int numInfo,
@@ -106,7 +106,7 @@ int FindSupportedFormat(RendererVk *renderer,
     return last;
 }
 
-bool HasNonFilterableTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)
+bool HasNonFilterableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID)
 {
     constexpr uint32_t kBitsColor =
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
@@ -139,7 +139,7 @@ Format::Format()
       mVkFormatIsUnsigned(false)
 {}
 
-void Format::initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *info, int numInfo)
+void Format::initImageFallback(Renderer *renderer, const ImageFormatInitInfo *info, int numInfo)
 {
     size_t skip                 = renderer->getFeatures().forceFallbackFormat.enabled ? 1 : 0;
     SupportTest testFunction    = HasNonRenderableTextureFormatSupport;
@@ -169,7 +169,7 @@ void Format::initImageFallback(RendererVk *renderer, const ImageFormatInitInfo *
     }
 }
 
-void Format::initBufferFallback(RendererVk *renderer,
+void Format::initBufferFallback(Renderer *renderer,
                                 const BufferFormatInitInfo *info,
                                 int numInfo,
                                 int compressedStartIndex)
@@ -234,7 +234,7 @@ FormatTable::FormatTable() {}
 
 FormatTable::~FormatTable() {}
 
-void FormatTable::initialize(RendererVk *renderer, gl::TextureCapsMap *outTextureCapsMap)
+void FormatTable::initialize(Renderer *renderer, gl::TextureCapsMap *outTextureCapsMap)
 {
     for (size_t formatIndex = 0; formatIndex < angle::kNumANGLEFormats; ++formatIndex)
     {
@@ -387,7 +387,7 @@ size_t GetValidImageCopyBufferAlignment(angle::FormatID intendedFormatID,
                : GetImageCopyBufferAlignment(actualFormatID);
 }
 
-VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, angle::FormatID formatID)
+VkImageUsageFlags GetMaximalImageUsageFlags(Renderer *renderer, angle::FormatID formatID)
 {
     constexpr VkFormatFeatureFlags kImageUsageFeatureBits =
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT |
@@ -411,9 +411,53 @@ VkImageUsageFlags GetMaximalImageUsageFlags(RendererVk *renderer, angle::FormatI
     imageUsageFlags |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     return imageUsageFlags;
 }
+
+VkImageCreateFlags GetMinimalImageCreateFlags(Renderer *renderer,
+                                              gl::TextureType textureType,
+                                              VkImageUsageFlags usage)
+{
+    switch (textureType)
+    {
+        case gl::TextureType::CubeMap:
+        case gl::TextureType::CubeMapArray:
+            return VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+
+        case gl::TextureType::_3D:
+        {
+            // Slices of this image may be used as:
+            //
+            // - Render target: The VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT flag is needed for that.
+            // - Sampled or storage image: The VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT flag is
+            //   needed for this.  If VK_EXT_image_2d_view_of_3d is not supported, we tolerate the
+            //   VVL error as drivers seem to support this behavior anyway.
+            VkImageCreateFlags flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
+
+            if ((usage & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+            {
+                if (renderer->getFeatures().supportsImage2dViewOf3d.enabled)
+                {
+                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
+                }
+            }
+            else if ((usage & VK_IMAGE_USAGE_SAMPLED_BIT) != 0)
+            {
+                if (renderer->getFeatures().supportsSampler2dViewOf3d.enabled)
+                {
+                    flags |= VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT;
+                }
+            }
+
+            return flags;
+        }
+
+        default:
+            return 0;
+    }
+}
+
 }  // namespace vk
 
-bool HasFullTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)
+bool HasFullTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID)
 {
     constexpr uint32_t kBitsColor = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT |
                                     VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT |
@@ -439,7 +483,7 @@ bool HasFullTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)
            renderer->hasImageFormatFeatureBits(formatID, kBitsDepth);
 }
 
-bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)
+bool HasNonRenderableTextureFormatSupport(vk::Renderer *renderer, angle::FormatID formatID)
 {
     constexpr uint32_t kBitsColor =
         VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;

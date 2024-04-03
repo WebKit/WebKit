@@ -35,6 +35,7 @@ extern "C" {
 void NetworkServiceInitializer();
 void WebContentServiceInitializer();
 void GPUServiceInitializer();
+void ModelServiceInitializer();
 
 void ExtensionEventHandler(xpc_connection_t);
 

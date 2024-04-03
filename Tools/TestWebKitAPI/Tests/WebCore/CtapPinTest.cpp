@@ -31,7 +31,7 @@
 #include "PlatformUtilities.h"
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
-#include <WebCore/CryptoAlgorithmAES_CBC.h>
+#include <WebCore/CryptoAlgorithmAESCBC.h>
 #include <WebCore/CryptoAlgorithmAesCbcCfbParams.h>
 #include <WebCore/CryptoAlgorithmECDH.h>
 #include <WebCore/CryptoKeyAES.h>
@@ -69,6 +69,94 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 63u);
     EXPECT_STREQ(result->data(), "123456781234567812345678123456781234567812345678123456781234567");
+}
+
+TEST(CtapPinTest, TestSetPinRequest)
+{
+    // Generate an EC key pair as the peer key.
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    String pin = "1234"_s;
+
+    auto request = SetPinRequest::tryCreate(pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    EXPECT_TRUE(request);
+    auto result = encodeAsCBOR(*request);
+
+    EXPECT_EQ(result.size(), 187u);
+    EXPECT_EQ(result[0], static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorClientPin));
+
+    // Decode the CBOR binary to check if each field is encoded correctly.
+    Vector<uint8_t> buffer;
+    buffer.append(result.subspan(1));
+    auto decodedResponse = cbor::CBORReader::read(buffer);
+    EXPECT_TRUE(decodedResponse);
+    EXPECT_TRUE(decodedResponse->isMap());
+    const auto& responseMap = decodedResponse->getMap();
+
+    const auto& it1 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kProtocol)));
+    EXPECT_NE(it1, responseMap.end());
+    EXPECT_EQ(it1->second.getInteger(), kProtocolVersion);
+
+    const auto& it2 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kSubcommand)));
+    EXPECT_NE(it2, responseMap.end());
+    EXPECT_EQ(it2->second.getInteger(), static_cast<uint8_t>(Subcommand::kSetPin));
+
+    // COSE
+    auto it = responseMap.find(CBORValue(static_cast<int>(RequestKey::kKeyAgreement)));
+    EXPECT_TRUE(decodedResponse);
+    EXPECT_TRUE(decodedResponse->isMap());
+    const auto& coseKey = it->second.getMap();
+
+    const auto& it3 = coseKey.find(CBORValue(COSE::kty));
+    EXPECT_NE(it3, coseKey.end());
+    EXPECT_EQ(it3->second.getInteger(), COSE::EC2);
+
+    const auto& it4 = coseKey.find(CBORValue(COSE::alg));
+    EXPECT_NE(it4, coseKey.end());
+    EXPECT_EQ(it4->second.getInteger(), COSE::ECDH256);
+
+    const auto& it5 = coseKey.find(CBORValue(COSE::crv));
+    EXPECT_NE(it5, coseKey.end());
+    EXPECT_EQ(it5->second.getInteger(), COSE::P_256);
+
+    // Check the cose key.
+    const auto& xIt = coseKey.find(CBORValue(COSE::x));
+    EXPECT_NE(xIt, coseKey.end());
+    const auto& yIt = coseKey.find(CBORValue(COSE::y));
+    EXPECT_NE(yIt, coseKey.end());
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    EXPECT_TRUE(cosePublicKey);
+
+    // Check the encrypted Pin.
+    auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), *cosePublicKey);
+    EXPECT_TRUE(sharedKeyResult);
+
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    crypto->addBytes(sharedKeyResult->span());
+    auto sharedKeyHash = crypto->computeHash();
+
+    auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
+    EXPECT_TRUE(aesKey);
+
+    const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kNewPinEnc)));
+    EXPECT_NE(it6, responseMap.end());
+    auto newPinEncResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAESCBC::Padding::No);
+    EXPECT_FALSE(newPinEncResult.hasException());
+    auto newPinEnc = newPinEncResult.releaseReturnValue();
+
+    const uint8_t expectedNewPinEnc[] = { 0x31, 0x32, 0x33, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    EXPECT_EQ(newPinEnc.size(), 64u);
+    EXPECT_EQ(memcmp(newPinEnc.data(), expectedNewPinEnc, newPinEnc.size()), 0);
+
+    String pin2 = "123"_s;
+    auto request2 = SetPinRequest::tryCreate(pin2, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    EXPECT_FALSE(request2);
+
+    String pin3 = "01234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950"_s;
+    auto request3 = SetPinRequest::tryCreate(pin3, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    EXPECT_FALSE(request3);
 }
 
 TEST(CtapPinTest, TestRetriesRequest)
@@ -166,8 +254,8 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
     Vector<uint8_t> expectedRawKey;
     expectedRawKey.reserveCapacity(65);
     expectedRawKey.append(0x04);
-    expectedRawKey.append(TestData::kCtapClientPinKeyAgreementResponse + 14, 32); // X
-    expectedRawKey.append(TestData::kCtapClientPinKeyAgreementResponse + 49, 32); // Y
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 14, 32 }); // X
+    expectedRawKey.append(std::span { TestData::kCtapClientPinKeyAgreementResponse + 49, 32 }); // Y
     EXPECT_TRUE(exportedRawKey.returnValue() == expectedRawKey);
 }
 
@@ -183,12 +271,13 @@ TEST(CtapPinTest, TestTokenRequest)
     auto token = TokenRequest::tryCreate(pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(token);
     auto result = encodeAsCBOR(*token);
+
     EXPECT_EQ(result.size(), 103u);
     EXPECT_EQ(result[0], static_cast<uint8_t>(CtapRequestCommand::kAuthenticatorClientPin));
 
     // Decode the CBOR binary to check if each field is encoded correctly.
     Vector<uint8_t> buffer;
-    buffer.append(result.data() + 1, result.size() - 1);
+    buffer.append(result.subspan(1));
     auto decodedResponse = cbor::CBORReader::read(buffer);
     EXPECT_TRUE(decodedResponse);
     EXPECT_TRUE(decodedResponse->isMap());
@@ -233,7 +322,7 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_TRUE(sharedKeyResult);
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());
+    crypto->addBytes(sharedKeyResult->span());
     auto sharedKeyHash = crypto->computeHash();
 
     auto aesKey = CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier::AES_CBC, WTFMove(sharedKeyHash), true, CryptoKeyUsageDecrypt);
@@ -241,7 +330,7 @@ TEST(CtapPinTest, TestTokenRequest)
 
     const auto& it6 = responseMap.find(CBORValue(static_cast<uint8_t>(RequestKey::kPinHashEnc)));
     EXPECT_NE(it6, responseMap.end());
-    auto pinHashResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAES_CBC::Padding::No);
+    auto pinHashResult = CryptoAlgorithmAESCBC::platformDecrypt({ }, *aesKey, it6->second.getByteString(), CryptoAlgorithmAESCBC::Padding::No);
     EXPECT_FALSE(pinHashResult.hasException());
     auto pinHash = pinHashResult.releaseReturnValue();
     const uint8_t expectedPinHash[] = { 0x03, 0xac, 0x67, 0x42, 0x16, 0xf3, 0xe1, 0x5c, 0x76, 0x1e, 0xe1, 0xa5, 0xe2, 0x55, 0xf0, 0x67 };

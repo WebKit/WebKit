@@ -22,6 +22,7 @@ PASS Headers interface: existence and properties of interface prototype object's
 PASS Headers interface: operation append(ByteString, ByteString)
 PASS Headers interface: operation delete(ByteString)
 PASS Headers interface: operation get(ByteString)
+PASS Headers interface: operation getSetCookie()
 PASS Headers interface: operation has(ByteString)
 PASS Headers interface: operation set(ByteString, ByteString)
 PASS Headers interface: iterable<ByteString, ByteString>
@@ -33,6 +34,7 @@ PASS Headers interface: new Headers() must inherit property "delete(ByteString)"
 PASS Headers interface: calling delete(ByteString) on new Headers() with too few arguments must throw TypeError
 PASS Headers interface: new Headers() must inherit property "get(ByteString)" with the proper type
 PASS Headers interface: calling get(ByteString) on new Headers() with too few arguments must throw TypeError
+PASS Headers interface: new Headers() must inherit property "getSetCookie()" with the proper type
 PASS Headers interface: new Headers() must inherit property "has(ByteString)" with the proper type
 PASS Headers interface: calling has(ByteString) on new Headers() with too few arguments must throw TypeError
 PASS Headers interface: new Headers() must inherit property "set(ByteString, ByteString)" with the proper type
@@ -58,6 +60,7 @@ PASS Request interface: attribute keepalive
 FAIL Request interface: attribute isReloadNavigation assert_true: The prototype object must have a property "isReloadNavigation" expected true got false
 FAIL Request interface: attribute isHistoryNavigation assert_true: The prototype object must have a property "isHistoryNavigation" expected true got false
 PASS Request interface: attribute signal
+FAIL Request interface: attribute duplex assert_true: The prototype object must have a property "duplex" expected true got false
 PASS Request interface: operation clone()
 PASS Request interface: attribute body
 PASS Request interface: attribute bodyUsed
@@ -83,6 +86,7 @@ PASS Request interface: new Request('about:blank') must inherit property "keepal
 FAIL Request interface: new Request('about:blank') must inherit property "isReloadNavigation" with the proper type assert_inherits: property "isReloadNavigation" not found in prototype chain
 FAIL Request interface: new Request('about:blank') must inherit property "isHistoryNavigation" with the proper type assert_inherits: property "isHistoryNavigation" not found in prototype chain
 PASS Request interface: new Request('about:blank') must inherit property "signal" with the proper type
+FAIL Request interface: new Request('about:blank') must inherit property "duplex" with the proper type assert_inherits: property "duplex" not found in prototype chain
 PASS Request interface: new Request('about:blank') must inherit property "clone()" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "body" with the proper type
 PASS Request interface: new Request('about:blank') must inherit property "bodyUsed" with the proper type
@@ -99,6 +103,7 @@ PASS Response interface: existence and properties of interface prototype object'
 PASS Response interface: existence and properties of interface prototype object's @@unscopables property
 PASS Response interface: operation error()
 PASS Response interface: operation redirect(USVString, optional unsigned short)
+FAIL Response interface: operation json(any, optional ResponseInit) assert_equals: property has wrong .length expected 0 but got 1
 PASS Response interface: attribute type
 PASS Response interface: attribute url
 PASS Response interface: attribute redirected
@@ -119,6 +124,8 @@ PASS Stringification of new Response()
 PASS Response interface: new Response() must inherit property "error()" with the proper type
 PASS Response interface: new Response() must inherit property "redirect(USVString, optional unsigned short)" with the proper type
 PASS Response interface: calling redirect(USVString, optional unsigned short) on new Response() with too few arguments must throw TypeError
+PASS Response interface: new Response() must inherit property "json(any, optional ResponseInit)" with the proper type
+PASS Response interface: calling json(any, optional ResponseInit) on new Response() with too few arguments must throw TypeError
 PASS Response interface: new Response() must inherit property "type" with the proper type
 PASS Response interface: new Response() must inherit property "url" with the proper type
 PASS Response interface: new Response() must inherit property "redirected" with the proper type

@@ -96,7 +96,7 @@ Ref<SharedBuffer> PasteboardCustomData::createSharedBuffer() const
     encoder << m_origin;
     encoder << sameOriginCustomStringData();
     encoder << orderedTypes();
-    return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
+    return SharedBuffer::create(encoder.span());
 }
 
 PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persistence::Decoder&& decoder)

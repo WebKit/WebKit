@@ -1,0 +1,66 @@
+
+
+
+
+
+PASS .item 1
+PASS .item 2
+PASS .item 3
+PASS .item 4
+PASS .item 5
+PASS .item 6
+FAIL .item 7 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: horizontal-tb; direction: ltr;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+FAIL .item 8 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: horizontal-tb; direction: rtl;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+FAIL .item 9 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: veritcal-rl; direction: ltr;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+FAIL .item 10 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: vertical-rl; direction: rtl;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+FAIL .item 11 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: vertical-lr; direction: ltr;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+FAIL .item 12 assert_equals:
+<div class="container">
+  <div class="item unsafe" style="writing-mode: vertical-lr; direction: rtl;" data-offset-x="-5"></div>
+</div>
+offsetLeft expected -5 but got 15
+PASS .item 13
+PASS .item 14
+PASS .item 15
+PASS .item 16
+PASS .item 17
+PASS .item 18
+FAIL .item 19 assert_equals:
+<div class="item unsafe" style="writing-mode: horizontal-tb; direction: ltr;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+FAIL .item 20 assert_equals:
+<div class="item unsafe" style="writing-mode: horizontal-tb; direction: rtl;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+FAIL .item 21 assert_equals:
+<div class="item unsafe" style="writing-mode: veritcal-rl; direction: ltr;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+FAIL .item 22 assert_equals:
+<div class="item unsafe" style="writing-mode: vertical-rl; direction: rtl;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+FAIL .item 23 assert_equals:
+<div class="item unsafe" style="writing-mode: vertical-lr; direction: ltr;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+FAIL .item 24 assert_equals:
+<div class="item unsafe" style="writing-mode: vertical-lr; direction: rtl;" data-offset-x="-5"></div>
+offsetLeft expected -5 but got 15
+

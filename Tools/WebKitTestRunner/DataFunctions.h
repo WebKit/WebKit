@@ -48,7 +48,7 @@ inline WTF::UUID dataToUUID(WKDataRef data)
 
 inline WKRetainPtr<WKDataRef> uuidToData(const WTF::UUID& uuid)
 {
-    auto span = uuid.toSpan();
+    auto span = uuid.span();
     return adoptWK(WKDataCreate(span.data(), span.size()));
 }
 

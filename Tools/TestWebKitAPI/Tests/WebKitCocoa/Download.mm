@@ -112,10 +112,8 @@ IGNORE_WARNINGS_END
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -418,10 +416,8 @@ IGNORE_WARNINGS_END
     EXPECT_TRUE(hasReceivedResponse);
     EXPECT_EQ(_download, download);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     *allowOverwrite = YES;
     return _destinationPath;
@@ -478,10 +474,8 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
 IGNORE_WARNINGS_END
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(!_destinationPath.isEmpty());
     *allowOverwrite = YES;
     return _destinationPath;
 }
@@ -653,10 +647,8 @@ TEST(_WKDownload, DownloadCanceledWhileDecidingDestination)
 {
     EXPECT_TRUE([filename hasSuffix:@".usdz"]);
 
-    FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile(String { filename }, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _destinationPath = FileSystem::createTemporaryFile(String { filename });
+    EXPECT_TRUE(!_destinationPath.isEmpty());
 
     completionHandler(YES, _destinationPath);
 }
@@ -1077,10 +1069,8 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
 
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    _path = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
-    EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
-    FileSystem::closeFile(fileHandle);
+    _path = FileSystem::createTemporaryFile("TestWebKitAPI"_s);
+    EXPECT_TRUE(_path && [_path.get() length]);
     completionHandler(YES, _path.get());
 }
 
@@ -1182,7 +1172,7 @@ template<size_t length>
 String longString(LChar c)
 {
     Vector<LChar> vector(length, c);
-    return String(vector.data(), length);
+    return vector.span();
 }
 
 enum class IncludeETag : bool { No, Yes };
@@ -2815,6 +2805,82 @@ TEST(WKDownload, LockdownModeUSDZ)
         DownloadCallback::DecideDestination,
         DownloadCallback::DidFinish
     });
+}
+
+TEST(WKDownload, DecideAfterRedirect)
+{
+    HTTPServer server { {
+        { "/"_s, { 301, { { "Location"_s, "/redirectTarget"_s } } } },
+        { "/redirectTarget"_s, { "hi"_s } },
+    } };
+    auto request = server.request();
+    auto redirectedRequest = server.request("/redirectTarget"_s);
+    auto webView = adoptNS([WKWebView new]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    auto downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+
+    downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        completionHandler(expectedDownloadFile);
+    };
+
+    __block bool receivedInitialNavigationAction { false };
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL isEqual:request.URL]) {
+            receivedInitialNavigationAction = true;
+            return completionHandler(WKNavigationActionPolicyAllow);
+        }
+        return completionHandler(WKNavigationActionPolicyDownload);
+    };
+    navigationDelegate.get().navigationActionDidBecomeDownload = ^(WKNavigationAction *action, WKDownload *download) {
+        EXPECT_WK_STREQ(action.request.URL.absoluteString, redirectedRequest.URL.absoluteString);
+        download.delegate = downloadDelegate.get();
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:request];
+    [downloadDelegate waitForDownloadDidFinish];
+    checkFileContents(expectedDownloadFile, "hi"_s);
+    EXPECT_TRUE(receivedInitialNavigationAction);
+}
+
+TEST(WKDownload, DecideAfterRedirectLegacyDownloadSPI)
+{
+    HTTPServer server { {
+        { "/"_s, { 301, { { "Location"_s, "/redirectTarget"_s } } } },
+        { "/redirectTarget"_s, { "hi"_s } },
+    } };
+    auto request = server.request();
+    auto redirectedRequest = server.request("/redirectTarget"_s);
+    auto webView = adoptNS([WKWebView new]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    NSURL *expectedDownloadFile = tempFileThatDoesNotExist();
+
+    auto downloadDelegate = adoptNS([TestLegacyDownloadDelegate new]);
+    downloadDelegate.get().decideDestinationWithSuggestedFilename = ^(_WKDownload *, NSString *suggestedFilename, void (^completionHandler)(BOOL, NSString *)) {
+        completionHandler(YES, expectedDownloadFile.path);
+    };
+    downloadDelegate.get().didReceiveResponse = ^(_WKDownload *, NSURLResponse *response) {
+        EXPECT_WK_STREQ(response.URL.absoluteString, redirectedRequest.URL.absoluteString);
+    };
+    __block bool didFinishDownload { false };
+    downloadDelegate.get().downloadDidFinish = ^(_WKDownload *) {
+        didFinishDownload = true;
+    };
+
+    __block bool receivedInitialNavigationAction { false };
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL isEqual:request.URL]) {
+            receivedInitialNavigationAction = true;
+            return completionHandler(WKNavigationActionPolicyAllow);
+        }
+        return completionHandler(WKNavigationActionPolicyDownload);
+    };
+    webView.get().configuration.processPool._downloadDelegate = downloadDelegate.get();
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:request];
+    Util::run(&didFinishDownload);
+    checkFileContents(expectedDownloadFile, "hi"_s);
+    EXPECT_TRUE(receivedInitialNavigationAction);
 }
 
 }

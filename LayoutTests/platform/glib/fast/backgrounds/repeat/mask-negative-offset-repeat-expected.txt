@@ -7,10 +7,10 @@ layer at (0,0) size 800x548
         RenderText {#text} at (0,0) size 153x17
           text run at (0,0) width 153: "Mask version of test for "
         RenderInline {I} at (0,0) size 750x35
-          RenderInline {A} at (0,0) size 293x17 [color=#0000EE]
+          RenderInline {A} at (153,0) size 293x17 [color=#0000EE]
             RenderText {#text} at (153,0) size 293x17
               text run at (153,0) width 293: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (445,0) size 750x35
+          RenderText {#text} at (0,0) size 750x35
             text run at (445,0) width 5: " "
             text run at (449,0) width 301: "no-repeat on negatively positioned fill images is"
             text run at (0,18) width 49: "ignored"

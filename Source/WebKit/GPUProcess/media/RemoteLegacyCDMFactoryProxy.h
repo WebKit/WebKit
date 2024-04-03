@@ -33,6 +33,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -64,7 +65,7 @@ public:
     void removeSession(RemoteLegacyCDMSessionIdentifier);
     RemoteLegacyCDMSessionProxy* getSession(const RemoteLegacyCDMSessionIdentifier&) const;
 
-    GPUConnectionToWebProcess* gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
+    RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     bool allowsExitUnderMemoryPressure() const;
 

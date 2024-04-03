@@ -61,7 +61,11 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 {
     MotionPathData data;
     auto pathOperation = renderer.style().offsetPath();
-    if (!is<RenderLayerModelObject>(renderer) || !pathOperation || (is<ShapePathOperation>(pathOperation) && is<BasicShapePath>(downcast<ShapePathOperation>(*pathOperation).shape())))
+    if (!is<RenderLayerModelObject>(renderer) || !pathOperation)
+        return std::nullopt;
+
+    auto* shapeOperation = dynamicDowncast<ShapePathOperation>(pathOperation);
+    if (shapeOperation && is<BasicShapePath>(shapeOperation->shape()))
         return std::nullopt;
 
     auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
@@ -82,9 +86,8 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
         if (is<ShapePathOperation>(pathOperation))
             data.usedStartingPosition = startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container);
-        if (is<RayPathOperation>(pathOperation)) {
-            auto& rayPathOperation = downcast<RayPathOperation>(*pathOperation);
-            auto startingPosition = rayPathOperation.position();
+        if (auto* rayPathOperation = dynamicDowncast<RayPathOperation>(pathOperation)) {
+            auto startingPosition = rayPathOperation->position();
             data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
         }
         return data;
@@ -112,43 +115,49 @@ static PathTraversalState traversalStateAtDistance(const Path& path, const Lengt
     return path.traversalStateAtLength(resolvedLength);
 }
 
-void MotionPath::applyMotionPathTransform(const RenderStyle& style, const TransformOperationData& transformData, TransformationMatrix& transform)
+void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, const FloatPoint& transformOrigin, const PathOperation& offsetPath, const LengthPoint& offsetAnchor, const Length& offsetDistance, const OffsetRotation& offsetRotate, TransformBox transformBox)
 {
-    if (!style.offsetPath())
-        return;
-
     auto& boundingBox = transformData.boundingBox;
-    auto transformOrigin = style.computeTransformOrigin(boundingBox).xy();
     auto anchor = transformOrigin;
-    if (!style.offsetAnchor().x().isAuto())
-        anchor = floatPointForLengthPoint(style.offsetAnchor(), boundingBox.size()) + boundingBox.location();
+    if (!offsetAnchor.x().isAuto())
+        anchor = floatPointForLengthPoint(offsetAnchor, boundingBox.size()) + boundingBox.location();
 
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = style.offsetPath()->getPath(transformData);
+    auto path = offsetPath.getPath(transformData);
     if (!path)
         return;
-    auto traversalState = traversalStateAtDistance(*path, style.offsetDistance());
-    transform.translate(traversalState.current().x(), traversalState.current().y());
+    auto traversalState = traversalStateAtDistance(*path, offsetDistance);
+    matrix.translate(traversalState.current().x(), traversalState.current().y());
 
     auto shiftToOrigin = anchor - transformOrigin;
 
     // Adjust anchor for SVG.
-    if (transformData.isSVGRenderer && style.transformBox() != TransformBox::ViewBox)
+    if (transformData.isSVGRenderer && transformBox != TransformBox::ViewBox)
         anchor += boundingBox.location();
 
     // Shift element to the anchor specified by offset-anchor.
-    transform.translate(-anchor.x(), -anchor.y());
+    matrix.translate(-anchor.x(), -anchor.y());
 
-    transform.translate(shiftToOrigin.width(), shiftToOrigin.height());
+    matrix.translate(shiftToOrigin.width(), shiftToOrigin.height());
 
     // Apply rotation.
-    auto rotation = style.offsetRotate();
+    auto& rotation = offsetRotate;
     if (rotation.hasAuto())
-        transform.rotate(traversalState.normalAngle() + rotation.angle());
+        matrix.rotate(traversalState.normalAngle() + rotation.angle());
     else
-        transform.rotate(rotation.angle());
+        matrix.rotate(rotation.angle());
 
-    transform.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
+    matrix.translate(-shiftToOrigin.width(), -shiftToOrigin.height());
+}
+
+void MotionPath::applyMotionPathTransform(const RenderStyle& style, const TransformOperationData& transformData, TransformationMatrix& matrix)
+{
+    auto* offsetPath = style.offsetPath();
+    if (!offsetPath)
+        return;
+
+    auto transformOrigin = style.computeTransformOrigin(transformData.boundingBox).xy();
+    applyMotionPathTransform(matrix, transformData, transformOrigin, *offsetPath, style.offsetAnchor(), style.offsetDistance(), style.offsetRotate(), style.transformBox());
 }
 
 bool MotionPath::needsUpdateAfterContainingBlockLayout(const PathOperation& pathOperation)
@@ -230,10 +239,9 @@ std::optional<Path> MotionPath::computePathForShape(const ShapePathOperation& pa
     if (auto motionPathData = data.motionPathData) {
         auto& shape = pathOperation.basicShape();
         auto containingBlockRect = offsetRectForData(*motionPathData).rect();
-        if (is<BasicShapeCircleOrEllipse>(shape)) {
-            auto& centerCoordShape = downcast<BasicShapeCircleOrEllipse>(shape);
-            if (centerCoordShape.positionWasOmitted())
-                return centerCoordShape.pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
+        if (auto* centerCoordShape = dynamicDowncast<BasicShapeCircleOrEllipse>(shape)) {
+            if (centerCoordShape->positionWasOmitted())
+                return centerCoordShape->pathForCenterCoordinate(containingBlockRect, motionPathData->usedStartingPosition);
         }
         return pathOperation.pathForReferenceRect(containingBlockRect);
     }

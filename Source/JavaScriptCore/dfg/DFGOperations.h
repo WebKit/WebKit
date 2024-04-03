@@ -38,6 +38,7 @@
 namespace JSC {
 
 class DateInstance;
+class DirectCallLinkInfo;
 class JSBigInt;
 class JSBoundFunction;
 class JSPropertyNameEnumerator;
@@ -116,6 +117,7 @@ JSC_DECLARE_JIT_OPERATION(operationGetByValObjectString, EncodedJSValue, (JSGlob
 JSC_DECLARE_JIT_OPERATION(operationGetByValObjectSymbol, EncodedJSValue, (JSGlobalObject*, JSCell*, JSCell* symbol));
 JSC_DECLARE_JIT_OPERATION(operationToPrimitive, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationToPropertyKey, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationToPropertyKeyOrNumber, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationToNumber, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationToNumberString, EncodedJSValue, (JSGlobalObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationToNumeric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
@@ -367,7 +369,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewRawObject, char*, (VM*, Structure*, int32_
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterfly, JSCell*, (VM*, Structure*, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength, JSCell*, (VM*, Structure*, unsigned length, Butterfly*));
 
-JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*, JSFunction*));
+JSC_DECLARE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo*, JSFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationDateGetFullYear, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetUTCFullYear, EncodedJSValue, (VM*, DateInstance*));

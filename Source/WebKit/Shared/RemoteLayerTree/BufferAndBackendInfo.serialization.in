@@ -24,3 +24,12 @@ struct WebKit::BufferAndBackendInfo {
     WebCore::RenderingResourceIdentifier resourceIdentifier;
     unsigned backendGeneration;
 };
+
+header: "BufferAndBackendInfo.h"
+[CustomHeader, RValue] struct WebKit::BufferSetBackendHandle {
+    std::optional<WebKit::ImageBufferBackendHandle> bufferHandle;
+
+    std::optional<WebKit::BufferAndBackendInfo> frontBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> backBufferInfo;
+    std::optional<WebKit::BufferAndBackendInfo> secondaryBackBufferInfo;
+};

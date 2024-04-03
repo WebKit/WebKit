@@ -315,10 +315,12 @@ PASS input.tabIndex: setAttribute() to "\f7"
 PASS input.tabIndex: setAttribute() to " 7"
 PASS input.tabIndex: setAttribute() to "\n7"
 PASS input.tabIndex: setAttribute() to "\r7"
+PASS input.tabIndex: setAttribute() to "7\v"
 PASS input.tabIndex: setAttribute() to 1.5
 PASS input.tabIndex: setAttribute() to "5%"
 PASS input.tabIndex: setAttribute() to "+100"
 PASS input.tabIndex: setAttribute() to object "2"
+PASS input.tabIndex: setAttribute() to object "3"
 PASS input.tabIndex: IDL set to -36
 PASS input.tabIndex: IDL set to -1
 PASS input.tabIndex: IDL set to 0
@@ -845,6 +847,8 @@ PASS input.maxLength: setAttribute() to 2147483648
 PASS input.maxLength: setAttribute() to 4294967295
 PASS input.maxLength: setAttribute() to 4294967296
 PASS input.maxLength: setAttribute() to ""
+PASS input.maxLength: setAttribute() to "-"
+PASS input.maxLength: setAttribute() to "+"
 PASS input.maxLength: setAttribute() to "-1"
 PASS input.maxLength: setAttribute() to "-0"
 PASS input.maxLength: setAttribute() to "0"
@@ -875,6 +879,12 @@ PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to " 7"
 PASS input.maxLength: setAttribute() to "　7"
+PASS input.maxLength: setAttribute() to "\t\v7"
+PASS input.maxLength: setAttribute() to "\n\v7"
+PASS input.maxLength: setAttribute() to "\f\v7"
+PASS input.maxLength: setAttribute() to "\r\v7"
+PASS input.maxLength: setAttribute() to " \v7"
+PASS input.maxLength: setAttribute() to "7\v"
 PASS input.maxLength: setAttribute() to undefined
 PASS input.maxLength: setAttribute() to 1.5
 PASS input.maxLength: setAttribute() to "5%"
@@ -947,6 +957,8 @@ PASS input.minLength: setAttribute() to 2147483648
 PASS input.minLength: setAttribute() to 4294967295
 PASS input.minLength: setAttribute() to 4294967296
 PASS input.minLength: setAttribute() to ""
+PASS input.minLength: setAttribute() to "-"
+PASS input.minLength: setAttribute() to "+"
 PASS input.minLength: setAttribute() to "-1"
 PASS input.minLength: setAttribute() to "-0"
 PASS input.minLength: setAttribute() to "0"
@@ -977,6 +989,12 @@ PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to " 7"
 PASS input.minLength: setAttribute() to "　7"
+PASS input.minLength: setAttribute() to "\t\v7"
+PASS input.minLength: setAttribute() to "\n\v7"
+PASS input.minLength: setAttribute() to "\f\v7"
+PASS input.minLength: setAttribute() to "\r\v7"
+PASS input.minLength: setAttribute() to " \v7"
+PASS input.minLength: setAttribute() to "7\v"
 PASS input.minLength: setAttribute() to undefined
 PASS input.minLength: setAttribute() to 1.5
 PASS input.minLength: setAttribute() to "5%"
@@ -1241,6 +1259,8 @@ PASS input.size: setAttribute() to 2147483648
 PASS input.size: setAttribute() to 4294967295
 PASS input.size: setAttribute() to 4294967296
 PASS input.size: setAttribute() to ""
+PASS input.size: setAttribute() to "-"
+PASS input.size: setAttribute() to "+"
 PASS input.size: setAttribute() to "-1"
 PASS input.size: setAttribute() to "-0"
 PASS input.size: setAttribute() to "0"
@@ -1270,6 +1290,12 @@ PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to " 7"
 PASS input.size: setAttribute() to "　7"
+PASS input.size: setAttribute() to "\t\v7"
+PASS input.size: setAttribute() to "\n\v7"
+PASS input.size: setAttribute() to "\f\v7"
+PASS input.size: setAttribute() to "\r\v7"
+PASS input.size: setAttribute() to " \v7"
+PASS input.size: setAttribute() to "7\v"
 PASS input.size: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
 PASS input.size: setAttribute() to undefined
 PASS input.size: setAttribute() to 1.5

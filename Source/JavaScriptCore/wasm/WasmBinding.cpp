@@ -48,6 +48,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     ASSERT(scratch != GPRReg::InvalidGPRReg);
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
 
+    JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfBoxedTargetCalleeLoadLocation(importIndex)), scratch);
+    jit.loadPtr(JIT::Address(scratch), scratch);
+    // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
+    // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
+    jit.storeWasmCalleeCallee(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
+
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
     jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
@@ -60,7 +67,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // Set up the callee's baseMemoryPointer register as well as the memory size registers.
     {
         jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1], /* validateAuth */ true, /* mayBeNull */ false);
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1]);
     }
 #endif
 
@@ -72,7 +79,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     if (UNLIKELY(patchBuffer.didFailToAllocate()))
         return makeUnexpected(BindingFailure::OutOfMemory);
 
-    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, "WebAssembly->WebAssembly import[%i]", importIndex);
+    return FINALIZE_WASM_CODE(patchBuffer, WasmEntryPtrTag, nullptr, "WebAssembly->WebAssembly import[%i]", importIndex);
 }
 
 } } // namespace JSC::Wasm

@@ -1,0 +1,3 @@
+
+PASS range.createContextualFragment assigned via policy (successful HTML transformation).
+

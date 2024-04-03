@@ -81,12 +81,13 @@ void RemoteImageBuffer::stopListeningForIPC()
         backend->streamConnection().stopReceivingMessages(Messages::RemoteImageBuffer::messageReceiverName(), identifier().toUInt64());
 }
 
-void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&& completionHandler)
+void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     auto memory = m_backend->sharedMemoryForGetPixelBuffer();
     MESSAGE_CHECK(memory, "No shared memory for getPixelBufferForImageBuffer"_s);
     MESSAGE_CHECK(WebCore::PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat), "Pixel format not supported"_s);
+    IntRect srcRect(srcPoint, srcSize);
     auto pixelBuffer = m_imageBuffer->getPixelBuffer(destinationFormat, srcRect);
     if (pixelBuffer) {
         MESSAGE_CHECK(pixelBuffer->sizeInBytes() <= memory->size(), "Shmem for return of getPixelBuffer is too small"_s);
@@ -96,59 +97,64 @@ void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFor
     completionHandler();
 }
 
-void RemoteImageBuffer::getPixelBufferWithNewMemory(SharedMemory::Handle&& handle, WebCore::PixelBufferFormat destinationFormat, WebCore::IntRect srcRect, CompletionHandler<void()>&& completionHandler)
+void RemoteImageBuffer::getPixelBufferWithNewMemory(WebCore::SharedMemory::Handle&& handle, WebCore::PixelBufferFormat destinationFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     m_backend->setSharedMemoryForGetPixelBuffer(nullptr);
-    auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle), WebKit::SharedMemory::Protection::ReadWrite);
+    auto sharedMemory = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
     MESSAGE_CHECK(sharedMemory, "Shared memory could not be mapped."_s);
     m_backend->setSharedMemoryForGetPixelBuffer(WTFMove(sharedMemory));
-    getPixelBuffer(WTFMove(destinationFormat), WTFMove(srcRect), WTFMove(completionHandler));
+    getPixelBuffer(WTFMove(destinationFormat), WTFMove(srcPoint), WTFMove(srcSize), WTFMove(completionHandler));
 }
 
-void RemoteImageBuffer::putPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, WebCore::IntRect srcRect, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat)
+void RemoteImageBuffer::putPixelBuffer(Ref<WebCore::PixelBuffer> pixelBuffer, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, WebCore::AlphaPremultiplication destFormat)
 {
     assertIsCurrent(workQueue());
+    IntRect srcRect(srcPoint, srcSize);
     m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
-void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveResolution, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
+void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveResolution, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    std::optional<ShareableBitmap::Handle> handle;
-    [&]() {
+    std::optional<WebCore::ShareableBitmap::Handle> handle = [&]() -> std::optional<WebCore::ShareableBitmap::Handle> {
         auto backendSize = m_imageBuffer->backendSize();
         auto logicalSize = m_imageBuffer->logicalSize();
         auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : m_imageBuffer->truncatedLogicalSize();
-        auto bitmap = ShareableBitmap::create({ resultSize, m_imageBuffer->colorSpace() });
+        auto bitmap = WebCore::ShareableBitmap::create({ resultSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
-            return;
+            return std::nullopt;
+        auto handle = bitmap->createHandle();
+        if (m_backend->resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->resourceOwner(), WebCore::MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
-            return;
+            return std::nullopt;
         context->drawImageBuffer(m_imageBuffer.get(), WebCore::FloatRect { { }, resultSize }, WebCore::FloatRect { { }, logicalSize }, { WebCore::CompositeOperator::Copy });
-        handle = bitmap->createHandle();
+        return handle;
     }();
     completionHandler(WTFMove(handle));
 }
 
-void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&& completionHandler)
+void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    std::optional<ShareableBitmap::Handle> handle;
-    [&]() {
+    std::optional<WebCore::ShareableBitmap::Handle> handle = [&]() -> std::optional<WebCore::ShareableBitmap::Handle> {
         auto image = m_imageBuffer->filteredNativeImage(filter);
         if (!image)
-            return;
+            return std::nullopt;
         auto imageSize = image->size();
-        auto bitmap = ShareableBitmap::create({ imageSize, m_imageBuffer->colorSpace() });
+        auto bitmap = WebCore::ShareableBitmap::create({ imageSize, m_imageBuffer->colorSpace() });
         if (!bitmap)
-            return;
+            return std::nullopt;
+        auto handle = bitmap->createHandle();
+        if (m_backend->resourceOwner())
+            handle->setOwnershipOfMemory(m_backend->resourceOwner(), WebCore::MemoryLedger::Graphics);
         auto context = bitmap->createGraphicsContext();
         if (!context)
-            return;
+            return std::nullopt;
         context->drawNativeImage(*image, WebCore::FloatRect { { }, imageSize }, WebCore::FloatRect { { }, imageSize });
-        handle = bitmap->createHandle();
+        return handle;
     }();
     completionHandler(WTFMove(handle));
 }

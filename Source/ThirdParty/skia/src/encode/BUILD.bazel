@@ -1,0 +1,189 @@
+load("//bazel:flags.bzl", "string_flag_with_values")
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "select_multi", "skia_cc_deps", "skia_cc_library", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+string_flag_with_values(
+    name = "include_encoder",
+    multiple = True,
+    values = [
+        "jpeg_encode_codec",
+        "png_encode_codec",
+        "webp_encode_codec",
+    ],
+)
+
+# In separate skia_filegroups to export these as gni file lists
+skia_filegroup(
+    name = "jpeg_encode_srcs",
+    srcs = [
+        "SkJPEGWriteUtility.cpp",
+        "SkJpegEncoderImpl.cpp",
+    ],
+)
+
+skia_filegroup(
+    name = "jpeg_encode_hdrs",
+    srcs = [
+        "SkJPEGWriteUtility.h",
+        "SkJpegEncoderImpl.h",
+    ],
+)
+
+skia_filegroup(
+    name = "no_jpeg_encode_srcs",
+    srcs = ["SkJpegEncoder_none.cpp"],
+)
+
+skia_filegroup(
+    name = "png_encode_hdrs",
+    srcs = ["SkPngEncoderImpl.h"],
+)
+
+skia_filegroup(
+    name = "png_encode_srcs",
+    srcs = ["SkPngEncoderImpl.cpp"],
+)
+
+skia_filegroup(
+    name = "no_png_encode_srcs",
+    srcs = ["SkPngEncoder_none.cpp"],
+)
+
+skia_filegroup(
+    name = "webp_encode_srcs",
+    srcs = ["SkWebpEncoderImpl.cpp"],
+)
+
+skia_filegroup(
+    name = "no_webp_encode_srcs",
+    srcs = ["SkWebpEncoder_none.cpp"],
+)
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "SkEncoder.cpp",
+        "SkICC.cpp",
+    ] + select_multi(
+        default_cases = {
+            ":jpeg_encode_codec": [":no_jpeg_encode_srcs"],
+            ":png_encode_codec": [":no_png_encode_srcs"],
+            ":webp_encode_codec": [":no_webp_encode_srcs"],
+        },
+        values_map = {
+            ":jpeg_encode_codec": [":jpeg_encode_srcs"],
+            ":png_encode_codec": [":png_encode_srcs"],
+            ":webp_encode_codec": [":webp_encode_srcs"],
+        },
+    ),
+    visibility = ["//src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = [
+        "SkICCPriv.h",
+        "SkImageEncoderFns.h",
+        "SkImageEncoderPriv.h",
+    ] + select_multi({
+        ":png_encode_codec": [":png_encode_hdrs"],
+        ":jpeg_encode_codec": [
+            ":jpeg_encode_hdrs",
+            "//src/codec:shared_jpeg_hdrs",
+        ],
+    }),
+    visibility = ["//src:__pkg__"],
+)
+
+skia_cc_deps(
+    name = "deps",
+    visibility = ["//src:__pkg__"],
+    deps = select_multi(
+        {
+            ":jpeg_encode_codec": ["@libjpeg_turbo"],
+            ":png_encode_codec": ["@libpng"],
+            ":webp_encode_codec": ["@libwebp"],
+        },
+    ),
+)
+
+skia_filegroup(
+    name = "any_encoder_srcs",
+    srcs = [
+        "SkEncoder.cpp",
+        "SkICC.cpp",
+        "SkICCPriv.h",
+        "SkImageEncoderFns.h",
+        "SkImageEncoderPriv.h",
+    ],
+)
+
+skia_cc_library(
+    name = "png_encode",
+    srcs = [
+        ":any_encoder_srcs",
+        ":png_encode_hdrs",
+        ":png_encode_srcs",
+        "//src/codec:common_png_srcs",
+    ],
+    hdrs = [
+        "//include/encode:encode_hdrs",
+        "//include/encode:png_hdrs",
+    ],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//modules/skcms",
+        "//src/base",
+        "//src/core:core_priv",
+        "@libpng",
+    ],
+)
+
+skia_cc_library(
+    name = "jpeg_encode",
+    srcs = [
+        ":any_encoder_srcs",
+        ":jpeg_encode_hdrs",
+        ":jpeg_encode_srcs",
+        "//src/codec:common_jpeg_srcs",
+    ],
+    hdrs = [
+        "//include/encode:encode_hdrs",
+        "//include/encode:jpeg_hdrs",
+    ],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//modules/skcms",
+        "//src/base",
+        "//src/core:core_priv",
+        "@libjpeg_turbo",
+    ],
+)
+
+skia_cc_library(
+    name = "webp_encode",
+    srcs = [
+        ":any_encoder_srcs",
+        ":webp_encode_srcs",
+    ],
+    hdrs = [
+        "//include/encode:encode_hdrs",
+        "//include/encode:webp_hdrs",
+    ],
+    features = ["layering_check"],
+    visibility = ["//:__pkg__"],
+    deps = [
+        "//:core",
+        "//modules/skcms",
+        "//src/base",
+        "//src/core:core_priv",
+        "@libwebp",
+    ],
+)

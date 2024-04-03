@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-
 #import "config.h"
 #import "PDFPluginChoiceAnnotation.h"
 
-#import "PDFLayerControllerSPI.h"
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>
@@ -43,9 +42,9 @@ namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-Ref<PDFPluginChoiceAnnotation> PDFPluginChoiceAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginChoiceAnnotation> PDFPluginChoiceAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
-    return adoptRef(*new PDFPluginChoiceAnnotation(annotation, pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginChoiceAnnotation(annotation, plugin));
 }
 
 void PDFPluginChoiceAnnotation::updateGeometry()
@@ -53,7 +52,7 @@ void PDFPluginChoiceAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     RefPtr styledElement = downcast<StyledElement>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * pdfLayerController().contentScaleFactor, CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginChoiceAnnotation::commit()
@@ -95,4 +94,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

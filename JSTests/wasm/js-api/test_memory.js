@@ -1,4 +1,3 @@
-//@ skip if $architecture != "arm64" && $architecture != "x86_64"
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 

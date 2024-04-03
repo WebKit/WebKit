@@ -96,6 +96,13 @@ inline bool isHTMLLineBreak(UChar character)
     return character <= '\r' && (character == '\n' || character == '\r');
 }
 
+ALWAYS_INLINE bool containsHTMLLineBreak(StringView view)
+{
+    if (view.is8Bit())
+        return charactersContain<LChar, '\r', '\n'>(view.span8());
+    return charactersContain<UChar, '\r', '\n'>(view.span16());
+}
+
 template<typename CharacterType> inline bool isComma(CharacterType character)
 {
     return character == ',';

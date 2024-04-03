@@ -92,7 +92,13 @@ void GPUConnectionToWebProcess::setTCCIdentity()
         return;
     }
 
-    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, [bundleProxy.bundleIdentifier UTF8String]));
+    const auto* bundleIdentifier = [bundleProxy.bundleIdentifier UTF8String];
+    if (!bundleIdentifier) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to get the bundle identifier, bundle is %d", !!bundleProxy);
+        return;
+    }
+
+    auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, bundleIdentifier));
     if (!identity) {
         RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
         return;

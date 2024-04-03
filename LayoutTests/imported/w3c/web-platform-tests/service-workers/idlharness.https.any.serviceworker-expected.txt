@@ -204,6 +204,13 @@ PASS ExtendableEvent must be primary interface of new ExtendableEvent("type")
 PASS Stringification of new ExtendableEvent("type")
 PASS ExtendableEvent interface: new ExtendableEvent("type") must inherit property "waitUntil(Promise<any>)" with the proper type
 PASS ExtendableEvent interface: calling waitUntil(Promise<any>) on new ExtendableEvent("type") with too few arguments must throw TypeError
+FAIL InstallEvent interface: existence and properties of interface object assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface object length assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface object name assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
+FAIL InstallEvent interface: operation addRoutes((RouterRule or sequence<RouterRule>)) assert_own_property: self does not have own property "InstallEvent" expected property "InstallEvent" missing
 PASS FetchEvent interface: existence and properties of interface object
 PASS FetchEvent interface object length
 PASS FetchEvent interface object name

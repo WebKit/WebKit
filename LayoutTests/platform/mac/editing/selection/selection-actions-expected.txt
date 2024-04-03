@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (159,18) size 1x18
       RenderText {#text} at (0,36) size 86x18
         text run at (0,36) width 86: "This is a para"
-      RenderInline {SPAN} at (0,0) size 9x18 [color=#0000FF]
+      RenderInline {SPAN} at (85,36) size 9x18 [color=#0000FF]
         RenderText {#text} at (85,36) size 9x18
           text run at (85,36) width 9: "g"
       RenderText {#text} at (93,36) size 34x18

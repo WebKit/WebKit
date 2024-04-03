@@ -38,7 +38,7 @@ void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(Auxili
 }
     
 XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy& process, Seconds interval)
-    : m_process(process)
+    : m_xpcConnection(process.connection()->xpcConnection())
     , m_watchdogTimer(RunLoop::main(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
     , m_assertion(ProcessAndUIAssertion::create(process, "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
 {
@@ -47,8 +47,7 @@ XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(AuxiliaryProc
     
 void XPCConnectionTerminationWatchdog::watchdogTimerFired()
 {
-    if (m_process && m_process->hasConnection())
-        terminateWithReason(m_process->connection()->xpcConnection(), ReasonCode::WatchdogTimerFired, "XPCConnectionTerminationWatchdog::watchdogTimerFired");
+    terminateWithReason(m_xpcConnection.get(), ReasonCode::WatchdogTimerFired, "XPCConnectionTerminationWatchdog::watchdogTimerFired");
     delete this;
 }
 

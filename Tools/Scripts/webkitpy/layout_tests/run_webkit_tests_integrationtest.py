@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import sys
 import unittest
 
 from webkitcorepy import StringIO, OutputCapture
@@ -1035,11 +1034,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
 
         for line in logging.getvalue():
-            if str(DeviceType.from_string('iPhone SE')) in line:
-                self.assertTrue('Skipping 2 tests' in line)
-            elif str(DeviceType.from_string('iPad (9th generation)')) in line:
+            if str(DeviceType.from_string('iPhone 12')) in line:
                 self.assertTrue('Skipping 1 test' in line)
-            elif str(DeviceType.from_string('iPhone 7')) in line:
+            elif str(DeviceType.from_string('iPad (9th generation)')) in line:
                 self.assertTrue('Skipping 0 tests' in line)
 
     def test_device_type_specific_listing(self):
@@ -1052,7 +1049,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+            exit_code = run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+
+        self.assertEqual(0, exit_code)
 
         current_type = None
         by_type = {}
@@ -1065,10 +1064,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                 continue
             by_type[current_type].append(line)
 
-        self.assertEqual(3, len(by_type.keys()))
+        self.assertEqual(2, len(by_type.keys()))
         self.assertEqual(2, len(by_type[DeviceType.from_string('iPhone 12')]))
         self.assertEqual(1, len(by_type[DeviceType.from_string('iPad (9th generation)')]))
-        self.assertEqual(0, len(by_type[DeviceType.from_string('iPhone 7')]))
 
     def test_ipad_test_division(self):
         host = MockHost()
@@ -1099,7 +1097,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         with OutputCapture() as captured:
             logging = StringIO()
-            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+            exit_code = run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args(['--print-expectations'])[0], [], logging_stream=logging)
+
+        self.assertEqual(0, exit_code)
 
         current_type = None
         by_type = {}

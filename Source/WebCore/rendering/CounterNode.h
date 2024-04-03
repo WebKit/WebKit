@@ -52,7 +52,7 @@ public:
     bool hasSetType() const { return m_type.contains(Type::Set); }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
-    RenderElement& owner() const { return m_owner; }
+    RenderElement& owner() const;
     void addRenderer(RenderCounter&);
     void removeRenderer(RenderCounter&);
 
@@ -84,8 +84,8 @@ private:
     OptionSet<Type> m_type { };
     int m_value;
     int m_countInParent { 0 };
-    RenderElement& m_owner;
-    RenderCounter* m_rootRenderer { nullptr };
+    SingleThreadWeakRef<RenderElement> m_owner;
+    SingleThreadWeakPtr<RenderCounter> m_rootRenderer;
 
     SingleThreadWeakPtr<CounterNode> m_parent;
     SingleThreadWeakPtr<CounterNode> m_previousSibling;

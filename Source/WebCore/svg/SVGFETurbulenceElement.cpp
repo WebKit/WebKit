@@ -58,26 +58,26 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
     case AttributeNames::typeAttr: {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(newValue);
         if (propertyValue != TurbulenceType::Unknown)
-            m_type->setBaseValInternal<TurbulenceType>(propertyValue);
+            Ref { m_type }->setBaseValInternal<TurbulenceType>(propertyValue);
         break;
     }
     case AttributeNames::stitchTilesAttr: {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(newValue);
         if (propertyValue > 0)
-            m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
+            Ref { m_stitchTiles }->setBaseValInternal<SVGStitchOptions>(propertyValue);
         break;
     }
     case AttributeNames::baseFrequencyAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
-            m_baseFrequencyX->setBaseValInternal(result->first);
-            m_baseFrequencyY->setBaseValInternal(result->second);
+            Ref { m_baseFrequencyX }->setBaseValInternal(result->first);
+            Ref { m_baseFrequencyY }->setBaseValInternal(result->second);
         }
         break;
     case AttributeNames::seedAttr:
-        m_seed->setBaseValInternal(newValue.toFloat());
+        Ref { m_seed }->setBaseValInternal(newValue.toFloat());
         break;
     case AttributeNames::numOctavesAttr:
-        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
+        Ref { m_numOctaves }->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));
         break;
     default:
         break;

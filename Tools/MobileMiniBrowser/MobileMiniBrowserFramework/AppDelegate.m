@@ -34,8 +34,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UIStoryboard *frameworkMainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle bundleForClass:[AppDelegate class]]];
     WebViewController *viewController = [frameworkMainStoryboard instantiateInitialViewController];
+#pragma clang diagnostic pop
     if (!viewController)
         return NO;
 

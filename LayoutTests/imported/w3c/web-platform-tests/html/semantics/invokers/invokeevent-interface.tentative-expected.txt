@@ -1,6 +1,6 @@
 
 
-PASS action is a readonly defaulting to 'auto'
+PASS action is a readonly defaulting to ''
 PASS invoker is readonly defaulting to null
 PASS action reflects initialized attribute
 PASS action set to undefined

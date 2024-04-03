@@ -188,7 +188,7 @@ public:
     }
 
     static constexpr size_t fastSizeLimit = 1000;
-    using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    using VectorPtr = CagedBarrierPtr<Gigacage::Primitive, void>;
 
     static void* nullVectorPtr()
     {
@@ -234,7 +234,7 @@ protected:
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
-        void* vector() const { return m_vector.getMayBeNull(m_length); }
+        void* vector() const { return m_vector.getMayBeNull(); }
         size_t length() const { return m_length; }
         size_t byteOffset() const { return m_byteOffset; }
         TypedArrayMode mode() const { return m_mode; }
@@ -242,7 +242,7 @@ protected:
         
     private:
         Structure* m_structure;
-        using VectorType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+        using VectorType = CagedPtr<Gigacage::Primitive, void>;
         VectorType m_vector;
         size_t m_length;
         size_t m_byteOffset;
@@ -281,7 +281,7 @@ public:
     void detach();
 
     bool hasVector() const { return !!m_vector; }
-    void* vector() const { return m_vector.getMayBeNull(m_length); }
+    void* vector() const { return m_vector.getMayBeNull(); }
     void* vectorWithoutPACValidation() const { return m_vector.getUnsafe(); }
     
     size_t byteOffset() const

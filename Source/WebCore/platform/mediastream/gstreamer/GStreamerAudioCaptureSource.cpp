@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-static CapabilityRange defaultVolumeCapability()
+static DoubleCapabilityRange defaultVolumeCapability()
 {
-    return CapabilityRange(0.0, 1.0);
+    return { 0.0, 1.0 };
 }
 const static RealtimeMediaSourceCapabilities::EchoCancellation defaultEchoCancellationCapability = RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
 
@@ -75,7 +75,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, Medi
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(result->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
     }
     return CaptureSourceOrError(WTFMove(source));
 }
@@ -160,7 +160,7 @@ const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities
     capabilities.setDeviceId(hashedId());
     capabilities.setEchoCancellation(defaultEchoCancellationCapability);
     capabilities.setVolume(defaultVolumeCapability());
-    capabilities.setSampleRate(CapabilityRange(minSampleRate, maxSampleRate));
+    capabilities.setSampleRate({ minSampleRate, maxSampleRate });
     m_capabilities = WTFMove(capabilities);
 
     return m_capabilities.value();

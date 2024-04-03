@@ -33,7 +33,7 @@ import logging
 import os
 import sys
 
-from webkitpy.layout_tests.servers import http_server, http_server_base
+from webkitpy.layout_tests.servers import http_server_base
 
 _log = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ _WS_LOG_NAME = 'pywebsocket.ws.log'
 _WSS_LOG_NAME = 'pywebsocket.wss.log'
 
 
-class PyWebSocket(http_server.Lighttpd):
+class PyWebSocket(http_server_base.HttpServerBase):
     DEFAULT_WS_PORT = 8880
     DEFAULT_WSS_PORT = 9323
 
@@ -53,9 +53,8 @@ class PyWebSocket(http_server.Lighttpd):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
-        http_server.Lighttpd.__init__(self, port_obj, output_dir,
-                                      port=port,
-                                      root=root)
+        super(PyWebSocket, self).__init__(port_obj)
+
         self._output_dir = output_dir
         self._pid_file = pidfile
         self._process = None
@@ -67,6 +66,11 @@ class PyWebSocket(http_server.Lighttpd):
         self._name = 'pywebsocket'
         if self._use_tls:
             self._name = 'pywebsocket_secure'
+
+        # Self generated certificate for SSL server (for client cert get
+        # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
+        self._pem_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'httpd2.pem')
 
         if private_key:
             self._private_key = private_key
@@ -166,11 +170,47 @@ class PyWebSocket(http_server.Lighttpd):
         return self._process.pid
 
     def _stop_running_server(self):
-        super(PyWebSocket, self)._stop_running_server()
+        # FIXME: It would be nice if we had a cleaner way of killing this process.
+        # Currently we throw away the process object created in _spawn_process,
+        # since there doesn't appear to be any way to kill the server any more
+        # cleanly using it than just killing the pid, and we need to support
+        # killing a pid directly anyway for run-webkit-httpd and run-webkit-websocketserver.
+        self._wait_for_action(self._check_and_kill)
+        if self._filesystem.exists(self._pid_file):
+            self._filesystem.remove(self._pid_file)
 
         if self._wsout:
             self._wsout.close()
             self._wsout = None
+
+    def _check_and_kill(self):
+        if self._process is not None:
+            self._process.poll()
+            if self._process.returncode is not None:
+                return True
+
+        if self._executive.check_running_pid(self._pid):
+            host = self._port_obj.host
+            if host.platform.is_win() and not host.platform.is_cygwin():
+                # FIXME: https://bugs.webkit.org/show_bug.cgi?id=106838
+                # We need to kill all of the child processes as well as the
+                # parent, so we can't use executive.kill_process().
+                #
+                # If this is actually working, we should figure out a clean API.
+                self._executive.run_command(["taskkill.exe", "/f", "/t", "/pid", self._pid], ignore_errors=True)
+            else:
+                self._executive.kill_process(self._pid)
+            return False
+        return True
+
+    def _is_server_running_on_all_ports(self):
+        if self._process is not None:
+            self._process.poll()
+            if self._process.returncode is not None:
+                _log.debug("Server isn't running at all")
+                raise http_server_base.ServerError("Server exited")
+
+        return super(PyWebSocket, self)._is_server_running_on_all_ports()
 
 
 def is_web_socket_server_running():

@@ -15,13 +15,23 @@ function main($path) {
 
     if (!count($path)) {
         $task_id = array_get($_GET, 'task');
-        if (!$task_id)
-            exit_with_error('TaskIdNotSpecified');
+        $request_id = array_get($_GET, 'buildRequest');
+        if (!$task_id && !$request_id)
+            exit_with_error('TaskOrBuildRequestIdNotSpecified');
+        if ($task_id && $request_id)
+            exit_with_error('CannotSpecifyBothTaskAndBuildRequestIds');
 
-        $test_groups = $db->select_rows('analysis_test_groups', 'testgroup', array('task' => $task_id));
-        if (!is_array($test_groups))
-            exit_with_error('FailedToFetchTestGroups');
-        $build_requests_fetcher->fetch_for_task($task_id);
+        if ($task_id) {
+            $test_groups = $db->select_rows('analysis_test_groups', 'testgroup', array('task' => $task_id));
+            if (!is_array($test_groups))
+                exit_with_error('FailedToFetchTestGroups');
+            $build_requests_fetcher->fetch_for_task($task_id);
+        } else {
+            $test_groups = $db->query_and_fetch_all('SELECT analysis_test_groups.* FROM analysis_test_groups JOIN build_requests ON request_group=testgroup_id WHERE request_id = $1', array(intval($request_id)));
+            if (!is_array($test_groups))
+                exit_with_error('FailedToFetchTestGroups');
+            $build_requests_fetcher->fetch_requests_for_groups($test_groups);
+        }
     } elseif ($path[0] == 'ready-for-notification') {
         $test_groups = $db->query_and_fetch_all("SELECT * FROM analysis_test_groups
             WHERE EXISTS(SELECT 1 FROM build_requests

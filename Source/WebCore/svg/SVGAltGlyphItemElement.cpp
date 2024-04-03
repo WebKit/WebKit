@@ -53,9 +53,9 @@ bool SVGAltGlyphItemElement::hasValidGlyphElements(Vector<String>& glyphNames) c
     // Here we fill glyphNames and return true only if all referenced glyphs are valid and
     // there is at least one glyph.
 
-    for (auto& glyphRef : childrenOfType<SVGGlyphRefElement>(*this)) {
+    for (Ref glyphRef : childrenOfType<SVGGlyphRefElement>(*this)) {
         String referredGlyphName;
-        if (glyphRef.hasValidGlyphElement(referredGlyphName))
+        if (glyphRef->hasValidGlyphElement(referredGlyphName))
             glyphNames.append(referredGlyphName);
         else {
             glyphNames.clear();

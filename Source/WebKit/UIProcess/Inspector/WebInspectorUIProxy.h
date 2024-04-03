@@ -264,6 +264,7 @@ private:
     void bringInspectedPageToFront();
     void attachAvailabilityChanged(bool);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
+    void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
     void inspectedURLChanged(const String&);
     void showCertificate(const WebCore::CertificateInfo&);
     void setInspectorPageDeveloperExtrasEnabled(bool);

@@ -34,14 +34,28 @@
 
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
+            testExpected('video.readyState', video.HAVE_METADATA);
 
             consoleWrite('Append a media segment.')
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
-            await waitFor(sourceBuffer, 'update');
-
             failTestIn(2000);
 
-            await waitFor(video, 'canplaythrough');
+            await Promise.all([
+                waitFor(video, 'loadeddata'),
+                waitFor(video, 'canplay'),
+                waitFor(sourceBuffer, 'update'),
+            ]);
+            testExpected('video.readyState', video.HAVE_FUTURE_DATA);
+            testExpected('sourceBuffer.buffered.length', 1);
+            testExpected('sourceBuffer.buffered.end(0)', 1.9, '>=');
+            run('source.endOfStream()');
+            await Promise.all([
+                waitFor(source, 'sourceended'),
+                waitFor(video, 'canplaythrough'),
+                testExpectedEventuallySilent('video.readyState', video.HAVE_ENOUGH_DATA)
+            ]);
+            testExpected('video.readyState', video.HAVE_ENOUGH_DATA);
+
             endTest();
         } catch (e) {
             failTest(`Caught exception: "${e}"`);

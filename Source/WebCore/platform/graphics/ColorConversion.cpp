@@ -434,10 +434,8 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
         switch (outputColorSpace.platformColorSpace()) {
         case PlatformColorSpace::Name::SRGB:
             return asColorComponents(convertColor<SRGBA<float>>(inputColor).resolved());
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         case PlatformColorSpace::Name::LinearSRGB:
             return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor).resolved());
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         case PlatformColorSpace::Name::DisplayP3:
             return asColorComponents(convertColor<DisplayP3<float>>(inputColor).resolved());

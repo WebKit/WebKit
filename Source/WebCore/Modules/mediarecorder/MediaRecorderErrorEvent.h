@@ -46,9 +46,6 @@ public:
 private:
     MediaRecorderErrorEvent(const AtomString&, Init&&, Ref<DOMException>&&, IsTrusted);
     MediaRecorderErrorEvent(const AtomString&, Exception&&);
-    
-    // Event
-    EventInterface eventInterface() const override;
 
     Ref<DOMException> m_domError;
 };

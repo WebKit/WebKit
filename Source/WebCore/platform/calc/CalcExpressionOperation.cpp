@@ -38,7 +38,8 @@ float CalcExpressionOperation::evaluate(float maxValue) const
 
 bool CalcExpressionOperation::operator==(const CalcExpressionNode& other) const
 {
-    return is<CalcExpressionOperation>(other) && *this == downcast<CalcExpressionOperation>(other);
+    auto* otherExpressionOperation = dynamicDowncast<CalcExpressionOperation>(other);
+    return otherExpressionOperation && *this == *otherExpressionOperation;
 }
 
 bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)

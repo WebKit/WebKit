@@ -50,10 +50,13 @@
 namespace WebCore {
 
 struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea>, public CanMakeCheckedPtr {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     ~SameSizeAsScrollableArea() { }
     SameSizeAsScrollableArea() { }
     void* pointer[3];
     IntPoint origin;
+    Markable<ScrollingNodeID> testID;
     bool bytes[9];
 };
 
@@ -775,12 +778,12 @@ IntSize ScrollableArea::totalContentsSize() const
 
 IntRect ScrollableArea::visibleContentRect(VisibleContentRectBehavior visibleContentRectBehavior) const
 {
-    return visibleContentRectInternal(ExcludeScrollbars, visibleContentRectBehavior);
+    return visibleContentRectInternal(VisibleContentRectIncludesScrollbars::No, visibleContentRectBehavior);
 }
 
 IntRect ScrollableArea::visibleContentRectIncludingScrollbars(VisibleContentRectBehavior visibleContentRectBehavior) const
 {
-    return visibleContentRectInternal(IncludeScrollbars, visibleContentRectBehavior);
+    return visibleContentRectInternal(VisibleContentRectIncludesScrollbars::Yes, visibleContentRectBehavior);
 }
 
 IntRect ScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
@@ -788,7 +791,7 @@ IntRect ScrollableArea::visibleContentRectInternal(VisibleContentRectIncludesScr
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
 
-    if (scrollbarInclusion == IncludeScrollbars) {
+    if (scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes) {
         if (Scrollbar* verticalBar = verticalScrollbar())
             verticalScrollbarWidth = verticalBar->occupiedWidth();
         if (Scrollbar* horizontalBar = horizontalScrollbar())
@@ -995,6 +998,16 @@ bool ScrollableArea::shouldBlockScrollPropagation(const FloatSize& biasedDelta) 
         && ((horizontalOverscrollBehaviorPreventsPropagation() && verticalOverscrollBehaviorPreventsPropagation())
         || (horizontalOverscrollBehaviorPreventsPropagation() && !biasedDelta.height()) || (verticalOverscrollBehaviorPreventsPropagation()
         && !biasedDelta.width())));
+}
+
+ScrollingNodeID ScrollableArea::scrollingNodeIDForTesting()
+{
+    if (m_scrollingNodeIDForTesting)
+        return *m_scrollingNodeIDForTesting;
+    auto testingNodeID = scrollingNodeID();
+    if (!testingNodeID)
+        m_scrollingNodeIDForTesting = testingNodeID = ScrollingNodeID::generate();
+    return testingNodeID;
 }
 
 } // namespace WebCore

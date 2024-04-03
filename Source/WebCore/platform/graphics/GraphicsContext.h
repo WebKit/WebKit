@@ -75,7 +75,7 @@ class GraphicsContext {
 public:
     // Indicates if draw operations read the sources such as NativeImage backing stores immediately
     // during draw operations.
-    enum class IsDeferred {
+    enum class IsDeferred : bool {
         No,
         Yes
     };
@@ -272,6 +272,10 @@ public:
 
     WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    ImageDrawResult drawMultiRepresentationHEIC(Image&, const Font&, const FloatRect& destination, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
+#endif
+
     virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
@@ -369,7 +373,6 @@ public:
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
 #endif
 
-    IsDeferred deferred() const { return m_isDeferred; }
 private:
     virtual void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
@@ -386,13 +389,12 @@ protected:
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 
     GraphicsContextState m_state;
-    const IsDeferred m_isDeferred;
-
 private:
     Vector<GraphicsContextState, 1> m_stack;
 
     unsigned m_transparencyLayerCount { 0 };
-    bool m_contentfulPaintDetected { false };
+    const IsDeferred m_isDeferred : 1; // NOLINT
+    bool m_contentfulPaintDetected : 1 { false };
 };
 
 } // namespace WebCore

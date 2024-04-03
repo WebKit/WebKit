@@ -50,6 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString * _Nullable errorMessage))completionHandler;
 
 - (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage;
+- (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage createIfNecessary:(BOOL)createIfNecessary;
+
 - (nullable NSString *)_deleteDatabaseIfEmpty;
 
 - (void)createSavepointWithCompletionHandler:(void (^)(NSUUID * _Nullable savepointIdentifer, NSString * _Nullable errorMessage))completionHandler;

@@ -40,10 +40,10 @@
 #if PLATFORM(IOS_FAMILY)
 #import "DynamicViewportSizeUpdate.h"
 #import "UIKitSPI.h"
+#import "WKBrowserEngineDefinitions.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
-#import "WKSEDefinitions.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntDegrees.h>
 #import <WebCore/LengthBox.h>
@@ -52,7 +52,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#define WK_WEB_VIEW_PROTOCOLS <WKSEScrollViewDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate>
 #endif
 
 #if PLATFORM(MAC)
@@ -85,6 +85,7 @@ enum class WheelScrollGestureState : uint8_t;
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
+enum class WebTextReplacementDataState : uint8_t;
 class IconLoadingDelegate;
 class NavigationState;
 class ResourceLoadDelegate;
@@ -105,6 +106,8 @@ class ViewGestureController;
 @class WKPasswordView;
 @class WKSafeBrowsingWarning;
 @class WKScrollView;
+@class WKTextExtractionItem;
+@class WKTextExtractionRequest;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 
@@ -115,6 +118,14 @@ class ViewGestureController;
 
 #if PLATFORM(MAC)
 @class WKTextFinderClient;
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+@class WKWebTextReplacementSession;
 #endif
 
 @protocol _WKTextManipulationDelegate;
@@ -131,6 +142,12 @@ struct OverriddenLayoutParameters {
     CGSize viewLayoutSize { CGSizeZero };
     CGSize minimumUnobscuredSize { CGSizeZero };
     CGSize maximumUnobscuredSize { CGSizeZero };
+};
+
+struct OverriddenZoomScaleParameters {
+    CGFloat minimumZoomScale { 1 };
+    CGFloat maximumZoomScale { 1 };
+    BOOL allowUserScaling { YES };
 };
 
 // This holds state that should be reset when the web process exits.
@@ -219,6 +236,10 @@ struct PerWebProcessState {
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    RetainPtr<NSMapTable<NSUUID *, WKWebTextReplacementSession *>> _unifiedTextReplacementSessions;
+#endif
+
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
@@ -232,14 +253,20 @@ struct PerWebProcessState {
     RetainPtr<WKContentView> _contentView;
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
-
+    RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 
     BOOL _findInteractionEnabled;
 #if HAVE(UIFINDINTERACTION)
-    RetainPtr<UIView> _findOverlay;
+    struct FindOverlays {
+        RetainPtr<UIView> top;
+        RetainPtr<UIView> right;
+        RetainPtr<UIView> bottom;
+        RetainPtr<UIView> left;
+    };
+    std::optional<FindOverlays> _findOverlaysOutsideContentView;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
@@ -248,6 +275,7 @@ struct PerWebProcessState {
     PerWebProcessState _perProcessState;
 
     std::optional<OverriddenLayoutParameters> _overriddenLayoutParameters;
+    std::optional<OverriddenZoomScaleParameters> _overriddenZoomScaleParameters;
     CGRect _inputViewBoundsInWindow;
 
     BOOL _fastClickingIsDisabled;
@@ -346,6 +374,13 @@ struct PerWebProcessState {
 - (void)_storeAppHighlight:(const WebCore::AppHighlight&)info;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+- (void)_textReplacementSession:(NSUUID *)sessionUUID showInformationForReplacementWithUUID:(NSUUID *)replacementUUID relativeToRect:(CGRect)rect;
+
+- (void)_textReplacementSession:(NSUUID *)sessionUUID updateState:(WebKit::WebTextReplacementDataState)state forReplacementWithUUID:(NSUUID *)replacementUUID;
+- (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid;
+#endif
+
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;
 
 - (void)_doAfterNextVisibleContentRectAndPresentationUpdate:(void (^)(void))updateBlock;
@@ -379,3 +414,8 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end
 #endif
+
+@interface WKWebView (WKTextExtraction)
+- (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context;
+- (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+@end

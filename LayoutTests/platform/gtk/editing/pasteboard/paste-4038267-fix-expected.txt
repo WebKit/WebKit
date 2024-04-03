@@ -21,10 +21,10 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+          RenderInline {A} at (112,27) size 261x26 [color=#0000EE]
             RenderText {#text} at (112,27) size 261x26
               text run at (112,27) width 261: "<rdar://problem/4038267>"
-          RenderText {#text} at (372,27) size 747x53
+          RenderText {#text} at (0,27) size 747x53
             text run at (372,27) width 375: " REGRESSION (Mail): Crash copying"
             text run at (0,54) width 287: "and pasting end of paragraph."
         RenderBlock {DIV} at (14,111) size 756x135

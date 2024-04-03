@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+
+<script>
+description("Test that accessing local file system metadata is not allowed");
+
+function runTest() {
+    if (!window.internals) {
+        alert("This test depends on Internals");
+        return;
+    }
+
+    window.jsTestIsAsync = true;
+
+    let path = location.pathname.split("/");
+    let targetFileName = internals.createTemporaryFile(`${path[path.length - 1]}`, "");
+
+    let input = document.createElement("input");
+    input.type = "file";
+
+    let file = new File([], targetFileName, {"type":"text/plain"});
+
+    dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file)
+    input.files = dataTransfer.files;
+
+    var functionOnSuccess = function (file)
+    {
+        testFailed("Should not receive file");
+        finishJSTest()
+    }
+
+    var functionOnError = function (value)
+    {
+        testPassed("Should not receive file");
+        finishJSTest()
+    }
+
+    input.webkitEntries.forEach((entry) => {
+        entry.file(functionOnSuccess, functionOnError)
+    });
+}
+
+runTest();
+
+</script>
+</body>
+</html>

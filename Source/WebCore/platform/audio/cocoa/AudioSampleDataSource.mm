@@ -187,7 +187,6 @@ void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampl
 
 void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const PlatformAudioData& audioData, size_t sampleCount)
 {
-    ASSERT(is<WebAudioBufferList>(audioData));
     pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount);
 }
 

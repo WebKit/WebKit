@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT submitting a <form> element that navigates cross-document targeting a same-origin-domain (but cross-origin) window Test timed out
+FAIL submitting a <form> element that navigates cross-document targeting a same-origin-domain (but cross-origin) window assert_true: destination.sameDocument expected true got false
 

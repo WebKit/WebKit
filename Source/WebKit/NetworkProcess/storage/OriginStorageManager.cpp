@@ -544,8 +544,9 @@ String OriginStorageManager::StorageBucket::resolvedIDBStoragePath()
         m_resolvedIDBStoragePath = m_customIDBStoragePath;
     } else {
         auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
-        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%" PUBLIC_LOG_STRING "'", this, idbStoragePath.utf8().data());
         auto moved = IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
+        if (moved)
+            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%" PUBLIC_LOG_STRING "'", this, idbStoragePath.utf8().data());
         if (!moved && FileSystem::fileExists(idbStoragePath)) {
             auto fileNames = FileSystem::listDirectory(m_customIDBStoragePath);
             auto newFileNames = FileSystem::listDirectory(idbStoragePath);

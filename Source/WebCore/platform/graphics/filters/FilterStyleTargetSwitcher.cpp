@@ -57,7 +57,7 @@ void FilterStyleTargetSwitcher::beginDrawSourceImage(GraphicsContext& destinatio
     }
 }
 
-void FilterStyleTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
+void FilterStyleTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&)
 {
     for ([[maybe_unused]] auto& filterStyle : makeReversedRange(m_filterStyles)) {
         destinationContext.endTransparencyLayer();

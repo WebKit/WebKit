@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ public:
     void setNumParameters(unsigned newValue) { m_codeBlock->setNumParameters(newValue); }
 
     UnlinkedMetadataTable& metadata() { return m_codeBlock->metadata(); }
-    void addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned column);
+    void addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn);
     void addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
     void addOpProfileControlFlowBytecodeOffset(JSInstructionStream::Offset offset)
     {
@@ -210,13 +210,12 @@ private:
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     Vector<WriteBarrier<UnlinkedFunctionExecutable>> m_functionDecls;
     Vector<WriteBarrier<UnlinkedFunctionExecutable>> m_functionExprs;
-    Vector<ExpressionRangeInfo> m_expressionInfo;
+    ExpressionInfo::Encoder m_expressionInfoEncoder;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     // In RareData.
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     Vector<UnlinkedSimpleJumpTable> m_unlinkedSwitchJumpTables;
     Vector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
-    Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     Vector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;

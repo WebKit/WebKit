@@ -48,10 +48,6 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-#if !PLATFORM(WPE)
-#include "BackingStore.h"
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -74,7 +70,7 @@ DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics()
 }
 
 #if !PLATFORM(WPE)
-void DrawingAreaProxyCoordinatedGraphics::paint(cairo_t* cr, const IntRect& rect, Region& unpaintedRegion)
+void DrawingAreaProxyCoordinatedGraphics::paint(PlatformPaintContextPtr cr, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
 
@@ -108,7 +104,7 @@ bool DrawingAreaProxyCoordinatedGraphics::forceUpdateIfNeeded()
 
     SetForScope inForceUpdate(m_inForceUpdate, true);
     send(Messages::DrawingArea::ForceUpdate());
-    m_webProcessProxy->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(m_identifier, 500_ms);
+    m_webProcessProxy->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(identifier(), 500_ms);
     return !!m_backingStore;
 }
 
@@ -186,7 +182,7 @@ void DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom(double scale, Floa
 
 void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
 {
-    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
+    sendWithAsyncReply(Messages::DrawingArea::CommitTransientZoom(scale, origin), [] { });
 }
 #endif
 

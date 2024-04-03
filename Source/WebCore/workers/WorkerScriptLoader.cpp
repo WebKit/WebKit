@@ -250,7 +250,8 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
 
     if (m_topOriginForServiceWorkerRegistration && response.source() == ResourceResponse::Source::MemoryCache && m_context) {
         m_isMatchingServiceWorkerRegistration = true;
-        auto& swConnection = is<WorkerGlobalScope>(m_context) ? static_cast<SWClientConnection&>(downcast<WorkerGlobalScope>(*m_context).swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        auto* worker = dynamicDowncast<WorkerGlobalScope>(*m_context);
+        auto& swConnection = worker ? static_cast<SWClientConnection&>(worker->swClientConnection()) : ServiceWorkerProvider::singleton().serviceWorkerConnection();
         swConnection.matchRegistration(WTFMove(*m_topOriginForServiceWorkerRegistration), response.url(), [this, protectedThis = Ref { *this }, response, identifier](auto&& registrationData) mutable {
             m_isMatchingServiceWorkerRegistration = false;
             if (registrationData && registrationData->activeWorker)
@@ -288,7 +289,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     if (buffer.isEmpty())
         return;
 
-    m_script.append(m_decoder->decode(buffer.data(), buffer.size()));
+    m_script.append(m_decoder->decode(buffer.span()));
 }
 
 void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics&)

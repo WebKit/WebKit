@@ -101,8 +101,8 @@ public:
 
     virtual void setLoggingLevel(WTFLogLevel);
 
-    WEBCORE_EXPORT void setVP9VTBSupport(bool);
-    virtual bool isSupportingVP9VTB() const;
+    WEBCORE_EXPORT virtual void setVP9HardwareSupportForTesting(std::optional<bool> value) { m_supportsVP9VTBForTesting = value; }
+    virtual bool isSupportingVP9HardwareDecoder() const { return m_supportsVP9VTBForTesting.value_or(false); }
 
     WEBCORE_EXPORT void disableEnumeratingAllNetworkInterfaces();
     WEBCORE_EXPORT void enableEnumeratingAllNetworkInterfaces();
@@ -148,7 +148,7 @@ private:
     std::optional<MediaCapabilitiesDecodingInfo> videoDecodingCapabilitiesOverride(const VideoConfiguration&) final;
     std::optional<MediaCapabilitiesEncodingInfo> videoEncodingCapabilitiesOverride(const VideoConfiguration&) final;
 
-    bool m_supportsVP9VTB { false };
+    std::optional<bool> m_supportsVP9VTBForTesting { false };
     bool m_useDTLS10 { false };
     bool m_disableNonLocalhostConnections { false };
     bool m_enableEnumeratingAllNetworkInterfaces { false };

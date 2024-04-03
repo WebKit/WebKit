@@ -66,7 +66,7 @@ public:
     size_t size() const { return m_list.size(); }
 
     // EventTarget interface
-    EventTargetInterface eventTargetInterface() const final { return SourceBufferListEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SourceBufferList; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<SourceBufferList>::ref;

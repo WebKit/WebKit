@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+# Copyright 2016 Google Inc.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""
+Calls `GIT_SYNC_DEPS_QUIET=T tools/git-sync-deps`.
+"""
+
+import os
+import subprocess
+import sys
+
+path = os.path.dirname(__file__) + '/../tools/git-sync-deps'
+subprocess.check_call([sys.executable, path] + sys.argv[:1],
+                      env=dict(os.environ, GIT_SYNC_DEPS_QUIET='T'))

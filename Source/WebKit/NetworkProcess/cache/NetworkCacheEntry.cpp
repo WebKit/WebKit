@@ -187,7 +187,7 @@ void Entry::initializeBufferFromStorageRecord() const
             return;
     }
 #endif
-    m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.data(), m_sourceStorageRecord.body.size());
+    m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.span());
 }
 
 WebCore::FragmentedSharedBuffer* Entry::buffer() const
@@ -204,7 +204,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> Entry::protectedBuffer() const
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-std::optional<ShareableResource::Handle> Entry::shareableResourceHandle() const
+std::optional<WebCore::ShareableResource::Handle> Entry::shareableResourceHandle() const
 {
     if (m_shareableResource)
         return m_shareableResource->createHandle();
@@ -213,7 +213,7 @@ std::optional<ShareableResource::Handle> Entry::shareableResourceHandle() const
     if (!sharedMemory)
         return std::nullopt;
 
-    if ((m_shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size())))
+    if ((m_shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, m_sourceStorageRecord.body.size())))
         return m_shareableResource->createHandle();
     return std::nullopt;
 }

@@ -28,7 +28,6 @@
 
 #include "AST.h"
 #include "ASTVisitor.h"
-#include "CallGraph.h"
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSL.h"
@@ -38,7 +37,7 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage, Reflection::EntryPointInformation&);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage);
 
     void rewrite();
 
@@ -49,6 +48,10 @@ private:
         AST::Attribute::List attributes;
     };
 
+    struct BuiltinMemberOrParameter : MemberOrParameter {
+        Builtin builtin;
+    };
+
     enum class IsBuiltin {
         No = 0,
         Yes = 1,
@@ -57,7 +60,7 @@ private:
     void collectParameters();
     void checkReturnType();
     void constructInputStruct();
-    void materialize(Vector<String>& path, MemberOrParameter&, IsBuiltin);
+    void materialize(Vector<String>& path, MemberOrParameter&, IsBuiltin, const String* builtinName = nullptr);
     void visit(Vector<String>& path, MemberOrParameter&&);
     void appendBuiltins();
 
@@ -65,39 +68,20 @@ private:
     ShaderModule& m_shaderModule;
     const AST::Function& m_function;
 
-    Vector<MemberOrParameter> m_builtins;
+    Vector<BuiltinMemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
     AST::Statement::List m_materializations;
     const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
-    Reflection::EntryPointInformation& m_information;
+    unsigned m_builtinID { 0 };
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage, Reflection::EntryPointInformation& information)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
-    , m_information(information)
 {
-    switch (m_stage) {
-    case ShaderStage::Compute: {
-        for (auto& attribute : function.attributes()) {
-            if (!is<AST::WorkgroupSizeAttribute>(attribute))
-                continue;
-            auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute);
-            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize.x(), workgroupSize.maybeY(), workgroupSize.maybeZ() };
-            break;
-        }
-        break;
-    }
-    case ShaderStage::Vertex:
-        m_information.typedEntryPoint = Reflection::Vertex { false };
-        break;
-    case ShaderStage::Fragment:
-        m_information.typedEntryPoint = Reflection::Fragment { };
-        break;
-    }
 }
 
 void EntryPointRewriter::rewrite()
@@ -142,14 +126,11 @@ void EntryPointRewriter::checkReturnType()
     if (m_stage == ShaderStage::Compute)
         return;
 
-    auto* maybeReturnType = m_function.maybeReturnType();
-    if (!maybeReturnType)
-        return;
-    if (!is<AST::IdentifierExpression>(*maybeReturnType))
+    auto* namedTypeName = dynamicDowncast<AST::IdentifierExpression>(m_function.maybeReturnType());
+    if (!namedTypeName)
         return;
 
-    auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
-    if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
+    if (auto* structType = std::get_if<Types::Struct>(namedTypeName->inferredType())) {
         const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
             String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
@@ -166,7 +147,7 @@ void EntryPointRewriter::checkReturnType()
                 AST::Identifier::make(returnStructName)
             );
             returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-            m_shaderModule.replace(namedTypeName, returnType);
+            m_shaderModule.replace(*namedTypeName, returnType);
         };
 
         if (m_stage == ShaderStage::Fragment) {
@@ -184,9 +165,9 @@ void EntryPointRewriter::checkReturnType()
     String returnStructName = makeString("__", m_function.name(), "_FragmentOutput");
     auto& fieldType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
-        AST::Identifier::make(namedTypeName.identifier())
+        AST::Identifier::make(namedTypeName->identifier())
     );
-    fieldType.m_inferredType = namedTypeName.inferredType();
+    fieldType.m_inferredType = namedTypeName->inferredType();
     auto& member = m_shaderModule.astBuilder().construct<AST::StructureMember>(
         SourceSpan::empty(),
         AST::Identifier::make("__value"_s),
@@ -206,7 +187,7 @@ void EntryPointRewriter::checkReturnType()
         AST::Identifier::make(returnStructName)
     );
     returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-    m_shaderModule.replace(namedTypeName, returnType);
+    m_shaderModule.replace(*namedTypeName, returnType);
 }
 
 void EntryPointRewriter::constructInputStruct()
@@ -246,11 +227,11 @@ void EntryPointRewriter::constructInputStruct()
     m_structType = m_shaderModule.types().structType(structure);
 }
 
-void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)
+void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin, const String* builtinName)
 {
     AST::Expression::Ptr rhs;
     if (isBuiltin == IsBuiltin::Yes)
-        rhs = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
+        rhs = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(*builtinName));
     else {
         rhs = &m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
             SourceSpan::empty(),
@@ -315,22 +296,35 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
         return;
     }
 
-    bool isBuiltin = false;
+    std::optional<Builtin> builtin;
     for (auto& attribute : data.attributes) {
-        if (is<AST::BuiltinAttribute>(attribute)) {
-            isBuiltin = true;
+        if (auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute)) {
+            builtin = builtinAttribute->builtin();
             break;
         }
     }
 
-    if (isBuiltin) {
-        // if path is empty, then it was already a parameter and there's nothing to do
-        if (!path.isEmpty())
-            materialize(path, data, IsBuiltin::Yes);
+    if (builtin.has_value()) {
+        if (!path.isEmpty()) {
+            // builtin was hoisted from a struct into a parameter, we need to reconstruct the struct
+            // ${path}.${data.name} = __builtin${builtinID}
+            // Note that we don't use ${data.name} on the right-hand side because it's the name of a
+            // struct field, and it might not be unique.
+            auto builtinName = makeString("__builtin", String::number(m_builtinID++));
+            materialize(path, data, IsBuiltin::Yes, &builtinName);
+            m_builtins.append({
+                {
+                    AST::Identifier::make(builtinName),
+                    data.type,
+                    data.attributes
+                },
+                *builtin
+            });
+            return;
+        }
 
-        // builtin was hoisted from a struct into a parameter, we need to reconstruct the struct
-        // ${path}.${data.name} = ${data.name}
-        m_builtins.append(WTFMove(data));
+        // if path is empty, then it was already a parameter and there's nothing to do
+        m_builtins.append({ data, *builtin });
         return;
     }
 
@@ -343,20 +337,24 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_shaderModule.append(m_function.parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
+        auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
             data.type,
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
-        ));
+        );
+        parameter.m_builtin = data.builtin;
+        m_shaderModule.append(m_function.parameters(), parameter);
     }
 }
 
-void rewriteEntryPoints(CallGraph& callGraph)
+void rewriteEntryPoints(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    for (auto& entryPoint : callGraph.entrypoints()) {
-        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage, entryPoint.information);
+    for (auto& entryPoint : shaderModule.callGraph().entrypoints()) {
+        if (!pipelineLayouts.contains(entryPoint.originalName))
+            continue;
+        EntryPointRewriter rewriter(shaderModule, entryPoint.function, entryPoint.stage);
         rewriter.rewrite();
     }
 }

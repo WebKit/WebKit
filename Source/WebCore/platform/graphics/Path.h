@@ -86,6 +86,7 @@ public:
     WEBCORE_EXPORT std::optional<PathSegment> singleSegment() const;
     std::optional<PathDataLine> singleDataLine() const;
     std::optional<PathArc> singleArc() const;
+    std::optional<PathClosedArc> singleClosedArc() const;
     std::optional<PathDataQuadCurve> singleQuadCurve() const;
     std::optional<PathDataBezierCurve> singleBezierCurve() const;
 
@@ -123,6 +124,7 @@ private:
     const PathImpl* asImpl() const;
 
     const PathMoveTo* asSingleMoveTo() const;
+    const PathArc* asSingleArc() const;
 
     std::variant<std::monostate, PathSegment, DataRef<PathImpl>> m_data;
 };

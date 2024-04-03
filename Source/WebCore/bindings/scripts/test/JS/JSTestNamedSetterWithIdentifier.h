@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestNamedSetterWithIdentifier>;
     static JSTestNamedSetterWithIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithIdentifier>&& impl)
     {
-        JSTestNamedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithIdentifier>(globalObject->vm())) JSTestNamedSetterWithIdentifier(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestNamedSetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithIdentifier>(vm)) JSTestNamedSetterWithIdentifier(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

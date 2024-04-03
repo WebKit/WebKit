@@ -295,7 +295,7 @@ Vector<uint8_t> getTestAttestedCredentialDataBytes()
 {
     // Combine kTestAttestedCredentialDataPrefix and kTestECPublicKeyCOSE.
     auto testAttestedData = convertBytesToVector(kTestAttestedCredentialDataPrefix, sizeof(kTestAttestedCredentialDataPrefix));
-    testAttestedData.append(TestData::kTestECPublicKeyCOSE, sizeof(TestData::kTestECPublicKeyCOSE));
+    testAttestedData.append(std::span { TestData::kTestECPublicKeyCOSE });
     return testAttestedData;
 }
 
@@ -311,9 +311,9 @@ Vector<uint8_t> getTestAuthenticatorDataBytes()
 Vector<uint8_t> getTestAttestationObjectBytes()
 {
     auto testAuthenticatorObject = convertBytesToVector(kFormatFidoU2fCBOR, sizeof(kFormatFidoU2fCBOR));
-    testAuthenticatorObject.append(kAttStmtCBOR, sizeof(kAttStmtCBOR));
-    testAuthenticatorObject.append(TestData::kU2fAttestationStatementCBOR, sizeof(TestData::kU2fAttestationStatementCBOR));
-    testAuthenticatorObject.append(kAuthDataCBOR, sizeof(kAuthDataCBOR));
+    testAuthenticatorObject.append(std::span { kAttStmtCBOR });
+    testAuthenticatorObject.append(std::span { TestData::kU2fAttestationStatementCBOR });
+    testAuthenticatorObject.append(std::span { kAuthDataCBOR });
     auto testAuthenticatorData = getTestAuthenticatorDataBytes();
     testAuthenticatorObject.appendVector(testAuthenticatorData);
     return testAuthenticatorObject;
@@ -330,14 +330,14 @@ Vector<uint8_t> getTestCorruptedSignResponse(size_t length)
     ASSERT(length < sizeof(TestData::kTestU2fSignResponse));
     Vector<uint8_t> testCorruptedSignResponse;
     testCorruptedSignResponse.reserveInitialCapacity(length);
-    testCorruptedSignResponse.append(TestData::kTestU2fSignResponse, length);
+    testCorruptedSignResponse.append(std::span { TestData::kTestU2fSignResponse, length });
     return testCorruptedSignResponse;
 }
 
 // Return a key handle used for GetAssertion request.
 BufferSource getTestCredentialRawIdBytes()
 {
-    return WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    return WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
 }
 
 // Return a malformed U2fRegisterResponse.
@@ -345,8 +345,8 @@ Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appe
 {
     Vector<uint8_t> result;
     result.reserveInitialCapacity(prefixSize + appendixSize);
-    result.append(TestData::kTestU2fRegisterResponse, prefixSize);
-    result.append(appendix, appendixSize);
+    result.append(std::span { TestData::kTestU2fRegisterResponse, prefixSize });
+    result.append(std::span { appendix, appendixSize });
     return result;
 }
 
@@ -523,21 +523,21 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData5)
     const auto suffix = sizeof(TestData::kTestU2fRegisterResponse) - signatureSize;
 
     Vector<uint8_t> testData1;
-    testData1.append(TestData::kTestU2fRegisterResponse, prefix);
+    testData1.append(std::span { TestData::kTestU2fRegisterResponse, prefix });
     testData1.append(0x30);
     testData1.append(0x01);
     testData1.append(0x00);
-    testData1.append(TestData::kTestU2fRegisterResponse + suffix, signatureSize);
+    testData1.append(std::span { TestData::kTestU2fRegisterResponse + suffix, signatureSize });
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData1, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 
     Vector<uint8_t> testData2;
-    testData2.append(TestData::kTestU2fRegisterResponse, prefix);
+    testData2.append(std::span { TestData::kTestU2fRegisterResponse, prefix });
     testData2.append(0x30);
     testData2.append(0x81);
     testData2.append(0x01);
     testData2.append(0x00);
-    testData2.append(TestData::kTestU2fRegisterResponse + suffix, signatureSize);
+    testData2.append(std::span { TestData::kTestU2fRegisterResponse + suffix, signatureSize });
     response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData2, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 }

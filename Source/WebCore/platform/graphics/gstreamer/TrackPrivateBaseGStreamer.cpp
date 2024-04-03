@@ -55,6 +55,17 @@ char TrackPrivateBaseGStreamer::prefixForType(TrackType trackType)
         }
 }
 
+static AtomString trimStreamId(StringView streamId)
+{
+    size_t index = streamId.find([](auto c) {
+        return c != '0';
+    });
+
+    if (index == notFound)
+        return AtomString::fromLatin1("0");
+    return AtomString(streamId.substring(index).toString());
+}
+
 AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType trackType, unsigned index)
 {
     return makeAtomString(prefixForType(trackType), index);
@@ -93,7 +104,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GstStream* stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_stringId(AtomString::fromLatin1(gst_stream_get_stream_id(stream)))
+    , m_stringId(trimStreamId(StringView::fromLatin1(gst_stream_get_stream_id(stream))))
     , m_id(trackIdFromStringIdOrIndex(type, m_stringId, index))
     , m_stream(stream)
     , m_type(type)
@@ -253,8 +264,6 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
-    TrackPrivateBaseClient* client = m_owner->client();
-
     GRefPtr<GstTagList> tags;
     {
         Locker locker { m_tagMutex };
@@ -266,8 +275,11 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     tagsChanged(GRefPtr<GstTagList>(tags));
 
-    if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
-        client->labelChanged(m_label);
+    if (getTag(tags.get(), GST_TAG_TITLE, m_label)) {
+        m_owner->notifyMainThreadClient([&](auto& client) {
+            client.labelChanged(m_label);
+        });
+    }
 
     AtomString language;
     if (!getLanguageCode(tags.get(), language))
@@ -277,8 +289,9 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     m_language = language;
-    if (client)
-        client->languageChanged(m_language);
+    m_owner->notifyMainThreadClient([&](auto& client) {
+        client.languageChanged(m_language);
+    });
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
@@ -291,7 +304,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
         return;
 
     GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
-    m_stringId = AtomString::fromLatin1(streamId.get());
+    m_stringId = trimStreamId(StringView::fromLatin1(streamId.get()));
 }
 
 void TrackPrivateBaseGStreamer::streamChanged()
@@ -361,7 +374,7 @@ String TrackPrivateBaseGStreamer::trackIdFromPadStreamStartOrUniqueID(TrackType 
     if (position == notFound || position + 1 == streamIdView.length())
         return generateUniquePlaybin2StreamID(type, index);
 
-    return streamIdView.substring(position + 1).toString();
+    return trimStreamId(streamIdView.substring(position + 1));
 }
 
 TrackID TrackPrivateBaseGStreamer::trackIdFromStringIdOrIndex(TrackType type, const AtomString& stringId, unsigned index)
@@ -384,6 +397,22 @@ GRefPtr<GstTagList> TrackPrivateBaseGStreamer::getAllTags(const GRefPtr<GstPad>&
         allTags = adoptGRef(gst_tag_list_merge(allTags.get(), taglist, GST_TAG_MERGE_APPEND));
     }
     return allTags;
+}
+
+bool TrackPrivateBaseGStreamer::updateTrackIDFromTags(const GRefPtr<GstTagList>& tags)
+{
+    GUniqueOutPtr<char> trackIDString;
+    if (!gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr()))
+        return false;
+
+    auto trackID = WTF::parseInteger<TrackID>(StringView { std::span { trackIDString.get(), strlen(trackIDString.get()) } });
+    if (trackID && *trackID != m_trackID.value_or(0)) {
+        m_trackID = *trackID;
+        m_stringId = AtomString::number(static_cast<unsigned long long>(*m_trackID));
+        ASSERT(m_trackID);
+        return true;
+    }
+    return false;
 }
 
 #undef GST_CAT_DEFAULT

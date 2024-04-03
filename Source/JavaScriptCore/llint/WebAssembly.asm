@@ -165,7 +165,7 @@ macro checkSwitchToJIT(increment, action)
 end
 
 macro checkSwitchToJITForPrologue(codeBlockRegister)
-    if WEBASSEMBLY_OMGJIT
+    if WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         5,
         macro()
@@ -242,7 +242,7 @@ macro checkSwitchToJITForLoop()
 end
 
 macro checkSwitchToJITForEpilogue()
-    if WEBASSEMBLY_OMGJIT
+    if WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT
     checkSwitchToJIT(
         10,
         macro ()
@@ -339,11 +339,11 @@ macro usePreviousFrame()
     end
 end
 
-macro reloadMemoryRegistersFromInstance(instance, scratch1, scratch2)
+macro reloadMemoryRegistersFromInstance(instance, scratch1)
 if not ARMv7
     loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
     loadp Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
-    cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, scratch1, scratch2) # If boundsCheckingSize is 0, pointer can be a nullptr.
+    cagedPrimitiveMayBeNull(memoryBase, scratch1) # If boundsCheckingSize is 0, pointer can be a nullptr.
 end
 end
 
@@ -389,7 +389,7 @@ macro wasmPrologue()
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0)
 
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
@@ -482,10 +482,10 @@ end
 
 # Tier up immediately, while saving full vectors in argument FPRs
 macro wasmPrologueSIMD()
-if WEBASSEMBLY_OMGJIT and not ARMv7
+if (WEBASSEMBLY_BBQJIT or WEBASSEMBLY_OMGJIT) and not ARMv7
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0)
 
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
@@ -861,7 +861,7 @@ slowWasmOp(struct_set)
 
 wasmOp(grow_memory, WasmGrowMemory, macro(ctx)
     callWasmSlowPath(_slow_path_wasm_grow_memory)
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0)
     dispatch(ctx)
 end)
 
@@ -995,25 +995,39 @@ wasmOp(ret_void, WasmRetVoid, macro(ctx)
 end)
 
 macro slowPathForWasmCall(ctx, slowPath, storeWasmInstance)
+    # First, prepare the new stack frame
+    # We do this before the CCall so it can write stuff into the new frame from CPP
+    wgetu(ctx, m_stackOffset, ws1)
+    lshifti 3, ws1
+if ARMv7
+    subp cfr, ws1, ws1
+    move ws1, sp
+else
+    subp cfr, ws1, sp
+end
+
+if ASSERT_ENABLED
+    if ARMv7
+        move 0xBEEF, a0
+        storep a0, PayloadOffset + Callee[sp]
+        move 0, a0
+        storep a0, TagOffset + Callee[sp]
+    else
+        move 0xBEEF, a0
+        storep a0, Callee[sp]
+    end
+end
+
     callWasmCallSlowPath(
         slowPath,
         # callee is r0 and targetWasmInstance is r1
         macro (calleeEntryPoint, targetWasmInstance)
-            move calleeEntryPoint, ws0
-
             loadi CallSiteIndex[cfr], PC
+
+            move calleeEntryPoint, ws0
 
             # the call might throw (e.g. indirect call with bad signature)
             btpz targetWasmInstance, .throw
-
-            wgetu(ctx, m_stackOffset, ws1)
-            lshifti 3, ws1
-if ARMv7
-            subp cfr, ws1, ws1
-            move ws1, sp
-else
-            subp cfr, ws1, sp
-end
 
             wgetu(ctx, m_numberOfStackArgs, ws1)
 
@@ -1021,7 +1035,7 @@ end
             move wasmInstance, PB
 
             storeWasmInstance(targetWasmInstance)
-            reloadMemoryRegistersFromInstance(targetWasmInstance, wa0, wa1)
+            reloadMemoryRegistersFromInstance(targetWasmInstance, wa0)
             loadp Wasm::Instance::m_owner[wasmInstance], wa0
             storep wa0, ThisArgumentOffset[sp] # Anchor new JSWebAssemblyInstance in ThisArgumentOffset.
 
@@ -1140,7 +1154,7 @@ end
             loadi CallSiteIndex[cfr], PC
 
             storeWasmInstance(wasmInstance)
-            reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+            reloadMemoryRegistersFromInstance(wasmInstance, ws0)
 
             dispatch(ctx)
 
@@ -1173,7 +1187,7 @@ else
 end
 
             storeWasmInstance(targetWasmInstance)
-            reloadMemoryRegistersFromInstance(targetWasmInstance, wa0, wa1)
+            reloadMemoryRegistersFromInstance(targetWasmInstance, wa0)
 
             wgetu(ctx, m_numberOfCalleeStackArgs, ws1)
 
@@ -2136,7 +2150,7 @@ macro commonCatchImpl(ctx)
     restoreStackPointerAfterCall()
 
     loadp CodeBlock[cfr], wasmInstance
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0)
 
     loadp UnboxedWasmCalleeStackSlot[cfr], PB
     loadp Wasm::LLIntCallee::m_instructionsRawPointer[PB], PB

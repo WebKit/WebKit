@@ -95,8 +95,6 @@ SOFT_LINK_CONSTANT(UIFoundation, NSBackgroundColorDocumentAttribute, NSString *)
 #define NSBackgroundColorDocumentAttribute getNSBackgroundColorDocumentAttribute()
 SOFT_LINK_CONSTANT(UIFoundation, NSMarkedClauseSegmentAttributeName, NSString *)
 #define NSMarkedClauseSegmentAttributeName getNSMarkedClauseSegmentAttributeName()
-SOFT_LINK_CONSTANT(UIFoundation, NSTextAlternativesAttributeName, NSString *)
-#define NSTextAlternativesAttributeName getNSTextAlternativesAttributeName()
 
 #import <UIKit/NSTextList.h>
 SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerCircle, NSTextListMarkerFormat)

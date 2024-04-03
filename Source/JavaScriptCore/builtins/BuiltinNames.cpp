@@ -111,7 +111,7 @@ struct CharBufferSeacher {
 
     static bool equal(const String& str, const Buffer& buf)
     {
-        return WTF::equal(str.impl(), buf.characters, buf.length);
+        return WTF::equal(str.impl(), buf.characters);
     }
 };
 
@@ -137,47 +137,47 @@ static SymbolImpl* lookUpWellKnownSymbolImpl(const BuiltinNames::WellKnownSymbol
     return iterator->value;
 }
 
-PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const LChar* characters, unsigned length) const
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const LChar> characters) const
 {
-    LCharBuffer buffer { characters, length };
+    LCharBuffer buffer { characters };
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
-PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const UChar* characters, unsigned length) const
+PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(std::span<const UChar> characters) const
 {
-    UCharBuffer buffer { characters, length };
+    UCharBuffer buffer { characters };
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
 PrivateSymbolImpl* BuiltinNames::lookUpPrivateName(const String& string) const
 {
     if (string.is8Bit()) {
-        LCharBuffer buffer { string.characters8(), string.length(), string.hash() };
+        LCharBuffer buffer { string.span8(), string.hash() };
         return lookUpPrivateNameImpl(m_privateNameSet, buffer);
     }
-    UCharBuffer buffer { string.characters16(), string.length(), string.hash() };
+    UCharBuffer buffer { string.span16(), string.hash() };
     return lookUpPrivateNameImpl(m_privateNameSet, buffer);
 }
 
-SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const LChar* characters, unsigned length) const
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const LChar> characters) const
 {
-    LCharBuffer buffer { characters, length };
+    LCharBuffer buffer { characters };
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 
-SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const UChar* characters, unsigned length) const
+SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(std::span<const UChar> characters) const
 {
-    UCharBuffer buffer { characters, length };
+    UCharBuffer buffer { characters };
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 
 SymbolImpl* BuiltinNames::lookUpWellKnownSymbol(const String& string) const
 {
     if (string.is8Bit()) {
-        LCharBuffer buffer { string.characters8(), string.length(), string.hash() };
+        LCharBuffer buffer { string.span8(), string.hash() };
         return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
     }
-    UCharBuffer buffer { string.characters16(), string.length(), string.hash() };
+    UCharBuffer buffer { string.span16(), string.hash() };
     return lookUpWellKnownSymbolImpl(m_wellKnownSymbolsMap, buffer);
 }
 

@@ -50,13 +50,13 @@ void TextCodecReplacement::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecReplacement::decode(const char*, size_t, bool, bool, bool& sawError)
+String TextCodecReplacement::decode(std::span<const uint8_t>, bool, bool, bool& sawError)
 {
     sawError = true;
     if (m_sentEOF)
         return emptyString();
     m_sentEOF = true;
-    return String { &replacementCharacter, 1 };
+    return span(replacementCharacter);
 }
 
 Vector<uint8_t> TextCodecReplacement::encode(StringView string, UnencodableHandling) const

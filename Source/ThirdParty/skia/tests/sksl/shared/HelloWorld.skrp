@@ -1,0 +1,12 @@
+4 instructions
+
+[immutable slots]
+i0 = 0
+i1 = 0x3F800000 (1.0)
+i2 = 0
+i3 = 0x3F800000 (1.0)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_4_immutables_unmasked     $0..3 = i0..3 [0, 0x3F800000 (1.0), 0, 0x3F800000 (1.0)]
+load_src                       src.rgba = $0..3

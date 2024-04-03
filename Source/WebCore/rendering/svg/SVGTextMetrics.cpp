@@ -45,19 +45,16 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     ASSERT(scalingFactor);
 
     const FontCascade& scaledFont = textRenderer.scaledFont();
-    int length = 0;
 
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
     m_width = scaledFont.width(run) / scalingFactor;
-    length = run.length();
     m_glyph.name = emptyString();
-    m_height = scaledFont.metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = scaledFont.metricsOfPrimaryFont().height() / scalingFactor;
 
-    m_glyph.unicodeString = run.is8Bit() ? String(run.characters8(), length) : String(run.characters16(), length);
+    m_glyph.unicodeString = run.text().toString();
     m_glyph.isValid = true;
 
-    ASSERT(length >= 0);
-    m_length = static_cast<unsigned>(length);
+    m_length = static_cast<unsigned>(run.length());
 }
 
 TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned position, unsigned length)
@@ -87,7 +84,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned length, float
     ASSERT(scalingFactor);
 
     m_width = width / scalingFactor;
-    m_height = text.scaledFont().metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = text.scaledFont().metricsOfPrimaryFont().height() / scalingFactor;
 
     m_length = length;
 }

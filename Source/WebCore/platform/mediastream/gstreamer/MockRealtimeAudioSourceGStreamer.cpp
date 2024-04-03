@@ -64,7 +64,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     auto source = adoptRef(*new MockRealtimeAudioSourceGStreamer(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts)));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
     }
 
     return CaptureSourceOrError(WTFMove(source));
@@ -143,6 +143,10 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         uint32_t bipBopStart = m_samplesRendered % m_bipBopBuffer.size();
         uint32_t bipBopRemain = m_bipBopBuffer.size() - bipBopStart;
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
+
+        // We might have stopped producing data. Break out of the loop earlier if that happens.
+        if (!m_caps)
+            break;
 
         ASSERT(m_streamFormat);
         const auto& info = m_streamFormat->getInfo();

@@ -37,7 +37,6 @@
 #include "ExceptionOr.h"
 #include "MediaStreamRequest.h"
 #include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -53,7 +52,6 @@ namespace WebCore {
 class CaptureDevice;
 class CaptureDeviceManager;
 class RealtimeMediaSourceSettings;
-class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
 
 struct MediaConstraints;
@@ -73,7 +71,7 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
 
     using ValidConstraintsHandler = Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs)>;
-    using InvalidConstraintsHandler = Function<void(const String& invalidConstraint)>;
+    using InvalidConstraintsHandler = Function<void(MediaConstraintType)>;
     WEBCORE_EXPORT void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, MediaDeviceHashSalts&&);
 
     using NewMediaStreamHandler = Function<void(Expected<Ref<MediaStreamPrivate>, CaptureSourceError>&&)>;
@@ -81,8 +79,6 @@ public:
 
     WEBCORE_EXPORT void getMediaStreamDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&&);
     WEBCORE_EXPORT std::optional<RealtimeMediaSourceCapabilities> getCapabilities(const CaptureDevice&);
-
-    const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
     WEBCORE_EXPORT AudioCaptureFactory& audioCaptureFactory();
     WEBCORE_EXPORT void setAudioCaptureFactory(AudioCaptureFactory&);
@@ -109,11 +105,12 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
     void setIdentity(OSObjectPtr<tcc_identity_t>&& identity) { m_identity = WTFMove(identity); }
     OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
+    bool hasIdentity() const { return !!m_identity; }
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     const String& currentMediaEnvironment() const;
-    void setCurrentMediaEnvironment(const String&);
+    void setCurrentMediaEnvironment(String&&);
 #endif
 
 private:
@@ -129,12 +126,10 @@ private:
         CaptureDevice device;
     };
 
-    void getDisplayMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>&, String&);
-    void getUserMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
+    void getDisplayMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>&, MediaConstraintType&);
+    void getUserMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, MediaConstraintType&);
     void validateRequestConstraintsAfterEnumeration(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, MediaDeviceHashSalts&&);
     void enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateDisplay, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&&);
-
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     RunLoop::Timer m_debounceTimer;
     void triggerDevicesChangedObservers();

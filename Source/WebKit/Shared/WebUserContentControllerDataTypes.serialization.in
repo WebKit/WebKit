@@ -22,21 +22,21 @@
 
 header: "WebUserContentControllerDataTypes.h"
 [CustomHeader] struct WebKit::WebUserScriptData {
-    uint64_t identifier;
+    WebKit::UserScriptIdentifier identifier;
     WebKit::ContentWorldIdentifier worldIdentifier;
     WebCore::UserScript userScript;
 }
 
 header: "WebUserContentControllerDataTypes.h"
 [CustomHeader] struct WebKit::WebUserStyleSheetData {
-    uint64_t identifier;
+    WebKit::UserStyleSheetIdentifier identifier;
     WebKit::ContentWorldIdentifier worldIdentifier;
     WebCore::UserStyleSheet userStyleSheet;
 }
 
 header: "WebUserContentControllerDataTypes.h"
 [CustomHeader] struct WebKit::WebScriptMessageHandlerData {
-    uint64_t identifier;
+    WebKit::ScriptMessageHandlerIdentifier identifier;
     WebKit::ContentWorldIdentifier worldIdentifier;
     String name;
 }

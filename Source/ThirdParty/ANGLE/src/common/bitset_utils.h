@@ -132,6 +132,15 @@ class BitSetT final
     constexpr bool none() const;
     constexpr std::size_t count() const;
 
+    // Returns true iff there are unset bits prior
+    // to the most significant bit set. For example:
+    // 0b0000 - false
+    // 0b0001 - false
+    // 0b0011 - false
+    // 0b0010 - true
+    // 0b0101 - true
+    constexpr bool hasGaps() const;
+
     constexpr static std::size_t size() { return N; }
 
     constexpr BitSetT &operator&=(const BitSetT &other);
@@ -250,6 +259,13 @@ template <size_t N, typename BitsT, typename ParamT>
 constexpr std::size_t BitSetT<N, BitsT, ParamT>::count() const
 {
     return gl::BitCount(mBits);
+}
+
+template <size_t N, typename BitsT, typename ParamT>
+constexpr bool BitSetT<N, BitsT, ParamT>::hasGaps() const
+{
+    ASSERT(mBits == (mBits & Mask(N).bits()));
+    return (mBits != Mask(N).bits()) && ((mBits & (mBits + 1)) != 0);
 }
 
 template <size_t N, typename BitsT, typename ParamT>

@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 738x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (53,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 305x18
               text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=17464"
-          RenderText {#text} at (357,0) size 738x36
+          RenderText {#text} at (0,0) size 738x36
             text run at (357,0) width 5: " "
             text run at (361,0) width 377: "REGRESSION: Crash in RenderBlock::findNextLineBreak"
             text run at (0,18) width 253: "reading r30444 commit email in GMail"

@@ -28,15 +28,14 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "RemoteVideoFrameIdentifier.h"
-#include "SharedMemory.h"
 #include "SharedVideoFrame.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "VideoCodecType.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoDecoder.h>
 #include <atomic>
@@ -86,8 +85,8 @@ private:
     void createDecoder(VideoDecoderIdentifier, VideoCodecType, const String& codecString, bool useRemoteFrames, bool enableAdditionalLogging, CompletionHandler<void(bool)>&&);
     void releaseDecoder(VideoDecoderIdentifier);
     void flushDecoder(VideoDecoderIdentifier);
-    void setDecoderFormatDescription(VideoDecoderIdentifier, const IPC::DataReference&, uint16_t width, uint16_t height);
-    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, const IPC::DataReference&);
+    void setDecoderFormatDescription(VideoDecoderIdentifier, std::span<const uint8_t>, uint16_t width, uint16_t height);
+    void decodeFrame(VideoDecoderIdentifier, int64_t timeStamp, std::span<const uint8_t>);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
     void createEncoder(VideoEncoderIdentifier, VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
@@ -97,7 +96,7 @@ private:
     void flushEncoder(VideoEncoderIdentifier, CompletionHandler<void()>&&);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
     void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(VideoEncoderIdentifier, SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(VideoEncoderIdentifier, WebCore::SharedMemory::Handle&&);
     void setRTCLoggingLevel(WTFLogLevel);
 
     void notifyEncoderResult(VideoEncoderIdentifier, bool);

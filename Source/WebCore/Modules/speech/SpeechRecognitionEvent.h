@@ -49,8 +49,6 @@ private:
     SpeechRecognitionEvent(const AtomString&, Init&&, IsTrusted);
     SpeechRecognitionEvent(const AtomString&, uint64_t resultIndex, RefPtr<SpeechRecognitionResultList>&&);
 
-    EventInterface eventInterface() const final;
-
     uint64_t m_resultIndex;
     RefPtr<SpeechRecognitionResultList> m_results;
 };

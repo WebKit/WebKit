@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 28: "note"
         RenderText {#text} at (27,0) size 5x19
           text run at (27,0) width 5: " "
-        RenderInline {A} at (0,0) size 74x19 [color=#551A8B]
+        RenderInline {A} at (31,0) size 74x19 [color=#551A8B]
           RenderText {#text} at (31,0) size 74x19
             text run at (31,0) width 74: "closepopup"
         RenderText {#text} at (0,0) size 0x0

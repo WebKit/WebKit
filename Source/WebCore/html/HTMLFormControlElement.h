@@ -102,9 +102,7 @@ public:
     const AtomString& popoverTargetAction() const;
     void setPopoverTargetAction(const AtomString& value);
 
-    RefPtr<HTMLElement> invokeTargetElement() const;
-    const AtomString& invokeAction() const;
-    void setInvokeAction(const AtomString& value);
+    RefPtr<Element> invokeTargetElement() const;
 
     using Node::ref;
     using Node::deref;

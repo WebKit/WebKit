@@ -38,14 +38,14 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIMenus : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIMenus, menus);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIMenus, menus, menus);
 
 public:
 #if PLATFORM(COCOA)
     using ClickHandlerMap = HashMap<String, Ref<WebExtensionCallbackHandler>>;
 
-    id createMenu(WebPage*, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void update(WebPage*, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    id createMenu(WebPage&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(WebPage&, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void remove(id identifier, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void removeAll(Ref<WebExtensionCallbackHandler>&&);

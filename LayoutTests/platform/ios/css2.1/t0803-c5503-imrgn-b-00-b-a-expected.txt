@@ -9,7 +9,7 @@ layer at (0,0) size 800x241
       RenderBlock {P} at (0,36) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
         RenderText {#text} at (0,-1) size 112x17
           text run at (0,-1) width 112: "xxx xxx"
-        RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (0,15) size 112x17 [bgcolor=#00FF00]
           RenderText {#text} at (0,15) size 112x17
             text run at (0,15) width 112: "xxx xxx"
         RenderText {#text} at (0,31) size 112x17
@@ -17,7 +17,7 @@ layer at (0,0) size 800x241
       RenderBlock {P} at (0,100) size 160x48 [color=#FFA500] [bgcolor=#FFFF00]
         RenderText {#text} at (0,-1) size 112x17
           text run at (0,-1) width 112: "xxx xxx"
-        RenderInline {SPAN} at (0,0) size 112x17 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (0,15) size 112x17 [bgcolor=#00FF00]
           RenderText {#text} at (0,15) size 112x17
             text run at (0,15) width 112: "xxx xxx"
         RenderText {#text} at (0,31) size 112x17

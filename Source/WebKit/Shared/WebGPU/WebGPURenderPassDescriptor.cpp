@@ -68,7 +68,7 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
 
     auto timestampWrites = renderPassDescriptor.timestampWrites ? convertToBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites) } };
+    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites), renderPassDescriptor.maxDrawCount } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::convertFromBacking(const RenderPassDescriptor& renderPassDescriptor)
@@ -106,7 +106,7 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
 
     auto timestampWrites = renderPassDescriptor.timestampWrites ? convertFromBacking(*renderPassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites) } };
+    return { { WTFMove(*base), WTFMove(colorAttachments), WTFMove(depthStencilAttachment), occlusionQuerySet, WTFMove(timestampWrites), renderPassDescriptor.maxDrawCount } };
 }
 
 } // namespace WebKit

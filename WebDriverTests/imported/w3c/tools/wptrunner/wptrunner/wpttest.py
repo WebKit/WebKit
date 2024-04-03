@@ -1,10 +1,10 @@
 # mypy: allow-untyped-defs
-
 import os
 import subprocess
 import sys
+from abc import ABC
 from collections import defaultdict
-from typing import Any, ClassVar, Dict, Type
+from typing import Any, ClassVar, Dict, Optional, Type
 from urllib.parse import urljoin
 
 from .wptmanifest.parser import atoms
@@ -13,7 +13,7 @@ atom_reset = atoms["Reset"]
 enabled_tests = {"testharness", "reftest", "wdspec", "crashtest", "print-reftest"}
 
 
-class Result:
+class Result(ABC):
     def __init__(self,
                  status,
                  message,
@@ -34,7 +34,7 @@ class Result:
         return f"<{self.__module__}.{self.__class__.__name__} {self.status}>"
 
 
-class SubtestResult:
+class SubtestResult(ABC):
     def __init__(self, name, status, message, stack=None, expected=None, known_intermittent=None):
         self.name = name
         if status not in self.statuses:
@@ -86,12 +86,11 @@ def get_run_info(metadata_root, product, **kwargs):
 
 
 class RunInfo(Dict[str, Any]):
-    def __init__(self, metadata_root, product, debug,
+    def __init__(self, metadata_root, product_name, debug,
                  browser_version=None,
                  browser_channel=None,
                  verify=None,
                  extras=None,
-                 enable_webrender=False,
                  device_serials=None,
                  adb_binary=None):
         import mozinfo
@@ -108,7 +107,7 @@ class RunInfo(Dict[str, Any]):
             self["revision"] = rev.decode("utf-8")
 
         self["python_version"] = sys.version_info.major
-        self["product"] = product
+        self["product"] = product_name
         if debug is not None:
             self["debug"] = debug
         elif "debug" not in self:
@@ -126,8 +125,6 @@ class RunInfo(Dict[str, Any]):
             self.update(extras)
         if "headless" not in self:
             self["headless"] = False
-
-        self["webrender"] = enable_webrender
 
         if adb_binary:
             self["adb_binary"] = adb_binary
@@ -206,11 +203,10 @@ def server_protocol(manifest_item):
     return "http"
 
 
-class Test:
-
-    result_cls = None  # type: ClassVar[Type[Result]]
-    subtest_result_cls = None  # type: ClassVar[Type[SubtestResult]]
-    test_type = None  # type: ClassVar[str]
+class Test(ABC):
+    result_cls: ClassVar[Type[Result]]
+    subtest_result_cls: ClassVar[Optional[Type[SubtestResult]]] = None
+    test_type: ClassVar[str]
     pac = None
 
     default_timeout = 10  # seconds
@@ -396,6 +392,19 @@ class Test:
             prefs.update(meta_prefs)
         return prefs
 
+    def expected_fail_message(self, subtest):
+        if subtest is None:
+            return None
+
+        metadata = self._get_metadata(subtest)
+        if metadata is None:
+            return None
+
+        try:
+            return metadata.get("expected-fail-message")
+        except KeyError:
+            return None
+
     def expected(self, subtest=None):
         if subtest is None:
             default = self.result_cls.default_expected
@@ -440,17 +449,6 @@ class Test:
         except KeyError:
             return []
 
-    def expect_any_subtest_status(self):
-        metadata = self._get_metadata()
-        if metadata is None:
-            return False
-        try:
-            # This key is used by the Blink CI to ignore subtest statuses
-            metadata.get("blink_expect_any_subtest_status")
-            return True
-        except KeyError:
-            return False
-
     def __repr__(self):
         return f"<{self.__module__}.{self.__class__.__name__} {self.id}>"
 
@@ -492,14 +490,6 @@ class TestharnessTest(Test):
                    jsshell=jsshell,
                    scripts=scripts,
                    subdomain=manifest_item.subdomain)
-
-    @property
-    def id(self):
-        return self.url
-
-
-class ManualTest(Test):
-    test_type = "manual"
 
     @property
     def id(self):
@@ -718,7 +708,6 @@ class CrashTest(Test):
 manifest_test_cls = {"reftest": ReftestTest,
                      "print-reftest": PrintReftestTest,
                      "testharness": TestharnessTest,
-                     "manual": ManualTest,
                      "wdspec": WdspecTest,
                      "crashtest": CrashTest}
 

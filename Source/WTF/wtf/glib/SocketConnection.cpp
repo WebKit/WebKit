@@ -57,9 +57,7 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
     });
 }
 
-SocketConnection::~SocketConnection()
-{
-}
+SocketConnection::~SocketConnection() = default;
 
 bool SocketConnection::read()
 {

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Document.execCommand("insertHTML") throws.
+PASS Document.execCommand("insertHTML") works with a TrustedHTML argument.
+PASS Document.execCommand("paste") works as usual."
+PASS Document.execCommand("paste") works with a TrustedHTML argument.
+PASS Document.execCommand("insertHTML") works as usual with a default policy.
+PASS Document.execCommand("paste") works as usual with a default policy.
+

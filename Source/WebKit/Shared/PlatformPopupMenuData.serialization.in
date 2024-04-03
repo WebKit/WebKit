@@ -34,7 +34,7 @@ struct WebKit::PlatformPopupMenuData {
     int m_clientInsetRight;
     int m_popupWidth;
     int m_itemHeight;
-    RefPtr<WebKit::ShareableBitmap> m_notSelectedBackingStore;
-    RefPtr<WebKit::ShareableBitmap> m_selectedBackingStore;
+    RefPtr<WebCore::ShareableBitmap> m_notSelectedBackingStore;
+    RefPtr<WebCore::ShareableBitmap> m_selectedBackingStore;
 #endif
 };

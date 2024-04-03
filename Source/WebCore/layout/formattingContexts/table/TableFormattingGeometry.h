@@ -38,7 +38,7 @@ public:
     TableFormattingGeometry(const TableFormattingContext&);
 
     LayoutUnit cellBoxContentHeight(const ElementBox&) const;
-    Edges computedCellBorder(const TableGrid::Cell&) const;
+    BoxGeometry::Edges computedCellBorder(const TableGrid::Cell&) const;
     std::optional<LayoutUnit> computedColumnWidth(const ElementBox& columnBox) const;
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCellContent(const TableGrid::Cell&) const;
     InlineLayoutUnit usedBaselineForCell(const ElementBox& cellBox) const;

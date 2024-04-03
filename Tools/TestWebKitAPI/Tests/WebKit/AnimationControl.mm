@@ -77,8 +77,8 @@ TEST(WebKit, IsAnyAnimationAllowedToPlayBehaviorWithIndividualAnimationControl)
 
     [webView synchronouslyLoadHTMLString:@"<img id='imgOne' src='test-mse.mp4'><img id='imgTwo' src='test-without-audio-track.mp4'>"];
     [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
+    [webView stringByEvaluatingJavaScript:@"window.internals.setImageAnimationEnabled(false)"];
 
-    [webView _pauseAllAnimationsWithCompletionHandler:nil];
     while (isAnimating(@"imgOne", webView) || isAnimating(@"imgTwo", webView))
         TestWebKitAPI::Util::runFor(0.05_s);
     ASSERT_FALSE([webView _allowsAnyAnimationToPlay]);
@@ -100,5 +100,10 @@ TEST(WebKit, IsAnyAnimationAllowedToPlayBehaviorWithIndividualAnimationControl)
     while (![webView _allowsAnyAnimationToPlay])
         TestWebKitAPI::Util::runFor(0.05_s);
     ASSERT_TRUE([webView _allowsAnyAnimationToPlay]);
+
+    [webView _pauseAllAnimationsWithCompletionHandler:nil];
+    while (isAnimating(@"imgTwo", webView))
+        TestWebKitAPI::Util::runFor(0.05_s);
+    ASSERT_FALSE([webView _allowsAnyAnimationToPlay]);
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

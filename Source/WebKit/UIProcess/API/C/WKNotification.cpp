@@ -86,7 +86,7 @@ WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notificati
 
 uint64_t WKNotificationGetID(WKNotificationRef notification)
 {
-    return toImpl(notification)->notificationID();
+    return toImpl(notification)->identifier().toUInt64();
 }
 
 WKStringRef WKNotificationCopyDataStoreIdentifier(WKNotificationRef notification)
@@ -98,7 +98,7 @@ WKStringRef WKNotificationCopyDataStoreIdentifier(WKNotificationRef notification
 WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
 {
     auto identifier = toImpl(notification)->coreNotificationID();
-    auto span = identifier.toSpan();
+    auto span = identifier.span();
     return WKDataCreate(span.data(), span.size());
 }
 

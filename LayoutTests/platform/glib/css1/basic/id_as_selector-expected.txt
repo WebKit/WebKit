@@ -32,7 +32,7 @@ layer at (0,0) size 785x627
       RenderBlock {P} at (0,253) size 769x18 [color=#0000FF]
         RenderText {#text} at (0,0) size 200x17
           text run at (0,0) width 200: "This paragraph should be blue ["
-        RenderInline {TT} at (0,0) size 64x15
+        RenderInline {TT} at (200,3) size 64x15
           RenderText {#text} at (200,3) size 64x15
             text run at (200,3) width 64: "ID=\"two\""
         RenderText {#text} at (264,0) size 9x17
@@ -54,12 +54,12 @@ layer at (0,0) size 785x627
         RenderTableSection {TBODY} at (1,1) size 420x229
           RenderTableRow {TR} at (0,0) size 420x26
             RenderTableCell {TD} at (0,0) size 420x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 420x203
             RenderTableCell {TD} at (0,114) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,3) size 4x19
+              RenderText {#text} at (4,92) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 408x203 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 400x18 [color=#008000]
@@ -71,7 +71,7 @@ layer at (0,0) size 785x627
               RenderBlock {P} at (4,72) size 400x18 [color=#0000FF]
                 RenderText {#text} at (0,0) size 200x17
                   text run at (0,0) width 200: "This paragraph should be blue ["
-                RenderInline {TT} at (0,0) size 72x15
+                RenderInline {TT} at (200,3) size 72x15
                   RenderText {#text} at (200,3) size 72x15
                     text run at (200,3) width 72: "ID=\"five\""
                 RenderText {#text} at (272,0) size 9x17

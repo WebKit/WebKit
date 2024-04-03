@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "JITPlan.h"
 #include "LinkBuffer.h"
 #include <wtf/BubbleSort.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -45,12 +46,13 @@ JITSizeStatistics::Marker JITSizeStatistics::markStart(String identifier, CCallH
     return marker;
 }
 
-void JITSizeStatistics::markEnd(Marker marker, CCallHelpers& jit)
+void JITSizeStatistics::markEnd(Marker marker, CCallHelpers& jit, JITPlan& planRef)
 {
     CCallHelpers::Label end = jit.labelIgnoringWatchpoints();
+    auto* plan = &planRef;
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         size_t size = linkBuffer.locationOf<NoPtrTag>(end).untaggedPtr<char*>() - linkBuffer.locationOf<NoPtrTag>(marker.start).untaggedPtr<char*>();
-        linkBuffer.addMainThreadFinalizationTask([=, this] {
+        plan->addMainThreadFinalizationTask([=, this] {
             auto& entry = m_data.add(marker.identifier, Entry { }).iterator->value;
             ++entry.count;
             entry.totalBytes += size;

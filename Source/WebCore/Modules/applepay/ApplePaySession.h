@@ -110,7 +110,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const override { return ApplePaySessionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::ApplePaySession; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }

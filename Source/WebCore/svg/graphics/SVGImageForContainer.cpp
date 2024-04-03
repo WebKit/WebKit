@@ -27,13 +27,17 @@
 
 namespace WebCore {
 
-
 SVGImageForContainer::SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL)
     : m_image(image)
     , m_containerSize(containerSize)
     , m_containerZoom(containerZoom)
     , m_initialFragmentURL(initialFragmentURL)
 {
+}
+
+RefPtr<SVGImage> SVGImageForContainer::protectedImage() const
+{
+    return m_image.get();
 }
 
 FloatSize SVGImageForContainer::size(ImageOrientation) const
@@ -45,18 +49,18 @@ FloatSize SVGImageForContainer::size(ImageOrientation) const
 
 ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    return m_image->drawForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, dstRect, srcRect, options);
+    return protectedImage()->drawForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, dstRect, srcRect, options);
 }
 
 void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
-    m_image->drawPatternForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, srcRect, patternTransform, phase, spacing, dstRect, options);
+    protectedImage()->drawPatternForContainer(context, m_containerSize, m_containerZoom, m_initialFragmentURL, srcRect, patternTransform, phase, spacing, dstRect, options);
 }
 
-RefPtr<NativeImage> SVGImageForContainer::nativeImageForCurrentFrame()
+RefPtr<NativeImage> SVGImageForContainer::currentNativeImage()
 {
-    return m_image->nativeImageForCurrentFrame();
+    return protectedImage()->currentNativeImage();
 }
 
 } // namespace WebCore

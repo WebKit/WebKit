@@ -31,7 +31,6 @@
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeHost.h"
 #include "MessageSenderInlines.h"
-#include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebDisplayRefreshMonitor.h"
 #include "WebPage.h"
@@ -46,6 +45,7 @@
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/Region.h>
 #include <WebCore/Settings.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/SetForScope.h>
 
 #if USE(GLIB_EVENT_LOOP)
@@ -260,6 +260,12 @@ bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()
 
     enterAcceleratedCompositingMode(nullptr);
     return true;
+}
+
+void DrawingAreaCoordinatedGraphics::backgroundColorDidChange()
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->backgroundColorDidChange();
 }
 #endif
 

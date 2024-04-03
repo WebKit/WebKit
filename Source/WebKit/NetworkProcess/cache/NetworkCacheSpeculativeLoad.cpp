@@ -33,6 +33,7 @@
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <pal/SessionID.h>
 #include <wtf/RunLoop.h>
@@ -113,7 +114,7 @@ void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, Pr
     if (m_response.isMultipart())
         m_bufferedDataForCache.reset();
 
-    bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
+    bool validationSucceeded = m_response.httpStatusCode() == httpStatus304NotModified;
     if (validationSucceeded && m_cacheEntry)
         m_cacheEntry = m_cache->update(m_originalRequest, *m_cacheEntry, m_response, privateRelayed);
     else

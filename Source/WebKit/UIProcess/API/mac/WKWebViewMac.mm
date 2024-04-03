@@ -36,12 +36,18 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "WebTextReplacementData.h"
+#import "WebUnifiedTextReplacementContextData.h"
 #import "WebViewImpl.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKHitTestResultInternal.h"
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
+#endif
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -1056,6 +1062,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 #endif // HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewMacAdditionsAfter.mm>
+#endif
 
 @end
 

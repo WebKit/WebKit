@@ -8,8 +8,8 @@ layer at (0,0) size 800x116
           text run at (0,0) width 245: "The next two bars should be identical:"
       RenderBlock {DIV} at (0,36) size 160x20
         RenderBlock {P} at (0,0) size 240x20 [color=#FFFF00] [bgcolor=#000080]
-          RenderText {#text} at (0,0) size 39x19
-            text run at (0,0) width 39: "TEST"
+          RenderText {#text} at (0,0) size 38x19
+            text run at (0,0) width 38: "TEST"
       RenderBlock {DIV} at (0,72) size 240x20 [color=#FFFF00] [bgcolor=#000080]
-        RenderText {#text} at (0,0) size 39x19
-          text run at (0,0) width 39: "TEST"
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "TEST"

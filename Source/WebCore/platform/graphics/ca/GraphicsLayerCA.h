@@ -152,6 +152,7 @@ public:
 #endif
     WEBCORE_EXPORT void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) override;
+    WEBCORE_EXPORT void setContentsToRemotePlatformContext(LayerHostingContextIdentifier, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     WEBCORE_EXPORT PlatformLayerIdentifier setContentsToAsyncDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>, ContentsLayerPurpose);
@@ -204,9 +205,13 @@ public:
 
     WEBCORE_EXPORT RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate*) override;
 
+    WEBCORE_EXPORT void markFrontBufferVolatileForTesting() override;
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     WEBCORE_EXPORT void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&) override;
 #endif
+
+    WEBCORE_EXPORT void purgeFrontBufferForTesting() override;
+    WEBCORE_EXPORT void purgeBackBufferForTesting() override;
 
 private:
     bool isGraphicsLayerCA() const override { return true; }
@@ -236,8 +241,9 @@ private:
     WEBCORE_EXPORT bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
     WEBCORE_EXPORT bool platformCALayerUseGiantTiles() const override;
-    WEBCORE_EXPORT bool platformCALayerUseCSS3DTransformInteroperability() const override;
+    WEBCORE_EXPORT bool platformCALayerCSSUnprefixedBackdropFilterEnabled() const override;
     WEBCORE_EXPORT void platformCALayerLogFilledVisibleFreshTile(unsigned) override;
+    WEBCORE_EXPORT bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const override;
     bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const override { return client().layerContainsBitmapOnly(this); }
     bool platformCALayerShouldPaintUsingCompositeCopy() const override { return shouldPaintUsingCompositeCopy(); }
 
@@ -267,6 +273,7 @@ private:
 
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
     virtual Ref<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
+    virtual Ref<PlatformCALayer> createPlatformCALayer(LayerHostingContextIdentifier, PlatformCALayerClient*);
 #if ENABLE(MODEL_ELEMENT)
     virtual Ref<PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner);
 #endif

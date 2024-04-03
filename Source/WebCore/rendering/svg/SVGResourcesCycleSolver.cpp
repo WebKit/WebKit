@@ -71,11 +71,9 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceCont
 
 void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResources& resources)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Verify that LBSE does not make use of SVGResourcesCache.
     if (renderer.document().settings().layerBasedSVGEngineEnabled())
         RELEASE_ASSERT_NOT_REACHED();
-#endif
 
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> localResources;
     resources.buildSetOfResources(localResources);

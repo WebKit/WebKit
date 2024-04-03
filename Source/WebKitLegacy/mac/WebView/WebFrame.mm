@@ -968,7 +968,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (WebCore::MIMETypeRegistry::isTextMIMEType(mimeType)
         || WebCore::Image::supportsType(mimeType)
-        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::AllPlugins) && frame->arePluginsEnabled())
+        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::AllPlugins))
         || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::OnlyApplicationPlugins)))
         return NO;
 
@@ -1772,7 +1772,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     PAL::TextEncoding encoding(textEncodingName);
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
-    return encoding.decode(reinterpret_cast<const char*>([data bytes]), [data length]);
+    return encoding.decode(span(data));
 }
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
@@ -2139,7 +2139,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)setAccessibleName:(NSString *)name
 {
-#if ENABLE(ACCESSIBILITY)
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         return;
     
@@ -2149,23 +2148,16 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto* rootObject = _private->coreFrame->document()->axObjectCache()->rootObject();
     if (rootObject)
         rootObject->setAccessibleName(AtomString { name });
-#endif
 }
 
 - (BOOL)enhancedAccessibilityEnabled
 {
-#if ENABLE(ACCESSIBILITY)
     return WebCore::AXObjectCache::accessibilityEnhancedUserInterfaceEnabled();
-#else
-    return NO;
-#endif
 }
 
 - (void)setEnhancedAccessibility:(BOOL)enable
 {
-#if ENABLE(ACCESSIBILITY)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(enable);
-#endif
 }
 
 - (NSString*)_layerTreeAsText
@@ -2179,7 +2171,6 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (id)accessibilityRoot
 {
-#if ENABLE(ACCESSIBILITY)
     if (!WebCore::AXObjectCache::accessibilityEnabled()) {
         WebCore::AXObjectCache::enableAccessibility();
 #if !PLATFORM(IOS_FAMILY)
@@ -2206,9 +2197,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return rootObject->firstChild()->wrapper();
     
     return rootObject->wrapper();
-#else
-    return nil;
-#endif
 }
 
 - (void)_clearOpener

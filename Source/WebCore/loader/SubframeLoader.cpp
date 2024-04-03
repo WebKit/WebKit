@@ -79,6 +79,11 @@ FrameLoader::SubframeLoader::SubframeLoader(LocalFrame& frame)
 {
 }
 
+Ref<LocalFrame> FrameLoader::SubframeLoader::protectedFrame() const
+{
+    return m_frame.get();
+}
+
 void FrameLoader::SubframeLoader::clear()
 {
     m_containsPlugins = false;
@@ -88,11 +93,11 @@ void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& 
 {
     if (ownerElement.contentFrame())
         return;
-    m_frame.loader().client().createFrame(frameName, ownerElement);
+    protectedFrame()->checkedLoader()->client().createFrame(frameName, ownerElement);
     if (!ownerElement.contentFrame())
         return;
 
-    if (auto* contentDocument = downcast<LocalFrame>(ownerElement.contentFrame())->document())
+    if (RefPtr contentDocument = downcast<LocalFrame>(*ownerElement.contentFrame()).document())
         contentDocument->setReferrerPolicy(ownerElement.referrerPolicy());
 }
 
@@ -123,22 +128,22 @@ bool FrameLoader::SubframeLoader::resourceWillUsePlugin(const String& url, const
 
 bool FrameLoader::SubframeLoader::pluginIsLoadable(const URL& url)
 {
-    auto* document = m_frame.document();
-    if (document) {
+    if (RefPtr document = m_frame->document()) {
         if (document->isSandboxed(SandboxPlugins))
             return false;
 
-        if (!document->securityOrigin().canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
-            FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
+        Ref securityOrigin = document->securityOrigin();
+        if (!securityOrigin->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
+            FrameLoader::reportLocalLoadFailed(protectedFrame().ptr(), url.string());
             return false;
         }
 
         if (!portAllowed(url)) {
-            FrameLoader::reportBlockedLoadFailed(m_frame, url);
+            FrameLoader::reportBlockedLoadFailed(protectedFrame(), url);
             return false;
         }
 
-        if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(m_frame, document->securityOrigin(), url))
+        if (MixedContentChecker::shouldBlockRequestForRunnableContent(protectedFrame(), securityOrigin, url))
             return false;
     }
 
@@ -168,14 +173,14 @@ bool FrameLoader::SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerEle
 {
     String mimeType = explicitMIMEType;
     if (mimeType.isEmpty()) {
-        if (auto page = ownerElement.document().page())
+        if (RefPtr page = ownerElement.document().page())
             mimeType = findPluginMIMETypeFromURL(*page, url);
     }
 
     // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
     // as opposed to third-party code such as Flash. The user agent decides whether or not they are
     // permitted, rather than WebKit.
-    if (!(m_frame.arePluginsEnabled() || MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
+    if (!MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
         return false;
 
     if (!pluginIsLoadable(url))
@@ -220,7 +225,10 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     if (completedURL.protocolIsJavaScript())
         return false;
 
-    bool hasFallbackContent = is<HTMLObjectElement>(ownerElement) && downcast<HTMLObjectElement>(ownerElement).hasFallbackContent();
+    bool hasFallbackContent = [&] {
+        auto* objectElement = dynamicDowncast<HTMLObjectElement>(ownerElement);
+        return objectElement && objectElement->hasFallbackContent();
+    }();
 
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
@@ -258,9 +266,9 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
                 page->willChangeLocationInCompletelyLoadedSubframe();
         }
 
-        frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument->securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
+        frame->checkedNavigationScheduler()->scheduleLocationChange(initiatingDocument, initiatingDocument->protectedSecurityOrigin(), upgradedRequestURL, m_frame->loader().outgoingReferrer(), lockHistory, lockBackForwardList, WTFMove(stopDelayingLoadEvent));
     } else
-        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame.loader().outgoingReferrer());
+        frame = loadSubframe(ownerElement, upgradedRequestURL, frameName, m_frame->loader().outgoingReferrerURL());
 
     if (!frame)
         return nullptr;
@@ -269,51 +277,61 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
     return dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
 }
 
-RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const String& referrer)
+RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const AtomString& name, const URL& referrer)
 {
-    Ref protectedFrame { m_frame };
+    Ref frame = m_frame.get();
     Ref document = ownerElement.document();
 
     if (!document->securityOrigin().canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
-        FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
+        FrameLoader::reportLocalLoadFailed(frame.ptr(), url.string());
         return nullptr;
     }
 
     if (!portAllowed(url)) {
-        FrameLoader::reportBlockedLoadFailed(m_frame, url);
+        FrameLoader::reportBlockedLoadFailed(frame, url);
         return nullptr;
     }
 
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
-    if (!m_frame.page() || m_frame.page()->subframeCount() >= Page::maxNumberOfFrames)
+    if (!frame->page() || frame->page()->subframeCount() >= Page::maxNumberOfFrames)
         return nullptr;
 
-    if (m_frame.tree().depth() >= Page::maxFrameDepth)
+    if (frame->tree().depth() >= Page::maxFrameDepth)
         return nullptr;
 
     // Prevent initial empty document load from triggering load events.
     document->incrementLoadEventDelayCount();
 
-    auto frame = m_frame.loader().client().createFrame(name, ownerElement);
-    if (!frame)  {
-        m_frame.loader().checkCallImplicitClose();
+    RefPtr subFrame = frame->loader().client().createFrame(name, ownerElement);
+    if (!subFrame)  {
+        frame->checkedLoader()->checkCallImplicitClose();
         document->decrementLoadEventDelayCount();
         return nullptr;
     }
     ReferrerPolicy policy = ownerElement.referrerPolicy();
     if (policy == ReferrerPolicy::EmptyString)
         policy = document->referrerPolicy();
-    String referrerToUse = SecurityPolicy::generateReferrerHeader(policy, url, referrer, OriginAccessPatternsForWebProcess::singleton());
+    // For any new (about:blank) browsing context, step 16 of
+    // https://html.spec.whatwg.org/#creating-a-new-browsing-context requires
+    // setting the referrer to "the serialization of creator's URL" — that is,
+    // the full URL, without regard to Referrer Policy.
+    // And rather than doing this in SecurityPolicy::generateReferrerHeader,
+    // we do it here because per-spec, this should only happen when creating
+    // a new browsing context — and per step 13 of the spec algorithm at
+    // https://html.spec.whatwg.org/#initialise-the-document-object, should
+    // not happen when creating and initializing a new Document object (in
+    // which case, Referrer Policy is applied).
+    auto referrerToUse = url.isAboutBlank() ? referrer.string() : SecurityPolicy::generateReferrerHeader(policy, url, referrer, OriginAccessPatternsForWebProcess::singleton());
 
-    m_frame.loader().loadURLIntoChildFrame(url, referrerToUse, frame.get());
+    frame->checkedLoader()->loadURLIntoChildFrame(url, referrerToUse, subFrame.get());
 
     document->decrementLoadEventDelayCount();
 
     // The frame's onload handler may have removed it from the document.
-    if (!frame || !frame->tree().parent()) {
-        m_frame.loader().checkCallImplicitClose();
+    if (!subFrame || !subFrame->tree().parent()) {
+        frame->checkedLoader()->checkCallImplicitClose();
         return nullptr;
     }
 
@@ -323,14 +341,16 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // actually completed below. (Note that we set m_isComplete to false even for synchronous
     // loads, so that checkCompleted() below won't bail early.)
     // FIXME: Can we remove this entirely? m_isComplete normally gets set to false when a load is committed.
-    frame->loader().started();
+    subFrame->checkedLoader()->started();
    
-    auto* renderer = ownerElement.renderer();
-    auto* view = frame->view();
-    if (is<RenderWidget>(renderer) && view)
-        downcast<RenderWidget>(*renderer).setWidget(view);
+    {
+        CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(ownerElement.renderer());
+        RefPtr view = subFrame->view();
+        if (renderWidget && view)
+            renderWidget->setWidget(WTFMove(view));
+    }
 
-    m_frame.loader().checkCallImplicitClose();
+    frame->checkedLoader()->checkCallImplicitClose();
 
     // Some loads are performed synchronously (e.g., about:blank and loads
     // cancelled by returning a null ResourceRequest from requestFromDelegate).
@@ -341,23 +361,24 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // FIXME: In this case the Frame will have finished loading before 
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
-    if (frame->loader().state() == FrameState::Complete && !frame->loader().policyDocumentLoader())
-        frame->loader().checkCompleted();
+    if (subFrame->loader().state() == FrameState::Complete && !subFrame->loader().policyDocumentLoader())
+        subFrame->checkedLoader()->checkCompleted();
 
-    if (!frame->tree().parent())
+    if (!subFrame->tree().parent())
         return nullptr;
 
-    return frame;
+    return subFrame;
 }
 
 bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool hasFallback, bool& useFallback)
 {
-    if (m_frame.loader().client().shouldAlwaysUsePluginDocument(mimeType)) {
+    Ref frame = m_frame.get();
+    if (frame->checkedLoader()->client().shouldAlwaysUsePluginDocument(mimeType)) {
         useFallback = false;
         return true;
     }
 
-    ObjectContentType objectType = m_frame.loader().client().objectContentType(url, mimeType);
+    ObjectContentType objectType = frame->checkedLoader()->client().objectContentType(url, mimeType);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
     useFallback = objectType == ObjectContentType::None && hasFallback;
@@ -370,47 +391,45 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
     if (useFallback)
         return false;
 
-    auto& document = pluginElement.document();
-    auto* renderer = pluginElement.renderEmbeddedObject();
+    Ref document = pluginElement.document();
+    WeakPtr renderer = pluginElement.renderEmbeddedObject();
 
     // FIXME: This code should not depend on renderer!
     if (!renderer)
         return false;
 
-    IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
-    bool loadManually = is<PluginDocument>(document) && !m_containsPlugins && downcast<PluginDocument>(document).shouldLoadPluginManually();
+    RefPtr pluginDocument = dynamicDowncast<PluginDocument>(document);
+    bool loadManually = pluginDocument && !m_containsPlugins && pluginDocument->shouldLoadPluginManually();
 
-    if (document.ownerElement() && document.settings().useImageDocumentForSubframePDF())
+    if (document->ownerElement() && document->settings().useImageDocumentForSubframePDF())
         loadManually = false;
 
-    WeakPtr weakRenderer { *renderer };
-
-    auto widget = m_frame.loader().client().createPlugin(contentSize, pluginElement, url, paramNames, paramValues, mimeType, loadManually);
+    auto widget = m_frame->loader().client().createPlugin(pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     // The call to createPlugin *may* cause this renderer to disappear from underneath.
-    if (!weakRenderer)
+    if (!renderer)
         return false;
 
     if (!widget) {
         if (!renderer->isPluginUnavailable())
-            renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
+            CheckedRef { *renderer }->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return false;
     }
 
-    renderer->setWidget(WTFMove(widget));
+    CheckedRef { *renderer }->setWidget(WTFMove(widget));
     m_containsPlugins = true;
     return true;
 }
 
 URL FrameLoader::SubframeLoader::completeURL(const String& url) const
 {
-    ASSERT(m_frame.document());
-    return m_frame.document()->completeURL(url);
+    ASSERT(m_frame->document());
+    return m_frame->protectedDocument()->completeURL(url);
 }
 
 bool FrameLoader::SubframeLoader::shouldConvertInvalidURLsToBlank() const
 {
-    return m_frame.settings().shouldConvertInvalidURLsToBlank();
+    return m_frame->settings().shouldConvertInvalidURLsToBlank();
 }
 
 } // namespace WebCore

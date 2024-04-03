@@ -73,9 +73,8 @@ RenderMarquee::~RenderMarquee() = default;
 int RenderMarquee::marqueeSpeed() const
 {
     int result = m_layer->renderer().style().marqueeSpeed();
-    Element* element = m_layer->renderer().element();
-    if (is<HTMLMarqueeElement>(element))
-        result = std::max(result, downcast<HTMLMarqueeElement>(*element).minimumDelay());
+    if (auto* marquee = dynamicDowncast<HTMLMarqueeElement>(m_layer->renderer().element()))
+        result = std::max(result, marquee->minimumDelay());
     return result;
 }
 

@@ -68,10 +68,11 @@ bool WebXRFrame::isOutsideNativeBoundsOfBoundedReferenceSpace(const WebXRSpace& 
 
 bool WebXRFrame::isLocalReferenceSpace(const WebXRSpace& space) const
 {
-    if (!is<WebXRReferenceSpace>(space))
+    auto* referenceSpace = dynamicDowncast<WebXRReferenceSpace>(space);
+    if (!referenceSpace)
         return false;
 
-    auto type = downcast<WebXRReferenceSpace>(space).type();
+    auto type = referenceSpace->type();
     if (type == XRReferenceSpaceType::Local || type == XRReferenceSpaceType::LocalFloor)
         return true;
 

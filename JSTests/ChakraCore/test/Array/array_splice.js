@@ -121,7 +121,7 @@ try
 }
 catch(e)
 {
- if (!e instanceof TypeError) throw(e);
+ if (!(e instanceof TypeError)) throw e;
  WScript.Echo(y);
  WScript.Echo(x);
 }
@@ -132,7 +132,7 @@ try
 }
 catch(e)
 {
- if (!e instanceof TypeError) throw(e);
+ if (!(e instanceof TypeError)) throw e;
  WScript.Echo(y);
  WScript.Echo(x);
 }
@@ -143,7 +143,7 @@ try
 }
  catch(e)
 {
- if (!e instanceof TypeError) throw(e);
+ if (!(e instanceof TypeError)) throw e;
  WScript.Echo(y);
  WScript.Echo(x);
 }

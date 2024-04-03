@@ -35,6 +35,7 @@
 #include "CSSHelper.h"
 #include "CSSPropertyParserHelpers.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "RenderStyle.h"

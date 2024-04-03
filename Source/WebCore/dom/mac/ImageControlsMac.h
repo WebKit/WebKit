@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class Element;
 class Event;
 class HTMLElement;
 class Node;
@@ -37,7 +38,7 @@ namespace ImageControlsMac {
 
 #if ENABLE(SERVICE_CONTROLS)
 
-bool isImageControlsButtonElement(const Node&);
+bool isImageControlsButtonElement(const Element&);
 bool isInsideImageControls(const Node&);
 void createImageControls(HTMLElement&);
 bool handleEvent(HTMLElement&, Event&);

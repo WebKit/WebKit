@@ -86,20 +86,20 @@ String createTemporaryZipArchive(const String& path)
         
         BOMCopier copier = BOMCopierNew();
         if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
-            temporaryFile = String::fromUTF8(archivePath);
+            temporaryFile = String::fromUTF8(archivePath.span());
         BOMCopierFree(copier);
     }];
     
     return temporaryFile;
 }
 
-String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHandle, StringView suffix)
+std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix)
 {
-    platformFileHandle = invalidPlatformFileHandle;
+    PlatformFileHandle platformFileHandle = invalidPlatformFileHandle;
 
     Vector<char> temporaryFilePath(PATH_MAX);
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.data(), temporaryFilePath.size()))
-        return String();
+        return { String(), invalidPlatformFileHandle };
 
     // Shrink the vector.
     temporaryFilePath.shrink(strlen(temporaryFilePath.data()));
@@ -107,20 +107,18 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHand
     ASSERT(temporaryFilePath.last() == '/');
 
     // Append the file name.
-    CString prefixUTF8 = prefix.utf8();
-    temporaryFilePath.append(prefixUTF8.data(), prefixUTF8.length());
-    temporaryFilePath.append("XXXXXX", 6);
+    temporaryFilePath.append(prefix.utf8().span());
+    temporaryFilePath.append("XXXXXX"_span);
     
     // Append the file name suffix.
     CString suffixUTF8 = suffix.utf8();
-    temporaryFilePath.append(suffixUTF8.data(), suffixUTF8.length());
-    temporaryFilePath.append('\0');
+    temporaryFilePath.append(suffixUTF8.spanIncludingNullTerminator());
 
     platformFileHandle = mkstemps(temporaryFilePath.data(), suffixUTF8.length());
     if (platformFileHandle == invalidPlatformFileHandle)
-        return String();
+        return { nullString(), invalidPlatformFileHandle };
 
-    return String::fromUTF8(temporaryFilePath.data());
+    return { String::fromUTF8(temporaryFilePath.data()), platformFileHandle };
 }
 
 NSString *createTemporaryDirectory(NSString *directoryPrefix)

@@ -29,18 +29,18 @@
 #include "CacheStorageStore.h"
 #include "NetworkCacheKey.h"
 #include <WebCore/RetrieveRecordsOptions.h>
+#include <wtf/Identified.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
 class CacheStorageManager;
 
-class CacheStorageCache : public CanMakeWeakPtr<CacheStorageCache> {
+class CacheStorageCache : public CanMakeWeakPtr<CacheStorageCache>, public Identified<WebCore::DOMCacheIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CacheStorageCache(CacheStorageManager&, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&&);
     ~CacheStorageCache();
-    WebCore::DOMCacheIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     const String& uniqueName() const { return m_uniqueName; }
     CacheStorageManager* manager();
@@ -67,7 +67,6 @@ private:
     WeakPtr<CacheStorageManager> m_manager;
     bool m_isInitialized { false };
     Vector<WebCore::DOMCacheEngine::CacheIdentifierCallback> m_pendingInitializationCallbacks;
-    WebCore::DOMCacheIdentifier m_identifier;
     String m_name;
     String m_uniqueName;
     HashMap<String, Vector<CacheStorageRecordInformation>> m_records;

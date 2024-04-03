@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (27,5) size 8x17
                     text run at (27,5) width 8: "1"
                 RenderTableCell {TD} at (50,5) size 517x28 [bgcolor=#FFCC33] [r=0 c=1 rs=1 cs=1]
-                  RenderInline {A} at (0,0) size 48x17 [color=#0000EE]
+                  RenderInline {A} at (5,5) size 48x17 [color=#0000EE]
                     RenderText {#text} at (5,5) size 48x17
                       text run at (5,5) width 48: "Believe"
                 RenderTableCell {TD} at (571,5) size 52x28 [bgcolor=#FFCC33] [r=0 c=2 rs=1 cs=1]
@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,38) size 784x54
             RenderBR {BR} at (784,0) size 0x17
             RenderBR {BR} at (784,18) size 0x17
-            RenderInline {A} at (0,0) size 134x17 [color=#0000EE]
-              RenderInline {FONT} at (0,0) size 134x17 [color=#FFCC33]
+            RenderInline {A} at (650,36) size 134x17 [color=#0000EE]
+              RenderInline {FONT} at (650,36) size 134x17 [color=#FFCC33]
                 RenderText {#text} at (650,36) size 134x17
                   text run at (650,36) width 83: "Back to the "
                   text run at (733,36) width 51: "index..."

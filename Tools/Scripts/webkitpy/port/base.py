@@ -77,7 +77,7 @@ from webkitpy.port import image_diff
 from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
 from webkitpy.port.image_diff import ImageDiffResult
-from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
+from webkitpy.layout_tests.servers import apache_http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
 
@@ -166,9 +166,6 @@ class Port(object):
 
     def architecture(self):
         return self.get_option('architecture') or self.DEFAULT_ARCHITECTURE
-
-    def set_architecture(self, arch):
-        self.set_option('architecture', arch)
 
     def additional_drt_flag(self):
         return []
@@ -316,10 +313,7 @@ class Port(object):
         return True
 
     def check_httpd(self):
-        if self._uses_apache():
-            httpd_path = self._path_to_apache()
-        else:
-            httpd_path = self._path_to_lighttpd()
+        httpd_path = self._path_to_apache()
 
         try:
             server_name = self._filesystem.basename(httpd_path)
@@ -396,27 +390,6 @@ class Port(object):
         if self.get_option('webkit_test_runner'):
             return 'WebKitTestRunner'
         return 'DumpRenderTree'
-
-    def expected_baselines_by_extension(self, test_name):
-        """Returns a dict mapping baseline suffix to relative path for each baseline in
-        a test. For reftests, it returns ".==" or ".!=" instead of the suffix."""
-        # FIXME: The name similarity between this and expected_baselines() below, is unfortunate.
-        # We should probably rename them both.
-        baseline_dict = {}
-        reference_files = self.reference_files(test_name)
-        if reference_files:
-            # FIXME: How should this handle more than one type of reftest?
-            baseline_dict['.' + reference_files[0][0]] = self.relative_test_filename(reference_files[0][1])
-
-        for extension in self.baseline_extensions():
-            path = self.expected_filename(test_name, extension, return_default=False)
-            baseline_dict[extension] = self.relative_test_filename(path) if path else path
-
-        return baseline_dict
-
-    def baseline_extensions(self):
-        """Returns a tuple of all of the non-reftest baseline extensions we use. The extensions include the leading '.'."""
-        return ('.wav', '.webarchive', '.txt', '.png')
 
     def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
         baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
@@ -551,7 +524,7 @@ class Port(object):
         text = string_utils.decode(self._filesystem.read_binary_file(baseline_path), target_type=str)
         return text.replace("\r\n", "\n")
 
-    _supported_reference_extensions = set(['.html', '.xml', '.xhtml', '.htm', '.svg', '.xht'])
+    _supported_reference_extensions = ('.html', '.xml', '.xhtml', '.htm', '.svg', '.xht')
 
     def reference_files(self, test_name, device_type=None):
         """Return a list of expectation (== or !=) and filename pairs"""
@@ -572,18 +545,6 @@ class Port(object):
                 self._filesystem.join(platform_dir, baseline_filename),
             ))
         return result
-
-    def potential_test_names_from_expected_file(self, path):
-        """Return potential test names if any from a potential expected file path, relative to LayoutTests directory."""
-
-        if not '-expected.' in path:
-            return None
-
-        if path.startswith('platform' + self._filesystem.sep):
-            steps = path.split(self._filesystem.sep)
-            path = self._filesystem.join(self._filesystem.sep.join(steps[2:]))
-
-        return [self.host.filesystem.relpath(test, self.layout_tests_dir()) for test in self._filesystem.glob(re.sub('-expected.*', '.*', self._filesystem.join(self.layout_tests_dir(), path))) if self._filesystem.isfile(test)]
 
     def test_key(self, test_name):
         """Turns a test name into a list with two sublists, the natural key of the
@@ -609,12 +570,6 @@ class Port(object):
                 return val
 
         return [(tryint(chunk), chunk) for chunk in re.split(r'(\d+)', string_to_split)]
-
-    def test_dirs(self):
-        """Returns the list of top-level test directories."""
-        layout_tests_dir = self.layout_tests_dir()
-        return filter(lambda x: self._filesystem.isdir(self._filesystem.join(layout_tests_dir, x)),
-                      self._filesystem.listdir(layout_tests_dir))
 
     @memoized
     def test_isfile(self, test_name):
@@ -783,18 +738,6 @@ class Port(object):
     def path_to_generic_test_expectations_file(self):
         return self._filesystem.join(self.layout_tests_dir(), 'TestExpectations')
 
-    @memoized
-    def path_to_test_expectations_file(self):
-        """Update the test expectations to the passed-in string.
-
-        This is used by the rebaselining tool. Raises NotImplementedError
-        if the port does not use expectations files."""
-
-        # FIXME: We need to remove this when we make rebaselining work with multiple files and just generalize expectations_files().
-
-        # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
-        return self._filesystem.join(self._webkit_baseline_path(self.port_name), 'TestExpectations')
-
     def relative_test_filename(self, filename):
         """Returns a test_name a relative unix-style path for a filename under the LayoutTests
         directory. Ports may legitimately return abspaths here if no relpath makes sense."""
@@ -812,12 +755,6 @@ class Port(object):
         host = target_host or self.host
         return host.filesystem.join(host.filesystem.map_base_host_path(self.layout_tests_dir()), test_name.replace(self.TEST_PATH_SEPARATOR, self.host.filesystem.sep))
 
-    def jsc_results_directory(self):
-        return self._build_path()
-
-    def bindings_results_directory(self):
-        return self._build_path()
-
     def results_directory(self):
         """Absolute path to the place to store the test results (uses --results-directory)."""
         if not self._results_directory:
@@ -827,9 +764,6 @@ class Port(object):
 
     def perf_results_directory(self):
         return self._build_path()
-
-    def python_unittest_results_directory(self):
-        return self._build_path('python-unittest-results')
 
     def default_results_directory(self):
         """Absolute path to the default place to store the test results."""
@@ -846,12 +780,6 @@ class Port(object):
         if self._image_differ:
             self._image_differ.stop()
             self._image_differ = None
-
-    # FIXME: os.environ access should be moved to onto a common/system class to be more easily mockable.
-    def _value_or_default_from_environ(self, name, default=None):
-        if name in os.environ:
-            return os.environ[name]
-        return default
 
     def _copy_value_from_environ_if_set(self, clean_env, name):
         if name in os.environ:
@@ -967,10 +895,7 @@ class Port(object):
             return
 
         http_port = self.get_option('http_port')
-        if self._uses_apache():
-            server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
-        else:
-            server = http_server.Lighttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
+        server = apache_http_server.LayoutTestApacheHttpd(self, self.results_directory(), additional_dirs=additional_dirs, port=http_port)
 
         server.start()
         self._http_server = server
@@ -1135,14 +1060,6 @@ class Port(object):
         and value being a list of valid configuration specifiers (such as ['xp', 'vista', 'win7'])."""
         return {}
 
-    def all_baseline_variants(self):
-        """Returns a list of platform names sufficient to cover all the baselines.
-
-        The list should be sorted so that a later platform  will reuse
-        an earlier platform's baselines if they are the same (e.g.,
-        'snowleopard' should precede 'leopard')."""
-        raise NotImplementedError
-
     def uses_test_expectations_file(self):
         # This is different from checking test_expectations() is None, because
         # some ports have Skipped files which are returned as part of test_expectations().
@@ -1241,9 +1158,6 @@ class Port(object):
     # The routines below should only be called by routines in this class
     # or any of its subclasses.
     #
-
-    def _uses_apache(self):
-        return True
 
     # FIXME: This does not belong on the port object.
     @memoized
@@ -1348,10 +1262,6 @@ class Port(object):
     def _path_to_user_cache_directory(self, suffix=None):
         return None
 
-    def _path_to_webcore_library(self):
-        """Returns the full path to a built copy of WebCore."""
-        return None
-
     def _path_to_helper(self):
         """Returns the full path to the layout_test_helper binary, which
         is used to help configure the system for the test run, or None
@@ -1387,18 +1297,6 @@ class Port(object):
 
     def path_to_api_test_binaries(self):
         return {binary: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}
-
-    def _path_to_lighttpd(self):
-        """Returns the path to the LigHTTPd binary.
-
-        This is needed only by ports that use the http_server.py module."""
-        raise NotImplementedError('Port._path_to_lighttpd')
-
-    def _path_to_lighttpd_modules(self):
-        """Returns the path to the LigHTTPd modules directory.
-
-        This is needed only by ports that use the http_server.py module."""
-        raise NotImplementedError('Port._path_to_lighttpd_modules')
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
@@ -1540,10 +1438,6 @@ class Port(object):
 
     def logging_detectors_to_strip_text_start(self, test_name):
         return []
-
-    def test_expectations_file_position(self):
-        # By default baseline search path schema is i.e. port-wk2 -> wk2 -> port -> generic, so port expectations file is at second to last position.
-        return 1
 
     def did_spawn_worker(self, worker_number):
         # This is overridden by ports that need to do work in the parent process after a worker subprocess is spawned,

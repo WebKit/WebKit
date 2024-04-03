@@ -24,7 +24,7 @@
 
 class WebKit::WebCompiledContentRuleListData {
     String identifier;
-    std::optional<WebKit::SharedMemoryHandle> createDataHandle();
+    std::optional<WebCore::SharedMemoryHandle> createDataHandle();
     size_t actionsOffset;
     size_t actionsSize;
     size_t urlFiltersBytecodeOffset;

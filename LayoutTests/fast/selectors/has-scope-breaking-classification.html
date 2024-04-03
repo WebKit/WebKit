@@ -1,0 +1,70 @@
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function testScopeBreaking(selector) {
+    if (!window.internals)
+        return;
+    const style = document.createElement("style");
+    style.textContent = selector + " { color:green }";
+    document.head.appendChild(style);
+    const isScopeBreaking = internals.hasScopeBreakingHasSelectors;
+    log.textContent += selector + (isScopeBreaking ? " IS scope breaking\n" : " is not scope breaking\n");
+    style.remove();
+}
+
+testScopeBreaking(":has(foo)");
+testScopeBreaking(":has(foo bar)");
+testScopeBreaking(":has(foo ~ bar)");
+testScopeBreaking(":has(~ foo)");
+testScopeBreaking(":has(~ foo bar)");
+testScopeBreaking(":has(+ foo)");
+testScopeBreaking(":has(+ foo bar)");
+testScopeBreaking(":has(:is(foo))");
+testScopeBreaking(":has(:is(foo bar))");
+testScopeBreaking(":has(:is(foo ~ bar))");
+testScopeBreaking(":is(:has(foo))");
+testScopeBreaking(":is(:has(foo bar))");
+testScopeBreaking(":is(:has(:is(foo)))");
+testScopeBreaking(":is(:has(:is(foo bar)))");
+testScopeBreaking(":has(~ foo)");
+testScopeBreaking(":has(~ foo bar)");
+testScopeBreaking(":has(~ :is(foo))");
+testScopeBreaking(":has(~ :is(foo bar))");
+testScopeBreaking(":is(~ :has(foo))");
+testScopeBreaking(":is(:has(~ foo bar))");
+testScopeBreaking(":is(:has(~ :is(foo)))");
+testScopeBreaking(":is(:has(~ :is(foo bar)))");
+testScopeBreaking(":has(+ foo)");
+testScopeBreaking(":has(+ foo bar)");
+testScopeBreaking(":has(+ :is(foo))");
+testScopeBreaking(":has(+ :is(foo bar))");
+testScopeBreaking(":is(+ :has(foo))");
+testScopeBreaking(":is(:has(+ foo bar))");
+testScopeBreaking(":is(:has(+ :is(foo)))");
+testScopeBreaking(":is(:has(+ :is(foo bar)))");
+testScopeBreaking(":has(:not(foo))");
+testScopeBreaking(":has(:not(foo bar))");
+testScopeBreaking(":has(:not(foo ~ bar))");
+testScopeBreaking(":not(:has(foo))");
+testScopeBreaking(":not(:has(foo bar))");
+testScopeBreaking(":not(:has(:not(foo)))");
+testScopeBreaking(":not(:has(:not(foo bar)))");
+testScopeBreaking(":has(~ foo)");
+testScopeBreaking(":has(~ foo bar)");
+testScopeBreaking(":has(~ :not(foo))");
+testScopeBreaking(":has(~ :not(foo bar))");
+testScopeBreaking(":not(~ :has(foo))");
+testScopeBreaking(":has(+ foo)");
+testScopeBreaking(":has(+ foo bar)");
+testScopeBreaking(":has(+ :not(foo))");
+testScopeBreaking(":has(+ :not(foo bar))");
+testScopeBreaking(":not(+ :has(foo))");
+testScopeBreaking(":not(:has(~ foo bar))");
+testScopeBreaking(":not(:has(~ :not(foo)))");
+testScopeBreaking(":not(:has(~ :not(foo bar)))");
+testScopeBreaking(":not(:has(+ foo bar))");
+testScopeBreaking(":not(:has(+ :not(foo)))");
+testScopeBreaking(":not(:has(+ :not(foo bar)))");
+</script>

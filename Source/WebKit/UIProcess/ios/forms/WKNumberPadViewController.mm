@@ -79,6 +79,8 @@ static CGFloat inputLabelFontSize()
 {
     [super viewDidLoad];
 
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+
     _numberPadView = adoptNS([[WKNumberPadView alloc] initWithFrame:UIRectInset(self.contentView.bounds, numberPadViewTopMargin, 0, 0, 0) controller:self]);
     [self.contentView addSubview:_numberPadView.get()];
 

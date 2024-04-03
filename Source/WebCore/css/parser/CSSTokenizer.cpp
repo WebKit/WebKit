@@ -166,8 +166,11 @@ UChar CSSTokenizer::consume()
 
 CSSParserToken CSSTokenizer::whiteSpace(UChar /*cc*/)
 {
+    auto startOffset = m_input.offset();
     m_input.advanceUntilNonWhitespace();
-    return CSSParserToken(WhitespaceToken);
+    // FIXME: This does not preserve whitespace type (like tabs).
+    auto whitespaceCount = 1 + (m_input.offset() - startOffset);
+    return CSSParserToken(whitespaceCount);
 }
 
 CSSParserToken CSSTokenizer::blockStart(CSSParserTokenType type)

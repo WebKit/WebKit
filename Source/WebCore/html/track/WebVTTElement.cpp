@@ -30,19 +30,13 @@
 
 #include "ElementInlines.h"
 #include "HTMLSpanElement.h"
-#include "RenderRuby.h"
-#include "RenderRubyText.h"
 #include "RenderTreePosition.h"
-#include "RubyElement.h"
-#include "RubyTextElement.h"
 #include "TextTrack.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTRubyElement);
-WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTRubyTextElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
@@ -79,36 +73,23 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 }
 
 WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, AtomString language, Document& document)
-    : WebVTTElementImpl(nodeType, language)
-    , Element(nodeTypeToTagName(nodeType), document, { })
+    : Element(nodeTypeToTagName(nodeType), document, { })
+    , m_webVTTNodeType(nodeType)
+    , m_language(language)
 {
 }
 
-Ref<Element> WebVTTElementImpl::create(WebVTTNodeType nodeType, AtomString language, Document& document)
+Ref<Element> WebVTTElement::create(WebVTTNodeType nodeType, AtomString language, Document& document)
 {
-    switch (nodeType) {
-    default:
-    case WebVTTNodeTypeNone:
-    case WebVTTNodeTypeClass:
-    case WebVTTNodeTypeItalic:
-    case WebVTTNodeTypeLanguage:
-    case WebVTTNodeTypeBold:
-    case WebVTTNodeTypeUnderline:
-    case WebVTTNodeTypeVoice:
-        return adoptRef(*new WebVTTElement(nodeType, language, document));
-    case WebVTTNodeTypeRuby:
-        return adoptRef(*new WebVTTRubyElement(language, document));
-    case WebVTTNodeTypeRubyText:
-        return adoptRef(*new WebVTTRubyTextElement(language, document));
-    }
+    return adoptRef(*new WebVTTElement(nodeType, language, document));
 }
 
-Ref<Element> WebVTTElementImpl::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
 {
-    return create(static_cast<WebVTTNodeType>(m_webVTTNodeType), m_language, targetDocument);
+    return create(m_webVTTNodeType, m_language, targetDocument);
 }
 
-Ref<HTMLElement> WebVTTElementImpl::createEquivalentHTMLElement(Document& document)
+Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
 {
     RefPtr<HTMLElement> htmlElement;
 
@@ -117,8 +98,8 @@ Ref<HTMLElement> WebVTTElementImpl::createEquivalentHTMLElement(Document& docume
     case WebVTTNodeTypeLanguage:
     case WebVTTNodeTypeVoice:
         htmlElement = HTMLSpanElement::create(document);
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, toElement().attributeWithoutSynchronization(voiceAttributeName()));
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, toElement().attributeWithoutSynchronization(langAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::titleAttr, attributeWithoutSynchronization(voiceAttributeName()));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::langAttr, attributeWithoutSynchronization(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
         htmlElement = HTMLElement::create(HTMLNames::iTag, document);
@@ -130,16 +111,19 @@ Ref<HTMLElement> WebVTTElementImpl::createEquivalentHTMLElement(Document& docume
         htmlElement = HTMLElement::create(HTMLNames::uTag, document);
         break;
     case WebVTTNodeTypeRuby:
-        htmlElement = RubyElement::create(document);
+        htmlElement = HTMLElement::create(HTMLNames::rubyTag, document);
         break;
     case WebVTTNodeTypeRubyText:
-        htmlElement = RubyTextElement::create(document);
+        htmlElement = HTMLElement::create(HTMLNames::rtTag, document);
+        break;
+    case WebVTTNodeTypeNone:
+        ASSERT_NOT_REACHED();
         break;
     }
 
     ASSERT(htmlElement);
     if (htmlElement)
-        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, toElement().attributeWithoutSynchronization(HTMLNames::classAttr));
+        htmlElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, attributeWithoutSynchronization(HTMLNames::classAttr));
     return htmlElement.releaseNonNull();
 }
 

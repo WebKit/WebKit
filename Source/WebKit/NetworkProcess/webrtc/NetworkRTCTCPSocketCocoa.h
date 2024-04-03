@@ -50,9 +50,9 @@ private:
     Type type() const final { return Type::ClientTCP; }
     void close() final;
     void setOption(int option, int value) final;
-    void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
+    void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) final;
 
-    Vector<uint8_t> createMessageBuffer(const uint8_t*, size_t);
+    Vector<uint8_t> createMessageBuffer(std::span<const uint8_t>);
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     NetworkRTCProvider& m_rtcProvider;

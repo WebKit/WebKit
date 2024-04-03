@@ -41,8 +41,7 @@ ClipboardItem::~ClipboardItem() = default;
 
 Ref<Blob> ClipboardItem::blobFromString(ScriptExecutionContext* context, const String& stringData, const String& type)
 {
-    auto utf8 = stringData.utf8();
-    return Blob::create(context, Vector { utf8.dataAsUInt8Ptr(), utf8.length() }, Blob::normalizedContentType(type));
+    return Blob::create(context, Vector(stringData.utf8().span()), Blob::normalizedContentType(type));
 }
 
 static ClipboardItem::PresentationStyle clipboardItemPresentationStyle(const PasteboardItemInfo& info)

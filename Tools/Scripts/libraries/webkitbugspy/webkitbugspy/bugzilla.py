@@ -207,18 +207,22 @@ class Tracker(GenericTracker):
         issue._labels = []
         issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
+        if member in ('title', 'timestamp', 'modified', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords', 'related'):
             response = self.session.get(
                 '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)),
                 timeout=self.timeout,
             )
             if response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
+                if response.json().get('code') == 101:
+                    sys.stderr.write("{}\n".format(response.json().get('message')))
+                    return None
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 response = response[0]
                 issue._title = response['summary']
                 issue._timestamp = int(calendar.timegm(datetime.strptime(response['creation_time'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+                issue._modified = int(calendar.timegm(datetime.strptime(response['last_change_time'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
                 if response.get('creator_detail'):
                     issue._creator = self.user(
                         name=response['creator_detail'].get('real_name'),
@@ -466,17 +470,11 @@ class Tracker(GenericTracker):
 
         return result
 
-    def issues_to_ids(self, issues):
-        if not isinstance(issues, (list, tuple)):
-            raise TypeError('Input should be a list of Issue objects.')
-        issue_ids = []
-        for i in issues:
-            issue_id = i.link
-            if isinstance(i.tracker, Tracker):
-                issue_ids.append(i.id)
-            else:
-                raise TypeError('Cannot relate issues of different types.')
-        return issue_ids
+    def related_issue_id(self, issue):
+        if isinstance(issue.tracker, Tracker):
+            return issue.id
+        else:
+            raise TypeError('Cannot relate issues of different types.')
 
     def relate(self, issue, depends_on=None, blocks=None, regressed_by=None, regressions=None, **relations):
         if relations:
@@ -485,13 +483,13 @@ class Tracker(GenericTracker):
         update_dict = dict()
         update_dict['ids'] = [issue.id]
         if depends_on:
-            update_dict['depends_on'] = {'add': self.issues_to_ids(depends_on)}
+            update_dict['depends_on'] = {'add': [self.related_issue_id(depends_on)]}
         if blocks:
-            update_dict['blocks'] = {'add': self.issues_to_ids(blocks)}
+            update_dict['blocks'] = {'add': [self.related_issue_id(blocks)]}
         if regressed_by:
-            update_dict['regressed_by'] = {'add': self.issues_to_ids(regressed_by)}
+            update_dict['regressed_by'] = {'add': [self.related_issue_id(regressed_by)]}
         if regressions:
-            update_dict['regressions'] = {'add': self.issues_to_ids(regressions)}
+            update_dict['regressions'] = {'add': [self.related_issue_id(regressions)]}
 
         response = None
         try:
@@ -512,13 +510,13 @@ class Tracker(GenericTracker):
             self.populate(issue, 'related')
         else:
             if depends_on:
-                issue._related['depends_on'] += depends_on
+                issue._related['depends_on'].append(depends_on)
             if blocks:
-                issue._related['blocks'] += blocks
+                issue._related['blocks'].append(blocks)
             if regressed_by:
-                issue._related['regressed_by'] += regressed_by
+                issue._related['regressed_by'].append(regressed_by)
             if regressions:
-                issue._related['regressions'] += regressions
+                issue._related['regressions'].append(regressions)
         return issue
 
     @property
@@ -652,6 +650,11 @@ class Tracker(GenericTracker):
                     self.radar_importer.name,
                     issue.references[0] if issue.references else '?',
                 ))
+                response = webkitcorepy.Terminal.choose(
+                    'Double-check you have the correct bug. Would you like to continue?', options=('Yes', 'No'), default='Yes',
+                )
+                if response == 'No':
+                    raise ValueError('Radar is tracking a different bug')
 
         did_modify_cc = False
         if user_to_cc or keyword_to_add:

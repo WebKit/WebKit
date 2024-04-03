@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            width: 700px;
+            height: 500px;
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        function loadDone()
+        {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body>
+    <iframe onload="loadDone()" src="/resources/network-simulator.py?test=load&path=/harness/resources/chunked.txt&chunksize=27&chunkdelay=16&initialdelay=100"></iframe>
+</body>
+</html>

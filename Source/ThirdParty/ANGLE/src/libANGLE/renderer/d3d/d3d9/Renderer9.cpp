@@ -2734,8 +2734,7 @@ angle::Result Renderer9::compileToExecutable(d3d::Context *context,
     }
 
     profileStream << "_" << ((getMajorShaderModel() >= 3) ? 3 : 2);
-    profileStream << "_"
-                  << "0";
+    profileStream << "_" << "0";
 
     std::string profile = profileStream.str();
 
@@ -3104,8 +3103,8 @@ void Renderer9::generateCaps(gl::Caps *outCaps,
 
 void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
 {
-    ApplyFeatureOverrides(features, mDisplay->getState());
-    if (!mDisplay->getState().featuresAllDisabled)
+    ApplyFeatureOverrides(features, mDisplay->getState().featureOverrides);
+    if (!mDisplay->getState().featureOverrides.allDisabled)
     {
         d3d9::InitializeFeatures(features, mAdapterIdentifier.VendorId);
     }
@@ -3113,8 +3112,8 @@ void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
 
 void Renderer9::initializeFrontendFeatures(angle::FrontendFeatures *features) const
 {
-    ApplyFeatureOverrides(features, mDisplay->getState());
-    if (!mDisplay->getState().featuresAllDisabled)
+    ApplyFeatureOverrides(features, mDisplay->getState().featureOverrides);
+    if (!mDisplay->getState().featureOverrides.allDisabled)
     {
         d3d9::InitializeFrontendFeatures(features, mAdapterIdentifier.VendorId);
     }

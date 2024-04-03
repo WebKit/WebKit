@@ -67,7 +67,7 @@ String CSSPropertyRule::initialValue() const
     if (!m_propertyRule->descriptor().initialValue)
         return nullString();
 
-    return m_propertyRule->descriptor().initialValue->tokenRange().serialize();
+    return m_propertyRule->descriptor().initialValue->serialize();
 }
 
 String CSSPropertyRule::cssText() const

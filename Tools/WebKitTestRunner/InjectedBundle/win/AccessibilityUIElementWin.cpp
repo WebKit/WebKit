@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include <WebCore/NotImplemented.h>
 
 namespace WTR {
@@ -53,17 +51,19 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement*)
     return false;
 }
 
-void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement>>&)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
 {
     notImplemented();
+    return { };
 }
 
-void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement>>&, unsigned, unsigned)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned, unsigned) const
 {
     notImplemented();
+    return { };
 }
 
-int AccessibilityUIElement::childrenCount()
+unsigned AccessibilityUIElement::childrenCount()
 {
     notImplemented();
     return 0;
@@ -1083,6 +1083,4 @@ bool AccessibilityUIElement::isInNonNativeTextControl() const
     return false;
 }
 
-} // namespace  WTF
-
-#endif // ENABLE(ACCESSIBILITY)
+} // namespace WTR

@@ -1,8 +1,4 @@
 Checks that element reflection is exposed to the a11y tree for 'ariaControlsElements'
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 PASS: axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
 PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2) === true
 PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true

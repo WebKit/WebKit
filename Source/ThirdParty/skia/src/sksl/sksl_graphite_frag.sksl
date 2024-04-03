@@ -1,0 +1,1421 @@
+// Graphite-specific fragment shader code
+
+const int $kTileModeClamp  = 0;
+const int $kTileModeRepeat = 1;
+const int $kTileModeMirror = 2;
+const int $kTileModeDecal  = 3;
+
+const int $kFilterModeNearest = 0;
+const int $kFilterModeLinear  = 1;
+
+const int $kTFTypeSRGB = 1;
+const int $kTFTypePQ = 2;
+const int $kTFTypeHLG = 3;
+const int $kTFTypeHLGinv = 4;
+
+const int $kColorSpaceXformFlagUnpremul = 0x1;
+const int $kColorSpaceXformFlagLinearize = 0x2;
+const int $kColorSpaceXformFlagGamutTransform = 0x4;
+const int $kColorSpaceXformFlagEncode = 0x8;
+const int $kColorSpaceXformFlagPremul = 0x10;
+const int $kColorSpaceXformFlagAlphaSwizzle = 0x20;
+
+const int $kMaskFormatA8   = 0;
+const int $kMaskFormatA565 = 1;
+const int $kMaskFormatARGB = 2;
+
+// Matches GrTextureEffect::kLinearInset, to make sure we don't touch an outer
+// row or column with a weight of 0 when linear filtering.
+const float $kLinearInset = 0.5 + 0.00001;
+
+$pure half4 sk_error() {
+    return half4(1.0, 0.0, 0.0, 1.0);
+}
+
+$pure half4 sk_passthrough(half4 color) {
+    return color;
+}
+
+$pure half4 sk_solid_shader(float4 colorParam) {
+    return half4(colorParam);
+}
+
+$pure half4 sk_rgb_opaque(float4 colorParam) {
+    return half4(colorParam.rgb, 1.0);
+}
+
+$pure half4 sk_alpha_only(float4 colorParam) {
+    return half4(0.0, 0.0, 0.0, colorParam.a);
+}
+
+$pure float $apply_xfer_fn(int kind, float x, half4 cs[2]) {
+    float G = cs[0][0], A = cs[0][1], B = cs[0][2], C = cs[0][3],
+          D = cs[1][0], E = cs[1][1], F = cs[1][2];
+    float s = sign(x);
+    x = abs(x);
+    switch (kind) {
+        case $kTFTypeSRGB:
+            x = (x < D) ? (C * x) + F
+                        : pow(A * x + B, G) + E;
+            break;
+        case $kTFTypePQ:
+            float x_C = pow(x, C);
+            x = pow(max(A + B * x_C, 0) / (D + E * x_C), F);
+            break;
+        case $kTFTypeHLG:
+            x = (x * A <= 1) ? pow(x * A, B)
+                             : exp((x - E) * C) + D;
+            x *= (F + 1);
+            break;
+        case $kTFTypeHLGinv:
+            x /= (F + 1);
+            x = (x <= 1) ? A * pow(x, B)
+                         : C * log(x - D) + E;
+            break;
+    }
+    return s * x;
+}
+
+$pure half4 sk_color_space_transform(half4 halfColor,
+                                     int flags,
+                                     int srcKind,
+                                     half3x3 gamutTransform,
+                                     int dstKind,
+                                     half4x4 coeffs) {
+    float4 color = float4(halfColor);
+
+    if (bool(flags & $kColorSpaceXformFlagUnpremul)) {
+        color = unpremul(color);
+    }
+
+    if (bool(flags & $kColorSpaceXformFlagLinearize)) {
+        half4 srcCoeffs[2];
+        srcCoeffs[0] = coeffs[0];
+        srcCoeffs[1] = coeffs[1];
+        color.r = $apply_xfer_fn(srcKind, color.r, srcCoeffs);
+        color.g = $apply_xfer_fn(srcKind, color.g, srcCoeffs);
+        color.b = $apply_xfer_fn(srcKind, color.b, srcCoeffs);
+    }
+    if (bool(flags & $kColorSpaceXformFlagGamutTransform)) {
+        color.rgb = gamutTransform * color.rgb;
+    }
+    if (bool(flags & $kColorSpaceXformFlagEncode)) {
+        half4 dstCoeffs[2];
+        dstCoeffs[0] = coeffs[2];
+        dstCoeffs[1] = coeffs[3];
+        color.r = $apply_xfer_fn(dstKind, color.r, dstCoeffs);
+        color.g = $apply_xfer_fn(dstKind, color.g, dstCoeffs);
+        color.b = $apply_xfer_fn(dstKind, color.b, dstCoeffs);
+    }
+
+    if (bool(flags & $kColorSpaceXformFlagPremul)) {
+        color.rgb *= color.a;
+    }
+    return half4(color);
+}
+
+$pure half4 $color_space_transform_swizzle(half4 halfColor,
+                                           int flags,
+                                           int srcKind,
+                                           half3x3 gamutTransform,
+                                           int dstKind,
+                                           half4x4 coeffs) {
+    if (flags == 0) {
+        return halfColor;
+    } else {
+        if (bool(flags & $kColorSpaceXformFlagAlphaSwizzle)) {
+            halfColor.a = dot(halfColor.r1, half2(coeffs[1][3], coeffs[3][3]));
+        }
+        return sk_color_space_transform(halfColor, flags, srcKind, gamutTransform, dstKind, coeffs);
+    }
+}
+
+$pure float $tile(int tileMode, float f, float low, float high) {
+    switch (tileMode) {
+        case $kTileModeClamp:
+            return clamp(f, low, high);
+
+        case $kTileModeRepeat: {
+            float length = high - low;
+            return (mod(f - low, length) + low);
+        }
+        case $kTileModeMirror: {
+            float length = high - low;
+            float length2 = 2 * length;
+            float tmp = mod(f - low, length2);
+            return (mix(tmp, length2 - tmp, step(length, tmp)) + low);
+        }
+        default:  // $kTileModeDecal
+            // Decal is handled later.
+            return f;
+    }
+}
+
+$pure half4 $sample_image(float2 pos, float2 invImgSize, sampler2D s) {
+    return sample(s, pos * invImgSize);
+}
+
+$pure half4 $sample_image_subset(float2 pos,
+                                 float2 invImgSize,
+                                 float4 subset,
+                                 int tileModeX,
+                                 int tileModeY,
+                                 int filterMode,
+                                 sampler2D s) {
+    // Do hard-edge shader transitions to the border color for nearest-neighbor decal tiling at the
+    // subset boundaries. Snap the input coordinates to nearest neighbor before comparing to the
+    // subset rect, to avoid GPU interpolation errors. See https://crbug.com/skia/10403.
+    if (tileModeX == $kTileModeDecal && filterMode == $kFilterModeNearest) {
+        float snappedX = floor(pos.x) + 0.5;
+        if (snappedX < subset.x || snappedX > subset.z) {
+            return half4(0);
+        }
+    }
+    if (tileModeY == $kTileModeDecal && filterMode == $kFilterModeNearest) {
+        float snappedY = floor(pos.y) + 0.5;
+        if (snappedY < subset.y || snappedY > subset.w) {
+            return half4(0);
+        }
+    }
+
+    pos.x = $tile(tileModeX, pos.x, subset.x, subset.z);
+    pos.y = $tile(tileModeY, pos.y, subset.y, subset.w);
+
+    // Clamp to an inset subset to prevent sampling neighboring texels when coords fall exactly at
+    // texel boundaries.
+    float4 insetClamp;
+    if (filterMode == $kFilterModeNearest) {
+        insetClamp = float4(floor(subset.xy) + $kLinearInset, ceil(subset.zw) - $kLinearInset);
+    } else {
+        insetClamp = float4(subset.xy + $kLinearInset, subset.zw - $kLinearInset);
+    }
+    float2 clampedPos = clamp(pos, insetClamp.xy, insetClamp.zw);
+    half4 color = $sample_image(clampedPos, invImgSize, s);
+
+    if (filterMode == $kFilterModeLinear) {
+        // Remember the amount the coord moved for clamping. This is used to implement shader-based
+        // filtering for repeat and decal tiling.
+        half2 error = half2(pos - clampedPos);
+        half2 absError = abs(error);
+
+        // Do 1 or 3 more texture reads depending on whether both x and y tiling modes are repeat
+        // and whether we're near a single subset edge or a corner. Then blend the multiple reads
+        // using the error values calculated above.
+        bool sampleExtraX = tileModeX == $kTileModeRepeat;
+        bool sampleExtraY = tileModeY == $kTileModeRepeat;
+        if (sampleExtraX || sampleExtraY) {
+            float extraCoordX;
+            float extraCoordY;
+            half4 extraColorX;
+            half4 extraColorY;
+            if (sampleExtraX) {
+                extraCoordX = error.x > 0 ? insetClamp.x : insetClamp.z;
+                extraColorX = $sample_image(float2(extraCoordX, clampedPos.y),
+                                            invImgSize, s);
+            }
+            if (sampleExtraY) {
+                extraCoordY = error.y > 0 ? insetClamp.y : insetClamp.w;
+                extraColorY = $sample_image(float2(clampedPos.x, extraCoordY),
+                                            invImgSize, s);
+            }
+            if (sampleExtraX && sampleExtraY) {
+                half4 extraColorXY = $sample_image(float2(extraCoordX, extraCoordY),
+                                                   invImgSize, s);
+                color = mix(mix(color, extraColorX, absError.x),
+                            mix(extraColorY, extraColorXY, absError.x),
+                            absError.y);
+            } else if (sampleExtraX) {
+                color = mix(color, extraColorX, absError.x);
+            } else if (sampleExtraY) {
+                color = mix(color, extraColorY, absError.y);
+            }
+        }
+
+        // Do soft edge shader filtering for decal tiling and linear filtering using the error
+        // values calculated above.
+        if (tileModeX == $kTileModeDecal) {
+            color *= max(1 - absError.x, 0);
+        }
+        if (tileModeY == $kTileModeDecal) {
+            color *= max(1 - absError.y, 0);
+        }
+    }
+
+    return color;
+}
+
+$pure half4 $cubic_filter_image(float2 pos,
+                                float2 invImgSize,
+                                float4 subset,
+                                int tileModeX,
+                                int tileModeY,
+                                half4x4 coeffs,
+                                sampler2D s) {
+    // Determine pos's fractional offset f between texel centers.
+    float2 f = fract(pos - 0.5);
+    // Sample 16 points at 1-pixel intervals from [p - 1.5 ... p + 1.5].
+    pos -= 1.5;
+    // Snap to texel centers to prevent sampling neighboring texels.
+    pos = floor(pos) + 0.5;
+
+    half4 wx = coeffs * half4(1.0, f.x, f.x * f.x, f.x * f.x * f.x);
+    half4 wy = coeffs * half4(1.0, f.y, f.y * f.y, f.y * f.y * f.y);
+    half4 color = half4(0);
+    for (int y = 0; y < 4; ++y) {
+        half4 rowColor = half4(0);
+        for (int x = 0; x < 4; ++x) {
+            rowColor += wx[x] * $sample_image_subset(pos + float2(x, y), invImgSize, subset,
+                                                     tileModeX, tileModeY, $kFilterModeNearest,
+                                                     s);
+        }
+        color += wy[y] * rowColor;
+    }
+    // Bicubic can send colors out of range, so clamp to get them back in gamut, assuming premul.
+    color.a = saturate(color.a);
+    color.rgb = clamp(color.rgb, half3(0.0), color.aaa);
+    return color;
+}
+
+$pure half4 sk_image_shader(float2 coords,
+                            float2 invImgSize,
+                            float4 subset,
+                            int tileModeX,
+                            int tileModeY,
+                            int filterMode,
+                            int csXformFlags,
+                            int csXformSrcKind,
+                            half3x3 csXformGamutTransform,
+                            int csXformDstKind,
+                            half4x4 csXformCoeffs,
+                            sampler2D s) {
+    half4 sampleColor = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
+                                             filterMode, s);
+    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
+                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+}
+
+$pure half4 sk_cubic_image_shader(float2 coords,
+                                  float2 invImgSize,
+                                  float4 subset,
+                                  int tileModeX,
+                                  int tileModeY,
+                                  half4x4 cubicCoeffs,
+                                  int csXformFlags,
+                                  int csXformSrcKind,
+                                  half3x3 csXformGamutTransform,
+                                  int csXformDstKind,
+                                  half4x4 csXformCoeffs,
+                                  sampler2D s) {
+    half4 sampleColor = $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY,
+                                            cubicCoeffs, s);
+    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
+                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+}
+
+$pure half4 sk_hw_image_shader(float2 coords,
+                               float2 invImgSize,
+                               int csXformFlags,
+                               int csXformSrcKind,
+                               half3x3 csXformGamutTransform,
+                               int csXformDstKind,
+                               half4x4 csXformCoeffs,
+                               sampler2D s) {
+    half4 sampleColor = $sample_image(coords, invImgSize, s);
+    return $color_space_transform_swizzle(sampleColor, csXformFlags, csXformSrcKind,
+                                          csXformGamutTransform, csXformDstKind, csXformCoeffs);
+}
+
+$pure half4 sk_yuv_image_shader(float2 coords,
+                                float2 invImgSize,
+                                float4 subset,
+                                int tileModeX,
+                                int tileModeY,
+                                int filterMode,
+                                half4 channelSelectY,
+                                half4 channelSelectU,
+                                half4 channelSelectV,
+                                half4 channelSelectA,
+                                half3x3 yuvToRGBMatrix,
+                                float3 yuvToRGBTranslate,
+                                int csXformFlags,
+                                int csXformSrcKind,
+                                half3x3 csXformGamutTransform,
+                                int csXformDstKind,
+                                half4x4 csXformCoeffs,
+                                sampler2D sY,
+                                sampler2D sU,
+                                sampler2D sV,
+                                sampler2D sA) {
+    half4 sampleColorY, sampleColorU, sampleColorV;
+    sampleColorY = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
+                                        filterMode, sY);
+    sampleColorU = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
+                                        filterMode, sU);
+    sampleColorV = $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY,
+                                        filterMode, sV);
+    float Y = dot(channelSelectY, sampleColorY);
+    float U = dot(channelSelectU, sampleColorU);
+    float V = dot(channelSelectV, sampleColorV);
+    half3 preColor = half3(Y, U, V);
+    half4 sampleColor;
+    sampleColor.rgb = saturate(yuvToRGBMatrix * preColor.rgb + half3(yuvToRGBTranslate));
+    if (channelSelectA == half4(0)) {
+        sampleColor.a = 1;
+    } else {
+        half4 sampleColorA =
+            $sample_image_subset(coords, invImgSize, subset, tileModeX, tileModeY, filterMode,
+                                 sA);
+        sampleColor.a = dot(channelSelectA, sampleColorA);
+        // premul alpha
+        sampleColor.rgb *= sampleColor.a;
+    }
+
+    return sk_color_space_transform(sampleColor, csXformFlags, csXformSrcKind,
+                                    csXformGamutTransform, csXformDstKind, csXformCoeffs);
+}
+
+$pure half4 sk_cubic_yuv_image_shader(float2 coords,
+                                      float2 invImgSize,
+                                      float4 subset,
+                                      int tileModeX,
+                                      int tileModeY,
+                                      half4x4 cubicCoeffs,
+                                      half4 channelSelectY,
+                                      half4 channelSelectU,
+                                      half4 channelSelectV,
+                                      half4 channelSelectA,
+                                      half3x3 yuvToRGBMatrix,
+                                      float3 yuvToRGBTranslate,
+                                      int csXformFlags,
+                                      int csXformSrcKind,
+                                      half3x3 csXformGamutTransform,
+                                      int csXformDstKind,
+                                      half4x4 csXformCoeffs,
+                                      sampler2D sY,
+                                      sampler2D sU,
+                                      sampler2D sV,
+                                      sampler2D sA) {
+    half4 sampleColorY, sampleColorU, sampleColorV;
+    sampleColorY = $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY,
+                                       cubicCoeffs, sY);
+    sampleColorU = $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY,
+                                       cubicCoeffs, sU);
+    sampleColorV = $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY,
+                                       cubicCoeffs, sV);
+    float Y = dot(channelSelectY, sampleColorY);
+    float U = dot(channelSelectU, sampleColorU);
+    float V = dot(channelSelectV, sampleColorV);
+    half3 preColor = half3(Y, U, V);
+    half4 sampleColor;
+    sampleColor.rgb = saturate(yuvToRGBMatrix * preColor.rgb + half3(yuvToRGBTranslate));
+    if (channelSelectA == half4(0)) {
+        sampleColor.a = 1;
+    } else {
+        half4 sampleColorA =
+            $cubic_filter_image(coords, invImgSize, subset, tileModeX, tileModeY, cubicCoeffs,
+                                sA);
+        sampleColor.a = dot(channelSelectA, sampleColorA);
+        // premul alpha
+        sampleColor.rgb *= sampleColor.a;
+    }
+
+    return sk_color_space_transform(sampleColor, csXformFlags, csXformSrcKind,
+                                    csXformGamutTransform, csXformDstKind, csXformCoeffs);
+}
+
+$pure half4 sk_dither_shader(half4 colorIn,
+                             float2 coords,
+                             half range,
+                             sampler2D lut) {
+    const float kImgSize = 8;
+
+    half value = sample(lut, coords / kImgSize).r - 0.5; // undo the bias in the table
+    // For each color channel, add the random offset to the channel value and then clamp
+    // between 0 and alpha to keep the color premultiplied.
+    return half4(clamp(colorIn.rgb + value * range, 0.0, colorIn.a), colorIn.a);
+}
+
+$pure float2 $tile_grad(int tileMode, float2 t) {
+    switch (tileMode) {
+        case $kTileModeClamp:
+            t.x = saturate(t.x);
+            break;
+
+        case $kTileModeRepeat:
+            t.x = fract(t.x);
+            break;
+
+        case $kTileModeMirror: {
+            float t_1 = t.x - 1;
+            t.x = t_1 - 2 * floor(t_1 * 0.5) - 1;
+            if (sk_Caps.mustDoOpBetweenFloorAndAbs) {
+                // At this point the expected value of tiled_t should between -1 and 1, so this
+                // clamp has no effect other than to break up the floor and abs calls and make sure
+                // the compiler doesn't merge them back together.
+                t.x = clamp(t.x, -1, 1);
+            }
+            t.x = abs(t.x);
+            break;
+        }
+
+        case $kTileModeDecal:
+            if (t.x < 0 || t.x > 1) {
+                return float2(0, -1);
+            }
+            break;
+    }
+
+    return t;
+}
+
+$pure half4 $colorize_grad_4(float4 colorsParam[4], float4 offsetsParam, float2 t) {
+    if (t.y < 0) {
+        return half4(0);
+
+    } else if (t.x <= offsetsParam[0]) {
+        return half4(colorsParam[0]);
+    } else if (t.x < offsetsParam[1]) {
+        return half4(mix(colorsParam[0], colorsParam[1], (t.x             - offsetsParam[0]) /
+                                                         (offsetsParam[1] - offsetsParam[0])));
+    } else if (t.x < offsetsParam[2]) {
+        return half4(mix(colorsParam[1], colorsParam[2], (t.x             - offsetsParam[1]) /
+                                                         (offsetsParam[2] - offsetsParam[1])));
+    } else if (t.x < offsetsParam[3]) {
+        return half4(mix(colorsParam[2], colorsParam[3], (t.x             - offsetsParam[2]) /
+                                                         (offsetsParam[3] - offsetsParam[2])));
+    } else {
+        return half4(colorsParam[3]);
+    }
+}
+
+$pure half4 $colorize_grad_8(float4 colorsParam[8], float4 offsetsParam[2], float2 t) {
+    if (t.y < 0) {
+        return half4(0);
+
+    // Unrolled binary search through intervals
+    // ( .. 0), (0 .. 1), (1 .. 2), (2 .. 3), (3 .. 4), (4 .. 5), (5 .. 6), (6 .. 7), (7 .. ).
+    } else if (t.x < offsetsParam[1][0]) {
+        if (t.x < offsetsParam[0][2]) {
+            if (t.x <= offsetsParam[0][0]) {
+                return half4(colorsParam[0]);
+            } else if (t.x < offsetsParam[0][1]) {
+                return half4(mix(colorsParam[0], colorsParam[1],
+                                 (t.x                - offsetsParam[0][0]) /
+                                 (offsetsParam[0][1] - offsetsParam[0][0])));
+            } else {
+                return half4(mix(colorsParam[1], colorsParam[2],
+                                 (t.x                - offsetsParam[0][1]) /
+                                 (offsetsParam[0][2] - offsetsParam[0][1])));
+            }
+        } else {
+            if (t.x < offsetsParam[0][3]) {
+                return half4(mix(colorsParam[2], colorsParam[3],
+                                 (t.x                - offsetsParam[0][2]) /
+                                 (offsetsParam[0][3] - offsetsParam[0][2])));
+            } else {
+                return half4(mix(colorsParam[3], colorsParam[4],
+                                 (t.x                - offsetsParam[0][3]) /
+                                 (offsetsParam[1][0] - offsetsParam[0][3])));
+            }
+        }
+    } else {
+        if (t.x < offsetsParam[1][2]) {
+            if (t.x < offsetsParam[1][1]) {
+                return half4(mix(colorsParam[4], colorsParam[5],
+                                 (t.x                - offsetsParam[1][0]) /
+                                 (offsetsParam[1][1] - offsetsParam[1][0])));
+            } else {
+                return half4(mix(colorsParam[5], colorsParam[6],
+                                 (t.x                - offsetsParam[1][1]) /
+                                 (offsetsParam[1][2] - offsetsParam[1][1])));
+            }
+        } else {
+            if (t.x < offsetsParam[1][3]) {
+                return half4(mix(colorsParam[6], colorsParam[7],
+                                 (t.x                - offsetsParam[1][2]) /
+                                 (offsetsParam[1][3] - offsetsParam[1][2])));
+            } else {
+                return half4(colorsParam[7]);
+            }
+        }
+    }
+}
+
+half4 $colorize_grad_tex(sampler2D colorsAndOffsetsSampler, int numStops, float2 t) {
+    const float kColorCoord = 0.25;
+    const float kOffsetCoord = 0.75;
+
+    if (t.y < 0) {
+        return half4(0);
+    } else if (t.x == 0) {
+        return sampleLod(colorsAndOffsetsSampler, float2(0, kColorCoord), 0);
+    } else if (t.x == 1) {
+        return sampleLod(colorsAndOffsetsSampler, float2(1, kColorCoord), 0);
+    } else {
+        float low = 0;
+        float high = float(numStops);
+        float invNumStops = 1.0 / high;
+        for (int loop = 1; loop < numStops; loop += loop) {
+            float mid = floor((low + high) * 0.5);
+            float samplePos = (mid + 0.5) * invNumStops;
+
+            float2 tmp = sampleLod(colorsAndOffsetsSampler, float2(samplePos, kOffsetCoord), 0).xy;
+            float offset = ldexp(tmp.x, int(tmp.y));
+
+            if (t.x < offset) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+        }
+
+        high = (low + 1.5) * invNumStops;
+        low = (low + 0.5) * invNumStops;
+        half4 color0 = sampleLod(colorsAndOffsetsSampler, float2(low, kColorCoord), 0);
+        half4 color1 = sampleLod(colorsAndOffsetsSampler, float2(high, kColorCoord), 0);
+
+        float2 tmp = sampleLod(colorsAndOffsetsSampler, float2(low, kOffsetCoord), 0).xy;
+        float offset0 = ldexp(tmp.x, int(tmp.y));
+
+        tmp = sampleLod(colorsAndOffsetsSampler, float2(high, kOffsetCoord), 0).xy;
+        float offset1 = ldexp(tmp.x, int(tmp.y));
+
+        return half4(mix(color0, color1,
+                         (t.x     - offset0) /
+                         (offset1 - offset0)));
+    }
+}
+
+$pure float2 $linear_grad_layout(float2 point0Param, float2 point1Param, float2 pos) {
+    pos -= point0Param;
+    float2 delta = point1Param - point0Param;
+    float t = dot(pos, delta) / dot(delta, delta);
+    return float2(t, 1);
+}
+
+$pure float2 $radial_grad_layout(float2 centerParam, float radiusParam, float2 pos) {
+    float t = distance(pos, centerParam) / radiusParam;
+    return float2(t, 1);
+}
+
+$pure float2 $sweep_grad_layout(float2 centerParam, float biasParam, float scaleParam, float2 pos) {
+    pos -= centerParam;
+
+    // Some devices incorrectly implement atan2(y,x) as atan(y/x). In actuality it is
+    // atan2(y,x) = 2 * atan(y / (sqrt(x^2 + y^2) + x)). To work around this we pass in
+    // (sqrt(x^2 + y^2) + x) as the second parameter to atan2 in these cases. We let the device
+    // handle the undefined behavior if the second parameter is 0, instead of doing the divide
+    // ourselves and calling atan with the quotient.
+    float angle = sk_Caps.atan2ImplementedAsAtanYOverX ? 2 * atan(-pos.y, length(pos) - pos.x)
+                                                       : atan(-pos.y, -pos.x);
+
+    // 0.1591549430918 is 1/(2*pi), used since atan returns values [-pi, pi]
+    float t = (angle * 0.1591549430918 + 0.5 + biasParam) * scaleParam;
+    return float2(t, 1);
+}
+
+$pure float3x3 $map_to_unit_x(float2 p0, float2 p1) {
+    // Returns a matrix that maps [p0, p1] to [(0, 0), (1, 0)]. Results are undefined if p0 = p1.
+    // From skia/src/core/SkMatrix.cpp, SkMatrix::setPolyToPoly.
+    return float3x3(
+        0, -1,  0,
+        1,  0,  0,
+        0,  0,  1
+    ) * inverse(float3x3(
+        p1.y - p0.y, p0.x - p1.x, 0,
+        p1.x - p0.x, p1.y - p0.y, 0,
+               p0.x,        p0.y, 1
+    ));
+}
+
+$pure float2 $conical_grad_layout(float2 point0Param,
+                                  float2 point1Param,
+                                  float radius0Param,
+                                  float radius1Param,
+                                  float2 pos) {
+    const float SK_ScalarNearlyZero = 1.0 / (1 << 12);
+    float dCenter = distance(point0Param, point1Param);
+    float dRadius = radius1Param - radius0Param;
+
+    // Degenerate case: a radial gradient (p0 = p1).
+    bool radial = dCenter < SK_ScalarNearlyZero;
+
+    // Degenerate case: a strip with bandwidth 2r (r0 = r1).
+    bool strip = abs(dRadius) < SK_ScalarNearlyZero;
+
+    if (radial) {
+        if (strip) {
+            // The start and end inputs are the same in both position and radius.
+            // We don't expect to see this input, but just in case we avoid dividing by zero.
+            return float2(0, -1);
+        }
+
+        float scale = 1 / dRadius;
+        float scaleSign = sign(dRadius);
+        float bias = radius0Param / dRadius;
+
+        float2 pt = (pos - point0Param) * scale;
+        float t = length(pt) * scaleSign - bias;
+        return float2(t, 1);
+
+    } else if (strip) {
+        float3x3 transform = $map_to_unit_x(point0Param, point1Param);
+        float r = radius0Param / dCenter;
+        float r_2 = r * r;
+
+        float2 pt = (transform * pos.xy1).xy;
+        float t = r_2 - pt.y * pt.y;
+        if (t < 0) {
+            return float2(0, -1);
+        }
+        t = pt.x + sqrt(t);
+        return float2(t, 1);
+
+    } else {
+        // See https://skia.org/docs/dev/design/conical/ for details on how this algorithm works.
+        // Calculate f and swap inputs if necessary (steps 1 and 2).
+        float f = radius0Param / (radius0Param - radius1Param);
+
+        bool isSwapped = abs(f - 1) < SK_ScalarNearlyZero;
+        if (isSwapped) {
+            float2 tmpPt = point0Param;
+            point0Param = point1Param;
+            point1Param = tmpPt;
+            f = 0;
+        }
+
+        // Apply mapping from [Cf, C1] to unit x, and apply the precalculations from steps 3 and 4,
+        // all in the same transformation.
+        float2 Cf = mix(point0Param, point1Param, f);
+        float3x3 transform = $map_to_unit_x(Cf, point1Param);
+
+        float scaleX = abs(1 - f);
+        float scaleY = scaleX;
+        float r1 = abs(radius1Param - radius0Param) / dCenter;
+        bool isFocalOnCircle = abs(r1 - 1) < SK_ScalarNearlyZero;
+        if (isFocalOnCircle) {
+            scaleX *= 0.5;
+            scaleY *= 0.5;
+        } else {
+            scaleX *= r1 / (r1 * r1 - 1);
+            scaleY /= sqrt(abs(r1 * r1 - 1));
+        }
+        transform = float3x3(
+            scaleX, 0, 0,
+            0, scaleY, 0,
+            0, 0, 1
+        ) * transform;
+
+        float2 pt = (transform * pos.xy1).xy;
+
+        // Continue with step 5 onward.
+        float invR1 = 1 / r1;
+        float dRadiusSign = sign(1 - f);
+        bool isWellBehaved = !isFocalOnCircle && r1 > 1;
+
+        float x_t = -1;
+        if (isFocalOnCircle) {
+            x_t = dot(pt, pt) / pt.x;
+        } else if (isWellBehaved) {
+            x_t = length(pt) - pt.x * invR1;
+        } else {
+            float temp = pt.x * pt.x - pt.y * pt.y;
+            if (temp >= 0) {
+                if (isSwapped || dRadiusSign < 0) {
+                    x_t = -sqrt(temp) - pt.x * invR1;
+                } else {
+                    x_t = sqrt(temp) - pt.x * invR1;
+                }
+            }
+        }
+
+        if (!isWellBehaved && x_t < 0) {
+            return float2(0, -1);
+        }
+
+        float t = f + dRadiusSign * x_t;
+        if (isSwapped) {
+            t = 1 - t;
+        }
+        return float2(t, 1);
+    }
+}
+
+$pure half4 sk_linear_grad_4_shader(float2 coords,
+                                    float4 colorsParam[4],
+                                    float4 offsetsParam,
+                                    float2 point0Param,
+                                    float2 point1Param,
+                                    int tileMode,
+                                    int colorSpace,
+                                    int doUnpremul) {
+    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_linear_grad_8_shader(float2 coords,
+                                    float4 colorsParam[8],
+                                    float4 offsetsParam[2],
+                                    float2 point0Param,
+                                    float2 point1Param,
+                                    int tileMode,
+                                    int colorSpace,
+                                    int doUnpremul) {
+    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_linear_grad_tex_shader(float2 coords,
+                                      float2 point0Param,
+                                      float2 point1Param,
+                                      int numStops,
+                                      int tileMode,
+                                      int colorSpace,
+                                      int doUnpremul,
+                                      sampler2D colorAndOffsetSampler) {
+    float2 t = $linear_grad_layout(point0Param, point1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_radial_grad_4_shader(float2 coords,
+                                    float4 colorsParam[4],
+                                    float4 offsetsParam,
+                                    float2 centerParam,
+                                    float radiusParam,
+                                    int tileMode,
+                                    int colorSpace,
+                                    int doUnpremul) {
+    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_radial_grad_8_shader(float2 coords,
+                                    float4 colorsParam[8],
+                                    float4 offsetsParam[2],
+                                    float2 centerParam,
+                                    float radiusParam,
+                                    int tileMode,
+                                    int colorSpace,
+                                    int doUnpremul) {
+    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_radial_grad_tex_shader(float2 coords,
+                                      float2 centerParam,
+                                      float radiusParam,
+                                      int numStops,
+                                      int tileMode,
+                                      int colorSpace,
+                                      int doUnpremul,
+                                      sampler2D colorAndOffsetSampler) {
+    float2 t = $radial_grad_layout(centerParam, radiusParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_sweep_grad_4_shader(float2 coords,
+                                   float4 colorsParam[4],
+                                   float4 offsetsParam,
+                                   float2 centerParam,
+                                   float biasParam,
+                                   float scaleParam,
+                                   int tileMode,
+                                   int colorSpace,
+                                   int doUnpremul) {
+    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_sweep_grad_8_shader(float2 coords,
+                                   float4 colorsParam[8],
+                                   float4 offsetsParam[2],
+                                   float2 centerParam,
+                                   float biasParam,
+                                   float scaleParam,
+                                   int tileMode,
+                                   int colorSpace,
+                                   int doUnpremul) {
+    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_sweep_grad_tex_shader(float2 coords,
+                                     float2 centerParam,
+                                     float biasParam,
+                                     float scaleParam,
+                                     int numStops,
+                                     int tileMode,
+                                     int colorSpace,
+                                     int doUnpremul,
+                                     sampler2D colorAndOffsetSampler) {
+    float2 t = $sweep_grad_layout(centerParam, biasParam, scaleParam, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_conical_grad_4_shader(float2 coords,
+                                     float4 colorsParam[4],
+                                     float4 offsetsParam,
+                                     float2 point0Param,
+                                     float2 point1Param,
+                                     float radius0Param,
+                                     float radius1Param,
+                                     int tileMode,
+                                     int colorSpace,
+                                     int doUnpremul) {
+    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_4(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_conical_grad_8_shader(float2 coords,
+                                     float4 colorsParam[8],
+                                     float4 offsetsParam[2],
+                                     float2 point0Param,
+                                     float2 point1Param,
+                                     float radius0Param,
+                                     float radius1Param,
+                                     int tileMode,
+                                     int colorSpace,
+                                     int doUnpremul) {
+    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_8(colorsParam, offsetsParam, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_conical_grad_tex_shader(float2 coords,
+                                       float2 point0Param,
+                                       float2 point1Param,
+                                       float radius0Param,
+                                       float radius1Param,
+                                       int numStops,
+                                       int tileMode,
+                                       int colorSpace,
+                                       int doUnpremul,
+                                       sampler2D colorAndOffsetSampler) {
+    float2 t = $conical_grad_layout(point0Param, point1Param, radius0Param, radius1Param, coords);
+    t = $tile_grad(tileMode, t);
+    half4 color = $colorize_grad_tex(colorAndOffsetSampler, numStops, t);
+    return $interpolated_to_rgb_unpremul(color, colorSpace, doUnpremul);
+}
+
+$pure half4 sk_matrix_colorfilter(half4 colorIn, float4x4 m, float4 v, int inHSLA) {
+    if (bool(inHSLA)) {
+        colorIn = $rgb_to_hsl(colorIn.rgb, colorIn.a); // includes unpremul
+    } else {
+        colorIn = unpremul(colorIn);
+    }
+
+    half4 colorOut = half4((m * colorIn) + v);
+
+    if (bool(inHSLA)) {
+        colorOut = $hsl_to_rgb(colorOut.rgb, colorOut.a); // includes clamp and premul
+    } else {
+        colorOut = saturate(colorOut);
+        colorOut.rgb *= colorOut.a;
+    }
+
+    return colorOut;
+}
+
+// This method computes the 4 x-coodinates ([0..1]) that should be used to look
+// up in the Perlin noise shader's noise table.
+$pure half4 $noise_helper(half2 noiseVec,
+                          half2 stitchData,
+                          int stitching,
+                          sampler2D permutationSampler) {
+    const half kBlockSize = 256.0;
+
+    half4 floorVal;
+    floorVal.xy = floor(noiseVec);
+    floorVal.zw = floorVal.xy + half2(1);
+
+    // Adjust frequencies if we're stitching tiles
+    if (bool(stitching)) {
+        floorVal -= step(stitchData.xyxy, floorVal) * stitchData.xyxy;
+    }
+
+    half sampleX = sample(permutationSampler, half2((floorVal.x + 0.5) / kBlockSize, 0.5)).r;
+    half sampleY = sample(permutationSampler, half2((floorVal.z + 0.5) / kBlockSize, 0.5)).r;
+
+    half2 latticeIdx = half2(sampleX, sampleY);
+
+    if (sk_Caps.PerlinNoiseRoundingFix) {
+        // Aggressively round to the nearest exact (N / 255) floating point values.
+        // This prevents rounding errors on some platforms (e.g., Tegras)
+        const half kInv255 = 1.0 / 255.0;
+
+        latticeIdx = floor(latticeIdx * half2(255.0) + half2(0.5)) * half2(kInv255);
+    }
+
+    // Get (x,y) coordinates with the permuted x
+    half4 noiseXCoords = kBlockSize*latticeIdx.xyxy + floorVal.yyww;
+
+    noiseXCoords /= half4(kBlockSize);
+    return noiseXCoords;
+}
+
+$pure half4 $noise_function(half2 noiseVec,
+                            half4 noiseXCoords,
+                            sampler2D noiseSampler) {
+    half2 fractVal = fract(noiseVec);
+
+    // Hermite interpolation : t^2*(3 - 2*t)
+    half2 noiseSmooth = smoothstep(0, 1, fractVal);
+
+    // This is used to convert the two 16bit integers packed into rgba 8 bit input into
+    // a [-1,1] vector
+    const half kInv256 = 0.00390625;  // 1.0 / 256.0
+
+    half4 result;
+
+    for (int channel = 0; channel < 4; channel++) {
+
+        // There are 4 lines in the noise texture, put y coords at center of each.
+        half chanCoord = (half(channel) + 0.5) / 4.0;
+
+        half4 sampleA = sample(noiseSampler, float2(noiseXCoords.x, chanCoord));
+        half4 sampleB = sample(noiseSampler, float2(noiseXCoords.y, chanCoord));
+        half4 sampleC = sample(noiseSampler, float2(noiseXCoords.w, chanCoord));
+        half4 sampleD = sample(noiseSampler, float2(noiseXCoords.z, chanCoord));
+
+        half2 tmpFractVal = fractVal;
+
+        // Compute u, at offset (0,0)
+        half u = dot((sampleA.ga + sampleA.rb*kInv256)*2 - 1, tmpFractVal);
+
+        // Compute v, at offset (-1,0)
+        tmpFractVal.x -= 1.0;
+        half v = dot((sampleB.ga + sampleB.rb*kInv256)*2 - 1, tmpFractVal);
+
+        // Compute 'a' as a linear interpolation of 'u' and 'v'
+        half a = mix(u, v, noiseSmooth.x);
+
+        // Compute v, at offset (-1,-1)
+        tmpFractVal.y -= 1.0;
+        v = dot((sampleC.ga + sampleC.rb*kInv256)*2 - 1, tmpFractVal);
+
+        // Compute u, at offset (0,-1)
+        tmpFractVal.x += 1.0;
+        u = dot((sampleD.ga + sampleD.rb*kInv256)*2 - 1, tmpFractVal);
+
+        // Compute 'b' as a linear interpolation of 'u' and 'v'
+        half b = mix(u, v, noiseSmooth.x);
+
+        // Compute the noise as a linear interpolation of 'a' and 'b'
+        result[channel] = mix(a, b, noiseSmooth.y);
+    }
+
+    return result;
+}
+
+// permutationSampler is [kBlockSize x 1] A8
+// noiseSampler is [kBlockSize x 4] RGBA8 premul
+$pure half4 perlin_noise_shader(float2 coords,
+                                float2 baseFrequency,
+                                float2 stitchDataIn,
+                                int noiseType,
+                                int numOctaves,
+                                int stitching,
+                                sampler2D permutationSampler,
+                                sampler2D noiseSampler) {
+    const int kFractalNoise = 0;
+    const int kTurbulence = 1;
+
+    // In the past, Perlin noise handled coordinates a bit differently than most shaders.
+    // It operated in device space, floored; it also had a one-pixel transform matrix applied to
+    // both the X and Y coordinates. This is roughly equivalent to adding 0.5 to the coordinates.
+    // This was originally done in order to better match preexisting golden images from WebKit.
+    // Perlin noise now operates in local space, which allows rotation to work correctly. To better
+    // approximate past behavior, we add 0.5 to the coordinates here. This is _not_ exactly the same
+    // because this adjustment is occurring in local space, not device space.
+    half2 noiseVec = half2((coords + 0.5) * baseFrequency);
+
+    // Clear the color accumulator
+    half4 color = half4(0);
+
+    half2 stitchData = half2(stitchDataIn);
+
+    half ratio = 1.0;
+
+    // Loop over all octaves
+    for (int octave = 0; octave < numOctaves; ++octave) {
+        half4 noiseXCoords = $noise_helper(noiseVec, stitchData, stitching, permutationSampler);
+
+        half4 tmp = $noise_function(noiseVec, noiseXCoords, noiseSampler);
+
+        if (noiseType != kFractalNoise) {
+            // For kTurbulence the result is: abs(noise[-1,1])
+            tmp = abs(tmp);
+        }
+
+        color += tmp * ratio;
+
+        noiseVec *= half2(2.0);
+        ratio *= 0.5;
+        stitchData *= half2(2.0);
+    }
+
+    if (noiseType == kFractalNoise) {
+        // For kFractalNoise the result is: noise[-1,1] * 0.5 + 0.5
+        color = color * half4(0.5) + half4(0.5);
+    }
+
+    // Clamp values
+    color = saturate(color);
+
+    // Pre-multiply the result
+    return half4(color.rgb * color.aaa, color.a);
+}
+
+$pure half4 sk_blend(half4 src, half4 dst, int blendMode) {
+    const int kClear      = 0;
+    const int kSrc        = 1;
+    const int kDst        = 2;
+    const int kSrcOver    = 3;
+    const int kDstOver    = 4;
+    const int kSrcIn      = 5;
+    const int kDstIn      = 6;
+    const int kSrcOut     = 7;
+    const int kDstOut     = 8;
+    const int kSrcATop    = 9;
+    const int kDstATop    = 10;
+    const int kXor        = 11;
+    const int kPlus       = 12;
+    const int kModulate   = 13;
+    const int kScreen     = 14;
+    const int kOverlay    = 15;
+    const int kDarken     = 16;
+    const int kLighten    = 17;
+    const int kColorDodge = 18;
+    const int kColorBurn  = 19;
+    const int kHardLight  = 20;
+    const int kSoftLight  = 21;
+    const int kDifference = 22;
+    const int kExclusion  = 23;
+    const int kMultiply   = 24;
+    const int kHue        = 25;
+    const int kSaturation = 26;
+    const int kColor      = 27;
+    const int kLuminosity = 28;
+
+    switch (blendMode) {
+        case kClear:      return blend_clear(src, dst);
+        case kSrc:        return blend_src(src, dst);
+        case kDst:        return blend_dst(src, dst);
+        case kSrcOver:    return blend_porter_duff(half4(1, 0,  0, -1), src, dst);
+        case kDstOver:    return blend_porter_duff(half4(0, 1, -1,  0), src, dst);
+        case kSrcIn:      return blend_porter_duff(half4(0, 0,  1,  0), src, dst);
+        case kDstIn:      return blend_porter_duff(half4(0, 0,  0,  1), src, dst);
+        case kSrcOut:     return blend_porter_duff(half4(0, 0, -1,  0), src, dst);
+        case kDstOut:     return blend_porter_duff(half4(0, 0,  0, -1), src, dst);
+        case kSrcATop:    return blend_porter_duff(half4(0, 0,  1, -1), src, dst);
+        case kDstATop:    return blend_porter_duff(half4(0, 0, -1,  1), src, dst);
+        case kXor:        return blend_porter_duff(half4(0, 0, -1, -1), src, dst);
+        case kPlus:       return blend_porter_duff(half4(1, 1,  0,  0), src, dst);
+        case kModulate:   return blend_modulate(src, dst);
+        case kScreen:     return blend_screen(src, dst);
+        case kOverlay:    return blend_overlay(/*flip=*/0, src, dst);
+        case kDarken:     return blend_darken(/*mode=*/1, src, dst);
+        case kLighten:    return blend_darken(/*mode=*/-1, src, dst);
+        case kColorDodge: return blend_color_dodge(src, dst);
+        case kColorBurn:  return blend_color_burn(src, dst);
+        case kHardLight:  return blend_overlay(/*flip=*/1, src, dst);
+        case kSoftLight:  return blend_soft_light(src, dst);
+        case kDifference: return blend_difference(src, dst);
+        case kExclusion:  return blend_exclusion(src, dst);
+        case kMultiply:   return blend_multiply(src, dst);
+        case kHue:        return blend_hslc(/*flipSat=*/half2(0, 1), src, dst);
+        case kSaturation: return blend_hslc(/*flipSat=*/half2(1), src, dst);
+        case kColor:      return blend_hslc(/*flipSat=*/half2(0), src, dst);
+        case kLuminosity: return blend_hslc(/*flipSat=*/half2(1, 0), src, dst);
+        default:          return half4(0); // avoid 'blend can exit without returning a value' error
+    }
+}
+
+$pure half4 sk_coeff_blend(half4 src, half4 dst, half4 coeffs) {
+    return blend_porter_duff(coeffs, src, dst);
+}
+
+$pure half4 sk_table_colorfilter(half4 inColor, sampler2D s) {
+    half4 coords = unpremul(inColor) * 255.0/256.0 + 0.5/256.0;
+    half4 color = half4(sample(s, half2(coords.r, 3.0/8.0)).r,
+                        sample(s, half2(coords.g, 5.0/8.0)).r,
+                        sample(s, half2(coords.b, 7.0/8.0)).r,
+                        1);
+    return color * sample(s, half2(coords.a, 1.0/8.0)).r;
+}
+
+$pure half4 sk_gaussian_colorfilter(half4 inColor) {
+    half factor = 1 - inColor.a;
+    factor = exp(-factor * factor * 4) - 0.018;
+    return half4(factor);
+}
+
+$pure half4 sample_indexed_atlas(float2 textureCoords,
+                                 int atlasIndex,
+                                 sampler2D atlas0,
+                                 sampler2D atlas1,
+                                 sampler2D atlas2,
+                                 sampler2D atlas3) {
+    switch (atlasIndex) {
+        case 1:
+            return sample(atlas1, textureCoords);
+        case 2:
+            return sample(atlas2, textureCoords);
+        case 3:
+            return sample(atlas3, textureCoords);
+        default:
+            return sample(atlas0, textureCoords);
+    }
+}
+
+$pure half4 bitmap_text_coverage_fn(half4 texColor, int maskFormat) {
+    return (maskFormat == $kMaskFormatA8) ? texColor.rrrr
+                                          : texColor;
+}
+
+$pure half4 sdf_text_coverage_fn(half texColor,
+                                 half distAdjust,
+                                 float2 unormTexCoords) {
+    // TODO: To minimize the number of shaders generated this is the full affine shader.
+    // For best performance it may be worth creating the uniform scale shader as well,
+    // as that's the most common case.
+    // TODO: Need to add 565 support.
+
+    // The distance field is constructed as uchar8_t values, so that the zero value is at 128,
+    // and the supported range of distances is [-4 * 127/128, 4].
+    // Hence to convert to floats our multiplier (width of the range) is 4 * 255/128 = 7.96875
+    // and zero threshold is 128/255 = 0.50196078431.
+    half dist = 7.96875 * (texColor - 0.50196078431);
+
+    // We may further adjust the distance for gamma correction.
+    dist -= half(distAdjust);
+
+    // After the distance is unpacked, we need to correct it by a factor dependent on the
+    // current transformation. For general transforms, to determine the amount of correction
+    // we multiply a unit vector pointing along the SDF gradient direction by the Jacobian of
+    // unormTexCoords (which is the inverse transform for this fragment) and take the length of
+    // the result.
+    half2 dist_grad = half2(dFdx(dist), dFdy(dist));
+       half dg_len2 = dot(dist_grad, dist_grad);
+
+    // The length of the gradient may be near 0, so we need to check for that. This also
+    // compensates for the Adreno, which likes to drop tiles on division by 0.
+    dist_grad = (dg_len2 >= 0.0001) ? dist_grad * inversesqrt(dg_len2)
+                                    : half2(0.7071);
+
+    // Computing the Jacobian and multiplying by the gradient.
+    half2 Jdx = half2(dFdx(unormTexCoords));
+    half2 Jdy = half2(dFdy(unormTexCoords));
+    half2 grad = half2(dist_grad.x * Jdx.x + dist_grad.y * Jdy.x,
+                       dist_grad.x * Jdx.y + dist_grad.y * Jdy.y);
+
+    // This gives us a smooth step across approximately one fragment.
+    half afwidth = 0.65 * length(grad);
+
+    // TODO: handle aliased and sRGB rendering
+    return half4(smoothstep(-afwidth, afwidth, dist));
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Support functions for analytic round rectangles
+
+// Calculates 1/|∇| in device space by applying the chain rule to a local gradient vector and the
+// 2x2 Jacobian describing the transform from local-to-device space. For non-perspective, this is
+// equivalent to the "normal matrix", or the inverse transpose. For perspective, J should be
+//    W(u,v) [m00' - m20'u  m01' - m21'u] derived from the first two columns of the 3x3 inverse.
+//           [m10' - m20'v  m11' - m21'v]
+$pure float $inverse_grad_len(float2 localGrad, float2x2 jacobian) {
+    // NOTE: By chain rule, the local gradient is on the left side of the Jacobian matrix
+    float2 devGrad = localGrad * jacobian;
+    // NOTE: This uses the L2 norm, which is more accurate than the L1 norm used by fwidth().
+    // TODO: Switch to L1 since it is a 2x perf improvement according to Xcode with little visual
+    // impact, but start with L2 to measure the change separately from the algorithmic update.
+    // return 1.0 / (abs(devGrad.x) + abs(devGrad.y));
+    return inversesqrt(dot(devGrad, devGrad));
+}
+
+// Returns distance from both sides of a stroked circle or ellipse. Elliptical coverage is
+// only accurate if strokeRadius = 0. A positive value represents the interior of the stroke.
+$pure float2 $elliptical_distance(float2 uv, float2 radii, float strokeRadius, float2x2 jacobian) {
+    // We do need to evaluate up to two circle equations: one with
+    //    R = cornerRadius(r)+strokeRadius(s), and another with R = r-s.
+    // This can be consolidated into a common evaluation against a circle of radius sqrt(r^2+s^2):
+    //    (x/(r+/-s))^2 + (y/(r+/-s))^2 = 1
+    //    x^2 + y^2 = (r+/-s)^2
+    //    x^2 + y^2 = r^2 + s^2 +/- 2rs
+    //    (x/sqrt(r^2+s^2))^2 + (y/sqrt(r^2+s^2)) = 1 +/- 2rs/(r^2+s^2)
+    // The 2rs/(r^2+s^2) is the "width" that adjusts the implicit function to the outer or inner
+    // edge of the stroke. For fills and hairlines, s = 0, which means these operations remain valid
+    // for elliptical corners where radii holds the different X and Y corner radii.
+    float2 invR2 = 1.0 / (radii * radii + strokeRadius*strokeRadius);
+    float2 normUV = invR2 * uv;
+    float invGradLength = $inverse_grad_len(normUV, jacobian);
+
+    // Since normUV already includes 1/r^2 in the denominator, dot with just 'uv' instead.
+    float f = 0.5 * invGradLength * (dot(uv, normUV) - 1.0);
+
+    // This is 0 for fills/hairlines, which are the only types that allow
+    // elliptical corners (strokeRadius == 0). For regular strokes just use X.
+    float width = radii.x * strokeRadius * invR2.x * invGradLength;
+    return float2(width - f, width + f);
+}
+
+// Accumulates the minimum (and negative maximum) of the outer and inner corner distances in 'dist'
+// for a possibly elliptical corner with 'radii' and relative pixel location specified by
+// 'cornerEdgeDist'. The corner's basis relative to the jacobian is defined in 'xyFlip'.
+void $corner_distance(inout float2 dist,
+                      float2x2 jacobian,
+                      float2 strokeParams,
+                      float2 cornerEdgeDist,
+                      float2 xyFlip,
+                      float2 radii) {
+    float2 uv = radii - cornerEdgeDist;
+    // NOTE: For mitered corners uv > 0 only if it's stroked, and in that case the
+    // subsequent conditions skip calculating anything.
+    if (all(greaterThan(uv, float2(0.0)))) {
+        if (all(greaterThan(radii, float2(0.0))) ||
+            (strokeParams.x > 0.0 && strokeParams.y < 0.0 /* round-join */)) {
+            // A rounded corner so incorporate outer elliptical distance if we're within the
+            // quarter circle.
+            float2 d = $elliptical_distance(uv * xyFlip, radii, strokeParams.x, jacobian);
+            d.y = (radii.x - strokeParams.x <= 0.0)
+                      ? 1.0    // Disregard inner curve since it's collapsed into an inner miter.
+                      : -d.y;  // Negate so that "min" accumulates the maximum value instead.
+            dist = min(dist, d);
+        } else if (strokeParams.y == 0.0 /* bevel-join */) {
+            // Bevels are--by construction--interior mitered, so inner distance is based
+            // purely on the edge distance calculations, but the outer distance is to a 45-degree
+            // line and not the vertical/horizontal lines of the other edges.
+            float bevelDist = (strokeParams.x - uv.x - uv.y) * $inverse_grad_len(xyFlip, jacobian);
+            dist.x = min(dist.x, bevelDist);
+        } // Else it's a miter so both inner and outer distances are unmodified
+    } // Else we're not affected by the corner so leave distances unmodified
+}
+
+// Accumulates the minimum (and negative maximum) of the outer and inner corner distances into 'd',
+// for all four corners of a [round] rectangle. 'edgeDists' should be ordered LTRB with positive
+// distance representing the interior of the edge. 'xRadii' and 'yRadii' should hold the per-corner
+// elliptical radii, ordered TL, TR, BR, BL.
+void $corner_distances(inout float2 d,
+                       float2x2 J,
+                       float2 stroke, // {radii, joinStyle}, see StrokeStyle struct definition
+                       float4 edgeDists,
+                       float4 xRadii,
+                       float4 yRadii) {
+    $corner_distance(d, J, stroke, edgeDists.xy, float2(-1.0, -1.0), float2(xRadii[0], yRadii[0]));
+    $corner_distance(d, J, stroke, edgeDists.zy, float2( 1.0, -1.0), float2(xRadii[1], yRadii[1]));
+    $corner_distance(d, J, stroke, edgeDists.zw, float2( 1.0,  1.0), float2(xRadii[2], yRadii[2]));
+    $corner_distance(d, J, stroke, edgeDists.xw, float2(-1.0,  1.0), float2(xRadii[3], yRadii[3]));
+}
+
+$pure half4 analytic_rrect_coverage_fn(float4 coords,
+                                       float4 jacobian,
+                                       float4 edgeDistances,
+                                       float4 xRadii,
+                                       float4 yRadii,
+                                       float2 strokeParams,
+                                       float2 perPixelControl) {
+    if (perPixelControl.x > 0.0) {
+        // A trivially solid interior pixel, either from a filled rect or round rect, or a
+        // stroke with sufficiently large width that the interior completely overlaps itself.
+        return half4(1.0);
+    } else if (perPixelControl.y > 1.0) {
+        // This represents a filled rectangle or quadrilateral, where the distances have already
+        // been converted to device space. Mitered strokes cannot use this optimization because
+        // their scale and bias is not uniform over the shape; Rounded shapes cannot use this
+        // because they rely on the edge distances being in local space to reconstruct the
+        // per-corner positions for the elliptical implicit functions.
+        float2 outerDist = min(edgeDistances.xy, edgeDistances.zw);
+        float c = min(outerDist.x, outerDist.y) * coords.w;
+        float scale = (perPixelControl.y - 1.0) * coords.w;
+        float bias = coverage_bias(scale);
+        return half4(saturate(scale * (c + bias)));
+    } else {
+        // Compute per-pixel coverage, mixing four outer edge distances, possibly four inner
+        // edge distances, and per-corner elliptical distances into a final coverage value.
+        // The Jacobian needs to be multiplied by W, but coords.w stores 1/w.
+        float2x2 J = float2x2(jacobian) / coords.w;
+
+        float2 invGradLen = float2($inverse_grad_len(float2(1.0, 0.0), J),
+                                   $inverse_grad_len(float2(0.0, 1.0), J));
+        float2 outerDist = invGradLen * (strokeParams.x + min(edgeDistances.xy,
+                                                              edgeDistances.zw));
+
+        // d.x tracks minimum outer distance (pre scale-and-biasing to a coverage value).
+        // d.y tracks negative maximum inner distance (so min() over c accumulates min and outer
+        // and max inner simultaneously).)
+        float2 d = float2(min(outerDist.x, outerDist.y), -1.0);
+        float scale, bias;
+
+        // Check for bidirectional coverage, which is is marked as a -1 from the vertex shader.
+        // We don't just check for < 0 since extrapolated fill triangle samples can have small
+        // negative values.
+        if (perPixelControl.x > -0.95) {
+            // A solid interior, so update scale and bias based on full width and height
+            float2 dim = invGradLen * (edgeDistances.xy + edgeDistances.zw + 2*strokeParams.xx);
+            scale = min(min(dim.x, dim.y), 1.0);
+            bias = coverage_bias(scale);
+            // Since we leave d.y = -1.0, no inner curve coverage will adjust it closer to 0,
+            // so 'finalCoverage' is based solely on outer edges and curves.
+        } else {
+            // Bidirectional coverage, so we modify c.y to hold the negative of the maximum
+            // interior coverage, and update scale and bias based on stroke width.
+            float2 strokeWidth = 2.0 * strokeParams.x * invGradLen;
+            float2 innerDist = strokeWidth - outerDist;
+
+            d.y = -max(innerDist.x, innerDist.y);
+            if (strokeParams.x > 0.0) {
+                float strokeDim = min(strokeWidth.x, strokeWidth.y);
+                if (innerDist.y >= -0.5 && strokeWidth.y > strokeDim) {
+                    strokeDim = strokeWidth.y;
+                }
+                if (innerDist.x >= -0.5 && strokeWidth.x > strokeDim) {
+                    strokeDim = strokeWidth.x;
+                }
+                scale = min(strokeDim, 1.0);
+                bias = coverage_bias(scale);
+            } else {
+                // A hairline, so scale and bias should both be 1
+                 scale = bias = 1.0;
+            }
+        }
+
+        // Check all corners, although most pixels should only be influenced by 1.
+        $corner_distances(d, J, strokeParams, edgeDistances, xRadii, yRadii);
+
+        float outsetDist = min(perPixelControl.y, 0.0) * coords.w;
+        float finalCoverage = scale * (min(d.x + outsetDist, -d.y) + bias);
+
+        return half4(saturate(finalCoverage));
+    }
+}
+
+$pure half4 per_edge_aa_quad_coverage_fn(float4 coords,
+                                         float4 edgeDistances) {
+    // This represents a filled rectangle or quadrilateral, where the distances have already
+    // been converted to device space.
+    float2 outerDist = min(edgeDistances.xy, edgeDistances.zw);
+    float c = min(outerDist.x, outerDist.y) * coords.w;
+    return half4(saturate(c));
+}

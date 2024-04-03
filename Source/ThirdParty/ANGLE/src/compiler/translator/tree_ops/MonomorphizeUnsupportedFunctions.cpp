@@ -467,7 +467,7 @@ class UpdateFunctionsDefinitionsTraverser final : public TIntermTraverser
         // If nothing to do, leave it be.
         if (data.monomorphizedDefinitions.empty())
         {
-            ASSERT(data.isOriginalUsed);
+            ASSERT(data.isOriginalUsed || function->isMain());
             return;
         }
 
@@ -498,7 +498,7 @@ class UpdateFunctionsDefinitionsTraverser final : public TIntermTraverser
         // If nothing to do, leave it be.
         if (data.monomorphizedDefinitions.empty())
         {
-            ASSERT(data.isOriginalUsed || function->name() == "main");
+            ASSERT(data.isOriginalUsed || function->isMain());
             return false;
         }
 

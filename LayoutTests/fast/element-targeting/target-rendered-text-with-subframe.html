@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+}
+.container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: white;
+}
+</style>
+</head>
+<body>
+<p>This text is covered by the container</p>
+<div class="container">
+    <h1>zero</h1>
+    <iframe frameborder="0" width="350" height="200" src="resources/subframe.html"></iframe>
+    <h3>five</h3>
+</div>
+<script>
+jsTestIsAsync = true;
+remainingLoadCount = 2;
+
+document.querySelector("iframe").addEventListener("load", runTestIfPossible);
+addEventListener("load", runTestIfPossible);
+
+async function runTestIfPossible() {
+    if (--remainingLoadCount)
+        return;
+    extractedText = await UIHelper.requestRenderedTextForFrontmostTarget(175, 100);
+    shouldBeEqualToString("extractedText", "zero one two three four five");
+    document.querySelector("div.container").remove();
+    finishJSTest();
+}
+</script>
+</body>
+</html>

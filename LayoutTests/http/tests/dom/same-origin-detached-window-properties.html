@@ -51,13 +51,13 @@ function validateWindow(_w)
     try {
     shouldBeTrue("!!w.history");
     if (w.history) {
-        shouldBe("w.history.length", "0");
-        shouldBeNull("w.history.state");
-        shouldNotThrow("w.history.back()");
-        shouldNotThrow("w.history.forward()");
-        shouldNotThrow("w.history.go(-1)");
-        shouldNotThrow("w.history.pushState({}, null)");
-        shouldNotThrow("w.history.replaceState({}, null)");
+        shouldThrowErrorName("w.history.length", "SecurityError");
+        shouldThrowErrorName("w.history.state", "SecurityError");
+        shouldThrowErrorName("w.history.back()", "SecurityError");
+        shouldThrowErrorName("w.history.forward()", "SecurityError");
+        shouldThrowErrorName("w.history.go(-1)", "SecurityError");
+        shouldThrowErrorName("w.history.pushState({}, null)", "SecurityError");
+        shouldThrowErrorName("w.history.replaceState({}, null)", "SecurityError");
     }
     } catch (e) {
         debug(e);
@@ -79,18 +79,6 @@ function validateWindow(_w)
         } catch (e) {
             debug(e);
         }
-    }
-
-    try {
-    shouldBeTrue("!!w.applicationCache");
-    if (w.applicationCache) {
-        shouldBe("w.applicationCache.status", "ApplicationCache.UNCACHED");
-        shouldThrowErrorName("w.applicationCache.update()", "InvalidStateError");
-        shouldThrowErrorName("w.applicationCache.swapCache()", "InvalidStateError");
-        shouldNotThrow("w.applicationCache.abort()");
-    }
-    } catch (e) {
-        debug(e);
     }
 
     try {

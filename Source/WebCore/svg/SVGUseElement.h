@@ -73,7 +73,7 @@ private:
     Document* externalDocument() const;
     void updateExternalDocument();
 
-    SVGElement* findTarget(AtomString* targetID = nullptr) const;
+    RefPtr<SVGElement> findTarget(AtomString* targetID = nullptr) const;
 
     void cloneTarget(ContainerNode&, SVGElement& target) const;
     RefPtr<SVGElement> targetClone() const;

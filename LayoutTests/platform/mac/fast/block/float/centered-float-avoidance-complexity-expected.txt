@@ -7,7 +7,7 @@ layer at (0,0) size 785x641
         RenderText {#text} at (0,0) size 542x37
           text run at (0,0) width 542: "Margins and block formating contexts ("
         RenderInline {A} at (0,0) size 749x74 [color=#0000EE]
-          RenderText {#text} at (541,0) size 749x74
+          RenderText {#text} at (0,0) size 749x74
             text run at (541,0) width 208: "additional tests"
             text run at (0,37) width 254: "from Alan Gresley"
         RenderText {#text} at (253,37) size 11x37

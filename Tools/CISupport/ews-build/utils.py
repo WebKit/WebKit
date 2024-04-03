@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,16 +20,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import json
+import os
+import socket
 
 
-def load_password(name, default=None):
+def load_password(name, default=None, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
     if os.getenv(name):
         return os.getenv(name)
     try:
-        passwords = json.load(open('passwords.json'))
+        passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
         return passwords.get(name, default)
+    except FileNotFoundError as e:
+        print(f'ERROR: passwords.json missing: {e}, using default value for {name}\n')
     except Exception as e:
-        print(f'Error in finding {name} in passwords.json')
-        return default
+        print(f'Error in finding {name} in passwords.json\n')
+    return default
+
+
+def get_custom_suffix():
+    hostname = socket.gethostname().strip()
+    if 'dev' in hostname:
+        return '-dev'
+    if 'uat' in hostname:
+        return '-uat'
+    return ''

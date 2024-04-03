@@ -88,10 +88,11 @@ enum class AXPropertyName : uint16_t {
     ColumnIndex,
     ColumnIndexRange,
     CurrentState,
+    DateTimeComponentsType,
+    DateTimeValue,
     DatetimeAttributeValue,
     DecrementButton,
     Description,
-    DescriptionAttributeValue,
     DisclosedByRow,
     DisclosedRows,
     DocumentEncoding,
@@ -105,15 +106,17 @@ enum class AXPropertyName : uint16_t {
     HasHighlighting,
     HasItalicFont,
     HasPlainText,
+    HasRemoteFrameChild,
     HasUnderline,
     HeaderContainer,
     HeadingLevel,
-    HelpText,
     HierarchicalLevel,
     HorizontalScrollBar,
     IdentifierAttribute,
     IncrementButton,
+    InitialFrameRect,
     InnerHTML,
+    InternalLinkElement,
     InsideLink,
     InvalidStatus,
     IsGrabbed,
@@ -131,6 +134,7 @@ enum class AXPropertyName : uint16_t {
     IsFileUploadButton,
     IsIndeterminate,
     IsInlineText,
+    IsRadioInput,
     IsInputImage,
     IsKeyboardFocusable,
     IsLink,
@@ -151,6 +155,7 @@ enum class AXPropertyName : uint16_t {
     IsMathToken,
     IsMeter,
     IsMultiSelectable,
+    IsNonLayerSVGObject,
     IsNonNativeTextControl,
     IsPlugin,
     IsPressed,
@@ -169,7 +174,6 @@ enum class AXPropertyName : uint16_t {
     IsWidget,
     KeyShortcuts,
     Language,
-    LinkedObjects,
     LiveRegionAtomic,
     LiveRegionRelevant,
     LiveRegionStatus,
@@ -198,7 +202,10 @@ enum class AXPropertyName : uint16_t {
     PopupValue,
     PosInSet,
     PreventKeyboardDOMEventDispatch,
+    RadioButtonGroup,
     RelativeFrame,
+    RemoteFrameOffset,
+    RemoteFramePlatformElement,
     RoleValue,
     RolePlatformString,
     RoleDescription,
@@ -212,6 +219,7 @@ enum class AXPropertyName : uint16_t {
     SelectedChildren,
     SelectedTextRange,
     SetSize,
+    ShouldEmitNewlinesBeforeAndAfterNode,
     SortDirection,
     SpeechHint,
     StringValue,
@@ -239,7 +247,6 @@ enum class AXPropertyName : uint16_t {
 #endif
     Title,
     TitleAttributeValue,
-    TitleUIElement,
     URL,
     ValueAutofillButtonType,
     ValueDescription,
@@ -252,9 +259,10 @@ enum class AXPropertyName : uint16_t {
 using AXPropertyNameSet = HashSet<AXPropertyName, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 // If this type is modified, the switchOn statment in AXIsolatedObject::setProperty must be updated as well.
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
+    , RetainPtr<id>
 #endif
 #if ENABLE(AX_THREAD_TEXT_APIS)
     , AXTextRuns
@@ -315,7 +323,6 @@ public:
 
     static RefPtr<AXIsolatedTree> treeForPageID(std::optional<PageIdentifier>);
     static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
-    constexpr ProcessID processID() const { return m_processID; }
     AXObjectCache* axObjectCache() const;
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
@@ -324,35 +331,23 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
-    template<typename U>
-    Vector<RefPtr<AXCoreObject>> objectsForIDs(const U& axIDs) const
-    {
-        ASSERT(!isMainThread());
-
-        Vector<RefPtr<AXCoreObject>> result;
-        result.reserveInitialCapacity(axIDs.size());
-        for (const auto& axID : axIDs) {
-            if (RefPtr object = objectForID(axID))
-                result.append(WTFMove(object));
-        }
-        result.shrinkToFit();
-        return result;
-    }
+    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
 
     void generateSubtree(AccessibilityObject&);
-    void labelCreated(AccessibilityObject&);
+    bool shouldCreateNodeChange(AccessibilityObject&);
     void updateNode(AccessibilityObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateChildrenForObjects(const ListHashSet<RefPtr<AccessibilityObject>>&);
-    void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); };
+    void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); }
     void updateNodeProperties(AXCoreObject&, const AXPropertyNameSet&);
-    void updateNodeAndDependentProperties(AccessibilityObject&);
+    void updateDependentProperties(AccessibilityObject&);
     void updatePropertiesForSelfAndDescendants(AccessibilityObject&, const AXPropertyNameSet&);
     void updateFrame(AXID, IntRect&&);
+    void updateRootScreenRelativePosition();
     void overrideNodeProperties(AXID, AXPropertyMap&&);
 
-    double loadingProgress() { return m_loadingProgress; }
+    double loadingProgress();
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
@@ -376,7 +371,8 @@ public:
     // During layout tests, it is called on the main thread.
     void applyPendingChanges();
 
-    AXID treeID() const { return m_id; }
+    constexpr AXID treeID() const { return m_id; }
+    constexpr ProcessID processID() const { return m_processID; }
     void setPageActivityState(OptionSet<ActivityState>);
     OptionSet<ActivityState> pageActivityState() const;
     // Use only if the s_storeLock is already held like in findAXTree.
@@ -385,13 +381,18 @@ public:
     AXTextMarkerRange selectedTextMarkerRange();
     void setSelectedTextMarkerRange(AXTextMarkerRange&&);
 
-    void queueNodeUpdate(AXCoreObject&, const NodeUpdateOptions&);
+    void queueNodeUpdate(AXID, const NodeUpdateOptions&);
     void processQueuedNodeUpdates();
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    AXTextMarker firstMarker();
+    AXTextMarker lastMarker();
+#endif
 
 private:
     AXIsolatedTree(AXObjectCache&);
     static void storeTree(AXObjectCache&, const Ref<AXIsolatedTree>&);
-    void reportCreationProgress(AXObjectCache&, unsigned percentComplete);
+    void reportLoadingProgress(double);
 
     // Queue this isolated tree up to destroy itself on the secondary thread.
     // We can't destroy the tree on the main-thread (by removing all `Ref`s to it)
@@ -403,6 +404,7 @@ private:
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
     constexpr void updatingSubtree(AccessibilityObject* axObject) { m_rootOfSubtreeBeingUpdated = axObject; }
+    RefPtr<AXIsolatedObject> retrieveObjectForIDFromMainThread(const AXID) const;
 
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     struct NodeChange {
@@ -481,6 +483,7 @@ private:
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
     AXID m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
+    std::atomic<double> m_processingProgress { 1 };
 
     // Relationships between objects.
     HashMap<AXID, AXRelations> m_relations WTF_GUARDED_BY_LOCK(m_changeLogLock);
@@ -505,6 +508,30 @@ inline AXObjectCache* AXIsolatedTree::axObjectCache() const
 inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(std::optional<PageIdentifier> pageID)
 {
     return pageID ? treeForPageID(*pageID) : nullptr;
+}
+
+template<typename U>
+inline Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
+{
+    ASSERT(!isMainThread());
+
+    Vector<RefPtr<AXCoreObject>> result;
+    result.reserveInitialCapacity(axIDs.size());
+    for (const auto& axID : axIDs) {
+        RefPtr object = objectForID(axID);
+        if (object) {
+            result.append(WTFMove(object));
+            continue;
+        }
+
+        object = retrieveObjectForIDFromMainThread(axID);
+        if (object) {
+            m_readerThreadNodeMap.add(axID, *object);
+            result.append(WTFMove(object));
+        }
+    }
+    result.shrinkToFit();
+    return result;
 }
 
 } // namespace WebCore

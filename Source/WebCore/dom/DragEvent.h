@@ -59,8 +59,6 @@ private:
         EventTarget* relatedTarget, double force, SyntheticClickType, DataTransfer*, IsSimulated, IsTrusted);
     DragEvent();
 
-    EventInterface eventInterface() const final;
-
     RefPtr<DataTransfer> m_dataTransfer;
 };
 

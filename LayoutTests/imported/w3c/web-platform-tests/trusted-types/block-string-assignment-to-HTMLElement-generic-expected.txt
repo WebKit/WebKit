@@ -1,0 +1,35 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS embed.src accepts only TrustedScriptURL
+PASS object.codeBase accepts only TrustedScriptURL
+PASS object.data accepts only TrustedScriptURL
+PASS script.src accepts only TrustedScriptURL
+PASS div.innerHTML accepts only TrustedHTML
+PASS iframe.srcdoc accepts only TrustedHTML
+PASS embed.src accepts string and null after default policy was created
+PASS object.codeBase accepts string and null after default policy was created
+PASS object.data accepts string and null after default policy was created
+PASS script.src accepts string and null after default policy was created
+PASS div.innerHTML accepts string and null after default policy was created
+PASS iframe.srcdoc accepts string and null after default policy was created
+PASS script.text accepts only TrustedScript
+FAIL script.innerText accepts only TrustedScript assert_throws_js: function "_ => {
+    elem[attribute] = value;
+  }" did not throw
+FAIL script.textContent accepts only TrustedScript assert_throws_js: function "_ => {
+    elem[attribute] = value;
+  }" did not throw
+

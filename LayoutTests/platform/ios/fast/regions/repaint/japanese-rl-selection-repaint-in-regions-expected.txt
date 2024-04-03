@@ -28,4 +28,3 @@ Named flows
             text run at (326,0) width 80: "\x{304F}\x{3001}\x{8A2A}\x{554F}"
     Regions for named flow 'thread'
       RenderNamedFlowFragment (anonymous child of {DIV})
-caret: position 70 of child 0 {#text} of child 1 {DIV} of body

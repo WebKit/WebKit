@@ -62,17 +62,17 @@ HashMap<const char*, size_t> PerformanceLogging::memoryUsageStatistics(ShouldInc
     stats.add("backforward_cache_page_count", BackForwardCache::singleton().pageCount());
     stats.add("document_count", Document::allDocuments().size());
 
-    auto& vm = commonVM();
+    Ref vm = commonVM();
     JSC::JSLockHolder locker(vm);
-    stats.add("javascript_gc_heap_capacity_mb", vm.heap.capacity() >> 20);
-    stats.add("javascript_gc_heap_extra_memory_size_mb", vm.heap.extraMemorySize() >> 20);
+    stats.add("javascript_gc_heap_capacity_mb", vm->heap.capacity() >> 20);
+    stats.add("javascript_gc_heap_extra_memory_size_mb", vm->heap.extraMemorySize() >> 20);
 
     if (includeExpensive == ShouldIncludeExpensiveComputations::Yes) {
-        stats.add("javascript_gc_heap_size_mb", vm.heap.size() >> 20);
-        stats.add("javascript_gc_object_count", vm.heap.objectCount());
-        stats.add("javascript_gc_protected_object_count", vm.heap.protectedObjectCount());
-        stats.add("javascript_gc_global_object_count", vm.heap.globalObjectCount());
-        stats.add("javascript_gc_protected_global_object_count", vm.heap.protectedGlobalObjectCount());
+        stats.add("javascript_gc_heap_size_mb", vm->heap.size() >> 20);
+        stats.add("javascript_gc_object_count", vm->heap.objectCount());
+        stats.add("javascript_gc_protected_object_count", vm->heap.protectedObjectCount());
+        stats.add("javascript_gc_global_object_count", vm->heap.globalObjectCount());
+        stats.add("javascript_gc_protected_global_object_count", vm->heap.protectedGlobalObjectCount());
     }
 
     getPlatformMemoryUsageStatistics(stats);

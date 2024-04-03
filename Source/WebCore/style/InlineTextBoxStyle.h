@@ -54,13 +54,15 @@ WavyStrokeParameters wavyStrokeParameters(float fontSize);
 struct TextUnderlinePositionUnder {
     float textRunLogicalHeight { 0.f };
     // This offset value is the distance between the current text run's logical bottom and the lowest position of all the text runs
-    // on line that belong to the same decoration box.
+    // on line that belong to the same decorating box.
     float textRunOffsetFromBottomMost { 0.f };
 };
 GlyphOverflow visualOverflowForDecorations(const RenderStyle&);
-GlyphOverflow visualOverflowForDecorations(const RenderStyle&, FontBaseline, TextUnderlinePositionUnder);
+GlyphOverflow visualOverflowForDecorations(const RenderStyle&, TextUnderlinePositionUnder);
 GlyphOverflow visualOverflowForDecorations(const InlineIterator::LineBoxIterator&, const RenderText&, float textBoxLogicalTop, float textBoxLogicalBottom);
+bool isAlignedForUnder(const RenderStyle& decoratingBoxStyle);
 
 float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
+float overlineOffsetForTextBoxPainting(const InlineIterator::InlineBox&, const RenderStyle&);
 
 } // namespace WebCore

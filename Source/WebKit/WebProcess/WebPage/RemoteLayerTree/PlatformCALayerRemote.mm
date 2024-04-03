@@ -56,7 +56,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformCALayer::LayerT
 {
     RefPtr<PlatformCALayerRemote> layer;
 
-    if (layerType == WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer ||  layerType == WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer)
+    if (layerType == WebCore::PlatformCALayer::LayerType::LayerTypeTiledBackingLayer || layerType == WebCore::PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer)
         layer = adoptRef(new PlatformCALayerRemoteTiledBacking(layerType, owner, context));
     else
         layer = adoptRef(new PlatformCALayerRemote(layerType, owner, context));
@@ -69,6 +69,11 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformCALayer::LayerT
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     return PlatformCALayerRemoteCustom::create(platformLayer, owner, context);
+}
+
+Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerHostingContextID contextID, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+{
+    return PlatformCALayerRemoteCustom::create(contextID, owner, context);
 }
 
 #if ENABLE(MODEL_ELEMENT)
@@ -208,7 +213,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         // Once that setting is made unnecessary, remove this entire conditional as well.
         if (type() == PlatformCALayer::Type::RemoteCustom
             && !downcast<PlatformCALayerRemoteCustom>(*this).hasVideo()) {
-            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, RemoteLayerBackingStoreProperties::LayerContentsType::CAMachPort);
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, nullptr, m_properties, LayerContentsType::CAMachPort);
             didCommit();
             return;
         }
@@ -236,11 +241,24 @@ void PlatformCALayerRemote::didCommit()
 void PlatformCALayerRemote::ensureBackingStore()
 {
     ASSERT(owner());
-
     ASSERT(m_properties.backingStoreAttached);
 
-    if (!m_properties.backingStoreOrProperties.store && m_context)
-        m_properties.backingStoreOrProperties.store = m_context->backingStoreCollection().createRemoteLayerBackingStore(this);
+    bool needsNewBackingStore = [&] {
+        if (!m_context)
+            return false;
+
+        if (!m_properties.backingStoreOrProperties.store)
+            return true;
+
+        // A layer pulled out of a pool may have existing backing store which we mustn't reuse if it lives in the wrong process.
+        if (m_properties.backingStoreOrProperties.store->processModel() != RemoteLayerBackingStore::processModelForLayer(this))
+            return true;
+
+        return false;
+    }();
+
+    if (needsNewBackingStore)
+        m_properties.backingStoreOrProperties.store = RemoteLayerBackingStore::createForLayer(this);
 
     updateBackingStore();
 }
@@ -983,7 +1001,7 @@ void PlatformCALayerRemote::setEventRegion(const EventRegion& eventRegion)
 #if ENABLE(SCROLLING_THREAD)
 ScrollingNodeID PlatformCALayerRemote::scrollingNodeID() const
 {
-    return m_properties.scrollingNodeID;
+    return m_properties.scrollingNodeID.value_or(ScrollingNodeID { });
 }
 
 void PlatformCALayerRemote::setScrollingNodeID(ScrollingNodeID nodeID)
@@ -1080,7 +1098,7 @@ void PlatformCALayerRemote::clearAcceleratedEffectsAndBaseValues()
     m_properties.notePropertiesChanged(LayerChange::AnimationsChanged);
 }
 
-void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects& effects, AcceleratedEffectValues& baseValues)
+void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const AcceleratedEffects& effects, const AcceleratedEffectValues& baseValues)
 {
     m_properties.animationChanges.effects = effects;
     m_properties.animationChanges.baseValues = baseValues;
@@ -1089,4 +1107,23 @@ void PlatformCALayerRemote::setAcceleratedEffectsAndBaseValues(const Accelerated
 }
 #endif
 
+void PlatformCALayerRemote::purgeFrontBufferForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        return m_properties.backingStoreOrProperties.store->purgeFrontBufferForTesting();
+}
+
+void PlatformCALayerRemote::purgeBackBufferForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        return m_properties.backingStoreOrProperties.store->purgeBackBufferForTesting();
+}
+
+void PlatformCALayerRemote::markFrontBufferVolatileForTesting()
+{
+    if (m_properties.backingStoreOrProperties.store)
+        m_properties.backingStoreOrProperties.store->markFrontBufferVolatileForTesting();
+}
+
 } // namespace WebKit
+

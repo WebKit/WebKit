@@ -41,7 +41,7 @@
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 
 @interface WebScrollerImpPairDelegateMac : NSObject <NSScrollerImpPairDelegate> {
-    WebCore::ScrollerPairMac* _scrollerPair;
+    ThreadSafeWeakPtr<WebCore::ScrollerPairMac> _scrollerPair;
 }
 - (id)initWithScrollerPair:(WebCore::ScrollerPairMac*)scrollerPair;
 @end
@@ -66,16 +66,21 @@
 - (NSRect)contentAreaRectForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollerPair)
+    RefPtr scrollerPair = _scrollerPair.get();
+    if (!scrollerPair)
         return NSZeroRect;
 
-    auto size = _scrollerPair->visibleSize();
+    auto size = scrollerPair->visibleSize();
     return NSMakeRect(0, 0, size.width(), size.height());
 }
 
 - (BOOL)inLiveResizeForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
-    return _scrollerPair->inLiveResize();
+    RefPtr scrollerPair = _scrollerPair.get();
+    if (!scrollerPair)
+        return NO;
+
+    return scrollerPair->inLiveResize();
 }
 
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
@@ -91,14 +96,18 @@
     UNUSED_PARAM(scrollerImpPair);
     UNUSED_PARAM(pointInContentArea);
 
-    if (!_scrollerPair || !scrollerImp)
+    RefPtr scrollerPair = _scrollerPair.get();
+    if (!scrollerPair)
+        return NSZeroPoint;
+
+    if (!scrollerPair || !scrollerImp)
         return NSZeroPoint;
 
     WebCore::ScrollerMac* scroller = nullptr;
     if ([scrollerImp isHorizontal])
-        scroller = &_scrollerPair->horizontalScroller();
+        scroller = &scrollerPair->horizontalScroller();
     else
-        scroller = &_scrollerPair->verticalScroller();
+        scroller = &scrollerPair->verticalScroller();
 
     ASSERT(scrollerImp == scroller->scrollerImp());
 
@@ -115,7 +124,9 @@
 {
     UNUSED_PARAM(scrollerImpPair);
 
-    _scrollerPair->setScrollbarStyle(WebCore::scrollbarStyle(newRecommendedScrollerStyle));
+    RefPtr scrollerPair = _scrollerPair.get();
+    if (scrollerPair)
+        scrollerPair->setScrollbarStyle(WebCore::scrollbarStyle(newRecommendedScrollerStyle));
 }
 
 @end
@@ -235,7 +246,11 @@ void ScrollerPairMac::setVerticalScrollbarPresentationValue(float scrollbValue)
 
 void ScrollerPairMac::updateValues()
 {
-    auto offset = m_scrollingNode.currentScrollOffset();
+    RefPtr node = m_scrollingNode.get();
+    if (!node)
+        return;
+
+    auto offset = node->currentScrollOffset();
 
     if (offset != m_lastScrollOffset) {
         if (m_lastScrollOffset) {
@@ -252,32 +267,48 @@ void ScrollerPairMac::updateValues()
 
 FloatSize ScrollerPairMac::visibleSize() const
 {
-    return m_scrollingNode.scrollableAreaSize();
+    RefPtr node = m_scrollingNode.get();
+    if (!node)
+        return { };
+
+    return node->scrollableAreaSize();
 }
 
 bool ScrollerPairMac::useDarkAppearance() const
 {
-    return m_scrollingNode.useDarkAppearanceForScrollbars();
+    RefPtr node = m_scrollingNode.get();
+    if (!node)
+        return false;
+
+    return node->useDarkAppearanceForScrollbars();
 }
 
 ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
 {
-    return m_scrollingNode.scrollbarWidthStyle();
+    RefPtr node = m_scrollingNode.get();
+    if (!node)
+        return ScrollbarWidth::Auto;
+
+    return node->scrollbarWidthStyle();
 }
 
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
 {
+    RefPtr node = m_scrollingNode.get();
+    if (!node)
+        return { };
+
     float position;
     float totalSize;
     float visibleSize;
     if (orientation == ScrollbarOrientation::Vertical) {
-        position = m_scrollingNode.currentScrollOffset().y();
-        totalSize = m_scrollingNode.totalContentsSize().height();
-        visibleSize = m_scrollingNode.scrollableAreaSize().height();
+        position = node->currentScrollOffset().y();
+        totalSize = node->totalContentsSize().height();
+        visibleSize = node->scrollableAreaSize().height();
     } else {
-        position = m_scrollingNode.currentScrollOffset().x();
-        totalSize = m_scrollingNode.totalContentsSize().width();
-        visibleSize = m_scrollingNode.scrollableAreaSize().width();
+        position = node->currentScrollOffset().x();
+        totalSize = node->totalContentsSize().width();
+        visibleSize = node->scrollableAreaSize().width();
     }
 
     float value;
@@ -343,7 +374,7 @@ void ScrollerPairMac::ensureOnMainThreadWithProtectedThis(Function<void()>&& tas
 
 void ScrollerPairMac::mouseEnteredContentArea()
 {
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseEnteredContentArea");
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protectedNode()->scrollingNodeID() << "] mouseEnteredContentArea");
 
     ensureOnMainThreadWithProtectedThis([this] {
         if ([m_scrollerImpPair overlayScrollerStateIsLocked])
@@ -356,8 +387,8 @@ void ScrollerPairMac::mouseEnteredContentArea()
 void ScrollerPairMac::mouseExitedContentArea()
 {
     m_mouseInContentArea = false;
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseExitedContentArea");
-    
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << protectedNode()->scrollingNodeID() << "] mouseExitedContentArea");
+
     ensureOnMainThreadWithProtectedThis([this] {
         if ([m_scrollerImpPair overlayScrollerStateIsLocked])
             return;

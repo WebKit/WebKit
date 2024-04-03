@@ -172,7 +172,7 @@ TEST_P(ContextNoErrorPPOTest31, DrawWithProgramThenPPO)
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
     ANGLE_GL_PROGRAM(simpleProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
-    ASSERT_NE(simpleProgram.get(), 0u);
+    ASSERT_NE(simpleProgram, 0u);
     EXPECT_GL_NO_ERROR();
 
     // Create two separable program objects from a
@@ -188,7 +188,7 @@ TEST_P(ContextNoErrorPPOTest31, DrawWithProgramThenPPO)
     EXPECT_GL_NO_ERROR();
 
     // Draw and expect red since program overrides PPO
-    drawQuad(simpleProgram.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    drawQuad(simpleProgram, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 

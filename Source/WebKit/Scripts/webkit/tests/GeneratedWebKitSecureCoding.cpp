@@ -45,114 +45,250 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
     return [archiver accumulatedDictionary];
 }
 
+template<typename T> static RetainPtr<NSDictionary> dictionaryFromVector(const Vector<std::pair<String, RetainPtr<T>>>& vector)
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:vector.size()];
+    for (auto& pair : vector)
+        dictionary[pair.first] = pair.second;
+    return dictionary;
+}
+
+template<typename T> static RetainPtr<NSDictionary> dictionaryFromOptionalVector(const std::optional<Vector<std::pair<String, RetainPtr<T>>>>& vector)
+{
+    if (!vector)
+        return nil;
+    return dictionaryFromVector<T>(*vector);
+}
+
+template<typename T> static Vector<std::pair<String, RetainPtr<T>>> vectorFromDictionary(NSDictionary *dictionary)
+{
+    if (![dictionary isKindOfClass:NSDictionary.class])
+        return { };
+    __block Vector<std::pair<String, RetainPtr<T>>> result;
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*){
+        if ([key isKindOfClass:NSString.class] && [value isKindOfClass:IPC::getClass<T>()])
+            result.append((NSString *)key, (T)value);
+    }];
+    return result;
+}
+
+template<typename T> static std::optional<Vector<std::pair<String, RetainPtr<T>>>> optionalVectorFromDictionary(NSDictionary *dictionary)
+{
+    if (![dictionary isKindOfClass:NSDictionary.class])
+        return std::nullopt;
+    return vectorFromDictionary<T>(dictionary);
+}
+
+template<typename T> static RetainPtr<NSArray> arrayFromVector(const Vector<RetainPtr<T>>& vector)
+{
+    return createNSArray(vector, [] (auto& t) {
+        return t.get();
+    });
+}
+
+template<typename T> static RetainPtr<NSArray> arrayFromOptionalVector(const std::optional<Vector<RetainPtr<T>>>& vector)
+{
+    if (!vector)
+        return nil;
+    return arrayFromVector<T>(*vector);
+}
+
+template<typename T> static Vector<RetainPtr<T>> vectorFromArray(NSArray *array)
+{
+    if (![array isKindOfClass:NSArray.class])
+        return { };
+    Vector<RetainPtr<T>> result;
+    for (id element in array) {
+        if ([element isKindOfClass:IPC::getClass<T>()])
+            result.append((T *)element);
+    }
+    return result;
+}
+
+template<typename T> static std::optional<Vector<RetainPtr<T>>> optionalVectorFromArray(NSArray *array)
+{
+    if (![array isKindOfClass:NSArray.class])
+        return std::nullopt;
+    return vectorFromArray<T>(array);
+}
+
 #if USE(AVFOUNDATION)
-CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *object)
-    : m_propertyList(dictionaryForWebKitSecureCodingType(object))
+CoreIPCAVOutputContext::CoreIPCAVOutputContext(
+    RetainPtr<NSString>&& AVOutputContextSerializationKeyContextID,
+    RetainPtr<NSString>&& AVOutputContextSerializationKeyContextType
+)
+    : m_AVOutputContextSerializationKeyContextID(WTFMove(AVOutputContextSerializationKeyContextID))
+    , m_AVOutputContextSerializationKeyContextType(WTFMove(AVOutputContextSerializationKeyContextType))
 {
 }
 
-bool CoreIPCAVOutputContext::isValidDictionary(CoreIPCDictionary& dictionary)
+CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *object)
 {
-    if (!dictionary.keyHasValueOfType("AVOutputContextSerializationKeyContextID"_s, IPC::NSType::String))
-        return false;
+    auto dictionary = dictionaryForWebKitSecureCodingType(object);
+    m_AVOutputContextSerializationKeyContextID = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"];
+    if (![m_AVOutputContextSerializationKeyContextID isKindOfClass:IPC::getClass<NSString>()])
+        m_AVOutputContextSerializationKeyContextID = nullptr;
 
-    if (!dictionary.keyHasValueOfType("AVOutputContextSerializationKeyContextType"_s, IPC::NSType::String))
-        return false;
+    m_AVOutputContextSerializationKeyContextType = (NSString *)[dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"];
+    if (![m_AVOutputContextSerializationKeyContextType isKindOfClass:IPC::getClass<NSString>()])
+        m_AVOutputContextSerializationKeyContextType = nullptr;
 
-    return true;
 }
 
 RetainPtr<id> CoreIPCAVOutputContext::toID() const
 {
+    auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
+    if (m_AVOutputContextSerializationKeyContextID)
+        propertyList[@"AVOutputContextSerializationKeyContextID"] = m_AVOutputContextSerializationKeyContextID.get();
+    if (m_AVOutputContextSerializationKeyContextType)
+        propertyList[@"AVOutputContextSerializationKeyContextType"] = m_AVOutputContextSerializationKeyContextType.get();
     if (![PAL::getAVOutputContextClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]) {
-        auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:m_propertyList.toID().get()]);
+        auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
         return adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
     }
-    return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);
+    return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:propertyList]);
 }
 #endif // USE(AVFOUNDATION)
 
-CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(NSSomeFoundationType *object)
-    : m_propertyList([object _webKitPropertyListData])
+CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(
+    RetainPtr<NSString>&& StringKey,
+    RetainPtr<NSNumber>&& NumberKey,
+    RetainPtr<NSNumber>&& OptionalNumberKey,
+    RetainPtr<NSArray>&& ArrayKey,
+    RetainPtr<NSArray>&& OptionalArrayKey,
+    RetainPtr<NSDictionary>&& DictionaryKey,
+    RetainPtr<NSDictionary>&& OptionalDictionaryKey
+)
+    : m_StringKey(WTFMove(StringKey))
+    , m_NumberKey(WTFMove(NumberKey))
+    , m_OptionalNumberKey(WTFMove(OptionalNumberKey))
+    , m_ArrayKey(WTFMove(ArrayKey))
+    , m_OptionalArrayKey(WTFMove(OptionalArrayKey))
+    , m_DictionaryKey(WTFMove(DictionaryKey))
+    , m_OptionalDictionaryKey(WTFMove(OptionalDictionaryKey))
 {
 }
 
-bool CoreIPCNSSomeFoundationType::isValidDictionary(CoreIPCDictionary& dictionary)
+CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(NSSomeFoundationType *object)
 {
-    if (!dictionary.keyHasValueOfType("StringKey"_s, IPC::NSType::String))
-        return false;
+    auto dictionary = dictionaryForWebKitSecureCodingType(object);
+    m_StringKey = (NSString *)[dictionary objectForKey:@"StringKey"];
+    if (![m_StringKey isKindOfClass:IPC::getClass<NSString>()])
+        m_StringKey = nullptr;
 
-    if (!dictionary.keyHasValueOfType("NumberKey"_s, IPC::NSType::Number))
-        return false;
+    m_NumberKey = (NSNumber *)[dictionary objectForKey:@"NumberKey"];
+    if (![m_NumberKey isKindOfClass:IPC::getClass<NSNumber>()])
+        m_NumberKey = nullptr;
 
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalNumberKey"_s, IPC::NSType::Number))
-        return false;
+    m_OptionalNumberKey = (NSNumber *)[dictionary objectForKey:@"OptionalNumberKey"];
+    if (![m_OptionalNumberKey isKindOfClass:IPC::getClass<NSNumber>()])
+        m_OptionalNumberKey = nullptr;
 
-    if (!dictionary.keyHasValueOfType("ArrayKey"_s, IPC::NSType::Array))
-        return false;
+    m_ArrayKey = (NSArray *)[dictionary objectForKey:@"ArrayKey"];
+    if (![m_ArrayKey isKindOfClass:IPC::getClass<NSArray>()])
+        m_ArrayKey = nullptr;
 
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalArrayKey"_s, IPC::NSType::Array))
-        return false;
+    m_OptionalArrayKey = (NSArray *)[dictionary objectForKey:@"OptionalArrayKey"];
+    if (![m_OptionalArrayKey isKindOfClass:IPC::getClass<NSArray>()])
+        m_OptionalArrayKey = nullptr;
 
-    if (!dictionary.keyHasValueOfType("DictionaryKey"_s, IPC::NSType::Dictionary))
-        return false;
+    m_DictionaryKey = (NSDictionary *)[dictionary objectForKey:@"DictionaryKey"];
+    if (![m_DictionaryKey isKindOfClass:IPC::getClass<NSDictionary>()])
+        m_DictionaryKey = nullptr;
 
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalDictionaryKey"_s, IPC::NSType::Dictionary))
-        return false;
+    m_OptionalDictionaryKey = (NSDictionary *)[dictionary objectForKey:@"OptionalDictionaryKey"];
+    if (![m_OptionalDictionaryKey isKindOfClass:IPC::getClass<NSDictionary>()])
+        m_OptionalDictionaryKey = nullptr;
 
-    return true;
 }
 
 RetainPtr<id> CoreIPCNSSomeFoundationType::toID() const
 {
+    auto propertyList = [NSMutableDictionary dictionaryWithCapacity:7];
+    if (m_StringKey)
+        propertyList[@"StringKey"] = m_StringKey.get();
+    if (m_NumberKey)
+        propertyList[@"NumberKey"] = m_NumberKey.get();
+    if (m_OptionalNumberKey)
+        propertyList[@"OptionalNumberKey"] = m_OptionalNumberKey.get();
+    if (m_ArrayKey)
+        propertyList[@"ArrayKey"] = m_ArrayKey.get();
+    if (m_OptionalArrayKey)
+        propertyList[@"OptionalArrayKey"] = m_OptionalArrayKey.get();
+    if (m_DictionaryKey)
+        propertyList[@"DictionaryKey"] = m_DictionaryKey.get();
+    if (m_OptionalDictionaryKey)
+        propertyList[@"OptionalDictionaryKey"] = m_OptionalDictionaryKey.get();
     RELEASE_ASSERT([NSSomeFoundationType instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
-    return adoptNS([[NSSomeFoundationType alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);
+    return adoptNS([[NSSomeFoundationType alloc] _initWithWebKitPropertyListData:propertyList]);
 }
 
 #if ENABLE(DATA_DETECTION)
-CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *object)
-    : m_propertyList([object _webKitPropertyListData])
+CoreIPCDDScannerResult::CoreIPCDDScannerResult(
+    RetainPtr<NSString>&& StringKey,
+    RetainPtr<NSNumber>&& NumberKey,
+    RetainPtr<NSNumber>&& OptionalNumberKey,
+    Vector<RetainPtr<DDScannerResult>>&& ArrayKey,
+    std::optional<Vector<RetainPtr<DDScannerResult>>>&& OptionalArrayKey,
+    Vector<std::pair<String, RetainPtr<Number>>>&& DictionaryKey,
+    std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>&& OptionalDictionaryKey,
+    Vector<RetainPtr<NSData>>&& DataArrayKey,
+    Vector<RetainPtr<SecTrustRef>>&& SecTrustArrayKey
+)
+    : m_StringKey(WTFMove(StringKey))
+    , m_NumberKey(WTFMove(NumberKey))
+    , m_OptionalNumberKey(WTFMove(OptionalNumberKey))
+    , m_ArrayKey(WTFMove(ArrayKey))
+    , m_OptionalArrayKey(WTFMove(OptionalArrayKey))
+    , m_DictionaryKey(WTFMove(DictionaryKey))
+    , m_OptionalDictionaryKey(WTFMove(OptionalDictionaryKey))
+    , m_DataArrayKey(WTFMove(DataArrayKey))
+    , m_SecTrustArrayKey(WTFMove(SecTrustArrayKey))
 {
 }
 
-bool CoreIPCDDScannerResult::isValidDictionary(CoreIPCDictionary& dictionary)
+CoreIPCDDScannerResult::CoreIPCDDScannerResult(DDScannerResult *object)
 {
-    if (!dictionary.keyHasValueOfType("StringKey"_s, IPC::NSType::String))
-        return false;
+    auto dictionary = dictionaryForWebKitSecureCodingType(object);
+    m_StringKey = (NSString *)[dictionary objectForKey:@"StringKey"];
+    if (![m_StringKey isKindOfClass:IPC::getClass<NSString>()])
+        m_StringKey = nullptr;
 
-    if (!dictionary.keyHasValueOfType("NumberKey"_s, IPC::NSType::Number))
-        return false;
+    m_NumberKey = (NSNumber *)[dictionary objectForKey:@"NumberKey"];
+    if (![m_NumberKey isKindOfClass:IPC::getClass<NSNumber>()])
+        m_NumberKey = nullptr;
 
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalNumberKey"_s, IPC::NSType::Number))
-        return false;
+    m_OptionalNumberKey = (NSNumber *)[dictionary objectForKey:@"OptionalNumberKey"];
+    if (![m_OptionalNumberKey isKindOfClass:IPC::getClass<NSNumber>()])
+        m_OptionalNumberKey = nullptr;
 
-    if (!dictionary.keyHasValueOfType("ArrayKey"_s, IPC::NSType::Array))
-        return false;
-    if (!dictionary.collectionValuesAreOfType("ArrayKey"_s, IPC::NSType::DDScannerResult))
-        return false;
-
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalArrayKey"_s, IPC::NSType::Array))
-        return false;
-    if (!dictionary.collectionValuesAreOfType("OptionalArrayKey"_s, IPC::NSType::DDScannerResult))
-        return false;
-
-    if (!dictionary.keyHasValueOfType("DictionaryKey"_s, IPC::NSType::Dictionary))
-        return false;
-    if (!dictionary.collectionValuesAreOfType("DictionaryKey"_s, IPC::NSType::String, IPC::NSType::Number))
-        return false;
-
-    if (!dictionary.keyIsMissingOrHasValueOfType("OptionalDictionaryKey"_s, IPC::NSType::Dictionary))
-        return false;
-    if (!dictionary.collectionValuesAreOfType("OptionalDictionaryKey"_s, IPC::NSType::String, IPC::NSType::DDScannerResult))
-        return false;
-
-    return true;
+    m_ArrayKey = vectorFromArray<DDScannerResult>((NSArray *)[dictionary objectForKey:@"ArrayKey"]);
+    m_OptionalArrayKey = optionalVectorFromArray<DDScannerResult>((NSArray *)[dictionary objectForKey:@"OptionalArrayKey"]);
+    m_DictionaryKey = vectorFromDictionary<Number>((NSDictionary *)[dictionary objectForKey:@"DictionaryKey"]);
+    m_OptionalDictionaryKey = optionalVectorFromDictionary<DDScannerResult>((NSDictionary *)[dictionary objectForKey:@"OptionalDictionaryKey"]);
+    m_DataArrayKey = vectorFromArray<NSData>((NSArray *)[dictionary objectForKey:@"DataArrayKey"]);
+    m_SecTrustArrayKey = vectorFromArray<SecTrustRef>((NSArray *)[dictionary objectForKey:@"SecTrustArrayKey"]);
 }
 
 RetainPtr<id> CoreIPCDDScannerResult::toID() const
 {
+    auto propertyList = [NSMutableDictionary dictionaryWithCapacity:9];
+    if (m_StringKey)
+        propertyList[@"StringKey"] = m_StringKey.get();
+    if (m_NumberKey)
+        propertyList[@"NumberKey"] = m_NumberKey.get();
+    if (m_OptionalNumberKey)
+        propertyList[@"OptionalNumberKey"] = m_OptionalNumberKey.get();
+    propertyList[@"ArrayKey"] = arrayFromVector(m_ArrayKey).get();
+    if (auto array = arrayFromOptionalVector(m_OptionalArrayKey))
+        propertyList[@"OptionalArrayKey"] = array.get();
+    propertyList[@"DictionaryKey"] = dictionaryFromVector(m_DictionaryKey).get();
+    if (auto dictionary = dictionaryFromOptionalVector(m_OptionalDictionaryKey))
+        propertyList[@"OptionalDictionaryKey"] = dictionary.get();
+    propertyList[@"DataArrayKey"] = arrayFromVector(m_DataArrayKey).get();
+    propertyList[@"SecTrustArrayKey"] = arrayFromVector(m_SecTrustArrayKey).get();
     RELEASE_ASSERT([PAL::getDDScannerResultClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);
-    return adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);
+    return adoptNS([[PAL::getDDScannerResultClass() alloc] _initWithWebKitPropertyListData:propertyList]);
 }
 #endif // ENABLE(DATA_DETECTION)
 

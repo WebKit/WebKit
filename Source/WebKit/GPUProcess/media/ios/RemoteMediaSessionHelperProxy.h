@@ -29,6 +29,8 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionHelperIOS.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -67,7 +69,7 @@ private:
     void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) final;
 
     bool m_isMonitoringWirelessRoutes { false };
-    GPUConnectionToWebProcess& m_gpuConnection;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     std::optional<int> m_presentingApplicationPID;
 };
 

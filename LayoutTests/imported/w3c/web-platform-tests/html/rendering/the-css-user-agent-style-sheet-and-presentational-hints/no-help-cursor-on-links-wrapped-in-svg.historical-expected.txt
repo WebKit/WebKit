@@ -1,0 +1,4 @@
+
+PASS Unvisited help links must have pointer cursor, not help cursor
+PASS Visited help links must have pointer cursor, not help cursor
+

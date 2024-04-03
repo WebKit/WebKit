@@ -88,7 +88,6 @@ bool RayPathOperation::canBlend(const PathOperation& to) const
 
 RefPtr<PathOperation> RayPathOperation::blend(const PathOperation* to, const BlendingContext& context) const
 {
-    ASSERT(is<RayPathOperation>(to));
     auto& toRayPathOperation = downcast<RayPathOperation>(*to);
     return RayPathOperation::create(WebCore::blend(m_angle, toRayPathOperation.angle(), context), m_size, m_isContaining, WebCore::blend(m_position, toRayPathOperation.position(), context), m_referenceBox);
 }

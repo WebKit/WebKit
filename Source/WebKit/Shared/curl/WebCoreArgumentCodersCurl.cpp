@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -39,60 +38,6 @@
 namespace IPC {
 
 using namespace WebCore;
-
-void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
-{
-    encoder << resourceError.type();
-    if (resourceError.isNull())
-        return;
-
-    encoder << resourceError.domain();
-    encoder << resourceError.errorCode();
-    encoder << resourceError.failingURL().string();
-    encoder << resourceError.localizedDescription();
-}
-
-bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, ResourceError& resourceError)
-{
-    ResourceErrorBase::Type errorType;
-    if (!decoder.decode(errorType))
-        return false;
-    if (errorType == ResourceErrorBase::Type::Null) {
-        resourceError = { };
-        return true;
-    }
-
-    String domain;
-    if (!decoder.decode(domain))
-        return false;
-
-    int errorCode;
-    if (!decoder.decode(errorCode))
-        return false;
-
-    String failingURL;
-    if (!decoder.decode(failingURL))
-        return false;
-
-    String localizedDescription;
-    if (!decoder.decode(localizedDescription))
-        return false;
-
-    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription, errorType);
-
-    return true;
-}
-
-void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<Credential>::decodePlatformData(Decoder&, Credential&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 void ArgumentCoder<CurlProxySettings>::encode(Encoder& encoder, const CurlProxySettings& settings)
 {
@@ -123,18 +68,5 @@ std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decode
 
     return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
-
-#if ENABLE(VIDEO)
-void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const SerializedPlatformDataCueValue& value)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-#endif
 
 }

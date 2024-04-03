@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 27x18 [color=#0000EE]
             RenderText {#text} at (0,0) size 27x18
               text run at (0,0) width 27: "Test"
-        RenderInline {A} at (0,0) size 64x18 [color=#0000EE]
+        RenderInline {A} at (26,0) size 64x18 [color=#0000EE]
           RenderText {#text} at (26,0) size 64x18
             text run at (26,0) width 64: " more test"
         RenderBR {BR} at (89,0) size 1x18
         RenderWordBreak {WBR} at (0,0) size 0x0
-        RenderInline {A} at (0,0) size 90x18 [color=#0000EE]
+        RenderInline {A} at (0,18) size 90x18 [color=#0000EE]
           RenderText {#text} at (0,18) size 90x18
             text run at (0,18) width 90: "Test more test"
         RenderBR {BR} at (89,18) size 1x18

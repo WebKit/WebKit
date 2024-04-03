@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,5.59) size 395x165
+  RenderSVGTransformableContainer {g} at (0,5.59) size 394.59x164.41
+layer at (0,5.59) size 395x18
+  RenderSVGText {text} at (0,0) size 395x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 395x19
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 61 width 394.59: "This should show three markers on the path for start/mid/end."
+layer at (0,25.59) size 373x18
+  RenderSVGText {text} at (0,20) size 374x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 374x19
+      chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 55 width 373.20: "Start marker has no markerWidth/markerHeight specified."
+layer at (0,45.59) size 276x18
+  RenderSVGText {text} at (0,40) size 277x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 277x19
+      chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 40 width 276.35: "Mid marker has no markerWidth specified."
+layer at (0,65.59) size 279x18
+  RenderSVGText {text} at (0,60) size 280x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 280x19
+      chunk 1 text run 1 at (0.00,80.00) startOffset 0 endOffset 41 width 279.01: "End marker has no markerHeight specified."
+layer at (0,0) size 3x4
+  RenderSVGResourceMarker {marker} at (0,-5.59) size 3x3
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 5x5 clip at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 3x4
+  RenderSVGResourceMarker {marker} at (0,-5.59) size 3x3
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 5x5 clip at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 3x4
+  RenderSVGResourceMarker {marker} at (0,-5.59) size 3x3
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 5x5 clip at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (130,120) size 50x51
+  RenderSVGPath {path} at (130,114.41) size 50x50 [start marker=marker1] [middle marker=marker2] [end marker=marker3] [data="M 130 120 L 180 120 L 180 170"]

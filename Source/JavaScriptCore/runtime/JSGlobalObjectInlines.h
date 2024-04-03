@@ -210,6 +210,7 @@ ALWAYS_INLINE Structure* JSGlobalObject::arrayStructureForIndexingTypeDuringAllo
     RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), functionGlobalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)));
 }
 
+inline JSFunction* JSGlobalObject::evalFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::evalFunction)); }
 inline JSFunction* JSGlobalObject::throwTypeErrorFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::throwTypeErrorFunction)); }
 inline JSFunction* JSGlobalObject::iteratorProtocolFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performIteration)); }
 inline JSFunction* JSGlobalObject::newPromiseCapabilityFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::newPromiseCapability)); }
@@ -372,6 +373,18 @@ inline JSObject* JSGlobalObject::arrayBufferConstructor(ArrayBufferSharingMode s
         return m_arrayBufferStructure.constructor(this);
     case ArrayBufferSharingMode::Shared:
         return m_sharedArrayBufferStructure.constructor(this);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+inline GetterSetter* JSGlobalObject::arrayBufferSpeciesGetterSetter(ArrayBufferSharingMode sharingMode) const
+{
+    switch (sharingMode) {
+    case ArrayBufferSharingMode::Default:
+        return m_arrayBufferSpeciesGetterSetter.get();
+    case ArrayBufferSharingMode::Shared:
+        return m_sharedArrayBufferSpeciesGetterSetter.get();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

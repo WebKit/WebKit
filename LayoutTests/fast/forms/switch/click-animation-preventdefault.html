@@ -1,10 +1,10 @@
 <!doctype html>
 <html class="reftest-wait">
+<script src="../../../resources/ui-helper.js"></script>
 <input type=checkbox switch onclick=end()>
 <script>
 window.onload = () => {
-    window.eventSender.mouseMoveTo(10, 10);
-    window.eventSender.scheduleAsynchronousClick();
+    UIHelper.activateAt(10, 10);
 }
 function end() {
     event.preventDefault();

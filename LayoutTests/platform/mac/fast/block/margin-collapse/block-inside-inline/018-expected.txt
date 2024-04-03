@@ -7,7 +7,7 @@ layer at (0,0) size 800x232
         RenderText {#text} at (0,0) size 632x18
           text run at (0,0) width 632: "The following box should contain exactly three bands, one yellow, one orange, and one lime, with "
         RenderInline {STRONG} at (0,0) size 749x36
-          RenderText {#text} at (631,0) size 749x36
+          RenderText {#text} at (0,0) size 749x36
             text run at (631,0) width 118: "absolutely no red"
             text run at (0,18) width 44: "visible"
         RenderText {#text} at (43,18) size 5x18

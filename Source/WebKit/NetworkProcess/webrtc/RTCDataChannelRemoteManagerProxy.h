@@ -27,7 +27,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
@@ -51,12 +50,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // To source
-    void sendData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);
+    void sendData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>);
     void close(WebCore::RTCDataChannelIdentifier);
 
     // To handler
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
-    void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);
+    void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, std::span<const uint8_t>);
     void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t amount);
 

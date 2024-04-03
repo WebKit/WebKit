@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebPageProxyIdentifier.h"
@@ -73,14 +72,14 @@ public:
 private:
     void didConnect(const String& subprotocol, const String& extensions);
     void didReceiveText(const String&);
-    void didReceiveBinaryData(const uint8_t* data, size_t length);
+    void didReceiveBinaryData(std::span<const uint8_t>);
     void didClose(unsigned short code, const String& reason);
     void didReceiveMessageError(String&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
+    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
     void sendDelayedError();
 

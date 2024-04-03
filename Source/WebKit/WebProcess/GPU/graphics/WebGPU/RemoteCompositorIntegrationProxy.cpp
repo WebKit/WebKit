@@ -77,7 +77,7 @@ void RemoteCompositorIntegrationProxy::paintCompositedResultsToCanvas(WebCore::I
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteCompositorIntegrationProxy::withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage&)>)
+void RemoteCompositorIntegrationProxy::withDisplayBufferAsNativeImage(uint32_t, Function<void(WebCore::NativeImage*)>)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -47,9 +47,9 @@ AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process
 
 AudioSessionRoutingArbitrator::~AudioSessionRoutingArbitrator() = default;
 
-const char* AudioSessionRoutingArbitrator::supplementName()
+ASCIILiteral AudioSessionRoutingArbitrator::supplementName()
 {
-    return "AudioSessionRoutingArbitrator";
+    return "AudioSessionRoutingArbitrator"_s;
 }
 
 void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)

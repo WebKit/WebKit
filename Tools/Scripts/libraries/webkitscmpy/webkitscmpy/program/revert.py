@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import re
 import sys
 import os
@@ -30,10 +29,11 @@ from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
 from .commit import Commit as CommitProgram
+from .land import Land
 
-from webkitbugspy import Tracker, bugzilla
+from webkitbugspy import Tracker, bugzilla, radar
 from webkitcorepy import arguments, run, Terminal, string_utils
-from webkitscmpy import local, log, remote
+from webkitscmpy import local, log
 from ..commit import Commit
 
 
@@ -42,77 +42,76 @@ class Revert(Command):
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
     REVERT_TITLE_TEMPLATE = 'Unreviewed, reverting {}'
     REVERT_TITLE_RE = re.compile(r'^Unreviewed, reverting {}'.format(Commit.IDENTIFIER_RE.pattern))
-    RES = [
-        re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
-        re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
-    ]
 
     @classmethod
     def parser(cls, parser, loggers=None):
-        PullRequest.parser(parser, loggers=loggers)
+        Land.parser(parser, loggers=loggers)
         parser.add_argument(
-            'commit',
+            'commit_id',
             nargs='+',
             help='git hash, svn revision or identifier of commits to revert'
         )
-
         parser.add_argument(
             '--reason', '--why', '-w',
             dest='reason',
             type=str,
             help='Reason for the revert'
         )
-
         parser.add_argument(
-            '--pr',
-            default=False,
-            action='store_true',
-            help='Create a pull request at the same time'
+            '--pr', '--no-pr',
+            default=None,
+            action=arguments.NoAction,
+            help='Create a pull request (or do not) after reverting'
         )
 
     @classmethod
     def get_commit_info(cls, args, repository, **kwargs):
         commit_objects = []
-        commits_to_revert = []
-        commit_bugs = set()
-        for c in args.commit:
+        commit_issues = {}
+
+        for c in args.commit_id:
             try:
                 commit = repository.find(c, include_log=True)
             except (local.Scm.Exception, ValueError) as exception:
                 sys.stderr.write('Could not find "{}"'.format(c) + '\n')
                 return None, None, None
+
             commit_objects.append(commit)
-            commits_to_revert.append(commit.hash)
-            commit_bugs.update({Tracker.from_string(i.link) for i in commit.issues if isinstance(Tracker.from_string(i.link).tracker, bugzilla.Tracker)})
-        return commit_objects, commits_to_revert, commit_bugs
+            for i in commit.issues:
+                if not commit_issues.get(i.tracker.NAME, None):
+                    commit_issues[i.tracker.NAME] = set()
+                commit_issues[i.tracker.NAME].add(i)
+
+        return commit_objects, commit_issues
 
     @classmethod
-    def get_issue_info(cls, args, repository, commit_objects, commit_bugs, **kwargs):
+    def get_issue_info(cls, args, repository, commit_objects, commit_issues, **kwargs):
         # Can give either a bug URL or a title of the new issue
         if not args.issue and not args.reason:
-            prompt = 'Enter issue URL or reason for the revert: '
+            print('This issue will track the revert and should not be the issue of the commit(s) to be reverted.')
+            prompt = 'Enter issue URL or title of new issue (reason for the revert): '
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
         elif args.reason:
             args.issue = args.reason
 
         issue = Tracker.from_string(args.issue)
-        commit_bugs_list = list(commit_bugs)
+
+        # Create a new bug if no issue exists
         if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if getattr(Tracker.instance(), 'credentials', None):
                 Tracker.instance().credentials(required=True, validate=True)
 
             # Automatically set project, component, and version of new bug
             print('Setting bug properties...')
-            commit_bug = commit_bugs_list.pop()
+            commit_issues_list = list(commit_issues.get(Tracker.instance().NAME))
+            commit_bug = commit_issues_list.pop()
             project = commit_bug.project
             component = commit_bug.component
             version = commit_bug.version
 
             # Check whether properties are the same if multiple commits are reverted
-            while len(commit_bugs_list):
-                commit_bug = commit_bugs_list.pop()
+            while len(commit_issues_list):
+                commit_bug = commit_issues_list.pop()
                 # Setting properties to None will prompt for user input
                 if commit_bug.project != project:
                     project = None
@@ -136,14 +135,13 @@ class Revert(Command):
             print("Created '{}'".format(issue))
         elif not Tracker.instance():
             sys.stderr.write('Could not find tracker instance.\n')
+        elif not issue or not issue.title:
+            sys.stderr.write('Could not fetch {} from link. Please verify that the issue exists.\n'.format(issue.tracker.NAME))
+            return None
 
         rdar = Branch.cc_radar(args, repository, issue)
         if rdar:
             log.info("Created {}".format(rdar))
-
-        for c_bug in commit_bugs:
-            # TODO: relate revert bug
-            c_bug.open(why="{}, tracking revert in {}".format(issue.title, issue.link))
 
         return issue
 
@@ -157,39 +155,49 @@ class Revert(Command):
             for line in commit.message.splitlines():
                 if not commit_title:
                     commit_title = line
-            bug_urls = [i.link for i in commit.issues]
+            bug_urls = ['    {}'.format(i.link) for i in commit.issues]
 
-            reverted_changeset += '\n{}\n'.format(commit_title)
+            reverted_changeset += '\n    {}\n'.format(commit_title)
             reverted_changeset += '\n'.join(bug_urls)
             if commit.identifier and commit.branch:
                 commit_identifiers.append('{}@{}'.format(commit.identifier, commit.branch))
-                reverted_changeset += '\nhttps://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
+                reverted_changeset += '\n    https://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
             else:
-                sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit)) + '\n')
-                return None
+                sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit_id)) + '\n')
+                return None, None
 
         # Retrieve information for the issue tracking the revert
         revert_issue = Tracker.from_string(args.issue)
         if not revert_issue:
             sys.stderr.write('Could not find issue {}'.format(revert_issue))
-            return None
-        revert_issue_radar = None
-        for bug in CommitProgram.bug_urls(revert_issue):
-            for regex in cls.RES:
-                if regex.match(bug):
-                    revert_issue_radar = bug
-                    break
-            if revert_issue_radar:
-                break
+            return None, None
+
+        revert_radar_link, revert_bug_link = None, None
+        for issue_url in CommitProgram.bug_urls(revert_issue):
+            issue = Tracker.from_string(issue_url)
+            if not issue:
+                continue
+            if isinstance(issue.tracker, radar.Tracker):
+                revert_radar_link = issue_url
+            if isinstance(issue.tracker, bugzilla.Tracker):
+                revert_bug_link = issue_url
+
+        # FIXME: Add support for radar-based repositories
+        if revert_issue.redacted or isinstance(revert_issue.tracker, radar.Tracker):
+            prompt = 'Enter a reason for the revert: '
+            revert_reason = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
+        else:
+            revert_reason = revert_issue.title
 
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(commit_identifiers))
-        env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_issue.link, revert_issue_radar or 'Include a Radar link (OOPS!).', revert_issue.title)
+        env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_bug_link or 'Include a Bugzilla link (OOPS!).', revert_radar_link or 'Include a Radar link (OOPS!).', revert_reason)
         env['COMMIT_MESSAGE_REVERT'] += 'Reverted {}:\n{}'.format('changes' if len(commit_identifiers) > 1 else 'change', reverted_changeset)
-        return commit_identifiers
+        return commit_identifiers, revert_reason
 
     @classmethod
-    def revert_commit(cls, args, repository, issue, commit_objects, commits_to_revert, **kwargs):
+    def revert_commit(cls, args, repository, issue, commit_objects, **kwargs):
+        commits_to_revert = [c.hash for c in commit_objects]
         result = run([repository.executable(), 'revert', '--no-commit'] + commits_to_revert, cwd=repository.root_path, capture_output=True)
         if result.returncode:
             # git revert will output nothing if this commit is already reverted
@@ -208,12 +216,47 @@ class Revert(Command):
             bug=[issue],
         )
 
-        result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
+        if args.commit:
+            result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
         if result.returncode:
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
             return 1
         log.info('Reverted {}'.format(', '.join(commits)))
+
+        return 0
+
+    @classmethod
+    def relate_issues(cls, args, repository, issue, commit_issues, revert_reason):
+        log.info("Automatically relating issues...")
+        rdar = Branch.cc_radar(args, repository, issue)
+        if rdar:
+            log.info("Created {}".format(rdar))
+
+        for r_link in CommitProgram.bug_urls(issue):
+            r_issue = Tracker.from_string(r_link)
+            for c_issue in commit_issues.get(r_issue.tracker.NAME, []):
+                # FIXME: Reopen radars after rdar://124165667
+                if not isinstance(c_issue.tracker, radar.Tracker):
+                    try:
+                        c_issue.open(why="Reopened {}.\n{}, tracking revert in {}.".format(r_issue.tracker.NAME, revert_reason, r_issue.link))
+                    except radar.Tracker.radarclient().exceptions.UnsuccessfulResponseException as e:
+                        sys.stderr.write('Failed to re-open {}\n'.format(c_issue.link))
+                        sys.stderr.write('{}\n'.format(str(e)))
+                        c_issue.add_comment('{}, tracking revert in {}.'.format(revert_reason, r_issue.link))
+
+                # Revert tracking bug blocks commit bugs, revert tracking radar caused by commit radars
+                if isinstance(c_issue.tracker, bugzilla.Tracker):
+                    r = r_issue.relate(blocks=c_issue)
+                elif isinstance(c_issue.tracker, radar.Tracker):
+                    try:
+                        r = c_issue.relate(cause_of=r_issue)
+                    except radar.Tracker.radarclient().exceptions.UnsuccessfulResponseException:
+                        r = None
+                if not r:
+                    sys.stderr.write('Failed to relate {} and {}.\n'.format(c_issue.link, r_issue.link))
+                else:
+                    log.info('Related {} and {}.'.format(c_issue.link, r_issue.link))
         return 0
 
     @classmethod
@@ -223,21 +266,27 @@ class Revert(Command):
             return 1
 
         if repository.modified():
-            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(', '.join(args.commit)))
+            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(', '.join(args.commit_id)))
             return 1
 
         if not PullRequest.check_pull_request_args(repository, args):
             return 1
 
-        commit_objects, commits_to_revert, commit_bugs = cls.get_commit_info(args, repository, **kwargs)
+        commit_objects, commit_issues = cls.get_commit_info(args, repository, **kwargs)
         if not commit_objects:
             return 1
 
-        issue = cls.get_issue_info(args, repository, commit_objects, commit_bugs, **kwargs)
+        # Overrides PR args.commit to set default as True
+        if args.commit is None:
+            args.commit = True
+        if not args.commit:
+            return cls.revert_commit(args, repository, None, commit_objects, **kwargs)
+
+        issue = cls.get_issue_info(args, repository, commit_objects, commit_issues, **kwargs)
         if not issue:
             return 1
 
-        commit_identifiers = cls.create_revert_commit_msg(args, commit_objects, **kwargs)
+        commit_identifiers, revert_reason = cls.create_revert_commit_msg(args, commit_objects, **kwargs)
         if not commit_identifiers:
             return 1
 
@@ -245,12 +294,24 @@ class Revert(Command):
         if not branch_point:
             return 1
 
-        result = cls.revert_commit(args, repository, issue, commit_objects, commits_to_revert, **kwargs)
-        if result:
-            return result
+        if cls.revert_commit(args, repository, issue, commit_objects, **kwargs):
+            return 1
 
-        if not args.pr:
-            return result
-        else:
+        if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
+            return 1
+
+        if args.safe is not None:
+            if args.pr is False:
+                response = Terminal.choose(
+                    '--no-pr is set. Do you want to create a PR and land the revert?', options=('Yes', 'No'), default='No',
+                )
+                if response == 'No':
+                    return 0
+                if response == 'Yes':
+                    log.info('Creating PR...')
+            return Land.main(args, repository, identifier_template=None, canonical_svn=False, hooks=None)
+
+        if args.pr:
             return PullRequest.create_pull_request(repository, args, branch_point)
 
+        return 0

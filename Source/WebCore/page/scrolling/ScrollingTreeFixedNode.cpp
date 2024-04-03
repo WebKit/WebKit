@@ -53,12 +53,12 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
 
 bool ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateFixedNode>(stateNode))
+    auto* fixedStateNode = dynamicDowncast<ScrollingStateFixedNode>(stateNode);
+    if (!fixedStateNode)
         return false;
 
-    const auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
     if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
-        m_constraints = fixedStateNode.viewportConstraints();
+        m_constraints = fixedStateNode->viewportConstraints();
 
     return true;
 }
@@ -68,42 +68,38 @@ FloatPoint ScrollingTreeFixedNode::computeLayerPosition() const
     FloatSize overflowScrollDelta;
     ScrollingTreeStickyNode* lastStickyNode = nullptr;
     for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (is<ScrollingTreeFrameScrollingNode>(*ancestor)) {
+        if (auto* scrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(*ancestor)) {
             // Fixed nodes are positioned relative to the containing frame scrolling node.
             // We bail out after finding one.
-            auto layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(*ancestor).layoutViewport();
+            auto layoutViewport = scrollingNode->layoutViewport();
             return m_constraints.layerPositionForViewportRect(layoutViewport) - overflowScrollDelta;
         }
 
-        if (is<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
+        if (auto* overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(*ancestor)) {
             // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
-            auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*ancestor);
-            overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
+            overflowScrollDelta -= overflowNode->scrollDeltaSinceLastCommit();
             continue;
         }
 
-        if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
+        if (auto* overflowNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
             // To keep the layer still during async scrolling we adjust by how much the position has changed since layout.
-            auto& overflowNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
-            overflowScrollDelta -= overflowNode.scrollDeltaSinceLastCommit();
+            overflowScrollDelta -= overflowNode->scrollDeltaSinceLastCommit();
             continue;
         }
 
-        if (is<ScrollingTreePositionedNode>(*ancestor)) {
-            auto& positioningAncestor = downcast<ScrollingTreePositionedNode>(*ancestor);
+        if (auto* positioningAncestor = dynamicDowncast<ScrollingTreePositionedNode>(*ancestor)) {
             // See if sticky node already handled this positioning node.
             // FIXME: Include positioning node information to sticky/fixed node to avoid these tests.
-            if (lastStickyNode && lastStickyNode->layer() == positioningAncestor.layer())
+            if (lastStickyNode && lastStickyNode->layer() == positioningAncestor->layer())
                 continue;
-            if (positioningAncestor.layer() != layer())
-                overflowScrollDelta -= positioningAncestor.scrollDeltaSinceLastCommit();
+            if (positioningAncestor->layer() != layer())
+                overflowScrollDelta -= positioningAncestor->scrollDeltaSinceLastCommit();
             continue;
         }
 
-        if (is<ScrollingTreeStickyNode>(*ancestor)) {
-            auto& stickyNode = downcast<ScrollingTreeStickyNode>(*ancestor);
-            overflowScrollDelta += stickyNode.scrollDeltaSinceLastCommit();
-            lastStickyNode = &stickyNode;
+        if (auto* stickyNode = dynamicDowncast<ScrollingTreeStickyNode>(*ancestor)) {
+            overflowScrollDelta += stickyNode->scrollDeltaSinceLastCommit();
+            lastStickyNode = stickyNode;
             continue;
         }
 

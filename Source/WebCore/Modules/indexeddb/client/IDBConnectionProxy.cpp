@@ -34,6 +34,7 @@
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBOpenRequestData.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
@@ -74,7 +75,7 @@ Ref<IDBOpenDBRequest> IDBConnectionProxy::openDatabase(ScriptExecutionContext& c
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::openDatabase, IDBRequestData(*this, *request));
+    callConnectionOnMainThread(&IDBConnectionToServer::openDatabase, IDBOpenRequestData(*this, *request));
 
     return request.releaseNonNull();
 }
@@ -90,7 +91,7 @@ Ref<IDBOpenDBRequest> IDBConnectionProxy::deleteDatabase(ScriptExecutionContext&
         m_openDBRequestMap.set(request->resourceIdentifier(), request.get());
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::deleteDatabase, IDBRequestData(*this, *request));
+    callConnectionOnMainThread(&IDBConnectionToServer::deleteDatabase, IDBOpenRequestData(*this, *request));
 
     return request.releaseNonNull();
 }
@@ -269,12 +270,12 @@ void IDBConnectionProxy::completeOperation(const IDBResultData& resultData)
     operation->transitionToComplete(resultData, WTFMove(operation));
 }
 
-void IDBConnectionProxy::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void IDBConnectionProxy::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::abortOpenAndUpgradeNeeded, databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+void IDBConnectionProxy::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     RefPtr<IDBDatabase> database;
     {
@@ -294,7 +295,7 @@ void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdent
     database->performCallbackOnOriginThread(*database, &IDBDatabase::fireVersionChangeEvent, requestIdentifier, requestedVersion);
 }
 
-void IDBConnectionProxy::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void IDBConnectionProxy::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::didFireVersionChangeEvent, databaseConnectionIdentifier, requestIdentifier, connectionClosed);
 }
@@ -315,7 +316,7 @@ void IDBConnectionProxy::notifyOpenDBRequestBlocked(const IDBResourceIdentifier&
     request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestBlocked, oldVersion, newVersion);
 }
 
-void IDBConnectionProxy::openDBRequestCancelled(const IDBRequestData& requestData)
+void IDBConnectionProxy::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::openDBRequestCancelled, requestData);
 }
@@ -345,7 +346,7 @@ void IDBConnectionProxy::didStartTransaction(const IDBResourceIdentifier& transa
     transaction->performCallbackOnOriginThread(*transaction, &IDBTransaction::didStart, error);
 }
 
-void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t pendingRequestCount)
+void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t handledRequestResultsCount)
 {
     {
         Locker locker { m_transactionMapLock };
@@ -353,7 +354,7 @@ void IDBConnectionProxy::commitTransaction(IDBTransaction& transaction, uint64_t
         m_committingTransactions.set(transaction.info().identifier(), &transaction);
     }
 
-    callConnectionOnMainThread(&IDBConnectionToServer::commitTransaction, transaction.info().identifier(), pendingRequestCount);
+    callConnectionOnMainThread(&IDBConnectionToServer::commitTransaction, transaction.info().identifier(), handledRequestResultsCount);
 }
 
 void IDBConnectionProxy::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
@@ -403,7 +404,7 @@ bool IDBConnectionProxy::hasRecordOfTransaction(const IDBTransaction& transactio
     return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
-void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, IDBTransaction& transaction)
+void IDBConnectionProxy::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, IDBTransaction& transaction)
 {
     callConnectionOnMainThread(&IDBConnectionToServer::didFinishHandlingVersionChangeTransaction, databaseConnectionIdentifier, transaction.info().identifier());
 }
@@ -418,7 +419,7 @@ void IDBConnectionProxy::databaseConnectionClosed(IDBDatabase& database)
     callConnectionOnMainThread(&IDBConnectionToServer::databaseConnectionClosed, database.databaseConnectionIdentifier());
 }
 
-void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+void IDBConnectionProxy::didCloseFromServer(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBError& error)
 {
     RefPtr<IDBDatabase> database;
     {
@@ -434,7 +435,7 @@ void IDBConnectionProxy::didCloseFromServer(uint64_t databaseConnectionIdentifie
 
 void IDBConnectionProxy::connectionToServerLost(const IDBError& error)
 {
-    Vector<uint64_t> databaseConnectionIdentifiers;
+    Vector<IDBDatabaseConnectionIdentifier> databaseConnectionIdentifiers;
     {
         Locker locker { m_databaseConnectionMapLock };
         databaseConnectionIdentifiers = copyToVector(m_databaseConnectionMap.keys());

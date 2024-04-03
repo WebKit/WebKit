@@ -81,6 +81,13 @@ public:
         return *this;
     }
 
+    GWeakPtr& operator=(GWeakPtr&& other)
+    {
+        reset(other.get());
+        other.reset();
+        return *this;
+    }
+
     bool operator!() const { return !m_ptr; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.

@@ -64,6 +64,7 @@ public:
     Protocol::ErrorStringOr<void> enable() final;
     Protocol::ErrorStringOr<void> disable() final;
     Protocol::ErrorStringOr<void> clearMessages() override;
+    Protocol::ErrorStringOr<void> setConsoleClearAPIEnabled(bool) override;
     Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Console::Channel>>> getLoggingChannels() override;
     Protocol::ErrorStringOr<void> setLoggingChannelLevel(Protocol::Console::ChannelSource, Protocol::Console::ChannelLevel) override;
 
@@ -99,6 +100,7 @@ protected:
     HashMap<String, MonotonicTime> m_times;
     bool m_enabled { false };
     bool m_isAddingMessageToFrontend { false };
+    bool m_consoleClearAPIEnabled { true };
 };
 
 } // namespace Inspector

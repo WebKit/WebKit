@@ -134,6 +134,12 @@ if ("ICU" IN_LIST HarfBuzz_FIND_COMPONENTS)
     endif ()
 endif ()
 
+# Workaround https://github.com/harfbuzz/harfbuzz/pull/4562
+if (HarfBuzz_INCLUDE_DIR AND EXISTS "${HarfBuzz_INCLUDE_DIR}/hb-features.h")
+    list(APPEND HarfBuzz_COMPILE_OPTIONS "-DHAVE_HB_FEATURES_H")
+    message(STATUS "Found hb-features.h")
+endif ()
+
 if (NOT HarfBuzz_FIND_QUIETLY)
     if (HarfBuzz_LIBS_FOUND)
         message(STATUS "Found the following HarfBuzz libraries:")

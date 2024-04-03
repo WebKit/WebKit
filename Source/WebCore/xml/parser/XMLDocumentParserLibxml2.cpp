@@ -36,6 +36,7 @@
 #include "CustomElementRegistry.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "DocumentType.h"
 #include "EventLoop.h"
 #include "FrameDestructionObserverInlines.h"
@@ -141,12 +142,12 @@ public:
         m_callbacks.append(makeUnique<PendingEndElementNSCallback>());
     }
 
-    void appendCharactersCallback(const xmlChar* s, int len)
+    void appendCharactersCallback(std::span<const xmlChar> s)
     {
         auto callback = makeUnique<PendingCharactersCallback>();
 
-        callback->s = xmlStrndup(s, len);
-        callback->len = len;
+        callback->s = xmlStrndup(s.data(), s.size());
+        callback->len = s.size();
 
         m_callbacks.append(WTFMove(callback));
     }
@@ -264,7 +265,7 @@ private:
 
         void call(XMLDocumentParser* parser) override
         {
-            parser->characters(s, len);
+            parser->characters(std::span { s, static_cast<size_t>(len) });
         }
 
         xmlChar* s;
@@ -503,7 +504,7 @@ static void* openFunc(const char* uri)
     if (!data)
         return &globalDescriptor;
 
-    return new OffsetBuffer({ data->data(), data->size() });
+    return new OffsetBuffer(Vector(data->span()));
 }
 
 static int readFunc(void* context, char* buffer, int len)
@@ -688,7 +689,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
 
 static inline String toString(const xmlChar* string, size_t size)
 {
-    return String::fromUTF8(reinterpret_cast<const char*>(string), size);
+    return String::fromUTF8({ reinterpret_cast<const char*>(string), size });
 }
 
 static inline String toString(const xmlChar* string)
@@ -836,8 +837,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
-    if (is<HTMLTemplateElement>(newElement))
-        pushCurrentNode(&downcast<HTMLTemplateElement>(newElement.get()).content());
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(newElement))
+        pushCurrentNode(&templateElement->content());
     else
         pushCurrentNode(newElement.ptr());
 
@@ -866,29 +867,31 @@ void XMLDocumentParser::endElementNs()
         return;
 
     RefPtr<ContainerNode> node = m_currentNode;
-    node->finishParsingChildren();
+    auto* element = dynamicDowncast<Element>(*node);
 
-    if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && isScriptElement(downcast<Element>(*node))) {
+    if (element)
+        element->finishParsingChildren();
+
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && element && isScriptElement(*element)) {
         popCurrentNode();
         node->remove();
         return;
     }
 
-    if (!node->isElementNode() || !m_view) {
+    if (!element || !m_view) {
         popCurrentNode();
         return;
     }
-
-    auto& element = downcast<Element>(*node);
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.
-    if (!element.isConnected()) {
+    if (!element->isConnected()) {
         popCurrentNode();
         return;
     }
 
-    if (!isScriptElement(element)) {
+    RefPtr scriptElement = dynamicDowncastScriptElement(*element);
+    if (!scriptElement) {
         popCurrentNode();
         return;
     }
@@ -897,18 +900,14 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    auto& scriptElement = downcastScriptElement(element);
-    if (scriptElement.prepareScript(m_scriptStartPosition)) {
-        // FIXME: Script execution should be shared between
-        // the libxml2 and Qt XMLDocumentParser implementations.
-
-        if (scriptElement.readyToBeParserExecuted()) {
-            if (scriptElement.scriptType() == ScriptType::Classic)
-                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+    if (scriptElement->prepareScript(m_scriptStartPosition)) {
+        if (scriptElement->readyToBeParserExecuted()) {
+            if (scriptElement->scriptType() == ScriptType::Classic)
+                scriptElement->executeClassicScript(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*scriptElement)));
             else
-                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.scriptContent(), scriptElement.sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
-        } else if (scriptElement.willBeParserExecuted() && scriptElement.loadableScript()) {
-            m_pendingScript = PendingScript::create(scriptElement, *scriptElement.loadableScript());
+                scriptElement->registerImportMap(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document()->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
+        } else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript()) {
+            m_pendingScript = PendingScript::create(*scriptElement, *scriptElement->loadableScript());
             m_pendingScript->setClient(*this);
 
             // m_pendingScript will be nullptr if script was already loaded and setClient() executed it.
@@ -924,19 +923,19 @@ void XMLDocumentParser::endElementNs()
     popCurrentNode();
 }
 
-void XMLDocumentParser::characters(const xmlChar* characters, int length)
+void XMLDocumentParser::characters(std::span<const xmlChar> characters)
 {
     if (isStopped())
         return;
 
     if (m_parserPaused) {
-        m_pendingCallbacks->appendCharactersCallback(characters, length);
+        m_pendingCallbacks->appendCharactersCallback(characters);
         return;
     }
 
     if (!m_leafTextNode)
         createLeafTextNode();
-    m_bufferedText.append(characters, length);
+    m_bufferedText.append(characters);
 }
 
 void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va_list args)
@@ -981,7 +980,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     m_currentNode->parserAppendChild(pi);
 
-    pi->finishParsingChildren();
+    pi->setCreatedByParser(false);
 
     if (pi->isCSS())
         m_sawCSS = true;
@@ -1086,7 +1085,7 @@ static void endElementNsHandler(void* closure, const xmlChar*, const xmlChar*, c
 
 static void charactersHandler(void* closure, const xmlChar* s, int len)
 {
-    getParser(closure)->characters(s, len);
+    getParser(closure)->characters(std::span { s, static_cast<size_t>(len) });
 }
 
 static void processingInstructionHandler(void* closure, const xmlChar* target, const xmlChar* data)

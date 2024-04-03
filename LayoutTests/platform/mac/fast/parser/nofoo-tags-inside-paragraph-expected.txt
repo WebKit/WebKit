@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 85x18
           text run at (0,0) width 85: "Test case for "
-        RenderInline {A} at (0,0) size 64x18 [color=#0000EE]
+        RenderInline {A} at (84,0) size 64x18 [color=#0000EE]
           RenderText {#text} at (84,0) size 64x18
             text run at (84,0) width 64: "Bug 7265"
         RenderText {#text} at (147,0) size 596x18
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 324x18
           text run at (0,0) width 324: "This sentence contains nolayer tags and should be "
-        RenderInline {NOLAYER} at (0,0) size 0x18
+        RenderInline {NOLAYER} at (323,0) size 0x18
         RenderText {#text} at (323,0) size 76x18
           text run at (323,0) width 76: "on one line."
       RenderBlock {P} at (0,136) size 784x18

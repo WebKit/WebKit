@@ -39,13 +39,10 @@ class FloatWithRect;
 class LegacyInlineBox;
 class LegacyInlineIterator;
 class LineInfo;
-class LineLayoutState;
 class LocalFrameViewLayoutContext;
 class RenderBlockFlow;
 class RenderObject;
-class RenderRubyRun;
 class LegacyRootInlineBox;
-class VerticalPositionCache;
 struct BidiStatus;
 struct WordMeasurement;
 
@@ -64,48 +61,26 @@ public:
     LegacyRootInlineBox* firstRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLineBox()); }
     LegacyRootInlineBox* lastRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.lastLineBox()); }
 
-    void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutLineBoxes();
 
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
-    bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
     void addOverflowFromInlineChildren();
 
     size_t lineCount() const;
-    size_t lineCountUntil(const LegacyRootInlineBox*) const;
 
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
-    static void updateLogicalWidthForAlignment(RenderBlockFlow&, const TextAlignMode&, const LegacyRootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
 
 private:
     std::unique_ptr<LegacyRootInlineBox> createRootInlineBox();
     LegacyRootInlineBox* createAndAppendRootInlineBox();
-    LegacyInlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
+    LegacyInlineBox* createInlineBoxForRenderer(RenderObject*);
     LegacyInlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
-    TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
-    void setMarginsForRubyRun(BidiRun*, RenderRubyRun&, RenderObject* previousObject, const LineInfo&);
-    void updateRubyForJustifiedText(RenderRubyRun&, BidiRun&, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t&);
-    void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth);
-    void computeInlineDirectionPositionsForLine(LegacyRootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
-    BidiRun* computeInlineDirectionPositionsForSegment(LegacyRootInlineBox*, const LineInfo&, TextAlignMode, float& logicalLeft, float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
     void removeInlineBox(BidiRun&, const LegacyRootInlineBox&) const;
-    void computeBlockDirectionPositionsForLine(LegacyRootInlineBox*, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache&);
+    void removeEmptyTextBoxesAndUpdateVisualReordering(LegacyRootInlineBox*, BidiRun* firstRun);
     inline BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext);
-    void appendFloatingObjectToLastLine(FloatingObject&);
-    LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
-    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
-    inline const LegacyInlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight, FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const LegacyInlineIterator& oldEnd);
-    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const LegacyInlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
-    void reattachCleanLineFloats(LegacyRootInlineBox& cleanLine, LayoutUnit delta, bool isFirstCleanLine);
-    void linkToEndLineIfNeeded(LineLayoutState&);
-    void checkFloatInCleanLine(LegacyRootInlineBox& cleanLine, RenderBox& floatBoxOnCleanLine, FloatWithRect& matchingFloatWithRect, bool& encounteredNewFloat, bool& dirtiedByFloat);
-    LegacyRootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
-    void determineEndPosition(LineLayoutState&, LegacyRootInlineBox* startLine, LegacyInlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
-    bool checkPaginationAndFloatsAtEndLine(LineLayoutState&);
-    bool lineWidthForPaginatedLineChanged(LegacyRootInlineBox* rootBox, LayoutUnit lineDelta, RenderFragmentedFlow*) const;
-    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const LegacyInlineIterator& endLineStart, const BidiStatus& endLineStatus);
-    void deleteEllipsisLineBoxes();
-    void checkLinesForTextOverflow();
-    void updateFragmentForLine(LegacyRootInlineBox*) const;
+    LegacyRootInlineBox* createLineBoxesFromBidiRuns(unsigned bidiLevel, BidiRunList<BidiRun>& bidiRuns, const LegacyInlineIterator& end, LineInfo&);
+    void layoutRunsAndFloats(bool hasInlineChild);
+    void layoutRunsAndFloatsInRange(InlineBidiResolver&);
 
     const RenderStyle& style() const;
     const LocalFrameViewLayoutContext& layoutContext() const;

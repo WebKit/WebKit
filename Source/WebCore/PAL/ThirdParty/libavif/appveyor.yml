@@ -1,5 +1,6 @@
 image: Visual Studio 2022
 configuration: Release
+skip_non_tags: true
 skip_commits:
   files:
     - '.github/*'
@@ -8,8 +9,6 @@ skip_commits:
     - '*.md'
 
 install:
- # Get submodules
- - git submodule update --init --recursive
  # Prepare Visual Studio environment
  - call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
  # Install Nasm
@@ -32,7 +31,7 @@ install:
  - mkdir build
  - cd build
  - cmake --version
- - cmake .. -DAVIF_CODEC_AOM=ON -DAVIF_LOCAL_AOM=ON -DAVIF_CODEC_DAV1D=ON -DAVIF_LOCAL_DAV1D=ON -DBUILD_SHARED_LIBS=OFF -DAVIF_LOCAL_JPEG=ON -DAVIF_LOCAL_ZLIBPNG=ON -DAVIF_LOCAL_LIBYUV=ON -DAVIF_BUILD_APPS=ON
+ - cmake .. -DAVIF_CODEC_AOM=LOCAL -DAVIF_CODEC_DAV1D=LOCAL  -DBUILD_SHARED_LIBS=OFF -DAVIF_LOCAL_JPEG=ON -DAVIF_LOCAL_ZLIBPNG=ON -DAVIF_LIBYUV=LOCAL -DAVIF_BUILD_APPS=ON -DAVIF_ENABLE_WERROR=ON
 
 build:
   project: build/libavif.sln

@@ -33,7 +33,7 @@
 @class _WKTextInputContext;
 @class UIEventAttribution;
 @class UIGestureRecognizer;
-@class WKSEDocumentContext;
+@class BEDocumentContext;
 @class UIWKDocumentRequest;
 @class UITapGestureRecognizer;
 
@@ -86,10 +86,13 @@
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
 
+- (void)_resetObscuredInsetsForTesting;
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;
 
 + (void)_resetPresentLockdownModeMessage;
+
+- (void)_doAfterNextVisibleContentRectAndStablePresentationUpdate:(void (^)(void))updateBlock;
 
 @end
 

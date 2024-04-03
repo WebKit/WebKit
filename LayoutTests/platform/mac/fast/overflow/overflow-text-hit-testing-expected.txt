@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 213x18
           text run at (0,0) width 213: "This tests for regressions against "
         RenderInline {I} at (0,0) size 781x36
-          RenderText {#text} at (212,0) size 781x36
+          RenderText {#text} at (0,0) size 781x36
             text run at (212,0) width 458: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5921 Hit-testing text "
             text run at (669,0) width 112: "in overflows does"
             text run at (0,18) width 195: "not take scrolling into account"
-        RenderText {#text} at (194,18) size 785x36
+        RenderText {#text} at (0,18) size 785x36
           text run at (194,18) width 85: " by scrolling "
           text run at (278,18) width 420: "the above text all the way to the right, clicking the last letter, and "
           text run at (697,18) width 88: "verifying that"

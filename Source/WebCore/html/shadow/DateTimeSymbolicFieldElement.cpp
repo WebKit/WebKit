@@ -109,11 +109,6 @@ String DateTimeSymbolicFieldElement::placeholderValue() const
     return m_symbols[m_placeholderIndex];
 }
 
-int DateTimeSymbolicFieldElement::valueAsInteger() const
-{
-    return m_selectedIndex;
-}
-
 void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != eventNames().keypressEvent)

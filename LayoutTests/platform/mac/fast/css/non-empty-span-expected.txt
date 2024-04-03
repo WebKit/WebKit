@@ -7,7 +7,7 @@ layer at (0,0) size 800x457
         RenderText {#text} at (0,0) size 121x18
           text run at (0,0) width 121: "Before empty span"
       RenderBlock (anonymous) at (0,18) size 784x100
-        RenderInline {SPAN} at (0,0) size 0x18
+        RenderInline {SPAN} at (0,41) size 0x18
         RenderText {#text} at (0,41) size 12x18
           text run at (0,41) width 12: "X"
       RenderBlock {DIV} at (0,118) size 784x18

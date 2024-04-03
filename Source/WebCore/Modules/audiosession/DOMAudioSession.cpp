@@ -31,7 +31,7 @@
 #include "AudioSession.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "FeaturePolicy.h"
+#include "PermissionsPolicy.h"
 #include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
@@ -84,7 +84,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     if (!document)
         return Exception { ExceptionCode::InvalidStateError };
 
-    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+    if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No))
         return { };
 
     document->topDocument().setAudioSessionType(type);
@@ -101,7 +101,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
 DOMAudioSession::Type DOMAudioSession::type() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+    if (document && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No))
         return DOMAudioSession::Type::Auto;
 
     return document ? document->topDocument().audioSessionType() : DOMAudioSession::Type::Auto;
@@ -121,7 +121,7 @@ static DOMAudioSession::State computeAudioSessionState()
 DOMAudioSession::State DOMAudioSession::state() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (!document || !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+    if (!document || !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No))
         return DOMAudioSession::State::Inactive;
 
     if (!m_state)
@@ -161,7 +161,7 @@ void DOMAudioSession::audioSessionActiveStateChanged()
 void DOMAudioSession::scheduleStateChangeEvent()
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
+    if (document && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No))
         return;
 
     if (m_hasScheduleStateChangeEvent)

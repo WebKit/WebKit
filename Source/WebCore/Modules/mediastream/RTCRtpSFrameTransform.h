@@ -86,7 +86,7 @@ private:
     bool virtualHasPendingActivity() const final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return RTCRtpSFrameTransformEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCRtpSFrameTransform; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

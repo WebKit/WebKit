@@ -26,16 +26,16 @@
 #import "config.h"
 #import "Download.h"
 
-#import "DataReference.h"
 #import "NetworkSessionCocoa.h"
 #import "WKDownloadProgress.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSProgressSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
-void Download::resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle)
+void Download::resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
     if (m_sandboxExtension)
@@ -64,14 +64,13 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     [m_downloadTask resume];
 }
     
-void Download::platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
+void Download::platformCancelNetworkLoad(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
     ASSERT(m_downloadTask);
     [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *resumeData) mutable {
         ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTFMove(completionHandler)] () mutable  {
-            auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>([resumeData bytes]), [resumeData length] } : IPC::DataReference { };
-            completionHandler(resumeDataReference);
+            completionHandler(span(resumeData.get()));
         });
     }).get()];
 }

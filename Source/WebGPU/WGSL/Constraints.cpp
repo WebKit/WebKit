@@ -149,13 +149,22 @@ const Type* concretize(const Type* type, TypeStore& types)
             return satisfyOrPromote(type, Constraints::ConcreteScalar, types);
         },
         [&](const Vector& vector) -> const Type* {
-            return types.vectorType(vector.size, concretize(vector.element, types));
+            auto* element = concretize(vector.element, types);
+            if (!element)
+                return nullptr;
+            return types.vectorType(vector.size, element);
         },
         [&](const Matrix& matrix) -> const Type* {
-            return types.matrixType(matrix.columns, matrix.rows, concretize(matrix.element, types));
+            auto* element = concretize(matrix.element, types);
+            if (!element)
+                return nullptr;
+            return types.matrixType(matrix.columns, matrix.rows, element);
         },
         [&](const Array& array) -> const Type* {
-            return types.arrayType(concretize(array.element, types), array.size);
+            auto* element = concretize(array.element, types);
+            if (!element)
+                return nullptr;
+            return types.arrayType(element, array.size);
         },
         [&](const Struct&) -> const Type* {
             return type;
@@ -165,11 +174,15 @@ const Type* concretize(const Type* type, TypeStore& types)
             case PrimitiveStruct::FrexpResult::kind: {
                 auto* fract = concretize(primitiveStruct.values[PrimitiveStruct::FrexpResult::fract], types);
                 auto* exp = concretize(primitiveStruct.values[PrimitiveStruct::FrexpResult::exp], types);
+                if (!fract || !exp)
+                    return nullptr;
                 return types.frexpResultType(fract, exp);
             }
             case PrimitiveStruct::ModfResult::kind: {
                 auto* fract = concretize(primitiveStruct.values[PrimitiveStruct::ModfResult::fract], types);
                 auto* whole = concretize(primitiveStruct.values[PrimitiveStruct::ModfResult::whole], types);
+                if (!fract || !whole)
+                    return nullptr;
                 return types.modfResultType(fract, whole);
             }
             case PrimitiveStruct::AtomicCompareExchangeResult::kind: {
@@ -187,22 +200,22 @@ const Type* concretize(const Type* type, TypeStore& types)
             return type;
         },
         [&](const Function&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const Texture&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TextureStorage&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TextureDepth&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const Reference&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         },
         [&](const TypeConstructor&) -> const Type* {
-            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
         });
 }
 

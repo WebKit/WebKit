@@ -35,6 +35,7 @@
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
+#include "UnlinkedFunctionExecutable.h"
 #include "VariableEnvironment.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SmallSet.h>
@@ -832,7 +833,7 @@ namespace JSC {
 
         static bool shouldCreateLexicalScopeForClass(PropertyListNode*);
 
-        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<JSTextPosition>*, Vector<JSTextPosition>*);
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID*, RegisterID*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*, Vector<UnlinkedFunctionExecutable::ClassElementDefinition>*);
 
         void emitDeclarePrivateFieldNames(BytecodeGenerator&, RegisterID* scope);
 
@@ -1628,6 +1629,8 @@ namespace JSC {
         void setNext(CommaNode* next) { m_next = next; }
         CommaNode* next() { return m_next; }
 
+        ExpressionNode* expr() const { return m_expr; }
+
     private:
         bool isCommaNode() const final { return true; }
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
@@ -2421,14 +2424,14 @@ namespace JSC {
     class DefineFieldNode final : public StatementNode {
     public:
         enum class Type { Name, PrivateName, ComputedName };
-        DefineFieldNode(const JSTokenLocation&, const Identifier*, ExpressionNode*, Type);
+        DefineFieldNode(const JSTokenLocation&, const Identifier&, ExpressionNode*, Type);
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* destination = nullptr) final;
 
         bool isDefineFieldNode() const final { return true; }
 
-        const Identifier* m_ident;
+        Identifier m_ident;
         ExpressionNode* m_assign;
         Type m_type;
     };
@@ -2472,7 +2475,6 @@ namespace JSC {
         virtual bool isBindingNode() const { return false; }
         virtual bool isAssignmentElementNode() const { return false; }
         virtual bool isRestParameter() const { return false; }
-        virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return nullptr; }
 
         virtual RegisterID* writableDirectBindingIfPossible(BytecodeGenerator&) const { return nullptr; }
         virtual void finishDirectBindingAssignment(BytecodeGenerator&) const { }
@@ -2504,7 +2506,6 @@ namespace JSC {
         };
         void collectBoundIdentifiers(Vector<Identifier>&) const final;
         void bindValue(BytecodeGenerator&, RegisterID*) const final;
-        RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID* dst, ExpressionNode*) final;
         void toString(StringBuilder&) const final;
 
         Vector<Entry> m_targetPatterns;

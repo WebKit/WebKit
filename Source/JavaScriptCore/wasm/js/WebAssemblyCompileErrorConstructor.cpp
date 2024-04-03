@@ -32,19 +32,12 @@
 #include "JSWebAssemblyCompileError.h"
 #include "WebAssemblyCompileErrorPrototype.h"
 
-#include "WebAssemblyCompileErrorConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorConstructor) };
+const ClassInfo WebAssemblyCompileErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyCompileError);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyCompileError);
-
-/* Source for WebAssemblyCompileErrorConstructor.lut.h
- @begin constructorTableWebAssemblyCompileError
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyCompileError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

@@ -29,9 +29,9 @@
 
 #if USE(CAIRO)
 
-#include "CharacterProperties.h"
 #include "FontCache.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 
@@ -144,7 +144,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
             return systemFallback.get();
 
         // In case of emoji, if fallback font is colored try again without the variation selector character.
-        if (isEmoji && characters[length - 1] == 0xFE0F && systemFallback->platformData().isColorBitmapFont() && systemFallback->canRenderCombiningCharacterSequence({ characters, length - 1 }))
+        if (isEmoji && characters[length - 1] == 0xFE0F && systemFallback->platformData().isColorBitmapFont() && systemFallback->canRenderCombiningCharacterSequence(std::span { characters, length - 1 }))
             return systemFallback.get();
     }
 

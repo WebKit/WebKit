@@ -54,7 +54,7 @@ static inline void append32(V& result, uint32_t value)
     result.append(value);
 }
 
-class SVGToOTFFontConverter {
+class SVGToOTFFontConverter : public CanMakeWeakPtr<SVGToOTFFontConverter> {
 public:
     SVGToOTFFontConverter(const SVGFontElement&);
     bool convertSVGToOTFFont();
@@ -83,7 +83,7 @@ private:
         FloatRect boundingBox;
         Vector<char> charString;
         String codepoints;
-        const SVGGlyphElement* glyphElement;
+        WeakPtr<const SVGGlyphElement, WeakPtrImplWithEventTargetData> glyphElement;
         float horizontalAdvance;
         float verticalAdvance;
     };
@@ -93,9 +93,9 @@ private:
         Placeholder(SVGToOTFFontConverter& converter, size_t baseOfOffset)
             : m_converter(converter)
             , m_baseOfOffset(baseOfOffset)
-            , m_location(m_converter.m_result.size())
+            , m_location(m_converter->m_result.size())
         {
-            m_converter.append16(0);
+            m_converter->append16(0);
         }
 
         Placeholder(Placeholder&& other)
@@ -103,20 +103,17 @@ private:
             , m_baseOfOffset(other.m_baseOfOffset)
             , m_location(other.m_location)
 #if ASSERT_ENABLED
-            , m_active(other.m_active)
+            , m_active(std::exchange(other.m_active, false))
 #endif
         {
-#if ASSERT_ENABLED
-            other.m_active = false;
-#endif
         }
 
         void populate()
         {
             ASSERT(m_active);
-            size_t delta = m_converter.m_result.size() - m_baseOfOffset;
+            size_t delta = m_converter->m_result.size() - m_baseOfOffset;
             ASSERT(delta < std::numeric_limits<uint16_t>::max());
-            m_converter.overwrite16(m_location, delta);
+            m_converter->overwrite16(m_location, delta);
 #if ASSERT_ENABLED
             m_active = false;
 #endif
@@ -128,7 +125,7 @@ private:
         }
 
     private:
-        SVGToOTFFontConverter& m_converter;
+        WeakRef<SVGToOTFFontConverter> m_converter;
         const size_t m_baseOfOffset;
         const size_t m_location;
 #if ASSERT_ENABLED
@@ -244,15 +241,17 @@ private:
         return value * s_outputUnitsPerEm / m_inputUnitsPerEm;
     }
 
+    Ref<const SVGFontElement> protectedFontElement() const { return m_fontElement.get(); }
+
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
     HashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
     Vector<uint8_t> m_result;
     Vector<char, 17> m_emptyGlyphCharString;
     FloatRect m_boundingBox;
-    const SVGFontElement& m_fontElement;
-    const SVGFontFaceElement* m_fontFaceElement;
-    const SVGMissingGlyphElement* m_missingGlyphElement;
+    WeakRef<const SVGFontElement, WeakPtrImplWithEventTargetData> m_fontElement;
+    WeakPtr<const SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_fontFaceElement;
+    WeakPtr<const SVGMissingGlyphElement, WeakPtrImplWithEventTargetData> m_missingGlyphElement;
     String m_fontFamily;
     float m_advanceWidthMax;
     float m_advanceHeightMax;
@@ -491,7 +490,7 @@ void SVGToOTFFontConverter::appendNAMETable()
 void SVGToOTFFontConverter::appendOS2Table()
 {
     int16_t averageAdvance = s_outputUnitsPerEm;
-    auto horizAdvX = parseHTMLInteger(m_fontElement.attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
+    auto horizAdvX = parseHTMLInteger(m_fontElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
     if (!horizAdvX && m_missingGlyphElement)
         horizAdvX = parseHTMLInteger(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::horiz_adv_xAttr));
     if (horizAdvX)
@@ -516,7 +515,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     append16(0); // No classification
 
     unsigned numPanoseBytes = 0;
-    const unsigned panoseSize = 10;
+    constexpr unsigned panoseSize = 10;
     char panoseBytes[panoseSize];
     if (m_fontFaceElement) {
         auto segments = StringView(m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr)).split(' ');
@@ -531,7 +530,7 @@ void SVGToOTFFontConverter::appendOS2Table()
     }
     if (numPanoseBytes != panoseSize)
         memset(panoseBytes, 0, panoseSize);
-    m_result.append(panoseBytes, panoseSize);
+    m_result.append(std::span { panoseBytes });
 
     for (int i = 0; i < 4; ++i)
         append32(0); // "Bit assignments are pending. Set to 0"
@@ -947,7 +946,7 @@ void SVGToOTFFontConverter::appendVORGTable()
     append16(1); // Major version
     append16(0); // Minor version
 
-    auto vertOriginY = parseHTMLInteger(m_fontElement.attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
+    auto vertOriginY = parseHTMLInteger(m_fontElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
     if (!vertOriginY && m_missingGlyphElement)
         vertOriginY = parseHTMLInteger(m_missingGlyphElement->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr));
     append16(clampTo<int16_t>(scaleUnitsPerEm(vertOriginY.value_or(0))));
@@ -955,7 +954,7 @@ void SVGToOTFFontConverter::appendVORGTable()
     auto tableSizeOffset = m_result.size();
     append16(0); // Place to write table size.
     for (Glyph i = 0; i < m_glyphs.size(); ++i) {
-        if (auto* glyph = m_glyphs[i].glyphElement) {
+        if (auto& glyph = m_glyphs[i].glyphElement) {
             if (auto verticalOriginY = parseHTMLInteger(glyph->attributeWithoutSynchronization(SVGNames::vert_origin_yAttr))) {
                 append16(i);
                 append16(clampTo<int16_t>(scaleUnitsPerEm(*verticalOriginY)));
@@ -1002,7 +1001,7 @@ static String codepointToString(char32_t codepoint)
     uint8_t length = 0;
     UBool error = false;
     U16_APPEND(buffer, length, 2, codepoint, error);
-    return error ? String() : String(buffer, length);
+    return error ? String() : String({ buffer, length });
 }
 
 Vector<Glyph, 1> SVGToOTFFontConverter::glyphsForCodepoint(char32_t codepoint) const
@@ -1058,7 +1057,7 @@ void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerning
 template<typename T> inline size_t SVGToOTFFontConverter::appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage)
 {
     Vector<KerningData> kerningData;
-    for (auto& element : childrenOfType<T>(m_fontElement)) {
+    for (auto& element : childrenOfType<T>(protectedFontElement())) {
         if (auto kerningPair = (element.*buildKerningPair)())
             addKerningPair(kerningData, WTFMove(*kerningPair));
     }
@@ -1364,8 +1363,8 @@ static void populateEmptyGlyphCharString(Vector<char, 17>& o, unsigned unitsPerE
 
 SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     : m_fontElement(fontElement)
-    , m_fontFaceElement(childrenOfType<SVGFontFaceElement>(m_fontElement).first())
-    , m_missingGlyphElement(childrenOfType<SVGMissingGlyphElement>(m_fontElement).first())
+    , m_fontFaceElement(childrenOfType<SVGFontFaceElement>(fontElement).first())
+    , m_missingGlyphElement(childrenOfType<SVGMissingGlyphElement>(fontElement).first())
     , m_advanceWidthMax(0)
     , m_advanceHeightMax(0)
     , m_minRightSideBearing(std::numeric_limits<float>::max())
@@ -1404,14 +1403,14 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     populateEmptyGlyphCharString(m_emptyGlyphCharString, s_outputUnitsPerEm);
 
     std::optional<FloatRect> boundingBox;
-    if (m_missingGlyphElement)
-        processGlyphElement(*m_missingGlyphElement, nullptr, defaultHorizontalAdvance, defaultVerticalAdvance, String(), boundingBox);
+    if (RefPtr missingGlyphElement = m_missingGlyphElement.get())
+        processGlyphElement(*missingGlyphElement, nullptr, defaultHorizontalAdvance, defaultVerticalAdvance, String(), boundingBox);
     else {
         m_glyphs.append(GlyphData(Vector<char>(m_emptyGlyphCharString), nullptr, s_outputUnitsPerEm, s_outputUnitsPerEm, FloatRect(), String()));
         boundingBox = FloatRect(0, 0, s_outputUnitsPerEm, s_outputUnitsPerEm);
     }
 
-    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
+    for (auto& glyphElement : childrenOfType<SVGGlyphElement>(protectedFontElement())) {
         auto& unicodeAttribute = glyphElement.attributeWithoutSynchronization(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);

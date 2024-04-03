@@ -112,6 +112,12 @@ void AXGeometryManager::willUpdateObjectRegions()
 {
     if (m_updateObjectRegionsTimer.isActive())
         m_updateObjectRegionsTimer.stop();
+
+    if (!m_cache)
+        return;
+
+    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_cache->pageID()))
+        tree->updateRootScreenRelativePosition();
 }
 
 void AXGeometryManager::scheduleRenderingUpdate()
@@ -119,7 +125,7 @@ void AXGeometryManager::scheduleRenderingUpdate()
     if (!m_cache)
         return;
 
-    if (auto* page = m_cache->document().page())
+    if (RefPtr page = m_cache->document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::AccessibilityRegionUpdate);
 }
 

@@ -139,15 +139,6 @@ API::InjectedBundle::PageUIClient::UIElementVisibility InjectedBundlePageUIClien
     return toUIElementVisibility(m_client.toolbarsAreVisible(toAPI(page), m_client.base.clientInfo));
 }
 
-bool InjectedBundlePageUIClient::didReachApplicationCacheOriginQuota(WebPage* page, API::SecurityOrigin* origin, int64_t totalBytesNeeded)
-{
-    if (!m_client.didReachApplicationCacheOriginQuota)
-        return false;
-
-    m_client.didReachApplicationCacheOriginQuota(toAPI(page), toAPI(origin), totalBytesNeeded, m_client.base.clientInfo);
-    return true;
-}
-
 uint64_t InjectedBundlePageUIClient::didExceedDatabaseQuota(WebPage* page, API::SecurityOrigin* origin, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes)
 {
     if (!m_client.didExceedDatabaseQuota)

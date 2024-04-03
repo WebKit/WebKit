@@ -31,6 +31,7 @@ class Directive;
 class DiagnosticDirective;
 
 class Declaration;
+class ConstAssert;
 
 class Attribute;
 class AlignAttribute;
@@ -77,6 +78,7 @@ class BreakStatement;
 class CallStatement;
 class CompoundAssignmentStatement;
 class CompoundStatement;
+class ConstAssertStatement;
 class ContinueStatement;
 class DecrementIncrementStatement;
 class DiscardStatement;

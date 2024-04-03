@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ class ConfigDotJSONTest(unittest.TestCase):
                               'remotes', 'runTests', 'shortname', 'tags', 'triggers', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
-                self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
+                self.assertTrue(key in valid_builder_keys, f"Unexpected key {key} for builder {builder.get('name')}")
 
     def test_multiple_scheduers_for_builder(self):
         config = self.get_config()
@@ -60,7 +60,7 @@ class ConfigDotJSONTest(unittest.TestCase):
 
         for scheduler in config.get('schedulers'):
             for buildername in scheduler.get('builderNames'):
-                self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
+                self.assertTrue(buildername not in builder_to_schduler_map, f'builder {buildername} appears multiple times in schedulers.')
                 builder_to_schduler_map[buildername] = scheduler.get('name')
 
     def test_schduler_contains_valid_builder_name(self):
@@ -68,13 +68,13 @@ class ConfigDotJSONTest(unittest.TestCase):
         builder_name_list = [builder['name'] for builder in config['builders']]
         for scheduler in config.get('schedulers'):
             for buildername in scheduler.get('builderNames'):
-                self.assertTrue(buildername in builder_name_list, 'builder "{}" in scheduler "{}" is invalid.'.format(buildername, scheduler.get('name')))
+                self.assertTrue(buildername in builder_name_list, f"builder {buildername} in scheduler {scheduler.get('name')} is invalid.")
 
     def test_single_builder_for_triggerable_scheduler(self):
         config = self.get_config()
         for scheduler in config['schedulers']:
             if scheduler.get('type') == 'Triggerable':
-                self.assertTrue(len(scheduler.get('builderNames')) == 1, 'scheduler "{}" triggers multiple builders.'.format(scheduler['name']))
+                self.assertTrue(len(scheduler.get('builderNames')) == 1, f"scheduler {scheduler['name']} triggers multiple builders.")
 
 
 class TagsForBuilderTest(unittest.TestCase):
@@ -148,7 +148,7 @@ class TestcheckValidBuilder(unittest.TestCase):
         longName = 'a' * 71
         with self.assertRaises(Exception) as context:
             loadConfig.checkValidBuilder({}, {'name': longName, 'shortname': 'a'})
-        self.assertEqual(context.exception.args, ('Builder name {} is longer than maximum allowed by Buildbot (70 characters).'.format(longName),))
+        self.assertEqual(context.exception.args, (f'Builder name {longName} is longer than maximum allowed by Buildbot (70 characters).',))
 
     def test_builder_with_invalid_configuration(self):
         with self.assertRaises(Exception) as context:
@@ -189,7 +189,7 @@ class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
     def test_checkWorkersAndBuildersForConsistency1(self):
         with self.assertRaises(Exception) as context:
             loadConfig.checkWorkersAndBuildersForConsistency({}, [self.ews101, self.ews102], [self.WK2Builder])
-        self.assertEqual(context.exception.args, ('Builder "macOS-High-Sierra-WK2-EWS" is for platform "mac-sierra", but has worker "ews102" for platform "ios-11"!',))
+        self.assertEqual(context.exception.args, ('Builder macOS-High-Sierra-WK2-EWS is for platform mac-sierra, but has worker ews102 for platform ios-11!',))
 
     def test_duplicate_worker(self):
         with self.assertRaises(Exception) as context:

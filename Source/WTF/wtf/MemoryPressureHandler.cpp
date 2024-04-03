@@ -26,7 +26,9 @@
 #include "config.h"
 #include <wtf/MemoryPressureHandler.h>
 
+#include <algorithm>
 #include <atomic>
+#include <functional>
 #include <wtf/Logging.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/NeverDestroyed.h>
@@ -65,7 +67,7 @@ static MemoryPressureHandler* memoryPressureHandlerIfExists()
 }
 
 MemoryPressureHandler::MemoryPressureHandler()
-#if OS(LINUX) || OS(FREEBSD)
+#if OS(LINUX) || OS(FREEBSD) || OS(QNX)
     : m_holdOffTimer(RunLoop::main(), this, &MemoryPressureHandler::holdOffTimerFired)
 #elif OS(WINDOWS)
     : m_windowsMeasurementTimer(RunLoop::main(), this, &MemoryPressureHandler::windowsMeasurementTimerFired)
@@ -74,6 +76,11 @@ MemoryPressureHandler::MemoryPressureHandler()
 #if PLATFORM(COCOA)
     setDispatchQueue(dispatch_get_main_queue());
 #endif
+}
+
+void MemoryPressureHandler::setMemoryFootprintPollIntervalForTesting(Seconds pollInterval)
+{
+    m_configuration.pollInterval = pollInterval;
 }
 
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
@@ -209,12 +216,29 @@ void MemoryPressureHandler::setMemoryUsagePolicyBasedOnFootprint(size_t footprin
     memoryPressureStatusChanged();
 }
 
+void MemoryPressureHandler::setMemoryFootprintNotificationThresholds(Vector<size_t>&& thresholds, WTF::Function<void(size_t)>&& handler)
+{
+    if (thresholds.isEmpty() || !handler)
+        return;
+
+    std::sort(thresholds.begin(), thresholds.end(), std::greater<>());
+    m_memoryFootprintNotificationThresholds = WTFMove(thresholds);
+    m_memoryFootprintNotificationHandler = WTFMove(handler);
+}
+
+
 void MemoryPressureHandler::measurementTimerFired()
 {
     size_t footprint = memoryFootprint();
 #if PLATFORM(COCOA)
     RELEASE_LOG(MemoryPressure, "Current memory footprint: %zu MB", footprint / MB);
 #endif
+
+    while (m_memoryFootprintNotificationThresholds.size() && footprint > m_memoryFootprintNotificationThresholds.last()) {
+        auto notificationThreshold = m_memoryFootprintNotificationThresholds.takeLast();
+        m_memoryFootprintNotificationHandler(notificationThreshold);
+    }
+
     auto killThreshold = thresholdForMemoryKill();
     if (killThreshold && footprint >= *killThreshold) {
         shrinkOrDie(*killThreshold);
@@ -299,19 +323,25 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     platformReleaseMemory(critical);
 }
 
-void MemoryPressureHandler::setMemoryPressureStatus(MemoryPressureStatus memoryPressureStatus)
+void MemoryPressureHandler::setMemoryPressureStatus(SystemMemoryPressureStatus status)
 {
-    if (m_memoryPressureStatus == memoryPressureStatus)
+    if (m_memoryPressureStatus == status)
         return;
 
-    m_memoryPressureStatus = memoryPressureStatus;
+    m_memoryPressureStatus = status;
     memoryPressureStatusChanged();
 }
 
 void MemoryPressureHandler::memoryPressureStatusChanged()
 {
     if (m_memoryPressureStatusChangedCallback)
-        m_memoryPressureStatusChangedCallback(m_memoryPressureStatus);
+        m_memoryPressureStatusChangedCallback();
+}
+
+void MemoryPressureHandler::didExceedProcessMemoryLimit(ProcessMemoryLimit limit)
+{
+    if (m_didExceedProcessMemoryLimitCallback)
+        m_didExceedProcessMemoryLimitCallback(limit);
 }
 
 void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()

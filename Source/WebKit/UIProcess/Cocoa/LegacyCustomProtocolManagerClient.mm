@@ -27,11 +27,11 @@
 #import "LegacyCustomProtocolManagerClient.h"
 
 #import "CacheStoragePolicy.h"
-#import "DataReference.h"
 #import "LegacyCustomProtocolManagerProxy.h"
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
@@ -109,8 +109,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_customProtocolManagerProxy)
         return;
 
-    IPC::DataReference coreData(static_cast<const uint8_t*>([data bytes]), [data length]);
-    _customProtocolManagerProxy->didLoadData(_customProtocolID, coreData);
+    _customProtocolManagerProxy->didLoadData(_customProtocolID, span(data));
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse

@@ -62,8 +62,6 @@ public:
     const MediaStreamArray& streams() const  { return m_streams; }
     RTCRtpTransceiver* transceiver() const  { return m_transceiver.get(); }
 
-    virtual EventInterface eventInterface() const { return RTCTrackEventInterfaceType; }
-
 private:
     RTCTrackEvent(const AtomString& type, CanBubble, IsCancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&, MediaStreamArray&&, RefPtr<RTCRtpTransceiver>&&);
     RTCTrackEvent(const AtomString& type, const Init&, IsTrusted);

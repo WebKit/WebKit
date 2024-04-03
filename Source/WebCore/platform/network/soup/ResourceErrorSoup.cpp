@@ -42,6 +42,45 @@ namespace WebCore {
 #define SOUP_HTTP_ERROR_DOMAIN SOUP_SESSION_ERROR
 #endif
 
+ResourceError::ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type, IsSanitized isSanitized)
+    : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
+{
+}
+
+ResourceError ResourceError::fromIPCData(std::optional<IPCData>&& ipcData)
+{
+    if (!ipcData)
+        return { };
+
+    ResourceError error {
+        ipcData->domain,
+        ipcData->errorCode,
+        ipcData->failingURL,
+        ipcData->localizedDescription,
+        ipcData->type,
+        ipcData->isSanitized
+    };
+    error.setCertificate(ipcData->certificateInfo.certificate().get());
+    error.setTLSErrors(ipcData->certificateInfo.tlsErrors());
+    return error;
+}
+
+auto ResourceError::ipcData() const -> std::optional<IPCData>
+{
+    if (isNull())
+        return std::nullopt;
+
+    return IPCData {
+        type(),
+        domain(),
+        errorCode(),
+        failingURL(),
+        localizedDescription(),
+        m_isSanitized,
+        CertificateInfo { *this }
+    };
+}
+
 ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
     return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN)), statusCode, failingURL, reasonPhrase);

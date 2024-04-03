@@ -96,8 +96,8 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         unsigned sortedEnd = from;
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
-            Node* node = parentMatrix[i][0];
-            if (is<Attr>(*node) && downcast<Attr>(*node).ownerElement() == commonAncestor)
+            auto* node = parentMatrix[i][0];
+            if (auto* attr = dynamicDowncast<Attr>(*node); attr && attr->ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {
@@ -157,10 +157,10 @@ void NodeSet::sort() const
     Vector<Vector<Node*>> parentMatrix(nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i) {
         Vector<Node*>& parentsVector = parentMatrix[i];
-        Node* node = m_nodes[i].get();
+        auto* node = m_nodes[i].get();
         parentsVector.append(node);
-        if (is<Attr>(*node)) {
-            node = downcast<Attr>(*node).ownerElement();
+        if (auto* attr = dynamicDowncast<Attr>(*node)) {
+            node = attr->ownerElement();
             parentsVector.append(node);
             containsAttributeNodes = true;
         }
@@ -181,8 +181,8 @@ void NodeSet::sort() const
 
 static Node* findRootNode(Node* node)
 {
-    if (is<Attr>(*node))
-        node = downcast<Attr>(*node).ownerElement();
+    if (auto* attr = dynamicDowncast<Attr>(*node))
+        node = attr->ownerElement();
     if (node->isConnected())
         node = &node->document();
     else {
@@ -212,15 +212,15 @@ void NodeSet::traversalSort() const
         if (nodes.contains(node))
             sortedNodes.append(node);
 
-        if (!containsAttributeNodes || !is<Element>(*node))
+        if (!containsAttributeNodes)
             continue;
 
-        Element& element = downcast<Element>(*node);
-        if (!element.hasAttributes())
+        RefPtr element = dynamicDowncast<Element>(*node);
+        if (!element || !element->hasAttributes())
             continue;
 
-        for (const Attribute& attribute : element.attributesIterator()) {
-            RefPtr<Attr> attr = element.attrIfExists(attribute.name());
+        for (const Attribute& attribute : element->attributesIterator()) {
+            RefPtr attr = element->attrIfExists(attribute.name());
             if (attr && nodes.contains(attr.get()))
                 sortedNodes.append(attr);
         }

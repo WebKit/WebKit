@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
@@ -19,19 +19,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://w3c.github.io/uievents/#interface-wheelevent
+
 [
     Exposed=Window
 ] interface WheelEvent : MouseEvent {
-    constructor([AtomString] DOMString type, optional WheelEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional WheelEventInit eventInitDict = {});
 
     // DeltaModeCode
     const unsigned long DOM_DELTA_PIXEL = 0x00;
     const unsigned long DOM_DELTA_LINE = 0x01;
     const unsigned long DOM_DELTA_PAGE = 0x02;
 
-    readonly attribute unrestricted double deltaX;
-    readonly attribute unrestricted double deltaY;
-    readonly attribute unrestricted double deltaZ;
+    readonly attribute double deltaX;
+    readonly attribute double deltaY;
+    readonly attribute double deltaZ;
     readonly attribute unsigned long deltaMode;
 
     // Legacy MouseWheelEvent API replaced by standard WheelEvent API.
@@ -40,12 +42,9 @@
     readonly attribute long wheelDelta;
 
     readonly attribute boolean webkitDirectionInvertedFromDevice;
-
-    undefined initWebKitWheelEvent(optional long wheelDeltaX = 0, optional long wheelDeltaY = 0, optional WindowProxy? view = null,
-        optional long screenX = 0, optional long screenY = 0, optional long clientX = 0, optional long clientY = 0,
-        optional boolean ctrlKey = false, optional boolean altKey = false,
-        optional boolean shiftKey = false, optional boolean metaKey = false);
 };
+
+// https://w3c.github.io/uievents/#idl-wheeleventinit
 
 dictionary WheelEventInit : MouseEventInit {
     double deltaX = 0.0;

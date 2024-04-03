@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 207x17
           text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 541x17
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (207,0) size 541x17
+          RenderInline {A} at (207,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (207,0) size 348x17
               text run at (207,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7943"
           RenderText {#text} at (554,0) size 194x17

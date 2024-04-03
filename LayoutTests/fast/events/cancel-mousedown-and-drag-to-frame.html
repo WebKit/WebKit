@@ -7,37 +7,22 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+var mouseMoveInOtherFrame = false;
+var mouseUpInOtherFrame = false;
+
 function log(msg) {
     var msgNode = document.createTextNode(msg);
     var li = document.createElement("li");
     li.appendChild(msgNode);
     document.getElementById("log").appendChild(li);
 }
-var dragging = false;
-var waitingForUp = false;
-function dragStarted() {
-    if (dragging || waitingForUp) {
-        log("Unexpected drag start");
-        return;
-    }
-    log("Drag started");
-    dragging = true;
-}
 
-window.onmousemove = function() {
-    if (!dragging || waitingForUp)
-        return;
-    log("Root frame received mouse move");
-    waitingForUp = true;
+function dragStarted() {
+    log("Drag started");
 }
 
 window.onmouseup = function() {
-    if (!waitingForUp) {
-        log("Unexpected mouseup");
-        return;
-    }
-    log("Root frame received mouseup event");
-    log("PASS!");
+    log("FAIL! Received unexpected mouseup on root frame");
 }
 
 window.onload = function() {
@@ -61,6 +46,11 @@ window.onload = function() {
         eventSender.mouseMoveTo(endX, endY);
         eventSender.mouseUp();
     } finally {
+        if (mouseUpInOtherFrame && mouseMoveInOtherFrame)
+            log("PASS!");
+        else
+            log("FAIL! Drag was not reflected in subframe");
+
         if (window.testRunner)
             testRunner.notifyDone();
     }

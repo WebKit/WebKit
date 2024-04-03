@@ -65,17 +65,17 @@ GPU* WorkerNavigator::gpu()
             if (!workerGlobalScope.graphicsClient())
                 return nullptr;
 
-            auto gpu = workerGlobalScope.graphicsClient()->createGPUForWebGPU();
+            RefPtr gpu = workerGlobalScope.graphicsClient()->createGPUForWebGPU();
             if (!gpu)
                 return nullptr;
 
             m_gpuForWebGPU = GPU::create(*gpu);
         } else if (scriptExecutionContext->isDocument()) {
-            auto& document = downcast<Document>(*scriptExecutionContext);
-            auto* page = document.page();
+            Ref document = downcast<Document>(*scriptExecutionContext);
+            RefPtr page = document->page();
             if (!page)
                 return nullptr;
-            auto gpu = page->chrome().createGPUForWebGPU();
+            RefPtr gpu = page->chrome().createGPUForWebGPU();
             if (!gpu)
                 return nullptr;
 
@@ -89,7 +89,6 @@ GPU* WorkerNavigator::gpu()
 #endif
 }
 
-#if ENABLE(BADGING)
 void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -116,7 +115,5 @@ void WorkerNavigator::clearAppBadge(Ref<DeferredPromise>&& promise)
 {
     setAppBadge(0, WTFMove(promise));
 }
-#endif
-
 
 } // namespace WebCore

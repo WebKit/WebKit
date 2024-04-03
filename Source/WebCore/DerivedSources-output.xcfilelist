@@ -123,6 +123,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDeferredPaymentRequest.cp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDeferredPaymentRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateBase.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDetailsUpdateBase.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDisbursementPaymentRequest.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayDisbursementPaymentRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSApplePayErrorCode.cpp
@@ -473,6 +475,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewX.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewX.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSSkewY.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStartingStyleRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration+PropertyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSStyleDeclaration.cpp
@@ -641,6 +645,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreManager.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateHTMLCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateHTMLCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateScriptCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateScriptCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateScriptURLCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCreateScriptURLCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialMediationRequirement.cpp
@@ -831,6 +841,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredential.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDigitalCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.cpp
@@ -891,8 +905,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDynamicsCompressorOptions.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendFuncExtended.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendFuncExtended.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendMinMax.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTBlendMinMax.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTClipControl.cpp
@@ -1637,6 +1649,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialProtocol.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityRequestProvider.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityRequestProvider.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleRequestCallback.cpp
@@ -1859,6 +1875,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSettingsRange.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSource.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSourceHandle.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaSourceHandle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStream.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.cpp
@@ -1871,6 +1889,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackProcessor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackProcessor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackCapabilities.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaTrackConstraints.cpp
@@ -1964,6 +1984,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Gamepad.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Gamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Geolocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Geolocation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Identity.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Identity.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+IsLoggedIn.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+IsLoggedIn.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaCapabilities.cpp
@@ -2214,6 +2236,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPoint2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPoint2D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerLockOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerLockOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPopStateEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPopStateEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPopoverInvokerElement.cpp
@@ -2234,8 +2258,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPromiseRejectionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPromiseRejectionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredential.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredential.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialClientCapabilities.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialClientCapabilities.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialCreationOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialCreationOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialDescriptor.cpp
@@ -2332,6 +2354,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransportState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceTransportState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalSessionDescriptionInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLocalSessionDescriptionInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLogsCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCLogsCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCOfferAnswerOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCOfferAnswerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCOfferOptions.cpp
@@ -2504,8 +2528,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAngle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAngle.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateColorElement.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateColorElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateElement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateElement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp
@@ -2942,6 +2964,18 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTreeWalker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTreeWalker.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedHTML.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedHTML.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedScript.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedScript.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedScriptURL.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedScriptURL.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicy.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicy.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicyFactory.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicyFactory.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicyOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrustedTypePolicyOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTypeConversions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTypeConversions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEvent.cpp
@@ -3018,6 +3052,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWGSLLanguageFeatures.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWGSLLanguageFeatures.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockSentinel.cpp
@@ -3096,6 +3132,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGL2RenderingContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGL2RenderingContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBlendFuncExtended.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBlendFuncExtended.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLClipCullDistance.cpp
@@ -3304,6 +3342,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Indexed
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+IndexedDatabase.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Performance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Performance.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+TrustedTypes.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+TrustedTypes.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowPostMessageOptions.cpp

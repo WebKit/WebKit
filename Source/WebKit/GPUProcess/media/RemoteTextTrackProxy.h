@@ -33,6 +33,7 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -77,7 +78,7 @@ private:
     virtual void removeGenericCue(WebCore::InbandGenericCue&);
 
     virtual void parseWebVTTFileHeader(String&&);
-    virtual void parseWebVTTCueData(const uint8_t* data, unsigned length);
+    virtual void parseWebVTTCueData(std::span<const uint8_t>);
     virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient
@@ -89,10 +90,11 @@ private:
     TextTrackPrivateRemoteConfiguration& configuration();
     void configurationChanged();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
+    size_t m_clientId { 0 };
 };
 
 } // namespace WebKit

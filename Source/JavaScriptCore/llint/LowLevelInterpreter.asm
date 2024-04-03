@@ -218,6 +218,7 @@ else
     const CellTag = constexpr JSValue::CellTag
     const EmptyValueTag = constexpr JSValue::EmptyValueTag
     const DeletedValueTag = constexpr JSValue::DeletedValueTag
+    const InvalidTag = constexpr JSValue::InvalidTag
     const LowestTag = constexpr JSValue::LowestTag
 end
 
@@ -320,7 +321,6 @@ end
 
 if GIGACAGE_ENABLED
     const GigacagePrimitiveBasePtrOffset = constexpr Gigacage::offsetOfPrimitiveGigacageBasePtr
-    const GigacageJSValueBasePtrOffset = constexpr Gigacage::offsetOfJSValueGigacageBasePtr
 end
 
 # Opcode offsets
@@ -1653,11 +1653,16 @@ macro functionInitialization(profileArgSkip)
         subp sizeof ArgumentValueProfile, t3
         storeq t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
     else
-        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t2
         subp sizeof ArgumentValueProfile, t3
-        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + TagOffset[t3]
+        loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t1
         loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
+        storeJSValueConcurrent(
+            macro (val, offset)
+                storei val, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + offset[t3]
+            end,
+            t1,
+            t2
+        )
     end
     baddpnz -8, t0, .argumentProfileLoop
 .argumentProfileDone:
@@ -1733,16 +1738,16 @@ global _vmEntryHostFunction
 _vmEntryHostFunction:
     jmp a2, HostFunctionPtrTag
 
-# unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
 if ARM64E
-emit ".globl _vmEntryToCSSJIT"
-emit "_vmEntryToCSSJIT:"
-    functionPrologue()
-    jmp t3, CSSSelectorPtrTag
-    emit ".globl _vmEntryToCSSJITAfter"
-    emit "_vmEntryToCSSJITAfter:"
-    functionEpilogue()
-    ret
+    # unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+    globalexport _vmEntryToCSSJIT
+    _vmEntryToCSSJIT:
+        functionPrologue()
+        jmp t3, CSSSelectorPtrTag
+    globalexport _vmEntryToCSSJITAfter
+    _vmEntryToCSSJITAfter:
+        functionEpilogue()
+        ret
 end
 
 if not (C_LOOP or C_LOOP_WIN)
@@ -1815,8 +1820,8 @@ end
 if ARM64E
     if JIT_CAGE
         # void* jitCagePtr(void* pointer, uintptr_t tag)
-        emit ".globl _jitCagePtr"
-        emit "_jitCagePtr:"
+        globalexport _jitCagePtr
+        _jitCagePtr:
             tagReturnAddress sp
             leap _g_config, t2
             jmp JSCConfigGateMapOffset + (constexpr Gate::jitCagePtr) * PtrSize[t2], NativeToJITGatePtrTag
@@ -2084,11 +2089,7 @@ macro slowPathOp(opcodeName)
     end)
 end
 
-slowPathOp(create_cloned_arguments)
-slowPathOp(create_direct_arguments)
-slowPathOp(create_lexical_environment)
 slowPathOp(create_rest)
-slowPathOp(create_scoped_arguments)
 slowPathOp(create_this)
 slowPathOp(create_promise)
 slowPathOp(create_generator)
@@ -2134,6 +2135,10 @@ llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
 llintSlowPathOp(instanceof)
+llintSlowPathOp(create_lexical_environment)
+llintSlowPathOp(create_direct_arguments)
+llintSlowPathOp(create_scoped_arguments)
+llintSlowPathOp(create_cloned_arguments)
 llintSlowPathOp(new_array)
 llintSlowPathOp(new_array_with_size)
 llintSlowPathOp(new_async_func)
@@ -2506,29 +2511,23 @@ end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
-macro linkSlowPathFor(function)
+macro linkFor(function)
     functionPrologue()
-    loadp JSGlobalObject::m_vm[t3], t1
-    storep cfr, VM::topCallFrame[t1]
-    move t2, a2
-    move t3, a1
+    move t2, a1
     move cfr, a0
-    cCall3(function)
+    cCall2(function)
     functionEpilogue()
     untagReturnAddress sp
-    btpz r1, .doNotTrash
-    preserveReturnAddressAfterCall(t1)
-    prepareForTailCall(t1, t2, t3, t4, macro(address) end)
-    untagReturnAddress t4
-.doNotTrash:
-    jmp t0, JSEntryPtrTag
+    btpnz r1, .throw
+    jmp r0, JSEntryPtrTag
+.throw:
+    functionPrologue()
+    jmp _llint_throw_from_slow_path_trampoline
 end
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
-macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, prepareCall, slowCase)
+macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, slowCase)
     addi 1, CallLinkInfo::m_slowPathCount[t2]
     if JSVALUE64
         btqnz t0, NotCellMask, slowCase
@@ -2541,57 +2540,47 @@ macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internal
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t5], t5
 .isExecutable:
     loadp offsetOfJITCodeWithArityCheck[t5], t4
-    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, t3 needs to be unmodified.
+    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, needs to be unmodified.
     move t4, t1
     move 0, t0
     bbneq JSCell::m_type[t5], FunctionExecutableType, .callCode
     loadp offsetOfCodeBlock[t5], t0
 .callCode:
-    prepareCall(t5, t2, t3, t4)
     storep t0, CodeBlock - PrologueStackPointerDelta[sp]
     jmp t1, JSEntryPtrTag
 .notJSFunction:
     bbneq JSCell::m_type[t0], InternalFunctionType, slowCase
-    prepareCall(t5, t2, t3, t4)
     jmp internalFunctionTrampoline
 end
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
-op(llint_link_call_trampoline, macro ()
-    linkSlowPathFor(_llint_link_call)
+op(llint_default_call_trampoline, macro ()
+    linkFor(_llint_default_call)
 end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_call_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
 .slowCase:
-    linkSlowPathFor(_llint_virtual_call)
+    linkFor(_llint_virtual_call)
 end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_construct_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, FunctionExecutable::m_codeBlockForConstruct, _llint_internal_function_construct_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+    virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, FunctionExecutable::m_codeBlockForConstruct, _llint_internal_function_construct_trampoline, .slowCase)
 .slowCase:
-    linkSlowPathFor(_llint_virtual_call)
+    linkFor(_llint_virtual_call)
 end)
 
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
-# t3 is caller's JSGlobalObject
 op(llint_virtual_tail_call_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4)
-        preserveReturnAddressAfterCall(temp1)
-        prepareForTailCall(temp1, temp2, temp3, temp4, macro(address) end)
-        untagReturnAddress temp4
-    end, .slowCase)
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, .slowCase)
 .slowCase:
-    linkSlowPathFor(_llint_virtual_call)
+    linkFor(_llint_virtual_call)
 end)
 
 if JIT

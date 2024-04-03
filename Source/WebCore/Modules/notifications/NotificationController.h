@@ -40,7 +40,7 @@ public:
     explicit NotificationController(NotificationClient*);
     ~NotificationController();
 
-    WEBCORE_EXPORT static const char* supplementName();
+    WEBCORE_EXPORT static ASCIILiteral supplementName();
     static NotificationController* from(Page* page) { return static_cast<NotificationController*>(Supplement<Page>::from(page, supplementName())); }
     WEBCORE_EXPORT static NotificationClient* clientFrom(Page&);
 

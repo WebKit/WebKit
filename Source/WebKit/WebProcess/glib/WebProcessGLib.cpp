@@ -33,6 +33,10 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 
+#include <WebCore/FontRenderOptions.h>
+#include <WebCore/PlatformScreen.h>
+#include <WebCore/ScreenProperties.h>
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -58,7 +62,7 @@
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
 #include <WebCore/ScrollbarThemeGtk.h>
 #endif
 
@@ -83,7 +87,9 @@
 #include <gtk/gtk.h>
 #endif
 
+#if USE(CAIRO)
 #include <WebCore/CairoUtilities.h>
+#endif
 
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -154,7 +160,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         if (m_dmaBufRendererBufferMode.contains(DMABufRendererBufferMode::Hardware)) {
             const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
             if (!disableGBM || !strcmp(disableGBM, "0")) {
-                if (auto* device = WebCore::GBMDevice::singleton().device())
+                if (auto* device = WebCore::GBMDevice::singleton().device(GBMDevice::Type::Render))
                     m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
             }
         }
@@ -168,7 +174,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::setGStreamerOptionsFromUIProcess(WTFMove(parameters.gstreamerOptions));
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     setUseSystemAppearanceForScrollbars(parameters.useSystemAppearanceForScrollbars);
 #endif
 
@@ -191,11 +197,19 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     if (parameters.disableFontHintingForTesting)
-        disableCairoFontHintingForTesting();
+        FontRenderOptions::singleton().disableHintingForTesting();
 
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
+
+#if PLATFORM(GTK)
     WebCore::setScreenProperties(parameters.screenProperties);
+#endif
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (!m_dmaBufRendererBufferMode.isEmpty())
+        WebCore::setScreenProperties(parameters.screenProperties);
 #endif
 }
 
@@ -213,7 +227,7 @@ void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)
         webkitWebProcessExtensionDidReceiveUserMessage(extension, WTFMove(message));
 }
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
 void WebProcess::setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
 {
     static_cast<ScrollbarThemeGtk&>(ScrollbarTheme::theme()).setUseSystemAppearance(useSystemAppearanceForScrollbars);
@@ -248,10 +262,12 @@ void WebProcess::releaseSystemMallocMemory()
 #endif
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     WebCore::setScreenProperties(properties);
+#endif
     for (auto& page : m_pageMap.values())
         page->screenPropertiesDidChange();
 }

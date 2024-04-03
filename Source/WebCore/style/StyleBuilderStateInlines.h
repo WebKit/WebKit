@@ -33,7 +33,7 @@ namespace Style {
 
 inline const FontCascadeDescription& BuilderState::fontDescription() { return m_style.fontDescription(); }
 inline const FontCascadeDescription& BuilderState::parentFontDescription() { return parentStyle().fontDescription(); }
-inline void BuilderState::setEffectiveZoom(float zoom) { m_fontDirty |= m_style.setEffectiveZoom(zoom); }
+inline void BuilderState::setUsedZoom(float zoom) { m_fontDirty |= m_style.setUsedZoom(zoom); }
 inline void BuilderState::setFontDescription(FontCascadeDescription&& description) { m_fontDirty |= m_style.setFontDescription(WTFMove(description)); }
 inline void BuilderState::setTextOrientation(TextOrientation orientation) { m_fontDirty |= m_style.setTextOrientation(orientation); }
 inline void BuilderState::setWritingMode(WritingMode mode) { m_fontDirty |= m_style.setWritingMode(mode); }

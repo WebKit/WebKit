@@ -1004,13 +1004,13 @@ void CommandBuffer::popDebugGroup()
 }
 
 #if ANGLE_MTL_EVENT_AVAILABLE
-void CommandBuffer::queueEventSignal(id<MTLEvent> event, uint64_t value)
+uint64_t CommandBuffer::queueEventSignal(id<MTLEvent> event, uint64_t value)
 {
     std::lock_guard<std::mutex> lg(mLock);
 
     ASSERT(readyImpl());
 
-    if (mActiveCommandEncoder && mActiveCommandEncoder->getType() == CommandEncoder::RENDER)
+    if (mActiveCommandEncoder)
     {
         // We cannot set event when there is an active render pass, defer the setting until the pass
         // end.
@@ -1023,14 +1023,16 @@ void CommandBuffer::queueEventSignal(id<MTLEvent> event, uint64_t value)
     {
         setEventImpl(event, value);
     }
+    return mQueueSerial;
 }
 
 void CommandBuffer::serverWaitEvent(id<MTLEvent> event, uint64_t value)
 {
     std::lock_guard<std::mutex> lg(mLock);
     ASSERT(readyImpl());
-
-    waitEventImpl(event, value);
+    ASSERT(!mActiveCommandEncoder);
+    setPendingEvents();
+    [get() encodeWaitForEvent:event value:value];
 }
 #endif  // ANGLE_MTL_EVENT_AVAILABLE
 
@@ -1130,24 +1132,8 @@ void CommandBuffer::setPendingEvents()
 #if ANGLE_MTL_EVENT_AVAILABLE
 void CommandBuffer::setEventImpl(id<MTLEvent> event, uint64_t value)
 {
-    ASSERT(!mActiveCommandEncoder || mActiveCommandEncoder->getType() != CommandEncoder::RENDER);
-    // For non-render command encoder, we can safely end it, so that we can encode a signal
-    // event.
-    forceEndingCurrentEncoder();
-
+    ASSERT(!mActiveCommandEncoder);
     [get() encodeSignalEvent:event value:value];
-}
-
-void CommandBuffer::waitEventImpl(id<MTLEvent> event, uint64_t value)
-{
-    ASSERT(!mActiveCommandEncoder || mActiveCommandEncoder->getType() != CommandEncoder::RENDER);
-
-    forceEndingCurrentEncoder();
-
-    // Encoding any pending event's signalling.
-    setPendingEvents();
-
-    [get() encodeWaitForEvent:event value:value];
 }
 #endif  // #if ANGLE_MTL_EVENT_AVAILABLE
 
@@ -1355,6 +1341,7 @@ void RenderCommandEncoder::reset()
     CommandEncoder::reset();
     mRecording        = false;
     mPipelineStateSet = false;
+    setRasterizationRateMap(nil);
     mCommands.clear();
 }
 
@@ -1782,12 +1769,22 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
     return *this;
 }
 
-RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect &rect)
+RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect &rect, id<MTLRasterizationRateMap> map)
 {
+    auto maxScissorRect =
+        MTLCoordinate2DMake(mRenderPassMaxScissorRect.width, mRenderPassMaxScissorRect.height);
+
+    if (map)
+    {
+        maxScissorRect = [map mapPhysicalToScreenCoordinates:maxScissorRect forLayer:0];
+        if (!(rect.width * rect.height))
+            return *this;
+    }
+
     NSUInteger clampedWidth =
-        rect.x > mRenderPassMaxScissorRect.width ? 0 : mRenderPassMaxScissorRect.width - rect.x;
+        rect.x > maxScissorRect.x ? 0 : (NSUInteger)ceilf(maxScissorRect.x) - rect.x;
     NSUInteger clampedHeight =
-        rect.y > mRenderPassMaxScissorRect.height ? 0 : mRenderPassMaxScissorRect.height - rect.y;
+        rect.y > maxScissorRect.y ? 0 : (NSUInteger)ceilf(maxScissorRect.y) - rect.y;
 
     MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                   std::min(rect.height, clampedHeight)};
@@ -1798,6 +1795,23 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect 
     }
 
     mStateCache.scissorRect = clampedRect;
+
+    if (map)
+    {
+        auto adjustedOrigin =
+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(clampedRect.x, clampedRect.y)
+                                       forLayer:0];
+        auto adjustedSize =
+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(clampedRect.width,
+                                                                    clampedRect.height)
+                                       forLayer:0];
+
+        clampedRect.x      = (NSUInteger)floorf(adjustedOrigin.x);
+        clampedRect.y      = (NSUInteger)floorf(adjustedOrigin.y);
+        MTLSize screenSize = [map screenSize];
+        clampedRect.width  = std::min<NSUInteger>(screenSize.width, ceilf(adjustedSize.x));
+        clampedRect.height = std::min<NSUInteger>(screenSize.height, ceilf(adjustedSize.y));
+    }
 
     mCommands.push(CmdType::SetScissorRect).push(clampedRect);
 
@@ -2205,6 +2219,12 @@ void RenderCommandEncoder::popDebugGroup()
     mCommands.push(CmdType::PopDebugGroup);
 }
 
+id<MTLRasterizationRateMap> RenderCommandEncoder::rasterizationRateMapForPass(id<MTLRasterizationRateMap> map,
+                                                                              id<MTLTexture>) const
+{
+    return map;
+}
+
 RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                 uint32_t colorAttachmentIndex)
 {
@@ -2297,6 +2317,16 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
         mCachedRenderPassDescObjC.get().stencilAttachment.loadAction   = action;
         mCachedRenderPassDescObjC.get().stencilAttachment.clearStencil = clearVal;
     }
+    return *this;
+}
+
+RenderCommandEncoder &RenderCommandEncoder::setRasterizationRateMap(id<MTLRasterizationRateMap> map)
+{
+    if (map != mCachedRenderPassDescObjC.get().rasterizationRateMap)
+    {
+        mCachedRenderPassDescObjC.get().rasterizationRateMap = map;
+    }
+
     return *this;
 }
 

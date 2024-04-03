@@ -333,6 +333,9 @@ class Value:
                 print(f"SKIPPED value {json_value['value']} in {key_path} due to '{json_value['status']}' status designation.")
             return None
 
+        if json_value.get("status", None) != "internal" and json_value["value"].startswith("-internal-"):
+            raise Exception(f'Value "{json_value["value"]}" starts with "-internal-" but does not have "status": "internal" set.')
+
         return Value(**json_value)
 
     @property
@@ -2598,8 +2601,7 @@ class GenerateCSSPropertyNames:
                     }
                     *nextCharacter++ = character;
                 }
-                unsigned length = nextCharacter - characters;
-                return { characters, length };
+                return std::span<const LChar> { characters, nextCharacter };
             }
 
             """)
@@ -3358,9 +3360,9 @@ class GenerateStyleBuilderGenerated:
     def _generate_animation_property_value_setter(self, to, property):
         to.write(f"auto& list = builderState.style().{property.method_name_for_ensure_animations_or_transitions}();")
         to.write(f"size_t childIndex = 0;")
-        to.write(f"if (is<CSSValueList>(value)) {{")
+        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
         to.write(f"    // Walk each value and put it into an animation, creating new animations as needed.")
-        to.write(f"    for (auto& currentValue : downcast<CSSValueList>(value)) {{")
+        to.write(f"    for (auto& currentValue : *valueList) {{")
         to.write(f"        if (childIndex >= list.size())")
         to.write(f"            list.append(Animation::create());")
         to.write(f"        builderState.styleMap().mapAnimation{property.name_for_methods}(list.animation(childIndex), currentValue);")
@@ -3619,18 +3621,13 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_style_builder_generated_cpp_builder_generated_apply(self, *, to):
         to.write_block("""
-            void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, bool isInitial, bool isInherit, const CSSRegisteredCustomProperty* registered)
+            void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, ApplyValueType valueType)
             {
                 switch (id) {
                 case CSSPropertyID::CSSPropertyInvalid:
                     break;
                 case CSSPropertyID::CSSPropertyCustom:
-                    if (isInitial)
-                        BuilderCustom::applyInitialCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value).name());
-                    else if (isInherit)
-                        BuilderCustom::applyInheritCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value).name());
-                    else
-                        BuilderCustom::applyValueCustomProperty(builderState, registered, downcast<CSSCustomPropertyValue>(value));
+                    ASSERT_NOT_REACHED();
                     break;""")
 
         with to.indent():
@@ -3665,15 +3662,20 @@ class GenerateStyleBuilderGenerated:
                         if property.codegen_properties.fill_layer_property:
                             apply_value_arguments.insert(0, "id")
 
-                        to.write(f"if (isInitial)")
+                        to.write(f"switch (valueType) {{")
+                        to.write(f"case ApplyValueType::Initial:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Initial')}::applyInitial{property.id_without_prefix}({', '.join(apply_initial_arguments)});")
-                        to.write(f"else if (isInherit)")
+                            to.write(f"break;")
+                        to.write(f"case ApplyValueType::Inherit:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Inherit')}::applyInherit{property.id_without_prefix}({', '.join(apply_inherit_arguments)});")
-                        to.write(f"else")
+                            to.write(f"break;")
+                        to.write("case ApplyValueType::Value:")
                         with to.indent():
                             to.write(f"{scope_for_function(property, 'Value')}::applyValue{property.id_without_prefix}({', '.join(apply_value_arguments)});")
+                            to.write(f"break;")
+                        to.write(f"}}")
 
                     to.write(f"break;")
 
@@ -4514,7 +4516,7 @@ class TermGeneratorNonFastPathKeywordTerm(TermGenerator):
                 else:
                     conditions.append(f"!{context_string}.{keyword_term.settings_flag}")
             if keyword_term.status == "internal":
-                conditions.append(f"!isValueAllowedInMode(keyword, {context_string}.mode)")
+                conditions.append(f"!isUASheetBehavior({context_string}.mode)")
 
             if keyword_term.aliased_to:
                 return_value = keyword_term.aliased_to.id
@@ -4623,7 +4625,7 @@ class KeywordFastPathGenerator:
                     else:
                         return_expression.append(f"context.{keyword_term.settings_flag}")
                 if keyword_term.status == "internal":
-                    return_expression.append("isValueAllowedInMode(keyword, context.mode)")
+                    return_expression.append("isUASheetBehavior(context.mode)")
 
                 keyword_term_and_return_expressions.append(KeywordTermReturnExpression(keyword_term, return_expression))
 

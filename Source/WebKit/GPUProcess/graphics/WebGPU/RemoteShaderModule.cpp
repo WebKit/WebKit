@@ -50,7 +50,7 @@ RemoteShaderModule::~RemoteShaderModule() = default;
 
 void RemoteShaderModule::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteShaderModule::stopListeningForIPC()

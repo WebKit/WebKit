@@ -85,6 +85,11 @@ Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
 
 Ref<ImmutableStyleProperties> MutableStyleProperties::immutableCopy() const
 {
+    return ImmutableStyleProperties::create(m_propertyVector.data(), m_propertyVector.size(), cssParserMode());
+}
+
+Ref<ImmutableStyleProperties> MutableStyleProperties::immutableDeduplicatedCopy() const
+{
     return ImmutableStyleProperties::createDeduplicating(m_propertyVector.data(), m_propertyVector.size(), cssParserMode());
 }
 

@@ -668,6 +668,9 @@ class AutoInstall(object):
 
     @classmethod
     def install(cls, package):
+        if not cls.enabled():
+            sys.stderr.write("Autoinstaller disabled, but 'install' called\n")
+            return None
         if isinstance(package, str):
             # we want this to throw if it hasn't been previously registered; in the case
             # that this is being called from cls.find_module it should always exist

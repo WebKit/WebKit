@@ -51,7 +51,7 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
     ASSERT(reportID == kHidReportId);
     ASSERT(reportLength == kHidMaxPacketSize);
 
-    connection->receiveReport({ report, static_cast<size_t>(reportLength) });
+    connection->receiveReport(std::span { report, static_cast<size_t>(reportLength) });
 }
 
 HidConnection::HidConnection(IOHIDDeviceRef device)

@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 300x300
+  RenderSVGTransformableContainer {g} at (0,0) size 300x300
+layer at (0,0) size 300x300
+  RenderSVGTransformableContainer {g} at (0,0) size 300x300
+layer at (0,100) size 300x200
+  RenderSVGRect {rect} at (0,100) size 300x200 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=100.00] [width=300.00] [height=200.00]
+layer at (0,0) size 300x300
+  RenderSVGTransformableContainer {g} at (0,0) size 300x300
+layer at (0,0) size 150x100
+  RenderSVGRect {rect} at (0,0) size 150x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7F7F7F]}] [x=0.00] [y=0.00] [width=150.00] [height=100.00]
+layer at (150,0) size 150x100
+  RenderSVGRect {rect} at (150,0) size 150x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#BBBBBB]}] [x=150.00] [y=0.00] [width=150.00] [height=100.00]
+layer at (0,100) size 300x200
+  RenderSVGTransformableContainer {g} at (0,100) size 300x200
+layer at (0,100) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (0,100) size 300x200
+  RenderSVGTransformableContainer {g} at (0,0) size 300x200
+layer at (100,100) size 100x100
+  RenderSVGRect {rect} at (100,0) size 100x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=100.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (200,100) size 100x100
+  RenderSVGRect {rect} at (200,0) size 100x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=200.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (0,200) size 150x100
+  RenderSVGRect {rect} at (0,100) size 150x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=0.00] [y=200.00] [width=150.00] [height=100.00]
+layer at (150,200) size 150x100
+  RenderSVGRect {rect} at (150,100) size 150x100 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=150.00] [y=200.00] [width=150.00] [height=100.00]
+layer at (27.97,33.13) size 241x222
+  RenderSVGTransformableContainer {g} at (27.97,33.13) size 239.55x221.02
+layer at (57.48,33.13) size 35x21
+  RenderSVGText {text} at (29,0) size 36x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x21
+      chunk 1 (middle anchor) text run 1 at (57.49,50.00) startOffset 0 endOffset 4 width 35.02: "dark"
+layer at (208.48,33.13) size 33x21
+  RenderSVGText {text} at (180,0) size 34x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 34x21
+      chunk 1 (middle anchor) text run 1 at (208.49,50.00) startOffset 0 endOffset 5 width 33.02: "light"
+layer at (32.48,133.13) size 35x21
+  RenderSVGText {text} at (4,100) size 36x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x21
+      chunk 1 (middle anchor) text run 1 at (32.49,150.00) startOffset 0 endOffset 4 width 35.02: "dark"
+layer at (133.48,133.13) size 33x21
+  RenderSVGText {text} at (105,100) size 34x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 34x21
+      chunk 1 (middle anchor) text run 1 at (133.49,150.00) startOffset 0 endOffset 5 width 33.02: "light"
+layer at (232.48,133.13) size 35x21
+  RenderSVGText {text} at (204,100) size 36x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 36x21
+      chunk 1 (middle anchor) text run 1 at (232.49,150.00) startOffset 0 endOffset 4 width 35.02: "dark"
+layer at (27.97,233.13) size 94x21
+  RenderSVGText {text} at (0,200) size 95x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 95x21
+      chunk 1 (middle anchor) text run 1 at (27.98,250.00) startOffset 0 endOffset 13 width 94.04: "dark or light"
+layer at (208.48,233.13) size 33x21
+  RenderSVGText {text} at (180,200) size 34x21 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 34x21
+      chunk 1 (middle anchor) text run 1 at (208.49,250.00) startOffset 0 endOffset 5 width 33.02: "light"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

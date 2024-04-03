@@ -18,20 +18,20 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,104) size 784x36
         RenderText {#text} at (0,0) size 332x18
           text run at (0,0) width 332: "If successful, the first table should have the caption "
-        RenderInline {B} at (0,0) size 45x18
+        RenderInline {B} at (331,0) size 45x18
           RenderText {#text} at (331,0) size 45x18
             text run at (331,0) width 45: "Fruity"
         RenderText {#text} at (375,0) size 298x18
           text run at (375,0) width 298: ", and the second table should have the caption "
-        RenderInline {B} at (0,0) size 75x18
+        RenderInline {B} at (672,0) size 75x18
           RenderText {#text} at (672,0) size 75x18
             text run at (672,0) width 75: "Vegetabley"
-        RenderText {#text} at (746,0) size 751x36
+        RenderText {#text} at (0,0) size 751x36
           text run at (746,0) width 5: "."
           text run at (0,18) width 636: "Upon failure, the first table will have no caption, and the second table will have the caption Things."
       RenderTable {TABLE} at (0,166) size 110x94 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 110x18
-          RenderInline {B} at (0,0) size 45x18
+          RenderInline {B} at (32,0) size 45x18
             RenderText {#text} at (32,0) size 45x18
               text run at (32,0) width 45: "Fruity"
         RenderTableSection {TBODY} at (1,19) size 108x74
@@ -60,7 +60,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,278) size 130x94 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 130x18
-          RenderInline {B} at (0,0) size 75x18
+          RenderInline {B} at (27,0) size 75x18
             RenderText {#text} at (27,0) size 75x18
               text run at (27,0) width 75: "Vegetabley"
         RenderTableSection {TBODY} at (1,19) size 128x74

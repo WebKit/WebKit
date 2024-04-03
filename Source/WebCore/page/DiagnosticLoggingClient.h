@@ -27,6 +27,7 @@
 
 #include "DiagnosticLoggingDomain.h"
 #include <variant>
+#include <wtf/CheckedPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -44,7 +45,7 @@ struct DiagnosticLoggingDictionary {
     void set(String key, Payload value) { dictionary.set(WTFMove(key), WTFMove(value)); }
 };
 
-class DiagnosticLoggingClient {
+class DiagnosticLoggingClient : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual void logDiagnosticMessage(const String& message, const String& description, ShouldSample) = 0;

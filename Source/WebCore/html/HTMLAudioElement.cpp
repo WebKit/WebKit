@@ -47,14 +47,14 @@ inline HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document
 
 Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    auto element = adoptRef(*new HTMLAudioElement(tagName, document, createdByParser));
+    Ref element = adoptRef(*new HTMLAudioElement(tagName, document, createdByParser));
     element->suspendIfNeeded();
     return element;
 }
 
 Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, const AtomString& src)
 {
-    auto element = create(audioTag, document, false);
+    Ref element = create(audioTag, document, false);
     element->setAttributeWithoutSynchronization(preloadAttr, autoAtom());
     element->setAttributeWithoutSynchronization(srcAttr, src);
     return element;

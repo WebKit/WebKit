@@ -1,0 +1,8 @@
+Description
+
+This test validates that pointer lock does not work without user activation.
+
+Target
+
+PASS pointerlock_without_gesture
+

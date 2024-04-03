@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
+#include "GLContextWrapper.h"
 #include "GraphicsContextGLANGLE.h"
 
 #if USE(NICOSIA)
@@ -39,7 +40,7 @@ namespace WebCore {
 
 class TextureMapperGCGLPlatformLayer;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE {
+class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();
@@ -57,6 +58,9 @@ public:
     void setContextVisibility(bool) final;
     bool reshapeDrawingBuffer() final;
     void prepareForDisplay() final;
+    bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    void enableFoveation(GCGLuint) final;
+    void disableFoveation() final;
 
 private:
     GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
@@ -69,6 +73,11 @@ private:
 #if USE(NICOSIA)
     GCGLuint setupCurrentTexture();
 #endif
+
+    // GLContextWrapper
+    GLContextWrapper::Type type() const override;
+    bool makeCurrentImpl() override;
+    bool unmakeCurrentImpl() override;
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 

@@ -101,8 +101,7 @@ static RetainPtr<NSURL> writeToTemporaryFile(WebCore::Model& modelSource)
     // to support reading USD files from its [SCNSceneSource initWithData:options:],
     // initializer but currently that does not work.
 
-    FileSystem::PlatformFileHandle fileHandle;
-    auto filePath = FileSystem::openTemporaryFile("ModelFile"_s, fileHandle, ".usdz"_s);
+    auto [filePath, fileHandle] = FileSystem::openTemporaryFile("ModelFile"_s, ".usdz"_s);
     ASSERT(FileSystem::isHandleValid(fileHandle));
 
     size_t byteCount = FileSystem::writeToFile(fileHandle, modelSource.data()->makeContiguous()->data(), modelSource.data()->size());

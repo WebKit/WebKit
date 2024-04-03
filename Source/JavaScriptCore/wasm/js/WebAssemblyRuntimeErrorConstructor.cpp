@@ -32,19 +32,12 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include "WebAssemblyRuntimeErrorPrototype.h"
 
-#include "WebAssemblyRuntimeErrorConstructor.lut.h"
-
 namespace JSC {
 
-const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorConstructor) };
+const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyRuntimeError);
-
-/* Source for WebAssemblyRuntimeErrorConstructor.lut.h
- @begin constructorTableWebAssemblyRuntimeError
- @end
- */
 
 JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

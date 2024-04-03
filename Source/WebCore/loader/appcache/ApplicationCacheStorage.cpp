@@ -87,8 +87,8 @@ static unsigned urlHostHash(const URL& url)
 {
     StringView host = url.host();
     if (host.is8Bit())
-        return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.characters8(), host.length()));
-    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.characters16(), host.length()));
+        return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.span8()));
+    return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(host.span16()));
 }
 
 ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manifestURL)
@@ -815,7 +815,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     } else {
         if (resource->data().size()) {
             auto contiguousData = resource->data().makeContiguous();
-            dataStatement->bindBlob(1, contiguousData->dataAsSpanForContiguousData());
+            dataStatement->bindBlob(1, contiguousData->span());
         }
     }
     
@@ -1062,7 +1062,7 @@ static inline void parseHeader(const CharacterType* header, unsigned headerLengt
     // Save memory by putting the header names into atom strings so each is stored only once,
     // even though the setHTTPHeaderField function does not require an atom string.
     AtomString headerName { header, colonPosition };
-    String headerValue { header + colonPosition + 1, headerLength - colonPosition - 1 };
+    String headerValue({ header + colonPosition + 1, headerLength - colonPosition - 1 });
 
     response.setHTTPHeaderField(headerName, headerValue);
 }
@@ -1291,7 +1291,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedB
         return false;
     
     int64_t writtenBytes = 0;
-    data.forEachSegment([&](auto& segment) {
+    data.forEachSegment([&](auto segment) {
         writtenBytes += FileSystem::writeToFile(handle, segment.data(), segment.size());
     });
     FileSystem::closeFile(handle);

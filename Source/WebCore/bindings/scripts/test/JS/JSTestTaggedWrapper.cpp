@@ -150,12 +150,12 @@ void JSTestTaggedWrapper::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestTaggedWrapperConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestTaggedWrapperPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestTaggedWrapper::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestTaggedWrapper::getConstructor(vm, prototype->globalObject()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)
@@ -189,7 +189,7 @@ void JSTestTaggedWrapperOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* 
 {
     auto* jsTestTaggedWrapper = static_cast<JSTestTaggedWrapper*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestTaggedWrapper->wrapped(), jsTestTaggedWrapper);
+    uncacheWrapper(world, jsTestTaggedWrapper->protectedWrapped().ptr(), jsTestTaggedWrapper);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

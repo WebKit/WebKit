@@ -595,7 +595,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     if (!metaDataAvailable() || !playing() || m_ended)
         return;
 
-    m_pausedTime = currentMediaTime();
+    m_pausedTime = currentTime();
     m_playbackState = PlaybackState::Paused;
 
     for (const auto& track : m_audioTrackMap.values())
@@ -664,12 +664,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleInViewport(bool isVisible)
     m_isVisibleInViewPort = isVisible;
 }
 
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
+MediaTime MediaPlayerPrivateMediaStreamAVFObjC::duration() const
 {
     return MediaTime::positiveInfiniteTime();
 }
 
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
+MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentTime() const
 {
     if (paused())
         return m_pausedTime;
@@ -808,18 +808,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::readyStateChanged(MediaStreamTrackPri
     scheduleDeferredTask([this] {
         updateReadyState();
     });
-}
-
-bool MediaPlayerPrivateMediaStreamAVFObjC::supportsPictureInPicture() const
-{
-#if PLATFORM(IOS_FAMILY)
-    for (const auto& track : m_videoTrackMap.values()) {
-        if (track->streamTrack().isCaptureTrack())
-            return false;
-    }
-#endif
-    
-    return true;
 }
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -1171,6 +1159,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::CurrentFramePainter::reset()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
+    if (!m_isMediaLayerRehosting)
+        return;
+
     Locker locker { m_sampleBufferDisplayLayerLock };
     if (m_sampleBufferDisplayLayer)
         m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds);
@@ -1210,6 +1201,8 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& fence)
 {
+    m_isMediaLayerRehosting = false;
+
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
 

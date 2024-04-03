@@ -3,6 +3,15 @@
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
+function module(bytes, valid = true) {
+  let buffer = new ArrayBuffer(bytes.length);
+  let view = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; ++i) {
+    view[i] = bytes.charCodeAt(i);
+  }
+  return new WebAssembly.Module(buffer);
+}
+
 function runWasmGCObjectTests(obj) {
   assert.eq(obj.foo, undefined);
   assert.eq(obj["foo"], undefined);
@@ -243,6 +252,37 @@ function testCastFailure() {
   {
     let m = instantiate(`
       (module
+        (type (struct))
+        (global (export "g") (ref 0) (struct.new 0))
+        (func (export "f") (param (ref func)) (result))
+      )
+    `);
+    assert.throws(
+      () => m.exports.f(m.exports.g.value),
+      TypeError,
+      "Funcref must be an exported wasm function"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (type (func))
+        (global (export "g") (ref 0) (struct.new 0))
+        (func (export "f") (param (ref 1)) (result))
+      )
+    `);
+    assert.throws(
+      () => m.exports.f(m.exports.g.value),
+      TypeError,
+      "Argument value did not match reference type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
         (func (export "f") (param (ref struct)) (result))
       )
     `);
@@ -264,6 +304,15 @@ function testCastFailure() {
       TypeError,
       "Argument value did not match reference type"
     );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (func (export "f") (param (ref any)) (result))
+      )
+    `);
+    m.exports.f(m.exports.f);
   }
 
   {
@@ -413,6 +462,19 @@ function testGlobal() {
     assert.eq(m.exports.f(m.exports.g.value), 42);
   }
 
+  {
+    let m1 = instantiate(`
+      (module
+        (func (export "f"))
+      )
+    `);
+    instantiate(`
+      (module
+        (global (import "m" "f") (ref any))
+      )
+    `, { m: { f: m1.exports.f } });
+  }
+
   // Test portable globals, with mutation.
   {
     let m = instantiate(`
@@ -430,6 +492,34 @@ function testGlobal() {
     m.exports.g02.value = m.exports.g2.value;
     m.exports.g1.value = null;
     m.exports.g2.value = null;
+  }
+
+  // Test type descriptor
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field f32)))
+        (global (export "g") (mut (ref null 0)) (struct.new 0 (f32.const 0.25))))
+    `);
+    assert.throws(
+      () => m.exports.g.type(),
+      TypeError,
+      "WebAssembly.Global.prototype.type unable to produce type descriptor for the given global"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (global (export "g") (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.g.type(),
+      TypeError,
+      "WebAssembly.Global.prototype.type unable to produce type descriptor for the given global"
+    )
   }
 }
 
@@ -449,6 +539,132 @@ function testTable() {
       )
     `);
     assert.eq(m.exports.t.get(0)(m.exports.g.value), 42);
+  }
+
+  {
+    let m1 = instantiate(`
+      (module
+        (func (export "f"))
+      )
+    `);
+    let m2 = instantiate(`
+      (module
+        (table (export "t") 10 (ref null any))
+      )
+    `);
+    m2.exports.t.set(0, m1.exports.f);
+  }
+
+  {
+    let m1 = instantiate(`
+      (module
+        (table (export "t") 10 (ref null func))
+      )
+    `);
+    assert.throws(
+      () => m1.exports.t.set(0, 5),
+      TypeError,
+      "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"
+    )
+  }
+
+  // Test type descriptor
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field f32)))
+        (table (export "t") 10 (ref null 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (table (export "t") 10 (ref 0) (struct.new 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Table.prototype.type unable to produce type descriptor for the given table"
+    )
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct))
+        (table (export "t") 10 (ref 0) (struct.new 0))
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.set(1),
+      TypeError,
+      "WebAssembly.Table.prototype.set requires the second argument for non-defaultable table type"
+    );
+    assert.throws(
+      () => m.exports.t.grow(1),
+      TypeError,
+      "WebAssembly.Table.prototype.grow requires the second argument for non-defaultable table type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref func) (ref.func 0))
+        (func)
+      )
+    `);
+    assert.throws(
+      () => m.exports.t.set(1),
+      TypeError,
+      "WebAssembly.Table.prototype.set requires the second argument for non-defaultable table type"
+    );
+    assert.throws(
+      () => m.exports.t.grow(1),
+      TypeError,
+      "WebAssembly.Table.prototype.grow requires the second argument for non-defaultable table type"
+    );
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (table (export "t") 10 (ref null i31) (ref.i31 (i32.const 42)))
+      )
+    `);
+    let origSize = m.exports.t.length;
+    for (let i = 0; i < origSize; i++)
+      assert.eq(m.exports.t.get(i), 42);
+    m.exports.t.grow(5);
+    for (let i = 0; i < origSize; i++)
+      assert.eq(m.exports.t.get(i), 42);
+    for (let i = origSize; i < origSize + 5; i++)
+      assert.eq(m.exports.t.get(i), null);
+    m.exports.t.set(1);
+    assert.eq(m.exports.t.get(1), null);
   }
 }
 
@@ -636,6 +852,37 @@ function testImport() {
   }
 }
 
+function testTag() {
+  {
+    /*
+     * (module
+     *   (type (struct (field f32)))
+     *   (tag (export "t") (param (ref null 0)))
+     * )
+     */
+    let m = new WebAssembly.Instance(module('\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x0a\x02\x5f\x01\x7d\x00\x60\x01\x63\x00\x00\x0d\x03\x01\x00\x01\x07\x05\x01\x01\x74\x04\x00'));
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Tag.prototype.type unable to produce type descriptor for the given tag"
+    )
+  }
+
+  {
+    /*
+     * (module
+     *   (tag (export "t") (param (ref func)))
+     * )
+     */
+    let m = new WebAssembly.Instance(module('\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x06\x01\x60\x01\x64\x70\x00\x0d\x03\x01\x00\x00\x07\x05\x01\x01\x74\x04\x00'));
+    assert.throws(
+      () => m.exports.t.type(),
+      TypeError,
+      "WebAssembly.Tag.prototype.type unable to produce type descriptor for the given tag"
+    )
+  }
+}
+
 testArray();
 testStruct();
 testI31();
@@ -644,3 +891,4 @@ testCastFailure();
 testGlobal();
 testTable();
 testImport();
+testTag();

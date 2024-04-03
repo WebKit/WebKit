@@ -151,10 +151,10 @@ void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
     request.first({ });
 }
 
-void RemoteRealtimeMediaSourceProxy::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
+void RemoteRealtimeMediaSourceProxy::applyConstraintsFailed(WebCore::MediaConstraintType invalidConstraint, String&& errorMessage)
 {
     auto callback = m_pendingApplyConstraintsRequests.takeFirst().first;
-    callback(RealtimeMediaSource::ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
+    callback(RealtimeMediaSource::ApplyConstraintsError { invalidConstraint, WTFMove(errorMessage) });
 }
 
 void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(const String& errorMessage)

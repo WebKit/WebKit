@@ -233,7 +233,7 @@ private:
     {
         if (stringView.is8Bit() || !isAll8BitData())
             return stringView.toString();
-        return String::make8Bit(stringView.characters16(), stringView.length());
+        return String::make8Bit(stringView.span16());
     }
 
     StringView m_text;
@@ -970,12 +970,8 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     if (m_tree.currentStackItem().elementName() != HTML::template_)
         parseError(token);
     m_tree.openElements().popUntil(HTML::template_);
-    Ref templateElement = checkedDowncast<HTMLTemplateElement>(m_tree.openElements().top());
+    Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
     m_tree.openElements().pop();
-
-    auto& item = adjustedCurrentStackItem();
-    RELEASE_ASSERT(item.isElement());
-    Ref shadowHost = item.element();
 
     m_tree.activeFormattingElements().clearToLastMarker();
     m_templateInsertionModes.removeLast();
@@ -3030,7 +3026,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
         default:
             break;
         }
-        const AtomString& currentNamespace = adjustedCurrentNode.namespaceURI();
+        auto& currentNamespace = adjustedCurrentNode.namespaceURI();
         if (currentNamespace == MathMLNames::mathmlNamespaceURI)
             adjustMathMLAttributes(token);
         if (currentNamespace == SVGNames::svgNamespaceURI) {
@@ -3038,6 +3034,15 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
             adjustSVGAttributes(token);
         }
         adjustForeignAttributes(token);
+
+        if (token.tagName() == TagName::script && token.selfClosing() && currentNamespace == SVGNames::svgNamespaceURI) {
+            token.setSelfClosingToFalse();
+            m_tree.insertForeignElement(WTFMove(token), currentNamespace);
+            AtomHTMLToken fakeToken(HTMLToken::Type::EndTag, TagName::script);
+            processTokenInForeignContent(WTFMove(fakeToken));
+            return;
+        }
+
         m_tree.insertForeignElement(WTFMove(token), currentNamespace);
         break;
     }

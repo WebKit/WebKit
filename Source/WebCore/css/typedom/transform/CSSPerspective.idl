@@ -28,7 +28,6 @@ typedef (CSSNumericValue or CSSKeywordish) CSSPerspectiveValue;
 
 // https://drafts.css-houdini.org/css-typed-om/#cssperspective
 [
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSPerspective : CSSTransformComponent {
     constructor(CSSPerspectiveValue length);

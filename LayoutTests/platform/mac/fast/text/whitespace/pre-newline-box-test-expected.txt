@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,53) size 24x15
           text run at (0,53) width 24: "One"
         RenderInline {SPAN} at (0,0) size 130x166
-          RenderText {#text} at (23,0) size 130x166
+          RenderText {#text} at (0,0) size 130x166
             text run at (23,0) width 1: " "
             text run at (0,83) width 130: "Two"

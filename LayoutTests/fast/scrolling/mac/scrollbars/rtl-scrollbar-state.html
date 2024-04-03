@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+        
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test that rtl bit is set on scrollbar for rtl scrollable area');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            const scroller = document.querySelector('.scroller');
+            const scrollerBounds = scroller.getBoundingClientRect();
+            const x = scrollerBounds.left + 10;
+            const y = scrollerBounds.top + 10;
+
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.verticalScrollbarState(scroller);
+                let isRTL = state.indexOf('RTL') != -1;
+                if (isRTL)
+                    testPassed('Scrollbar state: ' + state);
+                return isRTL;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="rtlScroller" class="scroller" dir="rtl">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

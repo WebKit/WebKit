@@ -35,7 +35,8 @@
  *
  */
 struct _WPEViewHeadlessPrivate {
-    GRefPtr<WPEBuffer> buffer;
+    GRefPtr<WPEBuffer> pendingBuffer;
+    GRefPtr<WPEBuffer> committedBuffer;
     GRefPtr<GSource> frameSource;
     gint64 lastFrameTime;
 };
@@ -68,8 +69,11 @@ static void wpeViewHeadlessConstructed(GObject* object)
     g_source_set_callback(priv->frameSource.get(), [](gpointer userData) -> gboolean {
         auto* view = WPE_VIEW(userData);
         auto* priv = WPE_VIEW_HEADLESS(view)->priv;
-        wpe_view_buffer_rendered(view, priv->buffer.get());
-        priv->buffer = nullptr;
+        if (priv->committedBuffer)
+            wpe_view_buffer_released(view, priv->committedBuffer.get());
+        priv->committedBuffer = WTFMove(priv->pendingBuffer);
+        wpe_view_buffer_rendered(view, priv->committedBuffer.get());
+
         if (g_source_is_destroyed(priv->frameSource.get()))
             return G_SOURCE_REMOVE;
         return G_SOURCE_CONTINUE;
@@ -93,7 +97,7 @@ static void wpeViewHeadlessDispose(GObject* object)
 static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, GError**)
 {
     auto* priv = WPE_VIEW_HEADLESS(view)->priv;
-    priv->buffer = buffer;
+    priv->pendingBuffer = buffer;
     auto now = g_get_monotonic_time();
     if (!priv->lastFrameTime)
         priv->lastFrameTime = now;
@@ -107,6 +111,12 @@ static gboolean wpeViewHeadlessRenderBuffer(WPEView* view, WPEBuffer* buffer, GE
     return TRUE;
 }
 
+static gboolean wpeViewHeadlessResize(WPEView* view, int width, int height)
+{
+    wpe_view_resized(view, width, height);
+    return TRUE;
+}
+
 static gboolean wpeViewHeadlessSetFullscreen(WPEView* view, gboolean fullscreen)
 {
     auto state = wpe_view_get_state(view);
@@ -114,11 +124,10 @@ static gboolean wpeViewHeadlessSetFullscreen(WPEView* view, gboolean fullscreen)
         state = static_cast<WPEViewState>(state | WPE_VIEW_STATE_FULLSCREEN);
     else
         state = static_cast<WPEViewState>(state & ~WPE_VIEW_STATE_FULLSCREEN);
-    wpe_view_set_state(view, state);
+    wpe_view_state_changed(view, state);
 
     return TRUE;
 }
-
 
 static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass)
 {
@@ -128,6 +137,7 @@ static void wpe_view_headless_class_init(WPEViewHeadlessClass* viewHeadlessClass
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewHeadlessClass);
     viewClass->render_buffer = wpeViewHeadlessRenderBuffer;
+    viewClass->resize = wpeViewHeadlessResize;
     viewClass->set_fullscreen = wpeViewHeadlessSetFullscreen;
 }
 

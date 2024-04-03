@@ -69,7 +69,7 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     if (buffer.position() == beginHashValue)
         return std::nullopt;
 
-    StringView hashValue(beginHashValue, buffer.position() - beginHashValue);
+    StringView hashValue(std::span(beginHashValue, buffer.position()));
 
     if (auto digest = base64Decode(hashValue))
         return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
@@ -110,7 +110,7 @@ template<typename CharacterType> static std::optional<EncodedResourceCryptograph
     if (buffer.position() == beginHashValue)
         return std::nullopt;
 
-    return EncodedResourceCryptographicDigest { *algorithm, String(beginHashValue, buffer.position() - beginHashValue) };
+    return EncodedResourceCryptographicDigest { *algorithm, String({ beginHashValue, buffer.position() }) };
 }
 
 std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>& buffer)
@@ -148,10 +148,10 @@ static PAL::CryptoDigest::Algorithm toCryptoDigestAlgorithm(ResourceCryptographi
     return PAL::CryptoDigest::Algorithm::SHA_512;
 }
 
-ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, const void* bytes, size_t length)
+ResourceCryptographicDigest cryptographicDigestForBytes(ResourceCryptographicDigest::Algorithm algorithm, std::span<const uint8_t> bytes)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
-    cryptoDigest->addBytes(bytes, length);
+    cryptoDigest->addBytes(bytes);
     return { algorithm, cryptoDigest->computeHash() };
 }
 
@@ -159,8 +159,8 @@ ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptogra
 {
     auto cryptoDigest = PAL::CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
     if (buffer) {
-        buffer->forEachSegment([&](auto& segment) {
-            cryptoDigest->addBytes(segment.data(), segment.size());
+        buffer->forEachSegment([&](auto segment) {
+            cryptoDigest->addBytes(segment);
         });
     }
     return { algorithm, cryptoDigest->computeHash() };

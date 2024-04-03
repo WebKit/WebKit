@@ -56,7 +56,7 @@ template<typename CharType>
 static void appendDescriptorAndReset(const CharType*& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
 {
     if (position > descriptorStart)
-        descriptors.append(StringView(descriptorStart, position - descriptorStart));
+        descriptors.append(StringView { std::span(descriptorStart, position - descriptorStart) });
     descriptorStart = nullptr;
 }
 
@@ -208,7 +208,7 @@ static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(const Char
 
         ASSERT(imageURLEnd > imageURLStart);
         unsigned imageURLLength = imageURLEnd - imageURLStart;
-        imageCandidates.append(ImageCandidate(StringView(imageURLStart, imageURLLength), result, ImageCandidate::SrcsetOrigin));
+        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(std::span(imageURLStart, imageURLLength), String()), result, ImageCandidate::SrcsetOrigin));
         // 11. Return to the step labeled splitting loop.
     }
     return imageCandidates;
@@ -267,7 +267,7 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
 {
     bool ignoreSrc = false;
     if (imageCandidates.isEmpty())
-        return ImageCandidate();
+        return { };
 
     // http://picture.responsiveimages.org/#normalize-source-densities
     for (auto& candidate : imageCandidates) {
@@ -301,18 +301,21 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, StringView srcAttribute, StringView srcsetAttribute, float sourceSize)
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomString& srcAttribute, StringView srcsetAttribute, float sourceSize, Function<bool(const ImageCandidate&)>&& shouldIgnoreCandidateCallback)
 {
     if (srcsetAttribute.isNull()) {
         if (srcAttribute.isNull())
-            return ImageCandidate();
-        return ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
+            return { };
+        return ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin);
     }
 
-    Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(StringView(srcsetAttribute));
+    Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(srcsetAttribute);
 
     if (!srcAttribute.isEmpty())
-        imageCandidates.append(ImageCandidate(StringView(srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
+        imageCandidates.append(ImageCandidate(StringViewWithUnderlyingString(srcAttribute, srcAttribute), DescriptorParsingResult(), ImageCandidate::SrcOrigin));
+
+    if (shouldIgnoreCandidateCallback)
+        imageCandidates.removeAllMatching(shouldIgnoreCandidateCallback);
 
     return pickBestImageCandidate(deviceScaleFactor, imageCandidates, sourceSize);
 }

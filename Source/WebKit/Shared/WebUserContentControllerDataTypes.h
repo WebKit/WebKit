@@ -26,6 +26,9 @@
 #pragma once
 
 #include "ContentWorldShared.h"
+#include "ScriptMessageHandlerIdentifier.h"
+#include "UserScriptIdentifier.h"
+#include "UserStyleSheetIdentifier.h"
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 
@@ -37,19 +40,19 @@ class Encoder;
 namespace WebKit {
 
 struct WebUserScriptData {
-    uint64_t identifier;
+    UserScriptIdentifier identifier;
     ContentWorldIdentifier worldIdentifier;
     WebCore::UserScript userScript;
 };
 
 struct WebUserStyleSheetData {
-    uint64_t identifier;
+    UserStyleSheetIdentifier identifier;
     ContentWorldIdentifier worldIdentifier;
     WebCore::UserStyleSheet userStyleSheet;
 };
 
 struct WebScriptMessageHandlerData {
-    uint64_t identifier;
+    ScriptMessageHandlerIdentifier identifier;
     ContentWorldIdentifier worldIdentifier;
     String name;
 };

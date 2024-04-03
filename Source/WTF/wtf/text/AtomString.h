@@ -49,7 +49,7 @@ public:
 
     AtomString(ASCIILiteral);
 
-    static AtomString lookUp(const UChar* characters, unsigned length) { return AtomStringImpl::lookUp(characters, length); }
+    static AtomString lookUp(const UChar* characters, unsigned length) { return AtomStringImpl::lookUp(std::span { characters, length }); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     AtomString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
@@ -68,6 +68,8 @@ public:
     bool is8Bit() const { return m_string.is8Bit(); }
     const LChar* characters8() const { return m_string.characters8(); }
     const UChar* characters16() const { return m_string.characters16(); }
+    std::span<const LChar> span8() const { return m_string.span8(); }
+    std::span<const UChar> span16() const { return m_string.span16(); }
     unsigned length() const { return m_string.length(); }
 
     UChar operator[](unsigned int i) const { return m_string[i]; }
@@ -175,12 +177,12 @@ inline AtomString::AtomString(const char* string)
 }
 
 inline AtomString::AtomString(const LChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(string, length))
+    : m_string(AtomStringImpl::add(std::span { string, length }))
 {
 }
 
 inline AtomString::AtomString(const UChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(string, length))
+    : m_string(AtomStringImpl::add(std::span { string, length }))
 {
 }
 
@@ -263,7 +265,7 @@ inline const AtomString& nullAtom() { return *reinterpret_cast<const AtomString*
 inline const AtomString& emptyAtom() { return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
-    : m_string(literal.length() ? AtomStringImpl::add(literal.characters(), literal.length()) : Ref { *emptyAtom().impl() })
+    : m_string(literal.length() ? AtomStringImpl::add(literal.span8()) : Ref { *emptyAtom().impl() })
 {
 }
 

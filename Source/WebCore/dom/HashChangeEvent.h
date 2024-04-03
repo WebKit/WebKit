@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,36 +48,24 @@ public:
         return adoptRef(*new HashChangeEvent(type, initializer, isTrusted));
     }
 
-    void initHashChangeEvent(const AtomString& eventType, bool canBubble, bool cancelable, const String& oldURL, const String& newURL)
-    {
-        if (isBeingDispatched())
-            return;
-
-        initEvent(eventType, canBubble, cancelable);
-
-        m_oldURL = oldURL;
-        m_newURL = newURL;
-    }
-
     const String& oldURL() const { return m_oldURL; }
     const String& newURL() const { return m_newURL; }
 
-    EventInterface eventInterface() const override { return HashChangeEventInterfaceType; }
-
 private:
     HashChangeEvent()
+        : Event(EventInterfaceType::HashChangeEvent)
     {
     }
 
     HashChangeEvent(const String& oldURL, const String& newURL)
-        : Event(eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
+        : Event(EventInterfaceType::HashChangeEvent, eventNames().hashchangeEvent, CanBubble::No, IsCancelable::No)
         , m_oldURL(oldURL)
         , m_newURL(newURL)
     {
     }
 
     HashChangeEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-        : Event(type, initializer, isTrusted)
+        : Event(EventInterfaceType::HashChangeEvent, type, initializer, isTrusted)
         , m_oldURL(initializer.oldURL)
         , m_newURL(initializer.newURL)
     {

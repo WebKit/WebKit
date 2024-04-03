@@ -28,7 +28,6 @@
 #include "config.h"
 #include "RenderSVGEllipse.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGShapeInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -83,17 +82,18 @@ void RenderSVGEllipse::updateShapeFromElement()
 
 void RenderSVGEllipse::calculateRadiiAndCenter()
 {
-    SVGLengthContext lengthContext(&graphicsElement());
+    Ref graphicsElement = this->graphicsElement();
+    SVGLengthContext lengthContext(graphicsElement.ptr());
     m_center = FloatPoint(
         lengthContext.valueForLength(style().svgStyle().cx(), SVGLengthMode::Width),
         lengthContext.valueForLength(style().svgStyle().cy(), SVGLengthMode::Height));
-    if (is<SVGCircleElement>(graphicsElement())) {
+    if (is<SVGCircleElement>(graphicsElement)) {
         float radius = lengthContext.valueForLength(style().svgStyle().r());
         m_radii = FloatSize(radius, radius);
         return;
     }
 
-    ASSERT(is<SVGEllipseElement>(graphicsElement()));
+    ASSERT(is<SVGEllipseElement>(graphicsElement));
 
     Length rx = style().svgStyle().rx();
     Length ry = style().svgStyle().ry();
@@ -171,5 +171,3 @@ bool RenderSVGEllipse::isRenderingDisabled() const
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

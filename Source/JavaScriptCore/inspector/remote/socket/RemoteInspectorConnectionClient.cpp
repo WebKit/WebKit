@@ -82,7 +82,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
             }
         });
     });
-    result.iterator->value.pushReceivedData(data.data(), data.size());
+    result.iterator->value.pushReceivedData(data.span());
 }
 
 std::optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient::extractEvent(ConnectionID clientID, Vector<uint8_t>&& data)

@@ -36,7 +36,7 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPIWebNavigation : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigation, webNavigation);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebNavigation, webNavigation, webNavigation);
 
 public:
 #if PLATFORM(COCOA)
@@ -46,8 +46,8 @@ public:
     WebExtensionAPIWebNavigationEvent& onCompleted();
     WebExtensionAPIWebNavigationEvent& onErrorOccurred();
 
-    void getAllFrames(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getFrame(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getAllFrames(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getFrame(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
     RefPtr<WebExtensionAPIWebNavigationEvent> m_onBeforeNavigateEvent;

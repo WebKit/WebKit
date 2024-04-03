@@ -56,6 +56,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
                                   pas_local_allocator* local_allocator,
                                   size_t size,
                                   size_t alignment,
+                                  pas_allocation_mode allocation_mode,
                                   pas_bitfit_page_config config)
 {
     static const bool verbose = false;
@@ -148,7 +149,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
                 pas_log("About to allocate in view %p, page %p.\n", view, page);
             
             bitfit_result = pas_bitfit_page_allocate(
-                page, view, size, alignment, config, commit_lock_hold_mode, &bytes_committed);
+                page, view, size, alignment, allocation_mode, config, commit_lock_hold_mode, &bytes_committed);
 
             if (need_to_lock_commit_lock)
                 pas_lock_unlock(&view->commit_lock);

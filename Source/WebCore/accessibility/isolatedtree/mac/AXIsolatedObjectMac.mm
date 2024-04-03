@@ -63,6 +63,8 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
         }
     }
 
+    setProperty(AXPropertyName::RemoteFramePlatformElement, object->remoteFramePlatformElement());
+
     // Cache the StringValue only if it differs from the AttributedText.
     auto value = object->stringValue();
     if (!attributedText || value != String([attributedText string]))
@@ -84,7 +86,8 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
     auto* scrollView = Accessibility::findAncestor<AXCoreObject>(*this, true, [] (const AXCoreObject& object) {
         return object.isScrollView();
     });
-    return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->m_remoteParent.get() : nil;
+    auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(scrollView);
+    return isolatedObject ? isolatedObject->m_remoteParent.get() : nil;
 }
 
 FloatRect AXIsolatedObject::primaryScreenRect() const
@@ -137,6 +140,32 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     if (auto text = textContent())
         return { tree()->treeID(), objectID(), 0, text->length() };
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis()) {
+        // This object doesn't have text content of its own. Create a range pointing to the first and last
+        // text positions of our descendants. We can do this by stopping text marker traversal when we try
+        // to move to our sibling. For example, getting textMarkerRange() for {ID 1, Role Group}:
+        //
+        // {ID 1, Role Group}
+        //   {ID 2, Role StaticText, "foo"}
+        //   {ID 3, Role Group}
+        //     {ID 4, Role StaticText, "bar"}
+        // {ID 5, Role Group}
+        //
+        // We would expect the returned range to be: {ID 2, offset 0} to {ID 4, offset 3}
+        auto* stopObject = siblingOrParent(AXDirection::Next);
+
+        auto thisMarker = AXTextMarker { tree()->treeID(), objectID(), 0 };
+        AXTextMarkerRange range { thisMarker, thisMarker };
+        auto endMarker = thisMarker.findLastBefore(stopObject ? std::make_optional(stopObject->objectID()) : std::nullopt);
+        if (endMarker.isValid() && endMarker.isInTextRun()) {
+            // One or more of our descendants have text, so let's form a range from the first and last text positions.
+            range = { thisMarker.toTextRunMarker(), WTFMove(endMarker) };
+        }
+        return range;
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
     return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
         auto* axObject = associatedAXObject();
         return axObject ? axObject->textMarkerRange() : AXTextMarkerRange();
@@ -175,6 +204,11 @@ unsigned AXIsolatedObject::textLength() const
     if (auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText))
         return [attributedText length];
     return 0;
+}
+
+RetainPtr<id> AXIsolatedObject::remoteFramePlatformElement() const
+{
+    return propertyValue<RetainPtr<id>>(AXPropertyName::RemoteFramePlatformElement);
 }
 
 RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& markerRange, SpellCheck spellCheck) const

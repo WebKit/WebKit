@@ -34,7 +34,7 @@ MarkedJSValueRefArray::MarkedJSValueRefArray(JSGlobalContextRef context, unsigne
     : m_size(size)
 {
     if (m_size > MarkedArgumentBuffer::inlineCapacity) {
-        m_buffer = BufferUniquePtr::create(m_size);
+        m_buffer = makeUniqueArray<JSValueRef>(m_size);
         toJS(context)->vm().heap.addMarkedJSValueRefArray(this);
         ASSERT(isOnList());
     }

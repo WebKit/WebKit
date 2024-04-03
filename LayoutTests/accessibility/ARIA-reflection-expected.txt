@@ -32,6 +32,20 @@ PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-autocomplete", otherData);
 PASS element[currentProperty] is otherDataProperty
 
+Test ariaBrailleLabel < - > aria-braillelabel
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-braillelabel", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaBrailleRoleDescription < - > aria-brailleroledescription
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-brailleroledescription", otherData);
+PASS element[currentProperty] is otherDataProperty
+
 Test ariaBusy < - > aria-busy
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
@@ -341,7 +355,7 @@ element.setAttribute("aria-valuetext", otherData);
 PASS element[currentProperty] is otherDataProperty
 
 
-PASS count is 47
+PASS count is 49
 PASS successfullyParsed is true
 
 TEST COMPLETE

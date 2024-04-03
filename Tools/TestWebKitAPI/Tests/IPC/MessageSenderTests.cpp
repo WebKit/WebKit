@@ -91,14 +91,28 @@ TEST_P(MessageSenderTest, SendAsyncAfterInvalidateCancelsAllAsyncReplies)
 
 // Tests that async reply messages sent to a connection after invalidate()
 // will receive the error.
-TEST_P(MessageSenderTest, SendWithPromisedReply)
+TEST_P(MessageSenderTest, SendWithPromisedReplyAfterInvalidateCancelsAllAsyncReplies)
 {
     ASSERT_TRUE(openBoth());
     b()->invalidate();
 
+    // This works for IPC::Connection.
     bool done = false;
 
     b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+        EXPECT_FALSE(result.has_value());
+        EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
+        done = true;
+    });
+
+    while (!done)
+        RunLoop::current().cycle();
+
+    // Same should work via IPC::MessageSender.
+    done = false;
+    SimpleMessageSender sender { b() };
+
+    sender.sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;

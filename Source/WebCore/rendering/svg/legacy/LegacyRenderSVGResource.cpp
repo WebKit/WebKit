@@ -49,8 +49,8 @@ static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bo
         return true;
     if (!object.parent())
         return false;
-    const SVGRenderStyle& parentSVGStyle = object.parent()->style().svgStyle();
-    color = object.style().colorResolvingCurrentColor(applyToFill ? parentSVGStyle.fillPaintColor() : parentSVGStyle.strokePaintColor());
+    Ref parentSVGStyle = object.parent()->style().svgStyle();
+    color = object.style().colorResolvingCurrentColor(applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor());
     return true;
 }
 
@@ -111,14 +111,10 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         return colorResource;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // FIXME: [LBSE] Add support for non-solid color resources in LBSE (gradient/pattern).
     SVGResources* resources = nullptr;
     if (!renderer.document().settings().layerBasedSVGEngineEnabled())
         resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
-#else
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
-#endif
 
     // If no resources are associated with the given renderer, return the color resource.
     if (!resources) {
@@ -216,12 +212,10 @@ void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderO
 void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject& object, bool needsLayout, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     ASSERT(object.node());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (object.document().settings().layerBasedSVGEngineEnabled()) {
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
-#endif
 
     if (visitedRenderers) {
         auto addResult = visitedRenderers->add(object);
@@ -278,19 +272,15 @@ void LegacyRenderSVGResource::fillAndStrokePathOrShape(GraphicsContext& context,
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
             if (CheckedPtr svgShape = dynamicDowncast<LegacyRenderSVGShape>(shape))
                 svgShape->fillShape(context);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
             else if (CheckedPtr svgShape = dynamicDowncast<RenderSVGShape>(shape))
                 svgShape->fillShape(context);
-#endif
         }
 
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
             if (CheckedPtr svgShape = dynamicDowncast<LegacyRenderSVGShape>(shape))
                 svgShape->strokeShape(context);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
             else if (CheckedPtr svgShape = dynamicDowncast<RenderSVGShape>(shape))
                 svgShape->strokeShape(context);
-#endif
         }
 
         return;

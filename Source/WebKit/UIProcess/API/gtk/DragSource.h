@@ -41,9 +41,11 @@ typedef struct _GdkDrag GdkDrag;
 typedef struct _GdkDragContext GdkDragContext;
 #endif
 
-namespace WebKit {
-
+namespace WebCore {
 class ShareableBitmap;
+}
+
+namespace WebKit {
 
 class DragSource {
     WTF_MAKE_NONCOPYABLE(DragSource); WTF_MAKE_FAST_ALLOCATED;
@@ -52,7 +54,7 @@ public:
     explicit DragSource(GtkWidget*);
     ~DragSource();
 
-    void begin(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&&, WebCore::IntPoint&& imageHotspot);
+    void begin(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&&, WebCore::IntPoint&& imageHotspot);
 
 private:
     GtkWidget* m_webView { nullptr };

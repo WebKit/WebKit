@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebIDBConnectionToServer.h"
 
-#include "DataReference.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -81,12 +80,12 @@ IDBClient::IDBConnectionToServer& WebIDBConnectionToServer::coreConnectionToServ
     return m_connectionToServer;
 }
 
-void WebIDBConnectionToServer::deleteDatabase(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::deleteDatabase(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::DeleteDatabase(requestData));
 }
 
-void WebIDBConnectionToServer::openDatabase(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::openDatabase(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::OpenDatabase(requestData));
 }
@@ -96,12 +95,12 @@ void WebIDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& tra
     send(Messages::NetworkStorageManager::AbortTransaction(transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
-    send(Messages::NetworkStorageManager::CommitTransaction(transactionIdentifier, pendingRequestCount));
+    send(Messages::NetworkStorageManager::CommitTransaction(transactionIdentifier, handledRequestResultsCount));
 }
 
-void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     send(Messages::NetworkStorageManager::DidFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier));
 }
@@ -176,32 +175,32 @@ void WebIDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, 
     send(Messages::NetworkStorageManager::IterateCursor(requestData, data));
 }
 
-void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+void WebIDBConnectionToServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     send(Messages::NetworkStorageManager::EstablishTransaction(databaseConnectionIdentifier, info));
 }
 
-void WebIDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void WebIDBConnectionToServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     send(Messages::NetworkStorageManager::DatabaseConnectionPendingClose(databaseConnectionIdentifier));
 }
 
-void WebIDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void WebIDBConnectionToServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
     send(Messages::NetworkStorageManager::DatabaseConnectionClosed(databaseConnectionIdentifier));
 }
 
-void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     send(Messages::NetworkStorageManager::AbortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier));
 }
 
-void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void WebIDBConnectionToServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     send(Messages::NetworkStorageManager::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed));
 }
 
-void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)
+void WebIDBConnectionToServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     send(Messages::NetworkStorageManager::OpenDBRequestCancelled(requestData));
 }
@@ -301,7 +300,7 @@ void WebIDBConnectionToServer::didIterateCursor(const WebIDBResult& result)
     m_connectionToServer->didIterateCursor(result.resultData());
 }
 
-void WebIDBConnectionToServer::fireVersionChangeEvent(uint64_t uniqueDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+void WebIDBConnectionToServer::fireVersionChangeEvent(IDBDatabaseConnectionIdentifier uniqueDatabaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
 {
     m_connectionToServer->fireVersionChangeEvent(uniqueDatabaseConnectionIdentifier, requestIdentifier, requestedVersion);
 }
@@ -311,7 +310,7 @@ void WebIDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& 
     m_connectionToServer->didStartTransaction(transactionIdentifier, error);
 }
 
-void WebIDBConnectionToServer::didCloseFromServer(uint64_t databaseConnectionIdentifier, const IDBError& error)
+void WebIDBConnectionToServer::didCloseFromServer(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBError& error)
 {
     m_connectionToServer->didCloseFromServer(databaseConnectionIdentifier, error);
 }

@@ -889,6 +889,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
             paramTokens, strings);
         return CallCapture(EntryPoint::GLBindImageTexture, std::move(params));
     }
+    if (strcmp(nameToken, "glBindMetalRasterizationRateMapANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLBindMetalRasterizationRateMapANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "glBindProgramPipeline") == 0)
     {
         ParamBuffer params =
@@ -2175,6 +2182,20 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLFRAMEBUFFERFETCHBARRIEREXTPROC>::type>(
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLFramebufferFetchBarrierEXT, std::move(params));
+    }
+    if (strcmp(nameToken, "glFramebufferFoveationConfigQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLFRAMEBUFFERFOVEATIONCONFIGQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferFoveationConfigQCOM, std::move(params));
+    }
+    if (strcmp(nameToken, "glFramebufferFoveationParametersQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLFRAMEBUFFERFOVEATIONPARAMETERSQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLFramebufferFoveationParametersQCOM, std::move(params));
     }
     if (strcmp(nameToken, "glFramebufferMemorylessPixelLocalStorageANGLE") == 0)
     {
@@ -5686,6 +5707,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
                 paramTokens, strings);
         return CallCapture(EntryPoint::GLTexSubImage3DRobustANGLE, std::move(params));
     }
+    if (strcmp(nameToken, "glTextureFoveationParametersQCOM") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLTEXTUREFOVEATIONPARAMETERSQCOMPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLTextureFoveationParametersQCOM, std::move(params));
+    }
     if (strcmp(nameToken, "glTransformFeedbackVaryings") == 0)
     {
         ParamBuffer params =
@@ -6189,6 +6217,16 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<decltype(DeleteUniformLocations)>(paramTokens, strings);
         return CallCapture("DeleteUniformLocations", std::move(params));
     }
+    if (strcmp(nameToken, "DestroyEGLImage") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(DestroyEGLImage)>(paramTokens, strings);
+        return CallCapture("DestroyEGLImage", std::move(params));
+    }
+    if (strcmp(nameToken, "DestroyEGLImageKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(DestroyEGLImageKHR)>(paramTokens, strings);
+        return CallCapture("DestroyEGLImageKHR", std::move(params));
+    }
     if (strcmp(nameToken, "FenceSync") == 0)
     {
         ParamBuffer params = ParseParameters<decltype(FenceSync)>(paramTokens, strings);
@@ -6416,11 +6454,11 @@ void DispatchCallCapture(Fn *fn, const Captures &cap)
     (*fn)(Arg<Fn, 0>(cap), Arg<Fn, 1>(cap), Arg<Fn, 2>(cap), Arg<Fn, 3>(cap), Arg<Fn, 4>(cap));
 }
 
-template <typename Fn, EnableIfNArgs<Fn, 6> = 0>
+template <typename Fn, EnableIfNArgs<Fn, 8> = 0>
 void DispatchCallCapture(Fn *fn, const Captures &cap)
 {
     (*fn)(Arg<Fn, 0>(cap), Arg<Fn, 1>(cap), Arg<Fn, 2>(cap), Arg<Fn, 3>(cap), Arg<Fn, 4>(cap),
-          Arg<Fn, 5>(cap));
+          Arg<Fn, 5>(cap), Arg<Fn, 6>(cap), Arg<Fn, 7>(cap));
 }
 
 template <typename Fn, EnableIfNArgs<Fn, 16> = 0>
@@ -6519,6 +6557,16 @@ void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &c
     if (call.customFunctionName == "DeleteUniformLocations")
     {
         DispatchCallCapture(DeleteUniformLocations, captures);
+        return;
+    }
+    if (call.customFunctionName == "DestroyEGLImage")
+    {
+        DispatchCallCapture(DestroyEGLImage, captures);
+        return;
+    }
+    if (call.customFunctionName == "DestroyEGLImageKHR")
+    {
+        DispatchCallCapture(DestroyEGLImageKHR, captures);
         return;
     }
     if (call.customFunctionName == "FenceSync")

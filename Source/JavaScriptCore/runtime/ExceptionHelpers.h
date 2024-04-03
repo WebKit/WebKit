@@ -39,7 +39,9 @@ namespace JSC {
 typedef JSObject* (*ErrorFactory)(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
 
 String defaultSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
+String notAFunctionSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 
+String constructErrorMessage(JSGlobalObject*, JSValue, const String&);
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, const String&, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(JSGlobalObject*);
 JSObject* createUndefinedVariableError(JSGlobalObject*, const Identifier&);

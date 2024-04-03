@@ -41,6 +41,7 @@ public:
     ~WebRemoteFrameClient();
 
     ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
+    void applyWebsitePolicies(WebsitePoliciesData&&) final;
 
 private:
     void frameDetached() final;
@@ -48,9 +49,14 @@ private:
     void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&) final;
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
-    void broadcastFrameRemovalToOtherProcesses() final;
-    void close() final;
+    void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, std::span<const uint8_t>, CompletionHandler<void(std::span<const uint8_t>, int)>&&) final;
+    void unbindRemoteAccessibilityFrames(int) final;
+    void updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint) final;
+
+    void closePage() final;
     void focus() final;
+    void unfocus() final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String& clientRedirectSourceForHistory, uint64_t navigationID, std::optional<WebCore::HitTestResult>&&, bool hasOpener, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 };

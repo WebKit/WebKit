@@ -39,8 +39,8 @@ namespace WebCore {
 
 struct WebCodecsAudioEncoderConfig {
     String codec;
-    std::optional<size_t> sampleRate;
-    std::optional<size_t> numberOfChannels;
+    size_t sampleRate;
+    size_t numberOfChannels;
     std::optional<uint64_t> bitrate;
     BitrateMode bitrateMode { BitrateMode::Variable };
     std::optional<OpusEncoderConfig> opus;

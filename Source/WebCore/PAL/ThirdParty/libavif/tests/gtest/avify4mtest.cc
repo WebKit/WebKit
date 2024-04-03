@@ -1,4 +1,4 @@
-// Copyright 2022 Google LLC. All rights reserved.
+// Copyright 2022 Google LLC
 // SPDX-License-Identifier: BSD-2-Clause
 
 #include <sstream>
@@ -12,7 +12,7 @@
 using testing::Combine;
 using testing::Values;
 
-namespace libavif {
+namespace avif {
 namespace {
 
 class Y4mTest
@@ -29,11 +29,11 @@ TEST_P(Y4mTest, EncodeDecode) {
   const avifRange yuv_range = std::get<4>(GetParam());
   const bool create_alpha = std::get<5>(GetParam());
   std::ostringstream file_path;
-  file_path << testing::TempDir() << "avify4mtest_" << width << "_" << height
-            << "_" << bit_depth << "_" << yuv_format << "_" << yuv_range << "_"
-            << create_alpha;
+  file_path << testing::TempDir() << "avify4mtest_encodedecode_" << width << "_"
+            << height << "_" << bit_depth << "_" << yuv_format << "_"
+            << yuv_range << "_" << create_alpha;
 
-  testutil::AvifImagePtr image = testutil::CreateImage(
+  ImagePtr image = testutil::CreateImage(
       width, height, bit_depth, yuv_format,
       create_alpha ? AVIF_PLANES_ALL : AVIF_PLANES_YUV, yuv_range);
   ASSERT_NE(image, nullptr);
@@ -48,12 +48,54 @@ TEST_P(Y4mTest, EncodeDecode) {
   testutil::FillImagePlain(image.get(), yuva);
   ASSERT_TRUE(y4mWrite(file_path.str().c_str(), image.get()));
 
-  testutil::AvifImagePtr decoded(avifImageCreateEmpty(), avifImageDestroy);
+  ImagePtr decoded(avifImageCreateEmpty());
   ASSERT_NE(decoded, nullptr);
-  ASSERT_TRUE(y4mRead(file_path.str().c_str(), decoded.get(),
-                      /*sourceTiming=*/nullptr, /*iter=*/nullptr));
+  ASSERT_TRUE(y4mRead(file_path.str().c_str(), AVIF_DEFAULT_IMAGE_SIZE_LIMIT,
+                      decoded.get(), /*sourceTiming=*/nullptr,
+                      /*iter=*/nullptr));
 
   EXPECT_TRUE(testutil::AreImagesEqual(*image, *decoded));
+}
+
+TEST_P(Y4mTest, OutOfRange) {
+  const int width = std::get<0>(GetParam());
+  const int height = std::get<1>(GetParam());
+  const int bit_depth = std::get<2>(GetParam());
+  const avifPixelFormat yuv_format = std::get<3>(GetParam());
+  const avifRange yuv_range = std::get<4>(GetParam());
+  const bool create_alpha = std::get<5>(GetParam());
+  std::ostringstream file_path;
+  file_path << testing::TempDir() << "avify4mtest_outofrange_" << width << "_"
+            << height << "_" << bit_depth << "_" << yuv_format << "_"
+            << yuv_range << "_" << create_alpha;
+
+  ImagePtr image = testutil::CreateImage(
+      width, height, bit_depth, yuv_format,
+      create_alpha ? AVIF_PLANES_ALL : AVIF_PLANES_YUV, yuv_range);
+  ASSERT_NE(image, nullptr);
+
+  // Insert values that may be out-of-range on purpose compared to the specified
+  // bit_depth and yuv_range.
+  const uint32_t yuva8[] = {255, 0, 255, 255};
+  const uint32_t yuva16[] = {0, (1u << 16) - 1u, 0, (1u << 16) - 1u};
+  testutil::FillImagePlain(image.get(),
+                           avifImageUsesU16(image.get()) ? yuva16 : yuva8);
+  ASSERT_TRUE(y4mWrite(file_path.str().c_str(), image.get()));
+
+  // y4mRead() should clamp the values to respect the specified depth in order
+  // to avoid computation with unexpected sample values. However, it does not
+  // respect the limited ("video") range because the libavif API just passes
+  // that tag along, it is ignored by the compression algorithm.
+  ImagePtr decoded(avifImageCreateEmpty());
+  ASSERT_NE(decoded, nullptr);
+  ASSERT_TRUE(y4mRead(file_path.str().c_str(), AVIF_DEFAULT_IMAGE_SIZE_LIMIT,
+                      decoded.get(), /*sourceTiming=*/nullptr,
+                      /*iter=*/nullptr));
+
+  // Pass it through the libavif API to make sure reading a bad y4m does not
+  // trigger undefined behavior.
+  const testutil::AvifRwData encoded = testutil::Encode(decoded.get());
+  EXPECT_NE(testutil::Decode(encoded.data, encoded.size), nullptr);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -76,4 +118,4 @@ INSTANTIATE_TEST_SUITE_P(AlphaCombinations, Y4mTest,
                                  /*create_alpha=*/Values(true)));
 
 }  // namespace
-}  // namespace libavif
+}  // namespace avif

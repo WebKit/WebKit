@@ -60,8 +60,6 @@ public:
     static Ref<WebInspectorUI> create(WebPage&);
     virtual ~WebInspectorUI();
 
-    static void enableFrontendFeatures(WebPage&);
-
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
@@ -126,6 +124,7 @@ public:
     void resetState() override;
 
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance) override;
+    void effectiveAppearanceDidChange(WebCore::InspectorFrontendClient::Appearance);
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() const override;
 

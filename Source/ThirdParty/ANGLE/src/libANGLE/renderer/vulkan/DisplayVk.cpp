@@ -11,18 +11,19 @@
 
 #include "common/debug.h"
 #include "common/system_utils.h"
+#include "libANGLE/BlobCache.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DeviceVk.h"
 #include "libANGLE/renderer/vulkan/ImageVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/SyncVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
 #include "libANGLE/renderer/vulkan/VkImageImageSiblingVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -90,11 +91,68 @@ void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
         *surfaceFormatsOut = std::move(surfaceFormats2);
     }
 }
+
+vk::UseValidationLayers ShouldUseValidationLayers(const egl::AttributeMap &attribs)
+{
+    EGLAttrib debugSetting =
+        attribs.get(EGL_PLATFORM_ANGLE_DEBUG_LAYERS_ENABLED_ANGLE, EGL_DONT_CARE);
+
+#if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+    const bool yes = ShouldUseDebugLayers(attribs);
+#else
+    const bool yes = debugSetting == EGL_TRUE;
+#endif  // defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS_BY_DEFAULT)
+
+    const bool ifAvailable = debugSetting == EGL_DONT_CARE;
+
+    return yes && ifAvailable ? vk::UseValidationLayers::YesIfAvailable
+           : yes              ? vk::UseValidationLayers::Yes
+                              : vk::UseValidationLayers::No;
+}
+
+angle::vk::ICD ChooseICDFromAttribs(const egl::AttributeMap &attribs)
+{
+#if !defined(ANGLE_PLATFORM_ANDROID)
+    // Mock ICD does not currently run on Android
+    EGLAttrib deviceType = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
+                                       EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
+
+    switch (deviceType)
+    {
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE:
+            break;
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE:
+            return angle::vk::ICD::Mock;
+        case EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE:
+            return angle::vk::ICD::SwiftShader;
+        default:
+            UNREACHABLE();
+            break;
+    }
+#endif  // !defined(ANGLE_PLATFORM_ANDROID)
+
+    return angle::vk::ICD::Default;
+}
+
+void InstallDebugAnnotator(egl::Display *display, vk::Renderer *renderer)
+{
+    bool installedAnnotator = false;
+
+    // Ensure the appropriate global DebugAnnotator is used
+    ASSERT(renderer);
+    renderer->setGlobalDebugAnnotator(&installedAnnotator);
+
+    if (!installedAnnotator)
+    {
+        std::unique_lock<std::mutex> lock(gl::GetDebugMutex());
+        display->setGlobalDebugAnnotator();
+    }
+}
 }  // namespace
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
-      vk::Context(new RendererVk()),
+      vk::Context(new vk::Renderer()),
       mScratchBuffer(1000u),
       mSupportedColorspaceFormatsMap{}
 {}
@@ -107,8 +165,22 @@ DisplayVk::~DisplayVk()
 egl::Error DisplayVk::initialize(egl::Display *display)
 {
     ASSERT(mRenderer != nullptr && display != nullptr);
-    angle::Result result = mRenderer->initialize(this, display, getWSIExtension(), getWSILayer());
+    const egl::AttributeMap &attribs = display->getAttributeMap();
+
+    const vk::UseValidationLayers useValidationLayers = ShouldUseValidationLayers(attribs);
+    const angle::vk::ICD desiredICD                   = ChooseICDFromAttribs(attribs);
+    const uint32_t preferredVendorId =
+        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
+    const uint32_t preferredDeviceId =
+        static_cast<uint32_t>(attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
+
+    angle::Result result = mRenderer->initialize(
+        this, this, desiredICD, preferredVendorId, preferredDeviceId, useValidationLayers,
+        getWSIExtension(), getWSILayer(), getWindowSystem(), mState.featureOverrides);
     ANGLE_TRY(angle::ToEGL(result, EGL_NOT_INITIALIZED));
+
+    InstallDebugAnnotator(display, mRenderer);
+
     // Query and cache supported surface format and colorspace for later use.
     initSupportedSurfaceFormatColorspaces();
     return egl::NoError();
@@ -122,15 +194,12 @@ void DisplayVk::terminate()
     mRenderer->onDestroy(this);
 }
 
-egl::Error DisplayVk::makeCurrent(egl::Display * /*display*/,
+egl::Error DisplayVk::makeCurrent(egl::Display *display,
                                   egl::Surface * /*drawSurface*/,
                                   egl::Surface * /*readSurface*/,
                                   gl::Context * /*context*/)
 {
-    // Ensure the appropriate global DebugAnnotator is used
-    ASSERT(mRenderer);
-    mRenderer->setGlobalDebugAnnotator();
-
+    InstallDebugAnnotator(display, mRenderer);
     return egl::NoError();
 }
 
@@ -450,8 +519,9 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // will ignore the hint and do a regular swap.
     outExtensions->swapBuffersWithDamage = true;
 
-    outExtensions->fenceSync = true;
-    outExtensions->waitSync  = true;
+    outExtensions->fenceSync            = true;
+    outExtensions->waitSync             = true;
+    outExtensions->globalFenceSyncANGLE = true;
 
     outExtensions->image                 = true;
     outExtensions->imageBase             = true;
@@ -555,17 +625,6 @@ const char *DisplayVk::getWSILayer() const
     return nullptr;
 }
 
-bool DisplayVk::isUsingSwapchain() const
-{
-    return true;
-}
-
-bool DisplayVk::getScratchBuffer(size_t requstedSizeBytes,
-                                 angle::MemoryBuffer **scratchBufferOut) const
-{
-    return mScratchBuffer.get(requstedSizeBytes, scratchBufferOut);
-}
-
 void DisplayVk::handleError(VkResult result,
                             const char *file,
                             const char *function,
@@ -596,5 +655,27 @@ void DisplayVk::initializeFrontendFeatures(angle::FrontendFeatures *features) co
 void DisplayVk::populateFeatureList(angle::FeatureList *features)
 {
     mRenderer->getFeatures().populateFeatureList(features);
+}
+
+// vk::GlobalOps
+void DisplayVk::putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value)
+{
+    getBlobCache()->putApplication(key, value);
+}
+
+bool DisplayVk::getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut)
+{
+    return getBlobCache()->get(&mScratchBuffer, key, valueOut);
+}
+
+std::shared_ptr<angle::WaitableEvent> DisplayVk::postMultiThreadWorkerTask(
+    const std::shared_ptr<angle::Closure> &task)
+{
+    return mState.multiThreadPool->postWorkerTask(task);
+}
+
+void DisplayVk::notifyDeviceLost()
+{
+    mState.notifyDeviceLost();
 }
 }  // namespace rx

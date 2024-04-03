@@ -25,7 +25,6 @@
 
 // https://drafts.css-houdini.org/css-typed-om/#csstransformvalue
 [
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSTransformValue : CSSStyleValue {
     constructor(sequence<CSSTransformComponent> transforms);

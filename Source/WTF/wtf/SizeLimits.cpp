@@ -46,7 +46,8 @@ struct SameSizeAsRefCounted {
     bool b;
     bool c;
     bool d;
-    bool e;
+    unsigned e;
+    bool f;
     // The debug version may get bigger.
 };
 #else

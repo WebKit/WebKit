@@ -29,7 +29,7 @@
 #include "config.h"
 #include "NicosiaGCGLANGLELayer.h"
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(NICOSIA)
 
 #include "GraphicsContextGLTextureMapperANGLE.h"
 #include "TextureMapperFlags.h"
@@ -107,4 +107,4 @@ GCGLANGLELayer::~GCGLANGLELayer()
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(NICOSIA)

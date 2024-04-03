@@ -46,6 +46,12 @@
 }
 @end
 
+typedef NS_OPTIONS(NSUInteger, NSMenuBackgroundFlags) {
+    NSMenuBackgroundPopupMenu = 0x200
+};
+
+APPKIT_EXTERN void NSDrawMenuBackground(NSRect bounds, NSRect clipRect, NSMenuBackgroundFlags);
+
 #endif
 
 WTF_EXTERN_C_BEGIN

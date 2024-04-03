@@ -1,0 +1,47 @@
+Tests that subfield values update correctly for date inputs.
+
+Original subfield values:
+AXDescription: month AXRole: AXIncrementor AXValue: 11
+AXDescription:  AXRole: AXStaticText AXValue: /
+AXDescription: day AXRole: AXIncrementor AXValue: 21
+AXDescription:  AXRole: AXStaticText AXValue: /
+AXDescription: year AXRole: AXIncrementor AXValue: 2022
+
+Focus date element and press up arrow to increment the month field:
+PASS: subfields[0].intValue === 12
+
+Press down arrow twice to decrement the month field.
+PASS: subfields[0].intValue === 10
+
+Press the tab key to move to the day field in the date input.
+PASS: subfields[2].intValue === 21
+
+Type 10 in the day subfield.
+PASS: subfields[2].intValue === 10
+
+Press down arrow to decrement the day field.
+PASS: subfields[2].intValue === 9
+
+Press up arrow twice to increment the day field.
+PASS: subfields[2].intValue === 11
+
+Press tab to move to the year field in the date input.
+PASS: subfields[4].intValue === 2022
+
+Press down arrow 10 times to decrement the year field.
+PASS: subfields[4].intValue === 2012
+
+Press up arrow to increment the year field.
+PASS: subfields[4].intValue === 2013
+
+Set the date via JavaScript.
+AXDescription: month AXRole: AXIncrementor AXValue: 12
+AXDescription:  AXRole: AXStaticText AXValue: /
+AXDescription: day AXRole: AXIncrementor AXValue: 31
+AXDescription:  AXRole: AXStaticText AXValue: /
+AXDescription: year AXRole: AXIncrementor AXValue: 2023
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

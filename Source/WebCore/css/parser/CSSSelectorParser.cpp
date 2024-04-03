@@ -34,9 +34,11 @@
 #include "CSSParserIdioms.h"
 #include "CSSSelector.h"
 #include "CSSSelectorInlines.h"
+#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
 #include "MutableCSSSelector.h"
+#include "PseudoElementIdentifier.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <wtf/OptionSet.h>
@@ -287,7 +289,7 @@ static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const MutableCSSSele
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
     // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
     // input[type="range" i]::-webkit-media-slider-container > div {
-    if (parserMode == UASheetMode && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::UserAgentPart)
+    if (isUASheetBehavior(parserMode) && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::UserAgentPart)
         return { };
 
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
@@ -452,6 +454,11 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return isScrollbarPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+    case CSSSelector::PseudoElement::ViewTransitionNew:
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+        return pseudoClass == CSSSelector::PseudoClass::OnlyChild;
     case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
     case CSSSelector::PseudoElement::WebKitUnknown:
@@ -575,7 +582,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeSimpleSelector(CSS
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
         // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
         // video::-webkit-media-text-track-region-container.scrolling
-        if (m_context.mode != UASheetMode && !isSimpleSelectorValidAfterPseudoElement(*selector, *m_precedingPseudoElement))
+        if (!isUASheetBehavior(m_context.mode) && !isSimpleSelectorValidAfterPseudoElement(*selector, *m_precedingPseudoElement))
             m_failedParsing = true;
     }
 
@@ -749,10 +756,9 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         return selector;
     }
 
+    ASSERT(token.type() == FunctionToken);
     CSSParserTokenRange block = range.consumeBlock();
     block.consumeWhitespace();
-    if (token.type() != FunctionToken)
-        return nullptr;
 
     if (selector->match() == CSSSelector::Match::PseudoClass) {
         switch (selector->pseudoClass()) {
@@ -1157,7 +1163,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::splitCompoundAtImplicitSh
     bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Slotted;
 
     std::unique_ptr<MutableCSSSelector> secondCompound;
-    if (context.mode == UASheetMode || isPart) {
+    if (isUASheetBehavior(context.mode) || isPart) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
         // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
         // we should remove this recursion once those rules are gone.
@@ -1205,6 +1211,73 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
 
     auto final = CSSSelectorList { WTFMove(result) };
     return final;
+}
+
+static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement type)
+{
+    auto pseudoId = CSSSelector::pseudoId(type);
+    if (pseudoId == PseudoId::None)
+        return { };
+    return Style::PseudoElementIdentifier { pseudoId };
+}
+
+// FIXME: It's probably worth investigating if more logic can be shared with
+// CSSSelectorParser::consumePseudo(), though note that the requirements are subtly different.
+std::pair<bool, std::optional<Style::PseudoElementIdentifier>> CSSSelectorParser::parsePseudoElement(const String& input, const CSSSelectorParserContext& context)
+{
+    auto tokenizer = CSSTokenizer { input };
+    auto range = tokenizer.tokenRange();
+    auto token = range.consume();
+    if (token.type() != ColonToken)
+        return { };
+    token = range.consume();
+    if (token.type() == IdentToken) {
+        if (!range.atEnd())
+            return { };
+        auto pseudoClassOrElement = findPseudoClassAndCompatibilityElementName(token.value());
+        if (!pseudoClassOrElement.compatibilityPseudoElement)
+            return { };
+        ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoClassOrElement.compatibilityPseudoElement, token.value(), context));
+        return { true, pseudoElementIdentifierFor(*pseudoClassOrElement.compatibilityPseudoElement) };
+    }
+    if (token.type() != ColonToken)
+        return { };
+    token = range.peek();
+    if (token.type() != IdentToken && token.type() != FunctionToken)
+        return { };
+    auto pseudoElement = CSSSelector::parsePseudoElementName(token.value(), context);
+    if (!pseudoElement)
+        return { };
+    if (token.type() == IdentToken) {
+        range.consume();
+        if (!range.atEnd() || CSSSelector::pseudoElementRequiresArgument(*pseudoElement))
+            return { };
+        return { true, pseudoElementIdentifierFor(*pseudoElement) };
+    }
+    ASSERT(token.type() == FunctionToken);
+    auto block = range.consumeBlock();
+    if (!range.atEnd())
+        return { };
+    block.consumeWhitespace();
+    switch (*pseudoElement) {
+    case CSSSelector::PseudoElement::Highlight: {
+        auto& ident = block.consumeIncludingWhitespace();
+        if (ident.type() != IdentToken || !block.atEnd())
+            return { };
+        return { true, Style::PseudoElementIdentifier { PseudoId::Highlight, ident.value().toAtomString() } };
+    }
+    case CSSSelector::PseudoElement::ViewTransitionGroup:
+    case CSSSelector::PseudoElement::ViewTransitionImagePair:
+    case CSSSelector::PseudoElement::ViewTransitionOld:
+    case CSSSelector::PseudoElement::ViewTransitionNew: {
+        auto& ident = block.consumeIncludingWhitespace();
+        if (ident.type() != IdentToken || !isValidCustomIdentifier(ident.id()) || !block.atEnd())
+            return { };
+        return { true, Style::PseudoElementIdentifier { CSSSelector::pseudoId(*pseudoElement), ident.value().toAtomString() } };
+    }
+    default:
+        return { };
+    }
 }
 
 } // namespace WebCore

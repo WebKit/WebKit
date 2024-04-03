@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+Quack, I want to be a duck!
+
+PASS document.write with html assigned via policy (successful URL transformation).
+PASS document.writeln with html assigned via policy (successful URL transformation).
+PASS `document.write(string)` throws
+PASS `document.writeln(string)` throws
+PASS `document.write(null)` throws
+PASS `document.writeln(null)` throws
+PASS `document.write(string)` observes default policy
+PASS `document.writeln(string)` observes default policy
+

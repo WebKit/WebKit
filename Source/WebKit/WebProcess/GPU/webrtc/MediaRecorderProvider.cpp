@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderProvider.h"
 
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
 
 #include "MediaRecorderPrivate.h"
 #include "WebPage.h"
@@ -49,4 +49,4 @@ std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMedi
 
 }
 
-#endif // ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#endif // ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)

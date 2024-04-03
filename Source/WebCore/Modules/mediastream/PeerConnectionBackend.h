@@ -211,6 +211,9 @@ public:
 
     void iceGatheringStateChanged(RTCIceGatheringState);
 
+    virtual void startGatheringStatLogs(Function<void(String&&)>&&) { }
+    virtual void stopGatheringStatLogs() { }
+
 protected:
     void doneGatheringCandidates();
 

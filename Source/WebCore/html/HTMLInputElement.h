@@ -58,7 +58,7 @@ struct InputElementClickState {
 
 enum class WasSetByJavaScript : bool { No, Yes };
 
-class HTMLInputElement : public HTMLTextFormControlElement {
+class HTMLInputElement final : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -87,6 +87,7 @@ public:
     void setValueForUser(const String& value) { setValue(value, DispatchInputAndChangeEvent); }
     WEBCORE_EXPORT WallTime valueAsDate() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsDate(WallTime);
+    WallTime accessibilityValueAsDate() const;
     WEBCORE_EXPORT double valueAsNumber() const;
     WEBCORE_EXPORT ExceptionOr<void> setValueAsNumber(double, TextFieldEventBehavior = DispatchNoEvent);
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);
@@ -157,6 +158,7 @@ public:
     // isTextField && !isPasswordField.
     WEBCORE_EXPORT bool isText() const;
     bool isTextType() const;
+    bool supportsWritingSuggestions() const;
     WEBCORE_EXPORT bool isEmailField() const;
     WEBCORE_EXPORT bool isFileUpload() const;
     bool isImageButton() const;
@@ -344,12 +346,16 @@ public:
     bool isSwitchVisuallyOn() const;
     float switchAnimationPressedProgress() const;
 
-protected:
-    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
+    void initializeInputTypeAfterParsingOrCloning();
+
+private:
+    enum class CreationType : uint8_t { Normal, ByParser, ByCloning };
+    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, CreationType);
 
     void defaultEventHandler(Event&) final;
 
-private:
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) override;
+
     enum AutoCompleteSetting : uint8_t { Uninitialized, On, Off };
     static constexpr int defaultSize = 20;
 
@@ -389,7 +395,6 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    void parserDidSetAttributes() final;
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
@@ -432,7 +437,6 @@ private:
     bool computeWillValidate() const final;
     void requiredStateChanged() final;
 
-    void initializeInputType();
     void updateType(const AtomString& typeAttributeValue);
     void runPostTypeUpdateTasks();
 

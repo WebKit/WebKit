@@ -252,12 +252,28 @@ CanvasRenderingContext2DBase::~CanvasRenderingContext2DBase()
 
 bool CanvasRenderingContext2DBase::isAccelerated() const
 {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
     auto* context = canvasBase().existingDrawingContext();
     return context && context->renderingMode() == RenderingMode::Accelerated;
 #else
     return false;
 #endif
+}
+
+bool CanvasRenderingContext2DBase::hasDeferredOperations() const
+{
+    // At the time of writing, any draw might linger in IPC buffer or queue of the underlying graphics system, like with Accelerated
+    // codepaths of GraphicsContextCG. Currently we don't use GraphicsContext IsDeferred status since that has some subtleties.
+    // Lingering draws are problematic, as they might retain references to the source surface that is coming from modifiable source
+    // such as a 2D context. Holding them forever is not a good idea, so participate in the canvas preparation phase after any modification.
+    return m_hasDeferredOperations;
+}
+
+void CanvasRenderingContext2DBase::flushDeferredOperations()
+{
+    m_hasDeferredOperations = false;
+    if (RefPtr buffer = canvasBase().buffer())
+        buffer->flushDrawingContextAsync();
 }
 
 void CanvasRenderingContext2DBase::reset()
@@ -270,12 +286,12 @@ void CanvasRenderingContext2DBase::reset()
     m_path.clear();
     m_unrealizedSaveCount = 0;
     m_cachedContents.emplace<CachedContentsTransparent>();
-
+    m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
-    resetTransform();
-
-    canvasBase().resetGraphicsContextState();
-    clearCanvas();
+    if (auto* c = canvasBase().existingDrawingContext()) {
+        canvasBase().resetGraphicsContextState();
+        c->clearRect(FloatRect { { }, canvasBase().size() });
+    }
 }
 
 CanvasRenderingContext2DBase::State::State()
@@ -1434,7 +1450,7 @@ static inline FloatSize size(ImageBitmap& imageBitmap)
 
 static inline FloatSize size(HTMLVideoElement& video)
 {
-    auto player = video.player();
+    RefPtr player = video.player();
     if (!player)
         return { };
     return player->naturalSize();
@@ -1649,11 +1665,17 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
                 return { };
             image = bitmapImage.copyRef();
         }
-        bitmapImage->updateFromSettings(document.settings());
+
         shouldPostProcess = false;
     }
 
-    ImagePaintingOptions options = { op, blendMode, orientation };
+    ImagePaintingOptions options = {
+        op,
+        blendMode,
+        orientation,
+        document.settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
+        document.settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
+    };
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(normalizedDstRect)) {
@@ -1711,7 +1733,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
 
     checkOrigin(&sourceCanvas);
 
-    sourceCanvas.makeRenderingResultsAvailable();
+    sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
 
     bool repaintEntireCanvas = false;
     if (rectContainsCanvas(normalizedDstRect)) {
@@ -1735,7 +1757,8 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     } else
         c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
 
-    didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
+    auto shouldUseDrawOptionsWithoutPostProcessing = sourceCanvas.renderingContext() && sourceCanvas.renderingContext()->is2d() && !sourceCanvas.havePendingCanvasNoiseInjection();
+    didDraw(repaintEntireCanvas, normalizedDstRect, shouldUseDrawOptionsWithoutPostProcessing ? defaultDidDrawOptionsWithoutPostProcessing() : defaultDidDrawOptions());
 
     return { };
 }
@@ -2052,11 +2075,11 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     if (cachedImage.image()->drawsSVGImage())
         originClean = false;
 
-    auto* image = cachedImage.imageForRenderer(renderer);
+    RefPtr image = cachedImage.imageForRenderer(renderer);
     if (!image)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto nativeImage = image->nativeImage();
+    RefPtr nativeImage = image->nativeImage();
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -2065,7 +2088,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    auto* cachedImage = imageElement.cachedImage();
+    CachedResourceHandle cachedImage = imageElement.cachedImage();
     
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
     if (!cachedImage || !imageElement.complete())
@@ -2087,7 +2110,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
 
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(SVGImageElement& imageElement, bool repeatX, bool repeatY)
 {
-    auto* cachedImage = imageElement.cachedImage();
+    CachedResourceHandle cachedImage = imageElement.cachedImage();
 
     // The image loading hasn't started.
     if (!cachedImage)
@@ -2193,6 +2216,8 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!drawingContext())
         return;
 
+    m_hasDeferredOperations = true;
+
     auto shouldApplyPostProcessing = options.contains(DidDrawOption::ApplyPostProcessing) ? ShouldApplyPostProcessingToDirtyRect::Yes : ShouldApplyPostProcessingToDirtyRect::No;
 
     if (!rect) {
@@ -2284,10 +2309,6 @@ void CanvasRenderingContext2DBase::prepareForDisplay()
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-    RefPtr buffer = canvasBase().buffer();
-    if (buffer && buffer->prefersPreparationForDisplay())
-        return true;
-
     return false;
 }
 
@@ -2676,8 +2697,8 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     location += textOffset(width, textRun.direction());
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
-    FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
-        width + fontMetrics.height(), fontMetrics.lineSpacing());
+    FloatRect textRect = FloatRect(location.x() - fontMetrics.intHeight() / 2, location.y() - fontMetrics.intAscent() - fontMetrics.intLineGap(),
+        width + fontMetrics.intHeight(), fontMetrics.intLineSpacing());
     if (!fill)
         inflateStrokeRect(textRect);
 
@@ -2793,16 +2814,18 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
+    int ascent = fontMetrics.intAscent();
+    int descent = fontMetrics.intDescent();
 
     metrics->setActualBoundingBoxAscent(glyphOverflow.top - offset.y());
     metrics->setActualBoundingBoxDescent(glyphOverflow.bottom + offset.y());
-    metrics->setFontBoundingBoxAscent(fontMetrics.ascent() - offset.y());
-    metrics->setFontBoundingBoxDescent(fontMetrics.descent() + offset.y());
-    metrics->setEmHeightAscent(fontMetrics.ascent() - offset.y());
-    metrics->setEmHeightDescent(fontMetrics.descent() + offset.y());
-    metrics->setHangingBaseline(fontMetrics.ascent() - offset.y());
+    metrics->setFontBoundingBoxAscent(ascent - offset.y());
+    metrics->setFontBoundingBoxDescent(descent + offset.y());
+    metrics->setEmHeightAscent(ascent - offset.y());
+    metrics->setEmHeightDescent(descent + offset.y());
+    metrics->setHangingBaseline(ascent - offset.y());
     metrics->setAlphabeticBaseline(-offset.y());
-    metrics->setIdeographicBaseline(-fontMetrics.descent() - offset.y());
+    metrics->setIdeographicBaseline(-descent - offset.y());
 
     metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
     metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
@@ -2818,14 +2841,14 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
     switch (state().textBaseline) {
     case TopTextBaseline:
     case HangingTextBaseline:
-        offset.setY(fontMetrics.ascent());
+        offset.setY(fontMetrics.intAscent());
         break;
     case BottomTextBaseline:
     case IdeographicTextBaseline:
-        offset.setY(-fontMetrics.descent());
+        offset.setY(-fontMetrics.intDescent());
         break;
     case MiddleTextBaseline:
-        offset.setY(fontMetrics.height() / 2 - fontMetrics.descent());
+        offset.setY(fontMetrics.intHeight() / 2 - fontMetrics.intDescent());
         break;
     case AlphabeticTextBaseline:
     default:

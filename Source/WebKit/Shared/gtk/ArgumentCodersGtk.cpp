@@ -26,12 +26,11 @@
 #include "config.h"
 #include "ArgumentCodersGtk.h"
 
-#include "DataReference.h"
-#include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Image.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -174,12 +173,12 @@ static void encodeGKeyFile(Encoder& encoder, GKeyFile* keyFile)
 {
     gsize dataSize;
     GUniquePtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
-    encoder << DataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
+    encoder << std::span<const uint8_t>(reinterpret_cast<uint8_t*>(data.get()), dataSize);
 }
 
 static WARN_UNUSED_RETURN bool decodeGKeyFile(Decoder& decoder, GUniquePtr<GKeyFile>& keyFile)
 {
-    DataReference dataReference;
+    std::span<const uint8_t> dataReference;
     if (!decoder.decode(dataReference))
         return false;
 

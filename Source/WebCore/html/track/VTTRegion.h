@@ -44,7 +44,7 @@ class HTMLDivElement;
 class VTTCueBox;
 class VTTScanner;
 
-class VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
+class WEBCORE_EXPORT VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
 public:
     static Ref<VTTRegion> create(ScriptExecutionContext& context)
     {
@@ -52,9 +52,6 @@ public:
     }
 
     virtual ~VTTRegion();
-
-    TextTrack* track() const { return m_track; }
-    void setTrack(TextTrack*);
 
     const String& id() const { return m_id; }
     void setId(const String&);
@@ -135,12 +132,6 @@ private:
     // effect of scrolling cues when this is enabled for the regions.
     RefPtr<HTMLDivElement> m_cueContainer;
     RefPtr<HTMLDivElement> m_regionDisplayTree;
-
-    // The member variable track can be a raw pointer as it will never
-    // reference a destroyed TextTrack, as this member variable
-    // is cleared in the TextTrack destructor and it is generally
-    // set/reset within the addRegion and removeRegion methods.
-    TextTrack* m_track { nullptr };
 
     // Keep track of the current numeric value of the css "top" property.
     double m_currentTop { 0 };

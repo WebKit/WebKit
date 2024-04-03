@@ -1,0 +1,4 @@
+
+
+FAIL Test we can construct a VideoFrame from a <video> who just fired onloadeddata. promise_test: Unhandled rejection with value: object "InvalidStateError: Video element has no video frame"
+

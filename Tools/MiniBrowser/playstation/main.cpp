@@ -63,7 +63,9 @@ static void initialize()
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
+#if defined(USE_CAIRO) && USE_CAIRO && defined(Cairo_LOAD_AT)
     loadLibraryOrExit(Cairo_LOAD_AT);
+#endif
     loadLibraryOrExit(ToolKitten_LOAD_AT);
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #if defined(LibPSL_LOAD_AT)

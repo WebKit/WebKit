@@ -24,26 +24,38 @@ function dumpAXTable(axElement, options) {
 }
 
 // Dumps the result of a traversal via the UI element search API (which is what some ATs use).
-function dumpAXSearchTraversal(axElement) {
+// `options` is an object with these keys:
+//   * `excludeRoles`: Array of strings representing roles you don't want to include in the output.
+//                     Case insensitive, partial match is fine, e.g. "scrollbar" will exclude "AXScrollBar".
+function dumpAXSearchTraversal(axElement, options = { }) {
     let output = "";
-    function elementDescription(axElement) {
-        if (!axElement)
-            return "null";
-
-        const role = axElement.role;
-        const id = axElement.domIdentifier;
-        let result = `${id ? `#${id} ` : ""}${role}`;
-        if (role.includes("StaticText"))
-            result += ` ${accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue}`;
-        return result;
-    }
-
     let searchResult = null;
     while (true) {
         searchResult = axElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
         if (!searchResult)
             break;
-        output += `\n{${elementDescription(searchResult)}}\n`;
+
+        const role = searchResult.role;
+
+        let excluded = false;
+        if (Array.isArray(options?.excludeRoles)) {
+            for (const excludedRole of options.excludeRoles) {
+                if (role.toLowerCase().includes(excludedRole.toLowerCase())) {
+                    excluded = true;
+                    break;
+                }
+            }
+        }
+
+        if (excluded)
+            continue;
+
+        const id = searchResult.domIdentifier;
+        let resultDescription = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText"))
+            resultDescription += ` ${accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue}`;
+
+        output += `\n{${resultDescription}}\n`;
     }
     return output;
 }

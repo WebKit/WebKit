@@ -1,0 +1,240 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+onload = async () => {
+  try {
+    let adapter0 = await navigator.gpu.requestAdapter();
+    let device0 = await adapter0.requestDevice();
+
+    let shaderModule1 = device0.createShaderModule(
+    {
+    label: 'a',
+    code: `@group(3) @binding(831)
+    var<storage, read_write> __ArgumentBufferT_0: array<u32>;
+    @group(1) @binding(660)
+    var<storage, read_write> field1: array<u32>;
+    @group(2) @binding(660)
+    var<storage, read_write> i2: array<u32>;
+    @group(1) @binding(403)
+    var<storage, read_write> local0: array<u32>;
+    @group(2) @binding(280)
+    var<storage, read_write> field2: array<u32>;
+    @group(1) @binding(660)
+    var<storage, read_write> field3: array<u32>;
+    @group(2) @binding(403)
+    var<storage, read_write> parameter1: array<u32>;
+    @group(0) @binding(280)
+    var<storage, read_write> __ArgumentBuffer_0: array<u32>;
+    @group(0) @binding(403)
+    var<storage, read_write> parameter2: array<u32>;
+    @compute @workgroup_size(6, 2, 3)
+    fn compute0(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      var x: u32 = 0;
+      loop {
+        parameter2[x] = global_id.x;
+        x += 1;
+        parameter1[global_id.y-global_id.x] = field3[x];
+        if (x > 2 * arrayLength(&parameter2)) {
+          break;
+        }
+      }
+    }
+    @compute @workgroup_size(6, 3, 4)
+    fn compute1(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      field3[global_id.x*local_id.x] = u32(__ArgumentBufferT_0[global_id.x*local_id.x]);
+    }
+
+    struct S {
+      @location(0) out0: vec4<f32>,
+      @location(1) out1: vec4<f32>,
+    }
+
+    struct S2 {
+      @location(0) out0: vec4<f32>,
+      out1: vec4<f32>,
+    }
+
+    struct S3 {
+      @location(0) out0: vec4<f32>,
+      out1: S4,
+    }
+
+    struct S4 {
+      @location(1) out2: vec4<f32>,
+      @location(2) out3: vec4<f32>,
+    }
+
+    @fragment
+    fn fragment0(@builtin(position) coord_in: vec4<f32>) -> @location(123) vec3<f32> {
+    return vec3<f32>();
+    }
+
+    @fragment
+    fn fragment1(@builtin(position) coord_in: vec4<f32>) -> @location(0) vec4<f32> {
+      return vec4<f32>(coord_in.x, coord_in.y, 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex0() -> @builtin(position) vec4<f32> {
+      return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex1(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> @builtin(position) vec4<f32> {
+      return vec4<f32>(f32(v_index), f32(i_index), 0.0, 1.0);
+    }
+
+    @vertex
+    fn vertex2(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+    }
+
+    @vertex
+    fn vertex3(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+      return S();
+    }
+    `,
+    sourceMap: {},
+    hints: {},
+    }
+    );
+    let shaderModule4 = device0.createShaderModule(
+    {
+    code: `@group(0) @binding(660)
+    var<storage, read_write> type2: array<u32>;
+    @compute @workgroup_size(2, 2, 4)
+    fn compute0(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      var x: u32 = 0;
+      loop {
+        type2[x] = global_id.x;
+        x += 1;
+        type2[global_id.y-global_id.x] = type2[x];
+        if (x > 2 * arrayLength(&type2)) {
+          break;
+        }
+      }
+    }
+    @compute @workgroup_size(3, 2, 4)
+    fn compute1(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+      type2[global_id.x*local_id.x] = u32(type2[global_id.x*local_id.x]);
+    }
+
+    struct S {
+      @location(0) out0: vec4<f32>,
+      @location(1) out1: vec4<f32>,
+    }
+
+    struct S2 {
+      @location(0) out0: vec4<f32>,
+      out1: vec4<f32>,
+    }
+
+    struct S3 {
+      @location(0) out0: vec4<f32>,
+      out1: S4,
+    }
+
+    struct S4 {
+      @location(1) out2: vec4<f32>,
+      @location(2) out3: vec4<f32>,
+    }
+
+    @fragment
+    fn fragment0(@builtin(position) coord_in: vec4<f32>) -> @location(123) vec4<f32> {
+    return vec4<f32>();
+    }
+
+    @vertex
+    fn vertex3(@builtin(vertex_index) v_index: u32, @builtin(instance_index) i_index: u32,) -> S {
+      return S();
+    }
+    `,
+    sourceMap: {},
+    }
+    );
+    
+    let bindGroupLayout3 = device0.createBindGroupLayout(
+    {
+    label: 'a',
+    entries: [
+    {
+    binding: 221,
+    visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+    storageTexture: {
+    access: 'read-only',
+    format: 'r32float',
+    },
+    }
+    ],
+    }
+    );
+    
+    let pipelineLayout6 = device0.createPipelineLayout(
+    {
+    bindGroupLayouts: [
+    bindGroupLayout3
+    ],
+    }
+    );
+
+    let pipeline = device0.createRenderPipeline(
+    {
+    label: 'a',
+    layout: pipelineLayout6,
+    vertex: {
+    module: shaderModule1,
+    entryPoint: 'vertex1',
+    constants: {},
+    },
+    multisample: {
+    mask: 0x4c8c2ed3,
+    },
+    fragment: {
+    module: shaderModule4,
+    entryPoint: 'fragment0',
+    targets: [
+    {
+    format: 'rgb10a2unorm',
+    writeMask: GPUColorWrite.GREEN | GPUColorWrite.ALPHA,
+    }
+    ],
+    },
+    depthStencil: {
+    depthWriteEnabled: false,
+    depthCompare: 'not-equal',
+    format: 'depth24plus-stencil8',
+    stencilFront: {
+    depthFailOp: 'zero',
+    passOp: 'invert',
+    },
+    stencilBack: {
+    compare: 'not-equal',
+    depthFailOp: 'invert',
+    passOp: 'invert',
+    },
+    stencilReadMask: 12,
+    stencilWriteMask: 58,
+    depthBias: 74,
+    depthBiasSlopeScale: 40,
+    depthBiasClamp: 4,
+    },
+    }
+    );
+
+    let renderBundleEncoder0 = device0.createRenderBundleEncoder(
+    {
+    label: 'a',
+    colorFormats: [
+    ],
+    depthStencilFormat: 'stencil8',
+    depthReadOnly: true,
+    }
+    );
+    
+    renderBundleEncoder0.setPipeline(pipeline);
+  } catch (e) { }
+  window.testRunner?.notifyDone();
+}
+</script>
+This test passes if it does not crash.

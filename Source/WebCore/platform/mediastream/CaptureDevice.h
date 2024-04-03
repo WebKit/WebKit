@@ -134,23 +134,3 @@ inline CaptureDevice CaptureDevice::isolatedCopy() &&
 }
 
 } // namespace WebCore
-
-#if ENABLE(MEDIA_STREAM)
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
-    using values = EnumValues<
-        WebCore::CaptureDevice::DeviceType,
-        WebCore::CaptureDevice::DeviceType::Unknown,
-        WebCore::CaptureDevice::DeviceType::Microphone,
-        WebCore::CaptureDevice::DeviceType::Speaker,
-        WebCore::CaptureDevice::DeviceType::Camera,
-        WebCore::CaptureDevice::DeviceType::Screen,
-        WebCore::CaptureDevice::DeviceType::Window,
-        WebCore::CaptureDevice::DeviceType::SystemAudio
-    >;
-};
-
-} // namespace WTF
-#endif
-

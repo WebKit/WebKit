@@ -54,11 +54,37 @@ template<> struct VirtualTableAndRefCountOverhead<true, false> {
 };
 template<> struct VirtualTableAndRefCountOverhead<false, false> { };
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_BEGIN("invalid-offsetof")
-#endif
 
 namespace IPC {
+
+#if USE(PASSKIT)
+template<> void encodeObjectDirectly<PKPaymentMethod>(IPC::Encoder& encoder, PKPaymentMethod *instance)
+{
+    encoder << (instance ? std::optional(WebKit::CoreIPCPKPaymentMethod(instance)) : std::nullopt);
+}
+
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<PKPaymentMethod>(IPC::Decoder& decoder)
+{
+    auto result = decoder.decode<std::optional<WebKit::CoreIPCPKPaymentMethod>>();
+    if (!result)
+        return std::nullopt;
+    return *result ? (*result)->toID() : nullptr;
+}
+#endif // USE(PASSKIT)
+
+template<> void encodeObjectDirectly<NSNull>(IPC::Encoder& encoder, NSNull *instance)
+{
+    encoder << (instance ? std::optional(WebKit::CoreIPCNull(instance)) : std::nullopt);
+}
+
+template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses<NSNull>(IPC::Decoder& decoder)
+{
+    auto result = decoder.decode<std::optional<WebKit::CoreIPCNull>>();
+    if (!result)
+        return std::nullopt;
+    return *result ? (*result)->toID() : nullptr;
+}
 
 void ArgumentCoder<WebKit::PlatformClass>::encode(Encoder& encoder, const WebKit::PlatformClass& instance)
 {
@@ -89,31 +115,38 @@ std::optional<WebKit::PlatformClass> ArgumentCoder<WebKit::PlatformClass>::decod
 #if USE(AVFOUNDATION)
 void ArgumentCoder<WebKit::CoreIPCAVOutputContext>::encode(Encoder& encoder, const WebKit::CoreIPCAVOutputContext& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_AVOutputContextSerializationKeyContextID)>, RetainPtr<NSString>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_AVOutputContextSerializationKeyContextType)>, RetainPtr<NSString>>);
     struct ShouldBeSameSizeAsAVOutputContext : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCAVOutputContext>, false> {
-        WebKit::CoreIPCDictionary m_propertyList;
+        RetainPtr<NSString> AVOutputContextSerializationKeyContextID;
+        RetainPtr<NSString> AVOutputContextSerializationKeyContextType;
     };
     static_assert(sizeof(ShouldBeSameSizeAsAVOutputContext) == sizeof(WebKit::CoreIPCAVOutputContext));
     static_assert(MembersInCorrectOrder < 0
-        , offsetof(WebKit::CoreIPCAVOutputContext, m_propertyList)
+        , offsetof(WebKit::CoreIPCAVOutputContext, m_AVOutputContextSerializationKeyContextID)
+        , offsetof(WebKit::CoreIPCAVOutputContext, m_AVOutputContextSerializationKeyContextType)
     >::value);
 
-    encoder << instance.m_propertyList;
+    encoder << instance.m_AVOutputContextSerializationKeyContextID;
+    encoder << instance.m_AVOutputContextSerializationKeyContextType;
 }
 
 std::optional<WebKit::CoreIPCAVOutputContext> ArgumentCoder<WebKit::CoreIPCAVOutputContext>::decode(Decoder& decoder)
 {
-    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
-    if (UNLIKELY(!decoder.isValid()))
+    auto AVOutputContextSerializationKeyContextID = decoder.decode<RetainPtr<NSString>>();
+    if (!AVOutputContextSerializationKeyContextID)
         return std::nullopt;
 
-    if (!(WebKit::CoreIPCAVOutputContext::isValidDictionary(*m_propertyList)))
+    auto AVOutputContextSerializationKeyContextType = decoder.decode<RetainPtr<NSString>>();
+    if (!AVOutputContextSerializationKeyContextType)
         return std::nullopt;
+
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
         WebKit::CoreIPCAVOutputContext {
-            WTFMove(*m_propertyList)
+            WTFMove(*AVOutputContextSerializationKeyContextID),
+            WTFMove(*AVOutputContextSerializationKeyContextType)
         }
     };
 }
@@ -122,31 +155,83 @@ std::optional<WebKit::CoreIPCAVOutputContext> ArgumentCoder<WebKit::CoreIPCAVOut
 
 void ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType>::encode(Encoder& encoder, const WebKit::CoreIPCNSSomeFoundationType& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_StringKey)>, RetainPtr<NSString>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_NumberKey)>, RetainPtr<NSNumber>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalNumberKey)>, RetainPtr<NSNumber>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_ArrayKey)>, RetainPtr<NSArray>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalArrayKey)>, RetainPtr<NSArray>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, RetainPtr<NSDictionary>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalDictionaryKey)>, RetainPtr<NSDictionary>>);
     struct ShouldBeSameSizeAsNSSomeFoundationType : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCNSSomeFoundationType>, false> {
-        WebKit::CoreIPCDictionary m_propertyList;
+        RetainPtr<NSString> StringKey;
+        RetainPtr<NSNumber> NumberKey;
+        RetainPtr<NSNumber> OptionalNumberKey;
+        RetainPtr<NSArray> ArrayKey;
+        RetainPtr<NSArray> OptionalArrayKey;
+        RetainPtr<NSDictionary> DictionaryKey;
+        RetainPtr<NSDictionary> OptionalDictionaryKey;
     };
     static_assert(sizeof(ShouldBeSameSizeAsNSSomeFoundationType) == sizeof(WebKit::CoreIPCNSSomeFoundationType));
     static_assert(MembersInCorrectOrder < 0
-        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_propertyList)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_StringKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_NumberKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_OptionalNumberKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_ArrayKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_OptionalArrayKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_DictionaryKey)
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_OptionalDictionaryKey)
     >::value);
 
-    encoder << instance.m_propertyList;
+    encoder << instance.m_StringKey;
+    encoder << instance.m_NumberKey;
+    encoder << instance.m_OptionalNumberKey;
+    encoder << instance.m_ArrayKey;
+    encoder << instance.m_OptionalArrayKey;
+    encoder << instance.m_DictionaryKey;
+    encoder << instance.m_OptionalDictionaryKey;
 }
 
 std::optional<WebKit::CoreIPCNSSomeFoundationType> ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType>::decode(Decoder& decoder)
 {
-    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
-    if (UNLIKELY(!decoder.isValid()))
+    auto StringKey = decoder.decode<RetainPtr<NSString>>();
+    if (!StringKey)
         return std::nullopt;
 
-    if (!(WebKit::CoreIPCNSSomeFoundationType::isValidDictionary(*m_propertyList)))
+    auto NumberKey = decoder.decode<RetainPtr<NSNumber>>();
+    if (!NumberKey)
         return std::nullopt;
+
+    auto OptionalNumberKey = decoder.decode<RetainPtr<NSNumber>>();
+    if (!OptionalNumberKey)
+        return std::nullopt;
+
+    auto ArrayKey = decoder.decode<RetainPtr<NSArray>>();
+    if (!ArrayKey)
+        return std::nullopt;
+
+    auto OptionalArrayKey = decoder.decode<RetainPtr<NSArray>>();
+    if (!OptionalArrayKey)
+        return std::nullopt;
+
+    auto DictionaryKey = decoder.decode<RetainPtr<NSDictionary>>();
+    if (!DictionaryKey)
+        return std::nullopt;
+
+    auto OptionalDictionaryKey = decoder.decode<RetainPtr<NSDictionary>>();
+    if (!OptionalDictionaryKey)
+        return std::nullopt;
+
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
         WebKit::CoreIPCNSSomeFoundationType {
-            WTFMove(*m_propertyList)
+            WTFMove(*StringKey),
+            WTFMove(*NumberKey),
+            WTFMove(*OptionalNumberKey),
+            WTFMove(*ArrayKey),
+            WTFMove(*OptionalArrayKey),
+            WTFMove(*DictionaryKey),
+            WTFMove(*OptionalDictionaryKey)
         }
     };
 }
@@ -154,33 +239,124 @@ std::optional<WebKit::CoreIPCNSSomeFoundationType> ArgumentCoder<WebKit::CoreIPC
 #if ENABLE(DATA_DETECTION)
 void ArgumentCoder<WebKit::CoreIPCDDScannerResult>::encode(Encoder& encoder, const WebKit::CoreIPCDDScannerResult& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_StringKey)>, RetainPtr<NSString>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_NumberKey)>, RetainPtr<NSNumber>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalNumberKey)>, RetainPtr<NSNumber>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_ArrayKey)>, Vector<RetainPtr<DDScannerResult>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalArrayKey)>, std::optional<Vector<RetainPtr<DDScannerResult>>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, Vector<std::pair<String, RetainPtr<Number>>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_OptionalDictionaryKey)>, std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DataArrayKey)>, Vector<RetainPtr<NSData>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_SecTrustArrayKey)>, Vector<RetainPtr<SecTrustRef>>>);
     struct ShouldBeSameSizeAsDDScannerResult : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCDDScannerResult>, false> {
-        WebKit::CoreIPCDictionary m_propertyList;
+        RetainPtr<NSString> StringKey;
+        RetainPtr<NSNumber> NumberKey;
+        RetainPtr<NSNumber> OptionalNumberKey;
+        Vector<RetainPtr<DDScannerResult>> ArrayKey;
+        std::optional<Vector<RetainPtr<DDScannerResult>>> OptionalArrayKey;
+        Vector<std::pair<String, RetainPtr<Number>>> DictionaryKey;
+        std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>> OptionalDictionaryKey;
+        Vector<RetainPtr<NSData>> DataArrayKey;
+        Vector<RetainPtr<SecTrustRef>> SecTrustArrayKey;
     };
     static_assert(sizeof(ShouldBeSameSizeAsDDScannerResult) == sizeof(WebKit::CoreIPCDDScannerResult));
     static_assert(MembersInCorrectOrder < 0
-        , offsetof(WebKit::CoreIPCDDScannerResult, m_propertyList)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_StringKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_NumberKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_OptionalNumberKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_ArrayKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_OptionalArrayKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_DictionaryKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_OptionalDictionaryKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_DataArrayKey)
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_SecTrustArrayKey)
     >::value);
 
-    encoder << instance.m_propertyList;
+    encoder << instance.m_StringKey;
+    encoder << instance.m_NumberKey;
+    encoder << instance.m_OptionalNumberKey;
+    encoder << instance.m_ArrayKey;
+    encoder << instance.m_OptionalArrayKey;
+    encoder << instance.m_DictionaryKey;
+    encoder << instance.m_OptionalDictionaryKey;
+    encoder << instance.m_DataArrayKey;
+    encoder << instance.m_SecTrustArrayKey;
 }
 
 std::optional<WebKit::CoreIPCDDScannerResult> ArgumentCoder<WebKit::CoreIPCDDScannerResult>::decode(Decoder& decoder)
 {
-    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
-    if (UNLIKELY(!decoder.isValid()))
+    auto StringKey = decoder.decode<RetainPtr<NSString>>();
+    if (!StringKey)
         return std::nullopt;
 
-    if (!(WebKit::CoreIPCDDScannerResult::isValidDictionary(*m_propertyList)))
+    auto NumberKey = decoder.decode<RetainPtr<NSNumber>>();
+    if (!NumberKey)
         return std::nullopt;
+
+    auto OptionalNumberKey = decoder.decode<RetainPtr<NSNumber>>();
+    if (!OptionalNumberKey)
+        return std::nullopt;
+
+    auto ArrayKey = decoder.decode<Vector<RetainPtr<DDScannerResult>>>();
+    if (!ArrayKey)
+        return std::nullopt;
+
+    auto OptionalArrayKey = decoder.decode<std::optional<Vector<RetainPtr<DDScannerResult>>>>();
+    if (!OptionalArrayKey)
+        return std::nullopt;
+
+    auto DictionaryKey = decoder.decode<Vector<std::pair<String, RetainPtr<Number>>>>();
+    if (!DictionaryKey)
+        return std::nullopt;
+
+    auto OptionalDictionaryKey = decoder.decode<std::optional<Vector<std::pair<String, RetainPtr<DDScannerResult>>>>>();
+    if (!OptionalDictionaryKey)
+        return std::nullopt;
+
+    auto DataArrayKey = decoder.decode<Vector<RetainPtr<NSData>>>();
+    if (!DataArrayKey)
+        return std::nullopt;
+
+    auto SecTrustArrayKey = decoder.decode<Vector<RetainPtr<SecTrustRef>>>();
+    if (!SecTrustArrayKey)
+        return std::nullopt;
+
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
         WebKit::CoreIPCDDScannerResult {
-            WTFMove(*m_propertyList)
+            WTFMove(*StringKey),
+            WTFMove(*NumberKey),
+            WTFMove(*OptionalNumberKey),
+            WTFMove(*ArrayKey),
+            WTFMove(*OptionalArrayKey),
+            WTFMove(*DictionaryKey),
+            WTFMove(*OptionalDictionaryKey),
+            WTFMove(*DataArrayKey),
+            WTFMove(*SecTrustArrayKey)
         }
     };
+}
+
+#endif
+
+#if USE(CFSTRING)
+void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef instance)
+{
+    encoder << WTF::String { instance };
+}
+
+void ArgumentCoder<CFStringRef>::encode(StreamConnectionEncoder& encoder, CFStringRef instance)
+{
+    encoder << WTF::String { instance };
+}
+
+std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WTF::String>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return result->createCFString();
 }
 
 #endif
@@ -191,6 +367,4 @@ namespace WTF {
 
 } // namespace WTF
 
-#if COMPILER(GCC)
 IGNORE_WARNINGS_END
-#endif

@@ -126,25 +126,27 @@ void RemoteImageBufferProxy::backingStoreWillChange()
     prepareForBackingStoreChange();
 }
 
-void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> handle)
+void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> backendHandle)
 {
     ASSERT(!m_backend);
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
-    if (handle) {
+    if (backendHandle) {
         auto backendParameters = this->backendParameters(parameters());
 #if HAVE(IOSURFACE)
-        if (std::holds_alternative<MachSendRight>(*handle)) {
+        if (std::holds_alternative<MachSendRight>(*backendHandle)) {
             if (canMapBackingStore())
-                backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*handle));
+                backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
             else
-                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*handle));
+                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
         }
 #endif
-        if (std::holds_alternative<ShareableBitmap::Handle>(*handle)) {
+        if (std::holds_alternative<ShareableBitmap::Handle>(*backendHandle)) {
             m_backendInfo = ImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(backendParameters);
-            backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(*handle));
+            auto handle = std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
+            handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
+            backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(handle));
         }
     }
     if (!backend) {

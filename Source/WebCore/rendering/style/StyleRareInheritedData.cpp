@@ -84,7 +84,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , visitedLinkCaretColor(StyleColor::currentColor())
     , accentColor(StyleColor::currentColor())
     , indent(RenderStyle::initialTextIndent())
-    , effectiveZoom(RenderStyle::initialZoom())
+    , usedZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
     , textBoxEdge(RenderStyle::initialTextBoxEdge())
     , miterLimit(RenderStyle::initialStrokeMiterLimit())
@@ -137,8 +137,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hasAutoAccentColor(true)
     , effectiveInert(false)
     , isInSubtreeWithBlendMode(false)
-    , effectiveSkippedContent(static_cast<unsigned>(ContentVisibility::Visible))
-    , effectiveTouchActions(RenderStyle::initialTouchActions())
+    , isInVisibilityAdjustmentSubtree(false)
+    , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
+    , usedTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
 #if ENABLE(DARK_MODE_CSS)
@@ -174,7 +175,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
-    , effectiveZoom(o.effectiveZoom)
+    , usedZoom(o.usedZoom)
     , textUnderlineOffset(o.textUnderlineOffset)
     , textBoxEdge(o.textBoxEdge)
     , miterLimit(o.miterLimit)
@@ -228,8 +229,9 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hasAutoAccentColor(o.hasAutoAccentColor)
     , effectiveInert(o.effectiveInert)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
-    , effectiveSkippedContent(o.effectiveSkippedContent)
-    , effectiveTouchActions(o.effectiveTouchActions)
+    , isInVisibilityAdjustmentSubtree(o.isInVisibilityAdjustmentSubtree)
+    , usedContentVisibility(o.usedContentVisibility)
+    , usedTouchActions(o.usedTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
     , strokeColor(o.strokeColor)
@@ -281,7 +283,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && arePointingToEqualData(textShadow, o.textShadow)
         && arePointingToEqualData(cursorData, o.cursorData)
         && indent == o.indent
-        && effectiveZoom == o.effectiveZoom
+        && usedZoom == o.usedZoom
         && textUnderlineOffset == o.textUnderlineOffset
         && textBoxEdge == o.textBoxEdge
         && wordSpacing == o.wordSpacing
@@ -349,10 +351,11 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hasVisitedLinkAutoCaretColor == o.hasVisitedLinkAutoCaretColor
         && hasAutoAccentColor == o.hasAutoAccentColor
         && isInSubtreeWithBlendMode == o.isInSubtreeWithBlendMode
-        && effectiveTouchActions == o.effectiveTouchActions
+        && isInVisibilityAdjustmentSubtree == o.isInVisibilityAdjustmentSubtree
+        && usedTouchActions == o.usedTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && effectiveInert == o.effectiveInert
-        && effectiveSkippedContent == o.effectiveSkippedContent
+        && usedContentVisibility == o.usedContentVisibility
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor

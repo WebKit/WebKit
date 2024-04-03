@@ -171,7 +171,8 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setReadDependency(Resource *resourcePtr);
 
 #if ANGLE_MTL_EVENT_AVAILABLE
-    void queueEventSignal(id<MTLEvent> event, uint64_t value);
+    // Queues the event and returns the current command buffer queue serial.
+    uint64_t queueEventSignal(id<MTLEvent> event, uint64_t value);
     void serverWaitEvent(id<MTLEvent> event, uint64_t value);
 #endif  // ANGLE_MTL_EVENT_AVAILABLE
 
@@ -201,7 +202,6 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     void setPendingEvents();
 #if ANGLE_MTL_EVENT_AVAILABLE
     void setEventImpl(id<MTLEvent> event, uint64_t value);
-    void waitEventImpl(id<MTLEvent> event, uint64_t value);
 #endif  // ANGLE_MTL_EVENT_AVAILABLE
 
     void pushDebugGroupImpl(const std::string &marker);
@@ -417,7 +417,8 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &setStencilRefVal(uint32_t ref);
 
     RenderCommandEncoder &setViewport(const MTLViewport &viewport);
-    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect);
+    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect,
+                                         id<MTLRasterizationRateMap> map);
 
     RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
 
@@ -566,6 +567,8 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &setDepthLoadAction(MTLLoadAction action, double clearValue);
     RenderCommandEncoder &setStencilLoadAction(MTLLoadAction action, uint32_t clearValue);
 
+    RenderCommandEncoder &setRasterizationRateMap(id<MTLRasterizationRateMap> map);
+
     void setLabel(NSString *label);
 
     void pushDebugGroup(NSString *label) override;
@@ -576,6 +579,8 @@ class RenderCommandEncoder final : public CommandEncoder
     bool hasPipelineState() const { return mPipelineStateSet; }
 
     uint64_t getSerial() const { return mSerial; }
+    id<MTLRasterizationRateMap> rasterizationRateMapForPass(id<MTLRasterizationRateMap> map,
+                                                            id<MTLTexture> colorTexture) const;
 
   private:
     // Override CommandEncoder

@@ -149,7 +149,7 @@ layer at (0,0) size 800x454
           text run at (1412,42) width 79: "1.03125px "
         RenderText {#text} at (1490,42) size 79x14
           text run at (1490,42) width 79: "8.34375px "
-        RenderText {#text} at (1568,42) size 1569x28
+        RenderText {#text} at (0,42) size 1569x28
           text run at (1568,42) width 1: " "
           text run at (0,56) width 0: " "
         RenderText {#text} at (0,70) size 211x14
@@ -184,7 +184,7 @@ layer at (0,0) size 800x454
           text run at (257,112) width 32: "1px "
         RenderText {#text} at (288,112) size 32x14
           text run at (288,112) width 32: "8px "
-        RenderText {#text} at (319,112) size 320x28
+        RenderText {#text} at (0,112) size 320x28
           text run at (319,112) width 1: " "
           text run at (0,126) width 0: " "
         RenderText {#text} at (0,140) size 211x14
@@ -219,7 +219,7 @@ layer at (0,0) size 800x454
           text run at (413,182) width 87: "1.078125px "
         RenderText {#text} at (499,182) size 87x14
           text run at (499,182) width 87: "8.671875px "
-        RenderText {#text} at (585,182) size 586x28
+        RenderText {#text} at (0,182) size 586x28
           text run at (585,182) width 1: " "
           text run at (0,196) width 0: " "
         RenderText {#text} at (0,210) size 211x14
@@ -254,7 +254,7 @@ layer at (0,0) size 800x454
           text run at (257,252) width 32: "2px "
         RenderText {#text} at (288,252) size 40x14
           text run at (288,252) width 40: "16px "
-        RenderText {#text} at (327,252) size 328x28
+        RenderText {#text} at (0,252) size 328x28
           text run at (327,252) width 1: " "
           text run at (0,266) width 0: " "
         RenderText {#text} at (0,280) size 211x14
@@ -289,7 +289,7 @@ layer at (0,0) size 800x454
           text run at (413,322) width 87: "2.078125px "
         RenderText {#text} at (499,322) size 94x14
           text run at (499,322) width 94: "16.671875px "
-        RenderText {#text} at (592,322) size 593x28
+        RenderText {#text} at (0,322) size 593x28
           text run at (592,322) width 1: " "
           text run at (0,336) width 0: " "
         RenderText {#text} at (0,350) size 211x14
@@ -344,6 +344,6 @@ layer at (0,0) size 800x454
           text run at (819,392) width 86: "1.703125px "
         RenderText {#text} at (904,392) size 87x14
           text run at (904,392) width 87: "1.703125px "
-        RenderText {#text} at (990,392) size 991x28
+        RenderText {#text} at (0,392) size 991x28
           text run at (990,392) width 1: " "
           text run at (0,406) width 0: " "

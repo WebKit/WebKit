@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CanonicalName</key>
-	<string>WebKitSDKAdditions</string>
+	<string>WebKitSDKAdditions_macosx</string>
 	<key>HeaderSearchPaths</key>
 	<array>
 		<string>usr/local/include</string>

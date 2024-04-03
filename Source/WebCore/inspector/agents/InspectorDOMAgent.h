@@ -170,6 +170,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> focus(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<void> setInspectedNode(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<void> setAllowEditingUserAgentShadowTrees(bool);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> getMediaStats(Inspector::Protocol::DOM::NodeId);
 
     // InspectorInstrumentation
     Inspector::Protocol::DOM::NodeId identifierForNode(Node&);
@@ -310,7 +311,7 @@ private:
     };
 
     // The pointer key for this map should not be used for anything other than matching.
-    WeakHashMap<HTMLMediaElement, MediaMetrics, WeakPtrImplWithEventTargetData> m_mediaMetrics;
+    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
 #endif
 
     struct InspectorEventListener {

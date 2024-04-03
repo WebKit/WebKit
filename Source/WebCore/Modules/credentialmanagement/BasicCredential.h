@@ -39,6 +39,7 @@ namespace WebCore {
 class BasicCredential : public RefCounted<BasicCredential> {
 public:
     enum class Type {
+        DigitalCredential,
         PublicKey,
     };
 

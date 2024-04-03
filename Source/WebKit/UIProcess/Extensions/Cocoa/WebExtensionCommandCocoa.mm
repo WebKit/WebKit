@@ -50,11 +50,16 @@
 
 + (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler
 {
-    RELEASE_ASSERT(title.length);
-    RELEASE_ASSERT(input.length);
+    RELEASE_ASSERT(title);
+    RELEASE_ASSERT(input);
     RELEASE_ASSERT(handler);
 
-    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:nil];
+    auto *propertyList = @{
+        @"title": title,
+        @"activation": input,
+    };
+
+    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:propertyList];
     if (!command)
         return nil;
 

@@ -82,7 +82,7 @@ static WTF::Function<void(CompletionHandler<void()>&&)> convert(WGPUOnSubmittedW
     };
 }
 
-Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor& presentationContextDescriptor)
+RefPtr<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor& presentationContextDescriptor)
 {
     auto& compositorIntegration = m_convertToBackingContext->convertToBacking(presentationContextDescriptor.compositorIntegration);
 
@@ -108,7 +108,7 @@ Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationCo
     return result;
 }
 
-Ref<CompositorIntegration> GPUImpl::createCompositorIntegration()
+RefPtr<CompositorIntegration> GPUImpl::createCompositorIntegration()
 {
     return CompositorIntegrationImpl::create(m_convertToBackingContext);
 }

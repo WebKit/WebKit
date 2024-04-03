@@ -34,10 +34,14 @@
 
 #if USE(EXTENSIONKIT)
 #import "ExtensionKitSPI.h"
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHandle.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(ServiceExtensions);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostable);
-SOFT_LINK_CLASS_OPTIONAL(ServiceExtensions, _SEHostingUpdateCoordinator);
+SOFT_LINK_FRAMEWORK_OPTIONAL(BrowserEngineKit);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchy);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchyHandle);
+SOFT_LINK_CLASS_OPTIONAL(BrowserEngineKit, BELayerHierarchyHostingTransactionCoordinator);
 #endif
 
 namespace WebKit {
@@ -76,8 +80,8 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
 #endif
     };
 #if USE(EXTENSIONKIT)
-    if (options.useHostable && [get_SEHostableClass() respondsToSelector:@selector(createHostableWithOptions:error:)]) {
-        layerHostingContext->m_hostable = [get_SEHostableClass() createHostableWithOptions:contextOptions error:nil];
+    if (options.useHostable) {
+        layerHostingContext->m_hostable = [getBELayerHierarchyClass() layerHierarchyWithOptions:contextOptions error:nil];
         return layerHostingContext;
     }
 #endif
@@ -128,7 +132,7 @@ LayerHostingContext::LayerHostingContext()
 LayerHostingContext::~LayerHostingContext()
 {
 #if USE(EXTENSIONKIT)
-    [m_hostingUpdateCoordinator commit];
+    [m_hostable invalidate];
 #endif
 }
 
@@ -156,7 +160,7 @@ LayerHostingContextID LayerHostingContext::contextID() const
 {
 #if USE(EXTENSIONKIT)
     if (auto xpcDictionary = xpcRepresentation())
-        return xpc_dictionary_get_uint64(xpcDictionary.get(), "cid");
+        return xpc_dictionary_get_uint64(xpcDictionary.get(), contextIDKey);
 #endif
     return [m_context contextId];
 }
@@ -191,14 +195,7 @@ bool LayerHostingContext::colorMatchUntaggedContent() const
 void LayerHostingContext::setFencePort(mach_port_t fencePort)
 {
 #if USE(EXTENSIONKIT)
-    if (m_hostable) {
-        auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        xpc_dictionary_set_mach_send(xpcRepresentation.get(), "p", fencePort);
-        [m_hostingUpdateCoordinator commit];
-        m_hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
-        [m_hostingUpdateCoordinator addHostable:m_hostable.get()];
-        return;
-    }
+    ASSERT(!m_hostable);
 #endif
     [m_context setFencePort:fencePort];
 }
@@ -223,13 +220,30 @@ OSObjectPtr<xpc_object_t> LayerHostingContext::xpcRepresentation() const
 {
     if (!m_hostable)
         return nullptr;
-    return [[m_hostable handle] xpcRepresentation];
+    return [[m_hostable handle] createXPCRepresentation];
 }
 
-void LayerHostingContext::commit()
+RetainPtr<BELayerHierarchyHostingTransactionCoordinator> LayerHostingContext::createHostingUpdateCoordinator(mach_port_t sendRight)
 {
-    [m_hostingUpdateCoordinator commit];
-    m_hostingUpdateCoordinator = nullptr;
+    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_mach_send(xpcRepresentation.get(), machPortKey, sendRight);
+    NSError* error = nil;
+    auto coordinator = [getBELayerHierarchyHostingTransactionCoordinatorClass() coordinatorWithXPCRepresentation:xpcRepresentation.get() error:&error];
+    if (error)
+        NSLog(@"Could not create update coordinator, error = %@", error);
+    return coordinator;
+}
+
+RetainPtr<BELayerHierarchyHandle> LayerHostingContext::createHostingHandle(uint64_t pid, uint64_t contextID)
+{
+    auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_uint64(xpcRepresentation.get(), processIDKey, pid);
+    xpc_dictionary_set_uint64(xpcRepresentation.get(), contextIDKey, contextID);
+    NSError* error = nil;
+    auto handle = [getBELayerHierarchyHandleClass() handleWithXPCRepresentation:xpcRepresentation.get() error:&error];
+    if (error)
+        NSLog(@"Could not create layer hierarchy handle, error = %@", error);
+    return handle;
 }
 #endif
 

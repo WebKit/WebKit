@@ -27,6 +27,7 @@
 
 OBJC_EXPORT
 @interface WKGrant : NSObject
+- (void)invalidateGrant;
 @end
 
 OBJC_EXPORT

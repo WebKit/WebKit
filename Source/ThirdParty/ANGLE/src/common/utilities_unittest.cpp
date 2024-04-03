@@ -177,4 +177,32 @@ TEST(ParseArrayIndex, ArrayIndexOutOfRange)
     EXPECT_EQ(15u, nameLengthWithoutArrayIndex);
 }
 
+// Test that ConstStrLen works.
+TEST(Utilities, ConstStrLen)
+{
+    constexpr auto v1 = angle::ConstStrLen(nullptr);
+    EXPECT_EQ(0u, v1);
+    constexpr auto v2 = angle::ConstStrLen("");
+    EXPECT_EQ(0u, v2);
+    constexpr auto v3 = angle::ConstStrLen("a");
+    EXPECT_EQ(1u, v3);
+    constexpr char c[5] = "cc\0c";
+    constexpr auto v4   = angle::ConstStrLen(c);
+    EXPECT_EQ(2u, v4);
+    constexpr char d[] = "dddd";
+    constexpr auto v5  = angle::ConstStrLen(d);
+    EXPECT_EQ(4u, v5);
+    constexpr char *e = nullptr;
+    constexpr auto v6 = angle::ConstStrLen(e);
+    EXPECT_EQ(0u, v6);
+
+    // Non-constexpr invocations
+    const char cc[5] = "cc\0c";
+    auto n1          = angle::ConstStrLen(cc);
+    EXPECT_EQ(2u, n1);
+    const char *dd = "ddd";
+    auto n2        = angle::ConstStrLen(dd);
+    EXPECT_EQ(3u, n2);
+}
+
 }  // anonymous namespace

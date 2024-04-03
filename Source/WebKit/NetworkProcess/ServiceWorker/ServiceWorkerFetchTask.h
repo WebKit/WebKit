@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "DownloadID.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/ResourceRequest.h>
@@ -61,13 +60,13 @@ class ServiceWorkerNavigationPreloader;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 
-class ServiceWorkerFetchTask : public CanMakeWeakPtr<ServiceWorkerFetchTask> {
+class ServiceWorkerFetchTask : public RefCounted<ServiceWorkerFetchTask>, public CanMakeWeakPtr<ServiceWorkerFetchTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
+    static RefPtr<ServiceWorkerFetchTask> fromNavigationPreloader(WebSWServerConnection&, NetworkResourceLoader&, const WebCore::ResourceRequest&, NetworkSession*);
 
-    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
-    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, std::unique_ptr<ServiceWorkerNavigationPreloader>&&);
+    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    static Ref<ServiceWorkerFetchTask> create(WebSWServerConnection&, NetworkResourceLoader&, std::unique_ptr<ServiceWorkerNavigationPreloader>&&);
 
     ~ServiceWorkerFetchTask();
 
@@ -91,6 +90,9 @@ public:
     MonotonicTime startTime() const;
 
 private:
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, WebCore::ResourceRequest&&, WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::SWServerRegistration&, NetworkSession*, bool isWorkerReady);
+    ServiceWorkerFetchTask(WebSWServerConnection&, NetworkResourceLoader&, std::unique_ptr<ServiceWorkerNavigationPreloader>&&);
+
     enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);

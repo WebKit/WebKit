@@ -29,8 +29,9 @@ public:
     using Base = JSDOMObject;
     static JSTestNamespaceConst* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestNamespaceConst* ptr = new (NotNull, JSC::allocateCell<JSTestNamespaceConst>(globalObject->vm())) JSTestNamespaceConst(structure, *globalObject);
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestNamespaceConst* ptr = new (NotNull, JSC::allocateCell<JSTestNamespaceConst>(vm)) JSTestNamespaceConst(structure, *globalObject);
+        ptr->finishCreation(vm);
         return ptr;
     }
 

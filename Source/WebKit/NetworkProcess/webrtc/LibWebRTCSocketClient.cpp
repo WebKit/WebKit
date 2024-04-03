@@ -29,7 +29,6 @@
 #if USE(LIBWEBRTC)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NetworkRTCProvider.h"
@@ -67,9 +66,9 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
     }
 }
 
-void LibWebRTCSocketClient::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
+void LibWebRTCSocketClient::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress& socketAddress, const rtc::PacketOptions& options)
 {
-    m_socket->SendTo(data, size, socketAddress, options);
+    m_socket->SendTo(data.data(), data.size(), socketAddress, options);
     auto error = m_socket->GetError();
     RELEASE_LOG_ERROR_IF(error && m_sendError != error, Network, "LibWebRTCSocketClient::sendTo (ID=%" PRIu64 ") failed with error %d", m_identifier.toUInt64(), error);
     m_sendError = error;
@@ -96,7 +95,7 @@ void LibWebRTCSocketClient::setOption(int option, int value)
 void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, const char* value, size_t length, const rtc::SocketAddress& address, const rtc::PacketTime& packetTime)
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
-    IPC::DataReference data(reinterpret_cast<const uint8_t*>(value), length);
+    std::span data(reinterpret_cast<const uint8_t*>(value), length);
     m_connection->send(Messages::LibWebRTCNetwork::SignalReadPacket(m_identifier, data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime), 0);
 }
 

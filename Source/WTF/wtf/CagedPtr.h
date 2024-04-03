@@ -38,9 +38,7 @@
 
 namespace WTF {
 
-constexpr bool tagCagedPtr = true;
-
-template<Gigacage::Kind passedKind, typename T, bool shouldTag = false, typename PtrTraits = RawPtrTraits<T>>
+template<Gigacage::Kind passedKind, typename T, typename PtrTraits = RawPtrTraits<T>>
 class CagedPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
@@ -50,50 +48,38 @@ public:
 
     CagedPtr() : CagedPtr(nullptr) { }
     CagedPtr(std::nullptr_t)
-        : m_ptr(shouldTag ? tagArrayPtr<T>(nullptr, 0) : nullptr)
+        : m_ptr(nullptr)
     { }
 
-    CagedPtr(T* ptr, size_t size)
-        : m_ptr(shouldTag ? tagArrayPtr(ptr, size) : ptr)
+    CagedPtr(T* ptr)
+        : m_ptr(ptr)
     { }
 
-    T* get(size_t size) const
+    T* get() const
     {
         ASSERT(m_ptr);
         T* ptr = PtrTraits::unwrap(m_ptr);
-        T* cagedPtr = Gigacage::caged(kind, ptr);
-        T* untaggedPtr = shouldTag ? untagArrayPtr(mergePointers(ptr, cagedPtr), size) : cagedPtr;
-        return untaggedPtr;
+        return Gigacage::caged(kind, ptr);
     }
 
-    T* getMayBeNull(size_t size) const
+    T* getMayBeNull() const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        if (!removeArrayPtrTag(ptr))
+        if (!ptr)
             return nullptr;
-        T* cagedPtr = Gigacage::caged(kind, ptr);
-        T* untaggedPtr = shouldTag ? untagArrayPtr(mergePointers(ptr, cagedPtr), size) : cagedPtr;
-        return untaggedPtr;
+        return Gigacage::caged(kind, ptr);
     }
 
     T* getUnsafe() const
     {
         T* ptr = PtrTraits::unwrap(m_ptr);
-        ptr = shouldTag ? removeArrayPtrTag(ptr) : ptr;
         return Gigacage::cagedMayBeNull(kind, ptr);
     }
 
     // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
     template<typename U = T>
     typename std::enable_if<!std::is_same<void, U>::value, T>::type&
-    /* T& */ at(size_t index, size_t size) const { return get(size)[index]; }
-
-    void recage(size_t oldSize, size_t newSize)
-    {
-        auto ptr = get(oldSize);
-        ASSERT(ptr == getUnsafe());
-        *this = CagedPtr(ptr, newSize);
-    }
+    /* T& */ at(size_t index) const { return get()[index]; }
 
     CagedPtr(CagedPtr& other)
         : m_ptr(other.m_ptr)
@@ -135,21 +121,10 @@ public:
     }
     
 protected:
-    static inline T* mergePointers(T* sourcePtr, T* cagedPtr)
-    {
-#if CPU(ARM64E)
-        return reinterpret_cast<T*>((reinterpret_cast<uintptr_t>(sourcePtr) & ~nonPACBitsMask) | (reinterpret_cast<uintptr_t>(cagedPtr) & nonPACBitsMask));
-#else
-        UNUSED_PARAM(sourcePtr);
-        return cagedPtr;
-#endif
-    }
-
     typename PtrTraits::StorageType m_ptr;
 };
 
 } // namespace WTF
 
 using WTF::CagedPtr;
-using WTF::tagCagedPtr;
 

@@ -200,9 +200,6 @@ private:
 Locker(Lock&) -> Locker<Lock>;
 Locker(AdoptLockTag, Lock&) -> Locker<Lock>;
 
-using LockHolder = Locker<Lock>;
-
 } // namespace WTF
 
 using WTF::Lock;
-using WTF::LockHolder;

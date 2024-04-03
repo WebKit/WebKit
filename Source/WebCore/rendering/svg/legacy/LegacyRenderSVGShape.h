@@ -61,10 +61,10 @@ public:
     virtual ~LegacyRenderSVGShape();
 
     inline SVGGraphicsElement& graphicsElement() const;
+    inline Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     void setNeedsBoundariesUpdate() final { m_needsBoundariesUpdate = true; }
-    bool needsBoundariesUpdate() final { return m_needsBoundariesUpdate; }
     void setNeedsTransformUpdate() final { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext&) const;
     virtual void strokeShape(GraphicsContext&) const;

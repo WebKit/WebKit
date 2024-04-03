@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="./resources/inspector-test.js"></script>
+<script>
+var pc1, pc2;
+async function setupCall()
+{
+    pc1 = new RTCPeerConnection();
+    pc2 = new RTCPeerConnection();
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    pc1.addTrack(localStream.getVideoTracks()[0], localStream);
+
+    pc1.onicecandidate = event => { pc2.addIceCandidate(event.candidate); };
+    pc2.onicecandidate = event => { pc1.addIceCandidate(event.candidate); };
+
+    await pc1.setLocalDescription();
+    await pc2.setRemoteDescription(pc1.localDescription);
+    await pc2.createAnswer();
+    await pc2.setLocalDescription(pc2.localDescription);
+    await pc1.setRemoteDescription(pc2.localDescription);
+}
+
+async function testStatsLogs()
+{
+    setupCall();
+
+    let resolveCallback;
+    let promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject("timed out 1"), 5000);
+    });
+
+    gatherRTCLogs(logs => {
+        if (logs.type === "stats")
+            resolveCallback(logs);
+    });
+
+    const statsLogs = await promise;
+
+    TestPage.log("Stats type: '" + statsLogs.type + "'");
+    TestPage.log("Stats level: '" + !statsLogs.level + "'");
+    TestPage.log("Stats connection: '" + (statsLogs.connection === pc1 || statsLogs.connection === pc2) + "'");
+
+    const parsed = JSON.parse(statsLogs.message);
+    TestPage.log("Stats message: '" + !!parsed + "'");
+
+    TestPage.dispatchEventToFrontend("Continue");
+}
+
+async function testRTCLogs()
+{
+    let resolveCallback;
+    let promise = new Promise((resolve, reject) => {
+        resolveCallback = resolve;
+        setTimeout(() => reject("timed out 1"), 5000);
+    });
+
+    gatherRTCLogs(logs => {
+        if (logs.type === "logs")
+            resolveCallback(logs);
+    });
+
+    const logs = await promise;
+
+    TestPage.log("Logs type: '" + logs.type + "'");
+    TestPage.log("Logs level: '" + !!logs.level + "'");
+    TestPage.log("Logs connection: '" + !logs.connection + "'");
+
+    TestPage.log("Logs message: '" + !!logs.message + "'");
+
+    TestPage.dispatchEventToFrontend("Continue");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebRTC logs");
+
+    function addTestCase({name, description, expression, validate}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test", includeCommandLineAPI: true},  () => { });
+                await Promise.all([
+                    InspectorTest.awaitEvent("Continue"),
+                ]);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Stats",
+        expression: `testStatsLogs()`,
+    });
+
+    addTestCase({
+        name: "Logs",
+        expression: `testRTCLogs()`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

@@ -31,12 +31,12 @@
 #include <memory>
 #include <wpe/webkit.h>
 
-#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
-#include <gst/gst.h>
+#if USE_ATK
+#include <atk/atk.h>
 #endif
 
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
-#include <atk/atk.h>
+#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
+#include <gst/gst.h>
 #endif
 
 static const char** uriArguments;
@@ -142,6 +142,14 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
 
         if ((keyval == WPE_KEY_Right || keyval == WPE_KEY_KP_Right) && webkit_web_view_can_go_forward(webView)) {
             webkit_web_view_go_forward(webView);
+            return TRUE;
+        }
+
+        if (keyval == WPE_KEY_Up) {
+            if (wpe_view_get_state(view) & WPE_VIEW_STATE_MAXIMIZED)
+                wpe_view_unmaximize(view);
+            else
+                wpe_view_maximize(view);
             return TRUE;
         }
     }
@@ -351,6 +359,7 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "enable-developer-extras", TRUE,
         "enable-webgl", TRUE,
         "enable-media-stream", TRUE,
+        "enable-webrtc", TRUE,
         "enable-encrypted-media", TRUE,
         nullptr);
 
@@ -388,6 +397,10 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
     }, backend) : nullptr;
 
+    auto* defaultWebsitePolicies = webkit_website_policies_new_with_policies(
+        "autoplay", WEBKIT_AUTOPLAY_ALLOW,
+        nullptr);
+
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
         "web-context", webContext,
@@ -397,12 +410,14 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "settings", settings,
         "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
+        "website-policies", defaultWebsitePolicies,
         nullptr));
     g_object_unref(settings);
+    g_object_unref(defaultWebsitePolicies);
 
     if (backend) {
         backend->setInputClient(std::make_unique<InputClient>(application, webView));
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
+#if USE_ATK
         auto* accessible = wpe_view_backend_dispatch_get_accessible(backend->backend());
         if (ATK_IS_OBJECT(accessible))
             backend->setAccessibleChild(ATK_OBJECT(accessible));

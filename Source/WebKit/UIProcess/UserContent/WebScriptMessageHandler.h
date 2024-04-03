@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIContentWorld.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "WebUserContentControllerDataTypes.h"
 #include <wtf/Identified.h>
 #include <wtf/Ref.h>
@@ -48,7 +49,7 @@ class WebPageProxy;
 class WebFrameProxy;
 struct FrameInfoData;
 
-class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public Identified<WebScriptMessageHandler>  {
+class WebScriptMessageHandler : public RefCounted<WebScriptMessageHandler>, public Identified<ScriptMessageHandlerIdentifier>  {
 public:
     class Client {
     public:

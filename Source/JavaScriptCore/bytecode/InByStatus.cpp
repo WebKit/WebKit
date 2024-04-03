@@ -51,14 +51,14 @@ void InByStatus::shrinkToFit()
 }
 
 #if ENABLE(JIT)
-InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit)
+InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit, CodeOrigin codeOrigin)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
     InByStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), map.get(CodeOrigin(bytecodeIndex)).stubInfo);
+    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), map.get(CodeOrigin(bytecodeIndex)).stubInfo, codeOrigin);
 
     if (!result.takesSlowPath() && didExit)
         return InByStatus(TakesSlowPath);
@@ -71,9 +71,9 @@ InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, By
     return result;
 }
 
-InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex)
+InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, CodeOrigin codeOrigin)
 {
-    return computeFor(profiledBlock, map, bytecodeIndex, hasBadCacheExitSite(profiledBlock, bytecodeIndex));
+    return computeFor(profiledBlock, map, bytecodeIndex, hasBadCacheExitSite(profiledBlock, bytecodeIndex), codeOrigin);
 }
 
 InByStatus InByStatus::computeFor(
@@ -88,8 +88,7 @@ InByStatus InByStatus::computeFor(
         
         auto bless = [&] (const InByStatus& result) -> InByStatus {
             if (!context->isInlined(codeOrigin)) {
-                InByStatus baselineResult = computeFor(
-                    profiledBlock, baselineMap, bytecodeIndex, didExit);
+                InByStatus baselineResult = computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, codeOrigin);
                 baselineResult.merge(result);
                 return baselineResult;
             }
@@ -103,7 +102,7 @@ InByStatus InByStatus::computeFor(
             InByStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), status.stubInfo);
+                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), status.stubInfo, codeOrigin);
             }
             if (result.isSet())
                 return bless(result);
@@ -114,21 +113,21 @@ InByStatus InByStatus::computeFor(
             return bless(*status.inStatus);
     }
     
-    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit);
+    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit, codeOrigin);
 }
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
 InByStatus InByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin)
 {
-    InByStatus result = InByStatus::computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), stubInfo);
+    InByStatus result = InByStatus::computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), stubInfo, codeOrigin);
 
     if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex()))
         return InByStatus(TakesSlowPath);
     return result;
 }
 
-InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM& vm, StructureStubInfo* stubInfo)
+InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM& vm, StructureStubInfo* stubInfo, CodeOrigin codeOrigin)
 {
     StubInfoSummary summary = StructureStubInfo::summary(vm, stubInfo);
     if (!isInlineable(summary))
@@ -164,6 +163,28 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
 
     case CacheType::Stub: {
         PolymorphicAccess* list = stubInfo->m_stub.get();
+        if (list->size() == 1) {
+            const AccessCase& access = list->at(0);
+            switch (access.type()) {
+            case AccessCase::InMegamorphic:
+            case AccessCase::IndexedMegamorphicIn: {
+                // Emitting InMegamorphic means that we give up polymorphic IC optimization. So this needs very careful handling.
+                // It is possible that one function can be inlined from the other function, and then it gets limited # of structures.
+                // In this case, continue using IC is better than falling back to megamorphic case. But if the function gets compiled before,
+                // and even optimizing JIT saw the megamorphism, then this is likely that this function continues having megamorphic behavior,
+                // and inlined megamorphic code is faster. Currently, we use InMegamorphic only when the exact same form of CodeOrigin gets
+                // this megamorphic GetById before (same level of inlining etc.). This is very conservative but effective since IC is very fast
+                // when it worked well (but costly if it doesn't work and get megamorphic). Once this cost-benefit tradeoff gets changed (via
+                // handler IC), we can revisit this condition.
+                if (isSameStyledCodeOrigin(stubInfo->codeOrigin, codeOrigin) && !stubInfo->tookSlowPath)
+                    return InByStatus(Megamorphic);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
             if (access.viaGlobalProxy())
@@ -240,7 +261,18 @@ void InByStatus::merge(const InByStatus& other)
     case NoInformation:
         *this = other;
         return;
-        
+
+    case Megamorphic:
+        if (m_state != other.m_state) {
+            if (other.m_state == Simple) {
+                *this = other;
+                return;
+            }
+            *this = InByStatus(TakesSlowPath);
+            return;
+        }
+        return;
+
     case Simple:
         if (other.m_state != Simple) {
             *this = InByStatus(TakesSlowPath);
@@ -313,6 +345,9 @@ void InByStatus::dump(PrintStream& out) const
         break;
     case Simple:
         out.print("Simple");
+        break;
+    case Megamorphic:
+        out.print("Megamorphic");
         break;
     case TakesSlowPath:
         out.print("TakesSlowPath");

@@ -5,7 +5,7 @@ layer at (0,0) size 800x52
     RenderBody {body} at (8,8) size 784x36
       RenderText {#text} at (0,0) size 170x17
         text run at (0,0) width 170: "This tests the behaviour of "
-      RenderInline {code} at (0,0) size 224x15
+      RenderInline {code} at (170,3) size 224x15
         RenderText {#text} at (170,3) size 224x15
           text run at (170,3) width 224: "SVGLocatable::getScreenCTM()"
       RenderText {#text} at (394,0) size 109x17

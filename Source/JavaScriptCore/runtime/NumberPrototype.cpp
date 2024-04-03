@@ -361,7 +361,7 @@ static String toStringWithRadixInternal(int32_t number, unsigned radix)
     if (negative)
         *--p = '-';
 
-    return String(p, static_cast<unsigned>(end - p));
+    return String({ p, end });
 }
 
 String toStringWithRadix(double doubleValue, int32_t radix)

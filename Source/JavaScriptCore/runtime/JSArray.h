@@ -115,6 +115,8 @@ public:
     IndexingType mergeIndexingTypeForCopying(IndexingType other, bool allowPromotion);
     bool appendMemcpy(JSGlobalObject*, VM&, unsigned startIndex, JSArray* otherArray);
 
+    ALWAYS_INLINE bool definitelyNegativeOneMiss() const;
+
     enum ShiftCountMode {
         // This form of shift hints that we're doing queueing. With this assumption in hand,
         // we convert to ArrayStorage, which has queue optimizations.
@@ -219,7 +221,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
             return nullptr;
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, vectorLengthHint);
-        void* temp = vm.jsValueGigacageAuxiliarySpace().allocate(
+        void* temp = vm.auxiliarySpace().allocate(
             vm,
             Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)),
             nullptr, AllocationFailureMode::ReturnNull);

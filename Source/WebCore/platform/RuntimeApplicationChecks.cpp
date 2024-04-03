@@ -109,6 +109,10 @@ const char* processTypeDescription(std::optional<AuxiliaryProcessType> type)
     case AuxiliaryProcessType::GPU:
         return "GPU";
 #endif
+#if ENABLE(MODEL_PROCESS)
+    case AuxiliaryProcessType::Model:
+        return "Model";
+#endif
     }
     return "Unknown";
 }

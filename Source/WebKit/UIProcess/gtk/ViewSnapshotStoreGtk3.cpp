@@ -28,7 +28,7 @@
 
 #if !USE(GTK4)
 
-#include <WebCore/CairoUtilities.h>
+#include <cairo.h>
 
 namespace WebKit {
 using namespace WebCore;

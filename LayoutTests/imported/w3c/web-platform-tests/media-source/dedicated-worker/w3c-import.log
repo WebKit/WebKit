@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-message-util.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-detach-element.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-duration.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-duration.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-get-objecturl.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-handle-transfer-to-main.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-handle-transfer.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-handle-transfer.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-handle.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-handle.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-must-fail-if-unsupported.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-objecturl.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-objecturl.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play-terminate-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play-terminate-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play.html
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play.js
+/LayoutTests/imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-util.js

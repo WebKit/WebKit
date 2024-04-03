@@ -36,17 +36,22 @@ class Scrollbar;
 class ScrollingStateFrameHostingNode final : public ScrollingStateNode {
 public:
     WEBCORE_EXPORT static Ref<ScrollingStateFrameHostingNode> create(ScrollingStateTree&, ScrollingNodeID);
-    WEBCORE_EXPORT static Ref<ScrollingStateFrameHostingNode> create(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
+    WEBCORE_EXPORT static Ref<ScrollingStateFrameHostingNode> create(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, std::optional<LayerHostingContextIdentifier>);
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
+
+    std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_hostingContext; }
+    void setLayerHostingContextIdentifier(const std::optional<LayerHostingContextIdentifier>);
 
     virtual ~ScrollingStateFrameHostingNode();
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
-    ScrollingStateFrameHostingNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
+    ScrollingStateFrameHostingNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, std::optional<LayerHostingContextIdentifier>);
     ScrollingStateFrameHostingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFrameHostingNode(const ScrollingStateFrameHostingNode&, ScrollingStateTree&);
+
+    std::optional<LayerHostingContextIdentifier> m_hostingContext;
 };
 
 } // namespace WebCore

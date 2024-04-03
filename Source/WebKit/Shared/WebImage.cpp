@@ -137,11 +137,8 @@ RefPtr<ShareableBitmap> WebImage::bitmap() const
         return nullptr;
     const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
 
-    auto* sharing = m_buffer->toBackendSharing();
-    if (!is<ImageBufferBackendHandleSharing>(sharing))
-        return nullptr;
-
-    return downcast<ImageBufferBackendHandleSharing>(*sharing).bitmap();
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(m_buffer->toBackendSharing());
+    return sharing ? sharing->bitmap() : nullptr;
 }
 
 #if USE(CAIRO)
@@ -156,16 +153,16 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
     if (!m_buffer)
-        return std::nullopt;
+        return { };
     const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
 
-    auto* sharing = m_buffer->toBackendSharing();
-    if (!is<ImageBufferBackendHandleSharing>(sharing))
-        return std::nullopt;
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(m_buffer->toBackendSharing());
+    if (!sharing)
+        return { };
 
-    auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle(protection);
+    auto backendHandle = sharing->createBackendHandle(protection);
     if (!backendHandle)
-        return std::nullopt;
+        return { };
 
     return std::get<ShareableBitmap::Handle>(WTFMove(*backendHandle));
 }

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "LegacyCustomProtocolID.h"
 #include "MessageReceiver.h"
 #include <wtf/CheckedRef.h>
@@ -60,7 +59,7 @@ public:
 
     void wasRedirectedToRequest(LegacyCustomProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponse(LegacyCustomProtocolID, const WebCore::ResourceResponse&, CacheStoragePolicy);
-    void didLoadData(LegacyCustomProtocolID, const IPC::DataReference&);
+    void didLoadData(LegacyCustomProtocolID, std::span<const uint8_t>);
     void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
     void didFinishLoading(LegacyCustomProtocolID);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,41 +70,38 @@ bool shouldAllowAutoFillForCellularIdentifiers(const URL& topURL)
         return false;
     }
 
-    WebCore::RegistrableDomain domain { topURL };
-    if (domain.isEmpty()) {
+    auto host = topURL.host().toString();
+    if (host.isEmpty()) {
         if (!std::exchange(hasLogged, true))
             RELEASE_LOG(Telephony, "Skipped cellular AutoFill status check (no registrable domain)");
         return false;
     }
 
-    auto domainString = domain.string();
-
+#if HAVE(DELAY_INIT_LINKING)
+    static NeverDestroyed cachedClient = adoptNS([[CoreTelephonyClient alloc] initWithQueue:dispatch_get_main_queue()]);
+#else
     static NeverDestroyed cachedClient = adoptNS([PAL::allocCoreTelephonyClientInstance() initWithQueue:dispatch_get_main_queue()]);
+#endif
     auto client = cachedClient->get();
-    if (![client respondsToSelector:@selector(isAutofilleSIMIdAllowedForDomain:error:)]) {
-        if (!std::exchange(hasLogged, true))
-            RELEASE_LOG(Telephony, "Skipped cellular AutoFill status check (missing support in CoreTelephony)");
-        return false;
-    }
 
-    static NeverDestroyed<String> lastQueriedDomainString;
-    static bool lastQueriedDomainResult = false;
-    if (lastQueriedDomainString.get() == domainString)
-        return lastQueriedDomainResult;
+    static NeverDestroyed<String> lastQueriedHost;
+    static bool lastQueriedHostResult = false;
+    if (lastQueriedHost.get() == host)
+        return lastQueriedHostResult;
 
     NSError *error = nil;
-    BOOL result = [client isAutofilleSIMIdAllowedForDomain:domain.string() error:&error];
+    BOOL result = [client isAutofilleSIMIdAllowedForDomain:host error:&error];
     if (error && !std::exchange(hasLogged, true)) {
         RELEASE_LOG_ERROR(Telephony, "Failed to query cellular AutoFill status: %{public}@", error);
         return false;
     }
 
     if (!std::exchange(hasLogged, true))
-        RELEASE_LOG(Telephony, "Is cellular AutoFill allowed for current domain? %{public}@", result ? @"YES" : @"NO");
+        RELEASE_LOG(Telephony, "Is cellular AutoFill allowed for current host? %{public}@", result ? @"YES" : @"NO");
 
-    lastQueriedDomainString.get() = WTFMove(domainString);
-    lastQueriedDomainResult = !!result;
-    return lastQueriedDomainResult;
+    lastQueriedHost.get() = WTFMove(host);
+    lastQueriedHostResult = !!result;
+    return lastQueriedHostResult;
 }
 
 #endif // HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)

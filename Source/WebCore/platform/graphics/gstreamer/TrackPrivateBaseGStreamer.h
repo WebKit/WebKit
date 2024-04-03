@@ -107,6 +107,10 @@ protected:
     GRefPtr<GstCaps> m_initialCaps;
     AbortableTaskQueue m_taskQueue;
 
+    // Track ID inferred from container-specific-track-id tag.
+    std::optional<TrackID> m_trackID;
+    bool updateTrackIDFromTags(const GRefPtr<GstTagList>&);
+
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);
     static AtomString generateUniquePlaybin2StreamID(TrackType, unsigned index);

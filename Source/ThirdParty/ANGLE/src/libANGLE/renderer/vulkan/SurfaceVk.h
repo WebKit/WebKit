@@ -19,8 +19,6 @@
 
 namespace rx
 {
-class RendererVk;
-
 class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk::Resource
 {
   public:
@@ -45,7 +43,7 @@ class SurfaceVk : public SurfaceImpl, public angle::ObserverInterface, public vk
 class OffscreenSurfaceVk : public SurfaceVk
 {
   public:
-    OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, RendererVk *renderer);
+    OffscreenSurfaceVk(const egl::SurfaceState &surfaceState, vk::Renderer *renderer);
     ~OffscreenSurfaceVk() override;
 
     egl::Error initialize(const egl::Display *display) override;
@@ -471,7 +469,7 @@ class WindowSurfaceVk : public SurfaceVk
     // than two frame ahead of the frame being rendered (and three frames ahead of the one being
     // presented).  This is a failsafe, as the application should ensure command buffer recording is
     // not ahead of the frame being rendered by *one* frame.
-    angle::Result throttleCPU(DisplayVk *displayVk, const QueueSerial &currentSubmitSerial);
+    angle::Result throttleCPU(vk::Context *context, const QueueSerial &currentSubmitSerial);
 
     // Finish all GPU operations on the surface
     angle::Result finish(vk::Context *context);
@@ -486,8 +484,8 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool updateColorSpace(DisplayVk *displayVk);
 
-    angle::FormatID getIntendedFormatID(RendererVk *renderer);
-    angle::FormatID getActualFormatID(RendererVk *renderer);
+    angle::FormatID getIntendedFormatID(vk::Renderer *renderer);
+    angle::FormatID getActualFormatID(vk::Renderer *renderer);
 
     std::vector<vk::PresentMode> mPresentModes;
 

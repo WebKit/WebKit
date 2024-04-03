@@ -28,6 +28,7 @@
 #if (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)
 
 #include "DataDetectorHighlight.h"
+#include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 #include "PageOverlay.h"
 #include "Timer.h"
@@ -39,6 +40,8 @@ namespace WebCore {
     
 class LayoutRect;
 class Page;
+
+enum class RenderingUpdateStep : uint32_t;
 
 struct GapRects;
 
@@ -74,7 +77,14 @@ private:
 
     void determineActiveHighlight(bool& mouseIsOverButton);
     void clearActiveHighlight();
+
+#if ENABLE(DATA_DETECTION)
+    // DataDetectorHighlightClient
     DataDetectorHighlight* activeHighlight() const final { return m_activeHighlight.get(); }
+    void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep>) final;
+    float deviceScaleFactor() const final;
+    RefPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient&) final;
+#endif
 
     DataDetectorHighlight* findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight&);
 
@@ -87,9 +97,10 @@ private:
     Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
 
     Page& page() const { return m_page; }
+    Ref<Page> protectedPage() const { return m_page.get(); }
 
-    Page& m_page;
-    PageOverlay* m_servicesOverlay { nullptr };
+    SingleThreadWeakRef<Page> m_page;
+    WeakPtr<PageOverlay> m_servicesOverlay;
 
     RefPtr<DataDetectorHighlight> m_activeHighlight;
     RefPtr<DataDetectorHighlight> m_nextActiveHighlight;

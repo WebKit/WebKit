@@ -53,6 +53,8 @@ struct IPAddress {
 
     rtc::IPAddress rtcAddress() const;
 
+    bool isUnspecified() const { return std::holds_alternative<UnspecifiedFamily>(value); }
+
     std::variant<UnspecifiedFamily, uint32_t, std::array<uint32_t, 4>> value;
 };
 

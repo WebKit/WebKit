@@ -14,10 +14,10 @@ layer at (0,0) size 800x300
           text run at (189,18) width 487: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (675,18) width 77: "dummy text"
           text run at (0,36) width 405: "dummy text dummy text dummy text dummy text dummy text "
-        RenderInline {SPAN} at (0,0) size 266x38 [color=#0000FF] [border: (10px double #0000FF)]
+        RenderInline {SPAN} at (404,26) size 266x38 [color=#0000FF] [border: (10px double #0000FF)]
           RenderText {#text} at (414,36) size 246x18
             text run at (414,36) width 246: "two blue lines all around this blue text"
-        RenderText {#text} at (669,36) size 777x108
+        RenderText {#text} at (0,36) size 777x108
           text run at (669,36) width 5: " "
           text run at (673,36) width 78: "dummy text"
           text run at (0,54) width 405: "dummy text dummy text dummy text dummy text dummy text "
@@ -31,11 +31,11 @@ layer at (0,0) size 800x300
           text run at (27,108) width 487: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (513,108) width 239: "dummy text dummy text dummy text"
           text run at (0,126) width 81: "dummy text "
-        RenderInline {SPAN} at (0,0) size 241x20 [color=#0000FF] [border: (1px solid #0000FF)]
+        RenderInline {SPAN} at (80,125) size 241x20 [color=#0000FF] [border: (1px solid #0000FF)]
           RenderText {#text} at (81,126) size 239x18
             text run at (81,126) width 28: "one "
             text run at (108,126) width 212: "blue line all around this blue text"
-        RenderText {#text} at (320,126) size 778x90
+        RenderText {#text} at (0,126) size 778x90
           text run at (320,126) width 167: " dummy text dummy text "
           text run at (486,126) width 292: "dummy text dummy text dummy text dummy"
           text run at (0,144) width 190: "text dummy text dummy text "

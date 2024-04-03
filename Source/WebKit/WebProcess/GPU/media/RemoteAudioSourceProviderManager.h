@@ -29,11 +29,11 @@
 
 #include "Connection.h"
 #include "SharedCARingBuffer.h"
-#include "SharedMemory.h"
 #include "WebProcess.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/SharedMemory.h>
 #include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {

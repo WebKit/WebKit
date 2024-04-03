@@ -1,21 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 385x503
-        RenderImage {IMG} at (0,0) size 395x275
-        RenderBlock {H2} at (0,315) size 385x27
-          RenderText {#text} at (0,0) size 316x26
-            text run at (0,0) width 316: "This text should be on line one."
-        RenderBlock (anonymous) at (0,361) size 385x37
-          RenderText {#text} at (0,0) size 340x35
-            text run at (0,0) width 269: "This text should be on the following lines. "
-            text run at (269,0) width 71: "These lines"
-            text run at (0,18) width 121: "should not overlap."
-        RenderBlock {H2} at (0,437) size 385x28
-          RenderText {#text} at (0,0) size 211x26
-            text run at (0,0) width 211: "Here's what's weird."
-        RenderBlock (anonymous) at (0,484) size 385x19
-          RenderText {#text} at (0,0) size 136x17
-            text run at (0,0) width 136: "The problem persists!"
+layer at (0,0) size 800x452
+  RenderBlock {html} at (0,0) size 800x452
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 574x14
+          text run at (0,0) width 574: "error on line 34 at column 7: Opening and ending tag mismatch: img line 25 and div"
+          text run at (573,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
+    RenderBody {body} at (8,168) size 784x276
+      RenderBlock {div} at (0,0) size 385x275
+        RenderImage {img} at (0,0) size 395x275

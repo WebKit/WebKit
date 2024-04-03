@@ -49,6 +49,7 @@ private:
     InlineLayoutUnit inlineItemWidth(size_t inlineItemIndex, bool useFirstLineStyle) const;
     bool shouldTrimLeading(size_t inlineItemIndex, bool useFirstLineStyle, bool isFirstLineInChunk) const;
     bool shouldTrimTrailing(size_t inlineItemIndex, bool useFirstLineStyle) const;
+    Vector<size_t> computeBreakOpportunities(InlineItemRange) const;
 
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineItemList& m_inlineItemList;
@@ -63,6 +64,7 @@ private:
     size_t m_numberOfInlineItems { 0 };
     double m_maximumLineWidth { 0 };
     bool m_cannotBalanceContent { false };
+    bool m_hasSingleLineVisibleContent { false };
 
     struct SlidingWidth {
         SlidingWidth(const InlineContentBalancer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);

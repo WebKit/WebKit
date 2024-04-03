@@ -75,7 +75,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    Ref<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;
+    RefPtr<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;
 
     void destroy() final;
 

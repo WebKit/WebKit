@@ -1,0 +1,17 @@
+<style>
+div {
+  border: solid 1px black;
+  width: 200px;
+  font-size: 20px;
+  font-family: Monospace;
+}
+rt {
+ font-size: 5px;
+}
+span {
+    white-space: nowrap;
+}
+</style>
+PASS if base does not wrap
+<div>before ruby <ruby><span>b a s e</span><rt>annotation</rt></ruby> after ruby</div>
+<div>before ruby <ruby>b a s e<rt>annotation</rt></ruby> after ruby</div>

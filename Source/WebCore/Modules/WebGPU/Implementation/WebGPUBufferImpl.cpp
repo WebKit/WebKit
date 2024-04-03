@@ -65,7 +65,7 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
 
     // FIXME: Check the casts.
     auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
-        callback(status == WGPUBufferMapAsyncStatus_Success ? true : false);
+        callback(status == WGPUBufferMapAsyncStatus_Success);
     });
     wgpuBufferMapAsync(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &mapAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in mapAsyncCallback().
 }

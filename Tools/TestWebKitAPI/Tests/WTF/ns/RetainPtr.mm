@@ -94,7 +94,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromMutableNSType)
     RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSameNSType)
@@ -114,7 +114,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSameNSType)
     RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSType)
@@ -134,7 +134,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSType)
     RetainPtr<NSString> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSTypeReversed)
@@ -154,7 +154,7 @@ TEST(RETAIN_PTR_TEST_NAME, ConstructionFromSimilarNSTypeReversed)
     RetainPtr<NSString *> ptr2(WTFMove(temp));
 
     EXPECT_EQ(string, ptr2);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromMutableNSType)
@@ -176,7 +176,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromMutableNSType)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSameNSType)
@@ -198,7 +198,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSameNSType)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSType)
@@ -220,7 +220,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSType)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSTypeReversed)
@@ -242,7 +242,7 @@ TEST(RETAIN_PTR_TEST_NAME, MoveAssignmentFromSimilarNSTypeReversed)
     ptr = WTFMove(temp);
 
     EXPECT_EQ(string, ptr);
-    EXPECT_EQ((NSString *)nil, temp);
+    SUPPRESS_USE_AFTER_MOVE EXPECT_EQ((NSString *)nil, temp.get());
 }
 
 TEST(RETAIN_PTR_TEST_NAME, OptionalRetainPtrNS)

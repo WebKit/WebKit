@@ -67,7 +67,7 @@
 #import "WindowServerConnection.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import "TCCSoftLink.h"
 #endif
 
@@ -116,7 +116,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
 
-        CheckedRef<WebProcessProxy> m_webProcessProxy;
+        WeakRef<WebProcessProxy> m_webProcessProxy;
     };
 
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());
@@ -246,7 +246,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcessProxy::isAXAuthenticated(CoreIPCAuditToken&& auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken.auditToken(), nullptr);

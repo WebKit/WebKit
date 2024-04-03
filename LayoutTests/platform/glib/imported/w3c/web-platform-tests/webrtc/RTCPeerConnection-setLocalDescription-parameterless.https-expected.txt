@@ -1,0 +1,17 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Parameterless SLD() in 'stable' goes to 'have-local-offer'
+PASS Parameterless SLD() in 'stable' sets pendingLocalDescription
+FAIL Parameterless SLD() in 'stable' assigns transceiver.mid assert_not_equals: got disallowed value null
+PASS Parameterless SLD() in 'have-remote-offer' goes to 'stable'
+PASS Parameterless SLD() in 'have-remote-offer' sets currentLocalDescription
+TIMEOUT Parameterless SLD() in 'have-remote-offer' sets transceiver.currentDirection Test timed out
+NOTRUN Parameterless SLD() uses [[LastCreatedOffer]] if it is still valid
+NOTRUN Parameterless SLD() uses [[LastCreatedAnswer]] if it is still valid
+NOTRUN Parameterless SLD() rejects with InvalidStateError if already closed
+NOTRUN Parameterless SLD() never settles if closed while pending
+NOTRUN Parameterless SLD() in a full O/A exchange succeeds
+NOTRUN Parameterless SRD() rejects with TypeError.
+NOTRUN RTCSessionDescription constructed without type throws TypeError
+

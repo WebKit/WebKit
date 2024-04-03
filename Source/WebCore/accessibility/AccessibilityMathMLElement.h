@@ -49,7 +49,7 @@ protected:
 
 private:
     AccessibilityRole determineAccessibilityRole() final;
-    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
+    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override;
     String stringValue() const override;
     bool isIgnoredElementWithinMathTree() const final;
 

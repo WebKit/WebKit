@@ -59,15 +59,20 @@ public:
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
     Device& device() const { return m_device; }
-    void makeInvalid();
+    void makeInvalid(NSString*);
+    void setBufferMapCount(int);
+    int bufferMapCount() const;
+    NSString* lastError() const;
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&);
     CommandBuffer(Device&);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
+    int m_bufferMapCount { 0 };
 
     const Ref<Device> m_device;
+    NSString* m_lastErrorString { nil };
 };
 
 } // namespace WebGPU

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width">
     <script src="../../../../resources/testharness.js"></script>
     <script src="../../../../resources/testharnessreport.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
     <script type="text/javascript">
       setup({ "explicit_done": true });
       function height(id) {
@@ -32,7 +33,8 @@
           testRunner.runUIScript(`
             uiController.findString("match", ${findOptions}, ${maxCount}); // match 4
             uiController.uiScriptComplete("Done");
-          `, afterMatch4.step_func_done(function() {
+          `, afterMatch4.step_func_done(async function() {
+              await UIHelper.ensurePresentationUpdate();
               assert_greater_than(node.scrollTop, 0);
               var expectedScrollTop = height("divBefore") + height("match4") / 2 - height("scrollable") / 2;
               assert_approx_equals(node.scrollTop, expectedScrollTop, 2);

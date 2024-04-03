@@ -39,8 +39,6 @@ public:
         return adoptRef(*new BeforeTextInsertedEvent(text));
     }
 
-    EventInterface eventInterface() const override;
-
     const String& text() const { return m_text; }
     void setText(const String& s) { m_text = s; }
 

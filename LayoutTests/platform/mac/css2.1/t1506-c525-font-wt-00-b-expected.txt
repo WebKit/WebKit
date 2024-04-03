@@ -41,7 +41,7 @@ layer at (0,0) size 800x440
       RenderBlock {P} at (0,389) size 784x19 [color=#000080]
         RenderText {#text} at (0,0) size 204x18
           text run at (0,0) width 204: "This sentence should be bold. "
-        RenderInline {SPAN} at (0,0) size 208x18
+        RenderInline {SPAN} at (203,0) size 208x18
           RenderText {#text} at (203,0) size 208x18
             text run at (203,0) width 208: "This sentence should be normal."
         RenderText {#text} at (0,0) size 0x0

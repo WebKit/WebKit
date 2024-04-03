@@ -50,13 +50,18 @@ public:
 
     virtual unsigned length() const;
     virtual bool contains(TrackBase&) const;
+    virtual bool contains(TrackID) const;
     virtual void remove(TrackBase&, bool scheduleEvent = true);
+    virtual void remove(TrackID, bool scheduleEvent = true);
+    virtual RefPtr<TrackBase> find(TrackID) const;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override = 0;
+    enum EventTargetInterfaceType eventTargetInterface() const override = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
+    void didMoveToNewDocument(Document&);
 
     WebCoreOpaqueRoot opaqueRoot();
 

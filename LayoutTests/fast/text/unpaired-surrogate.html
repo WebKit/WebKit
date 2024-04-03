@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html>
-<head>
-</head>
+<script src="../../resources/js-test.js"></script>
+<style>
+  #ref, #target {
+      background: lightblue;
+      display: inline-block;
+      font-size: 100px;
+      text-rendering: optimizeSpeed; // To take the simple text code path
+  }
+</style>
 <body>
-<div id="target" style="font-size: 100px;"></div>
-<script>
-let target = document.getElementById("target");
-target.textContent = 'a\uD800b';
-</script>
+  <span id="target"></span><br>
+  <span id="ref"></span><br>
+  <script>
+    description('An unpaired surrogate should show a glyph. "a\\uD800b" should be longer than "ab"');
+    document.getElementById("target").textContent = 'a\uD800b';
+    document.getElementById("ref").textContent = 'ab';
+    shouldBeGreaterThan("target.clientWidth", "ref.clientWidth");
+  </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 514x17
           text run at (0,0) width 514: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
         RenderInline {B} at (0,0) size 751x35
-          RenderText {#text} at (514,0) size 751x35
+          RenderText {#text} at (0,0) size 751x35
             text run at (514,0) width 237: "This demonstrates what might be a"
             text run at (0,18) width 31: "bug:"
         RenderText {#text} at (31,18) size 421x17

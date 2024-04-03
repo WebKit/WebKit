@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 402: "This tests inserting a paragraph separator after a horizontal rule. "
           text run at (402,0) width 379: "You should see 'foo', empty paragraph, horizontal rule, 'bar',"
           text run at (0,18) width 329: "and the caret should be just after the horizontal rule. "
-        RenderInline {B} at (0,0) size 777x35
-          RenderText {#text} at (329,18) size 777x35
+        RenderInline {B} at (0,18) size 777x35
+          RenderText {#text} at (0,18) size 777x35
             text run at (329,18) width 168: "This demonstrates 8345. "
             text run at (497,18) width 280: "The caret after a horizontal rule is drawn"
             text run at (0,36) width 381: "in the same location as the caret before a horizontal rule."

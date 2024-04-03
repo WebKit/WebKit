@@ -1105,7 +1105,7 @@ static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame*
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto otherViewWithString = otherJSString->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view, pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -1378,7 +1378,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         //   b. If e is failure, then let q = q+1.
         //   c. Else, e is an integer index <= s.
         size_t position = 0;
-        while ((matchPosition = stringImpl->find(separatorImpl, position)) != notFound) {
+        while ((matchPosition = StringView(stringImpl).find(vm.adaptiveStringSearcherTables(), StringView(separatorImpl), position)) != notFound) {
             // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
             //    through q (exclusive).
             // 2. Call CreateDataProperty(A, ToString(lengthA), T).
@@ -1810,7 +1810,7 @@ static EncodedJSValue stringIncludesImpl(JSGlobalObject* globalObject, VM& vm, S
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.find(searchString, start) != notFound));
+    return JSValue::encode(jsBoolean(StringView(stringToSearchIn).find(vm.adaptiveStringSearcherTables(), StringView(searchString), start) != notFound));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIncludes, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1874,23 +1874,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIterator, (JSGlobalObject* globalObject,
 
 enum class NormalizationForm { NFC, NFD, NFKC, NFKD };
 
-static constexpr bool normalizationAffects8Bit(NormalizationForm form)
-{
-    switch (form) {
-    case NormalizationForm::NFC:
-        return false;
-    case NormalizationForm::NFD:
-        return true;
-    case NormalizationForm::NFKC:
-        return false;
-    case NormalizationForm::NFKD:
-        return true;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return true;
-}
-
 static const UNormalizer2* normalizer(NormalizationForm form)
 {
     UErrorCode status = U_ZERO_ERROR;
@@ -1923,7 +1906,10 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     RETURN_IF_EXCEPTION(scope, { });
 
     StringView view = viewWithString.view;
-    if (view.is8Bit() && (!normalizationAffects8Bit(form) || charactersAreAllASCII(view.characters8(), view.length())))
+    // Latin-1 characters (U+0000..U+00FF) are left unaffected by NFC.
+    // ASCII characters (U+0000..U+007F) are left unaffected by all of the Normalization Forms
+    // https://unicode.org/reports/tr15/#Description_Norm
+    if (view.is8Bit() && (form == NormalizationForm::NFC || view.containsOnlyASCII()))
         RELEASE_AND_RETURN(scope, string);
 
     const UNormalizer2* normalizer = JSC::normalizer(form);
@@ -1985,9 +1971,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncNormalize, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, JSValue::encode(normalize(globalObject, string, form)));
 }
 
-static inline std::optional<unsigned> illFormedIndex(const UChar* characters, unsigned length)
+static inline std::optional<unsigned> illFormedIndex(std::span<const UChar> characters)
 {
-    for (unsigned index = 0; index < length; ++index) {
+    for (unsigned index = 0; index < characters.size(); ++index) {
         UChar character = characters[index];
         if (!U16_IS_SURROGATE(character))
             continue;
@@ -1996,7 +1982,7 @@ static inline std::optional<unsigned> illFormedIndex(const UChar* characters, un
             return index;
 
         ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == length)
+        if ((index + 1) == characters.size())
             return index;
         UChar nextCharacter = characters[index + 1];
 
@@ -2029,7 +2015,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIsWellFormed, (JSGlobalObject* globalObj
 
     if (string.is8Bit())
         return JSValue::encode(jsBoolean(true));
-    return JSValue::encode(jsBoolean(!illFormedIndex(string.characters16(), string.length())));
+    return JSValue::encode(jsBoolean(!illFormedIndex(string.span16())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2057,16 +2043,15 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     if (string.is8Bit())
         return JSValue::encode(stringValue);
 
-    const UChar* characters = string.characters16();
-    unsigned length = string.length();
-    auto firstIllFormedIndex = illFormedIndex(characters, length);
+    auto characters = string.span16();
+    auto firstIllFormedIndex = illFormedIndex(characters);
     if (!firstIllFormedIndex)
         return JSValue::encode(stringValue);
 
     Vector<UChar> buffer;
-    buffer.reserveInitialCapacity(length);
-    buffer.append(characters, firstIllFormedIndex.value());
-    for (unsigned index = firstIllFormedIndex.value(); index < length; ++index) {
+    buffer.reserveInitialCapacity(characters.size());
+    buffer.append(characters.first(*firstIllFormedIndex));
+    for (unsigned index = firstIllFormedIndex.value(); index < characters.size(); ++index) {
         UChar character = characters[index];
 
         if (!U16_IS_SURROGATE(character)) {
@@ -2080,7 +2065,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
         }
 
         ASSERT(U16_IS_SURROGATE_LEAD(character));
-        if ((index + 1) == length) {
+        if ((index + 1) == characters.size()) {
             buffer.append(replacementCharacter);
             continue;
         }

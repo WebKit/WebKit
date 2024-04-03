@@ -60,7 +60,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
     {
         unsigned protocolsCount;
         auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(class_copyProtocolList(cls, &protocolsCount));
-        worklist.append(protocols.get(), protocolsCount);
+        worklist.append(std::span { protocols.get(), protocolsCount });
     }
 
     bool stop = false;
@@ -83,7 +83,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
         {
             unsigned protocolsCount;
             auto protocols = adoptSystem<__unsafe_unretained Protocol*[]>(protocol_copyProtocolList(protocol, &protocolsCount));
-            worklist.append(protocols.get(), protocolsCount);
+            worklist.append(std::span { protocols.get(), protocolsCount });
         }
     }
 }

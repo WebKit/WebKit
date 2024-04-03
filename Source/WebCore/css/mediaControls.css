@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,6 @@
 @namespace "http://www.w3.org/1999/xhtml";
 
 /* media controls */
-
-audio {
-    width: 200px;
-    height: 16px;
-}
-
 ::-webkit-media-controls {
     width: inherit;
     height: inherit;
@@ -58,13 +52,13 @@ audio {
     text-align: right;
 }
 
-video:-webkit-full-page-media {
+video:-internal-media-document {
     margin: auto;
     position: absolute;
     inset: 0;
 }
 
-video:-webkit-full-page-media::-webkit-media-controls-panel {
+video:-internal-media-document::-webkit-media-controls-panel {
     bottom: 0px;
 }
 
@@ -279,16 +273,17 @@ video::cue(:future) {
     color: gray;
 }
 
-[pseudo="-webkit-media-text-track-display"] b {
-    font-weight: bold;
+[useragentpart="-webkit-media-text-track-display"] b { font-weight: bold; }
+[useragentpart="-webkit-media-text-track-display"] u { text-decoration: underline; }
+[useragentpart="-webkit-media-text-track-display"] i { font-style: italic; }
+[useragentpart="-webkit-media-text-track-display"] .hidden { display: none; }
+[useragentpart="-webkit-media-text-track-display"] ruby { display: ruby; }
+[useragentpart="-webkit-media-text-track-display"] ruby > rt {
+    display: ruby-text;
+    font-size: -webkit-ruby-text;
+    text-align: start;
+    line-height: normal;
 }
-
-[pseudo="-webkit-media-text-track-display"] u {
-    text-decoration: underline;
-}
-
-[pseudo="-webkit-media-text-track-display"] i {
-    font-style: italic;
-}
+[useragentpart="-webkit-media-text-track-display"] ruby > :not(ruby) { white-space: nowrap; }
 
 #endif

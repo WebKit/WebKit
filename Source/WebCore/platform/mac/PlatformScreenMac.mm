@@ -166,6 +166,7 @@ ScreenProperties collectScreenProperties()
         if (screenData.displayMask)
             screenData.gpuID = gpuIDForDisplayMask(screenData.displayMask);
 
+        screenData.screenSize = FloatSize { CGDisplayScreenSize(displayID) };
         screenData.scaleFactor = screen.backingScaleFactor;
         screenData.screenSupportsHighDynamicRange = screenSupportsHighDynamicRange(displayID, screenData.preferredDynamicRangeMode);
 
@@ -436,6 +437,12 @@ FloatRect safeScreenFrame(NSScreen* screen)
     return frame;
 }
 
+double ScreenData::screenDPI() const
+{
+    constexpr double mmPerInch = 25.4;
+    auto screenWidthInches = screenSize.width() / mmPerInch;
+    return screenRect.width() / screenWidthInches;
+}
 
 } // namespace WebCore
 

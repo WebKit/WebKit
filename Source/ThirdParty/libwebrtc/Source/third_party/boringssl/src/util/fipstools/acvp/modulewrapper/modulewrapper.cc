@@ -75,7 +75,7 @@ class RequestBufferImpl : public RequestBuffer {
 
 // static
 std::unique_ptr<RequestBuffer> RequestBuffer::New() {
-  return std::make_unique<RequestBufferImpl>();
+  return std::unique_ptr<RequestBuffer>(new RequestBufferImpl);
 }
 
 static bool ReadAll(int fd, void *in_data, size_t data_len) {

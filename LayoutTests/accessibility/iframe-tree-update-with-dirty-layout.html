@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe id="iframe" onload="runTest()" srcdoc="<main id='main'></main>"></iframe>
+
+<script>
+var output = "This test ensures we don't make incorrect updates to the accessibility tree when an iframe has dirty layout.\n\n";
+window.jsTestIsAsync = true;
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Touch the tree to ensure the AXObjectCache is created.
+    touchAccessibilityTree(accessibilityController.rootElement);
+    output += "Dumping initial AX tree search traversal.\n";
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webarea, { excludeRoles: ["scrollbar"] });
+    output += "\n\n";
+
+    var traversalOutput;
+    setTimeout(async function() {
+        const iframeDocument = document.getElementById("iframe").contentWindow.document;
+        let newTable = iframeDocument.createElement("table");
+        newTable.innerHTML = "<tr><th>Cell 1</th><th>Cell 2</th></tr><tr><td>Cell 3</td><td>Cell 4</td></tr>";
+        iframeDocument.getElementById("main").appendChild(newTable);
+
+        await waitFor(() => {
+            // The placement of this forced update is intentionally within this waitFor block as placing it elsewhere
+            // causes the timing to be different, and the bug not to be triggered.
+            internals.forceAXObjectCacheUpdate();
+            return true;
+        });
+
+        await waitFor(() => {
+            traversalOutput = dumpAXSearchTraversal(webarea, { excludeRoles: ["scrollbar"] });
+            return traversalOutput.includes("Cell 1")
+                && traversalOutput.includes("Cell 2")
+                && traversalOutput.includes("Cell 3")
+                && traversalOutput.includes("Cell 4");
+        });
+
+        output += "Dumping new AX tree search traversal.\n";
+        output += traversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

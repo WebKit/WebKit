@@ -39,6 +39,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <wtf/Scope.h>
@@ -234,7 +235,7 @@ ResourceError NetworkLoadChecker::validateResponse(const ResourceRequest& reques
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     // If we have a 304, the cached response is in WebProcess so we let WebProcess do the CORS check on the cached response.
-    if (response.httpStatusCode() == 304)
+    if (response.httpStatusCode() == httpStatus304NotModified)
         return { };
 
     auto result = passesAccessControlCheck(response, m_storedCredentialsPolicy, *origin(), m_networkResourceLoader.get());

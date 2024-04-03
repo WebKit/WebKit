@@ -69,7 +69,6 @@ public:
     virtual UIElementVisibility menuBarIsVisible(WebKit::WebPage*) { return UIElementVisibility::Unknown; }
     virtual UIElementVisibility toolbarsAreVisible(WebKit::WebPage*) { return UIElementVisibility::Unknown; }
 
-    virtual bool didReachApplicationCacheOriginQuota(WebKit::WebPage*, SecurityOrigin*, int64_t totalBytesNeeded) { UNUSED_PARAM(totalBytesNeeded); return false; }
     virtual uint64_t didExceedDatabaseQuota(WebKit::WebPage*, SecurityOrigin*, const WTF::String& databaseName, const WTF::String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes)
     {
         UNUSED_PARAM(databaseName);

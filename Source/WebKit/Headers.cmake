@@ -128,7 +128,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h
     WebProcess/InjectedBundle/API/c/WKBundleInitialize.h
-    WebProcess/InjectedBundle/API/c/WKBundleInspector.h
     WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.h
     WebProcess/InjectedBundle/API/c/WKBundleNavigationActionPrivate.h
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h

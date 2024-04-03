@@ -448,6 +448,23 @@ private:
                 }
                 break;
             }
+            case StringOrOtherUse: {
+                if (child1->hasConstant()) {
+                    if (JSValue value = child1->constant()->value()) {
+                        if (value.isUndefinedOrNull()) {
+                            m_graph.convertToConstant(m_node, value.isUndefined() ? vm().smallStrings.undefinedString() : vm().smallStrings.nullString());
+                            m_changed = true;
+                            break;
+                        }
+                        if (value.isString()) {
+                            m_graph.convertToConstant(m_node, value);
+                            m_changed = true;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
             case KnownPrimitiveUse:
                 break;
 
@@ -1174,7 +1191,8 @@ private:
             break;
         }
 
-        case InByVal: {
+        case InByVal:
+        case InByValMegamorphic: {
             Edge& baseEdge = m_graph.child(m_node, 0);
             Edge& keyEdge = m_graph.child(m_node, 1);
             if (baseEdge.useKind() == CellUse) {

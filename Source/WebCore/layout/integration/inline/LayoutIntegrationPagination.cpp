@@ -42,8 +42,8 @@ static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line
     auto gridLineHeight = lineGrid.rowHeight;
 
     auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
-    auto lineGridFontAscent = gridFontMetrics.ascent(line.baselineType());
-    auto lineGridFontHeight = gridFontMetrics.height();
+    auto lineGridFontAscent = gridFontMetrics.intAscent(line.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.intHeight();
     auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
     auto firstLineTop = lineGrid.topRowOffset;
     auto firstTextTop = firstLineTop + lineGridHalfLeading;
@@ -53,7 +53,7 @@ static LayoutUnit computeFirstLineSnapAdjustment(const InlineDisplay::Line& line
     return lineGrid.paginationOrigin.value_or(LayoutSize { }).height() + firstBaselinePosition - baseline;
 }
 
-Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
+std::pair<Vector<LineAdjustment>, std::optional<size_t>> computeAdjustmentsForPagination(const InlineContent& inlineContent, const Layout::PlacedFloats& placedFloats, bool allowLayoutRestart, const Layout::BlockLayoutState& blockLayoutState, RenderBlockFlow& flow)
 {
     auto lineCount = inlineContent.displayContent().lines.size();
     Vector<LineAdjustment> adjustments { lineCount };
@@ -92,6 +92,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
     }
 
     std::optional<size_t> previousPageBreakIndex;
+    std::optional<size_t> layoutRestartLineIndex;
 
     size_t widows = flow.style().hasAutoWidows() ? 0 : flow.style().widows();
     size_t orphans = flow.style().orphans();
@@ -110,7 +111,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
                 remainingLines--;
 
             // See if there are enough lines left to meet the widow requirement.
-            if (remainingLines < widows && !flow.didBreakAtLineToAvoidWidow()) {
+            if (remainingLines < widows && allowLayoutRestart && !layoutRestartLineIndex) {
                 auto previousPageLineCount = lineIndex - previousPageBreakIndex.value_or(0);
                 auto neededLines = widows - remainingLines;
                 auto availableLines = previousPageLineCount > orphans ? previousPageLineCount - orphans : 0;
@@ -120,6 +121,8 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
                     // Set the widow break and recompute the adjustments starting from that line.
                     flow.setBreakAtLineToAvoidWidow(breakIndex + 1);
                     lineIndex = breakIndex;
+                    // We need to redo the layout starting from the break for things like intrusive floats.
+                    layoutRestartLineIndex = breakIndex;
                     continue;
                 }
             }
@@ -147,7 +150,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
     if (!previousPageBreakIndex)
         return { };
 
-    return adjustments;
+    return { adjustments, layoutRestartLineIndex };
 }
 
 void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector<LineAdjustment>& adjustments)

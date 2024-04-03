@@ -27,7 +27,6 @@
 #include "Encoder.h"
 
 #include "ArgumentCoders.h"
-#include "DataReference.h"
 #include "MessageFlags.h"
 #include <algorithm>
 #include <wtf/OptionSet.h>
@@ -124,7 +123,7 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
     original->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
 
-    *this << DataReference(original->buffer(), original->bufferSize());
+    *this << std::span(original->buffer(), original->bufferSize());
 
     Vector<Attachment> attachments = original->releaseAttachments();
     reserve(attachments.size());

@@ -3,6 +3,7 @@
 class ManifestGenerator {
     private $db;
     private $manifest;
+    private $elapsed_time;
 
     // FIXME: Compute this value from config.json
     const MANIFEST_PATH = '../data/manifest.json';

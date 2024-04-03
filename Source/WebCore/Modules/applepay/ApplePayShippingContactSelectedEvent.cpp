@@ -36,17 +36,12 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayShippingContactSelectedEvent);
 
 ApplePayShippingContactSelectedEvent::ApplePayShippingContactSelectedEvent(const AtomString& type, unsigned version, const PaymentContact& shippingContact)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::ApplePayShippingContactSelectedEvent, type, CanBubble::No, IsCancelable::No)
     , m_shippingContact(shippingContact.toApplePayPaymentContact(version))
 {
 }
 
 ApplePayShippingContactSelectedEvent::~ApplePayShippingContactSelectedEvent() = default;
-
-EventInterface ApplePayShippingContactSelectedEvent::eventInterface() const
-{
-    return ApplePayShippingContactSelectedEventInterfaceType;
-}
 
 }
 

@@ -55,6 +55,24 @@ public:
 
     bool equals(const CSSViewValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (m_axis) {
+            if (func(*m_axis) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_startInset) {
+            if (func(*m_startInset) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        if (m_endInset) {
+            if (func(*m_endInset) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+
+
 private:
     CSSViewValue(RefPtr<CSSValue>&& axis, RefPtr<CSSValue>&& startInset, RefPtr<CSSValue>&& endInset)
         : CSSValue(ViewClass)

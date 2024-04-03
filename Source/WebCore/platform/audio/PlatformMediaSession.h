@@ -126,6 +126,7 @@ public:
     void setActive(bool);
 
     using MediaType = WebCore::PlatformMediaSessionMediaType;
+    enum class PlaybackControlsPurpose { ControlsManager, NowPlaying, MediaSession };
 
     MediaType mediaType() const;
     MediaType presentationType() const;
@@ -139,7 +140,7 @@ public:
 
     using InterruptionType = PlatformMediaSessionInterruptionType;
 
-    InterruptionType interruptionType() const { return m_interruptionType; }
+    InterruptionType interruptionType() const;
 
     using EndInterruptionFlags = PlatformMediaSessionEndInterruptionFlags;
 
@@ -198,6 +199,7 @@ public:
     virtual bool requiresPlaybackTargetRouteMonitoring() const { return false; }
 #endif
 
+    bool blockedBySystemInterruption() const;
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
     bool hasMediaStreamSource() const;
@@ -228,7 +230,10 @@ public:
         virtual bool wantsToCaptureAudio() const = 0;
     };
 
-    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    bool isNowPlayingEligible() const;
+    WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlaybackControlsPurpose);
+
     virtual void updateMediaUsageIfChanged() { }
 
     virtual bool isLongEnoughForMainContent() const { return false; }
@@ -241,12 +246,13 @@ protected:
 
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
+    size_t interruptionCount() const { return m_interruptionStack.size(); }
 
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { State::Idle };
     State m_stateToRestore { State::Idle };
-    InterruptionType m_interruptionType { InterruptionType::NoInterruption };
+    Vector<InterruptionType> m_interruptionStack;
     int m_interruptionCount { 0 };
     bool m_active { false };
     bool m_notifyingClient { false };
@@ -304,6 +310,10 @@ public:
     virtual void processIsSuspendedChanged() { }
 
     virtual bool shouldOverridePauseDuringRouteChange() const { return false; }
+
+    virtual bool isNowPlayingEligible() const { return false; }
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const;
+    virtual WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) { return nullptr; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const Logger& logger() const = 0;

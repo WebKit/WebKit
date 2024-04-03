@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea autofocus id="text" role="textbox">Text😀area with custom cursor handling</textarea>
+
+<script>
+var output = "Tests that we infer intents when JS is used to move the cursor in a text editor; this practice is common in online code editors.\n\n";
+
+const AXTextStateChangeTypeSelectionMove = 2;
+const AXTextStateChangeTypeSelectionExtend = AXTextStateChangeTypeSelectionMove + 1;
+
+const AXTextSelectionDirectionBeginning = 1;
+const AXTextSelectionDirectionEnd = AXTextSelectionDirectionBeginning + 1;
+const AXTextSelectionDirectionPrevious = AXTextSelectionDirectionEnd + 1;
+const AXTextSelectionDirectionNext = AXTextSelectionDirectionPrevious + 1;
+const AXTextSelectionDirectionDiscontiguous = AXTextSelectionDirectionNext + 1;
+
+const AXTextSelectionGranularityCharacter = 1;
+
+function notificationCallback(notification, userInfo) {
+    if (notification != "AXSelectedTextChanged")
+        return;
+
+    let str = "";
+    let type = userInfo["AXTextStateChangeType"];
+    if (type == AXTextStateChangeTypeSelectionMove)
+        str += "move";
+
+    let dir = userInfo["AXTextSelectionDirection"];
+    if (dir == AXTextSelectionDirectionNext)
+        str += " next";
+    else if (dir == AXTextSelectionDirectionPrevious)
+        str += " previous";
+    else if (dir == AXTextSelectionDirectionDiscontiguous)
+        str += " discontiguous";
+
+    let granularity = userInfo["AXTextSelectionGranularity"];
+    if (granularity == AXTextSelectionGranularityCharacter)
+        str += " character";
+
+    str += "\n";
+    output += str;
+
+    if (resolveNotificationPromise)
+        resolveNotificationPromise();
+}
+
+async function moveAndWaitForNotification(offset) {
+    text = document.getElementById("text");
+    output += "Move to " + offset + "\n";
+    let promise = new Promise((resolve, reject) => {
+        resolveNotificationPromise = resolve;
+    });
+    text.setSelectionRange(offset, offset);
+    await promise;
+    resolveNotificationPromise = null;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    var addedNotification = webArea.addNotificationListener(notificationCallback);
+    output += expect("addedNotification", "true");
+
+    setTimeout(async function() {
+        await moveAndWaitForNotification(0);
+        await moveAndWaitForNotification(1);
+        await moveAndWaitForNotification(2);
+        await moveAndWaitForNotification(3);
+        await moveAndWaitForNotification(4);
+
+        await moveAndWaitForNotification(6);  // Note single character (emoji)
+
+        await moveAndWaitForNotification(8);  // Discontiguous
+        await moveAndWaitForNotification(9);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

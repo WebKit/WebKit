@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGLengthList.h"
 
+#include "EventTarget.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -46,7 +47,7 @@ bool SVGLengthList::parse(StringView value)
             if (buffer.position() == start)
                 break;
 
-            auto value = SVGLengthValue::construct(m_lengthMode, StringView(start, buffer.position() - start));
+            auto value = SVGLengthValue::construct(m_lengthMode, std::span(start, buffer.position() - start));
             if (!value)
                 break;
 

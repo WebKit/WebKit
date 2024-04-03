@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -12,10 +13,10 @@ if (window.testRunner)
 <script>
 function test(e, p) {
     var testDiv = document.getElementById(e);
-    var cssValue = window.getComputedStyle(testDiv).getPropertyCSSValue(p);
-    document.write(e + " " + p + ": " + cssValue.cssText + "<br>");
+    var value = window.getComputedStyle(testDiv).getPropertyValue(p);
+    document.write(e + " " + p + ": " + value + "<br>");
 }
-    
+
 test('test1', 'font-feature-settings');
 test('test2', 'font-feature-settings');
 test('test1', '-webkit-font-smoothing');

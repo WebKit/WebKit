@@ -40,8 +40,8 @@ namespace WebCore {
 #if USE(AVFOUNDATION)
 RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
 {
-    if (isCV())
-        return downcast<VideoFrameCV>(this);
+    if (auto* videoFrameCV = dynamicDowncast<VideoFrameCV>(*this))
+        return videoFrameCV;
 
     auto buffer = pixelBuffer();
     if (!buffer)

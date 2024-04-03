@@ -31,6 +31,83 @@ header: "WCUpdateInfo.h"
     WebCore::IntRect dirtyRect;
 }
 
+[CustomHeader,OptionSet] enum class WebKit::WCLayerChange : uint32_t {
+    Children,
+    MaskLayer,
+    ReplicaLayer,
+    Position,
+    AnchorPoint,
+    Size,
+    BoundsOrigin,
+    MasksToBounds,
+    ContentsRectClipsDescendants,
+    ShowDebugBorder,
+    ShowRepaintCounter,
+    ContentsVisible,
+    BackfaceVisibility,
+    Preserves3D,
+    SolidColor,
+    DebugBorderColor,
+    Opacity,
+    DebugBorderWidth,
+    RepaintCount,
+    ContentsRect,
+    Background,
+    Transform,
+    ChildrenTransform,
+    Filters,
+    BackdropFilters,
+    BackdropFiltersRect,
+    ContentsClippingRect,
+    PlatformLayer,
+    RemoteFrame,
+}
+
+[Nested] struct WebKit::WCLayerUpdateInfo::BackgroundChanges {
+    WebCore::Color color;
+    bool hasBackingStore;
+    Vector<WebKit::WCTileUpdate> tileUpdates;
+}
+
+[Nested] struct WebKit::WCLayerUpdateInfo::PlatformLayerChanges {
+    bool hasLayer;
+    Vector<WebKit::WCContentBufferIdentifier> identifiers;
+}
+
+[CustomHeader] struct WebKit::WCLayerUpdateInfo {
+    [Validator='id'] WebCore::PlatformLayerIdentifier id;
+    [OptionalTupleBits] OptionSet<WebKit::WCLayerChange> changes;
+    [OptionalTupleBit=WebKit::WCLayerChange::Children] Vector<WebCore::PlatformLayerIdentifier> children;
+    [OptionalTupleBit=WebKit::WCLayerChange::MaskLayer] std::optional<WebCore::PlatformLayerIdentifier> maskLayer;
+    [OptionalTupleBit=WebKit::WCLayerChange::ReplicaLayer] std::optional<WebCore::PlatformLayerIdentifier> replicaLayer;
+    [OptionalTupleBit=WebKit::WCLayerChange::Position] WebCore::FloatPoint position;
+    [OptionalTupleBit=WebKit::WCLayerChange::AnchorPoint] WebCore::FloatPoint3D anchorPoint;
+    [OptionalTupleBit=WebKit::WCLayerChange::Size] WebCore::FloatSize size;
+    [OptionalTupleBit=WebKit::WCLayerChange::BoundsOrigin] WebCore::FloatPoint boundsOrigin;
+    [OptionalTupleBit=WebKit::WCLayerChange::MasksToBounds] bool masksToBounds;
+    [OptionalTupleBit=WebKit::WCLayerChange::ContentsRectClipsDescendants] bool contentsRectClipsDescendants;
+    [OptionalTupleBit=WebKit::WCLayerChange::ShowDebugBorder] bool showDebugBorder;
+    [OptionalTupleBit=WebKit::WCLayerChange::ShowRepaintCounter] bool showRepaintCounter;
+    [OptionalTupleBit=WebKit::WCLayerChange::ContentsVisible] bool contentsVisible;
+    [OptionalTupleBit=WebKit::WCLayerChange::BackfaceVisibility] bool backfaceVisibility;
+    [OptionalTupleBit=WebKit::WCLayerChange::Preserves3D] bool preserves3D;
+    [OptionalTupleBit=WebKit::WCLayerChange::SolidColor] WebCore::Color solidColor;
+    [OptionalTupleBit=WebKit::WCLayerChange::DebugBorderColor] WebCore::Color debugBorderColor;
+    [OptionalTupleBit=WebKit::WCLayerChange::Opacity] float opacity;
+    [OptionalTupleBit=WebKit::WCLayerChange::DebugBorderWidth] float debugBorderWidth;
+    [OptionalTupleBit=WebKit::WCLayerChange::RepaintCount] int repaintCount;
+    [OptionalTupleBit=WebKit::WCLayerChange::ContentsRect] WebCore::FloatRect contentsRect;
+    [OptionalTupleBit=WebKit::WCLayerChange::Background] WebKit::WCLayerUpdateInfo::BackgroundChanges background;
+    [OptionalTupleBit=WebKit::WCLayerChange::Transform] WebCore::TransformationMatrix transform;
+    [OptionalTupleBit=WebKit::WCLayerChange::ChildrenTransform] WebCore::TransformationMatrix childrenTransform;
+    [OptionalTupleBit=WebKit::WCLayerChange::Filters] WebCore::FilterOperations filters;
+    [OptionalTupleBit=WebKit::WCLayerChange::BackdropFilters] WebCore::FilterOperations backdropFilters;
+    [OptionalTupleBit=WebKit::WCLayerChange::BackdropFiltersRect] WebCore::FloatRoundedRect backdropFiltersRect;
+    [OptionalTupleBit=WebKit::WCLayerChange::ContentsClippingRect] WebCore::FloatRoundedRect contentsClippingRect;
+    [OptionalTupleBit=WebKit::WCLayerChange::PlatformLayer] WebKit::WCLayerUpdateInfo::PlatformLayerChanges platformLayer;
+    [OptionalTupleBit=WebKit::WCLayerChange::RemoteFrame] Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
+}
+
 struct WebKit::WCUpdateInfo {
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;

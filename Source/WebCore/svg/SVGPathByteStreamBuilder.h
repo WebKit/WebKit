@@ -60,16 +60,16 @@ private:
         } ByteType;
 
         ByteType type = { data };
-        m_byteStream.append(std::span { type.bytes, sizeof(ByteType) });
+        m_byteStream->append(std::span { type.bytes, sizeof(ByteType) });
     }
 
     void writeSegmentType(SVGPathSegType type)
     {
         static_assert(std::is_same_v<std::underlying_type_t<SVGPathSegType>, uint8_t>);
-        m_byteStream.append(enumToUnderlyingType(type));
+        m_byteStream->append(enumToUnderlyingType(type));
     }
 
-    SVGPathByteStream& m_byteStream;
+    SingleThreadWeakRef<SVGPathByteStream> m_byteStream;
 };
 
 } // namespace WebCore

@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/text/AdaptiveStringSearcher.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -109,32 +110,57 @@ size_t StringView::find(StringView matchString, unsigned start) const
     return findCommon(*this, matchString, start);
 }
 
-size_t StringView::find(const LChar* match, unsigned matchLength, unsigned start) const
+size_t StringView::find(AdaptiveStringSearcherTables& tables, StringView matchString, unsigned start) const
 {
-    ASSERT(matchLength);
+    unsigned subjectLength = length();
+    unsigned matchLength = matchString.length();
+
+    if (start > subjectLength)
+        return notFound;
+
+    if (!matchLength)
+        return start;
+
+    if (UNLIKELY(subjectLength > INT32_MAX || matchLength > INT32_MAX))
+        return find(matchString, start);
+
+    if (is8Bit()) {
+        if (matchString.is8Bit())
+            return searchStringRaw(tables, characters8(), length(), matchString.characters8(), matchString.length(), start);
+        return searchStringRaw(tables, characters8(), length(), matchString.characters16(), matchString.length(), start);
+    }
+
+    if (matchString.is8Bit())
+        return searchStringRaw(tables, characters16(), length(), matchString.characters8(), matchString.length(), start);
+    return searchStringRaw(tables, characters16(), length(), matchString.characters16(), matchString.length(), start);
+}
+
+size_t StringView::find(std::span<const LChar> match, unsigned start) const
+{
+    ASSERT(!match.empty());
     auto length = this->length();
     if (start > length)
         return notFound;
 
     unsigned searchLength = length - start;
-    if (matchLength > searchLength)
+    if (match.size() > searchLength)
         return notFound;
 
     if (is8Bit())
-        return findInner(characters8() + start, match, start, searchLength, matchLength);
-    return findInner(characters16() + start, match, start, searchLength, matchLength);
+        return findInner(characters8() + start, match.data(), start, searchLength, match.size());
+    return findInner(characters16() + start, match.data(), start, searchLength, match.size());
 }
 
-size_t StringView::reverseFind(const LChar* match, unsigned matchLength, unsigned start) const
+size_t StringView::reverseFind(std::span<const LChar> match, unsigned start) const
 {
-    ASSERT(matchLength);
+    ASSERT(!match.empty());
     auto length = this->length();
-    if (matchLength > length)
+    if (match.size() > length)
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), match, start, length, matchLength);
-    return reverseFindInner(characters16(), match, start, length, matchLength);
+        return reverseFindInner(characters8(), match.data(), start, length, match.size());
+    return reverseFindInner(characters16(), match.data(), start, length, match.size());
 }
 
 void StringView::SplitResult::Iterator::findNextSubstring()
@@ -183,9 +209,7 @@ public:
 
     StringView operator*() const
     {
-        if (m_stringView.is8Bit())
-            return StringView(m_stringView.characters8() + m_index, m_indexEnd - m_index);
-        return StringView(m_stringView.characters16() + m_index, m_indexEnd - m_index);
+        return m_stringView.substring(m_index, m_indexEnd - m_index);
     }
 
     bool operator==(const Impl& other) const
@@ -218,9 +242,7 @@ StringView::GraphemeClusters::Iterator::Iterator(StringView stringView, unsigned
 {
 }
 
-StringView::GraphemeClusters::Iterator::~Iterator()
-{
-}
+StringView::GraphemeClusters::Iterator::~Iterator() = default;
 
 StringView::GraphemeClusters::Iterator::Iterator(Iterator&& other)
     : m_impl(WTFMove(other.m_impl))
@@ -277,7 +299,7 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
 {
     for (unsigned i = 0; i < length; ++i) {
         if (UNLIKELY(isASCIIUpper(input[i])))
-            return makeAtomString(asASCIILowercase(StringView { input, length }));
+            return makeAtomString(asASCIILowercase(std::span { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
     return AtomString(input, length);

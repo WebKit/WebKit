@@ -39,10 +39,10 @@
 
 namespace WebCore {
 
-inline DOMURL::DOMURL(URL&& completeURL, const URL& baseURL)
-    : m_baseURL(baseURL)
-    , m_url(WTFMove(completeURL))
+inline DOMURL::DOMURL(URL&& completeURL)
+    : m_url(WTFMove(completeURL))
 {
+    ASSERT(m_url.isValid());
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
@@ -51,7 +51,7 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
     URL completeURL { base, url };
     if (!completeURL.isValid())
         return Exception { ExceptionCode::TypeError, makeString("\"", url, "\" cannot be parsed as a URL.") };
-    return adoptRef(*new DOMURL(WTFMove(completeURL), base));
+    return adoptRef(*new DOMURL(WTFMove(completeURL)));
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
@@ -64,13 +64,25 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
 
 DOMURL::~DOMURL() = default;
 
-bool DOMURL::canParse(const String& url, const String& base)
+static URL parseInternal(const String& url, const String& base)
 {
     URL baseURL { base };
     if (!base.isNull() && !baseURL.isValid())
-        return false;
-    URL completeURL { baseURL, url };
-    return completeURL.isValid();
+        return { };
+    return { baseURL, url };
+}
+
+RefPtr<DOMURL> DOMURL::parse(const String& url, const String& base)
+{
+    auto completeURL = parseInternal(url, base);
+    if (!completeURL.isValid())
+        return { };
+    return adoptRef(*new DOMURL(WTFMove(completeURL)));
+}
+
+bool DOMURL::canParse(const String& url, const String& base)
+{
+    return parseInternal(url, base).isValid();
 }
 
 ExceptionOr<void> DOMURL::setHref(const String& url)

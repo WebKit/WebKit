@@ -90,7 +90,7 @@ private:
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SpeechSynthesisUtterance; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

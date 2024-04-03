@@ -51,9 +51,9 @@ NotificationClient* NotificationController::clientFrom(Page& page)
     return &controller->client();
 }
 
-const char* NotificationController::supplementName()
+ASCIILiteral NotificationController::supplementName()
 {
-    return "NotificationController";
+    return "NotificationController"_s;
 }
 
 void provideNotification(Page* page, NotificationClient* client)

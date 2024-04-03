@@ -769,7 +769,11 @@ END
        if ($parameters{namespace} eq "HTML" && ($allElements{$elementKey}{wrapperOnlyIfMediaIsAvailable} || $allElements{$elementKey}{settingsConditional} || $allElements{$elementKey}{deprecatedGlobalSettingsConditional})) {
            print F <<END
     static bool checkTagName(const WebCore::HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName(WebCore::$parameters{namespace}Names::$allElements{$elementKey}{identifier}Tag); }
-    static bool checkTagName(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && checkTagName(downcast<WebCore::HTMLElement>(node)); }
+    static bool checkTagName(const WebCore::Node& node)
+    {
+        auto* element = dynamicDowncast<WebCore::HTMLElement>(node);
+        return element && checkTagName(*element);
+    }
 END
            ;
        } else {
@@ -780,7 +784,11 @@ END
            ;
        }
        print F <<END
-    static bool checkTagName(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && checkTagName(downcast<WebCore::Node>(target)); }
+    static bool checkTagName(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && checkTagName(*node);
+    }
 };
 }
 END

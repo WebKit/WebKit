@@ -219,7 +219,7 @@ BufferMemoryManager& BufferMemoryManager::singleton()
 BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedCapacity, PageCount initial, PageCount maximum, MemorySharingMode sharingMode, MemoryMode mode)
     : m_sharingMode(sharingMode)
     , m_mode(mode)
-    , m_memory(memory, mappedCapacity)
+    , m_memory(memory)
     , m_size(size)
     , m_mappedCapacity(mappedCapacity)
     , m_initial(initial)
@@ -309,8 +309,8 @@ BufferMemoryHandle::~BufferMemoryHandle()
 // For now, putting NEVER_INLINE to suppress inlining of this.
 NEVER_INLINE void* BufferMemoryHandle::memory() const
 {
-    ASSERT(m_memory.getMayBeNull(m_mappedCapacity) == m_memory.getUnsafe());
-    return m_memory.getMayBeNull(m_mappedCapacity);
+    ASSERT(m_memory.getMayBeNull() == m_memory.getUnsafe());
+    return m_memory.getMayBeNull();
 }
 
 } // namespace JSC

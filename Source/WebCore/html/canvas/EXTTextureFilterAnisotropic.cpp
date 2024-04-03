@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureFilterAnisotropic);
 EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTTextureFilterAnisotropic)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_filter_anisotropic"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_filter_anisotropic"_s);
 }
 
 EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;

@@ -70,6 +70,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
     result->m_arguments = ArgumentsPtr::tryCreate(length);
     if (UNLIKELY(!result->m_arguments))
         return nullptr;
+    result->m_watchpointSets.fill(nullptr, length);
     return result;
 }
 
@@ -80,6 +81,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::tryClone(VM& vm)
         return nullptr;
     for (unsigned i = m_length; i--;)
         result->at(i) = this->at(i);
+    result->m_watchpointSets = this->m_watchpointSets;
     return result;
 }
 
@@ -90,17 +92,21 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLen
         if (UNLIKELY(!newArguments))
             return nullptr;
         for (unsigned i = std::min(m_length, newLength); i--;)
-            newArguments.at(i, newLength) = this->at(i);
+            newArguments.at(i) = this->at(i);
         m_length = newLength;
         m_arguments = WTFMove(newArguments);
+        m_watchpointSets.resize(newLength);
         return this;
     }
     
     ScopedArgumentsTable* result = tryCreate(vm, newLength);
     if (UNLIKELY(!result))
         return nullptr;
-    for (unsigned i = std::min(m_length, newLength); i--;)
+    m_watchpointSets.resize(newLength);
+    for (unsigned i = std::min(m_length, newLength); i--;) {
         result->at(i) = this->at(i);
+        result->m_watchpointSets[i] = this->m_watchpointSets[i];
+    }
     return result;
 }
 
@@ -117,6 +123,17 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffs
         result = this;
     result->at(i) = value;
     return result;
+}
+
+void ScopedArgumentsTable::trySetWatchpointSet(uint32_t i, WatchpointSet* watchpoints)
+{
+    if (!watchpoints)
+        return;
+
+    if (i >= m_watchpointSets.size())
+        return;
+
+    m_watchpointSets[i] = watchpoints;
 }
 
 Structure* ScopedArgumentsTable::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

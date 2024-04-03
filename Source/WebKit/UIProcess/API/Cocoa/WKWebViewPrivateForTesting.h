@@ -51,7 +51,7 @@ struct WKAppPrivacyReportTestingData {
 
 @property (nonatomic, readonly) NSString *_caLayerTreeAsText;
 
-- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical;
+- (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID isVertical:(bool)isVertical;
 
 - (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(nullable NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral WK_API_AVAILABLE(macos(13.0), ios(16.0));
 

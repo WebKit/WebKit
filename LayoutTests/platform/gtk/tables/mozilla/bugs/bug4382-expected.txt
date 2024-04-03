@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 260: "The select should not contain blank items"
         RenderBR {BR} at (260,0) size 0x17
       RenderBlock {FORM} at (0,18) size 784x30
-        RenderInline {B} at (0,0) size 47x17
+        RenderInline {B} at (0,6) size 47x17
           RenderText {#text} at (0,6) size 47x17
             text run at (0,6) width 47: "Search"
         RenderText {#text} at (46,6) size 5x17

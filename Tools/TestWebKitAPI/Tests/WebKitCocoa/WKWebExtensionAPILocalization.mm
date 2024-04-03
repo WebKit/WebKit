@@ -106,6 +106,7 @@ TEST(WKWebExtensionAPILocalization, Errors)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -149,6 +150,7 @@ TEST(WKWebExtensionAPILocalization, i18n)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -231,6 +233,7 @@ TEST(WKWebExtensionAPILocalization, i18nWithFallback)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -269,6 +272,7 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutMessages)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -321,6 +325,7 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutDefaultLocale)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -430,6 +435,7 @@ TEST(WKWebExtensionAPILocalization, Placeholders)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];

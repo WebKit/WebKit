@@ -27,9 +27,6 @@
 #include "TestWithLegacyReceiver.h"
 
 #include "ArgumentCoders.h" // NOLINT
-#if PLATFORM(MAC)
-#include "ArgumentCodersDarwin.h" // NOLINT
-#endif
 #include "Connection.h" // NOLINT
 #include "Decoder.h" // NOLINT
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)

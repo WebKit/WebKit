@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (11,11) size 78x204
             RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
               RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-              RenderText {#text} at (13,2) size 36x56
+              RenderText {#text} at (9,2) size 36x56
                 text run at (13,2) width 28: "short"
                 text run at (11,16) width 32: "words"
                 text run at (16,30) width 22: "only"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (11,11) size 78x204
           RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
             RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-            RenderText {#text} at (13,2) size 36x56
+            RenderText {#text} at (9,2) size 36x56
               text run at (13,2) width 28: "short"
               text run at (11,16) width 32: "words"
               text run at (16,30) width 22: "only"
@@ -36,7 +36,7 @@ layer at (8,212) size 100x50
     RenderBlock (anonymous) at (11,11) size 78x204
       RenderBlock {DIV} at (0,0) size 74x204 [bgcolor=#008080] [border: (2px solid #800080)]
         RenderBlock (floating) {DIV} at (52,2) size 20x100 [bgcolor=#006400]
-        RenderText {#text} at (13,2) size 36x56
+        RenderText {#text} at (9,2) size 36x56
           text run at (13,2) width 28: "short"
           text run at (11,16) width 32: "words"
           text run at (16,30) width 22: "only"

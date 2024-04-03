@@ -43,13 +43,18 @@ WebXRSystem& NavigatorWebXR::xr(Navigator& navigatorObject)
 
 NavigatorWebXR& NavigatorWebXR::from(Navigator& navigator)
 {
-    auto* supplement = static_cast<NavigatorWebXR*>(Supplement<Navigator>::from(&navigator, "NavigatorWebXR"));
+    auto* supplement = static_cast<NavigatorWebXR*>(Supplement<Navigator>::from(&navigator, supplementName()));
     if (!supplement) {
         auto newSupplement = makeUnique<NavigatorWebXR>();
         supplement = newSupplement.get();
-        provideTo(&navigator, "NavigatorWebXR", WTFMove(newSupplement));
+        provideTo(&navigator, supplementName(), WTFMove(newSupplement));
     }
     return *supplement;
+}
+
+ASCIILiteral NavigatorWebXR::supplementName()
+{
+    return "NavigatorWebXR"_s;
 }
 
 } // namespace WebCore

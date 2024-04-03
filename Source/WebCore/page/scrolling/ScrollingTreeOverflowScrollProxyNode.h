@@ -51,7 +51,7 @@ protected:
 
     WEBCORE_EXPORT void dumpProperties(TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
-    ScrollingNodeID m_overflowScrollingNodeID { 0 };
+    ScrollingNodeID m_overflowScrollingNodeID;
 };
 
 } // namespace WebCore

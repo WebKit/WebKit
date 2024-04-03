@@ -34,6 +34,7 @@
 #import "VideoPresentationManagerProxy.h"
 #import "WKVideoView.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <UIKit/UIScrollView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -98,7 +99,13 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerType::LayerTypeModelLayer:
-        if (m_drawingArea->page().preferences().modelElementEnabled()) {
+#if ENABLE(MODEL_PROCESS)
+        bool modelHandledOutOfProcess = m_drawingArea->page().preferences().modelProcessEnabled();
+#else
+        bool modelHandledOutOfProcess = false;
+#endif
+
+        if (!modelHandledOutOfProcess && m_drawingArea->page().preferences().modelElementEnabled()) {
             if (auto* model = std::get_if<Ref<Model>>(&properties.additionalData)) {
 #if ENABLE(SEPARATED_MODEL)
                 return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*model]));

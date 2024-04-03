@@ -31,8 +31,8 @@
 namespace WebKit {
 
 RTCNetwork::RTCNetwork(const rtc::Network& network)
-    : name(network.name().data(), network.name().length())
-    , description(network.description().data(), network.description().length())
+    : name(std::span { network.name() })
+    , description(std::span { network.description() })
     , prefix(network.prefix())
     , prefixLength(network.prefix_length())
     , type(network.type())
@@ -103,7 +103,7 @@ rtc::SocketAddress SocketAddress::rtcAddress() const
 SocketAddress::SocketAddress(const rtc::SocketAddress& value)
     : port(value.port())
     , scopeID(value.scope_id())
-    , hostname(value.hostname().data(), value.hostname().size())
+    , hostname(std::span { value.hostname() })
     , ipAddress(value.IsUnresolvedIP() ? std::nullopt : std::optional(IPAddress(value.ipaddr()))) { }
 
 IPAddress::IPAddress(const rtc::IPAddress& input)

@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (78,100.08) size 324x19
+  RenderSVGTransformableContainer {g} at (78,100.08) size 324x18.41
+layer at (176.88,100.08) size 226x19
+  RenderSVGTransformableContainer {g} at (98.88,0) size 225.13x18.41
+layer at (398,112.80) size 5x5
+  RenderSVGEllipse {circle} at (221.13,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=400.00] [cy=114.80] [r=2.00]
+layer at (176.88,100.08) size 223x18
+  RenderSVGText {text} at (0,0) size 224x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 224x19
+      RenderSVGInlineText {#text} at (0,0) size 224x19
+        chunk 1 (end anchor) text run 1 at (176.88,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (128.44,100.08) size 224x19
+  RenderSVGTransformableContainer {g} at (50.44,0) size 223.13x18.41
+layer at (238,112.80) size 5x5
+  RenderSVGEllipse {circle} at (109.56,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=240.00] [cy=114.80] [r=2.00]
+layer at (128.44,100.08) size 223x18
+  RenderSVGText {text} at (0,0) size 224x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 224x19
+      RenderSVGInlineText {#text} at (0,0) size 224x19
+        chunk 1 (middle anchor) text run 1 at (128.44,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (78,100.08) size 226x19
+  RenderSVGTransformableContainer {g} at (0,0) size 225.13x18.41
+layer at (78,112.80) size 4x5
+  RenderSVGEllipse {circle} at (0,12.72) size 4x4.02 [fill={[type=SOLID] [color=#FF0000]}] [cx=80.00] [cy=114.80] [r=2.00]
+layer at (80,100.08) size 223x18
+  RenderSVGText {text} at (2,0) size 224x19 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 224x19
+      RenderSVGInlineText {#text} at (0,0) size 224x19
+        chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (80,100.08) size 320x19
+  RenderSVGTransformableContainer {g} at (80,100.08) size 320x18.41
+layer at (176.88,100.08) size 224x19
+  RenderSVGTransformableContainer {g} at (96.88,0) size 223.13x18.41
+layer at (176.88,100.08) size 223x18
+  RenderSVGText {text} at (0,0) size 224x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 224x19
+      chunk 1 text run 1 at (176.88,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+layer at (128.44,100.08) size 224x19
+  RenderSVGTransformableContainer {g} at (48.44,0) size 223.13x18.41
+layer at (128.44,100.08) size 223x18
+  RenderSVGText {text} at (0,0) size 224x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 224x19
+      chunk 1 (middle anchor) text run 1 at (128.44,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"
+layer at (80,100.08) size 224x19
+  RenderSVGTransformableContainer {g} at (0,0) size 223.13x18.41
+layer at (80,100.08) size 223x18
+  RenderSVGText {text} at (0,0) size 224x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 224x19
+      chunk 1 (end anchor) text run 1 at (80.00,114.80) startOffset 0 endOffset 38 width 223.12 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631}"

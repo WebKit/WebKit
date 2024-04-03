@@ -58,7 +58,7 @@ NumberConstructor::NumberConstructor(VM& vm, NativeExecutable* executable, JSGlo
 {
 }
 
-NumberConstructor* NumberConstructor::create(VM& vm, Structure* structure, NumberPrototype* numberPrototype, GetterSetter*)
+NumberConstructor* NumberConstructor::create(VM& vm, Structure* structure, NumberPrototype* numberPrototype)
 {
     JSGlobalObject* globalObject = structure->globalObject();
     NativeExecutable* executable = vm.getHostFunction(callNumberConstructor, ImplementationVisibility::Public, NumberConstructorIntrinsic, constructNumberConstructor, nullptr, vm.propertyNames->Number.string());

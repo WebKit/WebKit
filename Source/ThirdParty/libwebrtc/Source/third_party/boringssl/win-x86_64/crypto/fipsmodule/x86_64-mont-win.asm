@@ -6,7 +6,6 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
-%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -33,7 +32,6 @@ $L$SEH_begin_bn_mul_mont:
 
 
 
-_CET_ENDBR
 	mov	r9d,r9d
 	mov	rax,rsp
 
@@ -282,7 +280,7 @@ $L$copy:
 $L$mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_bn_mul_mont:
 
@@ -730,7 +728,7 @@ $L$copy4x:
 $L$mul4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_bn_mul4x_mont:
 EXTERN	bn_sqrx8x_internal
@@ -935,7 +933,7 @@ $L$sqr8x_cond_copy:
 $L$sqr8x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_bn_sqr8x_mont:
 
@@ -1305,7 +1303,7 @@ $L$mulx4x_cond_copy:
 $L$mulx4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_bn_mulx4x_mont:
 	DB	77,111,110,116,103,111,109,101,114,121,32,77,117,108,116,105
@@ -1443,7 +1441,7 @@ $L$common_seh_tail:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	ret
+	DB	0F3h,0C3h		;repret
 
 
 section	.pdata rdata align=4

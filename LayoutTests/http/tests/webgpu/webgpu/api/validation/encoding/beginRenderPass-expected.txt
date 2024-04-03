@@ -1,1 +1,6 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :color_attachments,device_mismatch:
+PASS :depth_stencil_attachment,device_mismatch:
+PASS :occlusion_query_set,device_mismatch:
+PASS :timestamp_query_set,device_mismatch:
+

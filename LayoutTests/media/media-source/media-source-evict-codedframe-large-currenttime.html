@@ -44,7 +44,7 @@
         var firstPts = 0 + offset;
         var lastPts = 55 + offset;
 
-        internals.settings.setMaximumSourceBufferSize(4000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 4000);
 
         for (var pts = firstPts; pts <= lastPts; pts++) {
             sourceBuffer.appendBuffer(makeASample(pts, pts, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));

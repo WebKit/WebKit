@@ -215,6 +215,9 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     if (!_previewController)
         return nil;
 
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     return _previewController->page().uiClient().presentingViewController();
 }
 
@@ -321,7 +324,9 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         return ".usdz"_s;
     }();
 
-    _filePath = FileSystem::openTemporaryFile("SystemPreview"_s, _fileHandle, fileExtension);
+    auto result = FileSystem::openTemporaryFile("SystemPreview"_s, fileExtension);
+    _filePath = result.first;
+    _fileHandle = result.second;
     ASSERT(FileSystem::isHandleValid(_fileHandle));
 
     _previewController->loadStarted(URL::fileURLWithFileSystemPath(_filePath));
@@ -376,6 +381,9 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     if (m_qlPreviewController)
         return completionHandler();
 
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 
     if (!presentingViewController)
@@ -387,7 +395,8 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
 
     auto request = WebCore::ResourceRequest(url);
     WeakPtr weakThis { *this };
-    m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+    bool shouldRunAtForegroundPriority = false;
+    m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
         if (!weakThis)
             return completionHandler();
 

@@ -1,0 +1,64 @@
+
+
+
+PASS Modifying selectionStart value of the input element
+PASS Modifying selectionEnd value of the input element
+PASS Calling setSelectionRange() on the input element
+PASS Calling select() on the input element
+PASS Calling setRangeText() on the input element
+PASS Setting initial zero selectionStart value on the input element
+PASS Setting the same selectionStart value twice on the input element
+PASS Setting initial zero selectionEnd value on the input element
+PASS Setting the same selectionEnd value twice on the input element
+PASS Setting initial zero selection range on the input element
+PASS Setting the same selection range twice on the input element
+PASS Calling select() twice on the input element
+PASS Calling setRangeText() after select() on the input element
+PASS Calling setRangeText() repeatedly on the input element
+PASS Calling setRangeText() on empty the input element
+PASS Modifying selectionStart value of the disconnected input element
+PASS Modifying selectionEnd value of the disconnected input element
+PASS Calling setSelectionRange() on the disconnected input element
+PASS Calling select() on the disconnected input element
+PASS Calling setRangeText() on the disconnected input element
+PASS Setting initial zero selectionStart value on the disconnected input element
+PASS Setting the same selectionStart value twice on the disconnected input element
+PASS Setting initial zero selectionEnd value on the disconnected input element
+PASS Setting the same selectionEnd value twice on the disconnected input element
+PASS Setting initial zero selection range on the disconnected input element
+PASS Setting the same selection range twice on the disconnected input element
+PASS Calling select() twice on the disconnected input element
+PASS Calling setRangeText() after select() on the disconnected input element
+PASS Calling setRangeText() repeatedly on the disconnected input element
+PASS Calling setRangeText() on empty the disconnected input element
+PASS Modifying selectionStart value of the textarea element
+PASS Modifying selectionEnd value of the textarea element
+PASS Calling setSelectionRange() on the textarea element
+PASS Calling select() on the textarea element
+PASS Calling setRangeText() on the textarea element
+PASS Setting initial zero selectionStart value on the textarea element
+PASS Setting the same selectionStart value twice on the textarea element
+PASS Setting initial zero selectionEnd value on the textarea element
+PASS Setting the same selectionEnd value twice on the textarea element
+PASS Setting initial zero selection range on the textarea element
+PASS Setting the same selection range twice on the textarea element
+PASS Calling select() twice on the textarea element
+PASS Calling setRangeText() after select() on the textarea element
+PASS Calling setRangeText() repeatedly on the textarea element
+PASS Calling setRangeText() on empty the textarea element
+PASS Modifying selectionStart value of the disconnected textarea element
+PASS Modifying selectionEnd value of the disconnected textarea element
+PASS Calling setSelectionRange() on the disconnected textarea element
+PASS Calling select() on the disconnected textarea element
+PASS Calling setRangeText() on the disconnected textarea element
+PASS Setting initial zero selectionStart value on the disconnected textarea element
+PASS Setting the same selectionStart value twice on the disconnected textarea element
+PASS Setting initial zero selectionEnd value on the disconnected textarea element
+PASS Setting the same selectionEnd value twice on the disconnected textarea element
+PASS Setting initial zero selection range on the disconnected textarea element
+PASS Setting the same selection range twice on the disconnected textarea element
+PASS Calling select() twice on the disconnected textarea element
+PASS Calling setRangeText() after select() on the disconnected textarea element
+PASS Calling setRangeText() repeatedly on the disconnected textarea element
+PASS Calling setRangeText() on empty the disconnected textarea element
+

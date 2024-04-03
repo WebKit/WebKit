@@ -119,7 +119,7 @@ void RenderBoxModelObject::ContinuationChainNode::insertAfter(ContinuationChainN
     after.next = this;
 }
 
-using ContinuationChainNodeMap = HashMap<const RenderBoxModelObject*, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>>;
+using ContinuationChainNodeMap = HashMap<SingleThreadWeakRef<const RenderBoxModelObject>, std::unique_ptr<RenderBoxModelObject::ContinuationChainNode>>;
 
 static ContinuationChainNodeMap& continuationChainNodeMap()
 {
@@ -127,7 +127,7 @@ static ContinuationChainNodeMap& continuationChainNodeMap()
     return map;
 }
 
-using FirstLetterRemainingTextMap = HashMap<const RenderBoxModelObject*, SingleThreadWeakPtr<RenderTextFragment>>;
+using FirstLetterRemainingTextMap = HashMap<SingleThreadWeakRef<const RenderBoxModelObject>, SingleThreadWeakPtr<RenderTextFragment>>;
 
 static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
 {
@@ -201,7 +201,7 @@ void RenderBoxModelObject::willBeDestroyed()
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasEffectiveAppearance() || style().boxShadow();
+    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasUsedAppearance() || style().boxShadow();
 }
 
 void RenderBoxModelObject::updateFromStyle()
@@ -225,9 +225,12 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); is<RenderInline>(parent); parent = parent->parent()) {
+    for (RenderElement* parent = downcast<RenderBlock>(*child).inlineContinuation(); parent; parent = parent->parent()) {
+        auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent);
+        if (!parentRenderInline)
+            break;
         if (parent->isInFlowPositioned())
-            offset += downcast<RenderInline>(*parent).offsetForInFlowPosition();
+            offset += parentRenderInline->offsetForInFlowPosition();
     }
     return offset;
 }
@@ -302,23 +305,22 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
-    auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
-    if (!bitmapImage || bitmapImage->canAnimate()) {
-        // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
-        // for the next frame will be calculated in BitmapImage::internalStartAnimation().
-        return DecodingMode::Synchronous;
-    }
-
     // Some document types force synchronous decoding.
 #if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
+
     if (document().isImageDocument())
         return DecodingMode::Synchronous;
 
     // A PaintBehavior may force synchronous decoding.
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
+        return DecodingMode::Synchronous;
+
+
+    auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage)
         return DecodingMode::Synchronous;
 
     auto defaultDecodingMode = [&]() -> DecodingMode {
@@ -327,8 +329,10 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 
         // First tile paint.
         if (paintInfo.paintBehavior.contains(PaintBehavior::DefaultAsynchronousImageDecode)) {
-            // And the images has not been painted in this element yet.
-            if (element() && !element()->hasEverPaintedImages())
+            // No image has been painted in this element yet and it should not flicker with previous painting.
+            auto observer = bitmapImage->imageObserver();
+            bool mayOverlapOtherClients = observer && observer->numberOfClients() > 1 && bitmapImage->currentFrameDecodingOptions().decodingMode() == DecodingMode::Asynchronous;
+            if (element() && !element()->hasEverPaintedImages() && !mayOverlapOtherClients)
                 return DecodingMode::Asynchronous;
         }
 
@@ -344,7 +348,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         // <img decoding="async"> forces asynchronous decoding but make sure this
         // will not cause flickering.
         if (imgElement->decodingMode() == DecodingMode::Asynchronous) {
-            // isAsyncDecodingEnabledForTesting() forces async image decoding regardless whether it is in the viewport or not.
             if (bitmapImage->isAsyncDecodingEnabledForTesting())
                 return DecodingMode::Asynchronous;
 
@@ -357,8 +360,19 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (bitmapImage->isAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
 
+    // Animated image case.
+    if (bitmapImage->isAnimated()) {
+        if (!(bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled()))
+            return DecodingMode::Synchronous;
+
+        if (bitmapImage->hasEverAnimated())
+            return DecodingMode::Asynchronous;
+
+        return defaultDecodingMode();
+    }
+
     // Large image case.
-    if (!(bitmapImage->canUseAsyncDecodingForLargeImages() && settings().largeImageAsyncDecodingEnabled()))
+    if (!(bitmapImage->isLargeForDecoding() && settings().largeImageAsyncDecodingEnabled()))
         return DecodingMode::Synchronous;
 
     // Choose a decodingMode such that the image does not flicker.
@@ -547,8 +561,8 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     // have already done a similar call to move from the containing block to the scrolling
     // ancestor above, but localToContainerQuad takes care of a lot of complex situations
     // involving inlines, tables, and transformations.
-    if (parent()->isRenderBox())
-        downcast<RenderBox>(parent())->flipForWritingMode(stickyBoxRect);
+    if (CheckedPtr parentBox = dynamicDowncast<RenderBox>(*parent()))
+        parentBox->flipForWritingMode(stickyBoxRect);
     auto stickyBoxRelativeToScrollingAncestor = parent()->localToContainerQuad(FloatRect(stickyBoxRect), &enclosingClippingBox, { } /* ignore transforms */).boundingBox();
 
     if (enclosingClippingLayer) {
@@ -730,7 +744,7 @@ static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, co
     return LayoutSize(size.width(), solutionHeight);
 }
 
-LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot) const
+LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByUsedZoom scaleByUsedZoom) const
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
     if (!image->imageHasNaturalDimensions())
@@ -747,8 +761,8 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     LayoutSize resolvedSize(intrinsicWidth.value(), intrinsicHeight.value());
     LayoutSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
 
-    if (shouldScaleOrNot == ScaleByEffectiveZoom)
-        resolvedSize.scale(style().effectiveZoom());
+    if (scaleByUsedZoom == ScaleByUsedZoom::Yes)
+        resolvedSize.scale(style().usedZoom());
     resolvedSize.clampToMinimumSize(minimumSize);
 
     if (!resolvedSize.isEmpty())
@@ -833,7 +847,7 @@ RenderBoxModelObject* RenderBoxModelObject::continuation() const
     if (!hasContinuationChainNode())
         return nullptr;
 
-    auto& continuationChainNode = *continuationChainNodeMap().get(this);
+    auto& continuationChainNode = *continuationChainNodeMap().get(*this);
     if (!continuationChainNode.next)
         return nullptr;
     return continuationChainNode.next->renderer.get();
@@ -844,7 +858,7 @@ RenderInline* RenderBoxModelObject::inlineContinuation() const
     if (!hasContinuationChainNode())
         return nullptr;
 
-    for (auto* next = continuationChainNodeMap().get(this)->next; next; next = next->next) {
+    for (auto* next = continuationChainNodeMap().get(*this)->next; next; next = next->next) {
         if (auto* renderInline = dynamicDowncast<RenderInline>(*next->renderer))
             return renderInline;
     }
@@ -857,7 +871,7 @@ void RenderBoxModelObject::forRendererAndContinuations(RenderBoxModelObject& ren
     if (!renderer.hasContinuationChainNode())
         return;
 
-    for (auto* next = continuationChainNodeMap().get(&renderer)->next; next; next = next->next) {
+    for (auto* next = continuationChainNodeMap().get(renderer)->next; next; next = next->next) {
         if (!next->renderer)
             continue;
         function(*next->renderer);
@@ -866,13 +880,13 @@ void RenderBoxModelObject::forRendererAndContinuations(RenderBoxModelObject& ren
 
 RenderBoxModelObject::ContinuationChainNode* RenderBoxModelObject::continuationChainNode() const
 {
-    return continuationChainNodeMap().get(this);
+    return continuationChainNodeMap().get(*this);
 }
 
 void RenderBoxModelObject::insertIntoContinuationChainAfter(RenderBoxModelObject& afterRenderer)
 {
     ASSERT(isContinuation());
-    ASSERT(!continuationChainNodeMap().contains(this));
+    ASSERT(!continuationChainNodeMap().contains(*this));
 
     auto& after = afterRenderer.ensureContinuationChainNode();
     ensureContinuationChainNode().insertAfter(after);
@@ -881,15 +895,15 @@ void RenderBoxModelObject::insertIntoContinuationChainAfter(RenderBoxModelObject
 void RenderBoxModelObject::removeFromContinuationChain()
 {
     ASSERT(hasContinuationChainNode());
-    ASSERT(continuationChainNodeMap().contains(this));
+    ASSERT(continuationChainNodeMap().contains(*this));
     setHasContinuationChainNode(false);
-    continuationChainNodeMap().remove(this);
+    continuationChainNodeMap().remove(*this);
 }
 
 auto RenderBoxModelObject::ensureContinuationChainNode() -> ContinuationChainNode&
 {
     setHasContinuationChainNode(true);
-    return *continuationChainNodeMap().ensure(this, [&] {
+    return *continuationChainNodeMap().ensure(*this, [&] {
         return makeUnique<ContinuationChainNode>(*this);
     }).iterator->value;
 }
@@ -898,19 +912,19 @@ RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
 {
     if (!isFirstLetter())
         return nullptr;
-    return firstLetterRemainingTextMap().get(this).get();
+    return firstLetterRemainingTextMap().get(*this).get();
 }
 
 void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)
 {
     ASSERT(isFirstLetter());
-    firstLetterRemainingTextMap().set(this, remainingText);
+    firstLetterRemainingTextMap().set(*this, remainingText);
 }
 
 void RenderBoxModelObject::clearFirstLetterRemainingText()
 {
     ASSERT(isFirstLetter());
-    firstLetterRemainingTextMap().remove(this);
+    firstLetterRemainingTextMap().remove(*this);
 }
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
@@ -929,7 +943,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 {
     if (auto styleable = Styleable::fromRenderer(*this))
-        return styleable->runningAnimationsAreAllAccelerated();
+        return styleable->hasRunningAcceleratedAnimations();
     return false;
 }
 
@@ -958,7 +972,7 @@ void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderSty
 
 bool RenderBoxModelObject::requiresLayer() const
 {
-    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection();
+    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || hasViewTransitionName() || isViewTransitionPseudo();
 }
 
 } // namespace WebCore

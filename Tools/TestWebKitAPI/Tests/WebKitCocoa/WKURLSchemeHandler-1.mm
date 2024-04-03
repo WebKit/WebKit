@@ -40,9 +40,11 @@
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKFrameHandle.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -166,6 +168,45 @@ TEST(URLSchemeHandler, Basic)
     EXPECT_EQ([handler.get().startedURLs count], 2u);
     EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:main"]]);
     EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:1] isEqual:[NSURL URLWithString:@"testing:image"]]);
+    EXPECT_EQ([handler.get().stoppedURLs count], 0u);
+}
+
+TEST(URLSchemeHandler, BasicWithHTTPS)
+{
+    using namespace TestWebKitAPI;
+
+    done = false;
+
+    HTTPServer httpsServer({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, String::fromUTF8(mainBytes) } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr<SchemeHandler> handler = adoptNS([[SchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO] mimeType:@"text/html"]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site1.example/"]];
+    [webView loadRequest:request];
+    Util::run(&done);
+
+    EXPECT_EQ([handler.get().startedURLs count], 1u);
+    EXPECT_TRUE([[handler.get().startedURLs objectAtIndex:0] isEqual:[NSURL URLWithString:@"testing:image"]]);
     EXPECT_EQ([handler.get().stoppedURLs count], 0u);
 }
 

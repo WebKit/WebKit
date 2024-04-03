@@ -36,9 +36,8 @@
     [CallWith=RelevantDocument] undefined forward();
     [CallWith=RelevantDocument] undefined go(optional long delta = 0);
 
-    // FIXME: title should not be nullable as per the HTML specification.
-    undefined pushState(SerializedScriptValue data, DOMString? title, optional USVString? url = null);
-    undefined replaceState(SerializedScriptValue data, DOMString? title, optional USVString? url = null);
+    undefined pushState(SerializedScriptValue data, DOMString unused, optional USVString? url = null);
+    undefined replaceState(SerializedScriptValue data, DOMString unused, optional USVString? url = null);
 };
 
 enum ScrollRestoration { "auto", "manual" };

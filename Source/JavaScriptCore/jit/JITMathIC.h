@@ -129,7 +129,7 @@ public:
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(MacroAssembler::differenceBetweenCodePtr(m_inlineStart, m_inlineEnd)));
             LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed);
             RELEASE_ASSERT(linkBuffer.isValid());
-            FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
+            FINALIZE_CODE(linkBuffer, NoPtrTag, nullptr, "JITMathIC: linking constant jump to out of line stub");
         };
 
         auto replaceCall = [&] () {
@@ -157,8 +157,7 @@ public:
 
                 LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
                 if (!linkBuffer.didFailToAllocate()) {
-                    m_code = FINALIZE_CODE_FOR(
-                        codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line fast IC snippet");
+                    m_code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, nullptr, "JITMathIC: generating out of line fast IC snippet");
 
                     if (!generationState.shouldSlowPathRepatch) {
                         // We won't need to regenerate, so we can wire the slow path call
@@ -199,8 +198,7 @@ public:
                 return;
 
 
-            m_code = FINALIZE_CODE_FOR(
-                codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line IC snippet");
+            m_code = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, nullptr, "JITMathIC: generating out of line IC snippet");
         }
 
         linkJumpToOutOfLineSnippet();

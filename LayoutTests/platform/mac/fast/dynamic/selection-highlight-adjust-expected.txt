@@ -7,10 +7,10 @@ layer at (0,0) size 800x156
         RenderText {#text} at (0,0) size 177x18
           text run at (0,0) width 177: "This is a regression test for "
         RenderInline {I} at (0,0) size 735x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (176,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (176,0) size 354x18
               text run at (176,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8835"
-          RenderText {#text} at (529,0) size 735x36
+          RenderText {#text} at (0,0) size 735x36
             text run at (529,0) width 5: " "
             text run at (533,0) width 202: "REGRESSION: Line moves but"
             text run at (0,18) width 203: "selection highlight stays behind"
@@ -20,7 +20,7 @@ layer at (0,0) size 800x156
         RenderImage {IMG} at (0,0) size 0x30
         RenderBR {BR} at (0,16) size 0x18
         RenderBR {BR} at (0,34) size 0x18
-        RenderInline {SPAN} at (0,0) size 316x18
+        RenderInline {SPAN} at (0,52) size 316x18
           RenderText {#text} at (0,52) size 316x18
             text run at (0,52) width 316: "The highlight should be on this line, not above it."
         RenderText {#text} at (0,0) size 0x0

@@ -23,15 +23,17 @@
             shouldBeTrue("supportedConstraints.echoCancellation");
             shouldBeTrue("supportedConstraints.facingMode");
             shouldBeTrue("supportedConstraints.frameRate");
-            shouldBeFalse("supportedConstraints.groupId");
+            shouldBeTrue("supportedConstraints.groupId");
             shouldBeTrue("supportedConstraints.height");
-            shouldBeFalse("supportedConstraints.sampleRate");
-            shouldBeFalse("supportedConstraints.sampleSize");
+            shouldBeTrue("supportedConstraints.sampleRate");
+            shouldBeTrue("supportedConstraints.sampleSize");
             shouldBeTrue("supportedConstraints.volume");
             shouldBeTrue("supportedConstraints.width");
             shouldBeTrue("supportedConstraints.zoom");
             debug("");
 
+            for (const key of Object.keys(supportedConstraints))
+                shouldBeTrue(`supportedConstraints["${key}"]`);
 
             finishJSTest();
 
