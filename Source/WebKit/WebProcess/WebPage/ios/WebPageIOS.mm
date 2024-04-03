@@ -75,6 +75,7 @@
 #import <WebCore/DataDetectionResultsStorage.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
@@ -155,6 +156,7 @@
 #import <WebCore/TextPlaceholderElement.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/UserGestureIndicator.h>
+#import <WebCore/ViewportArguments.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
@@ -4133,18 +4135,40 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return;
     }
 
-    if (hasMobileDocType) {
+    RefPtr document = frame->coreLocalFrame()->document();
+
+    auto updateViewportConfigurationForMobileDocType = [this, document] {
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
-        return;
+
+        // Do not update the viewport arguments if they are already configured from, say, a meta tag.
+        if (m_viewportConfiguration.viewportArguments().type >= ViewportArguments::Type::CSSDeviceAdaptation)
+            return;
+
+        if (!document || !document->isViewportDocument())
+            return;
+
+        auto viewportArguments = ViewportArguments { ViewportArguments::Type::CSSDeviceAdaptation };
+        document->setViewportArguments(viewportArguments);
+        viewportPropertiesDidChange(viewportArguments);
+    };
+
+    if (hasMobileDocType) {
+        return updateViewportConfigurationForMobileDocType();
     }
 
-    auto* document = frame->coreLocalFrame()->document();
-    if (document->isImageDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
-    else if (document->isTextDocument())
-        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
-    else
-        m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
+    bool configureWithParametersForStandardFrame = !document;
+
+    if (document) {
+        if (document->isImageDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
+        else if (document->isTextDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
+        else
+            configureWithParametersForStandardFrame = true;
+    }
+
+    if (configureWithParametersForStandardFrame)
+        return m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

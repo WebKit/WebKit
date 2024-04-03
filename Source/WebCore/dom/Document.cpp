@@ -4623,20 +4623,30 @@ ViewportArguments Document::viewportArguments() const
     return page->overrideViewportArguments().value_or(m_viewportArguments);
 }
 
+bool Document::isViewportDocument() const
+{
+    RefPtr page = this->page();
+    if (!page)
+        return false;
+
+#if ENABLE(FULLSCREEN_API)
+    if (RefPtr outermostFullscreenDocument = page->outermostFullscreenDocument())
+        return outermostFullscreenDocument == this;
+#endif
+
+    if (RefPtr frame = this->frame())
+        return frame->isMainFrame();
+
+    return false;
+}
+
 void Document::updateViewportArguments()
 {
     RefPtr page = this->page();
     if (!page)
         return;
 
-    bool isViewportDocument = [&] {
-#if ENABLE(FULLSCREEN_API)
-        if (auto* outermostFullscreenDocument = page->outermostFullscreenDocument())
-            return outermostFullscreenDocument == this;
-#endif
-        return frame()->isMainFrame();
-    }();
-    if (!isViewportDocument)
+    if (!isViewportDocument())
         return;
 
 #if ASSERT_ENABLED

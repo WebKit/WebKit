@@ -1079,8 +1079,8 @@ public:
     DOMTimerHoldingTank* domTimerHoldingTankIfExists() { return m_domTimerHoldingTank.get(); }
     DOMTimerHoldingTank& domTimerHoldingTank();
 #endif
-    
     void processViewport(const String& features, ViewportArguments::Type origin);
+    WEBCORE_EXPORT bool isViewportDocument() const;
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);

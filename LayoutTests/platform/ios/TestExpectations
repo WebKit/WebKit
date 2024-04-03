@@ -7018,9 +7018,6 @@ imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failur
 imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
 
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
-
 webkit.org/b/271785 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 webkit.org/b/271785 media/modern-media-controls/overflow-support/playback-speed.html [ Timeout ]
 
