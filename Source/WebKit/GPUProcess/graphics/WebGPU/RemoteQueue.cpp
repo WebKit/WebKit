@@ -87,7 +87,7 @@ void RemoteQueue::writeBuffer(
     if (!convertedBuffer)
         return;
 
-    m_backing->writeBuffer(*convertedBuffer, bufferOffset, data.data(), data.size(), 0, std::nullopt);
+    m_backing->writeBuffer(*convertedBuffer, bufferOffset, data.span(), 0, std::nullopt);
 }
 
 void RemoteQueue::writeTexture(

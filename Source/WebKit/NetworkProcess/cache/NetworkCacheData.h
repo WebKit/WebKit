@@ -55,7 +55,7 @@ namespace NetworkCache {
 class Data {
 public:
     Data() { }
-    Data(const uint8_t*, size_t);
+    Data(std::span<const uint8_t>);
 
     ~Data() { }
 
@@ -70,6 +70,7 @@ public:
     Data(GRefPtr<GBytes>&&, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle);
 #elif USE(CURL)
     Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&&);
+    Data(Vector<uint8_t>&& data) : Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData> { WTFMove(data) }) { }
 #endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }

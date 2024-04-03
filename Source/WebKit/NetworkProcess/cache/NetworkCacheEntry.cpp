@@ -102,11 +102,11 @@ Storage::Record Entry::encodeAsStorageRecord() const
     
     encoder.encodeChecksum();
 
-    Data header(encoder.buffer(), encoder.bufferSize());
+    Data header(encoder.span());
     Data body;
     if (m_buffer) {
         m_buffer = m_buffer->makeContiguous();
-        body = { static_cast<WebCore::SharedBuffer*>(m_buffer.get())->data(), m_buffer->size() };
+        body = { downcast<WebCore::SharedBuffer>(*m_buffer).span() };
     }
 
     return { m_key, m_timeStamp, header, body, { } };

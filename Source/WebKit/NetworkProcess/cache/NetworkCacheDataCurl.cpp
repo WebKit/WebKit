@@ -31,11 +31,11 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Data::Data(const uint8_t* data, size_t size)
-    : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(size)))
-    , m_size(size)
+Data::Data(std::span<const uint8_t> data)
+    : m_buffer(Box<std::variant<Vector<uint8_t>, FileSystem::MappedFileData>>::create(Vector<uint8_t>(data.size())))
+    , m_size(data.size())
 {
-    memcpy(std::get<Vector<uint8_t>>(*m_buffer).data(), data, size);
+    memcpy(std::get<Vector<uint8_t>>(*m_buffer).data(), data.data(), data.size());
 }
 
 Data::Data(std::variant<Vector<uint8_t>, FileSystem::MappedFileData>&& data)
@@ -83,7 +83,7 @@ Data Data::subrange(size_t offset, size_t size) const
     if (!m_buffer)
         return { };
 
-    return { data() + offset, size };
+    return span().subspan(offset, size);
 }
 
 Data concatenate(const Data& a, const Data& b)
