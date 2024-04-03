@@ -144,8 +144,7 @@ WK_LLVM_LTO_YES = $(WK_USER_LTO_MODE);
 WK_XCODE_SUPPORTS_LTO[sdk=macos*] = $(WK_NOT_$(WK_MACOS_BEFORE_1300));
 WK_XCODE_SUPPORTS_LTO[sdk=iphone*] = YES;
 WK_XCODE_SUPPORTS_LTO[sdk=appletv*] = YES;
-// FIXME: This was disabled due to rdar://90049836, and can likely be enabled now.
-WK_XCODE_SUPPORTS_LTO[sdk=watch*] = NO;
+WK_XCODE_SUPPORTS_LTO[sdk=watch*] = YES;
 
 WK_USER_LTO_MODE = $(WK_USER_LTO_MODE_$(WK_LTO_MODE));
 WK_USER_LTO_MODE_full = YES;
