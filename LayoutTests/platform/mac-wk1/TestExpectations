@@ -2865,3 +2865,7 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 [ Sonoma+ ] imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Failure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html [ Pass Failure ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html [ Pass Failure ]
+
+# webkit.org/b/272115 REGRESSION (274826@main): [ Sonoma WK1 ] 2X imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades tests are flaky failures
+[ Sonoma+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/image-upgrade.https.sub.html [ Pass Failure ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html [ Pass Failure ]
