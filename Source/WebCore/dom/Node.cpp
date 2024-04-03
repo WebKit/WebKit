@@ -2834,9 +2834,9 @@ Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle*
     return computeEditabilityWithStyle(style, userSelectAllTreatment, style ? ShouldUpdateStyle::DoNotUpdate : ShouldUpdateStyle::Update);
 }
 
-bool Node::willRespondToMouseClickEvents() const
+bool Node::willRespondToMouseClickEvents(const RenderStyle* styleToUse) const
 {
-    return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents());
+    return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents(styleToUse));
 }
 
 bool Node::willRespondToMouseClickEventsWithEditability(Editability editability) const
