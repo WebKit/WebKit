@@ -95,6 +95,11 @@ const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layou
     return lineLayout().rendererForLayoutBox(layoutBox);
 }
 
+bool InlineContent::hasRendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return lineLayout().hasRendererForLayoutBox(layoutBox);
+}
+
 const RenderBlockFlow& InlineContent::formattingContextRoot() const
 {
     return lineLayout().flow();

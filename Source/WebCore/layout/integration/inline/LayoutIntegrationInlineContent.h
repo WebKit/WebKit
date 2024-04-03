@@ -80,6 +80,8 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& formattingContextRoot() const;
 
+    bool hasRendererForLayoutBox(const Layout::Box&) const;
+
     size_t indexForBox(const InlineDisplay::Box&) const;
 
     const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const;

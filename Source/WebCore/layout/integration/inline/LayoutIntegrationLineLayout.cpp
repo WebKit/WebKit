@@ -918,6 +918,11 @@ const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBo
     return m_boxTree.rendererForLayoutBox(layoutBox);
 }
 
+bool LineLayout::hasRendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return m_boxTree.hasRendererForLayoutBox(layoutBox);
+}
+
 const Layout::ElementBox& LineLayout::rootLayoutBox() const
 {
     return m_boxTree.rootLayoutBox();

@@ -96,6 +96,11 @@ public:
         return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
+    bool hasRenderer() const
+    {
+        return m_inlineContent->hasRendererForLayoutBox(box().layoutBox());
+    }
+
     const RenderBlockFlow& formattingContextRoot() const
     {
         return m_inlineContent->formattingContextRoot();

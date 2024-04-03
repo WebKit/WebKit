@@ -7417,6 +7417,9 @@ webkit.org/b/268995 [ Debug ] fast/misc/out-of-flow-position-inside-mathml-crash
 
 webkit.org/b/261557 media/video-remove-insert-repaints.html [ Pass Crash ]
 
+# Out-of-flow line break handling
+[ Debug ] fast/text/remove-renderer-and-select-crash.html [ Skip ]
+
 # web-platform-tests/html/dom/elements/global-attributes failures
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-06.html [ ImageOnlyFailure ]
 webkit.org/b/267951 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-36.html [ ImageOnlyFailure ]
