@@ -50,6 +50,12 @@ local copy without needing to vendor it in the project source tree.
 
 #]=======================================================================]
 
+# Force CMP0116: cmake will automatically translate absolute paths in
+# depfiles to paths relative to the sub-build directory. Ninja expects
+# relative paths in depfiles.
+# This behavior is already the default when targeting cmake 3.20+.
+cmake_policy(SET CMP0116 NEW)
+
 # Add a dummy command in case introspection is disabled. This allows
 # always use it and automatically have it be a noop in that case, instead
 # of having a check next to each invocation.
