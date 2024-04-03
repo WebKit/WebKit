@@ -245,6 +245,11 @@ void WebXROpaqueFramebuffer::endFrame()
 
 }
 
+bool WebXROpaqueFramebuffer::usesLayeredMode() const
+{
+    return m_displayLayout == PlatformXR::Layout::Layered;
+}
+
 void WebXROpaqueFramebuffer::resolveMSAAFramebuffer(GraphicsContextGL& gl)
 {
     IntSize size = drawFramebufferSize();
@@ -292,7 +297,7 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
     IntSize phyiscalSize = m_leftPhysicalSize;
     IntRect viewport = m_leftViewport;
 
-    if (m_attributes.antialias)
+    if (m_resolvedFBO && m_attributes.antialias)
         resolveMSAAFramebuffer(gl);
 
     for (int layer = 0; layer < 2; ++layer) {
@@ -348,6 +353,17 @@ IntSize WebXROpaqueFramebuffer::drawFramebufferSize() const
     }
 }
 
+#if PLATFORM(COCOA)
+static IntRect convertViewportToPhysicalCoordinates(const IntRect& viewport, const IntSize& screenSize, const IntSize& phyiscalSize)
+{
+    return IntRect(
+        viewport.x() / static_cast<double>(screenSize.width()) * phyiscalSize.width(),
+        viewport.y() / static_cast<double>(screenSize.height()) * phyiscalSize.height(),
+        viewport.width() / static_cast<double>(screenSize.width()) * phyiscalSize.width(),
+        viewport.height() / static_cast<double>(screenSize.height()) * phyiscalSize.height());
+}
+#endif
+
 IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
 {
 #if PLATFORM(COCOA)
@@ -355,9 +371,9 @@ IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
     case PlatformXR::Eye::None:
         return IntRect(IntPoint::zero(), drawFramebufferSize());
     case PlatformXR::Eye::Left:
-        return m_leftViewport;
+        return m_usingFoveation ? convertViewportToPhysicalCoordinates(m_leftViewport, m_screenSize, m_leftPhysicalSize) : m_leftViewport;
     case PlatformXR::Eye::Right:
-        return m_rightViewport;
+        return m_usingFoveation ? convertViewportToPhysicalCoordinates(m_rightViewport, m_screenSize, m_rightPhysicalSize) : m_rightViewport;
     }
 #else
     UNUSED_PARAM(eye);
@@ -368,7 +384,7 @@ IntRect WebXROpaqueFramebuffer::drawViewport(PlatformXR::Eye eye) const
 #if PLATFORM(COCOA)
 static PlatformXR::Layout displayLayout(const PlatformXR::FrameData::LayerSetupData& data)
 {
-    return data.horizontalSamples[0].size() ? PlatformXR::Layout::Layered : PlatformXR::Layout::Shared;
+    return data.physicalSize[1][0] > 0 ? PlatformXR::Layout::Layered : PlatformXR::Layout::Shared;
 }
 #endif
 
@@ -383,6 +399,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     auto framebufferSize = IntSize(data.framebufferSize[0], data.framebufferSize[1]);
     bool framebufferResize = m_framebufferSize != framebufferSize || m_displayLayout != displayLayout(data);
     bool foveationChange = !data.horizontalSamples[0].empty() && !data.verticalSamples.empty() && !data.horizontalSamples[1].empty();
+    m_usingFoveation = foveationChange;
 
     m_framebufferSize = framebufferSize;
     m_displayLayout = displayLayout(data);
@@ -397,6 +414,17 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
     auto sampleCount = m_attributes.antialias ? std::min(4, m_context.maxSamples()) : 0;
 
     IntSize size = drawFramebufferSize();
+
+    // Drawing target
+    if (framebufferResize) {
+        // FIXME: We always allocate a new drawing target
+        allocateAttachments(gl, m_drawAttachments, sampleCount, size);
+
+        gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+        bindAttachments(gl, m_drawAttachments);
+        ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
+    }
+
     // Calculate viewports of each eye
     if (foveationChange) {
         if (!gl.createFoveation(toIntSize(data.physicalSize[0]), toIntSize(data.physicalSize[1]), data.screenSize, data.horizontalSamples[0], data.verticalSamples, data.horizontalSamples[1]))
@@ -416,16 +444,6 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
         ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
         if (gl.checkFramebufferStatus(GL::FRAMEBUFFER) != GL::FRAMEBUFFER_COMPLETE)
             return false;
-    }
-
-    // Drawing target
-    if (framebufferResize) {
-        // FIXME: We always allocate a new drawing target
-        allocateAttachments(gl, m_drawAttachments, sampleCount, size);
-
-        gl.bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
-        bindAttachments(gl, m_drawAttachments);
-        ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     }
 
     return gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE;
