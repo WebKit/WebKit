@@ -1272,6 +1272,27 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     RefPtr document = m_frame->document();
     // Update the data source's request with the new URL to fake the URL change
     URL oldURL = document->url();
+
+    if (document->settings().navigationAPIEnabled() && !url.isAboutBlank()) {
+        if (RefPtr domWindow = document->domWindow()) {
+            auto navigationType = determineNavigationType(policyChecker().loadType(), isNewNavigation);
+
+            // FIXME: This is likely not the ideal location for the navigate event and should happen earlier.
+            if (navigationType != NavigationNavigationType::Traverse) {
+                if (!domWindow->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(url, navigationType, equalIgnoringFragmentIdentifier(url, oldURL)))
+                    return;
+            }
+
+            if (RefPtr currentItem = checkedHistory()->currentItem()) {
+                // FIXME: Properly handle result of navigate event.
+                if (navigationType == NavigationNavigationType::Traverse)
+                    domWindow->protectedNavigation()->dispatchTraversalNavigateEvent(*currentItem);
+
+                domWindow->protectedNavigation()->updateForNavigation(*currentItem, navigationType);
+            }
+        }
+    }
+
     document->setURL(url);
     setOutgoingReferrer(url);
     protectedDocumentLoader()->replaceRequestURLForSameDocumentNavigation(url);
@@ -1298,24 +1319,6 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && !equalRespectingNullity(url.fragmentIdentifier(), oldURL.fragmentIdentifier());
 
     checkedHistory()->updateForSameDocumentNavigation();
-
-    if (document->settings().navigationAPIEnabled() && !url.isAboutBlank()) {
-        if (RefPtr domWindow = document->domWindow()) {
-            auto navigationType = determineNavigationType(policyChecker().loadType(), isNewNavigation);
-
-            // FIXME: This is likely not the ideal location for the navigate event and should happen earlier.
-            if (navigationType != NavigationNavigationType::Traverse)
-                domWindow->protectedNavigation()->dispatchPushReplaceReloadNavigateEvent(url, navigationType, equalIgnoringFragmentIdentifier(url, oldURL));
-
-            if (RefPtr currentItem = checkedHistory()->currentItem()) {
-                // FIXME: Properly handle result of navigate event.
-                if (navigationType == NavigationNavigationType::Traverse)
-                    domWindow->protectedNavigation()->dispatchTraversalNavigateEvent(*currentItem);
-
-                domWindow->protectedNavigation()->updateForNavigation(*currentItem, navigationType);
-            }
-        }
-    }
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
     if (hashChange)

@@ -6895,6 +6895,9 @@ imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-do
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-away-and-back.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/cross-document-location-api.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/location-reload.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-fragment.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-anchor-with-target.html [ Pass ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-svg-anchor-fragment.html [ Pass ]
 
 # -- View Transitions -- #
 # Reftest failures:
