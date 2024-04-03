@@ -187,7 +187,7 @@ class WebCore::PaymentSessionError {
     WebCore::PaymentContact shippingContact();
     Vector<String> supportedNetworks();
     WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities();
-    WebCore::ApplePaySessionPaymentRequest::ShippingType shippingType();
+    WebCore::ApplePaySessionPaymentRequestShippingType shippingType();
     Vector<WebCore::ApplePayShippingMethod> shippingMethods();
     Vector<WebCore::ApplePayLineItem> lineItems();
     WebCore::ApplePayLineItem total();

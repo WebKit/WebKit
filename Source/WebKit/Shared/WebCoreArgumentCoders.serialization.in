@@ -2000,7 +2000,7 @@ header: <WebCore/ResourceRequest.h>
 #endif
 
 [Nested] struct WebCore::ResourceError::IPCData {
-    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceError::Type type;
+    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceErrorBaseType type;
 #if PLATFORM(COCOA)
     RetainPtr<NSError> nsError;
     bool isSanitized;
@@ -4244,7 +4244,7 @@ struct WebCore::BackgroundFetchRequest {
     WebCore::FetchHeadersGuard guard;
     WebCore::HTTPHeaderMap httpHeaders;
     String referrer;
-    Markable<WebCore::ContentSecurityPolicyResponseHeaders, WebCore::ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 struct WebCore::BackgroundFetchRecordInformation {
@@ -7462,12 +7462,12 @@ header: <WebCore/DOMCacheEngine.h>
     uint64_t identifier;
     uint64_t updateResponseCounter;
 
-    WebCore::FetchHeaders::Guard requestHeadersGuard;
+    WebCore::FetchHeadersGuard requestHeadersGuard;
     WebCore::ResourceRequest request;
     WebCore::FetchOptions options;
     String referrer;
 
-    WebCore::FetchHeaders::Guard responseHeadersGuard;
+    WebCore::FetchHeadersGuard responseHeadersGuard;
     WebCore::ResourceResponse response;
     std::variant<std::nullptr_t, Ref<WebCore::FormData>, Ref<WebCore::SharedBuffer>> responseBody;
     uint64_t responseBodySize;
@@ -8003,3 +8003,41 @@ using ProcessID = int;
 #else
 using ProcessID = pid_t;
 #endif
+
+using WebCore::IntDegrees = int32_t;
+using WebCore::PageOverlay::PageOverlayID = uint64_t
+
+[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType : uint8_t {
+    SVG_PRESERVEASPECTRATIO_UNKNOWN,
+    SVG_PRESERVEASPECTRATIO_NONE,
+    SVG_PRESERVEASPECTRATIO_XMINYMIN,
+    SVG_PRESERVEASPECTRATIO_XMIDYMIN,
+    SVG_PRESERVEASPECTRATIO_XMAXYMIN,
+    SVG_PRESERVEASPECTRATIO_XMINYMID,
+    SVG_PRESERVEASPECTRATIO_XMIDYMID,
+    SVG_PRESERVEASPECTRATIO_XMAXYMID,
+    SVG_PRESERVEASPECTRATIO_XMINYMAX,
+    SVG_PRESERVEASPECTRATIO_XMIDYMAX,
+    SVG_PRESERVEASPECTRATIO_XMAXYMAX
+}
+
+[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType : uint8_t {
+    SVG_MEETORSLICE_UNKNOWN,
+    SVG_MEETORSLICE_MEET,
+    SVG_MEETORSLICE_SLICE
+}
+
+enum class WebCore::PlatformMediaError : uint8_t {
+    AppendError,
+    ClientDisconnected,
+    BufferRemoved,
+    SourceRemoved,
+    IPCError,
+    ParsingError,
+    MemoryError,
+    Cancelled,
+    LogicError,
+    DecoderCreationError,
+    NotSupportedError,
+    NetworkError,
+};

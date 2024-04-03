@@ -85,7 +85,7 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    SetCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode mode)
+    SetCaptionDisplayMode(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode mode)
     SetCaptionLanguage(String language)
 #endif
 
