@@ -472,8 +472,8 @@ void JPEGXLImageDecoder::prepareColorTransform()
 
 RetainPtr<CGColorSpaceRef> JPEGXLImageDecoder::tryDecodeICCColorProfile()
 {
-
     size_t profileSize = 0;
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
     if (JxlDecoderGetICCProfileSize(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
         return nullptr;
 
@@ -482,6 +482,16 @@ RetainPtr<CGColorSpaceRef> JPEGXLImageDecoder::tryDecodeICCColorProfile()
 
     if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), &s_pixelFormat, JXL_COLOR_PROFILE_TARGET_DATA, CFDataGetMutableBytePtr(data.get()), profileSize) != JXL_DEC_SUCCESS)
         return nullptr;
+#else
+    if (JxlDecoderGetICCProfileSize(m_decoder.get(), JXL_COLOR_PROFILE_TARGET_DATA, &profileSize) != JXL_DEC_SUCCESS)
+        return nullptr;
+
+    auto data = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, profileSize));
+    CFDataIncreaseLength(data.get(), profileSize);
+
+    if (JxlDecoderGetColorAsICCProfile(m_decoder.get(), JXL_COLOR_PROFILE_TARGET_DATA, CFDataGetMutableBytePtr(data.get()), profileSize) != JXL_DEC_SUCCESS)
+        return nullptr;
+#endif
 
     return adoptCF(CGColorSpaceCreateWithICCData(data.get()));
 }
