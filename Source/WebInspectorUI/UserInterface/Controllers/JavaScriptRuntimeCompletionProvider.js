@@ -61,6 +61,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 "dir",
                 "dirxml",
                 "error",
+                "gatherRTCLogs",
                 "group",
                 "groupCollapsed",
                 "groupEnd",

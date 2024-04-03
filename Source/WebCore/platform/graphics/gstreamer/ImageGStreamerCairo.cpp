@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ImageGStreamer.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && USE(CAIRO)
 
 #include "GStreamerCommon.h"
 
@@ -177,4 +177,4 @@ ImageGStreamer::~ImageGStreamer()
 
 } // namespace WebCore
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && USE(CAIRO)

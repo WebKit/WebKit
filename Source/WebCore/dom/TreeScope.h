@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "HitTestSource.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
@@ -67,15 +68,8 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
     void setParentTreeScope(TreeScope&);
 
-    // For CheckedPtr / CheckedRef use.
-    void incrementPtrCount() const;
-    void decrementPtrCount() const;
-#if CHECKED_POINTER_DEBUG
-    void registerCheckedPtr(const void*) const;
-    void copyCheckedPtr(const void* source, const void* destination) const;
-    void moveCheckedPtr(const void* source, const void* destination) const;
-    void unregisterCheckedPtr(const void*) const;
-#endif // CHECKED_POINTER_DEBUG
+    void ref() const;
+    void deref() const;
 
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
@@ -119,9 +113,8 @@ public:
     void removeLabel(const AtomString& forAttributeValue, HTMLLabelElement&);
     const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* labelElementsForId(const AtomString& forAttributeValue);
 
-    WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);
-    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY);
-    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(const FloatPoint&);
+    WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
+    WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY, HitTestSource = HitTestSource::Script);
 
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks
@@ -133,8 +126,8 @@ public:
     ContainerNode& rootNode() const { return m_rootNode; }
     Ref<ContainerNode> protectedRootNode() const;
 
-    IdTargetObserverRegistry& idTargetObserverRegistry() { return m_idTargetObserverRegistry.get(); }
-    const IdTargetObserverRegistry& idTargetObserverRegistry() const { return m_idTargetObserverRegistry.get(); }
+    inline IdTargetObserverRegistry& idTargetObserverRegistry();
+    IdTargetObserverRegistry* idTargetObserverRegistryIfExists() { return m_idTargetObserverRegistry.get(); }
 
     RadioButtonGroups& radioButtonGroups();
 
@@ -166,9 +159,10 @@ protected:
         m_documentScope = document;
     }
 
-    RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
+    RefPtr<Node> nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint, HitTestSource);
 
 private:
+    IdTargetObserverRegistry& ensureIdTargetObserverRegistry();
     CSSStyleSheetObservableArray& ensureAdoptedStyleSheets();
 
     SVGResourcesMap& svgResourcesMap() const;
@@ -184,7 +178,7 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_imagesByUsemap;
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
-    UniqueRef<IdTargetObserverRegistry> m_idTargetObserverRegistry;
+    std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
     RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;

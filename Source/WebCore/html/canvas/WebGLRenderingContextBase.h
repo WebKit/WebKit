@@ -77,7 +77,6 @@ class AbstractLocker;
 namespace WebCore {
 
 class ANGLEInstancedArrays;
-class EXTBlendFuncExtended;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;
@@ -116,6 +115,7 @@ class OESVertexArrayObject;
 class WebCodecsVideoFrame;
 class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
+class WebGLBlendFuncExtended;
 class WebGLClipCullDistance;
 class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
@@ -424,6 +424,8 @@ public:
     WEBCORE_EXPORT void simulateEventForTesting(SimulatedEventForTesting);
 
     GraphicsContextGL* graphicsContextGL() const { return m_context.get(); }
+    RefPtr<GraphicsContextGL> protectedGraphicsContextGL() const { return m_context; }
+
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
     void reshape(int width, int height) override;
@@ -506,6 +508,9 @@ protected:
     friend class WebGLVertexArrayObjectOES;
 
     // Implementation helpers.
+    friend class ScopedClearColorAndMask;
+    friend class ScopedClearDepthAndMask;
+    friend class ScopedClearStencilAndMask;
     friend class ScopedDisableRasterizerDiscard;
     friend class ScopedDisableScissorTest;
     friend class ScopedEnableBackbuffer;
@@ -711,7 +716,6 @@ protected:
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2
     RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
-    RefPtr<EXTBlendFuncExtended> m_extBlendFuncExtended;
     RefPtr<EXTBlendMinMax> m_extBlendMinMax;
     RefPtr<EXTClipControl> m_extClipControl;
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
@@ -744,6 +748,7 @@ protected:
     RefPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
     RefPtr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
     RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
+    RefPtr<WebGLBlendFuncExtended> m_webglBlendFuncExtended;
     RefPtr<WebGLClipCullDistance> m_webglClipCullDistance;
     RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
     RefPtr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;

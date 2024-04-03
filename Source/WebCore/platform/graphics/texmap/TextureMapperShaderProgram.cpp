@@ -475,7 +475,23 @@ static const char* fragmentTemplateCommon =
                 vec2 topRightRadii = u_roundedRect[(rectIndex * 3) + 1].zw;
                 vec2 bottomLeftRadii = u_roundedRect[(rectIndex * 3) + 2].xy;
                 vec2 bottomRightRadii = u_roundedRect[(rectIndex * 3) + 2].zw;
-                color *= roundedRectCoverage(fragCoord.xy, bounds, topLeftRadii, topRightRadii, bottomLeftRadii, bottomRightRadii);
+                float coverage = roundedRectCoverage(fragCoord.xy, bounds, topLeftRadii, topRightRadii, bottomLeftRadii, bottomRightRadii);
+
+                // Pixels outside the rect have coverage 0.0.
+                // Pixels inside the rect have coverage 1.0.
+                // Pixels on the border of the rounded parts have coverage between 0.0 and 1.0.
+
+                // Discard the fragments that are outside the rect.
+                if (coverage == 0.0)
+                    discard;
+
+                // By multiplying the color by the coverage, pixels on the border of the rounded corners get
+                // a bit more transparent.
+                // If blending is enabled, this does some antialiasing on the border pixels.
+                // If blending is disabled it means that we're rendering a holepunch buffer, so the color
+                // is always (0,0,0,0). In this case, multiplying by the coverage doesn't cause any effect
+                // and no antialiasing is done.
+                color *= coverage;
             }
         }
 

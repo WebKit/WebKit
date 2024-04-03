@@ -25,6 +25,8 @@
 
 // https://w3c.github.io/DOM-Parsing/#the-innerhtml-mixin
 interface mixin InnerHTML {
-    [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe(DOMString html);
-    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerHTML;
+    [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe(HTMLString html);
+    [CEReactions=Needed] attribute [LegacyNullToEmptyString] HTMLString innerHTML;
 };
+
+typedef [StringContext=TrustedHTML] DOMString HTMLString;

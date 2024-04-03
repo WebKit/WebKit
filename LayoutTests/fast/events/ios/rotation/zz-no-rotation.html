@@ -7,8 +7,8 @@
     <script>
         function doTest()
         {
-            shouldBe("window.innerWidth", "320");
-            shouldBe("window.innerHeight", "548");
+            console.log(`window.innerWidth: ${window.innerWidth}`);
+            console.log(`window.innerHeight: ${window.innerHeight}`);
         }
         window.addEventListener('load', doTest, false);
     </script>

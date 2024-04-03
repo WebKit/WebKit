@@ -4,7 +4,7 @@ layer at (0,0) size 800x232
   RenderBlock {HTML} at (0,0) size 800x232
     RenderBody {BODY} at (8,8) size 784x192
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderInline {P} at (0,0) size 608x16 [color=#FFFFFF] [bgcolor=#FF0000]
+        RenderInline {P} at (0,1) size 608x16 [color=#FFFFFF] [bgcolor=#FF0000]
           RenderText {#text} at (0,1) size 608x16
             text run at (0,1) width 608: "Ahem_font_would_be_nice_for_this_test."
         RenderText {#text} at (0,0) size 0x0

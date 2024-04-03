@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "Logging.h"
-#import "WebExtensionDeclarativeNetRequestConstants.h"
+#import "WebExtensionConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionLocalization.h"
-#import "_WKWebExtensionPermission.h"
+#import "_WKWebExtensionPermissionPrivate.h"
 #import <CoreFoundation/CFBundle.h>
 #import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <UniformTypeIdentifiers/UTType.h>
@@ -97,6 +97,8 @@ static NSString * const backgroundPageTypeModuleValue = @"module";
 
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 
+static NSString * const devtoolsPageManifestKey = @"devtools_page";
+
 static NSString * const contentScriptsManifestKey = @"content_scripts";
 static NSString * const contentScriptsMatchesManifestKey = @"matches";
 static NSString * const contentScriptsExcludeMatchesManifestKey = @"exclude_matches";
@@ -110,6 +112,9 @@ static NSString * const contentScriptsDocumentEndManifestKey = @"document_end";
 static NSString * const contentScriptsAllFramesManifestKey = @"all_frames";
 static NSString * const contentScriptsJSManifestKey = @"js";
 static NSString * const contentScriptsCSSManifestKey = @"css";
+static NSString * const contentScriptsWorldManifestKey = @"world";
+static NSString * const contentScriptsIsolatedManifestKey = @"ISOLATED";
+static NSString * const contentScriptsMainManifestKey = @"MAIN";
 
 static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
@@ -139,6 +144,10 @@ static NSString * const declarativeNetRequestRulesManifestKey = @"rule_resources
 static NSString * const declarativeNetRequestRulesetIDManifestKey = @"id";
 static NSString * const declarativeNetRequestRuleEnabledManifestKey = @"enabled";
 static NSString * const declarativeNetRequestRulePathManifestKey = @"path";
+
+static NSString * const externallyConnectableManifestKey = @"externally_connectable";
+static NSString * const externallyConnectableMatchesManifestKey = @"matches";
+static NSString * const externallyConnectableIDsManifestKey = @"ids";
 
 static const size_t maximumNumberOfShortcutCommands = 4;
 
@@ -419,6 +428,9 @@ void WebExtension::populateWebAccessibleResourcesIfNeeded()
 NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 {
     ASSERT(path);
+
+    if ([path hasPrefix:@"/"])
+        path = [path substringFromIndex:1];
 
     if (!path.length || !m_resourceBaseURL)
         return nil;
@@ -765,7 +777,7 @@ void WebExtension::recordError(NSError *error, SuppressNotification suppressNoti
     if (!m_errors)
         m_errors = [NSMutableArray array];
 
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{private}@", error);
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %{public}@", privacyPreservingDescription(error));
 
     [m_errors addObject:error];
 
@@ -791,6 +803,7 @@ NSArray *WebExtension::errors()
     populateWebAccessibleResourcesIfNeeded();
     populateCommandsIfNeeded();
     populateDeclarativeNetRequestPropertiesIfNeeded();
+    populateExternallyConnectableIfNeeded();
 
     return [m_errors copy] ?: @[ ];
 }
@@ -839,6 +852,63 @@ NSString *WebExtension::version()
 {
     populateDisplayStringsIfNeeded();
     return m_version.get();
+}
+
+void WebExtension::populateExternallyConnectableIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedExternallyConnectable)
+        return;
+
+    m_parsedExternallyConnectable = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/externally_connectable
+
+    auto *externallyConnectableDictionary = objectForKey<NSDictionary>(m_manifest, externallyConnectableManifestKey, false);
+
+    if (!externallyConnectableDictionary)
+        return;
+
+    if (!externallyConnectableDictionary.count) {
+        recordError(createError(Error::InvalidExternallyConnectable));
+        return;
+    }
+
+    bool shouldReportError = false;
+    MatchPatternSet matchPatterns;
+
+    auto *matchPatternStrings = objectForKey<NSArray>(externallyConnectableDictionary, externallyConnectableMatchesManifestKey, true, NSString.class);
+    for (NSString *matchPatternString in matchPatternStrings) {
+        if (!matchPatternString.length)
+            continue;
+
+        if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
+            if (matchPattern->matchesAllURLs() || !matchPattern->isSupported()) {
+                shouldReportError = true;
+                continue;
+            }
+
+            // URL patterns must contain at least a second-level domain. Top level domains and wildcards are not standalone patterns.
+            if (matchPattern->hostIsPublicSuffix()) {
+                shouldReportError = true;
+                continue;
+            }
+
+            matchPatterns.add(matchPattern.releaseNonNull());
+        }
+    }
+
+    m_externallyConnectableMatchPatterns = matchPatterns;
+
+    auto *extensionIDs = objectForKey<NSArray>(externallyConnectableDictionary, externallyConnectableIDsManifestKey, true, NSString.class);
+    extensionIDs = filterObjects(extensionIDs, ^bool(id key, NSString *extensionID) {
+        return !!extensionID.length;
+    });
+
+    if (shouldReportError || (matchPatterns.isEmpty() && !extensionIDs.count))
+        recordError(createError(Error::InvalidExternallyConnectable));
 }
 
 void WebExtension::populateDisplayStringsIfNeeded()
@@ -959,17 +1029,17 @@ NSString *WebExtension::actionPopupPath()
 
 bool WebExtension::hasAction()
 {
-    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
 }
 
 bool WebExtension::hasBrowserAction()
 {
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
 }
 
 bool WebExtension::hasPageAction()
 {
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
 }
 
 void WebExtension::populateActionPropertiesIfNeeded()
@@ -987,11 +1057,11 @@ void WebExtension::populateActionPropertiesIfNeeded()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
 
     if (supportsManifestVersion(3))
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey);
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
     else {
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey);
+        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
         if (!m_actionDictionary)
-            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey);
+            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
     }
 
     if (!m_actionDictionary)
@@ -1266,13 +1336,13 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
         return !!scriptPath.length;
     });
 
-    // Scripts takes precedence over page.
-    if (m_backgroundScriptPaths.get().count)
-        m_backgroundPagePath = nil;
+    // Page takes precedence over service worker.
+    if (m_backgroundPagePath)
+        m_backgroundServiceWorkerPath = nil;
 
-    // Service Worker takes precedence over page and scripts.
-    if (m_backgroundServiceWorkerPath) {
-        m_backgroundScriptPaths = nil;
+    // Scripts takes precedence over page and service worker.
+    if (m_backgroundScriptPaths.get().count) {
+        m_backgroundServiceWorkerPath = nil;
         m_backgroundPagePath = nil;
     }
 
@@ -1299,6 +1369,32 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     if (m_backgroundContentIsPersistent)
         recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
 #endif
+}
+
+bool WebExtension::hasInspectorBackgroundPage()
+{
+    return !!inspectorBackgroundPagePath();
+}
+
+NSString *WebExtension::inspectorBackgroundPagePath()
+{
+    populateInspectorPropertiesIfNeeded();
+    return m_inspectorBackgroundPagePath.get();
+}
+
+void WebExtension::populateInspectorPropertiesIfNeeded()
+{
+    if (!manifestParsedSuccessfully())
+        return;
+
+    if (m_parsedManifestInspectorProperties)
+        return;
+
+    m_parsedManifestInspectorProperties = true;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page
+
+    m_inspectorBackgroundPagePath = objectForKey<NSString>(m_manifest, devtoolsPageManifestKey);
 }
 
 bool WebExtension::hasOptionsPage()
@@ -1525,8 +1621,11 @@ void WebExtension::populateCommandsIfNeeded()
             continue;
         }
 
-        if (isActionCommand && !description.length)
+        if (isActionCommand && !description.length) {
             description = displayActionLabel();
+            if (!description.length)
+                description = displayShortName();
+        }
 
         commandData.description = description;
 
@@ -1854,13 +1953,22 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
 
+        WebExtensionContentWorldType contentWorldType = WebExtensionContentWorldType::ContentScript;
+        NSString *worldString = objectForKey<NSString>(dictionary, contentScriptsWorldManifestKey);
+        if (!worldString || [worldString isEqualToString:contentScriptsIsolatedManifestKey])
+            contentWorldType = WebExtensionContentWorldType::ContentScript;
+        else if ([worldString isEqualToString:contentScriptsMainManifestKey])
+            contentWorldType = WebExtensionContentWorldType::Main;
+        else
+            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
+
         InjectedContentData injectedContentData;
         injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
         injectedContentData.injectionTime = injectionTime;
         injectedContentData.matchesAboutBlank = matchesAboutBlank;
         injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
-        injectedContentData.forMainWorld = false;
+        injectedContentData.contentWorldType = contentWorldType;
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
         injectedContentData.includeGlobPatternStrings = includeGlobPatternStrings;
@@ -1877,7 +1985,7 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 {
     static MainThreadNeverDestroyed<PermissionsSet> permissions = std::initializer_list<String> { _WKWebExtensionPermissionActiveTab, _WKWebExtensionPermissionAlarms, _WKWebExtensionPermissionClipboardWrite,
         _WKWebExtensionPermissionContextMenus, _WKWebExtensionPermissionCookies, _WKWebExtensionPermissionDeclarativeNetRequest, _WKWebExtensionPermissionDeclarativeNetRequestFeedback,
-        _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, _WKWebExtensionPermissionMenus, _WKWebExtensionPermissionNativeMessaging, _WKWebExtensionPermissionScripting,
+        _WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess, _WKWebExtensionPermissionMenus, _WKWebExtensionPermissionNativeMessaging, _WKWebExtensionPermissionNotifications, _WKWebExtensionPermissionScripting,
         _WKWebExtensionPermissionStorage, _WKWebExtensionPermissionTabs, _WKWebExtensionPermissionUnlimitedStorage, _WKWebExtensionPermissionWebNavigation, _WKWebExtensionPermissionWebRequest };
     return permissions;
 }
@@ -1906,17 +2014,25 @@ const WebExtension::MatchPatternSet& WebExtension::optionalPermissionMatchPatter
     return m_optionalPermissionMatchPatterns;
 }
 
+const WebExtension::MatchPatternSet& WebExtension::externallyConnectableMatchPatterns()
+{
+    populateExternallyConnectableIfNeeded();
+    return m_externallyConnectableMatchPatterns;
+}
+
 WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
 {
     populatePermissionsPropertiesIfNeeded();
     populateContentScriptPropertiesIfNeeded();
+    populateExternallyConnectableIfNeeded();
 
     WebExtension::MatchPatternSet result;
 
     for (auto& matchPattern : m_permissionMatchPatterns)
         result.add(matchPattern);
 
-    // FIXME: <https://webkit.org/b/246491> Add externally connectable match patterns.
+    for (auto& matchPattern : m_externallyConnectableMatchPatterns)
+        result.add(matchPattern);
 
     for (auto& injectedContent : m_staticInjectedContents) {
         for (auto& matchPattern : injectedContent.includeMatchPatterns)
@@ -1995,26 +2111,6 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
             }
         }
     }
-}
-
-NSSet<_WKWebExtensionPermission> *toAPI(const WebExtension::PermissionsSet& permissions)
-{
-    NSMutableSet<_WKWebExtensionPermission> *result = [NSMutableSet setWithCapacity:permissions.size()];
-
-    for (auto& permission : permissions)
-        [result addObject:(NSString *)permission];
-
-    return [result copy];
-}
-
-NSSet<_WKWebExtensionMatchPattern *> *toAPI(const WebExtension::MatchPatternSet& patterns)
-{
-    NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:patterns.size()];
-
-    for (auto& matchPattern : patterns)
-        [result addObject:matchPattern->wrapper()];
-
-    return [result copy];
 }
 
 } // namespace WebKit

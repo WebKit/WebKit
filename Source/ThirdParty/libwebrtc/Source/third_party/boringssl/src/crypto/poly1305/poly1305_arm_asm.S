@@ -1,6 +1,14 @@
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_ARM) && defined(__ELF__)
+#if defined(__ARMEL__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
+
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 
 # This implementation was taken from the public domain, neon2 version in
 # SUPERCOP by D. J. Bernstein and Peter Schwabe.
@@ -2014,4 +2022,8 @@ vst1.8 d4,[r0,: 64]
 add sp,sp,#0
 bx lr
 
-#endif  /* !OPENSSL_NO_ASM && OPENSSL_ARM && __ELF__ */
+#endif  /* __ARMEL__ && !OPENSSL_NO_ASM && __ELF__ */
+
+#if defined(__ELF__)
+.section	.note.GNU-stack,"",%progbits
+#endif

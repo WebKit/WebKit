@@ -106,7 +106,8 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
 
         vImage_Error converterCreateError = kvImageNoError;
         auto converter = adoptCF(vImageConverter_CreateWithCGImageFormat(&sourceCGImageFormat, &destinationCGImageFormat, nullptr, kvImageNoFlags, &converterCreateError));
-        ASSERT_WITH_MESSAGE_UNUSED(converterCreateError, converterCreateError == kvImageNoError, "vImageConverter creation failed with error: %zd", converterCreateError);
+        if (converterCreateError != kvImageNoError)
+            return;
 
         vImage_Error converterConvertError = vImageConvert_AnyToAny(converter.get(), &sourceVImageBuffer, &destinationVImageBuffer, nullptr, kvImageNoFlags);
         ASSERT_WITH_MESSAGE_UNUSED(converterConvertError, converterConvertError == kvImageNoError, "vImageConvert_AnyToAny failed conversion with error: %zd", converterConvertError);

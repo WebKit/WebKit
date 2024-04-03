@@ -12,7 +12,7 @@
 
     async function startTest() {
         window.video = document.createElement('video');
-        let keys = await startEME({video: video, capabilities: [{
+        let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
             initDataTypes: ['sinf'],
             videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
             distinctiveIdentifier: 'not-allowed',
@@ -28,7 +28,7 @@
         consoleWrite('-');
         consoleWrite('Appending Encrypted Video Header');
 
-        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, 'video/mp4', 'content/elementary-stream-video-header-keyid-2.m4v');
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(video, mediaSource, keys, 'video/mp4', 'content/elementary-stream-video-header-keyid-2.m4v');
 
         consoleWrite('-');
         consoleWrite('Appending Encrypted Video Payload');

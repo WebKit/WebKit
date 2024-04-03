@@ -290,7 +290,7 @@ URL PrivateClickMeasurement::attributionReportClickDestinationURL() const
 
 Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
 {
-    auto reportDetails = JSON::Object::create();
+    Ref reportDetails = JSON::Object::create();
     if (!m_attributionTriggerData || !isValid())
         return reportDetails;
 
@@ -366,7 +366,7 @@ const std::optional<const URL> PrivateClickMeasurement::tokenSignatureURL() cons
 
 Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
 {
-    auto reportDetails = JSON::Object::create();
+    Ref reportDetails = JSON::Object::create();
     if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
         return reportDetails;
 
@@ -383,7 +383,7 @@ Ref<JSON::Object> PrivateClickMeasurement::tokenSignatureJSON() const
 
 Ref<JSON::Object> PCM::AttributionTriggerData::tokenSignatureJSON() const
 {
-    auto reportDetails = JSON::Object::create();
+    Ref reportDetails = JSON::Object::create();
     if (!ephemeralDestinationNonce || !ephemeralDestinationNonce->isValid())
         return reportDetails;
 

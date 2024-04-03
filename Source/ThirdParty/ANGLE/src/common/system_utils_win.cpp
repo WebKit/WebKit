@@ -8,8 +8,10 @@
 
 #include "system_utils.h"
 
+#include <fileapi.h>
 #include <stdarg.h>
 #include <windows.h>
+#include <algorithm>
 #include <array>
 #include <vector>
 
@@ -167,6 +169,39 @@ std::string GetModuleDirectory()
 std::string GetRootDirectory()
 {
     return "C:\\";
+}
+
+bool CreateDirectories(const std::string &path)
+{
+    // First sanitize path so we can use "/" as universal path separator
+    std::string sanitizedPath(path);
+    MakeForwardSlashThePathSeparator(sanitizedPath);
+
+    size_t pos = 0;
+    do
+    {
+        pos = sanitizedPath.find("/", pos);
+        std::string checkPath(sanitizedPath.substr(0, pos));
+        if (!checkPath.empty() && !IsDirectory(checkPath.c_str()))
+        {
+            if (!CreateDirectoryW(Widen(checkPath).c_str(), nullptr))
+            {
+                return false;
+            }
+        }
+        if (pos == std::string::npos)
+        {
+            break;
+        }
+        ++pos;
+    } while (true);
+    return true;
+}
+
+void MakeForwardSlashThePathSeparator(std::string &path)
+{
+    std::replace(path.begin(), path.end(), '\\', '/');
+    return;
 }
 
 Optional<std::string> GetTempDirectory()

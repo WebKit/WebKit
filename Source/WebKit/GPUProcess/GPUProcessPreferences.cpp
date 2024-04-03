@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 20220-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,10 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebPreferences.h"
+
+#if PLATFORM(COCOA)
+#include <WebCore/SystemBattery.h>
+#endif
 
 namespace WebKit {
 
@@ -72,6 +76,19 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
 #if ENABLE(EXTENSION_CAPABILITIES)
     if (webPreferences.mediaCapabilityGrantsEnabled())
         mediaCapabilityGrantsEnabled = true;
+#endif
+
+#if ENABLE(VP9)
+    if (webPreferences.vp8DecoderEnabled())
+        vp8DecoderEnabled = true;
+    if (webPreferences.vp9DecoderEnabled()) {
+        vp9DecoderEnabled = true;
+#if PLATFORM(COCOA)
+        if (!WebCore::systemHasBattery() || webPreferences.vp9SWDecoderEnabledOnBattery())
+            vp9SWDecoderEnabled = true;
+#endif
+
+    }
 #endif
 }
 

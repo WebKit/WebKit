@@ -65,9 +65,9 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPolicy, const String& outgoingReferrer, const OriginAccessPatterns& patterns)
+void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPolicy, const URL& outgoingReferrerURL, const OriginAccessPatterns& patterns)
 {
-    String newOutgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer, patterns);
+    String newOutgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrerURL, patterns);
     if (newOutgoingReferrer.isEmpty())
         request.clearHTTPReferrer();
     else
@@ -123,7 +123,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     }
 
     if (includeFetchMetadata) {
-        auto requestOrigin = SecurityOrigin::create(request.url());
+        Ref requestOrigin = SecurityOrigin::create(request.url());
         if (requestOrigin->isPotentiallyTrustworthy()) {
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchMode, "cors"_s);
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::SecFetchDest, "empty"_s);
@@ -156,7 +156,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         }
     }
 
-    if (auto* documentLoader = document.loader())
+    if (RefPtr documentLoader = document.loader())
         request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
 
     if (crossOriginAttribute.isNull()) {
@@ -335,10 +335,8 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
     if (policy == CrossOriginResourcePolicy::SameSite) {
         if (origin.isOpaque())
             return true;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
         if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(responseURL))
             return true;
-#endif
         if (origin.protocol() == "http"_s && responseURL.protocol() == "https"_s)
             return true;
     }

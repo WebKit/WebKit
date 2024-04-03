@@ -36,6 +36,11 @@ inline SVGMaskElement& LegacyRenderSVGResourceMasker::maskElement() const
     return downcast<SVGMaskElement>(LegacyRenderSVGResourceContainer::element());
 }
 
+inline Ref<SVGMaskElement> LegacyRenderSVGResourceMasker::protectedMaskElement() const
+{
+    return maskElement();
+}
+
 SVGUnitTypes::SVGUnitType LegacyRenderSVGResourceMasker::maskUnits() const
 {
     return maskElement().maskUnits();

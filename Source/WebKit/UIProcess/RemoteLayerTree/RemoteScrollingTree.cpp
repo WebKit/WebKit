@@ -73,8 +73,8 @@ void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode&
         return;
 
     std::optional<FloatPoint> layoutViewportOrigin;
-    if (is<ScrollingTreeFrameScrollingNode>(node))
-        layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
+    if (auto* scrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(node))
+        layoutViewportOrigin = scrollingNode->layoutViewport().location();
 
     m_scrollingCoordinatorProxy->scrollingTreeNodeDidScroll(node.scrollingNodeID(), node.currentScrollPosition(), layoutViewportOrigin, scrollingLayerPositionAction);
 }

@@ -36,6 +36,13 @@
 struct WGPUShaderModuleImpl {
 };
 
+namespace WGSL {
+namespace AST {
+class Function;
+}
+struct Type;
+}
+
 namespace WebGPU {
 
 class Device;
@@ -91,6 +98,11 @@ public:
     bool hasOverride(const String&) const;
     const VertexStageIn* stageInTypesForEntryPoint(const String&) const;
     const VertexOutputs* vertexReturnTypeForEntryPoint(const String&) const;
+    bool usesFrontFacingInInput(const String&) const;
+    bool usesSampleIndexInInput(const String&) const;
+    bool usesSampleMaskInInput(const String&) const;
+    bool usesSampleMaskInOutput(const String&) const;
+    bool usesFragDepth(const String&) const;
 
 private:
     ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, NSMutableSet<NSString *> *, HashMap<String, String>&&, Device&);
@@ -102,6 +114,11 @@ private:
     const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
     const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
+    void populateFragmentInputs(const WGSL::Type&, ShaderModule::FragmentInputs&, const String&);
+    FragmentInputs parseFragmentInputs(const WGSL::AST::Function&);
+    void populateOutputState(const String&, WGSL::Builtin);
+
+    ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type&, const String&);
 
     const Ref<Device> m_device;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
@@ -117,6 +134,16 @@ private:
 
     NSMutableSet<NSString *> *m_originalOverrideNames { nil };
     const HashMap<String, String> m_originalFunctionNames;
+    struct ShaderModuleState {
+        bool usesFrontFacingInInput { false };
+        bool usesSampleIndexInInput { false };
+        bool usesSampleMaskInInput { false };
+        bool usesSampleMaskInOutput { false };
+        bool usesFragDepth { false };
+    };
+    const ShaderModuleState* shaderModuleState(const String&) const;
+    ShaderModuleState& populateShaderModuleState(const String&);
+    HashMap<String, ShaderModuleState> m_usageInformationPerEntryPoint;
 };
 
 } // namespace WebGPU

@@ -44,7 +44,7 @@ public:
 
 private:
     static NavigatorContacts* from(Navigator&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     RefPtr<ContactsManager> m_contactsManager;
     Navigator& m_navigator;

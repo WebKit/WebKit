@@ -1,0 +1,5 @@
+
+PASS Check cues from resources/cue-recovery-header.vtt
+PASS Check cues from resources/cue-recovery-note.vtt
+PASS Check cues from resources/cue-recovery-cuetext.vtt
+

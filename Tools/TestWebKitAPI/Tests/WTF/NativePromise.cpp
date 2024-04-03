@@ -296,7 +296,7 @@ TEST(NativePromise, GenericPromise)
 
         GenericPromise::Producer producer3;
         Ref<GenericPromise> promise3 = producer3;
-        NativePromiseRequest<GenericPromise> request3;
+        NativePromiseRequest request3;
 
         // Note that if you're not interested in the result you can provide two Function<void()> to then()
         promise3->then(queue, doFail(), doFail()).track(request3);
@@ -422,7 +422,7 @@ TEST(NativePromise, PromiseRequest)
     // We declare the Request holder before using the runLoop to ensure it stays in scope for the entire run.
     // ASSERTION FAILED: !m_request
     using MyPromise = NativePromise<bool, bool>;
-    NativePromiseRequest<MyPromise> request1;
+    NativePromiseRequest request1;
 
     runInCurrentRunLoop([&](auto& runLoop) {
         MyPromise::Producer producer1;
@@ -443,7 +443,7 @@ TEST(NativePromise, PromiseRequest)
     // lifetime of the object.
     bool objectToShare = true;
     runInCurrentRunLoop([&](auto& runLoop) {
-        NativePromiseRequest<GenericPromise> request2;
+        NativePromiseRequest request2;
         GenericPromise::Producer producer2;
         Ref<GenericPromise> promise2 = producer2;
         promise2->whenSettled(runLoop,
@@ -465,7 +465,7 @@ TEST(NativePromise, PromiseRequest)
 TEST(NativePromise, PromiseRequestDisconnected1)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        NativePromiseRequest<TestPromise> request;
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
@@ -480,7 +480,7 @@ TEST(NativePromise, PromiseRequestDisconnected1)
 TEST(NativePromise, PromiseRequestDisconnected2)
 {
     runInCurrentRunLoop([](auto& runLoop) {
-        NativePromiseRequest<TestPromise> request;
+        NativePromiseRequest request;
 
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
@@ -928,7 +928,7 @@ TEST(NativePromise, PromiseAllSettledAsync)
 TEST(NativePromise, Chaining)
 {
     // We declare this variable before |awq| to ensure the destructor is run after |holder.disconnect()|.
-    NativePromiseRequest<TestPromise> holder;
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -1261,7 +1261,7 @@ TEST(NativePromise, HeterogeneousChaining)
     using Promise1 = NativePromise<std::unique_ptr<char>, bool>;
     using Promise2 = NativePromise<std::unique_ptr<int>, bool>;
 
-    NativePromiseRequest<Promise2> holder;
+    NativePromiseRequest holder;
 
     AutoWorkQueue awq;
     auto queue = awq.queue();
@@ -1678,6 +1678,128 @@ TEST(NativePromise, CreateSettledPromise)
     });
 }
 
+TEST(NativePromise, DisconnectNotOwnedInstance)
+{
+    GenericPromise::Producer producer;
+    auto request = makeUnique<NativePromiseRequest>();
+    WeakPtr weakRequest { *request };
+    producer->whenSettled(RunLoop::main(), [request = WTFMove(request)] (auto&& result) mutable {
+        request->complete();
+        EXPECT_TRUE(false);
+    })->track(*weakRequest);
+    weakRequest->disconnect();
+    EXPECT_FALSE(!!weakRequest);
+    producer.resolve();
+}
+
+TEST(NativePromise, AutoRejectProducer)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+    queue->dispatch([queue] {
+        RefPtr<GenericPromise> promise1;
+        {
+            GenericPromise::AutoRejectProducer producer;
+            promise1 = producer.promise();
+        }
+        promise1->then(queue, doFail(), [] {
+            EXPECT_TRUE(true);
+        });
+
+        RefPtr<NativePromise<int, int>> promise2;
+        {
+            NativePromise<int, int>::AutoRejectProducer producer(-1);
+            promise2 = producer.promise();
+        }
+        promise2->then(queue, doFail(), [](auto result) {
+            EXPECT_EQ(result, -1);
+        });
+
+        // Check that AutoRejectProducer is usable with non-copyable type.
+        RefPtr<NativePromise<int, std::unique_ptr<int>>> promise3;
+        {
+            NativePromise<int, std::unique_ptr<int>>::AutoRejectProducer producer(makeUniqueWithoutFastMallocCheck<int>(-1));
+            promise3 = producer.promise();
+        }
+        promise3->then(queue, doFail(), [](auto&& result) {
+            EXPECT_EQ(*result, -1);
+        });
+
+        RefPtr<NativePromise<int, std::unique_ptr<int>>> promise4;
+        {
+            NativePromise<int, std::unique_ptr<int>>::AutoRejectProducer producer(makeUniqueWithoutFastMallocCheck<int>(-2));
+            promise4 = producer.promise();
+            producer.setDefaultReject(makeUniqueWithoutFastMallocCheck<int>(-1));
+        }
+        promise4->then(queue, doFail(), [queue](auto&& result) {
+            EXPECT_EQ(*result, -1);
+            queue->beginShutdown();
+        });
+    });
+}
+
+TEST(NativePromise, ResolveWithFunction)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+
+    // Test settled with expected value, before whenSettled.
+    NativePromise<int, int>::Producer producer1;
+    producer1.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+    producer1.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+    });
+
+    // Test settled with rejected value, before whenSettled.
+    NativePromise<int, int>::Producer producer2;
+    producer2.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return makeUnexpected(2);
+    });
+    producer2.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_FALSE(!!result);
+        EXPECT_EQ(result.error(), 2);
+    });
+
+    // Test settled with expected value, after whenSettled.
+    NativePromise<int, int>::Producer producer3;
+    producer3.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+    });
+    producer3.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+
+    // Test settled with rejected value, after whenSettled.
+    NativePromise<int, int>::Producer producer4;
+    producer4.promise()->whenSettled(queue, [](auto result) {
+        EXPECT_FALSE(!!result);
+        EXPECT_EQ(result.error(), 2);
+    });
+    producer4.settleWithFunction([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return makeUnexpected(2);
+    });
+
+    // Test with settle(Function) syntax
+    NativePromise<int, int>::Producer producer5;
+    producer5.settle([queue]() -> NativePromise<int, int>::Result {
+        assertIsCurrent(queue);
+        return 1;
+    });
+    producer5.promise()->whenSettled(queue, [queue](auto result) {
+        EXPECT_TRUE(!!result);
+        EXPECT_EQ(*result, 1);
+        queue->beginShutdown();
+    });
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
@@ -1733,7 +1855,7 @@ private:
             // Note that you can resolve a NativePromise on any threads. Unlike with a CompletionHandler it is not the responsibility of the producer to resolve the promise
             // on a particular thread.
             // The consumer specifies the thread on which it wants to be called back.
-            producer.resolve(std::make_pair<Vector<uint8_t>, String>({ image.data(), image.size() }, { mimeType.data(), static_cast<unsigned>(mimeType.size()) }));
+            producer.resolve(std::make_pair<Vector<uint8_t>, String>(std::span { image }, std::span<const char> { mimeType }));
         }));
 
         // Return the promise which the producer will resolve at a later stage.

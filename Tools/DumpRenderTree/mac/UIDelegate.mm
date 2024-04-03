@@ -36,7 +36,6 @@
 #import "TestRunner.h"
 #import "WPTFunctions.h"
 
-#import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
@@ -182,6 +181,9 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
     auto webView = createWebViewAndOffscreenWindow();
     [webView setPreferences:[sender preferences]];
 
+    if (auto ports = gTestRunner->portsForUpgradingInsecureScheme())
+        [webView _setPortsForUpgradingInsecureSchemeForTesting:ports->first withSecurePort:ports->second];
+
     if (gTestRunner->newWindowsCopyBackForwardList())
         [webView _loadBackForwardListFromOtherView:sender];
     
@@ -226,25 +228,6 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
         }
     }
     [[origin databaseQuotaManager] setQuota:newQuota];
-}
-
-- (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
-{
-    if (!done && gTestRunner->dumpApplicationCacheDelegateCallbacks()) {
-        // For example, numbers from 30000 - 39999 will output as 30000.
-        // Rounding up or down not really matter for these tests. It's
-        // sufficient to just get a range of 10000 to determine if we were
-        // above or below a threshold.
-        unsigned long truncatedSpaceNeeded = static_cast<unsigned long>((totalSpaceNeeded / 10000) * 10000);
-        printf("UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{%s, %s, %i} totalSpaceNeeded:~%lu\n",
-            [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], truncatedSpaceNeeded);
-    }
-
-    if (gTestRunner->disallowIncreaseForApplicationCacheQuota())
-        return;
-
-    static const unsigned long long defaultOriginQuota = [WebApplicationCache defaultOriginQuota];
-    [[origin applicationCacheQuotaManager] setQuota:defaultOriginQuota];
 }
 
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text

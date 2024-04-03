@@ -172,22 +172,22 @@ void SpeculativeJIT::compile()
     createOSREntries();
     setEndOfCode();
 
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
+    LinkBuffer linkBuffer(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate()) {
         m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
 
-    link(*linkBuffer);
-    linkOSREntries(*linkBuffer);
+    link(linkBuffer);
+    linkOSREntries(linkBuffer);
 
-    disassemble(*linkBuffer);
+    disassemble(linkBuffer);
 
-    auto codeRef = FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
+    auto codeRef = FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
     m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
     m_jitCode->variableEventStream = finalizeEventStream();
 
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer));
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull());
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
@@ -271,24 +271,24 @@ void SpeculativeJIT::compileFunction()
     setEndOfCode();
 
     // === Link ===
-    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
-    if (linkBuffer->didFailToAllocate()) {
+    LinkBuffer linkBuffer(*this, m_codeBlock, LinkBuffer::Profile::DFG, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate()) {
         m_graph.m_plan.setFinalizer(makeUnique<FailedFinalizer>(m_graph.m_plan));
         return;
     }
-    link(*linkBuffer);
-    linkOSREntries(*linkBuffer);
+    link(linkBuffer);
+    linkOSREntries(linkBuffer);
 
-    disassemble(*linkBuffer);
+    disassemble(linkBuffer);
 
-    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer->locationOf<JSEntryPtrTag>(arityCheck);
+    CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer.locationOf<JSEntryPtrTag>(arityCheck);
 
     m_jitCode->initializeCodeRefForDFG(
-        FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
+        FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
         withArityCheck);
     m_jitCode->variableEventStream = finalizeEventStream();
 
-    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
+    auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), withArityCheck);
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
 }
 
@@ -365,7 +365,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
 
     VM& vm = this->vm();
     if (size) {
-        if (Allocator allocator = vm.jsValueGigacageAuxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists)) {
+        if (Allocator allocator = vm.auxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists)) {
             emitAllocate(storageGPR, JITAllocator::constant(allocator), scratchGPR, scratch2GPR, slowCases);
             
             addPtr(
@@ -664,7 +664,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         slowPathGenerator->generate(this);
 
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
     }
     for (auto& slowPathLambda : m_slowPathLambdas) {
         Node* currentNode = slowPathLambda.currentNode;
@@ -676,7 +676,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         slowPathLambda.generator();
         m_outOfLineStreamIndex = std::nullopt;
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
     }
 }
 
@@ -2601,7 +2601,7 @@ void SpeculativeJIT::compileCurrentBlock()
         compile(m_currentNode);
 
         if (UNLIKELY(sizeMarker))
-            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
 
         if (belongsInMinifiedGraph(m_currentNode->op()))
             m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));
@@ -3012,7 +3012,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         JITPutByValGenerator gen(
             codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy), usedRegisters,
-            baseRegs, propertyRegs, valueRegs, InvalidGPRReg, stubInfoGPR, ecmaMode);
+            baseRegs, propertyRegs, valueRegs, InvalidGPRReg, stubInfoGPR);
 
         std::visit([&](auto* stubInfo) {
             if (m_state.forNode(child2).isType(SpecString))
@@ -3836,8 +3836,8 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 {
     if (node->op() == PutByValAlias)
         return Jump();
-    JSArrayBufferView* view = m_graph.tryGetFoldableView(
-        m_state.forNode(m_graph.child(node, 0)).m_value, node->arrayMode());
+    Edge& edge = m_graph.child(node, 0);
+    JSArrayBufferView* view = m_graph.tryGetFoldableView(m_state.forNode(edge).m_value, node->arrayMode());
     if (view && !view->isResizableOrGrowableShared()) {
         size_t length = view->length();
         Node* indexNode = m_graph.child(node, 1).node();
@@ -3868,7 +3868,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
     UNUSED_PARAM(scratch2GPR);
 #endif
 
-    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+    if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(edge)))
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+
 #if USE(LARGE_TYPED_ARRAYS)
     signExtend32ToPtr(indexGPR, scratchGPR);
     return branch64(
@@ -3905,21 +3907,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node*
                 Address(base, JSArrayBufferView::offsetOfMode()),
                 TrustedImm32(isWastefulTypedArrayMode));
 
-            Jump hasNullVector;
-#if CPU(ARM64E)
-            {
-                GPRReg scratch = scratchRegister();
-                DisallowMacroScratchRegisterUsage disallowScratch(*this);
-
-                loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-                removeArrayPtrTag(scratch);
-                hasNullVector = branchTestPtr(Zero, scratch);
-            }
-#else // CPU(ARM64E)
-            hasNullVector = branchTestPtr(
+            auto hasNullVector = branchTestPtr(
                 Zero,
                 Address(base, JSArrayBufferView::offsetOfVector()));
-#endif
             speculationCheck(Uncountable, JSValueSource(), node, hasNullVector);
             notWasteful.link(this);
         }
@@ -4664,7 +4654,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     JITPutByValGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, usedRegisters,
-        JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
+        JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, stubInfoGPR);
 
     std::visit([&](auto* stubInfo) {
         stubInfo->propertyIsSymbol = true;
@@ -4716,7 +4706,7 @@ void SpeculativeJIT::compilePutPrivateNameById(Node* node)
 
     // We emit property check during DFG generation, so we don't need
     // to check it here.
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameById : AccessType::SetPrivateNameById, ECMAMode::strict());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameById : AccessType::SetPrivateNameById);
 
     noResult(node);
 }
@@ -8760,38 +8750,23 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
     storageResult(storageGPR, node);
 }
 
-void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bool validateAuth)
+void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
 {
-    auto untagArrayPtr = [&]() {
-#if CPU(ARM64E)
-        untagArrayPtrLength64(Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
-#else
-        UNUSED_PARAM(validateAuth);
-        UNUSED_PARAM(baseReg);
-        UNUSED_PARAM(storageReg);
-#endif
-    };
-
-#if GIGACAGE_ENABLED
     UNUSED_PARAM(baseReg);
-    if (!Gigacage::shouldBeEnabled()) {
-        untagArrayPtr();
+    UNUSED_PARAM(storageReg);
+#if GIGACAGE_ENABLED
+    if (!Gigacage::shouldBeEnabled())
         return;
-    }
     
     if (!Gigacage::disablingPrimitiveGigacageIsForbidden()) {
         VM& vm = this->vm();
-        if (vm.primitiveGigacageEnabled().isStillValid())
-            m_graph.watchpoints().addLazily(vm.primitiveGigacageEnabled());
-        else {
-            untagArrayPtr();
+        if (!vm.primitiveGigacageEnabled().isStillValid())
             return;
-        }
+        m_graph.watchpoints().addLazily(vm.primitiveGigacageEnabled());
     }
     
-    cageWithoutUntagging(Gigacage::Primitive, storageReg);
+    cage(Gigacage::Primitive, storageReg);
 #endif
-    untagArrayPtr();
 }
 
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
@@ -8871,7 +8846,9 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     GPRReg baseGPR = base.gpr();
     GPRReg resultGPR = result.gpr();
 
-    speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+
+    if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
+        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 
 #if USE(LARGE_TYPED_ARRAYS)
     load64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
@@ -9165,7 +9142,8 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
 
-        speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
+        if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
+            speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource::unboxedCell(baseGPR), node, branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
 #if USE(LARGE_TYPED_ARRAYS)
         load64(Address(baseGPR, JSArrayBufferView::offsetOfLength()), resultGPR);
         speculationCheck(ExitKind::Overflow, JSValueSource(), nullptr, branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int32_t>::max())));
@@ -11194,7 +11172,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     
     size_t size = initialOutOfLineCapacity * sizeof(JSValue);
 
-    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator = vm().auxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -11238,7 +11216,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
     
-    Allocator allocator = vm().jsValueGigacageAuxiliarySpace().allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator = vm().auxiliarySpace().allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
@@ -11743,6 +11721,39 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
             callOperation(operationCallStringConstructor, resultGPR, LinkableConstant::globalObject(*this, node), op1Regs);
         }
         exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    case StringOrOtherUse: {
+        JSValueOperand arg(this, node->child1(), ManualOperandSpeculation);
+        GPRTemporary result(this);
+
+        JSValueRegs argRegs = arg.jsValueRegs();
+        GPRReg resultGPR = result.gpr();
+
+        Edge& edge = node->child1();
+        JumpList doneCases;
+
+        auto notCell = branchIfNotCell(argRegs);
+        GPRReg cell = argRegs.payloadGPR();
+        DFG_TYPE_CHECK(argRegs, edge, (~SpecCellCheck) | SpecString, branchIfNotString(cell));
+        move(cell, resultGPR);
+        doneCases.append(jump());
+
+        notCell.link(this);
+        auto isUndefined = branchIfUndefined(argRegs);
+        auto isNull = branchIfNull(argRegs);
+        DFG_TYPE_CHECK(argRegs, edge, SpecCellCheck | SpecOther, jump());
+
+        isUndefined.link(this);
+        loadLinkableConstant(LinkableConstant(*this, vm().smallStrings.undefinedString()), resultGPR);
+        doneCases.append(jump());
+
+        isNull.link(this);
+        loadLinkableConstant(LinkableConstant(*this, vm().smallStrings.nullString()), resultGPR);
+
+        doneCases.link(this);
         cellResult(resultGPR, node);
         return;
     }
@@ -12282,11 +12293,6 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
         BaseIndex(storageGPR, scratchGPR, TimesFour));
     branchTest32(NonZero, scratchGPR).linkTo(loop, this);
     done.link(this);
-#if CPU(ARM64E)
-    // sizeGPR is still boxed as a number and there is no 32-bit variant of the PAC instructions.
-    zeroExtend48ToWord(sizeGPR, scratchGPR); // See rdar://107561209, rdar://107724053.
-    tagArrayPtr(scratchGPR, storageGPR);
-#endif
 
     auto butterfly = TrustedImmPtr(nullptr);
     switch (typedArrayType) {
@@ -14244,7 +14250,7 @@ void SpeculativeJIT::compileLazyJSConstant(Node* node)
 {
     JSValueRegsTemporary result(this);
     JSValueRegs resultRegs = result.regs();
-    node->lazyJSValue().emit(*this, resultRegs);
+    node->lazyJSValue().emit(*this, resultRegs, m_graph.m_plan);
     jsValueResult(resultRegs, node);
 }
 
@@ -14540,7 +14546,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     didNotOverflow.link(this);
 #endif
     emitAllocateVariableSized(
-        storageResultGPR, vm().jsValueGigacageAuxiliarySpace(), scratch2, scratch1, scratch3, slowCases);
+        storageResultGPR, vm().auxiliarySpace(), scratch2, scratch1, scratch3, slowCases);
     addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
     ASSERT(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
     storePair32(sizeGPR, sizeGPR, storageResultGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
@@ -14953,7 +14959,7 @@ void SpeculativeJIT::compilePutByIdFlush(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     flushRegisters();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy, node->ecmaMode(), Jump(), DontSpill);
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy, Jump(), DontSpill);
 
     noResult(node);
 }
@@ -14978,7 +14984,7 @@ void SpeculativeJIT::compilePutById(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy, node->ecmaMode());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy);
 
     noResult(node);
 }
@@ -15003,7 +15009,7 @@ void SpeculativeJIT::compilePutByIdDirect(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy, node->ecmaMode());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy);
 
     noResult(node);
 }
@@ -15978,6 +15984,35 @@ void SpeculativeJIT::compileToPropertyKey(Node* node)
     jsValueResult(resultRegs, node, DataFormatJSCell, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileToPropertyKeyOrNumber(Node* node)
+{
+    DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+    JSValueOperand argument(this, node->child1());
+    JSValueRegsTemporary result(this, Reuse, argument);
+    GPRTemporary temp(this);
+
+    JSValueRegs argumentRegs = argument.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
+    GPRReg tempGPR = temp.gpr();
+
+    argument.use();
+
+    JumpList alreadyPropertyKey;
+    JumpList slowCases;
+
+    alreadyPropertyKey.append(branchIfNumber(argumentRegs, tempGPR));
+    slowCases.append(branchIfNotCell(argumentRegs));
+    alreadyPropertyKey.append(branchIfSymbol(argumentRegs.payloadGPR()));
+    slowCases.append(branchIfNotString(argumentRegs.payloadGPR()));
+
+    alreadyPropertyKey.link(this);
+    moveValueRegs(argumentRegs, resultRegs);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationToPropertyKeyOrNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs));
+
+    jsValueResult(resultRegs, node, DataFormatJSCell, UseChildrenCalledExplicitly);
+}
+
 void SpeculativeJIT::compileToNumeric(Node* node)
 {
     DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
@@ -16806,7 +16841,7 @@ void SpeculativeJIT::compileProfileType(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, AccessType accessType, ECMAMode ecmaMode, Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, AccessType accessType, Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     RegisterSetBuilder usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
@@ -16825,7 +16860,7 @@ void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg bas
     JITPutByIdGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs, stubInfoGPR,
-        scratchGPR, ecmaMode, accessType);
+        scratchGPR, accessType);
 
     JumpList slowCases;
     if (slowPathTarget.isSet())

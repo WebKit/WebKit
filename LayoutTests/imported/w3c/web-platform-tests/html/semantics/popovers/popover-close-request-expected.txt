@@ -1,0 +1,4 @@
+Inside popover 1 Inside popover 2
+
+FAIL Popover close request behavior promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: sendCloseRequest"
+

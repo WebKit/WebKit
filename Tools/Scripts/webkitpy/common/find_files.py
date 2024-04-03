@@ -44,6 +44,7 @@ will be included into the result if the callback returns True.
 The callback has to take three arguments: filesystem, dirname and filename."""
 
 import itertools
+import re
 
 
 def find(filesystem, base_dir, paths=None, skipped_directories=None, file_filter=None, directory_sort_key=None):
@@ -76,15 +77,27 @@ def _normalized_find(filesystem, paths, skipped_directories, file_filter, direct
     sort_fn = (lambda lst: sorted(lst, key=directory_sort_key)) if directory_sort_key else (lambda lst: lst[:])
 
     def sorted_paths_generator(path, function):
-        base_path, separator, variant = path.partition('?')
-        if not separator:
-            return sort_fn(function(base_path))
+        m = re.search(
+            "^(?P<path>[^?#]*)(?P<variant>(?P<query>\\?[^#]*)?(?P<fragment>#.*)?)$",
+            path,
+        )
+        if not m.group("variant"):
+            return sort_fn(function(m.group("path")))
+
         # This isn't perfect, you won't be able glob the variant parts of the test name,
-        # but this is ultimately a design flaw stemming from a layout test not being a file
-        result = ['{}{}{}'.format(part, separator, variant) for part in function(base_path)]
+        # but this is ultimately a design flaw stemming from a layout test not being a
+        # file.
+        result = [
+            "{}{}".format(part, m.group("variant"))
+            for part in function(m.group("path"))
+        ]
         if result:
             return sort_fn(result)
+
+        # If we haven't matched anything, we might have a question-mark in path which we
+        # actually want to match as a glob, rather than treat it as a variant.
         return sort_fn(function(path))
+
 
     paths_to_walk = itertools.chain(*(sorted_paths_generator(path, filesystem.glob) for path in paths))
     all_files = itertools.chain(*(sorted_paths_generator(

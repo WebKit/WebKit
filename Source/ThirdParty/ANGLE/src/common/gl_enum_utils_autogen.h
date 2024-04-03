@@ -69,6 +69,7 @@ enum class GLESEnum
     FogParameter,
     FogPointerTypeEXT,
     FogPointerTypeIBM,
+    FoveationConfigBitQCOM,
     FragmentLightParameterSGIX,
     FragmentShaderDestMaskATI,
     FragmentShaderDestModMaskATI,

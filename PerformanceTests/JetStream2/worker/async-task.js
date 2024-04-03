@@ -390,7 +390,7 @@ var Statistics = new (function () {
 
     function findOptimalSegmentationInternal(cost, previousNode, values, costMatrix, segmentCount)
     {
-        cost[0] = [0]; // The cost of segmenting single value is always 0.
+        cost[0] = new Float32Array([0]); // The cost of segmenting single value is always 0.
         previousNode[0] = [-1];
         for (var segmentStart = 0; segmentStart < values.length; segmentStart++) {
             var costOfOptimalSegmentationThatEndAtCurrentStart = cost[segmentStart];
@@ -522,7 +522,8 @@ class AsyncTaskWorker {
         var worker = this._makeWorkerEventuallyAvailable();
         if (worker)
             callback(worker);
-        this._queue.push(callback);
+        else
+            this._queue.push(callback);
     }
 
     static _makeWorkerEventuallyAvailable()
@@ -537,6 +538,8 @@ class AsyncTaskWorker {
 
         if (this._latestStartTime > Date.now() - 50) {
             setTimeout(function () {
+                if (!AsyncTaskWorker._queue.length)
+                    return;
                 var worker = AsyncTaskWorker._findAvailableWorker();
                 if (worker)
                     AsyncTaskWorker._queue.pop()(worker);

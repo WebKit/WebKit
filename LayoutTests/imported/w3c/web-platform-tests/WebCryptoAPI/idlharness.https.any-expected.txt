@@ -19,11 +19,13 @@ PASS Crypto interface: existence and properties of interface prototype object's 
 PASS Crypto interface: existence and properties of interface prototype object's @@unscopables property
 PASS Crypto interface: attribute subtle
 PASS Crypto interface: operation getRandomValues(ArrayBufferView)
+PASS Crypto interface: operation randomUUID()
 PASS Crypto must be primary interface of crypto
 PASS Stringification of crypto
 PASS Crypto interface: crypto must inherit property "subtle" with the proper type
 PASS Crypto interface: crypto must inherit property "getRandomValues(ArrayBufferView)" with the proper type
 PASS Crypto interface: calling getRandomValues(ArrayBufferView) on crypto with too few arguments must throw TypeError
+PASS Crypto interface: crypto must inherit property "randomUUID()" with the proper type
 PASS CryptoKey interface: existence and properties of interface object
 PASS CryptoKey interface object length
 PASS CryptoKey interface object name

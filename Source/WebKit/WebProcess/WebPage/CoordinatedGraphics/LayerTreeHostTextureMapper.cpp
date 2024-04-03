@@ -262,6 +262,10 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
 {
 }
 
+void LayerTreeHost::backgroundColorDidChange()
+{
+}
+
 RefPtr<WebCore::DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(WebCore::PlatformDisplayID)
 {
     return nullptr;

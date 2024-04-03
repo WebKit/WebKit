@@ -26,8 +26,12 @@
 #include "GenericMediaQueryParser.h"
 
 #include "CSSAspectRatioValue.h"
+#include "CSSCustomPropertyValue.h"
+#include "CSSParserImpl.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
+#include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"
 
 namespace WebCore {
@@ -37,25 +41,44 @@ static AtomString consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
-    return range.consumeIncludingWhitespace().value().convertToASCIILowercaseAtom();
+    auto name = range.consumeIncludingWhitespace().value();
+    if (isCustomPropertyName(name))
+        return name.toAtomString();
+    return name.convertToASCIILowercaseAtom();
 }
 
-std::optional<Feature> GenericMediaQueryParserBase::consumeFeature(CSSParserTokenRange& range)
+std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto rangeCopy = range;
-    if (auto feature = consumeBooleanOrPlainFeature(range))
+    if (auto feature = consumeBooleanOrPlainFeature(range, context))
         return feature;
 
     range = rangeCopy;
-    return consumeRangeFeature(range);
+    return consumeRangeFeature(range, context);
 };
 
-std::optional<Feature> GenericMediaQueryParserBase::consumeBooleanOrPlainFeature(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeCustomPropertyValue(AtomString propertyName, CSSParserTokenRange& range)
+{
+    auto valueRange = range;
+    range.consumeAll();
+
+    // Syntax is that of a valid declaration so !important is allowed. It just gets ignored.
+    CSSParserImpl::consumeTrailingImportantAndWhitespace(valueRange);
+
+    if (valueRange.atEnd())
+        return CSSCustomPropertyValue::createEmpty(propertyName);
+
+    return CSSVariableParser::parseDeclarationValue(propertyName, valueRange, strictCSSParserContext());
+}
+
+std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto consumePlainFeatureName = [&]() -> std::pair<AtomString, ComparisonOperator> {
         auto name = consumeFeatureName(range);
         if (name.isEmpty())
             return { };
+        if (isCustomPropertyName(name))
+            return { name, ComparisonOperator::Equal };
         if (name.startsWith("min-"_s))
             return { StringView(name).substring(4).toAtomString(), ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("max-"_s))
@@ -85,10 +108,9 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeBooleanOrPlainFeature
         return { };
 
     range.consumeIncludingWhitespace();
-    if (range.atEnd())
-        return { };
 
-    auto value = consumeValue(range);
+    RefPtr value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range) : consumeValue(range, context);
+
     if (!value)
         return { };
 
@@ -98,7 +120,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeBooleanOrPlainFeature
     return Feature { featureName, Syntax::Plain, { }, Comparison { op, WTFMove(value) } };
 }
 
-std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParserTokenRange& range)
+std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
 {
     auto consumeRangeOperator = [&]() -> std::optional<ComparisonOperator> {
         if (range.atEnd())
@@ -135,7 +157,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
     auto consumeLeftComparison = [&]() -> std::optional<Comparison> {
         if (range.peek().type() == IdentToken)
             return { };
-        auto value = consumeValue(range);
+        RefPtr value = consumeValue(range, context);
         if (!value)
             return { };
         auto op = consumeRangeOperator();
@@ -151,7 +173,7 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
         auto op = consumeRangeOperator();
         if (!op)
             return { };
-        auto value = consumeValue(range);
+        RefPtr value = consumeValue(range, context);
         if (!value) {
             didFailParsing = true;
             return { };
@@ -192,49 +214,49 @@ std::optional<Feature> GenericMediaQueryParserBase::consumeRangeFeature(CSSParse
 
 static RefPtr<CSSValue> consumeRatioWithSlash(CSSParserTokenRange& range)
 {
-    auto leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr leftValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
     if (!leftValue)
         return nullptr;
 
     if (!CSSPropertyParserHelpers::consumeSlashIncludingWhitespace(range))
         return nullptr;
 
-    auto rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
+    RefPtr rightValue = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative);
     if (!rightValue)
         return nullptr;
 
     return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());
 }
 
-RefPtr<CSSValue> GenericMediaQueryParserBase::consumeValue(CSSParserTokenRange& range)
+RefPtr<CSSValue> FeatureParser::consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext&)
 {
     if (range.atEnd())
         return nullptr;
 
-    if (auto value = CSSPropertyParserHelpers::consumeIdent(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeIdent(range))
         return value;
 
     auto rangeCopy = range;
-    if (auto value = consumeRatioWithSlash(range))
+    if (RefPtr value = consumeRatioWithSlash(range))
         return value;
     range = rangeCopy;
 
-    if (auto value = CSSPropertyParserHelpers::consumeInteger(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeInteger(range))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::All))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::All))
         return value;
-    if (auto value = CSSPropertyParserHelpers::consumeResolution(range))
+    if (RefPtr value = CSSPropertyParserHelpers::consumeResolution(range))
         return value;
 
     return nullptr;
 }
 
-bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
+bool FeatureParser::validateFeatureAgainstSchema(Feature& feature, const FeatureSchema& schema)
 {
     auto validateValue = [&](auto& value) {
-        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value.get());
+        RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
         switch (schema.valueType) {
         case FeatureSchema::ValueType::Integer:
             return primitiveValue && primitiveValue->isInteger();
@@ -263,6 +285,9 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
                 return true;
             }
             return is<CSSAspectRatioValue>(value.get());
+
+        case FeatureSchema::ValueType::CustomProperty:
+            return value && value->isCustomPropertyValue();
         }
         ASSERT_NOT_REACHED();
         return false;
@@ -275,7 +300,10 @@ bool GenericMediaQueryParserBase::validateFeatureAgainstSchema(Feature& feature,
             if (feature.rightComparison && feature.rightComparison->op != ComparisonOperator::Equal)
                 return false;
         }
-
+        if (schema.valueType == FeatureSchema::ValueType::CustomProperty) {
+            if (!isCustomPropertyName(feature.name))
+                return false;
+        }
         if (feature.leftComparison) {
             if (!validateValue(feature.leftComparison->value))
                 return false;

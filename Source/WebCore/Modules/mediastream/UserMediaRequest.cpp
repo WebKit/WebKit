@@ -62,7 +62,6 @@ Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRe
 
 UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, TrackConstraints&& audioConstraints, TrackConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
     : ActiveDOMObject(document)
-    , m_identifier(UserMediaRequestIdentifier::generate())
     , m_promise(makeUniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>>(WTFMove(promise)))
     , m_request(WTFMove(request))
     , m_audioConstraints(WTFMove(audioConstraints))
@@ -116,19 +115,19 @@ void UserMediaRequest::start()
     switch (m_request.type) {
     case MediaStreamRequest::Type::DisplayMedia:
     case MediaStreamRequest::Type::DisplayMediaWithAudio:
-        if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::DisplayCapture, document)) {
+        if (!isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::DisplayCapture, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetDisplayMediaDenial(document);
             return;
         }
         break;
     case MediaStreamRequest::Type::UserMedia:
-        if (m_request.audioConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document)) {
+        if (m_request.audioConstraints.isValid && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetUserMediaDenial(document);
             return;
         }
-        if (m_request.videoConstraints.isValid && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document)) {
+        if (m_request.videoConstraints.isValid && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetUserMediaDenial(document);
             return;
@@ -166,7 +165,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
                 RELEASE_LOG(MediaStream, "UserMediaRequest::allow failed to create media stream!");
                 auto error = privateStreamOrError.error();
                 scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.errorMessage);
-                deny(error.denialReason, error.errorMessage);
+                deny(error.denialReason, error.errorMessage, error.invalidConstraint);
                 return;
             }
             auto privateStream = WTFMove(privateStreamOrError).value();
@@ -212,7 +211,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
     });
 }
 
-void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message)
+void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& message, MediaConstraintType invalidConstraint)
 {
     if (!scriptExecutionContext())
         return;
@@ -236,8 +235,8 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
         code = ExceptionCode::NotFoundError;
         break;
     case MediaAccessDenialReason::InvalidConstraint:
-        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %s", message.utf8().data());
-        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(message, "Invalid constraint"_s).get());
+        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraint - %d", (int)invalidConstraint);
+        m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, "Invalid constraint"_s).get());
         return;
     case MediaAccessDenialReason::HardwareError:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - hardware error");

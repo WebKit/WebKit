@@ -100,9 +100,6 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::TextField:
         ts << "textfield";
         break;
-    case StyleAppearance::CapsLockIndicator:
-        ts << "caps-lock-indicator";
-        break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         ts << "color-well";

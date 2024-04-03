@@ -56,12 +56,12 @@ promise_test((test) => {
             getDataChannelStats(localConnection).then((stats) => {
                 stats.id = "id";
                 stats.timestamp = 1;
-                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":0,"bytesSent":15,"datachannelid":1,"label":"sendDataChannel","messagesReceived":0,"messagesSent":4,"protocol":"","state":"open"}');
+                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":0,"bytesSent":15,"dataChannelIdentifier":1,"label":"sendDataChannel","messagesReceived":0,"messagesSent":4,"protocol":"","state":"open"}');
                 return getDataChannelStats(remoteConnection);
             }).then((stats) => {
                 stats.id = "id";
                 stats.timestamp = 1;
-                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":15,"bytesSent":0,"datachannelid":1,"label":"sendDataChannel","messagesReceived":4,"messagesSent":0,"protocol":"","state":"open"}');
+                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":15,"bytesSent":0,"dataChannelIdentifier":1,"label":"sendDataChannel","messagesReceived":4,"messagesSent":0,"protocol":"","state":"open"}');
                  resolve();
             });
         };

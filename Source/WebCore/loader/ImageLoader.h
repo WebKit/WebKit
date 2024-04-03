@@ -37,6 +37,7 @@ class Document;
 class ImageLoader;
 class Page;
 class RenderImageResource;
+struct ImageCandidate;
 
 template<typename T, typename Counter> class EventSender;
 using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
@@ -53,18 +54,24 @@ public:
     // loading if a load hasn't already been started.
     void updateFromElement(RelevantMutation = RelevantMutation::No);
 
-    // This function should be called whenever the 'src' attribute is set, even if its value
-    // doesn't change; starts new load unconditionally (matches Firefox and Opera behavior).
+    // This function should be called whenever the 'src' attribute is set.
+    // Starts new load unconditionally (matches Firefox and Opera behavior).
     void updateFromElementIgnoringPreviousError(RelevantMutation = RelevantMutation::No);
+
+    void updateFromElementIgnoringPreviousErrorToSameValue();
 
     void elementDidMoveToNewDocument(Document&);
 
-    Element& element() { return m_element; }
-    const Element& element() const { return m_element; }
+    Element& element() { return m_element.get(); }
+    const Element& element() const { return m_element.get(); }
+    Ref<Element> protectedElement() const { return m_element.get(); }
+
+    bool shouldIgnoreCandidateWhenLoadingFromArchive(const ImageCandidate&) const;
 
     bool imageComplete() const { return m_imageComplete; }
 
     CachedImage* image() const { return m_image.get(); }
+    CachedResourceHandle<CachedImage> protectedImage() const;
     void clearImage(); // Cancels pending load events, and doesn't dispatch new ones.
     
     size_t pendingDecodePromisesCountForTesting() const { return m_decodingPromises.size(); }
@@ -84,7 +91,7 @@ public:
 
     bool isDeferred() const { return m_lazyImageLoadState == LazyImageLoadState::Deferred || m_lazyImageLoadState == LazyImageLoadState::LoadImmediately; }
 
-    Document& document() { return m_element.document(); }
+    Document& document() { return m_element->document(); }
 
 protected:
     explicit ImageLoader(Element&);
@@ -117,7 +124,7 @@ private:
 
     VisibleInViewportState imageVisibleInViewport(const Document&) const override;
 
-    Element& m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
     CachedResourceHandle<CachedImage> m_image;
     Timer m_derefElementTimer;
     RefPtr<Element> m_protectedElement;

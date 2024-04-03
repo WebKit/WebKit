@@ -34,4 +34,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString media;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
     [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
+
+    // Non-standard
+    [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
 };

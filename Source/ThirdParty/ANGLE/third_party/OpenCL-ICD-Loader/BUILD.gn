@@ -2,14 +2,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("../../gni/angle.gni")
+import("//gni/angle.gni")
 
 config("opencl_icd_loader_config") {
   include_dirs = [ "src/loader" ]
 }
 
 source_set("opencl_icd_loader") {
-  sources = [ "src/loader/icd.c" ]
+  sources = [
+    "src/loader/icd.c",
+    "src/loader/icd_dispatch.c",
+    "src/loader/icd_dispatch_generated.c",
+  ]
   defines = [
     "CL_TARGET_OPENCL_VERSION=300",
     "OPENCL_ICD_LOADER_DISABLE_OPENCLON12",

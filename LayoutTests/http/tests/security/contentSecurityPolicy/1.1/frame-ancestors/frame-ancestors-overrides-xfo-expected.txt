@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/frame-ancestors-and-x-frame-options.pl?policy=other-origin.com&xfo=SAMEORIGIN because it does not appear in the frame-ancestors directive of the Content Security Policy.
+
+
+PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would block the page.
+PASS A 'frame-ancestors' CSP directive overrides an 'x-frame-options' header which would allow the page.
+

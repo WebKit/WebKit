@@ -61,7 +61,7 @@ private:
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const override { return PictureInPictureWindowEventTargetInterfaceType; };
+    enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::PictureInPictureWindow; };
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); };
 
     IntSize m_size;

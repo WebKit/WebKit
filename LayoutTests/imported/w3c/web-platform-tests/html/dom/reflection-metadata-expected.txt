@@ -315,10 +315,12 @@ PASS head.tabIndex: setAttribute() to "\f7"
 PASS head.tabIndex: setAttribute() to " 7"
 PASS head.tabIndex: setAttribute() to "\n7"
 PASS head.tabIndex: setAttribute() to "\r7"
+PASS head.tabIndex: setAttribute() to "7\v"
 PASS head.tabIndex: setAttribute() to 1.5
 PASS head.tabIndex: setAttribute() to "5%"
 PASS head.tabIndex: setAttribute() to "+100"
 PASS head.tabIndex: setAttribute() to object "2"
+PASS head.tabIndex: setAttribute() to object "3"
 PASS head.tabIndex: IDL set to -36
 PASS head.tabIndex: IDL set to -1
 PASS head.tabIndex: IDL set to 0
@@ -639,10 +641,12 @@ PASS title.tabIndex: setAttribute() to "\f7"
 PASS title.tabIndex: setAttribute() to " 7"
 PASS title.tabIndex: setAttribute() to "\n7"
 PASS title.tabIndex: setAttribute() to "\r7"
+PASS title.tabIndex: setAttribute() to "7\v"
 PASS title.tabIndex: setAttribute() to 1.5
 PASS title.tabIndex: setAttribute() to "5%"
 PASS title.tabIndex: setAttribute() to "+100"
 PASS title.tabIndex: setAttribute() to object "2"
+PASS title.tabIndex: setAttribute() to object "3"
 PASS title.tabIndex: IDL set to -36
 PASS title.tabIndex: IDL set to -1
 PASS title.tabIndex: IDL set to 0
@@ -963,10 +967,12 @@ PASS base.tabIndex: setAttribute() to "\f7"
 PASS base.tabIndex: setAttribute() to " 7"
 PASS base.tabIndex: setAttribute() to "\n7"
 PASS base.tabIndex: setAttribute() to "\r7"
+PASS base.tabIndex: setAttribute() to "7\v"
 PASS base.tabIndex: setAttribute() to 1.5
 PASS base.tabIndex: setAttribute() to "5%"
 PASS base.tabIndex: setAttribute() to "+100"
 PASS base.tabIndex: setAttribute() to object "2"
+PASS base.tabIndex: setAttribute() to object "3"
 PASS base.tabIndex: IDL set to -36
 PASS base.tabIndex: IDL set to -1
 PASS base.tabIndex: IDL set to 0
@@ -1347,10 +1353,12 @@ PASS link.tabIndex: setAttribute() to "\f7"
 PASS link.tabIndex: setAttribute() to " 7"
 PASS link.tabIndex: setAttribute() to "\n7"
 PASS link.tabIndex: setAttribute() to "\r7"
+PASS link.tabIndex: setAttribute() to "7\v"
 PASS link.tabIndex: setAttribute() to 1.5
 PASS link.tabIndex: setAttribute() to "5%"
 PASS link.tabIndex: setAttribute() to "+100"
 PASS link.tabIndex: setAttribute() to object "2"
+PASS link.tabIndex: setAttribute() to object "3"
 PASS link.tabIndex: IDL set to -36
 PASS link.tabIndex: IDL set to -1
 PASS link.tabIndex: IDL set to 0
@@ -2461,10 +2469,12 @@ PASS meta.tabIndex: setAttribute() to "\f7"
 PASS meta.tabIndex: setAttribute() to " 7"
 PASS meta.tabIndex: setAttribute() to "\n7"
 PASS meta.tabIndex: setAttribute() to "\r7"
+PASS meta.tabIndex: setAttribute() to "7\v"
 PASS meta.tabIndex: setAttribute() to 1.5
 PASS meta.tabIndex: setAttribute() to "5%"
 PASS meta.tabIndex: setAttribute() to "+100"
 PASS meta.tabIndex: setAttribute() to object "2"
+PASS meta.tabIndex: setAttribute() to object "3"
 PASS meta.tabIndex: IDL set to -36
 PASS meta.tabIndex: IDL set to -1
 PASS meta.tabIndex: IDL set to 0
@@ -2975,10 +2985,12 @@ PASS style.tabIndex: setAttribute() to "\f7"
 PASS style.tabIndex: setAttribute() to " 7"
 PASS style.tabIndex: setAttribute() to "\n7"
 PASS style.tabIndex: setAttribute() to "\r7"
+PASS style.tabIndex: setAttribute() to "7\v"
 PASS style.tabIndex: setAttribute() to 1.5
 PASS style.tabIndex: setAttribute() to "5%"
 PASS style.tabIndex: setAttribute() to "+100"
 PASS style.tabIndex: setAttribute() to object "2"
+PASS style.tabIndex: setAttribute() to object "3"
 PASS style.tabIndex: IDL set to -36
 PASS style.tabIndex: IDL set to -1
 PASS style.tabIndex: IDL set to 0

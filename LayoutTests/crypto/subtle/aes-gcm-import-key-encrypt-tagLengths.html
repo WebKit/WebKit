@@ -62,7 +62,6 @@ crypto.subtle.importKey("raw", rawKey, "aes-gcm", extractable, ["encrypt"]).then
 }).then(function(result) {
     cipherText = result;
     shouldBe("bytesToHexString(cipherText)", "expectedCipherText128");
-
     finishJSTest();
 });
 

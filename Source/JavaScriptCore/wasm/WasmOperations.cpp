@@ -65,9 +65,11 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 
 namespace JSC { namespace Wasm {
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 namespace WasmOperationsInternal {
     static constexpr bool verbose = false;
 }
+#endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
@@ -271,6 +273,47 @@ inline bool shouldJIT(unsigned functionIndex)
     return true;
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instance, uint32_t functionIndex))
+{
+    Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
+    ASSERT(instance->memory()->mode() == calleeGroup.mode());
+
+    uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
+    ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
+    BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
+    TierUpCount& tierUp = *callee.tierUpCount();
+
+    if (!shouldJIT(functionIndex)) {
+        tierUp.deferIndefinitely();
+        return;
+    }
+
+    dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
+
+    if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
+        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
+
+    // We already have an OMG replacement.
+    if (callee.replacement()) {
+        // No OSR entry points. Just defer indefinitely.
+        if (tierUp.osrEntryTriggers().isEmpty()) {
+            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile replacement in place, delaying indefinitely for ", functionIndex);
+            tierUp.dontOptimizeAnytimeSoon(functionIndex);
+            return;
+        }
+
+        // Found one OSR entry point. Since we do not have a way to jettison Wasm::Callee right now, this means that tierUp function is now meaningless.
+        // Not call it as much as possible.
+        if (callee.osrEntryCallee()) {
+            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile trigger in place, delaying indefinitely for ", functionIndex);
+            tierUp.dontOptimizeAnytimeSoon(functionIndex);
+            return;
+        }
+    }
+}
+#endif
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context& context))
 {
     OSREntryData& osrEntryData = *context.arg<OSREntryData*>();
@@ -280,6 +323,20 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     auto returnWithoutOSREntry = [&] {
         context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = 0;
+    };
+
+    auto doStackCheck = [instance](OSREntryCallee* callee) -> bool {
+        uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
+        ASSERT(callee->stackCheckSize());
+        if (callee->stackCheckSize() == stackCheckNotNeeded)
+            return true;
+        uintptr_t stackExtent = stackPointer - callee->stackCheckSize();
+        uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
+        if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
+            dataLogLnIf(Options::verboseOSR(), "Skipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+            return false;
+        }
+        return true;
     };
 
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
@@ -356,8 +413,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     }
 
     if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
-        if (osrEntryCallee->loopIndex() == loopIndex)
+        if (osrEntryCallee->loopIndex() == loopIndex) {
+            if (!doStackCheck(osrEntryCallee))
+                return returnWithoutOSREntry();
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+        }
     }
 
     if (!shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex) && !triggeredSlowPathToStartCompilation)
@@ -371,8 +431,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
     }
 
     if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
-        if (osrEntryCallee->loopIndex() == loopIndex)
+        if (osrEntryCallee->loopIndex() == loopIndex) {
+            if (!doStackCheck(osrEntryCallee))
+                return returnWithoutOSREntry();
             return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+        }
         tierUp.dontOptimizeAnytimeSoon(functionIndex);
         return returnWithoutOSREntry();
     }
@@ -452,12 +515,18 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         return returnWithoutOSREntry();
     }
 
-    if (osrEntryCallee->loopIndex() == loopIndex)
+    if (osrEntryCallee->loopIndex() == loopIndex) {
+        if (!doStackCheck(osrEntryCallee))
+            return returnWithoutOSREntry();
         return doOSREntry(instance, context, callee, *osrEntryCallee, osrEntryData);
+    }
 
     tierUp.dontOptimizeAnytimeSoon(functionIndex);
     return returnWithoutOSREntry();
 }
+
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 JSC_DEFINE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context& context))
 {
@@ -513,44 +582,6 @@ JSC_DEFINE_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context&
     context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = bitwise_cast<UCPURegister>(callee.loopEntrypoints()[loopIndex].taggedPtr());
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instance, uint32_t functionIndex))
-{
-    Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    ASSERT(instance->memory()->mode() == calleeGroup.mode());
-
-    uint32_t functionIndexInSpace = functionIndex + calleeGroup.functionImportCount();
-    ASSERT(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace).compilationMode() == Wasm::CompilationMode::BBQMode);
-    BBQCallee& callee = static_cast<BBQCallee&>(calleeGroup.wasmBBQCalleeFromFunctionIndexSpace(functionIndexInSpace));
-    TierUpCount& tierUp = *callee.tierUpCount();
-
-    if (!shouldJIT(functionIndex)) {
-        tierUp.deferIndefinitely();
-        return;
-    }
-
-    dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
-
-    if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
-        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
-
-    // We already have an OMG replacement.
-    if (callee.replacement()) {
-        // No OSR entry points. Just defer indefinitely.
-        if (tierUp.osrEntryTriggers().isEmpty()) {
-            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile replacement in place, delaying indefinitely for ", functionIndex);
-            tierUp.dontOptimizeAnytimeSoon(functionIndex);
-            return;
-        }
-
-        // Found one OSR entry point. Since we do not have a way to jettison Wasm::Callee right now, this means that tierUp function is now meaningless.
-        // Not call it as much as possible.
-        if (callee.osrEntryCallee()) {
-            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile trigger in place, delaying indefinitely for ", functionIndex);
-            tierUp.dontOptimizeAnytimeSoon(functionIndex);
-            return;
-        }
-    }
-}
 #endif
 
 JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void*, (Instance* instance))
@@ -890,7 +921,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance*
     JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
     auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
-    return JSValue::encode(JSWebAssemblyStruct::create(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT));
+    auto newStruct = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
+    return JSValue::encode(newStruct ? newStruct : jsNull());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
@@ -991,6 +1023,22 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (Instance* instance,
     return throwWasmToJSException(callFrame, type, instance);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationCrashDueToBBQStackOverflow, void, ())
+{
+    // We have crashed because of a mismatch between the stack check in the wasm slow path loop_osr and the BBQ JIT LoopOSREntrypoint.
+    // This really should never happen. We make this separate operation to have a clean crash log.
+    bool hiddenReturn = true;
+    if (hiddenReturn)
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(false);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCrashDueToOMGStackOverflow, void, ())
+{
+    bool hiddenReturn = true;
+    if (hiddenReturn)
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(false);
+}
+
 #if USE(JSVALUE64)
 JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, ThrownExceptionInfo, (Instance* instance))
 {
@@ -1013,7 +1061,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Thro
     return { JSValue::encode(thrownValue), jumpTarget };
 }
 #else
-static ThrownExceptionInfo retrieveAndClearExceptionIfCatchableNonSharedImpl(Instance* instance)
+// Same as JSVALUE64 version, but returns thrownValue on stack
+JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, void*, (Instance* instance, EncodedJSValue* thrownValue))
 {
     VM& vm = instance->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -1021,37 +1070,34 @@ static ThrownExceptionInfo retrieveAndClearExceptionIfCatchableNonSharedImpl(Ins
     RELEASE_ASSERT(!!throwScope.exception());
 
     vm.callFrameForCatch = nullptr;
-    vm.targetMachinePCForThrow = nullptr;
+    auto* jumpTarget = std::exchange(vm.targetMachinePCAfterCatch, nullptr);
 
     Exception* exception = throwScope.exception();
-    JSValue thrownValue = exception->value();
+    *thrownValue = JSValue::encode(exception->value());
 
     // We want to clear the exception here rather than in the catch prologue
     // JIT code because clearing it also entails clearing a bit in an Atomic
     // bit field in VMTraps.
     throwScope.clearException();
 
-    void* payload = nullptr;
-    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
-        payload = bitwise_cast<void*>(wasmException->payload().data());
-
-    return { JSValue::encode(thrownValue), payload };
-}
-
-JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable32, void*, (Instance* instance, EncodedJSValue* encodedThrownValue))
-{
-    auto info = retrieveAndClearExceptionIfCatchableNonSharedImpl(instance);
-    *encodedThrownValue = info.thrownValue;
-    return info.payload;
+    return jumpTarget;
 }
 #endif // USE(JSVALUE64)
 
-JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t value))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return arrayNew(instance, typeIndex, size, encValue);
+    return arrayNew(instance, typeIndex, size, value);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewVector, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t size, uint64_t lane0, uint64_t lane1))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return arrayNew(instance, typeIndex, size, v128_t { lane0, lane1 });
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (Instance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset))
@@ -1080,44 +1126,69 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (Instance* 
     JSGlobalObject* globalObject = instance->globalObject();
     auto arrayRTT = instance->module().moduleInformation().rtts[typeIndex];
 
-    // Get the element type
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
     const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
-    // Create a zero-initialized array with the right element type and length
+    size_t elementSize = fieldType.type.elementSize();
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+        return JSValue::encode(jsNull());
+
+    // Create a default-initialized array with the right element type and length
     JSWebAssemblyArray* array = nullptr;
-    switch (fieldType.type.elementSize()) {
-    case sizeof(uint8_t): {
-        FixedVector<uint8_t> v(size);
-        v.fill(0); // Prevent GC from tracing uninitialized array slots
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
-        break;
+    if (fieldType.type.is<PackedType>()) {
+        switch (fieldType.type.as<PackedType>()) {
+        case Wasm::PackedType::I8: {
+            FixedVector<uint8_t> v(size);
+            v.fill(0); // Prevent GC from tracing uninitialized array slots
+            array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+            break;
+        }
+        case Wasm::PackedType::I16: {
+            FixedVector<uint16_t> v(size);
+            v.fill(0);
+            array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+            break;
+        }
+        }
+        return JSValue::encode(array);
     }
-    case sizeof(uint16_t): {
-        FixedVector<uint16_t> v(size);
-        v.fill(0);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
-        break;
-    }
-    case sizeof(uint32_t): {
+
+    ASSERT(fieldType.type.is<Type>());
+    switch (fieldType.type.as<Type>().kind) {
+    case Wasm::TypeKind::I32:
+    case Wasm::TypeKind::F32: {
         FixedVector<uint32_t> v(size);
         v.fill(0);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
         break;
     }
-    case sizeof(uint64_t): {
+    case Wasm::TypeKind::I64:
+    case Wasm::TypeKind::F64: {
         FixedVector<uint64_t> v(size);
         v.fill(0);
-        array = JSWebAssemblyArray::create(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull: {
+        FixedVector<uint64_t> v(size);
+        v.fill(JSValue::encode(jsNull()));
+        array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
+        break;
+    }
+    case Wasm::TypeKind::V128: {
+        FixedVector<v128_t> v(size);
+        v.fill(vectorAllZeros());
+        array = JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(v), arrayRTT);
         break;
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return JSValue::encode(array);
+    return JSValue::encode(array ? array : jsNull());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayGet, EncodedJSValue, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index))
@@ -1136,12 +1207,20 @@ JSC_DEFINE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint3
     return arraySet(instance, typeIndex, arrayValue, index, value);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t offset, EncodedJSValue value, uint32_t size))
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (Instance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t value, uint32_t size))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return toUCPUStrictInt32(arrayFill(instance, typeIndex, arrayValue, offset, value, size));
+    return toUCPUStrictInt32(arrayFill(arrayValue, offset, value, size));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (Instance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t lane0, uint64_t lane1, uint32_t size))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    return toUCPUStrictInt32(arrayFill(arrayValue, offset, v128_t { lane0, lane1 }, size));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (Instance* instance, EncodedJSValue dst, uint32_t dstOffset, EncodedJSValue src, uint32_t srcOffset, uint32_t size))

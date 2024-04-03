@@ -156,10 +156,11 @@ using Salt = std::array<uint8_t, 8>;
 WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(const String& path);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(const String& path);
-WTF_EXPORT_PRIVATE int overwriteEntireFile(const String& path, std::span<uint8_t>);
+WTF_EXPORT_PRIVATE int overwriteEntireFile(const String& path, std::span<const uint8_t>);
 
 // Prefix is what the filename should be prefixed with, not the full path.
-WTF_EXPORT_PRIVATE String openTemporaryFile(StringView prefix, PlatformFileHandle&, StringView suffix = { });
+WTF_EXPORT_PRIVATE std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix = { });
+WTF_EXPORT_PRIVATE String createTemporaryFile(StringView prefix, StringView suffix = { });
 WTF_EXPORT_PRIVATE PlatformFileHandle openFile(const String& path, FileOpenMode, FileAccessPermission = FileAccessPermission::All, bool failIfFileExists = false);
 WTF_EXPORT_PRIVATE void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
@@ -167,9 +168,9 @@ WTF_EXPORT_PRIVATE long long seekFile(PlatformFileHandle, long long offset, File
 WTF_EXPORT_PRIVATE bool truncateFile(PlatformFileHandle, long long offset);
 WTF_EXPORT_PRIVATE bool flushFile(PlatformFileHandle);
 // Returns number of bytes actually read if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int writeToFile(PlatformFileHandle, const void* data, int length);
+WTF_EXPORT_PRIVATE int64_t writeToFile(PlatformFileHandle, const void* data, size_t length);
 // Returns number of bytes actually written if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int readFromFile(PlatformFileHandle, void* data, int length);
+WTF_EXPORT_PRIVATE int64_t readFromFile(PlatformFileHandle, void* data, size_t length);
 
 WTF_EXPORT_PRIVATE PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
 WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);
@@ -255,7 +256,7 @@ public:
     explicit operator bool() const { return !!m_fileData; }
     const void* data() const { return m_fileData; }
     unsigned size() const { return m_fileSize; }
-    std::span<const uint8_t> toSpan() { return { static_cast<const uint8_t *>(data()), size() }; }
+    std::span<const uint8_t> span() { return { static_cast<const uint8_t *>(data()), size() }; }
 
 #if PLATFORM(COCOA)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }

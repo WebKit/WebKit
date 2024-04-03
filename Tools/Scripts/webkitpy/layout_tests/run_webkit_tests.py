@@ -311,6 +311,7 @@ def parse_args(args):
             help="Set the maximum number of locked shards"),
         optparse.make_option("--additional-env-var", type="string", action="append", default=[],
             help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),
+        optparse.make_option("--additional-header", help="Passes that webkit-test-runner header value to the tests (--additional-header='KEY=VALUE KEY=VALUE ...')"),
         optparse.make_option("--profile", action="store_true",
             help="Output per-test profile information."),
         optparse.make_option("--profiler", action="store",
@@ -447,9 +448,9 @@ def _print_expectations(port, options, args, logging_stream):
         return exit_code
     except Exception as error:
         _log.error('Error printing expectations: {}'.format(error))
+        return -1
     finally:
         printer.cleanup()
-        return -1
 
 
 def _set_up_derived_options(port, options):
@@ -477,13 +478,16 @@ def _set_up_derived_options(port, options):
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-gpup'))
 
     if port.port_name == "mac" and options.site_isolation:
-        options.self_compare_with_header = 'SiteIsolationEnabled=true runInCrossOriginIframe=true'
+        options.additional_header = 'runInCrossOriginFrame=true'
         host = Host()
         host.initialize_scm()
         options.additional_expectations.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation/TestExpectations'))
         if not options.additional_platform_directory:
             options.additional_platform_directory = []
         options.additional_platform_directory.insert(0, port.host.filesystem.join(host.scm().checkout_root, 'LayoutTests/platform/mac-site-isolation'))
+        if options.result_report_flavor:
+            raise RuntimeError('--site-isolation implicitly sets the result flavor, this should not be overridden')
+        options.result_report_flavor = 'site-isolation'
 
     if options.additional_platform_directory:
         additional_platform_directories = []

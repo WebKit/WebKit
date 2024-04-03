@@ -73,6 +73,7 @@ angle_requestable_extensions = [
     "GL_ANGLE_texture_compression_dxt5",
     "GL_ANGLE_texture_external_update",
     "GL_ANGLE_texture_multisample",
+    "GL_ANGLE_variable_rasterization_rate_metal",
     "GL_ANGLE_vulkan_image",
     "GL_ANGLE_yuv_internal_format",
     "GL_CHROMIUM_color_buffer_float_rgb",
@@ -224,8 +225,10 @@ gles_requestable_extensions = [
     "GL_OES_vertex_type_10_10_10_2",
     "GL_OVR_multiview",
     "GL_OVR_multiview2",
+    "GL_QCOM_framebuffer_foveated",
     "GL_QCOM_render_shared_exponent",
     "GL_QCOM_shading_rate",
+    "GL_QCOM_texture_foveated",
     "GL_WEBGL_video_texture",
 ]
 

@@ -75,10 +75,10 @@ layer at (0,0) size 800x725
       RenderBlock {P} at (0,363) size 784x40
         RenderText {#text} at (0,0) size 120x19
           text run at (0,0) width 120: "The quoted word \""
-        RenderInline {A} at (0,0) size 45x19 [color=#008000]
+        RenderInline {A} at (119,0) size 45x19 [color=#008000]
           RenderText {#text} at (119,0) size 45x19
             text run at (119,0) width 45: "anchor"
-        RenderText {#text} at (163,0) size 739x39
+        RenderText {#text} at (0,0) size 739x39
           text run at (163,0) width 381: "\" should be green, NOT purple, since it's part of an anchor. "
           text run at (543,0) width 196: "It's a named anchor, and styles"
           text run at (0,20) width 355: "declared for the A tag are applied to them under CSS1. "
@@ -87,12 +87,12 @@ layer at (0,0) size 800x725
         RenderTableSection {TBODY} at (1,1) size 782x288
           RenderTableRow {TR} at (0,0) size 782x28
             RenderTableCell {TD} at (0,0) size 782x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x19
+              RenderInline {STRONG} at (4,4) size 161x19
                 RenderText {#text} at (4,4) size 161x19
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 782x260
             RenderTableCell {TD} at (0,144) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x19
+              RenderText {#text} at (4,120) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 770x260 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x20
@@ -151,10 +151,10 @@ layer at (0,0) size 800x725
               RenderBlock {P} at (4,216) size 762x40
                 RenderText {#text} at (0,0) size 120x19
                   text run at (0,0) width 120: "The quoted word \""
-                RenderInline {A} at (0,0) size 45x19 [color=#008000]
+                RenderInline {A} at (119,0) size 45x19 [color=#008000]
                   RenderText {#text} at (119,0) size 45x19
                     text run at (119,0) width 45: "anchor"
-                RenderText {#text} at (163,0) size 739x39
+                RenderText {#text} at (0,0) size 739x39
                   text run at (163,0) width 381: "\" should be green, NOT purple, since it's part of an anchor. "
                   text run at (543,0) width 196: "It's a named anchor, and styles"
                   text run at (0,20) width 355: "declared for the A tag are applied to them under CSS1. "

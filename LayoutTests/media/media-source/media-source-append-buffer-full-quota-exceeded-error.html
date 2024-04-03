@@ -66,7 +66,7 @@
         await waitFor(sourceBuffer, 'updateend');
         waitFor(sourceBuffer, 'error');
 
-        internals.settings.setMaximumSourceBufferSize(1000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 1000);
 
         exception = await appendPtsRange(0, 12);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
@@ -75,7 +75,7 @@
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
 
         // To exercise eviction ahead of current time we must add over 30s of data.
-        internals.settings.setMaximumSourceBufferSize(3000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 3000);
 
         // Ensure that small gaps that would be ignored during playback are also ignored by eviction.
         // We use a gap of 2/1000 as gaps of 1/1000th are removed and 2002/24000 is the maximum gap ignored during playback.
@@ -86,7 +86,7 @@
         // Check that appendBuffer removed all the small gaps in the data less than the threshold.
         testExpected('sourceBuffer.buffered.length', '1', '==');
 
-        internals.settings.setMaximumSourceBufferSize(1500);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 1500);
         // Ensure that if current time is close enough to the buffered data that the nearest range isn't evicted.
         sourceBuffer.remove(0, Infinity);
         await waitFor(sourceBuffer, 'updateend');
@@ -96,7 +96,7 @@
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
         testExpected('sourceBuffer.buffered.length', '1', '==');
 
-        internals.settings.setMaximumSourceBufferSize(4000);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 4000);
         // Ensure that small gaps that would be ignored during playback are also ignored by eviction.
         // We use a gap of 2000/24000 which is less than the 2002/24000 gap ignored during playback.
         // Gaps are removed during append, so we remove data to create a gap <= 2000/24000.

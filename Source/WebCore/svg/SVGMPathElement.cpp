@@ -67,7 +67,7 @@ void SVGMPathElement::buildPendingResource()
             treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (auto* svgElement = dynamicDowncast<SVGElement>(*target.element))
+    } else if (RefPtr svgElement = dynamicDowncast<SVGElement>(*target.element))
         svgElement->addReferencingElement(*this);
 
     targetPathChanged();
@@ -95,7 +95,6 @@ void SVGMPathElement::didFinishInsertingNode()
 void SVGMPathElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    notifyParentOfPathChange(&oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }
@@ -125,12 +124,7 @@ RefPtr<SVGPathElement> SVGMPathElement::pathElement()
 
 void SVGMPathElement::targetPathChanged()
 {
-    notifyParentOfPathChange(parentNode());
-}
-
-void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
-{
-    if (auto* animateMotionElement = dynamicDowncast<SVGAnimateMotionElement>(parent))
+    if (RefPtr animateMotionElement = dynamicDowncast<SVGAnimateMotionElement>(parentNode()))
         animateMotionElement->updateAnimationPath();
 }
 

@@ -1,6 +1,13 @@
 <?php
 
 class TestNameResolver {
+    private $db;
+    private $full_name_to_test;
+    private $test_id_to_child_metrics;
+    private $test_to_metrics;
+    private $tests_sorted_by_full_name;
+    private $id_to_metric;
+    private $id_to_aggregator;
 
     function __construct($db) {
         $this->db = $db;

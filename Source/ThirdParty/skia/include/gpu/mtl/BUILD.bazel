@@ -1,0 +1,24 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+# for exporting to //gn/gpu.gni:skia_shared_mtl_sources.
+skia_filegroup(
+    name = "shared_public_hdrs",
+    srcs = [
+        "MtlMemoryAllocator.h",
+    ],
+)
+
+# Group is exported to //gn/gpu.gni:skia_gpu_metal_public.
+skia_filegroup(
+    name = "public_hdrs",
+    srcs = [
+        "GrMtlBackendContext.h",
+        "GrMtlTypes.h",
+        ":shared_public_hdrs",
+    ],
+    visibility = ["//include/gpu:__pkg__"],
+)

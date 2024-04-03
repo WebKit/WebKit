@@ -13,7 +13,7 @@ message = query.get('message', [''])[0]
 expires = datetime.utcnow() + timedelta(seconds=60*60*24*30)
 
 sys.stdout.write(
-    'Set-Cookie: {name}={value}; expires={expires} GMT; Max-Age=2592000; path=/\r\n'
+    'Set-Cookie: {name}={value}; expires={expires} GMT; Max-Age=2592000; SameSite=None; path=/\r\n'
     'Content-Type: text/html\r\n\r\n'
     '{message}<br>'
     '<script>\n'

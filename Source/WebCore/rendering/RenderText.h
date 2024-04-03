@@ -52,7 +52,7 @@ public:
 
     const RenderStyle& style() const;
     const RenderStyle& firstLineStyle() const;
-    const RenderStyle* getCachedPseudoStyle(PseudoId, const RenderStyle* parentStyle = nullptr) const;
+    const RenderStyle* getCachedPseudoStyle(const Style::PseudoElementIdentifier&, const RenderStyle* parentStyle = nullptr) const;
 
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
@@ -68,7 +68,7 @@ public:
     void attachTextBox(LegacyInlineTextBox& box) { m_lineBoxes.attach(box); }
     void removeTextBox(LegacyInlineTextBox& box) { m_lineBoxes.remove(box); }
 
-    StringImpl& text() const { return *m_text.impl(); } // Since m_text can never be null, returning this type means callers won't null check.
+    const String& text() const { return m_text; }
     String textWithoutConvertingBackslashToYenSymbol() const;
 
     LegacyInlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
@@ -86,7 +86,7 @@ public:
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
-    Position positionForPoint(const LayoutPoint&) final;
+    Position positionForPoint(const LayoutPoint&, HitTestSource) final;
 
     UChar characterAt(unsigned) const;
     unsigned length() const final { return text().length(); }
@@ -210,7 +210,7 @@ private:
 
     bool canHaveChildren() const final { return false; }
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     void setSelectionState(HighlightState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
@@ -290,11 +290,11 @@ inline const RenderStyle& RenderText::firstLineStyle() const
     return parent()->firstLineStyle();
 }
 
-inline const RenderStyle* RenderText::getCachedPseudoStyle(PseudoId pseudoId, const RenderStyle* parentStyle) const
+inline const RenderStyle* RenderText::getCachedPseudoStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier, const RenderStyle* parentStyle) const
 {
     // Pseudostyle is associated with an element, so ascend the tree until we find a non-anonymous ancestor.
     if (auto* ancestor = firstNonAnonymousAncestor())
-        return ancestor->getCachedPseudoStyle(pseudoId, parentStyle);
+        return ancestor->getCachedPseudoStyle(pseudoElementIdentifier, parentStyle);
     return nullptr;
 }
 

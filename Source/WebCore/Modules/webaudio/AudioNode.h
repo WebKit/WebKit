@@ -239,7 +239,7 @@ private:
     static WeakOrStrongContext toWeakOrStrongContext(BaseAudioContext&, NodeType);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const override;
+    enum EventTargetInterfaceType eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     volatile bool m_isInitialized { false };

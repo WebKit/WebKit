@@ -94,6 +94,128 @@ enum class WebExtensionEventListenerType : uint8_t {
     WindowsOnRemoved,
 };
 
+inline String toAPIString(WebExtensionEventListenerType eventType)
+{
+    switch (eventType) {
+    case WebExtensionEventListenerType::Unknown:
+        return nullString();
+    case WebExtensionEventListenerType::ActionOnClicked:
+        return "onClicked"_s;
+    case WebExtensionEventListenerType::AlarmsOnAlarm:
+        return "onAlarm"_s;
+    case WebExtensionEventListenerType::CommandsOnChanged:
+        return "onChanged"_s;
+    case WebExtensionEventListenerType::CommandsOnCommand:
+        return "onCommand"_s;
+    case WebExtensionEventListenerType::CookiesOnChanged:
+        return "onChanged"_s;
+    case WebExtensionEventListenerType::DevToolsElementsPanelOnSelectionChanged:
+        return "onSelectionChanged"_s;
+    case WebExtensionEventListenerType::DevToolsExtensionPanelOnHidden:
+        return "onHidden"_s;
+    case WebExtensionEventListenerType::DevToolsExtensionPanelOnSearch:
+        return "onSearch"_s;
+    case WebExtensionEventListenerType::DevToolsExtensionPanelOnShown:
+        return "onShown"_s;
+    case WebExtensionEventListenerType::DevToolsExtensionSidebarPaneOnHidden:
+        return "onHidden"_s;
+    case WebExtensionEventListenerType::DevToolsExtensionSidebarPaneOnShown:
+        return "onShown"_s;
+    case WebExtensionEventListenerType::DevToolsInspectedWindowOnResourceAdded:
+        return "onResourceAdded"_s;
+    case WebExtensionEventListenerType::DevToolsNetworkOnNavigated:
+        return "onNavigated"_s;
+    case WebExtensionEventListenerType::DevToolsNetworkOnRequestFinished:
+        return "onRequestFinished"_s;
+    case WebExtensionEventListenerType::DevToolsPanelsOnThemeChanged:
+        return "onThemeChanged"_s;
+    case WebExtensionEventListenerType::DownloadsOnChanged:
+        return "onChanged"_s;
+    case WebExtensionEventListenerType::DownloadsOnCreated:
+        return "onCreated"_s;
+    case WebExtensionEventListenerType::MenusOnClicked:
+        return "onClicked"_s;
+    case WebExtensionEventListenerType::NotificationsOnButtonClicked:
+        return "onButtonClicked"_s;
+    case WebExtensionEventListenerType::NotificationsOnClicked:
+        return "onClicked"_s;
+    case WebExtensionEventListenerType::PermissionsOnAdded:
+        return "onAdded"_s;
+    case WebExtensionEventListenerType::PermissionsOnRemoved:
+        return "onRemoved"_s;
+    case WebExtensionEventListenerType::PortOnDisconnect:
+        return "onDisconnect"_s;
+    case WebExtensionEventListenerType::PortOnMessage:
+        return "onMessage"_s;
+    case WebExtensionEventListenerType::RuntimeOnConnect:
+        return "onConnect"_s;
+    case WebExtensionEventListenerType::RuntimeOnConnectExternal:
+        return "onConnectExternal"_s;
+    case WebExtensionEventListenerType::RuntimeOnInstalled:
+        return "onInstalled"_s;
+    case WebExtensionEventListenerType::RuntimeOnMessage:
+        return "onMessage"_s;
+    case WebExtensionEventListenerType::RuntimeOnMessageExternal:
+        return "onMessageExternal"_s;
+    case WebExtensionEventListenerType::RuntimeOnStartup:
+        return "onStartup"_s;
+    case WebExtensionEventListenerType::StorageOnChanged:
+        return "onChanged"_s;
+    case WebExtensionEventListenerType::TabsOnActivated:
+        return "onActivated"_s;
+    case WebExtensionEventListenerType::TabsOnAttached:
+        return "onAttached"_s;
+    case WebExtensionEventListenerType::TabsOnCreated:
+        return "onCreated"_s;
+    case WebExtensionEventListenerType::TabsOnDetached:
+        return "onDetached"_s;
+    case WebExtensionEventListenerType::TabsOnHighlighted:
+        return "onHighlighted"_s;
+    case WebExtensionEventListenerType::TabsOnMoved:
+        return "onMoved"_s;
+    case WebExtensionEventListenerType::TabsOnRemoved:
+        return "onRemoved"_s;
+    case WebExtensionEventListenerType::TabsOnReplaced:
+        return "onReplaced"_s;
+    case WebExtensionEventListenerType::TabsOnUpdated:
+        return "onUpdated"_s;
+    case WebExtensionEventListenerType::WebNavigationOnBeforeNavigate:
+        return "onBeforeNavigate"_s;
+    case WebExtensionEventListenerType::WebNavigationOnCommitted:
+        return "onCommitted"_s;
+    case WebExtensionEventListenerType::WebNavigationOnCompleted:
+        return "onCompleted"_s;
+    case WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded:
+        return "onDOMContentLoaded"_s;
+    case WebExtensionEventListenerType::WebNavigationOnErrorOccurred:
+        return "onErrorOccurred"_s;
+    case WebExtensionEventListenerType::WebRequestOnAuthRequired:
+        return "onAuthRequired"_s;
+    case WebExtensionEventListenerType::WebRequestOnBeforeRedirect:
+        return "onBeforeRedirect"_s;
+    case WebExtensionEventListenerType::WebRequestOnBeforeRequest:
+        return "onBeforeRequest"_s;
+    case WebExtensionEventListenerType::WebRequestOnBeforeSendHeaders:
+        return "onBeforeSendHeaders"_s;
+    case WebExtensionEventListenerType::WebRequestOnCompleted:
+        return "onCompleted"_s;
+    case WebExtensionEventListenerType::WebRequestOnErrorOccurred:
+        return "onErrorOccurred"_s;
+    case WebExtensionEventListenerType::WebRequestOnHeadersReceived:
+        return "onHeadersReceived"_s;
+    case WebExtensionEventListenerType::WebRequestOnResponseStarted:
+        return "onResponseStarted"_s;
+    case WebExtensionEventListenerType::WebRequestOnSendHeaders:
+        return "onSendHeaders"_s;
+    case WebExtensionEventListenerType::WindowsOnCreated:
+        return "onCreated"_s;
+    case WebExtensionEventListenerType::WindowsOnFocusChanged:
+        return "onFocusChanged"_s;
+    case WebExtensionEventListenerType::WindowsOnRemoved:
+        return "onRemoved"_s;
+    }
+}
+
 using WebExtensionEventListenerTypeWorldPair = std::pair<WebExtensionEventListenerType, WebExtensionContentWorldType>;
 
 } // namespace WebKit

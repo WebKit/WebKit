@@ -24,13 +24,13 @@ layer at (0,0) size 785x732
         RenderInline {SPAN} at (0,0) size 767x36 [bgcolor=#00FFFF]
           RenderText {#text} at (514,0) size 148x18
             text run at (514,0) width 148: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
+          RenderInline {TT} at (661,2) size 25x15
             RenderText {#text} at (661,2) size 25x15
               text run at (661,2) width 25: "one"
-          RenderText {#text} at (685,0) size 767x36
+          RenderText {#text} at (0,0) size 767x36
             text run at (685,0) width 82: ", giving it an"
             text run at (0,18) width 233: "aqua background and a 25px margin"
-        RenderText {#text} at (257,18) size 769x72
+        RenderText {#text} at (0,18) size 769x72
           text run at (257,18) width 9: ". "
           text run at (265,18) width 504: "Margins on inline elements does not affect line-height calculations, so all lines"
           text run at (0,36) width 317: "in this element should have the same line-height. "
@@ -47,13 +47,13 @@ layer at (0,0) size 785x732
         RenderInline {SPAN} at (0,0) size 766x36 [bgcolor=#00FFFF]
           RenderText {#text} at (479,0) size 148x18
             text run at (479,0) width 148: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
+          RenderInline {TT} at (626,2) size 25x15
             RenderText {#text} at (626,2) size 25x15
               text run at (626,2) width 25: "two"
-          RenderText {#text} at (650,0) size 766x36
+          RenderText {#text} at (0,0) size 766x36
             text run at (650,0) width 116: ", giving it an aqua"
             text run at (0,18) width 205: "background and a -10px margin"
-        RenderText {#text} at (194,18) size 760x54
+        RenderText {#text} at (0,18) size 760x54
           text run at (194,18) width 9: ". "
           text run at (202,18) width 547: "Margins on inline elements does not affect line-height calculations, so all lines in this"
           text run at (0,36) width 274: "element should have the same line-height. "
@@ -66,12 +66,12 @@ layer at (0,0) size 785x732
         RenderTableSection {TBODY} at (1,1) size 767x332
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x306
             RenderTableCell {TD} at (0,166) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,144) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x306 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18 [bgcolor=#C0C0C0]
@@ -84,13 +84,13 @@ layer at (0,0) size 785x732
                 RenderInline {SPAN} at (0,0) size 735x36 [bgcolor=#00FFFF]
                   RenderText {#text} at (514,0) size 148x18
                     text run at (514,0) width 148: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
+                  RenderInline {TT} at (661,2) size 25x15
                     RenderText {#text} at (661,2) size 25x15
                       text run at (661,2) width 25: "one"
-                  RenderText {#text} at (685,0) size 735x36
+                  RenderText {#text} at (0,0) size 735x36
                     text run at (685,0) width 50: ", giving"
                     text run at (0,18) width 265: "it an aqua background and a 25px margin"
-                RenderText {#text} at (289,18) size 747x72
+                RenderText {#text} at (0,18) size 747x72
                   text run at (289,18) width 9: ". "
                   text run at (297,18) width 450: "Margins on inline elements does not affect line-height calculations, so"
                   text run at (0,36) width 372: "all lines in this element should have the same line-height. "
@@ -107,13 +107,13 @@ layer at (0,0) size 785x732
                 RenderInline {SPAN} at (0,0) size 732x36 [bgcolor=#00FFFF]
                   RenderText {#text} at (479,0) size 148x18
                     text run at (479,0) width 148: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
+                  RenderInline {TT} at (626,2) size 25x15
                     RenderText {#text} at (626,2) size 25x15
                       text run at (626,2) width 25: "two"
-                  RenderText {#text} at (650,0) size 732x36
+                  RenderText {#text} at (0,0) size 732x36
                     text run at (650,0) width 82: ", giving it an"
                     text run at (0,18) width 239: "aqua background and a -10px margin"
-                RenderText {#text} at (228,18) size 739x72
+                RenderText {#text} at (0,18) size 739x72
                   text run at (228,18) width 9: ". "
                   text run at (236,18) width 503: "Margins on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 317: "in this element should have the same line-height. "

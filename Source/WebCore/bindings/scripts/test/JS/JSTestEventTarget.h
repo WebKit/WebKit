@@ -32,9 +32,10 @@ public:
     using DOMWrapped = TestEventTarget;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
     {
-        globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(globalObject->vm(), "Allocated masquerading object");
-        JSTestEventTarget* ptr = new (NotNull, JSC::allocateCell<JSTestEventTarget>(globalObject->vm())) JSTestEventTarget(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(vm, "Allocated masquerading object");
+        JSTestEventTarget* ptr = new (NotNull, JSC::allocateCell<JSTestEventTarget>(vm)) JSTestEventTarget(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -71,6 +72,9 @@ public:
     {
         return static_cast<TestEventTarget&>(Base::wrapped());
     }
+
+    Ref<TestEventTarget> protectedWrapped() const;
+
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::MasqueradesAsUndefined | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::OverridesPut;
 protected:

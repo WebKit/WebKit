@@ -41,12 +41,11 @@ namespace CDMUtilities {
 RefPtr<JSON::Object> parseJSONObject(const SharedBuffer& buffer)
 {
     // Fail on large buffers whose size doesn't fit into a 32-bit unsigned integer.
-    size_t size = buffer.size();
-    if (size > std::numeric_limits<unsigned>::max())
+    if (buffer.size() > std::numeric_limits<unsigned>::max())
         return nullptr;
 
     // Parse the buffer contents as JSON, returning the root object (if any).
-    String json { buffer.data(), static_cast<unsigned>(size) };
+    String json { buffer.span() };
 
     auto value = JSON::Value::parseJSON(json);
     if (!value)

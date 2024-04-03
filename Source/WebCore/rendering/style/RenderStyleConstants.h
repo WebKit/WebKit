@@ -1182,6 +1182,11 @@ enum class BlockStepInsert : bool {
     Padding
 };
 
+enum class FieldSizing : bool {
+    Fixed,
+    Content
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 constexpr float defaultMiterLimit = 4;
@@ -1303,5 +1308,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpaceCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
+WTF::TextStream& operator<<(WTF::TextStream&, FieldSizing);
 
 } // namespace WebCore

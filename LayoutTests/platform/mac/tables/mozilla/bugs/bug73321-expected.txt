@@ -6,7 +6,7 @@ layer at (0,0) size 785x1325
       RenderBlock {H1} at (16,37) size 737x102 [bgcolor=#CCCCCC]
         RenderText {#text} at (90,32) size 163x36
           text run at (90,32) width 163: "Simplified "
-        RenderInline {A} at (0,0) size 161x36 [color=#0000EE]
+        RenderInline {A} at (252,32) size 161x36 [color=#0000EE]
           RenderText {#text} at (252,32) size 161x36
             text run at (252,32) width 161: "Linux.com"
         RenderText {#text} at (412,32) size 235x36
@@ -190,11 +190,11 @@ layer at (0,0) size 785x1325
                   text run at (0,60) width 53: "blah blah"
           RenderTableRow {TR} at (0,385) size 737x747
             RenderTableCell {TD} at (600,970) size 135x162 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
-              RenderBlock {H2} at (5,18) size 125x37
+              RenderBlock {H2} at (5,603) size 125x37
                 RenderText {#text} at (0,0) size 88x35
                   text run at (0,0) width 88: "Community"
                   text run at (0,18) width 56: "Banner"
-              RenderBlock {P} at (5,67) size 125x76
+              RenderBlock {P} at (5,652) size 125x76
                 RenderText {#text} at (0,0) size 110x75
                   text run at (0,0) width 110: "blah blah blah blah"
                   text run at (0,15) width 110: "blah blah blah blah"

@@ -58,8 +58,8 @@ public:
     };
 
     struct Config {
-        std::optional<size_t> sampleRate;
-        std::optional<size_t> numberOfChannels;
+        size_t sampleRate;
+        size_t numberOfChannels;
         uint64_t bitRate { 0 };
         std::optional<OpusConfig> opusConfig;
         std::optional<bool> isAacADTS;

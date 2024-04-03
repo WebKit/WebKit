@@ -16,7 +16,7 @@ offer a number of significant benefits:
 
 ## Back-end Design
 
-The [`RendererVk`](RendererVk.cpp) class represents an `EGLDisplay`. `RendererVk` owns shared global
+The [`vk::Renderer`](vk::Renderer.cpp) class represents an `EGLDisplay`. `vk::Renderer` owns shared global
 resources like the [VkDevice][VkDevice], [VkQueue][VkQueue], the [Vulkan format tables](vk_format_utils.h)
 and [internal Vulkan shaders](shaders). The [ContextVk](ContextVk.cpp) class implements the back-end
 of a front-end OpenGL Context. ContextVk processes state changes and handles action commands like
@@ -56,7 +56,7 @@ are not actually recorded until `getOutsideRenderPassCommandBuffer` is called:
    started RenderPass.
 
 After the back-end records commands to the primary buffer and we flush (e.g. on swap) or when we call
-`RendererVk::finishQueueSerial`, ANGLE submits the primary command buffer to a `VkQueue`.
+`vk::Renderer::finishQueueSerial`, ANGLE submits the primary command buffer to a `VkQueue`.
 
 See the [code][CommandAPIs] for more details.
 

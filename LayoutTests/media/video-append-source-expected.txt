@@ -1,7 +1,4 @@
 
-EXPECTED (video.currentSrc == '') OK
-EXPECTED (video.currentSrc == '') OK
-EVENT(canplaythrough)
-EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
-END OF TEST
+
+PASS Verify that a media element's currentSrc is correctly set to source element's src
 

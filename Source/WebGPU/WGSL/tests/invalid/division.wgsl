@@ -85,11 +85,11 @@ fn testAbstractFloat()
 {
     // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
     _ = 42.0 / 0.0;
-    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(42, Infinity) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = 42.0 / vec2(1.0, 0.0);
-    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(Infinity, Infinity) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = vec2(42.0) / 0.0;
-    // CHECK-L: value Infinity cannot be represented as '<AbstractFloat>'
+    // CHECK-L: value vec2(42, Infinity) cannot be represented as 'vec2<<AbstractFloat>>'
     _ = vec2(42.0) / vec2(1.0, 0.0);
 
     // CHECK-NOT-L: division by zero
@@ -123,11 +123,11 @@ fn testF32()
 {
     // CHECK-L: value Infinity cannot be represented as 'f32'
     _ = 42f / 0f;
-    // CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value vec2(42f, Infinity) cannot be represented as 'vec2<f32>'
     _ = 42f / vec2(1f, 0f);
-    // CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value vec2(Infinity, Infinity) cannot be represented as 'vec2<f32>'
     _ = vec2(42f) / 0f;
-    // CHECK-L: value Infinity cannot be represented as 'f32'
+    // CHECK-L: value vec2(42f, Infinity) cannot be represented as 'vec2<f32>'
     _ = vec2(42f) / vec2(1f, 0f);
 
     let x = 42f;
@@ -194,6 +194,13 @@ fn testF32Compound()
     // y[0] /= 0;
     // skip-CHECK-NOT-L: division by zero
     // y[0] /= vec2(1, 0);
+}
+
+fn testDivisorOverflow()
+{
+    // CHECK-L: value 8144182087775404032 cannot be represented as 'i32'
+    let x = 1;
+    _ = x / 8144182087775404419;
 }
 
 @compute @workgroup_size(1)

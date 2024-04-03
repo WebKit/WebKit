@@ -54,7 +54,7 @@ public:
     void initializeB3Code(CodeRef<JSEntryPtrTag>);
     void initializeB3Byproducts(std::unique_ptr<OpaqueByproducts>);
     void initializeAddressForCall(CodePtr<JSEntryPtrTag>);
-    void initializeArityCheckEntrypoint(CodeRef<JSEntryPtrTag>);
+    void initializeAddressForArityCheck(CodePtr<JSEntryPtrTag>);
     
     void validateReferences(const TrackedReferences&) override;
 
@@ -85,7 +85,7 @@ public:
 private:
     CodeRef<JSEntryPtrTag> m_b3Code;
     std::unique_ptr<OpaqueByproducts> m_b3Byproducts;
-    CodeRef<JSEntryPtrTag> m_arityCheckEntrypoint;
+    CodePtr<JSEntryPtrTag> m_addressForArityCheck;
 };
 
 } } // namespace JSC::FTL

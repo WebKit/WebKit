@@ -2,7 +2,8 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,15 +38,15 @@ class UIEvent : public Event {
 public:
     static Ref<UIEvent> create(const AtomString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, RefPtr<WindowProxy>&& view, int detail)
     {
-        return adoptRef(*new UIEvent(type, canBubble, isCancelable, isComposed, WTFMove(view), detail));
+        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, canBubble, isCancelable, isComposed, WTFMove(view), detail));
     }
     static Ref<UIEvent> createForBindings()
     {
-        return adoptRef(*new UIEvent);
+        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent));
     }
     static Ref<UIEvent> create(const AtomString& type, const UIEventInit& initializer, IsTrusted = IsTrusted::No)
     {
-        return adoptRef(*new UIEvent(type, initializer));
+        return adoptRef(*new UIEvent(EventInterfaceType::UIEvent, type, initializer));
     }
     virtual ~UIEvent();
 
@@ -54,22 +55,20 @@ public:
     WindowProxy* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
-    EventInterface eventInterface() const override;
-
     virtual int layerX();
     virtual int layerY();
 
     virtual int pageX() const;
     virtual int pageY() const;
 
-    virtual int which() const;
+    virtual unsigned which() const;
 
 protected:
-    UIEvent();
+    UIEvent(enum EventInterfaceType);
 
-    UIEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail);
-    UIEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, IsTrusted = IsTrusted::Yes);
-    UIEvent(const AtomString&, const UIEventInit&, IsTrusted = IsTrusted::No);
+    UIEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail);
+    UIEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail, IsTrusted = IsTrusted::Yes);
+    UIEvent(enum EventInterfaceType, const AtomString&, const UIEventInit&, IsTrusted = IsTrusted::No);
 
 private:
     bool isUIEvent() const final;

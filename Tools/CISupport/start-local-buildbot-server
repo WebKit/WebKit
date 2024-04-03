@@ -240,7 +240,7 @@ class BuildbotTestRunner(object):
         return result
 
     def _setup_server_workdir(self):
-        self._server_wordir = os.path.join(self._base_workdir_temp, 'buildbot-server')
+        self._server_wordir = os.path.join(self._base_workdir_temp, os.path.basename(self._configdir))
         assert(not os.path.exists(self._server_wordir))
         self._server_log = os.path.join(self._server_wordir, 'server.log')
         self._server_ready_fd = os.path.join(self._server_wordir, '.server-is-ready')

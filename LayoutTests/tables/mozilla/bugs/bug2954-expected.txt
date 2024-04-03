@@ -9,11 +9,11 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 80x70 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 80x70
             RenderTableCell {TD} at (80,50) size 520x20 [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (0,0) size 104x20
-              RenderImage {IMG} at (104,0) size 104x20
-              RenderImage {IMG} at (208,0) size 104x20
-              RenderImage {IMG} at (312,0) size 104x20
-              RenderImage {IMG} at (416,0) size 104x20
+              RenderImage {IMG} at (0,50) size 104x20
+              RenderImage {IMG} at (104,50) size 104x20
+              RenderImage {IMG} at (208,50) size 104x20
+              RenderImage {IMG} at (312,50) size 104x20
+              RenderImage {IMG} at (416,50) size 104x20
           RenderTableRow {TR} at (0,70) size 600x24
             RenderTableCell {TD} at (0,70) size 600x24 [bgcolor=#CCCC99] [r=1 c=0 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 600x24

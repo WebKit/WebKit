@@ -43,7 +43,7 @@
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 #include <memory>
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
@@ -109,6 +109,7 @@ enum class MailBlockquoteHandling : bool {
 };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
+class AttachmentAssociatedElement;
 class HTMLAttachmentElement;
 #endif
 
@@ -234,8 +235,6 @@ public:
 
     String readPlainTextFromPasteboard(Pasteboard&);
 
-    WEBCORE_EXPORT void indent();
-    WEBCORE_EXPORT void outdent();
     void transpose();
 
     bool shouldInsertFragment(DocumentFragment&, const std::optional<SimpleRange>&, EditorInsertAction);
@@ -552,6 +551,10 @@ public:
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
 
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    WEBCORE_EXPORT void insertMultiRepresentationHEIC(const std::span<const uint8_t>&);
+#endif
+
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
@@ -587,7 +590,7 @@ public:
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& fileData);
     void registerAttachments(Vector<SerializedAttachmentData>&&);
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& filePath);
-    void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
+    void registerAttachmentIdentifier(const String&, const AttachmentAssociatedElement&);
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
@@ -660,7 +663,7 @@ private:
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
     WeakPtr<EditorClient> m_client;
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;

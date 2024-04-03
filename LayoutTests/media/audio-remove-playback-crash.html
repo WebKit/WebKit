@@ -1,0 +1,22 @@
+<p>This test passes if no crash.</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function GetVariable(fuzzervars, var_type) { { return fuzzervars[var_type]; } { } }
+    function SetVariable(fuzzervars, var_name, var_type) { fuzzervars[var_type] = var_name; }
+    function jsfuzzer() {
+        var fuzzervars = {};
+        SetVariable(fuzzervars, document, 'Document');
+        try { /* */ var var00041 = htmlvar00009.import; } catch (e) { }
+        try { if (!var00041) { var00041 = GetVariable(fuzzervars, 'Document'); } { SetVariable(fuzzervars, 'GlobalEventHandlers'); } } catch (e) { }
+        try { /* */ var00054 = htmlvar00002.outerHTML; } catch (e) { }
+        try { /* */ var00066 = document.createElement("input"); } catch (e) { }
+        try { document.all[81 % document.all.length].appendChild(var00066); } catch (e) { }
+        try { var00066.selectionEnd = 20; } catch (e) { }
+        try { var00041.execCommand("insertHTML", false, var00054); } catch (e) { }
+    }
+</script>
+
+<body onload=jsfuzzer()>
+    <audio id="htmlvar00002" srclang="ja-Hira" />
+</body>

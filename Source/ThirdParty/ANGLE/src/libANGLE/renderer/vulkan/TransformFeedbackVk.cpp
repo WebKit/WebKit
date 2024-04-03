@@ -44,12 +44,12 @@ TransformFeedbackVk::~TransformFeedbackVk() {}
 void TransformFeedbackVk::onDestroy(const gl::Context *context)
 {
     ContextVk *contextVk   = vk::GetImpl(context);
-    RendererVk *rendererVk = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
 
-    releaseCounterBuffers(rendererVk);
+    releaseCounterBuffers(renderer);
 }
 
-void TransformFeedbackVk::releaseCounterBuffers(RendererVk *renderer)
+void TransformFeedbackVk::releaseCounterBuffers(vk::Renderer *renderer)
 {
     for (vk::BufferHelper &bufferHelper : mCounterBufferHelpers)
     {
@@ -250,7 +250,7 @@ void TransformFeedbackVk::onSubjectStateChange(angle::SubjectIndex index,
         mBufferHelpers[index] = &bufferVk->getBuffer();
         mBufferOffsets[index] = binding.getOffset() + mBufferHelpers[index]->getOffset();
         mBufferSizes[index]   = std::min<VkDeviceSize>(gl::GetBoundBufferAvailableSize(binding),
-                                                     mBufferHelpers[index]->getSize());
+                                                       mBufferHelpers[index]->getSize());
         mBufferObserverBindings[index].bind(bufferVk);
         mBufferHandles[index] = mBufferHelpers[index]->getBuffer().getHandle();
     }

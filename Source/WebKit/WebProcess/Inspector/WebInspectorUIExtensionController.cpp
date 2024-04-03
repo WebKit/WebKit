@@ -212,7 +212,7 @@ void WebInspectorUIExtensionController::createTabForExtension(const Inspector::E
     });
 }
 
-void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspector::ExtensionID& extensionID, const String& scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
+void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspector::ExtensionID& extensionID, const String& scriptSource, const std::optional<URL>& frameURL, const std::optional<URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler({ }, std::nullopt, Inspector::ExtensionError::InvalidRequest);
@@ -407,7 +407,7 @@ void WebInspectorUIExtensionController::navigateTabForExtension(const Inspector:
 
 // WebInspectorUIExtensionController IPC messages for testing.
 
-void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const String& scriptSource, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
+void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const String& scriptSource, CompletionHandler<void(std::span<const uint8_t>, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler({ }, std::nullopt, Inspector::ExtensionError::InvalidRequest);

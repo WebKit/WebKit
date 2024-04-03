@@ -1,0 +1,4 @@
+
+
+PASS check frame of capture canvas is sufficient
+

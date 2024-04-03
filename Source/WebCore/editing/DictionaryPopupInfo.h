@@ -38,7 +38,6 @@ namespace WebCore {
 
 #if PLATFORM(COCOA)
 struct DictionaryPopupInfoCocoa {
-    RetainPtr<NSDictionary> options;
     AttributedString attributedString;
 };
 #endif

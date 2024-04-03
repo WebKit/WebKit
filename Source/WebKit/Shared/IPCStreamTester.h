@@ -29,9 +29,9 @@
 
 #include "IPCStreamTesterIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
-#include "SharedMemory.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
+#include <WebCore/SharedMemory.h>
 #include <memory>
 #include <wtf/HashMap.h>
 
@@ -58,7 +58,7 @@ private:
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
 
     // Messages.
-    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&&);
+    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
     void syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&&);
     void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
     void checkAutoreleasePool(CompletionHandler<void(int32_t)>&&);

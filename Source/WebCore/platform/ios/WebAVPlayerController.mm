@@ -30,7 +30,7 @@
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #import "Logging.h"
-#import "PlaybackSessionInterfaceAVKit.h"
+#import "PlaybackSessionInterfaceIOS.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import <AVFoundation/AVTime.h>
@@ -195,7 +195,7 @@ Class webAVPlayerControllerClass()
 
 @implementation WebAVPlayerController {
     WeakPtr<WebCore::PlaybackSessionModel> _delegate;
-    WeakPtr<WebCore::PlaybackSessionInterfaceAVKit> _playbackSessionInterface;
+    WeakPtr<WebCore::PlaybackSessionInterfaceIOS> _playbackSessionInterface;
     double _defaultPlaybackRate;
     double _rate;
     BOOL _liveStreamEventModePossible;
@@ -330,12 +330,12 @@ Class webAVPlayerControllerClass()
     _delegate = WeakPtr { delegate };
 }
 
-- (WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+- (WebCore::PlaybackSessionInterfaceIOS*)playbackSessionInterface
 {
     return _playbackSessionInterface.get();
 }
 
-- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceAVKit*)playbackSessionInterface
+- (void)setPlaybackSessionInterface:(WebCore::PlaybackSessionInterfaceIOS*)playbackSessionInterface
 {
     _playbackSessionInterface = WeakPtr { playbackSessionInterface };
 }
@@ -1163,6 +1163,12 @@ Class webAVPlayerControllerClass()
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    RetainPtr displayName = adoptNS([_localizedDisplayName copyWithZone:zone]);
+    return [[WebAVMediaSelectionOption allocWithZone:zone] initWithMediaType:_mediaType displayName:displayName.get()];
+}
+
 - (NSString *)displayName
 {
     return self.localizedDisplayName;
@@ -1291,6 +1297,13 @@ Class webAVPlayerControllerClass()
     WTFLogAlways("ERROR: -[WebAVMediaSelectionOption track:] unimplemented");
     return nil;
 }
+
+#if PLATFORM(APPLETV)
+- (NSString *)avkit_mediaRemoteIdentifier
+{
+    return self.displayName;
+}
+#endif
 
 @end
 

@@ -611,7 +611,7 @@ public:
         // bit_rate_scale
         // cpb_size_scale
         reader.ConsumeBits(8);
-        for (size_t cptr = 0; cptr < cpb_cnt_minus1; ++cptr) {
+        for (size_t cptr = 0; cptr <= cpb_cnt_minus1; ++cptr) {
             // bit_rate_value_minus1
             reader.ReadExponentialGolomb();
             // cpb_size_value_minus1
@@ -678,7 +678,9 @@ static uint8_t ComputeH264ReorderSizeFromSPS(const SpsAndVuiParser::State& state
   }
 
   uint64_t max_dpb_mbs = maxDpbMbsFromLevelNumber(state.profile_idc, state.level_idc, state.constraint_set3_flag);
-  uint64_t max_dpb_frames_from_sps = max_dpb_mbs / ((state.width / 16) * (state.height / 16));
+  uint64_t pic_width_in_mbs = state.pic_width_in_mbs_minus1 + 1;
+  uint64_t frame_height_in_mbs = (2 - state.frame_mbs_only_flag) * (state.pic_height_in_map_units_minus1 + 1);
+  uint64_t max_dpb_frames_from_sps = max_dpb_mbs / (pic_width_in_mbs * frame_height_in_mbs);
   // We use a max value of 16.
   auto max_dpb_frames = static_cast<uint8_t>(std::min(max_dpb_frames_from_sps, 16ull));
 
@@ -703,11 +705,11 @@ uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t an
   const uint8_t* spsData;
   size_t spsDataSize;
 
-  if (!reader.ReadNalu(&spsData, &spsDataSize)) {
+  if (!reader.ReadNalu(&spsData, &spsDataSize) || spsDataSize <= H264::kNaluTypeSize) {
     return 0;
   }
 
-  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(spsData, spsDataSize);
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(spsData + H264::kNaluTypeSize, spsDataSize - H264::kNaluTypeSize);
   auto spsAndVui = SpsAndVuiParser::Parse(unpacked_buffer);
   if (!spsAndVui) {
     RTC_LOG(LS_ERROR) << "Failed to parse sps.";

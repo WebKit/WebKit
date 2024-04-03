@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           text run at (14,14) width 750: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\" text"
           text run at (14,42) width 153: "is really \"foo \". "
           text run at (166,42) width 63: "There "
-        RenderInline {B} at (0,0) size 51x28
+        RenderInline {B} at (228,42) size 51x28
           RenderText {#text} at (228,42) size 51x28
             text run at (228,42) width 51: "must"
         RenderText {#text} at (278,42) size 315x28

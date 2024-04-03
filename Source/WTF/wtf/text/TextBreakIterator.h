@@ -101,15 +101,15 @@ private:
 
     using Backing = std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform>;
 
-    static Backing mapModeToBackingIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, ContentAnalysis, const AtomString& locale);
+    static Backing mapModeToBackingIterator(StringView, std::span<const UChar> priorContext, Mode, ContentAnalysis, const AtomString& locale);
 
     // Use CachedTextBreakIterator instead of constructing one of these directly.
-    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, ContentAnalysis, const AtomString& locale);
+    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, std::span<const UChar> priorContext, Mode, ContentAnalysis, const AtomString& locale);
 
-    void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
+    void setText(StringView string, std::span<const UChar> priorContext)
     {
         return switchOn(m_backing, [&](auto& iterator) {
-            return iterator.setText(string, priorContext, priorContextLength);
+            return iterator.setText(string, priorContext);
         });
     }
 
@@ -150,17 +150,17 @@ private:
     TextBreakIteratorCache& operator=(const TextBreakIteratorCache&) = delete;
     TextBreakIteratorCache& operator=(TextBreakIteratorCache&&) = delete;
 
-    TextBreakIterator take(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, TextBreakIterator::ContentAnalysis contentAnalysis, const AtomString& locale)
+    TextBreakIterator take(StringView string, std::span<const UChar> priorContext, TextBreakIterator::Mode mode, TextBreakIterator::ContentAnalysis contentAnalysis, const AtomString& locale)
     {
         ASSERT(isMainThread());
         auto iter = std::find_if(m_unused.begin(), m_unused.end(), [&](TextBreakIterator& candidate) {
             return candidate.mode() == mode && candidate.contentAnalysis() == contentAnalysis && candidate.locale() == locale;
         });
         if (iter == m_unused.end())
-            return TextBreakIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale);
+            return TextBreakIterator(string, priorContext, mode, contentAnalysis, locale);
         auto result = WTFMove(*iter);
         m_unused.remove(iter - m_unused.begin());
-        result.setText(string, priorContext, priorContextLength);
+        result.setText(string, priorContext);
         return result;
     }
 
@@ -183,8 +183,8 @@ private:
 class CachedTextBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CachedTextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
-        : m_backing(isMainThread() ? TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, contentAnalysis, locale) : TextBreakIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
+    CachedTextBreakIterator(StringView string, std::span<const UChar> priorContext, TextBreakIterator::Mode mode, const AtomString& locale, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
+        : m_backing(isMainThread() ? TextBreakIteratorCache::singleton().take(string, priorContext, mode, contentAnalysis, locale) : TextBreakIterator(string, priorContext, mode, contentAnalysis, locale))
     {
     }
 
@@ -310,7 +310,7 @@ public:
     {
         const UChar* priorContext = m_priorContext.characters();
         if (!m_iterator) {
-            m_iterator = CachedTextBreakIterator(m_stringView, priorContext, m_priorContext.length(), WTF::TextBreakIterator::LineMode { m_mode }, m_locale, m_contentAnalysis);
+            m_iterator = CachedTextBreakIterator(m_stringView, std::span { priorContext, m_priorContext.length() }, WTF::TextBreakIterator::LineMode { m_mode }, m_locale, m_contentAnalysis);
             m_cachedPriorContext = priorContext;
         } else if (priorContext != m_cachedPriorContext) {
             resetStringAndReleaseIterator(m_stringView, m_locale, m_mode, m_contentAnalysis);

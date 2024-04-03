@@ -32,7 +32,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "MediaQuery.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,7 +60,7 @@ private:
 
     Ref<const Document> protectedDocument() const;
 
-    CheckedRef<const Document> m_document;
+    WeakRef<const Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
     float m_length { 0 };
     bool m_lengthWasSet { false };

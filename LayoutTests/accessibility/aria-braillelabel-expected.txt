@@ -1,0 +1,9 @@
+This test ensures aria-braillelabel works.
+
+PASS: accessibilityController.accessibleElementById('button').brailleLabel === 'AXBrailleLabel: ***'
+PASS: accessibilityController.accessibleElementById('button').brailleLabel === 'AXBrailleLabel: *'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Three stars

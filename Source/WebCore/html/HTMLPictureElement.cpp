@@ -43,9 +43,7 @@ HTMLPictureElement::HTMLPictureElement(const QualifiedName& tagName, Document& d
 {
 }
 
-HTMLPictureElement::~HTMLPictureElement()
-{
-}
+HTMLPictureElement::~HTMLPictureElement() = default;
 
 Ref<HTMLPictureElement> HTMLPictureElement::create(const QualifiedName& tagName, Document& document)
 {

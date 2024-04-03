@@ -26,7 +26,7 @@
 #ifndef OutOfBandTextTrackPrivateAVF_h
 #define OutOfBandTextTrackPrivateAVF_h
 
-#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY)) && ENABLE(AVF_CAPTIONS)
+#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY))
 
 #include "InbandTextTrackPrivateAVF.h"
 
@@ -36,9 +36,9 @@ namespace WebCore {
     
 class OutOfBandTextTrackPrivateAVF : public InbandTextTrackPrivateAVF {
 public:
-    static Ref<OutOfBandTextTrackPrivateAVF> create(AVFInbandTrackParent* player,  AVMediaSelectionOption* selection)
+    static Ref<OutOfBandTextTrackPrivateAVF> create(AVFInbandTrackParent* player,  AVMediaSelectionOption* selection, TrackID trackID)
     {
-        return adoptRef(*new OutOfBandTextTrackPrivateAVF(player, selection));
+        return adoptRef(*new OutOfBandTextTrackPrivateAVF(player, selection, trackID));
     }
     
     void processCue(CFArrayRef, CFArrayRef, const MediaTime&) override { }
@@ -49,8 +49,8 @@ public:
     AVMediaSelectionOption* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
     
 protected:
-    OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection)
-        : InbandTextTrackPrivateAVF(player, InbandTextTrackPrivate::CueFormat::Generic)
+    OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection, TrackID trackID)
+        : InbandTextTrackPrivateAVF(player, trackID, InbandTextTrackPrivate::CueFormat::Generic)
         , m_mediaSelectionOption(selection)
     {
     }

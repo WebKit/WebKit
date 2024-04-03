@@ -1,0 +1,39 @@
+text
+text
+span
+text
+text
+
+FAIL align-content: normal assert_equals: expected 10 but got 11
+FAIL align-content: normal; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: start assert_equals: expected 10 but got 11
+FAIL align-content: start; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: unsafe start assert_equals: expected 10 but got 11
+FAIL align-content: unsafe start; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: safe start assert_equals: expected 10 but got 11
+FAIL align-content: safe start; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: flex-start assert_equals: expected 10 but got 11
+FAIL align-content: flex-start; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: space-between assert_equals: expected 10 but got 11
+FAIL align-content: space-between; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: stretch assert_equals: expected 10 but got 11
+FAIL align-content: stretch; contain: size assert_equals: expected 10 but got 11
+FAIL align-content: center assert_equals: expected 30 but got 29
+FAIL align-content: center; contain: size assert_equals: expected 30 but got 29
+FAIL align-content: unsafe center assert_equals: expected 30 but got 29
+FAIL align-content: unsafe center; contain: size assert_equals: expected 30 but got 29
+FAIL align-content: safe center assert_equals: expected 30 but got 29
+FAIL align-content: safe center; contain: size assert_equals: expected 30 but got 29
+FAIL align-content: space-around assert_equals: expected 30 but got 29
+FAIL align-content: space-around; contain: size assert_equals: expected 30 but got 29
+FAIL align-content: space-evenly assert_equals: expected 30 but got 29
+FAIL align-content: space-evenly; contain: size assert_equals: expected 30 but got 29
+FAIL align-content: end assert_equals: expected 60 but got 58
+FAIL align-content: end; contain: size assert_equals: expected 60 but got 58
+FAIL align-content: unsafe end assert_equals: expected 60 but got 58
+FAIL align-content: unsafe end; contain: size assert_equals: expected 60 but got 58
+FAIL align-content: safe end assert_equals: expected 60 but got 58
+FAIL align-content: safe end; contain: size assert_equals: expected 60 but got 58
+FAIL align-content: flex-end assert_equals: expected 60 but got 58
+FAIL align-content: flex-end; contain: size assert_equals: expected 60 but got 58
+

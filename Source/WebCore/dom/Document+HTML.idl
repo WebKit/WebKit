@@ -61,14 +61,14 @@ partial interface Document {
     [CEReactions=Needed, CallWith=EntryDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
     [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, [AtomString] DOMString name, DOMString features);
     [CEReactions=Needed, ImplementedAs=closeForBindings] undefined close();
-    [CEReactions=Needed, CallWith=EntryDocument] undefined write(DOMString... text);
-    [CEReactions=Needed, CallWith=EntryDocument] undefined writeln(DOMString... text);
+    [CEReactions=Needed, CallWith=EntryDocument] undefined write(HTMLString... text);
+    [CEReactions=Needed, CallWith=EntryDocument] undefined writeln(HTMLString... text);
 
     // user interaction
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
     boolean hasFocus();
     [CEReactions=Needed] attribute DOMString designMode;
-    [CEReactions=Needed] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+    [CEReactions=Needed] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional (DOMString or TrustedHTML) value = "");
     boolean queryCommandEnabled(DOMString commandId);
     boolean queryCommandIndeterm(DOMString commandId);
     boolean queryCommandState(DOMString commandId);
@@ -78,3 +78,5 @@ partial interface Document {
     // special event handler IDL attributes that only apply to Document objects
     [LegacyLenientThis] attribute EventHandler onreadystatechange;
 };
+
+typedef [StringContext=TrustedHTML] DOMString HTMLString;

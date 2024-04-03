@@ -134,7 +134,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 138x28
             text run at (0,0) width 132: "the notational"
             text run at (131,0) width 7: " "
-          RenderInline {SPAN} at (0,0) size 0x28
+          RenderInline {SPAN} at (137,0) size 0x28
         RenderBlock {DIV} at (14,42) size 756x28
           RenderText {#text} at (0,0) size 138x28
             text run at (0,0) width 138: "the notational,"

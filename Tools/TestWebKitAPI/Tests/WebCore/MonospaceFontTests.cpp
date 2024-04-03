@@ -56,7 +56,7 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
             if (fontCascade.canTakeFixedPitchFastContentMeasuring()) {
                 for (uint32_t character = 0; character <= UINT16_MAX; ++character) {
                     const char16_t ch = character;
-                    StringView content(&ch, 1);
+                    StringView content(span(ch));
                     if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
                         continue;
                     constexpr bool whitespaceIsCollapsed = false;
@@ -68,19 +68,19 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     fontCascade.fonts()->widthCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
                     fontCascade.fonts()->widthCache().clear();
-                    float originalWidth = fontCascade.widthForSimpleText(content);
+                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
                 {
                     const char16_t characters[] {
                         ' ', ' ', 'a'
                     };
-                    StringView content(characters, 3);
+                    StringView content(characters);
                     constexpr bool whitespaceIsCollapsed = false;
                     fontCascade.fonts()->widthCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);
                     fontCascade.fonts()->widthCache().clear();
-                    float originalWidth = fontCascade.widthForSimpleText(content);
+                    float originalWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(content);
                     EXPECT_EQ(originalWidth , width);
                 }
             }

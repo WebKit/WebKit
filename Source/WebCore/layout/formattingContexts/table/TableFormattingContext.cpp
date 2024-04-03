@@ -122,8 +122,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
             // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to
             // use some kind of intrinsic padding similar to RenderTableCell.
-            auto paddingTop = valueOrDefault(cellBoxGeometry.paddingBefore());
-            auto paddingBottom = valueOrDefault(cellBoxGeometry.paddingAfter());
+            auto paddingTop = cellBoxGeometry.paddingBefore();
+            auto paddingBottom = cellBoxGeometry.paddingAfter();
             auto intrinsicPaddingTop = LayoutUnit { };
             auto intrinsicPaddingBottom = LayoutUnit { };
 
@@ -166,7 +166,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                 };
                 adjustCellContentWithInstrinsicPaddingBefore();
             }
-            cellBoxGeometry.setVerticalPadding(VerticalEdges { paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
+            cellBoxGeometry.setVerticalPadding(BoxGeometry::VerticalEdges { paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
         };
         computeIntrinsicVerticalPaddingForCell();
     }
@@ -196,9 +196,9 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // Border collapsing delegates borders to table/cells.
             border.horizontal = { };
             if (!rowIndex)
-                border.vertical.top = { };
+                border.vertical.before = { };
             if (rowIndex == rows.size() - 1)
-                border.vertical.bottom = { };
+                border.vertical.after = { };
             return border;
         }();
         if (computedRowBorder.height() > row.logicalHeight()) {
@@ -208,16 +208,16 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             // or with a wide frame box.
             // If it happens to cause issues in the display tree, we could also consider
             // a special frame box override, where padding box + border != frame box.
-            computedRowBorder.vertical.top = { };
-            computedRowBorder.vertical.bottom = { };
+            computedRowBorder.vertical.before = { };
+            computedRowBorder.vertical.after = { };
         }
         rowBoxGeometry.setContentBoxHeight(row.logicalHeight() - computedRowBorder.height());
 
         auto rowLogicalWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
         if (computedRowBorder.width() > rowLogicalWidth) {
             // See comment above.
-            computedRowBorder.horizontal.left = { };
-            computedRowBorder.horizontal.right = { };
+            computedRowBorder.horizontal.start = { };
+            computedRowBorder.horizontal.end = { };
         }
         rowBoxGeometry.setContentBoxWidth(rowLogicalWidth - computedRowBorder.width());
         rowBoxGeometry.setBorder(computedRowBorder);
@@ -265,7 +265,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         // Section borders are either collapsed or ignored.
         sectionBoxGeometry.setBorder({ });
         // Use fake vertical padding to space out the sections.
-        sectionBoxGeometry.setPadding(Edges { { }, { paddingBefore.value_or(0_lu), paddingAfter } });
+        sectionBoxGeometry.setPadding(BoxGeometry::Edges { { }, { paddingBefore.value_or(0_lu), paddingAfter } });
         paddingBefore = std::nullopt;
         // Internal table elements do not have margins.
         sectionBoxGeometry.setHorizontalMargin({ });

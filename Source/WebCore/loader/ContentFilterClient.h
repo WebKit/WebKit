@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class ResourceError;
 class SharedBuffer;
 class SubstituteData;
 
-class ContentFilterClient {
+class ContentFilterClient : public CanMakeWeakPtr<ContentFilterClient> {
 public:
     virtual ~ContentFilterClient() = default;
     virtual void ref() const = 0;

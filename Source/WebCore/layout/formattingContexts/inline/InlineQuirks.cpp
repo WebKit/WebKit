@@ -94,7 +94,7 @@ bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox)
     }
     // Non-root inline boxes (e.g. <span>).
     auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-    if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().value_or(0_lu)) {
+    if (boxGeometry.horizontalBorderAndPadding()) {
         // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
         return true;
     }
@@ -109,11 +109,11 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
     auto& primaryFontMetrics = lineBoxStyle.fontCascade().metricsOfPrimaryFont();
     auto lineHeight = [&]() -> InlineLayoutUnit {
         if (lineBoxStyle.lineHeight().isNegative())
-            return primaryFontMetrics.ascent() + primaryFontMetrics.descent();
+            return primaryFontMetrics.intAscent() + primaryFontMetrics.intDescent();
         return lineBoxStyle.computedLineHeight();
     };
     auto& floatBoxGeometry = formattingContext().geometryForBox(floatBox);
-    return LayoutUnit { primaryFontMetrics.ascent() + (lineHeight() - primaryFontMetrics.height()) / 2 - primaryFontMetrics.capHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
+    return LayoutUnit { primaryFontMetrics.intAscent() + (lineHeight() - primaryFontMetrics.intHeight()) / 2 - primaryFontMetrics.intCapHeight() - floatBoxGeometry.marginBorderAndPaddingBefore() };
 }
 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
@@ -164,8 +164,8 @@ std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(cons
         return { };
 
     auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
-    auto lineGridFontAscent = gridFontMetrics.ascent(lineBox.baselineType());
-    auto lineGridFontHeight = gridFontMetrics.height();
+    auto lineGridFontAscent = gridFontMetrics.intAscent(lineBox.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.intHeight();
     auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
 
     auto firstLineTop = lineGrid.topRowOffset + lineGrid.gridOffset.height();

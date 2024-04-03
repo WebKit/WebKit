@@ -27,22 +27,24 @@
 
 #include <WebCore/PixelBuffer.h>
 
-namespace WebKit {
-
+namespace WebCore {
 class SharedMemory;
+}
+
+namespace WebKit {
 
 class ShareablePixelBuffer : public WebCore::PixelBuffer {
 public:
     static RefPtr<ShareablePixelBuffer> tryCreate(const WebCore::PixelBufferFormat&, const WebCore::IntSize&);
 
-    SharedMemory& data() const { return m_data.get(); }
+    WebCore::SharedMemory& data() const { return m_data.get(); }
 
     RefPtr<WebCore::PixelBuffer> createScratchPixelBuffer(const WebCore::IntSize&) const override;
 
 private:
-    ShareablePixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntSize&, Ref<SharedMemory>&&);
+    ShareablePixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntSize&, Ref<WebCore::SharedMemory>&&);
 
-    Ref<SharedMemory> m_data;
+    Ref<WebCore::SharedMemory> m_data;
 };
 
 } // namespace WebKit

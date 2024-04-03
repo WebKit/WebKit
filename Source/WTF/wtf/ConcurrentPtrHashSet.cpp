@@ -33,9 +33,7 @@ ConcurrentPtrHashSet::ConcurrentPtrHashSet()
     initialize();
 }
 
-ConcurrentPtrHashSet::~ConcurrentPtrHashSet()
-{
-}
+ConcurrentPtrHashSet::~ConcurrentPtrHashSet() = default;
 
 void ConcurrentPtrHashSet::deleteOldTables()
 {

@@ -180,7 +180,7 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
-        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
+        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -204,7 +204,7 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
-        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
+        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -249,9 +249,6 @@ class CallFrame;
 #define JSC_DEFINE_COMMON_SLOW_PATH(name) \
     JSC_DEFINE_JIT_OPERATION(name, UGPRPair, (CallFrame* callFrame, const JSInstruction* pc))
 
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_direct_arguments);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_scoped_arguments);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enter);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_this);
@@ -292,6 +289,7 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_is_constructor);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_strcat);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_primitive);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_property_key);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_property_key_or_number);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_get_property_enumerator);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_next);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_get_by_val);
@@ -300,7 +298,6 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_put_by_val);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_profile_type_clear_log);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_unreachable);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_lexical_environment);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_push_with_scope);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_resolve_scope);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_eval);

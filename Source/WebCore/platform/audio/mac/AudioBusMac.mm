@@ -29,6 +29,7 @@
 #import "AudioBus.h"
 
 #import "AudioFileReader.h"
+#import <wtf/cocoa/SpanCocoa.h>
 
 @interface WebCoreAudioBundleClass : NSObject
 @end
@@ -44,7 +45,7 @@ RefPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRa
         NSBundle *bundle = [NSBundle bundleForClass:[WebCoreAudioBundleClass class]];
         NSURL *audioFileURL = [bundle URLForResource:[NSString stringWithUTF8String:name] withExtension:@"wav" subdirectory:@"audio"];
         if (NSData *audioData = [NSData dataWithContentsOfURL:audioFileURL options:NSDataReadingMappedIfSafe error:nil])
-            return createBusFromInMemoryAudioFile([audioData bytes], [audioData length], false, sampleRate);
+            return createBusFromInMemoryAudioFile(span(audioData), false, sampleRate);
     }
 
     ASSERT_NOT_REACHED();

@@ -49,7 +49,7 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
             },
             "/webkit/WebKitAccessibility/text/state-changed": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/256557"}}
             }
         }
     },
@@ -70,7 +70,7 @@
     "TestWebKitFaviconDatabase": {
         "subtests": {
             "/webkit/WebKitFaviconDatabase/get-favicon": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205381"}}
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/205381"}}
             }
         }
     },
@@ -93,6 +93,12 @@
             },
             "/webkit/WebKitWebView/notification": {
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/265886"}}
+            },
+            "/webkit/WebKitWebView/save": {
+                "expected": {
+                        "gtk": {"status": ["CRASH", "FAIL"], "bug": "webkit.org/b/269585"},
+                        "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/271327"}
+                }
             }
         }
     },
@@ -107,6 +113,9 @@
         "subtests": {
            "/webkit/WebKitWebInspectorServer/test-page-list": {
               "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/216646"}}
+           },
+           "/webkit/WebKitWebInspectorServer/http-test-page-list": {
+              "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/269586"}}
            }
         },
         "expected": {"all": {"slow": true}}

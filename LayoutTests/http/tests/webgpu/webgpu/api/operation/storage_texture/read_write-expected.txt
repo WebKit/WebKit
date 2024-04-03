@@ -1,0 +1,32 @@
+
+PASS :basic:format="r32uint";shaderStage="fragment";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32uint";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=2
+PASS :basic:format="r32uint";shaderStage="compute";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32uint";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32uint";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=2
+PASS :basic:format="r32sint";shaderStage="fragment";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32sint";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=2
+PASS :basic:format="r32sint";shaderStage="compute";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32sint";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32sint";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=2
+PASS :basic:format="r32float";shaderStage="fragment";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="fragment";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32float";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="fragment";textureDimension="3d";depthOrArrayLayers=2
+PASS :basic:format="r32float";shaderStage="compute";textureDimension="1d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="compute";textureDimension="2d";depthOrArrayLayers=2
+PASS :basic:format="r32float";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=1
+PASS :basic:format="r32float";shaderStage="compute";textureDimension="3d";depthOrArrayLayers=2
+

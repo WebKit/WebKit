@@ -58,7 +58,6 @@ public:
     UIElementVisibility menuBarIsVisible(WebPage*) override;
     UIElementVisibility toolbarsAreVisible(WebPage*) override;
 
-    bool didReachApplicationCacheOriginQuota(WebPage*, API::SecurityOrigin*, int64_t totalBytesNeeded) override;
     uint64_t didExceedDatabaseQuota(WebPage*, API::SecurityOrigin*, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes) override;
 
     String plugInStartLabelTitle(const String& mimeType) const override;

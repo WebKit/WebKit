@@ -105,9 +105,9 @@ String VTTScanner::extractString(const Run& run)
     ASSERT(run.end() <= end());
     String s;
     if (m_is8Bit)
-        s = String(m_data.characters8, run.length());
+        s = std::span { m_data.characters8, run.length() };
     else
-        s = String(m_data.characters16, run.length());
+        s = std::span { m_data.characters16, run.length() };
     seekTo(run.end());
     return s;
 }
@@ -129,9 +129,9 @@ unsigned VTTScanner::scanDigits(unsigned& number)
     StringView string;
     unsigned numDigits = runOfDigits.length();
     if (m_is8Bit)
-        string = { m_data.characters8, numDigits };
+        string = std::span { m_data.characters8, numDigits };
     else
-        string = { m_data.characters16, numDigits };
+        string = std::span { m_data.characters16, numDigits };
 
     // Since these are ASCII digits, the only failure mode is overflow, so use the maximum unsigned value.
     number = parseInteger<unsigned>(string).value_or(std::numeric_limits<unsigned>::max());
@@ -163,9 +163,9 @@ bool VTTScanner::scanFloat(float& number, bool* isNegative)
     size_t lengthOfFloat = Run(integerRun.start(), position(), m_is8Bit).length();
     bool validNumber;
     if (m_is8Bit)
-        number = charactersToFloat(integerRun.start(), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ integerRun.start(), lengthOfFloat }, &validNumber);
     else
-        number = charactersToFloat(reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat, &validNumber);
+        number = charactersToFloat({ reinterpret_cast<const UChar*>(integerRun.start()), lengthOfFloat }, &validNumber);
 
     if (!validNumber)
         number = std::numeric_limits<float>::max();

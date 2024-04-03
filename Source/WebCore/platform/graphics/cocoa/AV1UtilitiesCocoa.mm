@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(AV1)
 
+#import "AV1Utilities.h"
 #import "MediaCapabilitiesInfo.h"
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
@@ -148,6 +149,14 @@ std::optional<MediaCapabilitiesInfo> validateAV1Parameters(const AV1CodecConfigu
     }
 
     return info;
+}
+
+bool av1HardwareDecoderAvailable()
+{
+    if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported())
+        return VTIsHardwareDecodeSupported('av01');
+
+    return false;
 }
 
 }

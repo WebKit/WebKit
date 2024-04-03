@@ -39,10 +39,10 @@ layer at (0,0) size 800x348
                           text run at (0,0) width 48: "<title"
                         RenderText {#text} at (48,0) size 8x15
                           text run at (48,0) width 8: ">"
-                      RenderInline {span} at (0,0) size 24x15
+                      RenderInline {span} at (56,0) size 24x15
                         RenderText {#text} at (56,0) size 24x15
                           text run at (56,0) width 24: "Bug"
-                      RenderInline {span} at (0,0) size 64x15 [color=#881280]
+                      RenderInline {span} at (80,0) size 64x15 [color=#881280]
                         RenderText {#text} at (80,0) size 56x15
                           text run at (80,0) width 56: "</title"
                         RenderText {#text} at (136,0) size 8x15
@@ -97,10 +97,10 @@ layer at (0,0) size 800x348
                           text run at (0,0) width 24: "<h1"
                         RenderText {#text} at (24,0) size 8x15
                           text run at (24,0) width 8: ">"
-                      RenderInline {span} at (0,0) size 312x15
+                      RenderInline {span} at (32,0) size 312x15
                         RenderText {#text} at (32,0) size 312x15
                           text run at (32,0) width 312: "The background image should not repeat."
-                      RenderInline {span} at (0,0) size 40x15 [color=#881280]
+                      RenderInline {span} at (344,0) size 40x15 [color=#881280]
                         RenderText {#text} at (344,0) size 32x15
                           text run at (344,0) width 32: "</h1"
                         RenderText {#text} at (376,0) size 8x15
@@ -114,15 +114,15 @@ layer at (0,0) size 800x348
                           RenderInline {span} at (0,0) size 152x15 [color=#881280]
                             RenderText {#text} at (0,0) size 32x15
                               text run at (0,0) width 32: "<div"
-                            RenderInline {span} at (0,0) size 112x15
+                            RenderInline {span} at (32,0) size 112x15
                               RenderText {#text} at (32,0) size 8x15
                                 text run at (32,0) width 8: " "
-                              RenderInline {span} at (0,0) size 16x15 [color=#994500]
+                              RenderInline {span} at (40,0) size 16x15 [color=#994500]
                                 RenderText {#text} at (40,0) size 16x15
                                   text run at (40,0) width 16: "id"
                               RenderText {#text} at (56,0) size 16x15
                                 text run at (56,0) width 16: "=\""
-                              RenderInline {span} at (0,0) size 64x15 [color=#1A1AA6]
+                              RenderInline {span} at (72,0) size 64x15 [color=#1A1AA6]
                                 RenderText {#text} at (72,0) size 64x15
                                   text run at (72,0) width 64: "top_news"
                               RenderText {#text} at (136,0) size 8x15
@@ -151,15 +151,15 @@ layer at (0,0) size 800x348
                                       RenderInline {span} at (0,0) size 280x15 [color=#881280]
                                         RenderText {#text} at (0,0) size 24x15
                                           text run at (0,0) width 24: "<li"
-                                        RenderInline {span} at (0,0) size 248x15
+                                        RenderInline {span} at (24,0) size 248x15
                                           RenderText {#text} at (24,0) size 8x15
                                             text run at (24,0) width 8: " "
-                                          RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                                          RenderInline {span} at (32,0) size 40x15 [color=#994500]
                                             RenderText {#text} at (32,0) size 40x15
                                               text run at (32,0) width 40: "style"
                                           RenderText {#text} at (72,0) size 16x15
                                             text run at (72,0) width 16: "=\""
-                                          RenderInline {span} at (0,0) size 176x15 [color=#1A1AA6]
+                                          RenderInline {span} at (88,0) size 176x15 [color=#1A1AA6]
                                             RenderText {#text} at (88,0) size 176x15
                                               text run at (88,0) width 176: "border: 1px solid red;"
                                           RenderText {#text} at (264,0) size 8x15
@@ -176,34 +176,34 @@ layer at (0,0) size 800x348
                                           RenderInline {span} at (0,0) size 704x30
                                             RenderText {#text} at (40,0) size 8x15
                                               text run at (40,0) width 8: " "
-                                            RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                                            RenderInline {span} at (48,0) size 40x15 [color=#994500]
                                               RenderText {#text} at (48,0) size 40x15
                                                 text run at (48,0) width 40: "style"
                                             RenderText {#text} at (88,0) size 16x15
                                               text run at (88,0) width 16: "=\""
                                             RenderInline {span} at (0,0) size 704x30 [color=#1A1AA6]
-                                              RenderText {#text} at (104,0) size 704x30
+                                              RenderText {#text} at (0,0) size 704x30
                                                 text run at (104,0) width 600: "background-image: url(../media/resources/apple_logo_half_size.png); border:"
                                                 text run at (0,15) width 128: "2px solid green;"
                                             RenderText {#text} at (128,15) size 8x15
                                               text run at (128,15) width 8: "\""
-                                          RenderInline {span} at (0,0) size 136x15
+                                          RenderInline {span} at (136,15) size 136x15
                                             RenderText {#text} at (136,15) size 8x15
                                               text run at (136,15) width 8: " "
-                                            RenderInline {span} at (0,0) size 40x15 [color=#994500]
+                                            RenderInline {span} at (144,15) size 40x15 [color=#994500]
                                               RenderText {#text} at (144,15) size 40x15
                                                 text run at (144,15) width 40: "class"
                                             RenderText {#text} at (184,15) size 16x15
                                               text run at (184,15) width 16: "=\""
-                                            RenderInline {span} at (0,0) size 64x15 [color=#1A1AA6]
+                                            RenderInline {span} at (200,15) size 64x15 [color=#1A1AA6]
                                               RenderText {#text} at (200,15) size 64x15
                                                 text run at (200,15) width 64: "img_cont"
                                             RenderText {#text} at (264,15) size 8x15
                                               text run at (264,15) width 8: "\""
                                           RenderText {#text} at (272,15) size 8x15
                                             text run at (272,15) width 8: ">"
-                                        RenderInline {span} at (0,0) size 0x15
-                                        RenderInline {span} at (0,0) size 56x15 [color=#881280]
+                                        RenderInline {span} at (280,15) size 0x15
+                                        RenderInline {span} at (280,15) size 56x15 [color=#881280]
                                           RenderText {#text} at (280,15) size 48x15
                                             text run at (280,15) width 48: "</span"
                                           RenderText {#text} at (328,15) size 8x15

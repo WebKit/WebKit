@@ -159,7 +159,7 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestTypedefsDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -169,12 +169,12 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor:
     auto hello = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
-    auto testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
+    RefPtr testCallbackFunction = convert<IDLCallbackFunction<JSTestCallbackFunction>>(*lexicalGlobalObject, argument1.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 1, "testCallbackFunction", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     EnsureStillAliveScope argument2 = callFrame->uncheckedArgument(2);
-    auto testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument2.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
+    RefPtr testCallbackInterface = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument2.value(), *castedThis->globalObject(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 2, "testCallbackInterface", "TestTypedefs", nullptr); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestTypedefs::create(WTFMove(hello), testCallbackFunction.releaseNonNull(), testCallbackInterface.releaseNonNull());
+    auto object = TestTypedefs::create(WTFMove(hello), *testCallbackFunction, *testCallbackInterface);
     if constexpr (IsExceptionOr<decltype(object)>)
         RETURN_IF_EXCEPTION(throwScope, { });
     static_assert(TypeOrExceptionOrUnderlyingType<decltype(object)>::isRef);
@@ -275,12 +275,12 @@ void JSTestTypedefs::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestTypedefs::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestTypedefs::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestTypedefs_unsignedLongLongAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestTypedefs& thisObject)
@@ -805,7 +805,7 @@ void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     auto* jsTestTypedefs = static_cast<JSTestTypedefs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestTypedefs->wrapped(), jsTestTypedefs);
+    uncacheWrapper(world, jsTestTypedefs->protectedWrapped().ptr(), jsTestTypedefs);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

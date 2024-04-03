@@ -13,12 +13,12 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 45 width 267.92: "For this test case to be successful, the rect"
         RenderSVGInlineText {#text} at (267,0) size 4x18
           chunk 1 text run 1 at (267.92,0.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 364x18
+        RenderSVGTSpan {tspan} at (0,15) size 364x18
           RenderSVGInlineText {#text} at (0,15) size 364x18
             chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 55 width 363.91: "above should be .9 transparant green and 200x200 pixels"
         RenderSVGInlineText {#text} at (363,15) size 4x18
           chunk 1 text run 1 at (363.91,15.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 71x18
+        RenderSVGTSpan {tspan} at (0,30) size 71x18
           RenderSVGInlineText {#text} at (0,30) size 71x18
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 70.67: "Bug 11909"
         RenderSVGInlineText {#text} at (0,0) size 0x0

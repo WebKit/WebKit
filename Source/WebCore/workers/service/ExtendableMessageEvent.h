@@ -71,8 +71,6 @@ public:
     const std::optional<ExtendableMessageEventSource>& source() const { return m_source; }
     const Vector<RefPtr<MessagePort>>& ports() const { return m_ports; }
 
-    EventInterface eventInterface() const final { return ExtendableMessageEventInterfaceType; }
-
 private:
     ExtendableMessageEvent(JSC::JSGlobalObject&, const AtomString&, const Init&, IsTrusted);
     ExtendableMessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);

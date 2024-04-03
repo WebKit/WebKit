@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "NetworkSessionCurl.h"
 #include "WebSocketTask.h"
 #include <WebCore/CurlStream.h>
@@ -53,8 +52,8 @@ public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
-    void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
-    void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
+    void sendString(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    void sendData(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
 
     void cancel();
@@ -87,10 +86,10 @@ private:
     void skipReceivedBuffer(size_t len);
 
     Expected<bool, String> validateOpeningHandshake();
-    std::optional<String> receiveFrames(Function<void(WebCore::WebSocketFrame::OpCode, const uint8_t*, size_t)>&&);
+    std::optional<String> receiveFrames(Function<void(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t>)>&&);
     std::optional<String> validateFrame(const WebCore::WebSocketFrame&);
 
-    bool sendFrame(WebCore::WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength);
+    bool sendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void sendClosingHandshakeIfNeeded(int32_t, const String& reason);
 
     void didFail(String&& reason);

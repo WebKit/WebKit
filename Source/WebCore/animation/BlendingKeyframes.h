@@ -111,6 +111,7 @@ public:
 
     void copyKeyframes(const BlendingKeyframes&);
     bool hasImplicitKeyframes() const;
+    bool hasImplicitKeyframeForProperty(AnimatableCSSProperty) const;
     void fillImplicitKeyframes(const KeyframeEffect&, const RenderStyle& elementStyle);
 
     auto begin() const { return m_keyframes.begin(); }
@@ -135,6 +136,8 @@ private:
     AtomString m_animationName;
     Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
     HashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
+    HashSet<AnimatableCSSProperty> m_explicitToProperties; // The properties with an explicit value for the 100% keyframe.
+    HashSet<AnimatableCSSProperty> m_explicitFromProperties; // The properties with an explicit value for the 0% keyframe.
     HashSet<AnimatableCSSProperty> m_propertiesSetToInherit;
     HashSet<AnimatableCSSProperty> m_propertiesSetToCurrentColor;
     bool m_usesRelativeFontWeight { false };

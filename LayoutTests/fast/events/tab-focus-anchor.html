@@ -6,13 +6,13 @@
 function pass()
 {
     var el = document.querySelector('pre');
-    el.textContent = 'PASS';
+    el.textContent += 'PASS\n';
 }
 
 function fail()
 {
     var el = document.querySelector('pre');
-    el.textContent = 'FAIL';
+    el.textContent += 'FAIL\n';
 }
 
 if (window.testRunner) {
@@ -24,7 +24,7 @@ window.onload = function()
     if (!window.testRunner)
         return;
 
-    for (var i = 0; i < 1; i++) {
+    for (var i = 0; i < 2; i++) {
         eventSender.keyDown('\t');
     }
 };
@@ -36,12 +36,14 @@ window.onload = function()
 <p>This test ensures that we can tab to an a element with a tab index. Press tab
 to focus the element below.
 
-<p><a tabindex=0 onfocus="fail()" href="#">Not focusable (given the WebKitTabToLinks pref is set to false)</a>
+<p><a onfocus="fail()" href="#">Not focusable (given the WebKitTabToLinks pref is set to false)</a>
+<p><a onfocus="fail()">Not focusable</a>
+<p><a tabindex=0 onfocus="pass()" href="#">Focusable</a>
 <p><a tabindex=0 onfocus="pass()">Focusable</a>
 
 <p>Result
 
-<pre>FAIL</pre>
+<pre id="out"></pre>
 
 </body>
 </html>

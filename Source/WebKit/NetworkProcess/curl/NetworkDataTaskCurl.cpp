@@ -29,7 +29,6 @@
 #include "APIError.h"
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
-#include "DataReference.h"
 #include "Download.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
@@ -62,17 +61,18 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     , m_sourceOrigin(parameters.sourceOrigin)
 {
     auto request = parameters.request;
-    if (request.url().protocolIsInHTTPFamily()) {
-        if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
-            auto url = request.url();
-            m_user = url.user();
-            m_password = url.password();
-            request.removeCredentials();
+    auto url = request.url();
+    if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use && url.protocolIsInHTTPFamily()) {
+        m_user = url.user();
+        m_password = url.password();
+        request.removeCredentials();
+        url = request.url();
 
+        if (auto* storageSession = m_session->networkStorageSession()) {
             if (m_user.isEmpty() && m_password.isEmpty())
-                m_initialCredential = m_session->networkStorageSession()->credentialStorage().get(m_partition, request.url());
+                m_initialCredential = storageSession->credentialStorage().get(m_partition, url);
             else
-                m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistence::None), request.url());
+                storageSession->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistence::None), url);
         }
     }
 
@@ -139,7 +139,12 @@ Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& reques
     // Creates a CurlRequest in suspended state.
     // Then, NetworkDataTaskCurl::resume() will be called and communication resumes.
     const auto captureMetrics = shouldCaptureExtraNetworkLoadMetrics() ? CurlRequest::CaptureNetworkLoadMetrics::Extended : CurlRequest::CaptureNetworkLoadMetrics::Basic;
-    return CurlRequest::create(request, *this, captureMetrics);
+    auto curlRequest = CurlRequest::create(request, *this, captureMetrics);
+
+    if (m_session->networkProcess().localhostAliasesForTesting().contains<StringViewHashTranslator>(curlRequest->resourceRequest().url().host()))
+        curlRequest->enableLocalhostAlias();
+
+    return curlRequest;
 }
 
 void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long totalBytesSent, unsigned long long totalBytesExpectedToSend)
@@ -195,7 +200,7 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, Ref<SharedBuffer>&& b
         uint64_t bytesWritten = 0;
         for (auto& segment : buffer.get()) {
             if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
-                download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
+                download->didFail(ResourceError(CURLE_WRITE_ERROR, m_response.url()), { });
                 invalidateAndCancel();
                 return;
             }
@@ -242,7 +247,7 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
         deleteDownloadFile();
         auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
         RELEASE_ASSERT(download);
-        download->didFail(resourceError, IPC::DataReference());
+        download->didFail(resourceError, { });
         return;
     }
 
@@ -376,10 +381,12 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty()) {
-            auto credential = m_session->networkStorageSession()->credentialStorage().get(m_partition, request.url());
-            if (!credential.isEmpty()) {
-                m_initialCredential = credential;
-                didChangeCredential = true;
+            if (auto* storageSession = m_session->networkStorageSession()) {
+                auto credential = storageSession->credentialStorage().get(m_partition, request.url());
+                if (!credential.isEmpty()) {
+                    m_initialCredential = credential;
+                    didChangeCredential = true;
+                }
             }
         }
     }
@@ -424,19 +431,22 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
             // The stored credential wasn't accepted, stop using it. There is a race condition
             // here, since a different credential might have already been stored by another
             // NetworkDataTask, but the observable effect should be very minor, if any.
-            m_session->networkStorageSession()->credentialStorage().remove(m_partition, challenge.protectionSpace());
+            if (auto* storageSession = m_session->networkStorageSession())
+                storageSession->credentialStorage().remove(m_partition, challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            auto credential = m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace());
-            if (!credential.isEmpty() && credential != m_initialCredential) {
-                ASSERT(credential.persistence() == CredentialPersistence::None);
-                if (challenge.failureResponse().isUnauthorized()) {
-                    // Store the credential back, possibly adding it as a default for this directory.
-                    m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+            if (auto* storageSession = m_session->networkStorageSession()) {
+                auto credential = storageSession->credentialStorage().get(m_partition, challenge.protectionSpace());
+                if (!credential.isEmpty() && credential != m_initialCredential) {
+                    ASSERT(credential.persistence() == CredentialPersistence::None);
+                    if (challenge.failureResponse().isUnauthorized()) {
+                        // Store the credential back, possibly adding it as a default for this directory.
+                        storageSession->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    }
+                    restartWithCredential(challenge.protectionSpace(), credential);
+                    return;
                 }
-                restartWithCredential(challenge.protectionSpace(), credential);
-                return;
             }
         }
     }
@@ -452,9 +462,9 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
         }
 
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
-            if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
-                if (credential.persistence() == CredentialPersistence::ForSession || credential.persistence() == CredentialPersistence::Permanent)
-                    m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
+            if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use && (credential.persistence() == CredentialPersistence::ForSession || credential.persistence() == CredentialPersistence::Permanent)) {
+                if (auto* storageSession = m_session->networkStorageSession())
+                    storageSession->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
             }
 
             restartWithCredential(challenge.protectionSpace(), credential);
@@ -529,20 +539,24 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
-    auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-    auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
-    if (!cookieHeaderField.isEmpty())
-        request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
+    if (auto* storageSession = m_session->networkStorageSession()) {
+        auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+        auto cookieHeaderField = storageSession->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
+        if (!cookieHeaderField.isEmpty())
+            request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
+    }
 }
 
 void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& request, const CurlResponse& response)
 {
     static constexpr auto setCookieHeader = "set-cookie: "_s;
 
-    for (auto header : response.headers) {
-        if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-            String setCookieString = header.right(header.length() - setCookieHeader.length());
-            m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
+    if (auto* storageSession = m_session->networkStorageSession()) {
+        for (auto header : response.headers) {
+            if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
+                String setCookieString = header.right(header.length() - setCookieHeader.length());
+                storageSession->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
+            }
         }
     }
 }

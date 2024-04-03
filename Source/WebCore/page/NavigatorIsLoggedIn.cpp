@@ -42,9 +42,9 @@ NavigatorIsLoggedIn* NavigatorIsLoggedIn::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorIsLoggedIn::supplementName()
+ASCIILiteral NavigatorIsLoggedIn::supplementName()
 {
-    return "NavigatorIsLoggedIn";
+    return "NavigatorIsLoggedIn"_s;
 }
 
 void NavigatorIsLoggedIn::setLoggedIn(Navigator& navigator, Ref<DeferredPromise>&& promise)

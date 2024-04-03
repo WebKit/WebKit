@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PDFPluginTextAnnotation_h
-#define PDFPluginTextAnnotation_h
+#pragma once
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
 #include "PDFPluginAnnotation.h"
 
@@ -42,15 +41,17 @@ namespace WebKit {
 
 class PDFPluginTextAnnotation : public PDFPluginAnnotation {
 public:
-    static Ref<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFPluginBase*);
     virtual ~PDFPluginTextAnnotation();
 
     void updateGeometry() override;
     void commit() override;
 
+    void setValue(const String&);
+
 protected:
-    PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
-        : PDFPluginAnnotation(annotation, pdfLayerController, plugin)
+    PDFPluginTextAnnotation(PDFAnnotation *annotation, PDFPluginBase* plugin)
+        : PDFPluginAnnotation(annotation, plugin)
     {
     }
 
@@ -67,6 +68,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
-
-#endif // PDFPluginTextAnnotation_h
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

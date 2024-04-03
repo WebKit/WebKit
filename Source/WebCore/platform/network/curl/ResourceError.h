@@ -42,6 +42,17 @@ public:
     {
     }
 
+    struct IPCData {
+        Type type;
+        String domain;
+        int errorCode;
+        URL failingURL;
+        String localizedDescription;
+        IsSanitized isSanitized;
+    };
+    WEBCORE_EXPORT static ResourceError fromIPCData(std::optional<IPCData>&&);
+    WEBCORE_EXPORT std::optional<IPCData> ipcData() const;
+
     WEBCORE_EXPORT ResourceError(int curlCode, const URL& failingURL, Type = Type::General);
 
     WEBCORE_EXPORT bool isCertificationVerificationError() const;

@@ -53,7 +53,7 @@ class ComputeShaderTest : public ANGLETest<>
         EXPECT_GL_NO_ERROR();
 
         ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-        glUseProgram(program.get());
+        glUseProgram(program);
 
         glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, internalFormat);
         EXPECT_GL_NO_ERROR();
@@ -175,10 +175,10 @@ void main()
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
 
-    GLint uniformLoc = glGetUniformLocation(program.get(), "myUniformInt");
+    GLint uniformLoc = glGetUniformLocation(program, "myUniformInt");
     EXPECT_NE(-1, uniformLoc);
 
-    uniformLoc = glGetUniformLocation(program.get(), "myUniformSampler");
+    uniformLoc = glGetUniformLocation(program, "myUniformSampler");
     EXPECT_NE(-1, uniformLoc);
 
     EXPECT_GL_NO_ERROR();
@@ -389,7 +389,7 @@ void main()
     GLTexture texture;
     createMockOutputImage(texture, GL_RGBA32UI, 4, 3);
 
-    glUseProgram(program.get());
+    glUseProgram(program);
     glDispatchCompute(8, 4, 2);
     EXPECT_GL_NO_ERROR();
 }
@@ -716,7 +716,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCSSource);
-    glUseProgram(program.get());
+    glUseProgram(program);
     const int kWidth = 4, kHeight = 6;
     GLuint inputValues[kWidth][kHeight] = {};
 
@@ -809,7 +809,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, buffer);
 
@@ -870,7 +870,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     int width = 1, height = 1;
     GLuint inputValues[] = {200};
 
@@ -937,7 +937,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     int width = 1, height = 1, depth = 1;
     GLuint inputValues[] = {200};
 
@@ -1006,7 +1006,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     constexpr int kTextureWidth = 1, kTextureHeight = 2;
     GLuint inputValues[] = {200, 200};
 
@@ -1066,7 +1066,7 @@ void main()
 })";
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
     constexpr int kTextureWidth = 1, kTextureHeight = 2;
     GLuint inputValues[] = {100, 100};
     GLTexture in;
@@ -1351,7 +1351,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     glBindImageTexture(1, texture[2], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
@@ -1408,7 +1408,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1470,7 +1470,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 1, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1529,7 +1529,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1599,7 +1599,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 1, GL_TRUE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1666,7 +1666,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1744,7 +1744,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1812,7 +1812,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1883,7 +1883,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 1, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -1962,7 +1962,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 3, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -2068,7 +2068,7 @@ TEST_P(ComputeShaderTest, BindImageTextureWithMixTextureTypes)
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, csSource);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32UI);
     EXPECT_GL_NO_ERROR();
@@ -2198,7 +2198,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R32I);
     EXPECT_GL_NO_ERROR();
@@ -2414,9 +2414,6 @@ TEST_P(ComputeShaderTest, AtomicFunctionsNoReturnValue)
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
-    // Fails on AMD windows drivers.  http://anglebug.com/3872
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
-
     // Fails to link on Android.  http://anglebug.com/3874
     ANGLE_SKIP_TEST_IF(IsAndroid());
 
@@ -2483,9 +2480,6 @@ TEST_P(ComputeShaderTest, AtomicFunctionsInNonInitializerSingleAssignment)
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
 
-    // Fails on AMD windows drivers.  http://anglebug.com/3872
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
-
     const char kCSShader[] = R"(#version 310 es
 layout (local_size_x = 9, local_size_y = 1, local_size_z = 1) in;
 layout (r32i, binding = 0) readonly uniform highp iimage2D srcImage;
@@ -2534,9 +2528,6 @@ TEST_P(ComputeShaderTest, AtomicFunctionsInitializerWithUnsigned)
 {
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
-
-    // Fails on AMD windows drivers.  http://anglebug.com/3872
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     constexpr char kCShader[] = R"(#version 310 es
 layout (local_size_x = 9, local_size_y = 1, local_size_z = 1) in;
@@ -2597,9 +2588,6 @@ TEST_P(ComputeShaderTest, AtomicFunctionsReturnWithUnsigned)
 {
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
-
-    // Fails on AMD windows drivers.  http://anglebug.com/3872
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     constexpr char kCShader[] = R"(#version 310 es
 layout (local_size_x = 9, local_size_y = 1, local_size_z = 1) in;
@@ -2724,7 +2712,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     GLint uniformBufferIndex = glGetUniformBlockIndex(program, "uni");
     EXPECT_NE(uniformBufferIndex, -1);
@@ -2791,7 +2779,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCSSource);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     glBindImageTexture(1, texture[1], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
@@ -2851,7 +2839,7 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     ANGLE_GL_COMPUTE_PROGRAM(program, kCSSource);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     glBindImageTexture(0, texture[0], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
     glBindImageTexture(1, texture[1], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32UI);
@@ -3247,9 +3235,6 @@ TEST_P(ComputeShaderTest, UniformDirty)
 {
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
-
-    // glReadPixels is getting the result of the first dispatch call.  http://anglebug.com/3879
-    ANGLE_SKIP_TEST_IF(IsVulkan() && IsWindows() && (IsAMD() || IsNVIDIA()));
 
     GLTexture texture[2];
     GLFramebuffer framebuffer;
@@ -3766,9 +3751,6 @@ TEST_P(ComputeShaderTest, DrawDispatchDispatchDraw)
 {
     // http://anglebug.com/5072
     ANGLE_SKIP_TEST_IF(IsIntel() && IsLinux() && IsOpenGL());
-
-    // Fails on AMD windows drivers.  http://anglebug.com/3871
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
     const char kCSSource[] = R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;

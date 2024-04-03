@@ -189,6 +189,12 @@ if (inspectedGlobalObject.document && inspectedGlobalObject.Node) {
     };
 }
 
+if (CommandLineAPIHost.gatherRTCLogs) {
+    CommandLineAPI.methods["gatherRTCLogs"] = function(callback) {
+        return CommandLineAPIHost.gatherRTCLogs(callback);
+    };
+}
+
 for (let name in CommandLineAPI.methods)
     CommandLineAPI.methods[name].toString = function() { return "function " + name + "() { [Command Line API] }"; };
 

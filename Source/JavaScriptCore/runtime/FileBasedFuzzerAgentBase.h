@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "ExpressionInfo.h"
 #include "FuzzerAgent.h"
+#include "LineColumn.h"
 #include "Opcode.h"
 #include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
@@ -35,12 +37,7 @@ namespace JSC {
 class VM;
 
 struct PredictionTarget {
-    BytecodeIndex bytecodeIndex;
-    unsigned divot;
-    unsigned startOffset;
-    unsigned endOffset;
-    unsigned line;
-    unsigned column;
+    ExpressionInfo::Entry info;
     OpcodeID opcodeId;
     String sourceFilename;
     String lookupKey;

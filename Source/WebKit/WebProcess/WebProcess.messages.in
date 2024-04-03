@@ -42,6 +42,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     RegisterURLSchemeAsCachePartitioned(String scheme)
     RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    RegisterURLSchemeAsWebExtension(String scheme)
+#endif
+
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetDisableFontSubpixelAntialiasingForTesting(bool disable)
@@ -59,18 +63,19 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetHasStylusDevice(bool hasStylusDevice)
 #endif
 
-    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
+    void StartMemorySampler(WebKit::SandboxExtensionHandle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
 
     SetTextCheckerState(struct WebKit::TextCheckerState textCheckerState)
 
     SetEnhancedAccessibility(bool flag)
+    BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
 
     GarbageCollectJavaScriptObjects()
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
-    SetInjectedBundleParameter(String parameter, IPC::DataReference value);
-    SetInjectedBundleParameters(IPC::DataReference parameters);
+    SetInjectedBundleParameter(String parameter, std::span<const uint8_t> value);
+    SetInjectedBundleParameters(std::span<const uint8_t> parameters);
     HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
 
     FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
@@ -80,7 +85,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
-    SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
+    SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
 
     SetMemoryCacheDisabled(bool disabled);
 
@@ -105,11 +110,11 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> ()
 
     SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
-    SetIsInProcessCache(bool isInProcessCache)
+    SetIsInProcessCache(bool isInProcessCache) -> ()
     MarkIsNoLongerPrewarmed()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #endif
 #if PLATFORM(MAC)
@@ -163,25 +168,25 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
     SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
-    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
+    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domains) -> ()
     SendResourceLoadStatisticsDataImmediately() -> ()
 
     UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
 
-    GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
+    GrantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandle> assetServicesHandles)
     RevokeAccessToAssetServices()
-    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles)
+    SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtensionHandle> fontMachExtensionHandles)
 
 #if PLATFORM(COCOA)
     DisableURLSchemeCheckInDataDetectors()
-    UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtension::Handle> handleArray)
+    UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtensionHandle> handleArray)
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
     PowerSourceDidChange(bool hasAC)
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     SetUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
 #endif
 
@@ -212,15 +217,15 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if PLATFORM(MAC)
-    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle, WebKit::SandboxExtension::Handle machBootstrapHandle)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle, WebKit::SandboxExtensionHandle machBootstrapHandle)
 #endif
 
     ReleaseMemory() -> ()
 
     AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
 
-#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
-    PostNotification(String message)
+#if ENABLE(NOTIFY_BLOCKING)
+    PostNotification(String message, std::optional<uint64_t> state)
     PostObserverNotification(String message)
 #endif
 }

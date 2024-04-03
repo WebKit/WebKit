@@ -216,5 +216,10 @@ CVPixelBufferRef VideoFrameLibWebRTC::pixelBuffer() const
     return m_pixelBuffer.get();
 }
 
+Ref<VideoFrame> VideoFrameLibWebRTC::clone()
+{
+    return adoptRef(*new VideoFrameLibWebRTC(presentationTime(), isMirrored(), rotation(), PlatformVideoColorSpace { colorSpace() }, rtc::scoped_refptr<webrtc::VideoFrameBuffer> { m_buffer }, ConversionCallback { m_conversionCallback }));
+}
+
 }
 #endif // PLATFORM(COCOA) && USE(LIBWEBRTC)

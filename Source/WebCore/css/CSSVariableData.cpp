@@ -45,7 +45,7 @@ template<typename CharacterType> void CSSVariableData::updateBackingStringsInTok
 {
     auto* currentOffset = m_backingString.characters<CharacterType>();
     for (auto& token : m_tokens) {
-        if (!token.hasStringBacking())
+        if (!token.hasStringBacking() || token.isBackedByStringLiteral())
             continue;
         unsigned length = token.value().length();
         token.updateCharacters(currentOffset, length);
@@ -60,14 +60,18 @@ bool CSSVariableData::operator==(const CSSVariableData& other) const
 }
 
 CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSParserContext& context)
-    : m_context(context)
+    : m_tokens(range.span())
+    , m_context(context)
 {
     StringBuilder stringBuilder;
-    m_tokens = WTF::map(range, [&](auto& token) {
-        if (token.hasStringBacking())
-            stringBuilder.append(token.value());
-        return token;
-    });
+    for (auto& token : m_tokens) {
+        if (!token.hasStringBacking())
+            continue;
+        if (token.tryUseStringLiteralBacking())
+            continue;
+        stringBuilder.append(token.value());
+    }
+
     if (!stringBuilder.isEmpty()) {
         m_backingString = stringBuilder.toString();
         if (m_backingString.is8Bit())
@@ -75,6 +79,11 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSPars
         else
             updateBackingStringsInTokens<UChar>();
     }
+}
+
+String CSSVariableData::serialize() const
+{
+    return tokenRange().serialize(CSSParserToken::SerializationMode::CustomProperty);
 }
 
 } // namespace WebCore

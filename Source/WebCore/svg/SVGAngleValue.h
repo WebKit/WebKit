@@ -30,11 +30,13 @@ class SVGAngleValue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
+        // FIXME: Change the casing style of the enum type or naming of the Angle Value (webkit.org/b/269429).
         SVG_ANGLETYPE_UNKNOWN = 0,
         SVG_ANGLETYPE_UNSPECIFIED = 1,
         SVG_ANGLETYPE_DEG = 2,
         SVG_ANGLETYPE_RAD = 3,
-        SVG_ANGLETYPE_GRAD = 4
+        SVG_ANGLETYPE_GRAD = 4,
+        SVG_ANGLETYPE_TURN = 5
     };
 
     Type unitType() const { return m_unitType; }

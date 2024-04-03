@@ -68,13 +68,13 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
 static bool writeUInt32(Vector<uint8_t>& vector, uint32_t value)
 {
     uint32_t bigEndianValue = htonl(value);
-    return vector.tryAppend(reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue));
+    return vector.tryAppend(std::span { reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue) });
 }
 
 static bool writeUInt16(Vector<uint8_t>& vector, uint16_t value)
 {
     uint16_t bigEndianValue = htons(value);
-    return vector.tryAppend(reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue));
+    return vector.tryAppend(std::span { reinterpret_cast_ptr<uint8_t*>(&bigEndianValue), sizeof(bigEndianValue) });
 }
 
 static const uint32_t woffSignature = 0x774f4646; /* 'wOFF' */
@@ -105,7 +105,7 @@ public:
     {
         if (!m_vector.tryReserveCapacity(m_vector.size() + n))
             return false;
-        m_vector.append(static_cast<const uint8_t*>(data), n);
+        m_vector.append(std::span { static_cast<const uint8_t*>(data), n });
         return true;
     }
 
@@ -265,7 +265,7 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
 
         if (tableCompLength == tableOrigLength) {
             // The table is not compressed.
-            if (!sfnt.tryAppend(woff.data() + tableOffset, tableCompLength))
+            if (!sfnt.tryAppend(woff.span().subspan(tableOffset, tableCompLength)))
                 return false;
         } else {
             uLongf destLen = tableOrigLength;

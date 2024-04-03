@@ -115,10 +115,10 @@ void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
 
 void ScriptExecutable::installCode(CodeBlock* codeBlock)
 {
-    installCode(codeBlock->vm(), codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
+    installCode(codeBlock->vm(), codeBlock, codeBlock->codeType(), codeBlock->specializationKind(), Profiler::JettisonReason::NotJettisoned);
 }
 
-void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType codeType, CodeSpecializationKind kind)
+void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType codeType, CodeSpecializationKind kind, Profiler::JettisonReason reason)
 {
     if (genericCodeBlock)
         CODEBLOCK_LOG_EVENT(genericCodeBlock, "installCode", ());
@@ -198,8 +198,19 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
             debugger->registerCodeBlock(genericCodeBlock);
     }
 
+    switch (reason) {
+    case Profiler::JettisonReason::JettisonDueToWeakReference:
+    case Profiler::JettisonReason::JettisonDueToOldAge: {
+        if (genericCodeBlock && !vm.heap.isMarked(genericCodeBlock))
+            genericCodeBlock = nullptr;
+        break;
+    }
+    default:
+        break;
+    }
+
     if (oldCodeBlock)
-        oldCodeBlock->unlinkIncomingCalls();
+        oldCodeBlock->unlinkOrUpgradeIncomingCalls(vm, genericCodeBlock);
 
     vm.writeBarrier(this);
 }
@@ -366,7 +377,7 @@ static void setupLLInt(CodeBlock* codeBlock)
 static void setupJIT(VM& vm, CodeBlock* codeBlock)
 {
 #if ENABLE(JIT)
-    CompilationResult result = JIT::compile(vm, codeBlock, JITCompilationMustSucceed);
+    CompilationResult result = JIT::compileSync(vm, codeBlock, JITCompilationMustSucceed);
     RELEASE_ASSERT(result == CompilationSuccessful);
 #else
     UNUSED_PARAM(vm);
@@ -409,7 +420,7 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
             setupJIT(vm, codeBlock);
     }
 
-    installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
+    installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind(), Profiler::JettisonReason::NotJettisoned);
 }
 
 ScriptExecutable* ScriptExecutable::topLevelExecutable()

@@ -86,11 +86,17 @@ div {
 
 @scope (.root) to (.limit) {
   :scope.outer .green-17 {
-      color: green;
-    }
+    color: green;
   }
 }
 
+@scope (#green-18) {
+  * { color: red; font-style: italic; }
+}
+
+@scope (#green-21) to (#limit1, #limit2) {
+ * { text-decoration: underline; }
+}
 </style>
 
 <div class="a">
@@ -202,5 +208,49 @@ div {
     <div class="root inner">
       <span class="green-17">should not be green</span>
     </div>
+  </div>
+</div>
+
+<div id="green-18">
+ <div>
+  <style>
+    @scope {
+      * { color: green; }
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-19">
+ <div>
+  <style>
+    @scope {
+    * { color: green; }
+    }
+    @scope (#green-19) {
+    * { color: red; font-style: italic}
+    }
+  </style>
+  <span>should be green and italic</span>
+</div>
+</div>
+
+<div id="green-20">
+  <style>
+    @scope (#green-20) {
+    * { color: red; font-style: italic; }
+    }
+    @scope {
+    * { color: green; }
+    }
+  </style>
+<span>should be green and italic</span>
+</div>
+
+<div id="green-21">
+  <span>should be underlined</span>
+  <div id=limit2>
+    <span>should not be underlined</span>
   </div>
 </div>

@@ -92,12 +92,12 @@ void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashStri
             uint32_t buffer[pixelsWide];
             for (unsigned column = 0; column < pixelsWide; column++)
                 buffer[column] = OSReadLittleInt32(bitmapData, 4 * column);
-            sha1.addBytes(reinterpret_cast<const uint8_t*>(buffer), 4 * pixelsWide);
+            sha1.addBytes(std::span { reinterpret_cast<const uint8_t*>(buffer), 4 * pixelsWide });
             bitmapData += bytesPerRow;
         }
     } else {
         for (unsigned row = 0; row < pixelsHigh; row++) {
-            sha1.addBytes(bitmapData, 4 * pixelsWide);
+            sha1.addBytes(std::span { bitmapData, 4 * pixelsWide });
             bitmapData += bytesPerRow;
         }
     }

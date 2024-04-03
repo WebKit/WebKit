@@ -54,7 +54,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLSourceElement);
 using namespace HTMLNames;
 
 inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
 {
     LOG(Media, "HTMLSourceElement::HTMLSourceElement - %p", this);
@@ -123,6 +123,12 @@ void HTMLSourceElement::removedFromAncestor(RemovalType removalType, ContainerNo
     }
 }
 
+void HTMLSourceElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+}
+
 void HTMLSourceElement::scheduleErrorEvent()
 {
     LOG(Media, "HTMLSourceElement::scheduleErrorEvent - %p", this);
@@ -141,6 +147,12 @@ void HTMLSourceElement::cancelPendingErrorEvent()
 bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+}
+
+bool HTMLSourceElement::attributeContainsURL(const Attribute& attribute) const
+{
+    return attribute.name() == srcsetAttr
+        || HTMLElement::attributeContainsURL(attribute);
 }
 
 const char* HTMLSourceElement::activeDOMObjectName() const
@@ -217,6 +229,24 @@ Attribute HTMLSourceElement::replaceURLsInAttributeValue(const Attribute& attrib
 void HTMLSourceElement::addCandidateSubresourceURLs(ListHashSet<URL>& urls) const
 {
     getURLsFromSrcsetAttribute(*this, attributeWithoutSynchronization(srcsetAttr), urls);
+}
+
+Ref<Element> HTMLSourceElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+{
+    auto clone = create(targetDocument);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    cloneAttachmentAssociatedElementWithoutAttributesAndChildren(clone, targetDocument);
+#endif
+    return clone;
+}
+
+void HTMLSourceElement::copyNonAttributePropertiesFromElement(const Element& source)
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    auto& sourceElement = downcast<HTMLSourceElement>(source);
+    copyAttachmentAssociatedPropertiesFromElement(sourceElement);
+#endif
+    Element::copyNonAttributePropertiesFromElement(source);
 }
 
 }

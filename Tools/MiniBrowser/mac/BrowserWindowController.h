@@ -84,6 +84,9 @@
 - (IBAction)toggleMainThreadStalls:(id)sender;
 - (BOOL)mainThreadStallsEnabled;
 
+- (IBAction)togglePictureInPicture:(id)sender;
+- (IBAction)toggleInWindowFullscreen:(id)sender;
+
 - (void)didChangeSettings;
 - (BOOL)webViewFillsWindow;
 - (void)setWebViewFillsWindow:(BOOL)fillWindow;

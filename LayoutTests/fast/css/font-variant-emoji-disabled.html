@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ CSSFontVariantEmojiEnabled=false ]-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test font-variant parsing when font-variant-emoji is disabled</title>
+<meta charset="utf-8">
+</head>
+<body>
+<p>When font-variant-emoji is disabled, the following should not parse:</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+test_valid_value("font-variant", "normal");
+test_invalid_value("font-variant", "text");
+test_invalid_value("font-variant", "emoji");
+test_invalid_value("font-variant", "unicode");
+
+test_invalid_value("font-variant-emoji", "normal");
+test_invalid_value("font-variant-emoji", "text");
+test_invalid_value("font-variant-emoji", "emoji");
+test_invalid_value("font-variant-emoji", "unicode");
+</script>
+</body>
+</html>

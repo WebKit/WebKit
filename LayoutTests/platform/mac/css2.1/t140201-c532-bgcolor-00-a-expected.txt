@@ -9,7 +9,7 @@ layer at (0,0) size 800x118
       RenderBlock {P} at (0,34) size 784x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 61x18
           text run at (0,0) width 61: "This line "
-        RenderInline {SPAN} at (0,0) size 102x18
+        RenderInline {SPAN} at (60,0) size 102x18
           RenderText {#text} at (60,0) size 102x18
             text run at (60,0) width 102: "should be green"
         RenderText {#text} at (161,0) size 30x18

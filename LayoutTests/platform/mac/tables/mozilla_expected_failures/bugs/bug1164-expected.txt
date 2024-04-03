@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 32x18
                         text run at (2,2) width 32: "hello"
             RenderTableCell {TD} at (272,19) size 117x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 32x18
+              RenderText {#text} at (2,19) size 32x18
                 text run at (2,2) width 32: "hello"
           RenderTableRow {TR} at (0,60) size 390x22
             RenderTableCell {TD} at (2,60) size 269x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]

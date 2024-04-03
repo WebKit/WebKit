@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "HitTestSource.h"
 #include <wtf/Assertions.h>
 #include <wtf/OptionSet.h>
 
@@ -52,11 +53,31 @@ public:
         PenEvent = 1 << 17,
     };
 
-    HitTestRequest(OptionSet<Type> type = { Type::ReadOnly, Type::Active, Type::DisallowUserAgentShadowContent })
-        : m_type { type }
+    static constexpr OptionSet defaultTypes = { Type::ReadOnly, Type::Active, Type::DisallowUserAgentShadowContent };
+
+    static inline void assertConsistentType(OptionSet<Type> type)
     {
+#if ASSERT_ENABLED
         ASSERT(!type.containsAll({ Type::DisallowUserAgentShadowContentExceptForImageOverlays, Type::DisallowUserAgentShadowContent }));
         ASSERT_IMPLIES(type.contains(Type::IncludeAllElementsUnderPoint), type.contains(Type::CollectMultipleElements));
+#else
+        UNUSED_PARAM(type);
+#endif
+    }
+
+    HitTestRequest(HitTestSource source, OptionSet<Type> type = defaultTypes)
+        : m_type { type }
+        , m_source { source }
+    {
+        assertConsistentType(type);
+    }
+
+    // FIXME: This constructor should be phased out in favor of the `HitTestSource` version above, such that all call sites must
+    // consider whether the hit test request is user-triggered or bindings-triggered.
+    HitTestRequest(OptionSet<Type> type = defaultTypes)
+        : m_type { type }
+    {
+        assertConsistentType(type);
     }
 
     bool readOnly() const { return m_type.contains(Type::ReadOnly); }
@@ -78,6 +99,7 @@ public:
     bool isChildFrameHitTest() const { return m_type.contains(Type::ChildFrameHitTest); }
     bool resultIsElementList() const { return m_type.contains(Type::CollectMultipleElements); }
     bool includesAllElementsUnderPoint() const { return m_type.contains(Type::IncludeAllElementsUnderPoint); }
+    bool userTriggered() const { return m_source == HitTestSource::User; }
 
     // Convenience functions
     bool touchMove() const { return move() && touchEvent(); }
@@ -87,6 +109,7 @@ public:
 
 private:
     OptionSet<Type> m_type;
+    HitTestSource m_source { HitTestSource::User };
 };
 
 } // namespace WebCore

@@ -4,6 +4,17 @@ require_once('test-path-resolver.php');
 require_once('uploaded-file-helpers.php');
 
 class BuildRequestsFetcher {
+    private $db;
+    private $rows;
+    private $commit_sets;
+    private $commits_by_id;
+    private $commits;
+    private $commit_sets_by_id;
+    private $test_parameter_sets;
+    private $test_parameter_sets_by_id;
+    private $uploaded_files;
+    private $uploaded_files_by_id;
+
     function __construct($db) {
         $this->db = $db;
         $this->rows = null;
@@ -199,7 +210,7 @@ class BuildRequestsFetcher {
         $test_parameter_items = array();
         foreach ($test_parameter_set_items as &$row) {
             $test_parameter_id = $row['testparamset_parameter'];
-            $test_parameter_value = json_decode($row['testparamset_value'], true);
+            $test_parameter_value = $row['testparamset_value'] ? json_decode($row['testparamset_value'], true) : null;
             $test_parameter_file_id = $row['testparamset_file'];
             if ($test_parameter_file_id)
                 $this->add_uploaded_file($test_parameter_file_id);

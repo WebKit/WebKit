@@ -100,7 +100,8 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
 
     for (auto& message : m_bufferedMessages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
-            client.didReceiveRawData(data->makeContiguous()->data(), data->size());
+            Ref contiguousData = data->makeContiguous();
+            client.didReceiveRawData(contiguousData->span());
         }, [&](String& text) {
             client.didReceiveStringData(text);
         }, [&](StateChange stateChange) {
@@ -119,9 +120,9 @@ bool LibWebRTCDataChannelHandler::sendStringData(const CString& utf8Text)
     return m_channel->Send({ rtc::CopyOnWriteBuffer(utf8Text.data(), utf8Text.length()), false });
 }
 
-bool LibWebRTCDataChannelHandler::sendRawData(const uint8_t* data, size_t length)
+bool LibWebRTCDataChannelHandler::sendRawData(std::span<const uint8_t> data)
 {
-    return m_channel->Send({ rtc::CopyOnWriteBuffer(data, length), true });
+    return m_channel->Send({ rtc::CopyOnWriteBuffer(data.data(), data.size()), true });
 }
 
 void LibWebRTCDataChannelHandler::close()
@@ -184,9 +185,9 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     if (!m_hasClient) {
         auto* data = buffer.data.data<uint8_t>();
         if (buffer.binary)
-            m_bufferedMessages.append(SharedBuffer::create(data, buffer.size()));
+            m_bufferedMessages.append(SharedBuffer::create(std::span { data, buffer.size() }));
         else
-            m_bufferedMessages.append(String::fromUTF8(data, buffer.size()));
+            m_bufferedMessages.append(String::fromUTF8({ data, buffer.size() }));
         return;
     }
 
@@ -195,11 +196,11 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
         if (!client)
             return;
 
-        auto* data = buffer->data.data<uint8_t>();
+        std::span data { buffer->data.data<uint8_t>(), buffer->size() };
         if (buffer->binary)
-            client->didReceiveRawData(data, buffer->size());
+            client->didReceiveRawData(data);
         else
-            client->didReceiveStringData(String::fromUTF8(data, buffer->size()));
+            client->didReceiveStringData(String::fromUTF8(data));
     });
 }
 

@@ -10,23 +10,25 @@ jsTestIsAsync = true;
 
 let didRunIdleCallback = false;
 onload = () => {
-    requestIdleCallback((idleDeadline) => {
-        didRunIdleCallback = true;
-        window.idleDeadline = idleDeadline;
-        window.preferredRenderingUpdateInterval = internals.preferredRenderingUpdateInterval();
-        shouldBeTrue('idleDeadline.timeRemaining() > preferredRenderingUpdateInterval');
+    requestAnimationFrame(() => {
+        requestIdleCallback((idleDeadline) => {
+            didRunIdleCallback = true;
+            window.idleDeadline = idleDeadline;
+            window.preferredRenderingUpdateInterval = internals.preferredRenderingUpdateInterval();
+            shouldBeTrue('idleDeadline.timeRemaining() > preferredRenderingUpdateInterval');
 
-        document.body.appendChild(document.createElement('span')).textContent = 'hello';
-        requestAnimationFrame(() => { });
+            document.body.appendChild(document.createElement('span')).textContent = 'hello';
+            requestAnimationFrame(() => { });
 
-        shouldBeTrue('idleDeadline.timeRemaining() <= preferredRenderingUpdateInterval + 0.5');
-        if (idleDeadline.timeRemaining() > preferredRenderingUpdateInterval + 0.5) 
-            console.log(idleDeadline.timeRemaining() + ' > ' + preferredRenderingUpdateInterval);
+            shouldBeTrue('idleDeadline.timeRemaining() <= preferredRenderingUpdateInterval + 0.5');
+            if (idleDeadline.timeRemaining() > preferredRenderingUpdateInterval + 0.5) 
+                console.log(idleDeadline.timeRemaining() + ' > ' + preferredRenderingUpdateInterval);
+        });
+        setTimeout(() => {
+            shouldBeTrue('didRunIdleCallback');
+            finishJSTest();
+        }, 200);
     });
-    setTimeout(() => {
-        shouldBeTrue('didRunIdleCallback');
-        finishJSTest();
-    }, 200);
 }
 
 </script>

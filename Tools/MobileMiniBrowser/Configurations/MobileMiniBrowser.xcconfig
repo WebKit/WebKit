@@ -23,4 +23,4 @@
 
 PRODUCT_NAME = MiniBrowser
 STRIP_STYLE=debugging
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator xros xrsimulator;

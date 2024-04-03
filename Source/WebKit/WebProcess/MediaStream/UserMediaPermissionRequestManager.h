@@ -53,7 +53,7 @@ public:
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);
     void userMediaAccessWasGranted(WebCore::UserMediaRequestIdentifier, WebCore::CaptureDevice&& audioDevice, WebCore::CaptureDevice&& videoDevice, WebCore::MediaDeviceHashSalts&&, CompletionHandler<void()>&&);
-    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, WebCore::MediaAccessDenialReason, String&&);
+    void userMediaAccessWasDenied(WebCore::UserMediaRequestIdentifier, WebCore::MediaAccessDenialReason, String&&, WebCore::MediaConstraintType);
 
     void enumerateMediaDevices(WebCore::Document&, CompletionHandler<void(Vector<WebCore::CaptureDeviceWithCapabilities>&&, WebCore::MediaDeviceHashSalts&&)>&&);
 

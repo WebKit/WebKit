@@ -26,19 +26,22 @@
 #pragma once
 
 #include "WebGPUColor.h"
+#include "WebGPUIntegralTypes.h"
 #include "WebGPULoadOp.h"
 #include "WebGPUStoreOp.h"
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore::WebGPU {
 
 class TextureView;
 
 struct RenderPassColorAttachment {
-    TextureView& view;
-    TextureView* resolveTarget { nullptr };
+    WeakRef<TextureView> view;
+    std::optional<IntegerCoordinate> depthSlice;
+    WeakPtr<TextureView> resolveTarget;
 
     std::optional<Color> clearValue;
     LoadOp loadOp { LoadOp::Load };

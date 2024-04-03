@@ -1,0 +1,31 @@
+This tests that the attributes of table rows and cells are correct when there are two THeads.
+
+PASS: table.rowCount === 2
+PASS: table.columnCount === 2
+
+Adding THead:
+
+PASS: table.rowCount === 3
+PASS: table.columnCount === 2
+PASS: accessibilityController.accessibleElementById('tr1').indexInTable() === 0
+PASS: accessibilityController.accessibleElementById('tr2').indexInTable() === 2
+PASS: accessibilityController.accessibleElementById('tr3').indexInTable() === 1
+PASS: accessibilityController.accessibleElementById('th1').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th1').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th2').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th2').columnIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('th3').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('th3').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th4').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('th4').columnIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1').rowIndexRange() === '{2, 1}'
+PASS: accessibilityController.accessibleElementById('td1').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('td2').rowIndexRange() === '{2, 1}'
+PASS: accessibilityController.accessibleElementById('td2').columnIndexRange() === '{1, 1}'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Header 1	Header 2
+Header 3	Header 4
+Cell 1	Cell 2

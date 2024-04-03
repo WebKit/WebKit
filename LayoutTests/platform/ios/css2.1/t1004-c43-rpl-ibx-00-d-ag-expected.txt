@@ -12,7 +12,7 @@ layer at (0,0) size 800x173
         RenderImage {IMG} at (389,0) size 16x15
         RenderText {#text} at (404,0) size 5x19
           text run at (404,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 16x15 [color=#0000FF] [bgcolor=#FF0000]
+        RenderInline {SPAN} at (408,0) size 16x15 [color=#0000FF] [bgcolor=#FF0000]
           RenderText {#text} at (408,0) size 16x15
             text run at (408,0) width 16: "X"
         RenderText {#text} at (0,0) size 0x0
@@ -22,7 +22,7 @@ layer at (0,0) size 800x173
         RenderImage {IMG} at (389,0) size 65x64
         RenderText {#text} at (453,49) size 5x19
           text run at (453,49) width 5: " "
-        RenderInline {SPAN} at (0,0) size 65x65 [color=#0000FF] [bgcolor=#FF0000]
+        RenderInline {SPAN} at (457,0) size 65x65 [color=#0000FF] [bgcolor=#FF0000]
           RenderText {#text} at (457,0) size 65x65
             text run at (457,0) width 65: "X"
         RenderText {#text} at (0,0) size 0x0

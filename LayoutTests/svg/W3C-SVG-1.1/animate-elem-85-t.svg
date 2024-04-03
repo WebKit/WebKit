@@ -33,33 +33,33 @@ Then, the bottom two rectangles should smoothly animate from green, through oran
                   begin="0s" dur="5s" fill="freeze" />
   </rect>
   <rect  fill="#f00" x="140" y="50" height="100" width="90">
-    <animateColor attributeName="fill"
+    <animate attributeName="fill"
                   from="#000000" to="#008000"
                   begin="0s" dur="5s" fill="freeze" />
   </rect>
   <rect color="green" fill="#f00" x="250" y="50" height="100" width="90">
-    <animateColor attributeName="fill"
+    <animate attributeName="fill"
                   from="#000000" to="currentColor"
                   begin="0s" dur="5s" fill="freeze" />
   </rect>
   <rect color="black" fill="#f00" x="360" y="50" height="100" width="90">
-    <animateColor attributeName="fill"
+    <animate attributeName="fill"
                   to="#008000" from="currentColor"
                   begin="0s" dur="5s" fill="freeze" />
   </rect>
   <rect color="black" fill="#f00" x="100" y="180" height="60" width="280">
-    <animateColor attributeName="fill"
+    <animate attributeName="fill"
                   from="#008000" to="currentColor"
                   begin="5s" dur="5s" fill="freeze" />
-    <animateColor attributeName="color"
+    <animate attributeName="color"
                   to="yellow" from="red"
                   begin="5s" dur="5s" fill="freeze" />
   </rect>
   <rect color="black" fill="#f00" x="100" y="260" height="60" width="280">
-    <animateColor attributeName="fill"
+    <animate attributeName="fill"
                   from="#008000" to="currentColor"
                   begin="5s" dur="5s" fill="freeze" />
-    <animateColor attributeName="color"
+    <animate attributeName="color"
                   to="yellow" from="#f00"
                   begin="5s" dur="5s" fill="freeze" />
   </rect>

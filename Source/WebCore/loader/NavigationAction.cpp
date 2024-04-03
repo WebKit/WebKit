@@ -80,11 +80,11 @@ static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForF
 
 static std::optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
 {
-    for (Event* e = event; e; e = e->underlyingEvent()) {
-        if (e->isMouseEvent())
-            return NavigationAction::MouseEventData { static_cast<const MouseEvent&>(*e) };
+    for (auto* e = event; e; e = e->underlyingEvent()) {
+        if (auto* mouseEvent = dynamicDowncast<MouseEvent>(e))
+            return NavigationAction::MouseEventData { *mouseEvent };
     }
-    return std::nullopt;
+    return { };
 }
 
 static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)

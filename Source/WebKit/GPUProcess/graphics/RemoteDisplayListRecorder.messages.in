@@ -74,6 +74,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #if ENABLE(INLINE_PATH_DATA)
     FillLine(struct WebCore::PathDataLine line)
     FillArc(struct WebCore::PathArc arc)
+    FillClosedArc(struct WebCore::PathClosedArc closedArc)
     FillQuadCurve(struct WebCore::PathDataQuadCurve curve)
     FillBezierCurve(struct WebCore::PathDataBezierCurve curve)
 #endif
@@ -88,6 +89,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
     StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStroke strokeItem) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
+    StrokeClosedArc(struct WebCore::PathClosedArc closedArc) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
     StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
 #endif
@@ -105,7 +107,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
+    SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
 }
 

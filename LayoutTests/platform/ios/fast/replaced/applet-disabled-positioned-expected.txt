@@ -19,7 +19,5 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,36) size 784x20
         RenderText {#text} at (0,0) size 609x19
           text run at (0,0) width 609: "If Java is enabled, disable it and reload this page. You should see the word PASS at the bottom."
-layer at (8,580) size 37x20
-  RenderBlock (positioned) {APPLET} at (8,580) size 37x20
-    RenderText {#text} at (0,0) size 37x19
-      text run at (0,0) width 37: "PASS"
+layer at (8,450) size 300x150
+  RenderEmbeddedObject {APPLET} at (8,450) size 300x150

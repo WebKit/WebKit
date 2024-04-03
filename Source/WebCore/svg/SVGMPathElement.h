@@ -54,8 +54,6 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
     void didFinishInsertingNode() final;
-
-    void notifyParentOfPathChange(ContainerNode*);
 };
 
 } // namespace WebCore

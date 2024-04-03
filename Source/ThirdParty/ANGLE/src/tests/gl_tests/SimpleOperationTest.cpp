@@ -83,7 +83,7 @@ TEST_P(SimpleOperationTest, CullFaceEnabledState)
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
 
-    drawQuad(program.get(), "position", 0.0f, 1.0f, true);
+    drawQuad(program, "position", 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -103,7 +103,7 @@ TEST_P(SimpleOperationTest, CullFaceFrontEnabledState)
     // Should make the quad disappear since we draw it front facing.
     glCullFace(GL_FRONT);
 
-    drawQuad(program.get(), "position", 0.0f, 1.0f, true);
+    drawQuad(program, "position", 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -136,7 +136,7 @@ TEST_P(SimpleOperationTest, BlendingRenderState)
     ASSERT_NE(-1, positionLocation);
 
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                  GL_STATIC_DRAW);
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -225,7 +225,7 @@ TEST_P(SimpleOperationTest, ScissorTest)
               getWindowHeight() / 2);
 
     // Fill the whole screen with a quad.
-    drawQuad(program.get(), "position", 0.0f, 1.0f, true);
+    drawQuad(program, "position", 0.0f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -285,7 +285,7 @@ void main()
 TEST_P(SimpleOperationTest, BufferDataWithData)
 {
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
     std::vector<uint8_t> data(1024);
     FillVectorWithRandomUBytes(&data);
@@ -299,7 +299,7 @@ TEST_P(SimpleOperationTest, BufferDataWithData)
 TEST_P(SimpleOperationTest, BufferDataWithNoData)
 {
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
     glBufferData(GL_ARRAY_BUFFER, 1024, nullptr, GL_STATIC_DRAW);
 
     ASSERT_GL_NO_ERROR();
@@ -308,7 +308,7 @@ TEST_P(SimpleOperationTest, BufferDataWithNoData)
 TEST_P(SimpleOperationTest, BufferSubData)
 {
     GLBuffer buffer;
-    glBindBuffer(GL_ARRAY_BUFFER, buffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
     constexpr size_t bufferSize = 1024;
     std::vector<uint8_t> data(bufferSize);
@@ -334,7 +334,7 @@ TEST_P(SimpleOperationTest, DrawQuad)
 {
     ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -346,7 +346,7 @@ TEST_P(SimpleOperationTest, DrawQuadFromClientMemory)
 {
     ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, false);
+    drawQuad(program, "position", 0.5f, 1.0f, false);
 
     ASSERT_GL_NO_ERROR();
 
@@ -358,8 +358,8 @@ TEST_P(SimpleOperationTest, DrawQuadTwice)
 {
     ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
 
@@ -462,7 +462,7 @@ TEST_P(SimpleOperationTest, DrawLineStrip)
     ASSERT_NE(-1, positionLocation);
 
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                  GL_STATIC_DRAW);
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -504,7 +504,7 @@ class TriangleFanDrawTest : public SimpleOperationTest
         const GLint positionLocation = glGetAttribLocation(mProgram, "position");
         ASSERT_NE(-1, positionLocation);
 
-        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer.get());
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices[0]) * mVertices.size(), mVertices.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -593,7 +593,7 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanElements)
     std::vector<GLubyte> indices = {0, 1, 2, 3, 4};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
 
@@ -613,7 +613,7 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartAtMiddle)
     std::vector<GLubyte> indices = {0, 1, 2, 3, 0xff, 0, 4, 3};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
@@ -634,7 +634,7 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartAtBegin)
     std::vector<GLubyte> indices = {0, 1, 2, 3, 0xff, 0, 4, 3};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
@@ -656,7 +656,7 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartAtEnd)
     std::vector<GLubyte> indices = {0, 1, 2, 3, 4, 0xff};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
@@ -676,7 +676,7 @@ TEST_P(TriangleFanDrawTest, DrawTriangleFanPrimitiveRestartNonIndexedDraw)
     std::vector<GLubyte> indices = {0, 1, 2, 3, 4};
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
                  GL_STATIC_DRAW);
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
@@ -695,7 +695,7 @@ TEST_P(SimpleOperationTest, DrawQuadAndSwap)
 
     for (int i = 0; i < 8; ++i)
     {
-        drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+        drawQuad(program, "position", 0.5f, 1.0f, true);
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
         swapBuffers();
@@ -709,7 +709,7 @@ TEST_P(SimpleOperationTest, DrawIndexedQuad)
 {
     ANGLE_GL_PROGRAM(program, kBasicVertexShader, kGreenFragmentShader);
 
-    drawIndexedQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawIndexedQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -724,7 +724,7 @@ TEST_P(SimpleOperationTest, DrawIndexedQuadAndSwap)
     // issues will reproduce consistently.
     for (int i = 0; i < 32; ++i)
     {
-        drawIndexedQuad(program.get(), "position", 0.5f, 1.0f, true);
+        drawIndexedQuad(program, "position", 0.5f, 1.0f, true);
         ASSERT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
         swapBuffers();
@@ -750,7 +750,7 @@ TEST_P(SimpleOperationTest, DrawQuadWithFragmentUniform)
     glUseProgram(program);
     glUniform4f(location, 0.0f, 1.0f, 0.0f, 1.0f);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -782,7 +782,7 @@ TEST_P(SimpleOperationTest, DrawQuadWithVertexUniform)
     glUseProgram(program);
     glUniform4f(location, 0.0f, 1.0f, 0.0f, 1.0f);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -819,7 +819,7 @@ TEST_P(SimpleOperationTest, DrawQuadWithTwoUniforms)
     glUniform4f(location1, 0.0f, 1.0f, 0.0f, 1.0f);
     glUniform4f(location2, 1.0f, 0.0f, 0.0f, 1.0f);
 
-    drawQuad(program.get(), "position", 0.5f, 1.0f, true);
+    drawQuad(program, "position", 0.5f, 1.0f, true);
 
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);

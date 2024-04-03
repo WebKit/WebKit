@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ CSSCustomPropertiesAndValuesEnabled=true ] -->
+<!DOCTYPE html>
 <!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
@@ -26,10 +26,10 @@ test(function() {
 
 test(function() {
   inlineStyle.setProperty('--baz', '   40px');
-  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
   assert_equals(computedStyle.getPropertyValue('--foo'), '');
   assert_equals(computedStyle.getPropertyValue('--bar'), '');
-  assert_equals(computedStyle.getPropertyValue('--baz'), ' 40px');
+  assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
   assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
   inlineStyle.removeProperty('--baz');
   assert_equals(computedStyle.getPropertyValue('--baz'), '');

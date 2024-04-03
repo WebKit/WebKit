@@ -27,13 +27,13 @@ PASS w.screen.availTop is 0
 PASS w.screen.availHeight is 0
 PASS w.screen.availWidth is 0
 PASS !!w.history is true
-PASS w.history.length is 0
-PASS w.history.state is null
-PASS w.history.back() did not throw exception.
-PASS w.history.forward() did not throw exception.
-PASS w.history.go(-1) did not throw exception.
-PASS w.history.pushState({}, null) did not throw exception.
-PASS w.history.replaceState({}, null) did not throw exception.
+PASS w.history.length threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.state threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.back() threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.forward() threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.go(-1) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.pushState({}, null) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.replaceState({}, null) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
 PASS !!w.crypto is true
 PASS !!w.locationbar is true
 PASS w.locationbar.visible is false
@@ -47,11 +47,6 @@ PASS !!w.statusbar is true
 PASS w.statusbar.visible is false
 PASS !!w.toolbar is true
 PASS w.toolbar.visible is false
-PASS !!w.applicationCache is true
-PASS w.applicationCache.status is ApplicationCache.UNCACHED
-PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
-PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
-PASS w.applicationCache.abort() did not throw exception.
 PASS !!w.visualViewport is true
 PASS w.visualViewport.offsetLeft is 0
 PASS w.visualViewport.offsetTop is 0
@@ -101,13 +96,13 @@ PASS w.screen.availTop is 0
 PASS w.screen.availHeight is 0
 PASS w.screen.availWidth is 0
 PASS !!w.history is true
-PASS w.history.length is 0
-PASS w.history.state is null
-PASS w.history.back() did not throw exception.
-PASS w.history.forward() did not throw exception.
-PASS w.history.go(-1) did not throw exception.
-PASS w.history.pushState({}, null) did not throw exception.
-PASS w.history.replaceState({}, null) did not throw exception.
+PASS w.history.length threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.state threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.back() threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.forward() threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.go(-1) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.pushState({}, null) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
+PASS w.history.replaceState({}, null) threw exception SecurityError: Attempt to use History API from a document that isn't fully active.
 PASS !!w.crypto is true
 PASS !!w.locationbar is true
 PASS w.locationbar.visible is false
@@ -121,11 +116,6 @@ PASS !!w.statusbar is true
 PASS w.statusbar.visible is false
 PASS !!w.toolbar is true
 PASS w.toolbar.visible is false
-PASS !!w.applicationCache is true
-PASS w.applicationCache.status is ApplicationCache.UNCACHED
-PASS w.applicationCache.update() threw exception InvalidStateError: The object is in an invalid state..
-PASS w.applicationCache.swapCache() threw exception InvalidStateError: The object is in an invalid state..
-PASS w.applicationCache.abort() did not throw exception.
 PASS !!w.visualViewport is true
 PASS w.visualViewport.offsetLeft is 0
 PASS w.visualViewport.offsetTop is 0

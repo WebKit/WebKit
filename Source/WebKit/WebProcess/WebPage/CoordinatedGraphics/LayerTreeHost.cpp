@@ -129,6 +129,9 @@ void LayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
+    if (m_webPage.size().isEmpty())
+        return;
+
     if (m_isWaitingForRenderer) {
         m_scheduledWhileWaitingForRenderer = true;
         return;
@@ -149,9 +152,6 @@ void LayerTreeHost::layerFlushTimerFired()
         return;
 
     if (m_isWaitingForRenderer)
-        return;
-
-    if (!m_coordinator.rootCompositingLayer())
         return;
 
 #if !HAVE(DISPLAY_LINK)
@@ -277,7 +277,6 @@ GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()
 void LayerTreeHost::contentsSizeChanged(const IntSize& newSize)
 {
     m_viewportController.didChangeContentsSize(newSize);
-    didChangeViewport();
 }
 
 void LayerTreeHost::didChangeViewportAttributes(ViewportAttributes&& attr)
@@ -335,6 +334,11 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
     scaledSize.scale(m_webPage.deviceScaleFactor());
     m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
     didChangeViewport();
+}
+
+void LayerTreeHost::backgroundColorDidChange()
+{
+    m_surface->backgroundColorDidChange();
 }
 
 #if !HAVE(DISPLAY_LINK)
@@ -401,6 +405,11 @@ void LayerTreeHost::willRenderFrame()
             drawingArea->willStartRenderingUpdateDisplay();
     });
     m_surface->willRenderFrame();
+}
+
+void LayerTreeHost::clearIfNeeded()
+{
+    m_surface->clearIfNeeded();
 }
 
 void LayerTreeHost::didRenderFrame()

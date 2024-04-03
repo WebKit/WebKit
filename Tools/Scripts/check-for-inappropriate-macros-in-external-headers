@@ -45,7 +45,7 @@ def framework_headers_for_path(framework, path)
   full_path = File.join Dir.pwd, framework, $is_shallow_bundle ? "" : "Versions/A/", path
   if File.directory? full_path
     Dir.glob "#{full_path}/**/*.h"
-  elsif File.exists? full_path
+  elsif File.exist? full_path
     [full_path]
   else
     print_error "path '#{full_path}' for argument '#{path}' does not exist."

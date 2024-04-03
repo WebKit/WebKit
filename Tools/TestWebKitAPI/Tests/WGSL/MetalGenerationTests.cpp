@@ -40,9 +40,13 @@ inline Expected<String, WGSL::FailedCheck> translate(const String& wgsl, const S
     if (auto* maybeError = std::get_if<WGSL::FailedCheck>(&result))
         return makeUnexpected(*maybeError);
 
-    auto preparedResults = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(result).ast, entryPointName, { });
-
-    return { WTFMove(preparedResults.msl) };
+    auto& ast = std::get<WGSL::SuccessfulCheck>(result).ast;
+    auto prepareResult = WGSL::prepare(ast, entryPointName, { });
+    if (auto* maybeError = std::get_if<WGSL::Error>(&prepareResult))
+        return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
+    HashMap<String, WGSL::ConstantValue> constantValues;
+    auto msl = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues);
+    return { WTFMove(msl) };
 }
 
 TEST(WGSLMetalGenerationTests, RedFrag)

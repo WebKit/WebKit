@@ -117,23 +117,22 @@ void InsertLineBreakCommand::doApply()
     } else if (position.deprecatedEditingOffset() >= caretMaxOffset(*position.deprecatedNode()) || !is<Text>(*position.deprecatedNode())) {
         insertNodeAt(*nodeToInsert, position);
         setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), Affinity::Downstream, endingSelection().isDirectional()));
-    } else if (is<Text>(*position.deprecatedNode())) {
+    } else if (RefPtr textNode = dynamicDowncast<Text>(*position.deprecatedNode())) {
         // Split a text node
-        auto textNode = downcast<Text>(position.protectedDeprecatedNode().releaseNonNull());
-        splitTextNode(textNode, position.deprecatedEditingOffset());
-        insertNodeBefore(*nodeToInsert, textNode);
-        Position endingPosition = firstPositionInNode(textNode.ptr());
+        splitTextNode(*textNode, position.deprecatedEditingOffset());
+        insertNodeBefore(*nodeToInsert, *textNode);
+        Position endingPosition = firstPositionInNode(textNode.get());
         
         // Handle whitespace that occurs after the split
         document->updateLayoutIgnorePendingStylesheets();
         if (!endingPosition.isRenderedCharacter()) {
-            Position positionBeforeTextNode(positionInParentBeforeNode(textNode.ptr()));
+            Position positionBeforeTextNode(positionInParentBeforeNode(textNode.get()));
             // Clear out all whitespace and insert one non-breaking space
             deleteInsignificantTextDownstream(endingPosition);
             ASSERT(!textNode->renderer() || textNode->renderer()->style().collapseWhiteSpace());
             // Deleting insignificant whitespace will remove textNode if it contains nothing but insignificant whitespace.
             if (textNode->isConnected())
-                insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
+                insertTextIntoNode(*textNode, 0, nonBreakingSpaceString());
             else {
                 auto nbspNode = document->createTextNode(String { nonBreakingSpaceString() });
                 insertNodeAt(nbspNode.copyRef(), positionBeforeTextNode);

@@ -54,12 +54,14 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     template <typename ElementType>
-    static JSWebAssemblyArray* create(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload, RefPtr<const Wasm::RTT> rtt)
+    static JSWebAssemblyArray* tryCreate(VM& vm, Structure* structure, Wasm::FieldType elementType, size_t size, FixedVector<ElementType>&& payload, RefPtr<const Wasm::RTT> rtt)
     {
-        JSWebAssemblyArray* array = new (NotNull, allocateCell<JSWebAssemblyArray>(vm)) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload), rtt);
+        void* buffer = tryAllocateCell<JSWebAssemblyArray>(vm);
+        if (UNLIKELY(!buffer))
+            return nullptr;
+        JSWebAssemblyArray* array = new (NotNull, buffer) JSWebAssemblyArray(vm, structure, elementType, size, WTFMove(payload), rtt);
         array->finishCreation(vm);
         return array;
-
     }
 
     DECLARE_VISIT_CHILDREN;
@@ -82,6 +84,8 @@ public:
         case Wasm::TypeKind::I32:
         case Wasm::TypeKind::F32:
             return reinterpret_cast<uint8_t*>(m_payload32.data());
+        case Wasm::TypeKind::V128:
+            return reinterpret_cast<uint8_t*>(m_payload128.data());
         default:
             return reinterpret_cast<uint8_t*>(m_payload64.data());
         }
@@ -112,6 +116,9 @@ public:
         case Wasm::TypeKind::I32:
         case Wasm::TypeKind::F32:
             return static_cast<uint64_t>(m_payload32[index]);
+        case Wasm::TypeKind::V128:
+            // V128 is not supported in LLInt.
+            RELEASE_ASSERT_NOT_REACHED();
         default:
             return static_cast<uint64_t>(m_payload64[index]);
         }
@@ -158,7 +165,15 @@ public:
         }
     }
 
+    void set(uint32_t index, v128_t value)
+    {
+        ASSERT(m_elementType.type.is<Wasm::Type>());
+        ASSERT(m_elementType.type.as<Wasm::Type>().kind == Wasm::TypeKind::V128);
+        m_payload128[index] = value;
+    }
+
     void fill(uint32_t, uint64_t, uint32_t);
+    void fill(uint32_t, v128_t, uint32_t);
     void copy(JSWebAssemblyArray&, uint32_t, uint32_t, uint32_t);
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
@@ -186,8 +201,7 @@ public:
         case Wasm::TypeKind::RefNull:
             return FixedVector<uint64_t>::Storage::offsetOfData();
         case Wasm::TypeKind::V128:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
+            return FixedVector<v128_t>::Storage::offsetOfData();
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -201,6 +215,7 @@ protected:
     JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint16_t>&&, RefPtr<const Wasm::RTT>);
     JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint32_t>&&, RefPtr<const Wasm::RTT>);
     JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<uint64_t>&&, RefPtr<const Wasm::RTT>);
+    JSWebAssemblyArray(VM&, Structure*, Wasm::FieldType, size_t, FixedVector<v128_t>&&, RefPtr<const Wasm::RTT>);
     ~JSWebAssemblyArray();
 
     DECLARE_DEFAULT_FINISH_CREATION;
@@ -215,6 +230,7 @@ protected:
         FixedVector<uint16_t> m_payload16;
         FixedVector<uint32_t> m_payload32;
         FixedVector<uint64_t> m_payload64;
+        FixedVector<v128_t>   m_payload128;
     };
 };
 

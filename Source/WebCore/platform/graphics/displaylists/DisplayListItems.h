@@ -486,7 +486,7 @@ public:
     Ref<Filter> filter() const { return m_filter; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
@@ -1085,6 +1085,25 @@ private:
     PathArc m_arc;
 };
 
+class FillClosedArc {
+public:
+    static constexpr char name[] = "fill-closed-arc";
+
+    FillClosedArc(const PathClosedArc& closedArc)
+        : m_closedArc(closedArc)
+    {
+    }
+
+    const PathClosedArc& closedArc() const { return m_closedArc; };
+    Path path() const { return Path({ PathSegment(m_closedArc) }); }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    PathClosedArc m_closedArc;
+};
+
 class FillQuadCurve {
 public:
     static constexpr char name[] = "fill-quad-curve";
@@ -1274,6 +1293,25 @@ public:
 
 private:
     PathArc m_arc;
+};
+
+class StrokeClosedArc {
+public:
+    static constexpr char name[] = "stroke-closed-arc";
+
+    StrokeClosedArc(const PathClosedArc& closedArc)
+        : m_closedArc(closedArc)
+    {
+    }
+
+    const PathClosedArc& closedArc() const { return m_closedArc; }
+    Path path() const { return Path({ PathSegment(m_closedArc) }); }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    PathClosedArc m_closedArc;
 };
 
 class StrokeQuadCurve {

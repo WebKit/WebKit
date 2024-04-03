@@ -58,7 +58,7 @@ public:
     void setCurrentWheelEventWillStartSwipe(std::optional<bool> value) { m_currentWheelEventWillStartSwipe = value; }
 
     struct NodeAndGestureState {
-        WebCore::ScrollingNodeID wheelGestureNode { 0 };
+        std::optional<WebCore::ScrollingNodeID> wheelGestureNode;
         std::optional<WebCore::WheelScrollGestureState> wheelGestureState;
     };
 

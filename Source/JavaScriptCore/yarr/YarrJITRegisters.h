@@ -70,7 +70,10 @@ public:
     static constexpr GPRReg regUnicodeInputAndTrail = ARM64Registers::x10;
     static constexpr GPRReg unicodeAndSubpatternIdTemp = ARM64Registers::x5;
     static constexpr GPRReg initialStart = ARM64Registers::x11;
-    static constexpr GPRReg supplementaryPlanesBase = ARM64Registers::x12;
+
+#define UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP 1
+    static constexpr GPRReg firstCharacterAdditionalReadSize = ARM64Registers::x12;
+
     static constexpr GPRReg leadingSurrogateTag = ARM64Registers::x13;
     static constexpr GPRReg trailingSurrogateTag = ARM64Registers::x14;
     static constexpr GPRReg endOfStringAddress = ARM64Registers::x15;
@@ -78,6 +81,7 @@ public:
     static constexpr GPRReg returnRegister = ARM64Registers::x0;
     static constexpr GPRReg returnRegister2 = ARM64Registers::x1;
 
+    static constexpr MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
     static constexpr MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
 #elif CPU(X86_64)
 #if !OS(WINDOWS)
@@ -211,6 +215,7 @@ public:
     GPRReg regUnicodeInputAndTrail { InvalidGPRReg };
     GPRReg unicodeAndSubpatternIdTemp { InvalidGPRReg };
     GPRReg endOfStringAddress { InvalidGPRReg };
+    GPRReg firstCharacterAdditionalReadSize { InvalidGPRReg };
 
     const MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
     const MacroAssembler::TrustedImm32 leadingSurrogateTag = MacroAssembler::TrustedImm32(0xd800);

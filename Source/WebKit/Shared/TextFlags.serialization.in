@@ -120,9 +120,22 @@ enum class WebCore::FontSmoothingMode : uint8_t {
     SubpixelAntialiased
 };
 
+struct WebKit::TextCheckerState {
+    bool isContinuousSpellCheckingEnabled
+    bool isGrammarCheckingEnabled
+
+#if USE(APPKIT)
+    bool isAutomaticSpellingCorrectionEnabled
+    bool isAutomaticQuoteSubstitutionEnabled
+    bool isAutomaticDashSubstitutionEnabled
+    bool isAutomaticLinkDetectionEnabled
+    bool isAutomaticTextReplacementEnabled
+#endif
+};
+
 enum class WebCore::FontOrientation : bool
 enum class WebCore::NonCJKGlyphOrientation : bool
-enum class FontVariantNumericOrdinal : bool
-enum class FontVariantNumericSlashedZero : bool
+enum class WebCore::FontVariantNumericOrdinal : bool
+enum class WebCore::FontVariantNumericSlashedZero : bool
 enum class WebCore::FontSynthesisLonghandValue : bool
 enum class WebCore::FontSmallCaps : bool

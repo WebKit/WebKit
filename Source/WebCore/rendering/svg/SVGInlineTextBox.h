@@ -62,7 +62,7 @@ public:
     bool startsNewTextChunk() const { return m_startsNewTextChunk; }
     void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
 
-    int offsetForPositionInFragment(const SVGTextFragment&, float position, bool includePartialGlyphs) const;
+    int offsetForPositionInFragment(const SVGTextFragment&, float position) const;
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, unsigned fragmentStartPosition, unsigned fragmentEndPosition, const RenderStyle&) const;
     
     OptionSet<RenderSVGResourceMode> paintingResourceMode() const { return OptionSet<RenderSVGResourceMode>::fromRaw(m_legacyPaintingResourceMode); }
@@ -75,10 +75,8 @@ private:
 
     TextRun constructTextRun(const RenderStyle&, const SVGTextFragment&) const;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
     void releasePaintingResource(SVGPaintServerHandling&);
-#endif
 
     bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const RenderStyle&);
     void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
@@ -95,9 +93,7 @@ private:
     unsigned m_legacyPaintingResourceMode : 4; // RenderSVGResourceMode
     unsigned m_startsNewTextChunk : 1;
     LegacyRenderSVGResource* m_legacyPaintingResource { nullptr };
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     SVGPaintServerOrColor m_paintServerOrColor { };
-#endif
 
     Vector<SVGTextFragment> m_textFragments;
 };

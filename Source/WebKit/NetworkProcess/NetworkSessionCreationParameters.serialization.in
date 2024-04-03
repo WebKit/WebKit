@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+enum class WebKit::AllowsCellularAccess : bool;
+
 [RValue] struct WebKit::NetworkSessionCreationParameters {
     PAL::SessionID sessionID;
     Markable<WTF::UUID> dataStoreIdentifier;
@@ -35,10 +37,10 @@
 #endif
 #if HAVE(ALTERNATIVE_SERVICE)
     String alternativeServiceDirectory;
-    WebKit::SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle alternativeServiceDirectoryExtensionHandle;
 #endif
     String hstsStorageDirectory;
-    WebKit::SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle hstsStorageDirectoryExtensionHandle;
 #if USE(SOUP)
     String cookiePersistentStoragePath;
     WebKit::SoupCookiePersistentStorageType cookiePersistentStorageType;
@@ -56,7 +58,7 @@
     WebKit::WebPushD::WebPushDaemonConnectionConfiguration webPushDaemonConnectionConfiguration;
 
     String networkCacheDirectory;
-    WebKit::SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle networkCacheDirectoryExtensionHandle;
     String dataConnectionServiceType;
     bool fastServerTrustEvaluationEnabled;
     bool networkCacheSpeculativeValidationEnabled;
@@ -69,7 +71,6 @@
     bool shouldRunServiceWorkersOnMainThreadForTesting;
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication;
-    bool appHasRequestedCrossWebsiteTrackingPermission;
     std::optional<bool> useNetworkLoader;
     bool allowsHSTSWithUntrustedRootCertificate;
     String pcmMachServiceName;
@@ -77,6 +78,7 @@
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode;
     bool isBlobRegistryTopOriginPartitioningEnabled;
+    bool shouldSendPrivateTokenIPCForTesting;
 
     WebKit::UnifiedOriginStorageLevel unifiedOriginStorageLevel;
     uint64_t perOriginStorageQuota;
@@ -85,20 +87,22 @@
     std::optional<uint64_t> standardVolumeCapacity;
     std::optional<uint64_t> volumeCapacityOverride;
     String localStorageDirectory;
-    WebKit::SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle localStorageDirectoryExtensionHandle;
     String indexedDBDirectory;
-    WebKit::SandboxExtension::Handle indexedDBDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle indexedDBDirectoryExtensionHandle;
     String cacheStorageDirectory;
-    WebKit::SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle cacheStorageDirectoryExtensionHandle;
     String generalStorageDirectory;
-    WebKit::SandboxExtension::Handle generalStorageDirectoryHandle;
+    WebKit::SandboxExtensionHandle generalStorageDirectoryHandle;
     String serviceWorkerRegistrationDirectory;
-    WebKit::SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    WebKit::SandboxExtensionHandle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled;
     bool inspectionForServiceWorkersAllowed;
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled;
 #endif
-
+#if HAVE(NW_PROXY_CONFIG)
+    std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> proxyConfigData;
+#endif
     WebKit::ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

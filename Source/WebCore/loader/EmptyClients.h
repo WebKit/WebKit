@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ChromeClient.h"
+#include "CryptoClient.h"
 #include <wtf/UniqueRef.h>
 
 // Empty client classes for use by WebCore.
@@ -179,7 +180,6 @@ class EmptyChromeClient : public ChromeClient {
     void triggerRenderingUpdate() final { }
 
 #if PLATFORM(WIN)
-    void setLastSetCursorToCurrentCursor() final { }
     void AXStartFrameLoad() final { }
     void AXFinishFrameLoad() final { }
 #endif
@@ -237,5 +237,12 @@ class EmptyChromeClient : public ChromeClient {
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();
 WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
+
+class EmptyCryptoClient: public CryptoClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    EmptyCryptoClient() = default;
+    ~EmptyCryptoClient() = default;
+};
 
 }

@@ -27,7 +27,6 @@
 #include "ContentVisibilityDocumentState.h"
 
 #include "ContentVisibilityAutoStateChangeEvent.h"
-#include "DeclarativeAnimation.h"
 #include "DocumentInlines.h"
 #include "DocumentTimeline.h"
 #include "EventNames.h"
@@ -38,6 +37,7 @@
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
 #include "SimpleRange.h"
+#include "StyleOriginatedAnimation.h"
 #include "VisibleSelection.h"
 
 namespace WebCore {
@@ -243,15 +243,15 @@ void ContentVisibilityDocumentState::updateAnimations(const Element& element, Is
     if (wasSkipped == IsSkippedContent::No || becomesSkipped == IsSkippedContent::Yes)
         return;
     for (RefPtr animation : WebAnimation::instances()) {
-        RefPtr declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation.releaseNonNull());
-        if (!declarativeAnimation)
+        RefPtr styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation.releaseNonNull());
+        if (!styleOriginatedAnimation)
             continue;
-        auto owningElement = declarativeAnimation->owningElement();
+        auto owningElement = styleOriginatedAnimation->owningElement();
         if (!owningElement || !owningElement->element.isDescendantOrShadowDescendantOf(&element))
             continue;
 
-        if (RefPtr timeline = declarativeAnimation->timeline())
-            timeline->animationTimingDidChange(*declarativeAnimation);
+        if (RefPtr timeline = styleOriginatedAnimation->timeline())
+            timeline->animationTimingDidChange(*styleOriginatedAnimation);
     }
 }
 

@@ -5,6 +5,9 @@ Test for animation on elements inserted programmatically. Should result in a 200
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 PASS rect.width.animVal.value is 200
 PASS rect.width.baseVal.value is 200
 PASS rect.width.animVal.value is 150

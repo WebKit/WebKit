@@ -63,10 +63,8 @@ RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
     if (m_context)
         return &downcast<PaintRenderingContext2D>(*m_context);
 
-    auto context = PaintRenderingContext2D::create(*this);
-    auto* contextPtr = context.get();
-    m_context = WTFMove(context);
-    return contextPtr;
+    m_context = PaintRenderingContext2D::create(*this);
+    return static_cast<PaintRenderingContext2D*>(m_context.get());
 }
 
 void CustomPaintCanvas::replayDisplayList(GraphicsContext& target)

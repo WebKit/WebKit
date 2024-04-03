@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 62: "Three"
                 RenderBlock (anonymous) at (4,63) size 760x43
                   RenderBlock {H3} at (0,0) size 760x42 [border: (2px solid #FF0000)]
-                    RenderInline {I} at (0,0) size 64x33
+                    RenderInline {I} at (4,4) size 64x33
                       RenderText {#text} at (4,4) size 64x33
                         text run at (4,4) width 64: "Four"
                 RenderBlock (anonymous) at (4,135) size 760x0

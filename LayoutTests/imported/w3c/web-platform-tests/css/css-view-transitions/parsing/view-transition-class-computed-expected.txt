@@ -1,0 +1,13 @@
+
+FAIL Property view-transition-class value 'none' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'foo' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'bar' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'baz' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'foo bar' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'foo bar baz' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'unset' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'initial' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'inherit' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'revert' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+FAIL Property view-transition-class value 'revert-layer' assert_true: view-transition-class doesn't seem to be supported in the computed style expected true got false
+

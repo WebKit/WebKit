@@ -81,7 +81,7 @@ static LayoutUnit axisHeight(const RenderStyle& style)
 
     // Otherwise, the idea is to try and use the middle of operators as the math axis which we thus approximate by "half of the x-height".
     // Note that Gecko has a slower but more accurate version that measures half of the height of U+2212 MINUS SIGN.
-    return LayoutUnit(style.metricsOfPrimaryFont().xHeight() / 2);
+    return LayoutUnit(style.metricsOfPrimaryFont().xHeight().value_or(0) / 2);
 }
 
 LayoutUnit RenderMathMLBlock::mathAxisHeight() const
@@ -99,8 +99,6 @@ LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, Layout
 
 LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to
-    // return 0 here to match our line-height. This matters when LegacyRootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
 
@@ -147,23 +145,23 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     switch (length.type) {
     // Zoom for physical units needs to be accounted for.
     case MathMLElement::LengthType::Cm:
-        return LayoutUnit(style.effectiveZoom() * length.value * cssPixelsPerInch / 2.54f);
+        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 2.54f);
     case MathMLElement::LengthType::In:
-        return LayoutUnit(style.effectiveZoom() * length.value * cssPixelsPerInch);
+        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch);
     case MathMLElement::LengthType::Mm:
-        return LayoutUnit(style.effectiveZoom() * length.value * cssPixelsPerInch / 25.4f);
+        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 25.4f);
     case MathMLElement::LengthType::Pc:
-        return LayoutUnit(style.effectiveZoom() * length.value * cssPixelsPerInch / 6);
+        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 6);
     case MathMLElement::LengthType::Pt:
-        return LayoutUnit(style.effectiveZoom() * length.value * cssPixelsPerInch / 72);
+        return LayoutUnit(style.usedZoom() * length.value * cssPixelsPerInch / 72);
     case MathMLElement::LengthType::Px:
-        return LayoutUnit(style.effectiveZoom() * length.value);
+        return LayoutUnit(style.usedZoom() * length.value);
 
     // Zoom for logical units is accounted for either in the font info or referenceValue.
     case MathMLElement::LengthType::Em:
         return LayoutUnit(length.value * style.fontCascade().size());
     case MathMLElement::LengthType::Ex:
-        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight());
+        return LayoutUnit(length.value * style.metricsOfPrimaryFont().xHeight().value_or(0));
     case MathMLElement::LengthType::MathUnit:
         return LayoutUnit(length.value * style.fontCascade().size() / 18);
     case MathMLElement::LengthType::Percentage:

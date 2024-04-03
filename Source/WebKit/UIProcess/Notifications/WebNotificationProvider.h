@@ -51,7 +51,7 @@ public:
     bool show(WebPageProxy*, WebNotification&, RefPtr<WebCore::NotificationResources>&&) override;
     void cancel(WebNotification&) override;
     void didDestroyNotification(WebNotification&) override;
-    void clearNotifications(const Vector<uint64_t>& notificationIDs) override;
+    void clearNotifications(const Vector<WebNotificationIdentifier>&) override;
 
     void addNotificationManager(WebNotificationManagerProxy&) override;
     void removeNotificationManager(WebNotificationManagerProxy&) override;

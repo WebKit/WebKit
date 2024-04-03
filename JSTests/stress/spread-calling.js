@@ -75,7 +75,7 @@ for (let i = 0; i < 3000; i++) {
         testFunction(...objectThrow);
         failed = true;
     } catch (e) {
-        if (!e instanceof Error)
+        if (!(e instanceof Error))
             failed = true;
     }
     if (failed)

@@ -510,33 +510,33 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
         add32(scratch2GPR, scratch3GPR);
     }
 
-    and32(TrustedImm32(MegamorphicCache::primaryMask), scratch3GPR);
-    if (hasOneBitSet(sizeof(MegamorphicCache::Entry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::Entry))), scratch3GPR);
+    and32(TrustedImm32(MegamorphicCache::loadCachePrimaryMask), scratch3GPR);
+    if (hasOneBitSet(sizeof(MegamorphicCache::LoadEntry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::LoadEntry))), scratch3GPR);
     else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::Entry)), scratch3GPR, scratch3GPR);
+        mul32(TrustedImm32(sizeof(MegamorphicCache::LoadEntry)), scratch3GPR, scratch3GPR);
     auto& cache = vm.ensureMegamorphicCache();
     move(TrustedImmPtr(&cache), scratch2GPR);
-    ASSERT(!MegamorphicCache::offsetOfPrimaryEntries());
+    ASSERT(!MegamorphicCache::offsetOfLoadCachePrimaryEntries());
     addPtr(scratch2GPR, scratch3GPR);
 
     load16(Address(scratch2GPR, MegamorphicCache::offsetOfEpoch()), scratch2GPR);
 
-    primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfStructureID())));
+    primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfStructureID())));
     if (uid)
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), TrustedImmPtr(uid)));
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), TrustedImmPtr(uid)));
     else
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), uidGPR));
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), uidGPR));
     // We already hit StructureID and uid. And we get stale epoch for this entry.
     // Since all entries in the secondary cache has stale epoch for this StructureID and uid pair, we should just go to the slow case.
-    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfEpoch()), scratch2GPR));
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfEpoch()), scratch2GPR));
 
     // Cache hit!
     Label cacheHit = label();
-    loadPtr(Address(scratch3GPR, MegamorphicCache::Entry::offsetOfHolder()), scratch2GPR);
+    loadPtr(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfHolder()), scratch2GPR);
     auto missed = branchTestPtr(Zero, scratch2GPR);
     moveConditionally64(Equal, scratch2GPR, TrustedImm32(bitwise_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratch1GPR);
-    load16(Address(scratch3GPR, MegamorphicCache::Entry::offsetOfOffset()), scratch2GPR);
+    load16(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfOffset()), scratch2GPR);
     loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { resultGPR });
     auto done = jump();
 
@@ -549,19 +549,19 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
     else
         add32(uidGPR, scratch1GPR, scratch3GPR);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift3), scratch3GPR);
-    and32(TrustedImm32(MegamorphicCache::secondaryMask), scratch3GPR);
-    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::Entry))) // is a power of 2
-        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::Entry))), scratch3GPR);
+    and32(TrustedImm32(MegamorphicCache::loadCacheSecondaryMask), scratch3GPR);
+    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::LoadEntry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::LoadEntry))), scratch3GPR);
     else
-        mul32(TrustedImm32(sizeof(MegamorphicCache::Entry)), scratch3GPR, scratch3GPR);
-    addPtr(TrustedImmPtr(bitwise_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfSecondaryEntries()), scratch3GPR);
+        mul32(TrustedImm32(sizeof(MegamorphicCache::LoadEntry)), scratch3GPR, scratch3GPR);
+    addPtr(TrustedImmPtr(bitwise_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfLoadCacheSecondaryEntries()), scratch3GPR);
 
-    slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfStructureID())));
+    slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfStructureID())));
     if (uid)
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), TrustedImmPtr(uid)));
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), TrustedImmPtr(uid)));
     else
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfUid()), uidGPR));
-    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::Entry::offsetOfEpoch()), scratch2GPR));
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfUid()), uidGPR));
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfEpoch()), scratch2GPR));
     jump().linkTo(cacheHit, this);
 
     missed.link(this);
@@ -572,7 +572,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
     return slowCases;
 }
 
-AssemblyHelpers::JumpList AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
     // uidGPR can be InvalidGPRReg if uid is non-nullptr.
 
@@ -581,6 +581,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRR
 
     JumpList primaryFail;
     JumpList slowCases;
+    JumpList reallocatingCases;
 
     load32(Address(baseGPR, JSCell::structureIDOffset()), scratch1GPR);
 #if CPU(ARM64)
@@ -629,6 +630,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRR
 
     // Cache hit!
     Label cacheHit = label();
+    reallocatingCases.append(branchTest8(NonZero, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfReallocating())));
     load32(Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfNewStructureID()), scratch2GPR);
     load16(Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfOffset()), scratch3GPR);
     auto replaceCase = branch32(Equal, scratch2GPR, scratch1GPR);
@@ -660,6 +662,95 @@ AssemblyHelpers::JumpList AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRR
     else
         slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), uidGPR));
     slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfEpoch()), scratch2GPR));
+    jump().linkTo(cacheHit, this);
+
+    done.link(this);
+
+    return std::tuple { slowCases, reallocatingCases };
+}
+
+AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+{
+    // uidGPR can be InvalidGPRReg if uid is non-nullptr.
+
+    if (!uid)
+        ASSERT(uidGPR != InvalidGPRReg);
+
+    JumpList primaryFail;
+    JumpList slowCases;
+
+    load32(Address(baseGPR, JSCell::structureIDOffset()), scratch1GPR);
+#if CPU(ARM64)
+    extractUnsignedBitfield32(scratch1GPR, TrustedImm32(MegamorphicCache::structureIDHashShift1), TrustedImm32(32 - MegamorphicCache::structureIDHashShift1), scratch2GPR);
+    xorUnsignedRightShift32(scratch2GPR, scratch1GPR, TrustedImm32(MegamorphicCache::structureIDHashShift6), scratch3GPR);
+#else
+    urshift32(scratch1GPR, TrustedImm32(MegamorphicCache::structureIDHashShift1), scratch2GPR);
+    urshift32(scratch1GPR, TrustedImm32(MegamorphicCache::structureIDHashShift6), scratch3GPR);
+    xor32(scratch2GPR, scratch3GPR);
+#endif
+    if (uid)
+        add32(TrustedImm32(uid->hash()), scratch3GPR);
+    else {
+        // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
+        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
+        // ever load the result from the cache if the cache entry matches what we are querying for.
+        // So we either get super lucky and use zero for the hash and somehow collide with the entity
+        // we're looking for, or we realize we're comparing against another entity, and go to the
+        // slow path anyways.
+        load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
+        urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
+        add32(scratch2GPR, scratch3GPR);
+    }
+
+    and32(TrustedImm32(MegamorphicCache::hasCachePrimaryMask), scratch3GPR);
+    if (hasOneBitSet(sizeof(MegamorphicCache::HasEntry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::HasEntry))), scratch3GPR);
+    else
+        mul32(TrustedImm32(sizeof(MegamorphicCache::HasEntry)), scratch3GPR, scratch3GPR);
+    auto& cache = vm.ensureMegamorphicCache();
+    move(TrustedImmPtr(&cache), scratch2GPR);
+    addPtr(scratch2GPR, scratch3GPR);
+    addPtr(TrustedImmPtr(MegamorphicCache::offsetOfHasCachePrimaryEntries()), scratch3GPR);
+
+    load16(Address(scratch2GPR, MegamorphicCache::offsetOfEpoch()), scratch2GPR);
+
+    primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfStructureID())));
+    if (uid)
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfUid()), TrustedImmPtr(uid)));
+    else
+        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfUid()), uidGPR));
+    // We already hit StructureID and uid. And we get stale epoch for this entry.
+    // Since all entries in the secondary cache has stale epoch for this StructureID and uid pair, we should just go to the slow case.
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfEpoch()), scratch2GPR));
+
+    // Cache hit!
+    Label cacheHit = label();
+    load16(Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfResult()), scratch2GPR);
+    boxBoolean(scratch2GPR, JSValueRegs { resultGPR });
+    auto done = jump();
+
+    // Secondary cache lookup. Now,
+    //   1. scratch1GPR holds StructureID.
+    //   2. scratch2GPR holds global epoch.
+    primaryFail.link(this);
+    if (uid)
+        add32(TrustedImm32(static_cast<uint32_t>(bitwise_cast<uintptr_t>(uid))), scratch1GPR, scratch3GPR);
+    else
+        add32(uidGPR, scratch1GPR, scratch3GPR);
+    addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift7), scratch3GPR);
+    and32(TrustedImm32(MegamorphicCache::hasCacheSecondaryMask), scratch3GPR);
+    if constexpr (hasOneBitSet(sizeof(MegamorphicCache::HasEntry))) // is a power of 2
+        lshift32(TrustedImm32(getLSBSet(sizeof(MegamorphicCache::HasEntry))), scratch3GPR);
+    else
+        mul32(TrustedImm32(sizeof(MegamorphicCache::HasEntry)), scratch3GPR, scratch3GPR);
+    addPtr(TrustedImmPtr(bitwise_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfHasCacheSecondaryEntries()), scratch3GPR);
+
+    slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfStructureID())));
+    if (uid)
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfUid()), TrustedImmPtr(uid)));
+    else
+        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfUid()), uidGPR));
+    slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfEpoch()), scratch2GPR));
     jump().linkTo(cacheHit, this);
 
     done.link(this);
@@ -1114,9 +1205,8 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
 #endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 }
 
-void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
+void AssemblyHelpers::emitVirtualCall(VM& vm, CallLinkInfo* info)
 {
-    move(TrustedImmPtr(globalObject), GPRInfo::regT3);
     move(TrustedImmPtr(info), GPRInfo::regT2);
     emitVirtualCallWithoutMovingGlobalObject(vm, GPRInfo::regT2, info->callMode());
 }
@@ -1425,91 +1515,43 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
 #endif
 }
 
-void AssemblyHelpers::cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage, bool mayBeNull)
+void AssemblyHelpers::cage(Gigacage::Kind kind, GPRReg storage)
 {
 #if GIGACAGE_ENABLED
     if (!Gigacage::isEnabled(kind))
         return;
-
-#if CPU(ARM64E)
-    RegisterID tempReg = InvalidGPRReg;
-    Jump skip;
-    if (kind == Gigacage::Primitive) {
-        if (mayBeNull)
-            skip = branchPtr(Equal, storage, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
-        tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
-        and64(TrustedImm64(Gigacage::mask(kind)), storage, tempReg);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), tempReg);
-        // Flip the registers since bitFieldInsert only inserts into the low bits.
-        std::swap(storage, tempReg);
-    } else {
-        and64(TrustedImm64(Gigacage::mask(kind)), storage);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-    }
-    if (kind == Gigacage::Primitive)
-        insertBitField64(storage, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), tempReg);
-    if (skip.isSet())
-        skip.link(this);
-#else
-    UNUSED_PARAM(mayBeNull);
     andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
     addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-#endif
-
 #else
     UNUSED_PARAM(kind);
     UNUSED_PARAM(storage);
-    UNUSED_PARAM(mayBeNull);
 #endif
 }
 
 // length may be the same register as scratch.
-void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth, bool mayBeNull)
+void AssemblyHelpers::cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch)
 {
 #if GIGACAGE_ENABLED
     if (Gigacage::isEnabled(kind)) {
         if (kind != Gigacage::Primitive || Gigacage::disablingPrimitiveGigacageIsForbidden())
-            cageWithoutUntagging(kind, storage, mayBeNull);
+            cage(kind, storage);
         else {
-#if CPU(ARM64E)
-            if (length == scratch)
-                scratch = getCachedMemoryTempRegisterIDAndInvalidate();
-#endif
             JumpList done;
-#if CPU(ARM64E)
-            if (mayBeNull)
-                done.append(branchPtr(Equal, storage, TrustedImmPtr(JSArrayBufferView::nullVectorPtr())));
-#endif
             done.append(branchTest8(NonZero, AbsoluteAddress(&Gigacage::disablePrimitiveGigacageRequested)));
 
             loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
             done.append(branchTest64(Zero, scratch));
-#if CPU(ARM64E)
-            GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();
-            move(storage, tempReg);
-            ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
-            andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
-            addPtr(scratch, tempReg);
-            insertBitField64(tempReg, TrustedImm32(0), TrustedImm32(64 - maxNumberOfAllowedPACBits), storage);
-#else
             andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
             addPtr(scratch, storage);
-#endif // CPU(ARM64E)
             done.link(this);
         }
     }
 #endif
 
-#if CPU(ARM64E)
-    if (kind == Gigacage::Primitive)
-        untagArrayPtr(length, storage, validateAuth, scratch);
-#endif
-    UNUSED_PARAM(validateAuth);
     UNUSED_PARAM(kind);
     UNUSED_PARAM(storage);
     UNUSED_PARAM(length);
     UNUSED_PARAM(scratch);
-    UNUSED_PARAM(mayBeNull);
 }
 
 void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)

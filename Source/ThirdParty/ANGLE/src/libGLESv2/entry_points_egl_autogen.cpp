@@ -421,19 +421,15 @@ EGLint EGLAPIENTRY EGL_GetError()
 
     Thread *thread = egl::GetCurrentThread();
     EGLint returnValue;
-    {
-        ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT(GetError, "");
 
-        {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetError, thread);
-            ANGLE_EGL_VALIDATE(thread, GetError, nullptr, EGLint);
+    EGL_EVENT(GetError, "");
 
-            returnValue = GetError(thread);
-        }
+    ANGLE_EGL_VALIDATE(thread, GetError, nullptr, EGLint);
 
-        ANGLE_CAPTURE_EGL(GetError, true, thread, returnValue);
-    }
+    returnValue = GetError(thread);
+
+    ANGLE_CAPTURE_EGL(GetError, true, thread, returnValue);
+
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }

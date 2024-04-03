@@ -1,0 +1,5 @@
+int samplerExternalOES;
+
+/*%%*
+expected an identifier, but found type 'samplerExternalOES'
+*%%*/

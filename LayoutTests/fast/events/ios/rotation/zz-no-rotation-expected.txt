@@ -1,6 +1,6 @@
+CONSOLE MESSAGE: window.innerWidth: 390
+CONSOLE MESSAGE: window.innerHeight: 797
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS window.innerWidth is 320
-PASS window.innerHeight is 548
 This test checks that the view is not left in a rotated state after the previous tests.

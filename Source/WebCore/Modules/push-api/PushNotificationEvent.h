@@ -54,8 +54,6 @@ public:
 private:
     PushNotificationEvent(const AtomString&, ExtendableEventInit&&, Notification*, std::optional<uint64_t> proposedAppBadge, IsTrusted);
 
-    EventInterface eventInterface() const final { return PushNotificationEventInterfaceType; }
-
     RefPtr<Notification> m_proposedNotification;
     std::optional<uint64_t> m_proposedAppBadge;
     std::optional<NotificationData> m_updatedNotificationData;

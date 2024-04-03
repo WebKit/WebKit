@@ -67,10 +67,11 @@ WKModelView * ModelElementController::modelViewForModelIdentifier(ModelIdentifie
     if (!m_webPageProxy.preferences().modelElementEnabled())
         return nil;
 
-    if (!is<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea()))
+    auto* proxy = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_webPageProxy.drawingArea());
+    if (!proxy)
         return nil;
 
-    auto* node = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_webPageProxy.drawingArea()).remoteLayerTreeHost().nodeForID(modelIdentifier.layerIdentifier);
+    auto* node = proxy->remoteLayerTreeHost().nodeForID(modelIdentifier.layerIdentifier);
     if (!node)
         return nil;
 
@@ -84,6 +85,9 @@ ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdenti
 
 void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIdentifier, const URL& originatingPageURL)
 {
+    // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
+    // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
+    // We should call PageClientImpl::presentingViewController() instead.
     auto *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
     if (!presentingViewController)
         return;

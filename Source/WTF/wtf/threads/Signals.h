@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,7 @@ struct SigInfo {
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
 using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
 
+extern Atomic<bool> fallbackToOldExceptions;
 struct SignalHandlers {
     static void initialize();
 
@@ -124,18 +125,36 @@ struct SignalHandlers {
 // and once commited they can't be turned off.
 WTF_EXPORT_PRIVATE void addSignalHandler(Signal, SignalHandler&&);
 WTF_EXPORT_PRIVATE void activateSignalHandlersFor(Signal);
+WTF_EXPORT_PRIVATE void finalizeSignalHandlers();
 
+#if OS(UNIX) && HAVE(MACH_EXCEPTIONS)
+inline exception_mask_t toMachMask(Signal signal)
+{
+    switch (signal) {
+    case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
+    case Signal::IllegalInstruction: return EXC_MASK_BAD_INSTRUCTION;
+    case Signal::FloatingPoint: return EXC_MASK_ARITHMETIC;
+    case Signal::Breakpoint: return EXC_MASK_BREAKPOINT;
+    default: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#endif // OS(UNIX) && HAVE(MACH_EXCEPTIONS)
 
 #if HAVE(MACH_EXCEPTIONS)
 class Thread;
 void registerThreadForMachExceptionHandling(Thread&);
-WTF_EXPORT_PRIVATE void initMachExceptionHandlerThread(bool);
-inline void initializeSignalHandling() { initMachExceptionHandlerThread(true); }
-inline void disableSignalHandling() { initMachExceptionHandlerThread(false); }
+WTF_EXPORT_PRIVATE void initMachExceptionHandlerThread(bool, uint32_t, exception_mask_t);
+inline void initializeSignalHandling(uint32_t signingKey, exception_mask_t mask) { initMachExceptionHandlerThread(true, signingKey, mask); }
+inline void disableSignalHandling() { initMachExceptionHandlerThread(false, 0, 0); }
 
 void handleSignalsWithMach();
 #else
-inline void initializeSignalHandling() { }
+inline void initializeSignalHandling(uint32_t signingKey, int mask)
+{
+    UNUSED_PARAM(signingKey);
+    UNUSED_PARAM(mask);
+}
 inline void disableSignalHandling() { }
 #endif // HAVE(MACH_EXCEPTIONS)
 
@@ -152,5 +171,6 @@ using WTF::SignalAction;
 using WTF::SignalHandler;
 using WTF::addSignalHandler;
 using WTF::activateSignalHandlersFor;
+using WTF::finalizeSignalHandlers;
 using WTF::initializeSignalHandling;
 using WTF::disableSignalHandling;

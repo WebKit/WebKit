@@ -51,7 +51,7 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
 void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::MediaStreamRequest request, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts, ValidateUserMediaRequestConstraintsCallback&& completionHandler)
 {
     m_validateUserMediaRequestConstraintsCallback = WTFMove(completionHandler);
-    auto invalidHandler = [this](const String& invalidConstraint) mutable {
+    auto invalidHandler = [this](auto invalidConstraint) mutable {
         Vector<CaptureDevice> audioDevices;
         Vector<CaptureDevice> videoDevices;
         m_validateUserMediaRequestConstraintsCallback(invalidConstraint, audioDevices, videoDevices);

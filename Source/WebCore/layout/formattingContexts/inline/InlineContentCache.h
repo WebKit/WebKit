@@ -28,7 +28,7 @@
 #include "FormattingConstraints.h"
 #include "InlineDisplayContent.h"
 #include "InlineItem.h"
-#include "IntrinsicWidthHandler.h"
+#include "LineLayoutResult.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -43,31 +43,35 @@ public:
         InlineItemList& content() { return m_inlineItemList; }
         const InlineItemList& content() const { return m_inlineItemList; }
 
-        void set(InlineItemList&& inlineItemList) { m_inlineItemList = WTFMove(inlineItemList); }
-        void append(InlineItemList&& inlineItemList) { m_inlineItemList.appendVector(WTFMove(inlineItemList)); }
-        void clear() { m_inlineItemList.clear(); }
+        struct ContentAttributes {
+            bool requiresVisualReordering { false };
+            // Note that <span>this is text</span> returns true as inline boxes are not considered 'content' here.
+            bool hasTextAndLineBreakOnlyContent { false };
+            size_t inlineBoxCount { 0 };
+        };
+        void set(InlineItemList&&, ContentAttributes);
+        void replace(size_t insertionPosition, InlineItemList&&, ContentAttributes);
         void shrinkToFit() { m_inlineItemList.shrinkToFit(); }
 
         bool isEmpty() const { return content().isEmpty(); }
         size_t size() const { return content().size(); }
 
-        void setRequiresVisualReordering(bool contentRequiresVisualReordering) { m_contentRequiresVisualReordering = contentRequiresVisualReordering; }
-        bool requiresVisualReordering() const { return m_contentRequiresVisualReordering; }
-
-        void setIsNonBidiTextAndForcedLineBreakOnlyContent(bool isNonBidiTextAndForcedLineBreakOnlyContent) { m_isNonBidiTextAndForcedLineBreakOnlyContent = isNonBidiTextAndForcedLineBreakOnlyContent; }
-        bool isNonBidiTextAndForcedLineBreakOnlyContent() const { return m_isNonBidiTextAndForcedLineBreakOnlyContent; }
+        bool requiresVisualReordering() const { return m_contentAttributes.requiresVisualReordering; }
+        bool hasTextAndLineBreakOnlyContent() const { return m_contentAttributes.hasTextAndLineBreakOnlyContent; }
+        bool hasInlineBoxes() const { return !!inlineBoxCount(); }
+        size_t inlineBoxCount() const { return m_contentAttributes.inlineBoxCount; }
 
     private:
+        ContentAttributes m_contentAttributes;
         InlineItemList m_inlineItemList;
-        bool m_contentRequiresVisualReordering { false };
-        bool m_isNonBidiTextAndForcedLineBreakOnlyContent { false };
+
     };
     const InlineItems& inlineItems() const { return m_inlineItems; }
     InlineItems& inlineItems() { return m_inlineItems; }
 
-    void setMaximumIntrinsicWidthLayoutResult(IntrinsicWidthHandler::LineBreakingResult&& layoutResult) { m_maximumIntrinsicWidthLayoutResult = WTFMove(layoutResult); }
-    void clearMaximumIntrinsicWidthLayoutResult() { m_maximumIntrinsicWidthLayoutResult = { }; }
-    std::optional<IntrinsicWidthHandler::LineBreakingResult>& maximumIntrinsicWidthLayoutResult() { return m_maximumIntrinsicWidthLayoutResult; }
+    void setMaximumIntrinsicWidthLineContent(LineLayoutResult&& lineContent) { m_maximumIntrinsicWidthLineContent = WTFMove(lineContent); }
+    void clearMaximumIntrinsicWidthLineContent() { m_maximumIntrinsicWidthLineContent = { }; }
+    std::optional<LineLayoutResult>& maximumIntrinsicWidthLineContent() { return m_maximumIntrinsicWidthLineContent; }
 
     void setMinimumContentSize(InlineLayoutUnit minimumContentSize) { m_minimumContentSize = minimumContentSize; }
     void setMaximumContentSize(InlineLayoutUnit maximumContentSize) { m_maximumContentSize = maximumContentSize; }
@@ -77,7 +81,7 @@ public:
 
 private:
     InlineItems m_inlineItems;
-    std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
+    std::optional<LineLayoutResult> m_maximumIntrinsicWidthLineContent { };
     std::optional<InlineLayoutUnit> m_minimumContentSize { };
     std::optional<InlineLayoutUnit> m_maximumContentSize { };
 };
@@ -86,6 +90,20 @@ inline void InlineContentCache::resetMinimumMaximumContentSizes()
 {
     m_minimumContentSize = { };
     m_maximumContentSize = { };
+    m_maximumIntrinsicWidthLineContent = { };
+}
+
+inline void InlineContentCache::InlineItems::set(InlineItemList&& inlineItemList, ContentAttributes contentAttributes)
+{
+    m_inlineItemList = WTFMove(inlineItemList);
+    m_contentAttributes = contentAttributes;
+}
+
+inline void InlineContentCache::InlineItems::replace(size_t insertionPosition, InlineItemList&& inlineItemList, ContentAttributes contentAttributes)
+{
+    m_inlineItemList.remove(insertionPosition, m_inlineItemList.size() - insertionPosition);
+    m_inlineItemList.appendVector(WTFMove(inlineItemList));
+    m_contentAttributes = contentAttributes;
 }
 
 }

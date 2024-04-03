@@ -31,7 +31,7 @@
 #include "ContentData.h"
 #include "CursorData.h"
 #include "CursorList.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FillLayer.h"
 #include "RenderStyleInlines.h"
 #include "SVGURIReference.h"
@@ -107,7 +107,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
         loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::Anonymous);
 
     // Are there other pseudo-elements that need resource loading? 
-    if (auto* firstLineStyle = style.getCachedPseudoStyle(PseudoId::FirstLine))
+    if (auto* firstLineStyle = style.getCachedPseudoStyle({ PseudoId::FirstLine }))
         loadPendingResources(*firstLineStyle, document, element);
 }
 

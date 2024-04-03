@@ -84,7 +84,6 @@ platform/mac/fast/text/justified-text-rect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=115274
 # testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess and is WebKitLegacy only.
-http/tests/security/appcache-switching-private-browsing.html [ Skip ]
 http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
@@ -166,8 +165,6 @@ webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
 webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Failure ]
-
-http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
 
 # DatabaseProcess cannot open some of these database filenames (DRT can open the exact same database filenames)
 webkit.org/b/154681 storage/indexeddb/database-odd-names.html
@@ -688,6 +685,7 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
+[ Debug ] ipc/validate-message-check-in-networkconnectiontowebproces-crash.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-testOnlyIPC.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Skip ]
 [ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
@@ -836,8 +834,6 @@ fullscreen/fullscreen-enter-bottom-padding-animation.html [ Pass ]
 ### (4) Features that are not supported in WebKit2 and likely never will be
 ### (5) Progressions, expected successes that are expected failures in WebKit1.
 
-webkit.org/b/168092 media/track/track-cues-sorted-before-dispatch.html [ Pass Failure ]
-
 webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Failure ]
 webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/redirect-chain-limits.html [ Pass Failure ]
 
@@ -884,5 +880,3 @@ webkit.org/b/262157 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
 
 webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]
-
-webkit.org/b/267355 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]

@@ -36,6 +36,7 @@
 #include "CSSSelectorParser.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
@@ -194,6 +195,14 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
         popCascadeLayer(layerRule->name());
         return;
     }
+
+    case StyleRuleType::StartingStyle: {
+        SetForScope startingStyleScope { m_isStartingStyle, IsStartingStyle::Yes };
+        auto startingStyleRule = uncheckedDowncast<StyleRuleStartingStyle>(WTFMove(rule));
+        addChildRules(startingStyleRule->childRules());
+        return;
+    }
+
     case StyleRuleType::CounterStyle:
     case StyleRuleType::FontFace:
     case StyleRuleType::FontPaletteValues:
@@ -234,6 +243,9 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
         if (!rule->styleSheet())
             continue;
 
+        if (!rule->supportsMatches())
+            continue;
+
         if (m_mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
             auto& cascadeLayerName = rule->cascadeLayerName();
             if (cascadeLayerName) {
@@ -271,7 +283,7 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
     if (!selectorList.isEmpty()) {
         unsigned selectorListIndex = 0;
         for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
-            RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
+            RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount(), m_isStartingStyle);
             m_mediaQueryCollector.addRuleIfNeeded(ruleData);
             m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier);
             ++selectorListIndex;

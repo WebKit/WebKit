@@ -64,8 +64,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         if (!lineBox.hasContent() || !rootInlineBox.hasContent())
             return { };
         return {
-            lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.annotationAbove().value_or(0.f),
-            lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.annotationBelow().value_or(0.f)
+            lineBoxRect.top() + rootInlineBox.logicalTop() - rootInlineBox.textEmphasisAbove().value_or(0.f),
+            lineBoxRect.top() + rootInlineBox.logicalBottom() + rootInlineBox.textEmphasisBelow().value_or(0.f)
         };
     };
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
@@ -97,7 +97,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             // In standards mode, inline boxes always start with an imaginary strut.
-            auto isContentful = formattingContext().layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            auto isContentful = formattingContext().layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorderAndPadding();
             if (!isContentful)
                 continue;
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
@@ -113,8 +113,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else
             ASSERT_NOT_REACHED();
 
-        auto adjustedBorderBoxTop = borderBox.top() - inlineLevelBox.annotationAbove().value_or(0.f);
-        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.annotationBelow().value_or(0.f);
+        auto adjustedBorderBoxTop = borderBox.top() - inlineLevelBox.textEmphasisAbove().value_or(0.f);
+        auto adjustedBorderBoxBottom = borderBox.bottom() + inlineLevelBox.textEmphasisBelow().value_or(0.f);
         enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
         enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
     }
@@ -259,7 +259,7 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
             }
             isFirstContentRun = false;
         }
-        ASSERT_UNUSED(lineEndingEllipsisPolicy, lineEndingEllipsisPolicy != LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection || truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd);
+        ASSERT_UNUSED(lineEndingEllipsisPolicy, lineEndingEllipsisPolicy != LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection || truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd || boxes.last().isInlineBox());
         return truncateRight.value_or(right(boxes.last()));
     }
 
@@ -294,7 +294,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
         case LineEndingEllipsisPolicy::NoEllipsis:
             return false;
         case LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
-            return displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
+            return displayLine.contentLogicalWidth() && displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
         case LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
             if (isLastLineWithInlineContent)
                 return false;
@@ -312,7 +312,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
     ASSERT(displayBoxes[0].isRootInlineBox());
     auto& rootInlineBox = displayBoxes[0];
     auto& rootStyle = rootInlineBox.style();
-    auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
+    auto ellipsisWidth = std::max(0.f, rootStyle.fontCascade().width(TextUtil::ellipsisTextRun()));
 
     auto contentNeedsTruncation = [&] {
         switch (lineEndingEllipsisPolicy) {
@@ -339,7 +339,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
         }
     } else {
         auto lineBoxVisualLeft = rootStyle.isHorizontalWritingMode() ? displayLine.left() : displayLine.top();
-        auto lineBoxVisualRight = rootStyle.isHorizontalWritingMode() ? displayLine.right() : displayLine.bottom();
+        auto lineBoxVisualRight = std::max(rootStyle.isHorizontalWritingMode() ? displayLine.right() : displayLine.bottom(), lineBoxVisualLeft);
         ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, 0, displayBoxes.size() - 1, lineBoxVisualLeft, lineBoxVisualRight, ellipsisWidth, rootStyle, lineEndingEllipsisPolicy);
     }
 

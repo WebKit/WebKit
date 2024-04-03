@@ -180,8 +180,8 @@ private:
     static bool equal(const Identifier& a, const Identifier& b) { return a.m_string.impl() == b.m_string.impl(); }
     static bool equal(const Identifier& a, const LChar* b) { return equal(a.m_string.impl(), b); }
 
-    template <typename T> static Ref<AtomStringImpl> add(VM&, const T*, int length);
-    static Ref<AtomStringImpl> add8(VM&, const UChar*, int length);
+    template <typename T> static Ref<AtomStringImpl> add(VM&, const T*, int length); // FIXME: This should take in a span<const T>.
+    static Ref<AtomStringImpl> add8(VM&, const UChar*, int length); // FIXME: This should take in a span<const UChar>.
     template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
     static Ref<AtomStringImpl> add(VM&, StringImpl*);
@@ -216,7 +216,7 @@ Ref<AtomStringImpl> Identifier::add(VM& vm, const T* s, int length)
     if (!length)
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
-    return *AtomStringImpl::add(s, length);
+    return *AtomStringImpl::add(std::span { s, static_cast<size_t>(length) });
 }
 
 inline Ref<AtomStringImpl> Identifier::add(VM& vm, ASCIILiteral literal)

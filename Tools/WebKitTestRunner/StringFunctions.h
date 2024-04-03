@@ -102,7 +102,7 @@ inline WTF::String toWTFString(WKStringRef string)
     size_t stringLength = WKStringGetUTF8CStringNonStrict(string, buffer.get(), bufferSize);
     if (!stringLength)
         return "(null)"_s;
-    return WTF::String::fromUTF8WithLatin1Fallback(buffer.get(), stringLength - 1);
+    return WTF::String::fromUTF8WithLatin1Fallback({ buffer.get(), stringLength - 1 });
 }
     
 inline WTF::String toWTFString(const WKRetainPtr<WKStringRef>& string)

@@ -61,20 +61,20 @@ Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject* rende
 
 AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
 {
-    if (!is<SVGUseElement>(element()))
+    auto* use = dynamicDowncast<SVGUseElement>(element());
+    if (!use)
         return nullptr;
 
-    SVGUseElement& use = downcast<SVGUseElement>(*element());
-    String href = use.href();
+    auto href = use->href();
     if (href.isEmpty())
         href = getAttribute(HTMLNames::hrefAttr);
 
-    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScopeForSVGReferences());
+    auto target = SVGURIReference::targetElementFromIRIString(href, use->treeScopeForSVGReferences());
     if (!target.element)
         return nullptr;
 
     if (auto* cache = axObjectCache())
-        return cache->getOrCreate(target.element.get());
+        return cache->getOrCreate(*target.element);
     return nullptr;
 }
 
@@ -138,17 +138,20 @@ String AccessibilitySVGElement::description() const
     if (!ariaDescription.isEmpty())
         return ariaDescription;
 
-    auto titleElements = childrenOfType<SVGTitleElement>(*element());
-    if (auto titleChild = childElementWithMatchingLanguage(titleElements))
-        return titleChild->textContent();
+    RefPtr element = this->element();
+    if (element) {
+        auto titleElements = childrenOfType<SVGTitleElement>(*element);
+        if (auto* titleChild = childElementWithMatchingLanguage(titleElements))
+            return titleChild->textContent();
+    }
 
-    if (is<SVGAElement>(element())) {
-        auto& xlinkTitle = element()->attributeWithoutSynchronization(XLinkNames::titleAttr);
+    if (is<SVGAElement>(element.get())) {
+        const auto& xlinkTitle = element->attributeWithoutSynchronization(XLinkNames::titleAttr);
         if (!xlinkTitle.isEmpty())
             return xlinkTitle;
     }
 
-    if (is<SVGUseElement>(element())) {
+    if (is<SVGUseElement>(element.get())) {
         if (auto* target = targetForUseElement())
             return target->description();
     }
@@ -156,8 +159,8 @@ String AccessibilitySVGElement::description() const
     // FIXME: This is here to not break the svg-image.html test. But 'alt' is not
     // listed as a supported attribute of the 'image' element in the SVG spec:
     // https://www.w3.org/TR/SVG/struct.html#ImageElement
-    if (m_renderer->isRenderOrLegacyRenderSVGImage()) {
-        const AtomString& alt = getAttribute(HTMLNames::altAttr);
+    if (m_renderer && m_renderer->isRenderOrLegacyRenderSVGImage()) {
+        const auto& alt = getAttribute(HTMLNames::altAttr);
         if (!alt.isNull())
             return alt;
     }

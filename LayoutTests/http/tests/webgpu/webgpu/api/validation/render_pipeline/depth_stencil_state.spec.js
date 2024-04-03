@@ -5,7 +5,11 @@ This test dedicatedly tests validation of GPUDepthStencilState of createRenderPi
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../common/util/util.js';
 import { kCompareFunctions, kStencilOperations } from '../../../capability_info.js';
-import { kTextureFormats, kTextureFormatInfo, kDepthStencilFormats } from '../../../format_info.js';
+import {
+  kAllTextureFormats,
+  kTextureFormatInfo,
+  kDepthStencilFormats } from
+'../../../format_info.js';
 import { getFragmentShaderCodeWithOutput } from '../../../util/shader.js';
 
 import { CreateRenderPipelineValidationTest } from './common.js';
@@ -14,7 +18,11 @@ export const g = makeTestGroup(CreateRenderPipelineValidationTest);
 
 g.test('format').
 desc(`The texture format in depthStencilState must be a depth/stencil format.`).
-params((u) => u.combine('isAsync', [false, true]).combine('format', kTextureFormats)).
+params((u) =>
+u //
+.combine('isAsync', [false, true]).
+combine('format', kAllTextureFormats)
+).
 beforeAllSubcases((t) => {
   const { format } = t.params;
   const info = kTextureFormatInfo[format];
@@ -302,4 +310,3 @@ fn((t) => {
   const stencilWriteEnabled = op !== undefined && op !== 'keep';
   t.doCreateRenderPipelineTest(isAsync, !stencilWriteEnabled || !!info.stencil, descriptor);
 });
-//# sourceMappingURL=depth_stencil_state.spec.js.map

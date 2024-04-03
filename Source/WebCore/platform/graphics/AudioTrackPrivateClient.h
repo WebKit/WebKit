@@ -36,10 +36,15 @@ struct PlatformAudioTrackConfiguration;
 
 class AudioTrackPrivateClient : public TrackPrivateBaseClient {
 public:
+    constexpr Type type() const final { return Type::Audio; }
     virtual void enabledChanged(bool) = 0;
     virtual void configurationChanged(const PlatformAudioTrackConfiguration&) = 0;
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioTrackPrivateClient)
+static bool isType(const WebCore::TrackPrivateBaseClient& track) { return track.type() == WebCore::TrackPrivateBaseClient::Type::Audio; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

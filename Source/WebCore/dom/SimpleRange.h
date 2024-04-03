@@ -74,9 +74,9 @@ template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
 
 template<> WEBCORE_EXPORT bool contains<ComposedTree>(const SimpleRange&, const std::optional<BoundaryPoint>&);
 
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const Node&);
-WEBCORE_EXPORT bool containsForTesting(TreeType, const SimpleRange&, const BoundaryPoint&);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange& outerRange, const SimpleRange& innerRange);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const Node&);
+WEBCORE_EXPORT bool contains(TreeType, const SimpleRange&, const BoundaryPoint&);
 
 template<TreeType = Tree> bool intersects(const SimpleRange&, const SimpleRange&);
 template<TreeType = Tree> bool intersects(const SimpleRange&, const Node&);
@@ -117,7 +117,7 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    IntersectingNodeIterator(const SimpleRange&);
+    WEBCORE_EXPORT IntersectingNodeIterator(const SimpleRange&);
 
     enum QuirkFlag { DeprecatedZeroOffsetStartQuirk };
     IntersectingNodeIterator(const SimpleRange&, QuirkFlag);
@@ -130,7 +130,7 @@ public:
     bool operator==(const std::nullptr_t) const { return !m_node; }
 
     IntersectingNodeIterator& operator++() { advance(); return *this; }
-    void advance();
+    WEBCORE_EXPORT void advance();
     void advanceSkippingChildren();
 
 private:

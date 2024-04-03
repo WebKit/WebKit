@@ -28,8 +28,14 @@
 
 #import "LaunchServicesDatabaseXPCConstants.h"
 #import "NetworkProcessMessages.h"
+#import "PageClient.h"
+#import "WKUIDelegatePrivate.h"
+#import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import "WebProcessProxy.h"
 #import "XPCEndpoint.h"
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/EnumTraits.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -121,6 +127,40 @@ void NetworkProcessProxy::setBackupExclusionPeriodForTesting(PAL::SessionID sess
     sendWithAsyncReply(Messages::NetworkProcess::SetBackupExclusionPeriodForTesting(sessionID, period), WTFMove(completionHandler));
 }
 
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
+{
+    auto sceneIdentifier = nullString();
+    auto bundleIdentifier = WebCore::applicationBundleIdentifier();
+    auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
+    if (!page) {
+        completionHandler(sceneIdentifier, bundleIdentifier);
+        return;
+    }
+
+    sceneIdentifier = page->pageClient().sceneID();
+    RetainPtr<WKWebView> webView = page->cocoaView();
+    id webViewUIDelegate = [webView UIDelegate];
+    if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneIdentifierForWebView:)])
+        sceneIdentifier = [webViewUIDelegate _hostSceneIdentifierForWebView:webView.get()];
+    if ([webViewUIDelegate respondsToSelector:@selector(_hostSceneBundleIdentifierForWebView:)])
+        bundleIdentifier = [webViewUIDelegate _hostSceneBundleIdentifierForWebView:webView.get()];
+
+    completionHandler(sceneIdentifier, bundleIdentifier);
+}
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+void NetworkProcessProxy::getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    RefPtr page = WebProcessProxy::webPage(webPageProxyIdentifier);
+    if (!page)
+        return completionHandler(WebPageProxy::standardUserAgent());
+
+    completionHandler(page->userAgent());
+}
 #endif
 
 }

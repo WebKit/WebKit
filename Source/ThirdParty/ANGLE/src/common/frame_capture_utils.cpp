@@ -158,6 +158,8 @@ CallCapture &CallCapture::operator=(CallCapture &&other)
     std::swap(customFunctionName, other.customFunctionName);
     std::swap(params, other.params);
     std::swap(isActive, other.isActive);
+    std::swap(contextID, other.contextID);
+    std::swap(isSyncPoint, other.isSyncPoint);
     return *this;
 }
 

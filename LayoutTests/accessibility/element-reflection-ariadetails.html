@@ -14,71 +14,83 @@
 <x-custom></x-custom>
 
 <script>
-  class XTarget extends HTMLElement {
+class XTarget extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let target = document.createElement("div");
-      target.id = "innertarget";
-      target.textContent = "Target 3";
-      target.ariaDetailsElements = [detail3];
-      this.shadowRoot.appendChild(target);
+        super();
+        this.attachShadow({ mode: "open" });
+        let target = document.createElement("div");
+        target.id = "innertarget";
+        target.textContent = "Target 3";
+        target.ariaDetailsElements = [detail3];
+        this.shadowRoot.appendChild(target);
     }
-  }
-  customElements.define("x-target", XTarget);
+}
+customElements.define("x-target", XTarget);
 
-  class XCustom extends HTMLElement {
+class XCustom extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let detail = document.createElement("div");
-      detail.id = "detail5";
-      detail.textContent = "Fifth detail";
-      let target = document.createElement("div");
-      target.id = "target5";
-      target.textContent = "Target 5";
-      this.shadowRoot.appendChild(detail);
-      this.shadowRoot.appendChild(target);
-      target.ariaDetailsElements = [detail];
-      document.body.appendChild(detail);
+        super();
+        this.attachShadow({ mode: "open" });
+        let detail = document.createElement("div");
+        detail.id = "detail5";
+        detail.textContent = "Fifth detail";
+        let target = document.createElement("div");
+        target.id = "target5";
+        target.textContent = "Target 5";
+        this.shadowRoot.appendChild(detail);
+        this.shadowRoot.appendChild(target);
+        target.ariaDetailsElements = [detail];
+        document.body.appendChild(detail);
     }
-  }
-  customElements.define("x-custom", XCustom);
+}
+customElements.define("x-custom", XCustom);
 
-  description("Checks that element reflection is exposed to the a11y tree for 'ariaDetailsElements'");
-  if (!window.accessibilityController) {
-    debug("This test requires accessibilityController");
-  } else {
-    target1.ariaDetailsElements = [detail1];
-    var axDetail1 = accessibilityController.accessibleElementById("detail1");
-    var axTarget1 = accessibilityController.accessibleElementById("target1");
-    shouldBeTrue("axTarget1.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaDetailsElements'\n\n";
+  
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    var axDetail1, axTarget1, wrapper, axDetail2, axTarget2, axDetail3, axInnerTarget, axDetail4, axTarget4, axDetail5, axTarget5;
+    setTimeout(async function() {
+        target1.ariaDetailsElements = [detail1];
+        axDetail1 = accessibilityController.accessibleElementById("detail1");
+        axTarget1 = accessibilityController.accessibleElementById("target1");
+        await waitFor(() => axTarget1.ariaDetailsElementAtIndex(0));
+        output += expect("axTarget1.ariaDetailsElementAtIndex(0).isEqual(axDetail1)", "true");
+        
+        target2.ariaDetailsElements = [document.getElementsByClassName("detail")[0]];
+        wrapper = accessibilityController.accessibleElementById("wrapper");
+        axDetail2 = wrapper.childAtIndex(0);
+        axTarget2 = accessibilityController.accessibleElementById("target2");
+        await waitFor(() => axTarget2.ariaDetailsElementAtIndex(0));
+        output += expect("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail2)", "true");
+        target2.setAttribute("aria-details", "detail1");
+        await waitFor(() => axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1));
+        output += expect("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)", "true");
 
-    target2.ariaDetailsElements = [document.getElementsByClassName("detail")[0]];
-    var wrapper = accessibilityController.accessibleElementById("wrapper");
-    var axDetail2 = wrapper.childAtIndex(0);
-    var axTarget2 = accessibilityController.accessibleElementById("target2");
-    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail2)");
-    target2.setAttribute("aria-details", "detail1");
-    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
+        axDetail3 = accessibilityController.accessibleElementById("detail3");
+        axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+        output += expect("axInnerTarget.ariaDetailsElementAtIndex(0).isEqual(axDetail3)", "true");
 
-    var axDetail3 = accessibilityController.accessibleElementById("detail3");
-    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
-    shouldBeTrue("axInnerTarget.ariaDetailsElementAtIndex(0).isEqual(axDetail3)");
+        target2.ariaDetailsElements = [detail1, document.getElementsByClassName("detail")[0], detail3];
+        await waitFor(() => axTarget2.ariaDetailsElementAtIndex(2));
+        output += expect("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)", "true");
+        output += expect("axTarget2.ariaDetailsElementAtIndex(1).isEqual(axDetail2)", "true");
+        output += expect("axTarget2.ariaDetailsElementAtIndex(2).isEqual(axDetail3)", "true");
 
-    target2.ariaDetailsElements = [detail1, document.getElementsByClassName("detail")[0], detail3];
-    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
-    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(1).isEqual(axDetail2)");
-    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(2).isEqual(axDetail3)");
+        target4.ariaDetailsElements = [detail4];
+        detail4.id = "detail4-new";
+        axDetail4 = accessibilityController.accessibleElementById("detail4-new");
+        axTarget4 = accessibilityController.accessibleElementById("target4");
+        await waitFor(() => axTarget4.ariaDetailsElementAtIndex(0));
+        output += expect("axTarget4.ariaDetailsElementAtIndex(0).isEqual(axDetail4)", "true");
 
-    target4.ariaDetailsElements = [detail4];
-    detail4.id = "detail4-new";
-    var axDetail4 = accessibilityController.accessibleElementById("detail4-new");
-    var axTarget4 = accessibilityController.accessibleElementById("target4");
-    shouldBeTrue("axTarget4.ariaDetailsElementAtIndex(0).isEqual(axDetail4)");
-
-    var axDetail5 = accessibilityController.accessibleElementById("detail5");
-    var axTarget5 = accessibilityController.accessibleElementById("target5");
-    shouldBeTrue("axTarget5.ariaDetailsElementAtIndex(0).isEqual(axDetail5)");
-  }
+        axDetail5 = accessibilityController.accessibleElementById("detail5");
+        axTarget5 = accessibilityController.accessibleElementById("target5");
+        output += expect("axTarget5.ariaDetailsElementAtIndex(0).isEqual(axDetail5)", "true");
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>

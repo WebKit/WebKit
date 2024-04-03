@@ -24,7 +24,7 @@ OSWindow *OSWindow::New()
     // Prefer X11
     if (IsX11WindowAvailable())
     {
-        return new X11Window();
+        return CreateX11Window();
     }
 #    endif
 

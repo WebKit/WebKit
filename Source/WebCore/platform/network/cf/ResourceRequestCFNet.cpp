@@ -27,16 +27,13 @@
 #include "ResourceRequestCFNet.h"
 
 #include "HTTPHeaderNames.h"
+#include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequest.h"
 #include <dlfcn.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/cf/TypeCastsCF.h>
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-#include "PublicSuffix.h"
-#endif
 
 namespace WebCore {
 

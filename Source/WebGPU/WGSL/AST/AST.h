@@ -41,6 +41,8 @@
 #include "ASTCallStatement.h"
 #include "ASTCompoundAssignmentStatement.h"
 #include "ASTCompoundStatement.h"
+#include "ASTConstAssert.h"
+#include "ASTConstAssertStatement.h"
 #include "ASTConstAttribute.h"
 #include "ASTContinueStatement.h"
 #include "ASTDecrementIncrementStatement.h"

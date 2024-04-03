@@ -179,9 +179,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
         httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
+    auto& directories = resolvedDirectories();
 #if HAVE(ALTERNATIVE_SERVICE)
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
-    String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
+    String alternativeServiceStorageDirectory = directories.alternativeServicesDirectory;
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 #endif
 
@@ -203,7 +204,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain = WebCore::RegistrableDomain { m_configuration->standaloneApplicationURL() };
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTFMove(resourceLoadStatisticsManualPrevalentResource);
 
-    auto cookieFile = resolvedCookieStorageFile();
+    auto cookieFile = directories.cookieStorageFile;
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {
@@ -593,7 +594,7 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
             return;
         
         NSArray<NSString *> *appBoundData = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"WKAppBoundDomains"];
-        keyExists = appBoundData ? true : false;
+        keyExists = !!appBoundData;
         
         RunLoop::main().dispatch([forceReinitialization, appBoundData = retainPtr(appBoundData)] {
             if (hasInitializedAppBoundDomains && forceReinitialization != ForceReinitialization::Yes)
@@ -754,11 +755,11 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
 #elif !PLATFORM(MACCATALYST)
         if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
-            crossSiteTrackingPreventionRelaxedDomains = [[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
+            crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else
             crossSiteTrackingPreventionRelaxedDomains = @[];
 #endif
-        managedKeyExists = crossSiteTrackingPreventionRelaxedDomains ? true : false;
+        managedKeyExists = !!crossSiteTrackingPreventionRelaxedDomains;
     
         RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
             if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
@@ -855,16 +856,7 @@ std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
 
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
-    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Standard;
-    NSString* unifiedOriginStorageLevelKey = @"WebKitDebugUnifiedOriginStorageLevel";
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:unifiedOriginStorageLevelKey] == nil)
-        return defaultUnifiedOriginStorageLevelValue;
-
-    auto level = convertToUnifiedOriginStorageLevel([[NSUserDefaults standardUserDefaults] integerForKey:unifiedOriginStorageLevelKey]);
-    if (!level)
-        return defaultUnifiedOriginStorageLevelValue;
-
-    return *level;
+    return UnifiedOriginStorageLevel::Standard;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -955,14 +947,14 @@ void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, Comple
 
 void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()] {
+    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()] {
         WebCore::saveRecentSearchesToFile(name, searchItems, directory);
     });
 }
 
 void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
-    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()]() mutable {
+    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy()]() mutable {
         auto result = WebCore::loadRecentSearchesFromFile(name, directory);
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
             completionHandler(WTFMove(result));
@@ -972,7 +964,7 @@ void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<
 
 void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, CompletionHandler<void()>&& completionHandler)
 {
-    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedDirectories().searchFieldHistoryDirectory.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });

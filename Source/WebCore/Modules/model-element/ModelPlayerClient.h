@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayerHostingContextIdentifier.h"
 #include "PlatformLayerIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -38,8 +39,12 @@ class WEBCORE_EXPORT ModelPlayerClient : public CanMakeWeakPtr<ModelPlayerClient
 public:
     virtual ~ModelPlayerClient();
 
+    virtual void didUpdateLayerHostingContextIdentifier(ModelPlayer&, LayerHostingContextIdentifier) = 0;
     virtual void didFinishLoading(ModelPlayer&) = 0;
     virtual void didFailLoading(ModelPlayer&, const ResourceError&) = 0;
+#if ENABLE(MODEL_PROCESS)
+    virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
+#endif
     virtual PlatformLayerIdentifier platformLayerID() = 0;
 };
 

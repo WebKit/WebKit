@@ -28,6 +28,7 @@
 #include "APICast.h"
 #include "JSGlobalObjectInlines.h"
 #include "MarkedJSValueRefArray.h"
+#include "RegisterTZoneTypes.h"
 #include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -35,6 +36,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/TZoneMallocInitialization.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
 

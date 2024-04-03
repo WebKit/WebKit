@@ -55,7 +55,7 @@ private:
     // RTCDataChannelHandler API
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
-    bool sendRawData(const uint8_t*, size_t) final;
+    bool sendRawData(std::span<const uint8_t>) final;
     std::optional<unsigned short> id() const final;
     void close() final;
 

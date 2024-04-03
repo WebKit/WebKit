@@ -46,16 +46,15 @@ ScrollingTreePositionedNode::~ScrollingTreePositionedNode() = default;
 
 bool ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStatePositionedNode>(stateNode))
+    auto* positionedStateNode = dynamicDowncast<ScrollingStatePositionedNode>(stateNode);
+    if (!positionedStateNode)
         return false;
 
-    const auto& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
+    if (positionedStateNode->hasChangedProperty(ScrollingStateNode::Property::RelatedOverflowScrollingNodes))
+        m_relatedOverflowScrollingNodes = positionedStateNode->relatedOverflowScrollingNodes();
 
-    if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::RelatedOverflowScrollingNodes))
-        m_relatedOverflowScrollingNodes = positionedStateNode.relatedOverflowScrollingNodes();
-
-    if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::LayoutConstraintData))
-        m_constraints = positionedStateNode.layoutConstraints();
+    if (positionedStateNode->hasChangedProperty(ScrollingStateNode::Property::LayoutConstraintData))
+        m_constraints = positionedStateNode->layoutConstraints();
 
     if (!m_relatedOverflowScrollingNodes.isEmpty())
         scrollingTree().activePositionedNodes().add(*this);
@@ -67,12 +66,8 @@ FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
 {
     FloatSize delta;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
-        if (auto* node = scrollingTree().nodeForID(nodeID)) {
-            if (is<ScrollingTreeOverflowScrollingNode>(node)) {
-                auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
-                delta += overflowNode.scrollDeltaSinceLastCommit();
-            }
-        }
+        if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(nodeID)))
+            delta += node->scrollDeltaSinceLastCommit();
     }
 
     // Positioned nodes compensate for scrolling, so negate the scroll delta.

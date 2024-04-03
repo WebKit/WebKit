@@ -16,7 +16,7 @@ layer at (20,20) size 444x200
       text run at (55,0) width 100: "eget lobortis at, "
       text run at (55,100) width 72: "convallis ut"
       text run at (73,0) width 44: "lectus. "
-    RenderText {#text} at (73,100) size 131x192
+    RenderText {#text} at (73,0) size 131x192
       text run at (73,100) width 62: " vulputate"
       text run at (91,0) width 147: "tincidunt leo, eu varius "
       text run at (91,147) width 31: "nunc"
@@ -26,7 +26,7 @@ layer at (20,20) size 444x200
       text run at (169,0) width 170: "et rutrum. Praesent pretium"
       text run at (187,0) width 57: "euismod "
       text run at (187,57) width 97: "est eget laoreet."
-    RenderText {#text} at (205,44) size 221x196
+    RenderText {#text} at (205,0) size 221x196
       text run at (205,44) width 102: " suscipit suscipit"
       text run at (223,0) width 182: "elementum. Duis consectetur"
       text run at (241,0) width 189: "pulvinar tempor. In mi sapien,"
@@ -45,14 +45,14 @@ layer at (20,20) size 444x200
     RenderText {#text} at (427,52) size 17x60
       text run at (427,52) width 60: " ut lorem."
 layer at (20,20) size 17x57
-  RenderInline (relative positioned) {SPAN} at (0,0) size 17x57 [bgcolor=#FFFF00]
+  RenderInline (relative positioned) {SPAN} at (72,44) size 17x57 [bgcolor=#FFFF00]
     RenderText {#text} at (73,44) size 17x57
       text run at (73,44) width 57: "Vivamus"
 layer at (20,20) size 17x44
-  RenderInline (relative positioned) {SPAN} at (0,0) size 17x44 [bgcolor=#FFFF00]
+  RenderInline (relative positioned) {SPAN} at (198,0) size 17x44 [bgcolor=#FFFF00]
     RenderText {#text} at (205,0) size 17x44
       text run at (205,0) width 44: "Integer"
 layer at (20,20) size 17x52
-  RenderInline (relative positioned) {SPAN} at (0,0) size 17x52 [bgcolor=#FFFF00]
+  RenderInline (relative positioned) {SPAN} at (414,0) size 17x52 [bgcolor=#FFFF00]
     RenderText {#text} at (427,0) size 17x52
       text run at (427,0) width 52: "pulvinar"

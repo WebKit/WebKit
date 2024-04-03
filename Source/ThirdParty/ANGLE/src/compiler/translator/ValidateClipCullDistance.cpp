@@ -3,8 +3,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// The ValidateClipCullDistance function checks if the sum of array sizes for gl_ClipDistance and
-// gl_CullDistance exceeds gl_MaxCombinedClipAndCullDistances
+// The ValidateClipCullDistance function:
+// * gathers clip/cull distance usages
+// * checks if the sum of array sizes for gl_ClipDistance and
+//   gl_CullDistance exceeds gl_MaxCombinedClipAndCullDistances
+// * checks if length() operator is used correctly
+// * adds an explicit clip/cull distance declaration
 //
 
 #include "ValidateClipCullDistance.h"
@@ -12,6 +16,7 @@
 #include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
+#include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/util.h"
 
 namespace sh
@@ -30,7 +35,6 @@ class ValidateClipCullDistanceTraverser : public TIntermTraverser
   public:
     ValidateClipCullDistanceTraverser();
     void validate(TDiagnostics *diagnostics,
-                  const unsigned int maxCullDistances,
                   const unsigned int maxCombinedClipAndCullDistances,
                   uint8_t *clipDistanceSizeOut,
                   uint8_t *cullDistanceSizeOut,
@@ -128,12 +132,6 @@ bool ValidateClipCullDistanceTraverser::visitBinary(Visit visit, TIntermBinary *
             case EbtUInt:
                 idx = constIdx->getUConst();
                 break;
-            case EbtFloat:
-                idx = static_cast<int>(constIdx->getFConst());
-                break;
-            case EbtBool:
-                idx = constIdx->getBConst() ? 1 : 0;
-                break;
             default:
                 UNREACHABLE();
                 break;
@@ -188,7 +186,6 @@ bool ValidateClipCullDistanceTraverser::visitBinary(Visit visit, TIntermBinary *
 }
 
 void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
-                                                 const unsigned int maxCullDistances,
                                                  const unsigned int maxCombinedClipAndCullDistances,
                                                  uint8_t *clipDistanceSizeOut,
                                                  uint8_t *cullDistanceSizeOut,
@@ -225,7 +222,9 @@ void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
              ? enabledClipDistances + enabledCullDistances
              : 0);
 
-    if (enabledCullDistances > 0 && maxCullDistances == 0)
+    // When cull distances are not supported, i.e., when GL_ANGLE_clip_cull_distance is
+    // exposed but GL_EXT_clip_cull_distance is not exposed, the combined limit is 0.
+    if (enabledCullDistances > 0 && maxCombinedClipAndCullDistances == 0)
     {
         error(*mCullDistance, "Cull distance functionality is not available", diagnostics);
     }
@@ -250,25 +249,121 @@ void ValidateClipCullDistanceTraverser::validate(TDiagnostics *diagnostics,
     *clipDistanceUsedOut       = (mMaxClipDistanceIndex != -1) || mHasNonConstClipDistanceIndex;
 }
 
+class ValidateClipCullDistanceLengthTraverser : public TIntermTraverser
+{
+  public:
+    ValidateClipCullDistanceLengthTraverser(TDiagnostics *diagnostics,
+                                            uint8_t clipDistanceSized,
+                                            uint8_t cullDistanceSized);
+
+  private:
+    bool visitUnary(Visit visit, TIntermUnary *node) override;
+
+    TDiagnostics *mDiagnostics;
+    const bool mClipDistanceSized;
+    const bool mCullDistanceSized;
+};
+
+ValidateClipCullDistanceLengthTraverser::ValidateClipCullDistanceLengthTraverser(
+    TDiagnostics *diagnostics,
+    uint8_t clipDistanceSize,
+    uint8_t cullDistanceSize)
+    : TIntermTraverser(true, false, false),
+      mDiagnostics(diagnostics),
+      mClipDistanceSized(clipDistanceSize > 0),
+      mCullDistanceSized(cullDistanceSize > 0)
+{}
+
+bool ValidateClipCullDistanceLengthTraverser::visitUnary(Visit visit, TIntermUnary *node)
+{
+    if (node->getOp() == EOpArrayLength)
+    {
+        TIntermTyped *operand = node->getOperand();
+        if ((operand->getQualifier() == EvqClipDistance && !mClipDistanceSized) ||
+            (operand->getQualifier() == EvqCullDistance && !mCullDistanceSized))
+        {
+            error(*operand->getAsSymbolNode(),
+                  "The length() method cannot be called on an array that is not "
+                  "runtime sized and also has not yet been explicitly sized",
+                  mDiagnostics);
+        }
+    }
+    return true;
+}
+
+bool ReplaceAndDeclareVariable(TCompiler *compiler,
+                               TIntermBlock *root,
+                               const ImmutableString &name,
+                               unsigned int size)
+{
+    const TVariable *var = static_cast<const TVariable *>(
+        compiler->getSymbolTable().findBuiltIn(name, compiler->getShaderVersion()));
+    ASSERT(var != nullptr);
+
+    if (size != var->getType().getOutermostArraySize())
+    {
+        TType *resizedType = new TType(var->getType());
+        resizedType->setArraySize(0, size);
+        TVariable *resizedVar =
+            new TVariable(&compiler->getSymbolTable(), name, resizedType, SymbolType::BuiltIn);
+        if (!ReplaceVariable(compiler, root, var, resizedVar))
+        {
+            return false;
+        }
+        var = resizedVar;
+    }
+
+    TIntermDeclaration *globalDecl = new TIntermDeclaration();
+    globalDecl->appendDeclarator(new TIntermSymbol(var));
+    root->insertStatement(0, globalDecl);
+
+    return true;
+}
+
 }  // anonymous namespace
 
-bool ValidateClipCullDistance(TIntermBlock *root,
+bool ValidateClipCullDistance(TCompiler *compiler,
+                              TIntermBlock *root,
                               TDiagnostics *diagnostics,
-                              const unsigned int maxCullDistances,
                               const unsigned int maxCombinedClipAndCullDistances,
                               uint8_t *clipDistanceSizeOut,
                               uint8_t *cullDistanceSizeOut,
-                              bool *clipDistanceRedeclaredOut,
-                              bool *cullDistanceRedeclaredOut,
                               bool *clipDistanceUsedOut)
 {
     ValidateClipCullDistanceTraverser varyingValidator;
     root->traverse(&varyingValidator);
     int numErrorsBefore = diagnostics->numErrors();
-    varyingValidator.validate(diagnostics, maxCullDistances, maxCombinedClipAndCullDistances,
-                              clipDistanceSizeOut, cullDistanceSizeOut, clipDistanceRedeclaredOut,
-                              cullDistanceRedeclaredOut, clipDistanceUsedOut);
-    return (diagnostics->numErrors() == numErrorsBefore);
+    bool clipDistanceRedeclared;
+    bool cullDistanceRedeclared;
+    varyingValidator.validate(diagnostics, maxCombinedClipAndCullDistances, clipDistanceSizeOut,
+                              cullDistanceSizeOut, &clipDistanceRedeclared, &cullDistanceRedeclared,
+                              clipDistanceUsedOut);
+
+    ValidateClipCullDistanceLengthTraverser lengthValidator(diagnostics, *clipDistanceSizeOut,
+                                                            *cullDistanceSizeOut);
+    root->traverse(&lengthValidator);
+    if (diagnostics->numErrors() != numErrorsBefore)
+    {
+        return false;
+    }
+
+    // If the clip/cull distance variables are not explicitly redeclared in the incoming shader,
+    // redeclare them to ensure that various pruning passes will not cause inconsistent AST state.
+    if (*clipDistanceSizeOut > 0 && !clipDistanceRedeclared &&
+        !ReplaceAndDeclareVariable(compiler, root, ImmutableString("gl_ClipDistance"),
+                                   *clipDistanceSizeOut))
+    {
+
+        return false;
+    }
+    if (*cullDistanceSizeOut > 0 && !cullDistanceRedeclared &&
+        !ReplaceAndDeclareVariable(compiler, root, ImmutableString("gl_CullDistance"),
+                                   *cullDistanceSizeOut))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 }  // namespace sh

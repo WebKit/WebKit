@@ -371,7 +371,15 @@
 		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
 		3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */; };
 		3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2232988C96D0080D728 /* renderermtl_utils.h */; };
+		4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */; };
+		4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
+		7B1538852BBC2C7A00B50C74 /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */; };
+		7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538822BBC2C7A00B50C74 /* NodeType.h */; };
+		7B1538872BBC2C7A00B50C74 /* IntermRebuild.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */; };
+		7B1538882BBC2C7A00B50C74 /* AsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538842BBC2C7A00B50C74 /* AsNode.h */; };
+		7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */; };
+		7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		7B19599526C3C64E00C09322 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
@@ -379,12 +387,8 @@
 		7B24C80D28D9A25100E2DDB1 /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */; };
 		7B24C80E28D9A25100E2DDB1 /* SymbolTable_ESSL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */; };
 		7B359D552A7CECAE0016DC59 /* DriverUniformMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D4B2A7CECAE0016DC59 /* DriverUniformMetal.cpp */; };
-		7B359D562A7CECAE0016DC59 /* NodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4C2A7CECAE0016DC59 /* NodeType.h */; };
-		7B359D572A7CECAE0016DC59 /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */; };
-		7B359D582A7CECAE0016DC59 /* IntermRebuild.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */; };
 		7B359D592A7CECAE0016DC59 /* DriverUniformMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D4F2A7CECAE0016DC59 /* DriverUniformMetal.h */; };
 		7B359D5A2A7CECAE0016DC59 /* UtilsMSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D502A7CECAE0016DC59 /* UtilsMSL.cpp */; };
-		7B359D5B2A7CECAE0016DC59 /* AsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D512A7CECAE0016DC59 /* AsNode.h */; };
 		7B359D5C2A7CECAE0016DC59 /* TranslatorMSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D522A7CECAE0016DC59 /* TranslatorMSL.h */; };
 		7B359D5D2A7CECAE0016DC59 /* UtilsMSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D532A7CECAE0016DC59 /* UtilsMSL.h */; };
 		7B359D5E2A7CECAE0016DC59 /* TranslatorMSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D542A7CECAE0016DC59 /* TranslatorMSL.cpp */; };
@@ -884,6 +888,13 @@
 			remoteGlobalIDString = 31CDFDF32491819E00486F27;
 			remoteInfo = "ANGLE (dynamic)";
 		};
+		4458D1252B635E0000B64F47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 31DB794F2491C33300982878;
+			remoteInfo = ANGLE;
+		};
 		FF194FF52744331A006A97A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -1071,6 +1082,10 @@
 		3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelLocalStorage.cpp; path = src/libANGLE/PixelLocalStorage.cpp; sourceTree = SOURCE_ROOT; };
 		3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderermtl_utils.cpp; sourceTree = "<group>"; };
 		3AD0D2232988C96D0080D728 /* renderermtl_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderermtl_utils.h; sourceTree = "<group>"; };
+		4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = metal_translator_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4458D1152B634F4200B64F47 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = translator_fuzzer.cpp; sourceTree = "<group>"; };
+		4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = metal_translator_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -1445,16 +1460,18 @@
 		7B037F9329E98CF100D23E74 /* SourcesCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourcesCGL.cpp; path = WebKit/SourcesCGL.cpp; sourceTree = "<group>"; };
 		7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourcesPlatform.cpp; path = WebKit/SourcesPlatform.cpp; sourceTree = "<group>"; };
 		7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "SourcesPlatform-mm.mm"; path = "WebKit/SourcesPlatform-mm.mm"; sourceTree = "<group>"; };
+		7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
+		7B1538822BBC2C7A00B50C74 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
+		7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
+		7B1538842BBC2C7A00B50C74 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
+		7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromFunctionDeclarations.cpp; sourceTree = "<group>"; };
+		7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromFunctionDeclarations.h; sourceTree = "<group>"; };
 		7B24C80928D9A20D00E2DDB1 /* ImmutableString_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableString_ESSL_autogen.cpp; sourceTree = "<group>"; };
 		7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
 		7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable_ESSL_autogen.cpp; sourceTree = "<group>"; };
 		7B359D4B2A7CECAE0016DC59 /* DriverUniformMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverUniformMetal.cpp; sourceTree = "<group>"; };
-		7B359D4C2A7CECAE0016DC59 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
-		7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntermRebuild.cpp; sourceTree = "<group>"; };
-		7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
 		7B359D4F2A7CECAE0016DC59 /* DriverUniformMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverUniformMetal.h; sourceTree = "<group>"; };
 		7B359D502A7CECAE0016DC59 /* UtilsMSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UtilsMSL.cpp; sourceTree = "<group>"; };
-		7B359D512A7CECAE0016DC59 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
 		7B359D522A7CECAE0016DC59 /* TranslatorMSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TranslatorMSL.h; sourceTree = "<group>"; };
 		7B359D532A7CECAE0016DC59 /* UtilsMSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilsMSL.h; sourceTree = "<group>"; };
 		7B359D542A7CECAE0016DC59 /* TranslatorMSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorMSL.cpp; sourceTree = "<group>"; };
@@ -1881,6 +1898,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4458D1192B635DCC00B64F47 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1891,6 +1916,7 @@
 				FF81FF202581919700894E24 /* msl */,
 				5CBD596922826A00002B22AA /* treeops */,
 				5C55D6EA22826C9800B5BA2C /* treeutil */,
+				7B1538842BBC2C7A00B50C74 /* AsNode.h */,
 				6E27925827EA43F500B1BA86 /* BaseTypes.cpp */,
 				31012DA018B97B9B0039062F /* BaseTypes.h */,
 				5C1DBBFD1B04375F00235552 /* blocklayout.cpp */,
@@ -1938,9 +1964,12 @@
 				31012DCA18B97B9B0039062F /* InitializeGlobals.h */,
 				5C1DBC091B04375F00235552 /* IntermNode.cpp */,
 				5C1DBC0A1B04375F00235552 /* IntermNode.h */,
+				7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */,
+				7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */,
 				315EBD651FCE443100AC7A89 /* IsASTDepthBelowLimit.cpp */,
 				315EBD571FCE442D00AC7A89 /* IsASTDepthBelowLimit.h */,
 				5C1DBC0B1B04375F00235552 /* length_limits.h */,
+				7B1538822BBC2C7A00B50C74 /* NodeType.h */,
 				5C1DBC0C1B04375F00235552 /* Operator.cpp */,
 				FF194FBB27432C4D006A97A3 /* Operator_autogen.h */,
 				315EBD751FCE443500AC7A89 /* OutputTree.cpp */,
@@ -2100,6 +2129,14 @@
 				3A0EBF962980B445002C72BC /* mru_cache.h */,
 			);
 			path = containers;
+			sourceTree = "<group>";
+		};
+		4458D1162B634FC200B64F47 /* fuzz */ = {
+			isa = PBXGroup;
+			children = (
+				4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */,
+			);
+			path = fuzz;
 			sourceTree = "<group>";
 		};
 		5C1BAA931DFB60E2002906BB /* EGL */ = {
@@ -2654,6 +2691,8 @@
 				5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
+				7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */,
+				7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */,
 				FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */,
 				FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */,
 				5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */,
@@ -2797,7 +2836,9 @@
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
+				4458D1152B634F4200B64F47 /* BaseTarget.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -3048,6 +3089,7 @@
 			isa = PBXGroup;
 			children = (
 				31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */,
+				4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3055,6 +3097,7 @@
 		FB39D2201200F35A00088E69 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				4458D1162B634FC200B64F47 /* fuzz */,
 				FB39D2441200F35A00088E69 /* preprocessor */,
 				31012D9F18B97B9B0039062F /* translator */,
 			);
@@ -3211,7 +3254,6 @@
 		FF81FF202581919700894E24 /* msl */ = {
 			isa = PBXGroup;
 			children = (
-				7B359D512A7CECAE0016DC59 /* AsNode.h */,
 				FF81FF3E2581919700894E24 /* AstHelpers.cpp */,
 				FF81FF472581919700894E24 /* AstHelpers.h */,
 				3A2C66ED29236D4100FEDF46 /* ConstantNames.cpp */,
@@ -3226,8 +3268,6 @@
 				FF81FF522581919700894E24 /* EmitMetal.h */,
 				FF81FF512581919700894E24 /* IdGen.cpp */,
 				FF81FF382581919700894E24 /* IdGen.h */,
-				7B359D4D2A7CECAE0016DC59 /* IntermRebuild.cpp */,
-				7B359D4E2A7CECAE0016DC59 /* IntermRebuild.h */,
 				FF81FF322581919700894E24 /* Layout.cpp */,
 				FF81FF402581919700894E24 /* Layout.h */,
 				FF81FF5A2581919700894E24 /* MapFunctionsToDefinitions.cpp */,
@@ -3238,7 +3278,6 @@
 				FF81FF562581919700894E24 /* ModifyStruct.h */,
 				FF81FF212581919700894E24 /* Name.cpp */,
 				FF81FF242581919700894E24 /* Name.h */,
-				7B359D4C2A7CECAE0016DC59 /* NodeType.h */,
 				FF81FF372581919700894E24 /* Pipeline.cpp */,
 				FF81FF492581919700894E24 /* Pipeline.h */,
 				FF81FF502581919700894E24 /* ProgramPrelude.cpp */,
@@ -3277,7 +3316,7 @@
 				31CD007F249184FD00486F27 /* angletypes.h in Headers */,
 				31CDFF542491848C00486F27 /* angleutils.h in Headers */,
 				7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */,
-				7B359D5B2A7CECAE0016DC59 /* AsNode.h in Headers */,
+				7B1538882BBC2C7A00B50C74 /* AsNode.h in Headers */,
 				3A2C66FB292372CC00FEDF46 /* AstcDecompressor.h in Headers */,
 				31CD0054249184FC00486F27 /* AttributeMap.h in Headers */,
 				3A0EBF9E2980B4A0002C72BC /* base_export.h in Headers */,
@@ -3463,7 +3502,7 @@
 				31CDFFE9249184A700486F27 /* IntermNode.h in Headers */,
 				31CDFFB3249184A100486F27 /* IntermNode_util.h in Headers */,
 				31CDFFB4249184A100486F27 /* IntermNodePatternMatcher.h in Headers */,
-				7B359D582A7CECAE0016DC59 /* IntermRebuild.h in Headers */,
+				7B1538872BBC2C7A00B50C74 /* IntermRebuild.h in Headers */,
 				31CDFFB0249184A100486F27 /* IntermTraverse.h in Headers */,
 				7B359DB32A7CEDAA0016DC59 /* IntroduceVertexIndexID.h in Headers */,
 				31CD000B249184BB00486F27 /* IOSurfaceSurfaceEAGL.h in Headers */,
@@ -3496,7 +3535,7 @@
 				7B359DA22A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.h in Headers */,
 				3A0EBF9F2980B4A0002C72BC /* no_destructor.h in Headers */,
 				31CDFFB5249184A100486F27 /* NodeSearch.h in Headers */,
-				7B359D562A7CECAE0016DC59 /* NodeType.h in Headers */,
+				7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */,
 				31CD001D249184E700486F27 /* null_functions.h in Headers */,
 				31CDFF732491849200486F27 /* numeric_lex.h in Headers */,
 				31CD0052249184FC00486F27 /* Observer.h in Headers */,
@@ -3606,6 +3645,7 @@
 				7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */,
 				7B359DAD2A7CEDAA0016DC59 /* SeparateCompoundStructDeclarations.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
+				7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */,
 				31CD0031249184F400486F27 /* serial_utils.h in Headers */,
 				31CDFFD0249184A700486F27 /* Severity.h in Headers */,
@@ -3733,6 +3773,23 @@
 			productReference = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		4458D11B2B635DCC00B64F47 /* metal_translator_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4458D1202B635DCC00B64F47 /* Build configuration list for PBXNativeTarget "metal_translator_fuzzer" */;
+			buildPhases = (
+				4458D1182B635DCC00B64F47 /* Sources */,
+				4458D1192B635DCC00B64F47 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4458D1262B635E0000B64F47 /* PBXTargetDependency */,
+			);
+			name = metal_translator_fuzzer;
+			productName = metal_translator_fuzzer;
+			productReference = 4458D11C2B635DCC00B64F47 /* metal_translator_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFDA50CB269F845100AE11E2 /* Build configuration list for PBXNativeTarget "ANGLEMetalLib" */;
@@ -3764,6 +3821,9 @@
 						CreatedOnToolsVersion = 12.0;
 						ProvisioningStyle = Automatic;
 					};
+					4458D11B2B635DCC00B64F47 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					FFDA50C4269F845100AE11E2 = {
 						CreatedOnToolsVersion = 13.0;
 						ProvisioningStyle = Automatic;
@@ -3785,6 +3845,7 @@
 				31DB794F2491C33300982878 /* ANGLE */,
 				31CDFDF32491819E00486F27 /* ANGLE (dynamic) */,
 				FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */,
+				4458D11B2B635DCC00B64F47 /* metal_translator_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -3967,7 +4028,7 @@
 				DF83E2B92639FD83000825EF /* IntermNode.cpp in Sources */,
 				DF83E2B22639FD83000825EF /* IntermNode_util.cpp in Sources */,
 				DF83E28C2639FD83000825EF /* IntermNodePatternMatcher.cpp in Sources */,
-				7B359D572A7CECAE0016DC59 /* IntermRebuild.cpp in Sources */,
+				7B1538852BBC2C7A00B50C74 /* IntermRebuild.cpp in Sources */,
 				DF83E2CF2639FD84000825EF /* IntermTraverse.cpp in Sources */,
 				7B359DAE2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp in Sources */,
 				DF83E3752639FEB8000825EF /* IOSurfaceSurfaceMtl.mm in Sources */,
@@ -4107,6 +4168,7 @@
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
 				7B359DA62A7CEDAA0016DC59 /* SeparateCompoundStructDeclarations.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
+				7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */,
 				3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */,
@@ -4203,6 +4265,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4458D1182B635DCC00B64F47 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FFDA50C3269F845100AE11E2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4218,6 +4288,11 @@
 			isa = PBXTargetDependency;
 			target = 31CDFDF32491819E00486F27 /* ANGLE (dynamic) */;
 			targetProxy = 31DB79562491C35400982878 /* PBXContainerItemProxy */;
+		};
+		4458D1262B635E0000B64F47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 31DB794F2491C33300982878 /* ANGLE */;
+			targetProxy = 4458D1252B635E0000B64F47 /* PBXContainerItemProxy */;
 		};
 		FF194FF62744331A006A97A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4264,6 +4339,30 @@
 		};
 		31DB79522491C33300982878 /* Production */ = {
 			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4458D1212B635DCC00B64F47 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4458D1222B635DCC00B64F47 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4458D1232B635DCC00B64F47 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4458D1142B634F4200B64F47 /* metal_translator_fuzzer.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -4332,6 +4431,16 @@
 				31DB79502491C33300982878 /* Debug */,
 				31DB79512491C33300982878 /* Release */,
 				31DB79522491C33300982878 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4458D1202B635DCC00B64F47 /* Build configuration list for PBXNativeTarget "metal_translator_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4458D1212B635DCC00B64F47 /* Debug */,
+				4458D1222B635DCC00B64F47 /* Release */,
+				4458D1232B635DCC00B64F47 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

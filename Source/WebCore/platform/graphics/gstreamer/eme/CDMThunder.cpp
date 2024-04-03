@@ -271,8 +271,8 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
         const uint16_t challengeLength) {
         GST_DEBUG("Got 'challenge' OCDM notification with length %hu", challengeLength);
         ASSERT(challengeLength > 0);
-        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(challenge,
-            challengeLength)]() mutable {
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(std::span { challenge,
+            challengeLength })]() mutable {
             if (!session)
                 return;
             session->challengeGeneratedCallback(WTFMove(buffer));
@@ -281,7 +281,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     m_thunderSessionCallbacks.key_update_callback = [](OpenCDMSession*, void* userData, const uint8_t keyIDData[], const uint8_t keyIDLength) {
         GST_DEBUG("Got 'key updated' OCDM notification");
         KeyIDType keyID;
-        keyID.append(keyIDData, keyIDLength);
+        keyID.append(std::span { keyIDData, keyIDLength });
         callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, keyID = WTFMove(keyID)]() mutable {
             if (!session)
                 return;
@@ -298,8 +298,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     };
     m_thunderSessionCallbacks.error_message_callback = [](OpenCDMSession*, void* userData, const char message[]) {
         GST_ERROR("Got 'error' OCDM notification: %s", message);
-        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(message,
-            strlen(message))]() mutable {
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(span(message))]() mutable {
             if (!session)
                 return;
             session->errorCallback(WTFMove(buffer));
@@ -326,9 +325,8 @@ public:
         unsigned offset = 0u;
         if (buffer->size() >= 7) {
             auto data = buffer->read(0, 7);
-            StringView dataString(reinterpret_cast<const LChar*>(data.data()), data.size());
-            static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
-            if (dataString.endsWith(type)) {
+            StringView dataString(data.span());
+            if (dataString.endsWith(":Type:"_s)) {
                 m_type.emplace(static_cast<WebCore::MediaKeyMessageType>(dataString.characterAt(0) - '0'));
                 offset = 7;
             }
@@ -624,7 +622,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder({ }));
             else {
                 auto responseData = responseMessage->extractData();
-                StringView response(reinterpret_cast<const LChar*>(responseData.data()), responseData.size());
+                StringView response(responseData.span());
                 GST_DEBUG("Error message: %s", response.utf8().data());
                 callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
             }

@@ -51,7 +51,7 @@ public:
         return false;
     }
 
-    void setText(StringView, const UChar*, unsigned)
+    void setText(StringView, std::span<const UChar>)
     {
         ASSERT_NOT_REACHED();
     }

@@ -56,7 +56,7 @@ public:
     Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
 
 private:
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     void gamepadsBecameVisible();
 

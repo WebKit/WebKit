@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x60
-  RenderBlock {HTML} at (0,0) size 800x60
-    RenderBody {BODY} at (8,8) size 784x44
-      RenderBlock {DIV} at (0,0) size 784x22
+layer at (0,0) size 800x61
+  RenderBlock {HTML} at (0,0) size 800x61
+    RenderBody {BODY} at (8,8) size 784x45
+      RenderBlock {DIV} at (0,0) size 784x23
         RenderText {#text} at (619,0) size 165x19
           text run at (619,0) width 9 RTL: ": "
           text run at (627,0) width 157: "right to left search fields"
@@ -20,7 +20,7 @@ layer at (0,0) size 800x60
             RenderBlock {DIV} at (0,0) size 125x14
             RenderBlock {DIV} at (0,7) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,22) size 784x22
+      RenderBlock {DIV} at (0,22) size 784x23
         RenderText {#text} at (0,0) size 165x19
           text run at (0,0) width 165: "left to right search fields: "
         RenderTextControl {INPUT} at (164,1) size 156x22 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
@@ -44,11 +44,11 @@ layer at (324,12) size 125x14
   RenderBlock {DIV} at (0,0) size 125x14
     RenderText {#text} at (90,0) size 35x14
       text run at (90,0) width 35: "foobar"
-layer at (194,34) size 127x14
+layer at (194,35) size 127x14
   RenderBlock {DIV} at (0,0) size 127x14
     RenderText {#text} at (0,0) size 35x14
       text run at (0,0) width 35: "foobar"
-layer at (353,34) size 127x14
+layer at (353,35) size 127x14
   RenderBlock {DIV} at (0,0) size 127x14
     RenderText {#text} at (0,0) size 35x14
       text run at (0,0) width 35: "foobar"

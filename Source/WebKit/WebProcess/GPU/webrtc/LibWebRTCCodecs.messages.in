@@ -25,10 +25,10 @@
 messages -> LibWebRTCCodecs NotRefCounted {
     FailedDecoding(WebKit::VideoDecoderIdentifier identifier)
     FlushDecoderCompleted(WebKit::VideoDecoderIdentifier identifier)
-    CompletedDecoding(WebKit::VideoDecoderIdentifier identifier, int64_t timeStamp, int64_t timeStampNs, WebKit::RemoteVideoFrameProxy::Properties frame)
+    CompletedDecoding(WebKit::VideoDecoderIdentifier identifier, int64_t timeStamp, int64_t timeStampNs, struct WebKit::RemoteVideoFrameProxyProperties frame)
     CompletedDecodingCV(WebKit::VideoDecoderIdentifier identifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef> pixelBuffer)
-    CompletedEncoding(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info);
-    SetEncodingConfiguration(WebKit::VideoEncoderIdentifier identifier, struct IPC::DataReference description, std::optional<WebCore::PlatformVideoColorSpace> colorSpace);
+    CompletedEncoding(WebKit::VideoEncoderIdentifier identifier, std::span<const uint8_t> data, struct webrtc::WebKitEncodedFrameInfo info);
+    SetEncodingConfiguration(WebKit::VideoEncoderIdentifier identifier, std::span<const uint8_t> description, std::optional<WebCore::PlatformVideoColorSpace> colorSpace);
 }
 
 #endif // USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)

@@ -134,7 +134,7 @@ private:
     const char* activeDOMObjectName() const final;
     
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    EventTargetInterface eventTargetInterface() const final { return ServiceWorkerContainerEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ServiceWorkerContainer; }
     void refEventTarget() final;
     void derefEventTarget() final;
     void stop() final;
@@ -154,7 +154,7 @@ private:
     HashMap<ServiceWorkerJobIdentifier, OngoingJob> m_jobMap;
 
     bool m_isStopped { false };
-    HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;
+    HashMap<ServiceWorkerRegistrationIdentifier, WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData>> m_registrations;
 
 #if ASSERT_ENABLED
     Ref<Thread> m_creationThread { Thread::current() };

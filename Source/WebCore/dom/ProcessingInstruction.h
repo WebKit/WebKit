@@ -45,8 +45,6 @@ public:
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
-    void finishParsingChildren() override;
-
     const String& localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
     RefPtr<StyleSheet> protectedSheet() const;

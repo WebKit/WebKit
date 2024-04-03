@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
                   RenderInline {SPAN} at (0,0) size 34x18
                     RenderText {#text} at (0,0) size 34x18
                       text run at (0,0) width 34: "static"
-                  RenderInline {SPAN} at (0,0) size 52x18
+                  RenderInline {SPAN} at (33,0) size 52x18
                     RenderText {#text} at (33,0) size 52x18
                       text run at (33,0) width 52: "editable"
         RenderBlock (anonymous) at (0,46) size 784x18

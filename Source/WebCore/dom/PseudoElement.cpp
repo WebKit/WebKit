@@ -86,7 +86,7 @@ bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
         return true;
 
     if (RefPtr element = m_hostElement.get()) {
-        if (auto* stack = element->keyframeEffectStack(pseudoId()))
+        if (auto* stack = element->keyframeEffectStack(Style::PseudoElementIdentifier { pseudoId() }))
             return stack->requiresPseudoElement();
     }
     return false;

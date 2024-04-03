@@ -100,7 +100,7 @@ layer at (0,0) size 800x632
               RenderText {#text} at (30,30) size 22x19
                 text run at (30,30) width 22: "foo"
             RenderTableCell {TD} at (320,19) size 452x62 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (21,21) size 21x19
+              RenderText {#text} at (21,30) size 21x19
                 text run at (21,21) width 21: "bar"
       RenderBlock (anonymous) at (0,504) size 784x20
         RenderBR {BR} at (0,0) size 0x19

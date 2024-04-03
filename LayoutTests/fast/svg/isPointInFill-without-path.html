@@ -1,0 +1,10 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText() }
+function checkPointInFill() {
+    var result = rectElement.isPointInFill();
+    alert("This test passes if it does not crash");
+}
+</script>
+<body onload=checkPointInFill()>
+<svg id="svgElement" transform="skewY(0)" style="font-variant-caps: titling-case; rotation: 0deg; text-decoration-upright: all none; box-ordinal-group: 1; grid-template: none/-1px" xml:space="default" baseProfile="full" xml:space="preserve" preserveAlpha="true" points="1,1 12,0" x="1em" role="button" role="button">
+<rect id="rectElement" x="20em" y="1 -1 62" width="-1cm" height="1cm" font-size="4px" transform="skewX(-1) skewX(6)" fill="url(#doesnotexist) currentColor" clip-path="url(#svgElement)" repeatDur="4s" vert-origin-y="10" onclick="eventhandler4()" refX="56" fx="1" />

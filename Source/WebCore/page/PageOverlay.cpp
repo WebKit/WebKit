@@ -132,7 +132,7 @@ IntSize PageOverlay::viewToOverlayOffset() const
         return IntSize();
 
     case OverlayType::Document: {
-        auto* frameView = m_page->mainFrame().virtualView();
+        RefPtr frameView = m_page->mainFrame().virtualView();
         return frameView ? toIntSize(frameView->viewToContents(IntPoint())) : IntSize();
     }
     }

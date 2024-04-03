@@ -31,10 +31,12 @@
 import os
 import logging
 import shlex
+import webbrowser
 
 import webkitpy
 from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.glib import GLibPort
 from webkitpy.port.xvfbdriver import XvfbDriver
@@ -111,19 +113,6 @@ class GtkPort(GLibPort):
     def _path_to_default_image_diff(self):
         return self._path_to_image_diff()
 
-    def _path_to_webcore_library(self):
-        gtk_library_names = [
-            "libwebkitgtk-1.0.so",
-            "libwebkitgtk-3.0.so",
-            "libwebkit2gtk-1.0.so",
-        ]
-
-        for library in gtk_library_names:
-            full_library = self._built_libraries_path(library)
-            if self._filesystem.isfile(full_library):
-                return full_library
-        return None
-
     def _search_paths(self):
         search_paths = []
 
@@ -156,14 +145,15 @@ class GtkPort(GLibPort):
         self._leakdetector.parse_and_print_leaks_detail(leaks_files)
 
     def show_results_html_file(self, results_filename):
-        self.run_minibrowser([path.abspath_to_uri(self.host.platform, results_filename)])
+        uri = path.abspath_to_uri(self.host.platform, results_filename)
+        try:
+            self.run_minibrowser([uri, ])
+        except ScriptError:
+            print('Failed to run Minibrowser, falling back to default browser')
+            webbrowser.open_new(uri)
 
     def check_sys_deps(self):
         return super(GtkPort, self).check_sys_deps() and self._driver_class().check_driver(self)
-
-    def test_expectations_file_position(self):
-        # GTK port baseline search path is gtk -> glib -> wk2 -> generic (as gtk-wk2 and gtk baselines are merged), so port test expectations file is at third to last position.
-        return 3
 
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)

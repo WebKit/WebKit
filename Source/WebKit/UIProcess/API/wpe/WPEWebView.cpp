@@ -30,6 +30,7 @@
 #include "APIViewClient.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "EditingRange.h"
 #include "EditorState.h"
 #include "NativeWebKeyboardEvent.h"
@@ -44,12 +45,22 @@
 #if ENABLE(GAMEPAD)
 #include <WebCore/GamepadProviderLibWPE.h>
 #endif
-#include <WebCore/RefPtrCairo.h>
-#include <cairo.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
+#if USE(CAIRO)
+#include <WebCore/RefPtrCairo.h>
+#include <cairo.h>
+#endif
+
+#if USE(SKIA)
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 #if ENABLE(WPE_PLATFORM)
+#include "ScreenManager.h"
 #include <wpe/wpe-platform.h>
 #endif
 
@@ -72,7 +83,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
 #endif
-    , m_pageClient(makeUnique<PageClientImpl>(*this))
+    , m_pageClient(makeUniqueWithoutRefCountedCheck<PageClientImpl>(*this))
     , m_size { 800, 600 }
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)
@@ -84,30 +95,26 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 #endif
 
     auto configuration = baseConfiguration.copy();
-    auto* preferences = configuration->preferences();
-    if (!preferences && configuration->pageGroup()) {
-        preferences = &configuration->pageGroup()->preferences();
-        configuration->setPreferences(preferences);
-    }
-    if (preferences) {
-        preferences->setAcceleratedCompositingEnabled(true);
-        preferences->setForceCompositingMode(true);
-        preferences->setThreadedScrollingEnabled(true);
-    }
+    auto& preferences = configuration->preferences();
+    preferences.setAcceleratedCompositingEnabled(true);
+    preferences.setForceCompositingMode(true);
+    preferences.setThreadedScrollingEnabled(true);
 
-    auto* pool = configuration->processPool();
-    if (!pool) {
-        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
-        pool = &WebProcessPool::create(processPoolConfiguration).leakRef();
-        configuration->setProcessPool(pool);
-    }
-    m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+    auto& pool = configuration->processPool();
+    m_pageProxy = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
 #if ENABLE(WPE_PLATFORM)
     if (display) {
         m_wpeView = adoptGRef(wpe_view_new(display));
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
         m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
+
+        if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
+            m_displayID = wpe_monitor_get_id(monitor);
+        else
+            m_displayID = ScreenManager::singleton().primaryDisplayID();
+        m_pageProxy->windowScreenDidChange(m_displayID);
+
         g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));
@@ -116,6 +123,10 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         g_signal_connect(m_wpeView.get(), "notify::scale", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
             auto& webView = *reinterpret_cast<View*>(userData);
             webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
+        }), this);
+        g_signal_connect(m_wpeView.get(), "notify::monitor", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            webView.updateDisplayID();
         }), this);
         g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
             auto& webView = *reinterpret_cast<View*>(userData);
@@ -240,7 +251,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
-        pool->startMemorySampler(0);
+        pool.startMemorySampler(0);
 #endif
 
     static struct wpe_view_backend_client s_backendClient = {
@@ -275,10 +286,11 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         // get_accessible
         [](void* data) -> void*
         {
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
             auto& view = *reinterpret_cast<View*>(data);
             return view.accessible();
 #else
+            UNUSED_PARAM(data);
             return nullptr;
 #endif
         },
@@ -478,8 +490,8 @@ View::~View()
         wpe_view_backend_set_backend_client(m_backend, nullptr, nullptr);
         wpe_view_backend_set_input_client(m_backend, nullptr, nullptr);
         // Although the fullscreen client is used for libwpe 1.11.1 and newer, we cannot
-        // unregister it prior to 1.15.2 (see https://github.com/WebPlatformForEmbedded/libwpe/pull/129).
-#if ENABLE(FULLSCREEN_API) && WPE_CHECK_VERSION(1, 15, 2)
+        // unregister it prior to 1.14.2 (see https://github.com/WebPlatformForEmbedded/libwpe/pull/129).
+#if ENABLE(FULLSCREEN_API) && WPE_CHECK_VERSION(1, 14, 2)
         wpe_view_backend_set_fullscreen_client(m_backend, nullptr, nullptr);
 #endif
     }
@@ -492,7 +504,7 @@ View::~View()
     m_backingStore = nullptr;
 #endif
 
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
 #endif
@@ -726,7 +738,7 @@ bool View::setFullScreen(bool fullScreenState)
 };
 #endif
 
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
 WebKitWebViewAccessible* View::accessible() const
 {
     if (!m_accessible)
@@ -771,6 +783,20 @@ void View::updateAcceleratedSurface(uint64_t surfaceID)
 {
     if (m_backingStore)
         m_backingStore->updateSurfaceID(surfaceID);
+}
+
+void View::updateDisplayID()
+{
+    auto* monitor = wpe_view_get_monitor(m_wpeView.get());
+    if (!monitor)
+        return;
+
+    auto displayID = wpe_monitor_get_id(monitor);
+    if (displayID == m_displayID)
+        return;
+
+    m_displayID = displayID;
+    m_pageProxy->windowScreenDidChange(m_displayID);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -911,9 +937,10 @@ void View::setCursor(const WebCore::Cursor& cursor)
         return;
     }
 
+#if USE(CAIRO)
     ASSERT(cursor.type() == WebCore::Cursor::Type::Custom);
     auto image = cursor.image();
-    auto nativeImage = image->nativeImageForCurrentFrame();
+    auto nativeImage = image->currentNativeImage();
     if (!nativeImage)
         return;
 
@@ -928,9 +955,48 @@ void View::setCursor(const WebCore::Cursor& cursor)
 
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, stride, hotspot.x(), hotspot.y());
+#elif USE(SKIA)
+    auto nativeImage = cursor.image()->currentNativeImage();
+    if (!nativeImage)
+        return;
+
+    SkPixmap pixmap;
+    auto platformImage = nativeImage->platformImage();
+    ASSERT(platformImage->peekPixels(&pixmap));
+
+    platformImage->ref();
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(pixmap.addr(), pixmap.computeByteSize(), [](gpointer data) {
+        static_cast<SkImage*>(data)->unref();
+    }, platformImage.get()));
+
+    WebCore::IntPoint hotspot = WebCore::determineHotSpot(cursor.image().get(), cursor.hotSpot());
+    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
+#endif
 #else
     UNUSED_PARAM(cursor);
 #endif
+}
+
+void View::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (m_wpeView) {
+        RELEASE_ASSERT(!m_nextPresentationUpdateCallback);
+        m_nextPresentationUpdateCallback = WTFMove(callback);
+        if (!m_bufferRenderedID) {
+            m_bufferRenderedID = g_signal_connect_after(m_wpeView.get(), "buffer-rendered", G_CALLBACK(+[](WPEView* view, WPEBuffer*, gpointer userData) {
+                auto& webView = *reinterpret_cast<View*>(userData);
+                if (webView.m_nextPresentationUpdateCallback)
+                    webView.m_nextPresentationUpdateCallback();
+            }), this);
+        }
+
+        return;
+    }
+#endif
+
+    RELEASE_ASSERT(m_pageProxy->drawingArea());
+    downcast<DrawingAreaProxyCoordinatedGraphics>(*m_pageProxy->drawingArea()).dispatchAfterEnsuringDrawing(WTFMove(callback));
 }
 
 } // namespace WKWPE

@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,122) size 784x36
         RenderText {#text} at (0,0) size 517x18
           text run at (0,0) width 517: "The rule to follow is 3.3.4.N2 in the Unicode Standard's Bidirectional Algorithm"
-        RenderInline {A} at (0,0) size 402x18 [color=#0000EE]
+        RenderInline {A} at (0,18) size 402x18 [color=#0000EE]
           RenderText {#text} at (0,18) size 402x18
             text run at (0,18) width 402: "http://www.unicode.org/reports/tr9/#Resolving_Neutral_Types"
         RenderText {#text} at (401,18) size 5x18

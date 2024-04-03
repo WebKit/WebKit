@@ -33,6 +33,7 @@
 #include <WebCore/TrackBase.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -80,11 +81,12 @@ private:
     VideoTrackPrivateRemoteConfiguration configuration();
     void updateConfiguration();
 
-    WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     Ref<WebCore::VideoTrackPrivate> m_trackPrivate;
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_selected { false };
+    size_t m_clientRegistrationId { 0 };
 };
 
 } // namespace WebKit

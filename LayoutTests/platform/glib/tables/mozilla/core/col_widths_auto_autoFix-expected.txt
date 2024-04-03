@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 604x104 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
               RenderImage {IMG} at (2,2) size 600x100
             RenderTableCell {TD} at (608,43) size 25x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x17
+              RenderText {#text} at (2,43) size 21x17
                 text run at (2,2) width 21: "foo"
           RenderTableRow {TR} at (0,108) size 635x22
             RenderTableCell {TD} at (2,108) size 25x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]

@@ -1,0 +1,48 @@
+<style>
+  *:scope,
+  *::first-letter,
+  select:valid {
+    none;
+    -webkit-user-modify: read-write-plaintext-only;
+    word-break: 59px;
+    -webkit-line-break: after-white-space;
+    margin: hidden;
+    min-width: max-content;
+    perspective:
+  }
+</style>
+<p>Pass if no crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  function main() {
+    try { x21.addEventListener("DOMNodeInserted", f1); } catch { }
+    try { v41 = x11.getElementById("x36"); } catch { }
+    try { v41.appendChild(x2); } catch { }
+    try { document.onselectionchange = f1; } catch { }
+  }
+  function f1() {
+    try { x5.replaceWith("AAAA"); } catch { }
+    try { x8.outerText = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; } catch { }
+    try { v21 = window.document; } catch { }
+    try { x51.outerText = "AAAAAAAAAAAAAAAAAAAAAAAAAAAA"; } catch { }
+    try { window.find("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); } catch { }
+    try { v21.execCommand("removeFormat", false, null); } catch { }
+  }
+</script>
+
+<body onload="main()">
+  <hgroup id="x2" tabindex="20406">
+  </hgroup>
+  <progress draggable="false">
+  </progress>
+  <svg id="x11" display="flow-root" onfocusout="f4()">
+    <polygon id="x21" onfocusout="f3()">
+      <mask id="x36" maskContentUnits="objectBoundingBox">
+  </svg>
+  <dfn id="x51" title="AAAAAAAAAAAAAAAAAAAA">
+  </dfn>
+  <fieldset id="x5" dir="ltr">
+  </fieldset>
+  <wbr id="x8" class="class0">
+  <br inputmode="numeric">

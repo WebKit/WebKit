@@ -38,6 +38,7 @@ public:
 
     const CSSCalcExpressionNode& child() const { return m_child.get(); }
     CSSCalcExpressionNode& child() { return m_child.get(); }
+    Ref<CSSCalcExpressionNode> protectedChild() const { return m_child; }
 
     void setChild(Ref<CSSCalcExpressionNode>&& child) { m_child = WTFMove(child); }
 

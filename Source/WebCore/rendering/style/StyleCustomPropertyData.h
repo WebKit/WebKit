@@ -44,7 +44,8 @@ public:
     const CSSCustomPropertyValue* get(const AtomString&) const;
     void set(const AtomString&, Ref<const CSSCustomPropertyValue>&&);
 
-    unsigned size() const;
+    unsigned size() const { return m_size; }
+    bool mayHaveAnimatableProperties() const { return m_mayHaveAnimatableProperties; }
 
     void forEach(const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>&) const;
     AtomString findKeyAtIndex(unsigned) const;
@@ -59,6 +60,7 @@ private:
     CustomPropertyValueMap m_ownValues;
     unsigned m_size { 0 };
     unsigned m_ancestorCount { 0 };
+    bool m_mayHaveAnimatableProperties { false };
 #if ASSERT_ENABLED
     mutable bool m_hasChildren { false };
 #endif

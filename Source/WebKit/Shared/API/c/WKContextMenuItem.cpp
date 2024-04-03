@@ -194,7 +194,7 @@ STATIC_ASSERT_EQUALS(16, kWKContextMenuItemTagNoGuessesFound, ContextMenuItemTag
 STATIC_ASSERT_EQUALS(17, kWKContextMenuItemTagIgnoreSpelling, ContextMenuItemTagIgnoreSpelling);
 STATIC_ASSERT_EQUALS(18, kWKContextMenuItemTagLearnSpelling, ContextMenuItemTagLearnSpelling);
 STATIC_ASSERT_EQUALS(19, kWKContextMenuItemTagOther, ContextMenuItemTagOther);
-STATIC_ASSERT_EQUALS(20, kWKContextMenuItemTagSearchInSpotlight, ContextMenuItemTagSearchInSpotlight);
+static_assert(20 == kWKContextMenuItemTagSearchInSpotlight);
 STATIC_ASSERT_EQUALS(21, kWKContextMenuItemTagSearchWeb, ContextMenuItemTagSearchWeb);
 STATIC_ASSERT_EQUALS(22, kWKContextMenuItemTagLookUpInDictionary, ContextMenuItemTagLookUpInDictionary);
 STATIC_ASSERT_EQUALS(23, kWKContextMenuItemTagOpenWithDefaultApplication, ContextMenuItemTagOpenWithDefaultApplication);

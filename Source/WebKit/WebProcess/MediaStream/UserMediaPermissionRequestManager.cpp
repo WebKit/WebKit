@@ -129,13 +129,13 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(UserMediaReque
     request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalts), WTFMove(completionHandler));
 }
 
-void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, MediaAccessDenialReason reason, String&& invalidConstraint)
+void UserMediaPermissionRequestManager::userMediaAccessWasDenied(UserMediaRequestIdentifier requestID, MediaAccessDenialReason reason, String&& message, MediaConstraintType invalidConstraint)
 {
     auto request = m_ongoingUserMediaRequests.take(requestID);
     if (!request)
         return;
 
-    request->deny(reason, WTFMove(invalidConstraint));
+    request->deny(reason, WTFMove(message),  invalidConstraint);
 }
 
 void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&, MediaDeviceHashSalts&&)>&& completionHandler)

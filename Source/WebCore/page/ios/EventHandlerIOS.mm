@@ -199,21 +199,21 @@ void EventHandler::focusDocumentView()
     }
 
     RELEASE_ASSERT(page == m_frame->page());
-    CheckedRef(page->focusController())->setFocusedFrame(protectedFrame().ptr());
+    page->checkedFocusController()->setFocusedFrame(protectedFrame().ptr());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    auto* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
-    if (!is<RenderWidget>(target))
+    auto* target = event.targetNode() ? dynamicDowncast<RenderWidget>(event.targetNode()->renderer()) : nullptr;
+    if (!target)
         return false;
 
     // Double-click events don't exist in Cocoa. Since passWidgetMouseDownEventToWidget() will
     // just pass currentEvent down to the widget, we don't want to call it for events that
     // don't correspond to Cocoa events. The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
+    return passMouseDownEventToWidget(target->widget());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
@@ -399,13 +399,13 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
         auto* node = event.targetNode();
         if (!node)
             return false;
-        auto* renderer = node->renderer();
-        if (!is<RenderWidget>(renderer))
+        auto* renderer = dynamicDowncast<RenderWidget>(node->renderer());
+        if (!renderer)
             return false;
-        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        auto* widget = renderer->widget();
         if (!widget || !widget->isLocalFrameView())
             return false;
-        if (!passWidgetMouseDownEventToWidget(downcast<RenderWidget>(renderer)))
+        if (!passWidgetMouseDownEventToWidget(renderer))
             return false;
         m_mouseDownWasInSubframe = true;
         return true;

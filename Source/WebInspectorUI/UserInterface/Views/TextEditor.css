@@ -124,7 +124,7 @@
 }
 
 .text-editor > .CodeMirror .highlighted {
-    animation: "text-editor-highlight-fadeout" 2s;
+    animation: text-editor-highlight-fadeout 2s;
 }
 
 @keyframes text-editor-highlight-fadeout {
@@ -132,7 +132,7 @@
 }
 
 .text-editor > .CodeMirror .hovered-expression-highlight {
-    animation: "text-editor-hovered-expression-highlight-fadeout" 2s;
+    animation: text-editor-hovered-expression-highlight-fadeout 2s;
     background-color: hsla(0, 0%, 0%, 0.1);
 }
 

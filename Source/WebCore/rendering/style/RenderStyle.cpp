@@ -112,7 +112,7 @@ static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorat
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
-static_assert(!((enumToUnderlyingType(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
+static_assert(!((enumToUnderlyingType(PseudoId::AfterLastInternalPseudoId) - 1) >> PseudoElementTypeBits));
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
@@ -166,7 +166,7 @@ RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& pare
 
 RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle)
 {
-    ASSERT(pseudoStyle.styleType() == PseudoId::Before || pseudoStyle.styleType() == PseudoId::After);
+    ASSERT(pseudoStyle.pseudoElementType() == PseudoId::Before || pseudoStyle.pseudoElementType() == PseudoId::After);
 
     auto style = create();
     style.inheritFrom(pseudoStyle);
@@ -229,7 +229,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
-    m_nonInheritedFlags.styleType = static_cast<unsigned>(PseudoId::None);
+    m_nonInheritedFlags.pseudoElementType = static_cast<unsigned>(PseudoId::None);
     m_nonInheritedFlags.pseudoBits = static_cast<unsigned>(PseudoId::None);
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
@@ -447,7 +447,7 @@ bool RenderStyle::operator==(const RenderStyle& other) const
 
 bool RenderStyle::hasUniquePseudoStyle() const
 {
-    if (!m_cachedPseudoStyles || styleType() != PseudoId::None)
+    if (!m_cachedPseudoStyles || pseudoElementType() != PseudoId::None)
         return false;
 
     for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
@@ -458,13 +458,13 @@ bool RenderStyle::hasUniquePseudoStyle() const
     return false;
 }
 
-RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
+RenderStyle* RenderStyle::getCachedPseudoStyle(const Style::PseudoElementIdentifier& pseudoElementIdentifier) const
 {
     if (!m_cachedPseudoStyles)
         return nullptr;
 
     for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
-        if (pseudoStyle->styleType() == pid)
+        if (pseudoStyle->pseudoElementType() == pseudoElementIdentifier.pseudoId && pseudoStyle->pseudoElementNameArgument() == pseudoElementIdentifier.nameArgument)
             return pseudoStyle.get();
     }
 
@@ -476,7 +476,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     if (!pseudo)
         return nullptr;
 
-    ASSERT(pseudo->styleType() > PseudoId::None);
+    ASSERT(pseudo->pseudoElementType() > PseudoId::None);
 
     RenderStyle* result = pseudo.get();
 
@@ -496,10 +496,6 @@ bool RenderStyle::inheritedEqual(const RenderStyle& other) const
         && m_rareInheritedData == other.m_rareInheritedData;
 }
 
-bool RenderStyle::inheritedCustomPropertiesEqual(const RenderStyle& other) const
-{
-    return m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
-}
 
 bool RenderStyle::fastPathInheritedEqual(const RenderStyle& other) const
 {
@@ -555,7 +551,7 @@ static inline unsigned computeFontHash(const FontCascade& font)
 unsigned RenderStyle::hashForTextAutosizing() const
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
-    unsigned hash = m_nonInheritedData->miscData->effectiveAppearance;
+    unsigned hash = m_nonInheritedData->miscData->usedAppearance;
     hash ^= m_nonInheritedData->rareData->lineClamp.value();
     hash ^= m_rareInheritedData->overflowWrap;
     hash ^= m_rareInheritedData->nbspMode;
@@ -575,7 +571,7 @@ unsigned RenderStyle::hashForTextAutosizing() const
 
 bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
 {
-    return m_nonInheritedData->miscData->effectiveAppearance == other.m_nonInheritedData->miscData->effectiveAppearance
+    return m_nonInheritedData->miscData->usedAppearance == other.m_nonInheritedData->miscData->usedAppearance
         && m_nonInheritedData->rareData->lineClamp == other.m_nonInheritedData->rareData->lineClamp
         && m_rareInheritedData->textSizeAdjust == other.m_rareInheritedData->textSizeAdjust
         && m_rareInheritedData->overflowWrap == other.m_rareInheritedData->overflowWrap
@@ -721,7 +717,7 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         || m_rareInheritedData->textUnderlinePosition != other.m_rareInheritedData->textUnderlinePosition) {
         // Underlines are always drawn outside of their textbox bounds when text-underline-position: under;
         // is specified. We can take an early out here.
-        if (textUnderlinePosition() == TextUnderlinePosition::Under || other.textUnderlinePosition() == TextUnderlinePosition::Under)
+        if (isAlignedForUnder(*this) || isAlignedForUnder(other))
             return true;
         return visualOverflowForDecorations(*this) != visualOverflowForDecorations(other);
     }
@@ -739,7 +735,7 @@ static bool miscDataChangeRequiresLayout(const StyleMiscNonInheritedData& first,
 {
     ASSERT(&first != &second);
 
-    if (first.effectiveAppearance != second.effectiveAppearance
+    if (first.usedAppearance != second.usedAppearance
         || first.textOverflow != second.textOverflow)
         return true;
 
@@ -849,8 +845,8 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.inputSecurity != second.inputSecurity)
         return true;
 
-    if (first.effectiveContainment().contains(Containment::Size) != second.effectiveContainment().contains(Containment::Size)
-        || first.effectiveContainment().contains(Containment::InlineSize) != second.effectiveContainment().contains(Containment::InlineSize))
+    if (first.usedContain().contains(Containment::Size) != second.usedContain().contains(Containment::Size)
+        || first.usedContain().contains(Containment::InlineSize) != second.usedContain().contains(Containment::InlineSize))
         return true;
 
     // content-visibiliy:hidden turns on contain:size which requires relayout.
@@ -886,7 +882,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
         || first.textIndentLine != second.textIndentLine
-        || first.effectiveZoom != second.effectiveZoom
+        || first.usedZoom != second.usedZoom
         || first.textZoom != second.textZoom
 #if ENABLE(TEXT_AUTOSIZING)
         || first.textSizeAdjust != second.textSizeAdjust
@@ -913,7 +909,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.lineSnap != second.lineSnap
         || first.lineAlign != second.lineAlign
         || first.hangingPunctuation != second.hangingPunctuation
-        || first.effectiveSkippedContent != second.effectiveSkippedContent
+        || first.usedContentVisibility != second.usedContentVisibility
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
@@ -1074,7 +1070,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.overflowY != other.m_nonInheritedFlags.overflowY)
         return true;
 
-    if ((visibility() == Visibility::Collapse) != (other.visibility() == Visibility::Collapse))
+    if ((usedVisibility() == Visibility::Collapse) != (other.usedVisibility() == Visibility::Collapse))
         return true;
 
     bool hasFirstLineStyle = hasPseudoStyle(PseudoId::FirstLine);
@@ -1082,10 +1078,10 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         return true;
 
     if (hasFirstLineStyle) {
-        auto* firstLineStyle = getCachedPseudoStyle(PseudoId::FirstLine);
+        auto* firstLineStyle = getCachedPseudoStyle({ PseudoId::FirstLine });
         if (!firstLineStyle)
             return true;
-        auto* otherFirstLineStyle = other.getCachedPseudoStyle(PseudoId::FirstLine);
+        auto* otherFirstLineStyle = other.getCachedPseudoStyle({ PseudoId::FirstLine });
         if (!otherFirstLineStyle)
             return true;
         // FIXME: Not all first line style changes actually need layout.
@@ -1179,7 +1175,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, OptionSet
 
 static bool requiresPainting(const RenderStyle& style)
 {
-    if (style.visibility() == Visibility::Hidden)
+    if (style.usedVisibility() == Visibility::Hidden)
         return false;
     if (!style.opacity())
         return false;
@@ -1546,6 +1542,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClear);
         if (first.position != second.position)
             changingProperties.m_properties.set(CSSPropertyPosition);
+        if (first.effectiveDisplay != second.effectiveDisplay)
+            changingProperties.m_properties.set(CSSPropertyDisplay);
         if (first.floating != second.floating)
             changingProperties.m_properties.set(CSSPropertyFloat);
         if (first.tableLayout != second.tableLayout)
@@ -1554,7 +1552,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationLine);
 
         // Non animated styles are followings.
-        // effectiveDisplay
         // originalDisplay
         // unicodeBidi
         // usesViewportUnits
@@ -1567,7 +1564,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // firstChildState
         // lastChildState
         // isLink
-        // styleType
+        // pseudoElementType
         // pseudoBits
     };
 
@@ -1802,7 +1799,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // hasExplicitlySetDirection
         // hasExplicitlySetWritingMode
         // appearance
-        // effectiveAppearance
+        // usedAppearance
         // userDrag
     };
 
@@ -2084,14 +2081,14 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // textSizeAdjust
         // userSelect
         // isInSubtreeWithBlendMode
-        // effectiveTouchActions
+        // usedTouchActions
         // eventListenerRegionTypes
         // effectiveInert
-        // effectiveSkippedContent
+        // usedContentVisibility
         // strokeColor
         // visitedLinkStrokeColor
         // hasSetStrokeColor
-        // effectiveZoom
+        // usedZoom
         // textBoxEdge
         // textSecurity
         // userModify
@@ -2771,21 +2768,21 @@ void RenderStyle::setLineHeight(Length&& height)
     SET_VAR(m_inheritedData, lineHeight, WTFMove(height));
 }
 
-int RenderStyle::computedLineHeight() const
+float RenderStyle::computedLineHeight() const
 {
     return computeLineHeight(lineHeight());
 }
 
-int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
+float RenderStyle::computeLineHeight(const Length& lineHeightLength) const
 {
     // Negative value means the line height is not set. Use the font's built-in spacing.
     if (lineHeightLength.isNegative())
         return metricsOfPrimaryFont().lineSpacing();
 
     if (lineHeightLength.isPercentOrCalculated())
-        return minimumValueForLength(lineHeightLength, computedFontSize());
+        return minimumValueForLength(lineHeightLength, computedFontSize()).toFloat();
 
-    return clampTo<int>(lineHeightLength.value());
+    return lineHeightLength.value();
 }
 
 // FIXME: Remove this after all old calls to whiteSpace() are replaced with appropriate
@@ -3034,7 +3031,7 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
         if (colorProperty == CSSPropertyTextDecorationColor) {
             if (hasPositiveStrokeWidth()) {
                 // Prefer stroke color if possible but not if it's fully transparent.
-                auto strokeColor = colorResolvingCurrentColor(effectiveStrokeColorProperty(), visitedLink);
+                auto strokeColor = colorResolvingCurrentColor(usedStrokeColorProperty(), visitedLink);
                 if (strokeColor.isVisible())
                     return strokeColor;
             }
@@ -3099,7 +3096,7 @@ Color RenderStyle::colorWithColorFilter(const StyleColor& color) const
     return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
 }
 
-Color RenderStyle::effectiveAccentColor() const
+Color RenderStyle::usedAccentColor() const
 {
     if (hasAutoAccentColor())
         return { };
@@ -3110,7 +3107,7 @@ Color RenderStyle::effectiveAccentColor() const
     return colorResolvingCurrentColor(accentColor());
 }
 
-Color RenderStyle::effectiveScrollbarThumbColor() const
+Color RenderStyle::usedScrollbarThumbColor() const
 {
     if (!scrollbarColor().has_value())
         return { };
@@ -3121,7 +3118,7 @@ Color RenderStyle::effectiveScrollbarThumbColor() const
     return colorResolvingCurrentColor(scrollbarColor().value().thumbColor);
 }
 
-Color RenderStyle::effectiveScrollbarTrackColor() const
+Color RenderStyle::usedScrollbarTrackColor() const
 {
     if (!scrollbarColor().has_value())
         return { };
@@ -3466,10 +3463,39 @@ const CSSCustomPropertyValue* RenderStyle::customPropertyValue(const AtomString&
     return nullptr;
 }
 
+bool RenderStyle::customPropertyValueEqual(const RenderStyle& other, const AtomString& name) const
+{
+    if (&nonInheritedCustomProperties() == &other.nonInheritedCustomProperties() && &inheritedCustomProperties() == &other.inheritedCustomProperties())
+        return true;
+
+    auto* value = customPropertyValue(name);
+    auto* otherValue = other.customPropertyValue(name);
+    if (value == otherValue)
+        return true;
+    if (!value || !otherValue)
+        return false;
+    return *value == *otherValue;
+}
+
 bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const
 {
     return m_nonInheritedData->rareData->customProperties == other.m_nonInheritedData->rareData->customProperties
         && m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
+}
+
+FieldSizing RenderStyle::fieldSizing() const
+{
+    return m_nonInheritedData->rareData->fieldSizing;
+}
+
+FieldSizing RenderStyle::initialFieldSizing()
+{
+    return FieldSizing::Fixed;
+}
+
+void RenderStyle::setFieldSizing(const FieldSizing sizing)
+{
+    SET_NESTED_VAR(m_nonInheritedData, rareData, fieldSizing, sizing);
 }
 
 const LengthBox& RenderStyle::scrollMargin() const
@@ -3751,7 +3777,7 @@ bool RenderStyle::hasPositiveStrokeWidth() const
 
 Color RenderStyle::computedStrokeColor() const
 {
-    return visitedDependentColor(effectiveStrokeColorProperty());
+    return visitedDependentColor(usedStrokeColorProperty());
 }
 
 UsedClear RenderStyle::usedClear(const RenderObject& renderer)
@@ -3798,7 +3824,7 @@ UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-UserSelect RenderStyle::effectiveUserSelect() const
+UserSelect RenderStyle::usedUserSelect() const
 {
     if (effectiveInert())
         return UserSelect::None;

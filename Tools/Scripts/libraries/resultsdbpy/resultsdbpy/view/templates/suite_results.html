@@ -33,6 +33,7 @@
 import {CommitBank} from '/assets/js/commit.js';
 import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, escapeHTML} from '/assets/js/common.js';
 import {Configuration} from '/assets/js/configuration.js';
+import {SUITES_LIMITS} from '/assets/js/constants.js';
 import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar} from '/assets/js/drawer.js';
 import {InvestigateDrawer} from '/assets/js/investigate.js';
 import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
@@ -130,6 +131,7 @@ class MainView {
         });
         if (params.branch)
             suiteParams.branch = params.branch;
+        suiteParams['suite'] = SUITES;
         let query = paramsToQuery(suiteParams);
         fetch(query ? 'api/suites?' + query: 'api/suites').then(response => {
             response.json().then(json => {
@@ -183,7 +185,7 @@ ${Drawer([
             view.children[suite].update();
         }
     }, true, true, false, true),
-    LimitSlider(() => {view.reload()}),
+    LimitSlider(() => {view.reload()}, SUITES_LIMITS.max, SUITES_LIMITS.default),
     BranchSelector(() => {
         CommitBank.reload();
         view.reload();

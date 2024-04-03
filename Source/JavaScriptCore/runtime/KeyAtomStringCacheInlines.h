@@ -35,20 +35,20 @@ namespace JSC {
 template<typename Buffer, typename Func>
 ALWAYS_INLINE JSString* KeyAtomStringCache::make(VM& vm, Buffer& buffer, const Func& func)
 {
-    if (!buffer.length)
+    if (buffer.characters.empty())
         return jsEmptyString(vm);
 
-    if (buffer.length == 1) {
+    if (buffer.characters.size() == 1) {
         auto firstCharacter = buffer.characters[0];
         if (firstCharacter <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(firstCharacter);
     }
 
-    ASSERT(buffer.length <= maxStringLengthForCache);
+    ASSERT(buffer.characters.size() <= maxStringLengthForCache);
     auto& slot = m_cache[buffer.hash % capacity];
     if (slot) {
         auto* impl = slot->tryGetValueImpl();
-        if (impl->hash() == buffer.hash && equal(impl, buffer.characters, buffer.length))
+        if (impl->hash() == buffer.hash && equal(impl, buffer.characters))
             return slot;
     }
 

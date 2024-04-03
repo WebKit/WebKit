@@ -16,19 +16,19 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 45x75
               chunk 1 text run 1 at (140.00,190.00) startOffset 0 endOffset 1 width 45.00: "H"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {altGlyph} at (0,0) size 38x75
+          RenderSVGTSpan {altGlyph} at (45,0) size 38x75
             RenderSVGInlineText {#text} at (45,0) size 38x75
               chunk 1 text run 1 at (185.00,190.00) startOffset 0 endOffset 1 width 37.80: "A"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {altGlyph} at (0,0) size 37x75
+          RenderSVGTSpan {altGlyph} at (82,0) size 37x75
             RenderSVGInlineText {#text} at (82,0) size 36x75
               chunk 1 text run 1 at (222.80,190.00) startOffset 0 endOffset 1 width 36.00: "P"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {altGlyph} at (0,0) size 37x75
+          RenderSVGTSpan {altGlyph} at (118,0) size 37x75
             RenderSVGInlineText {#text} at (118,0) size 36x75
               chunk 1 text run 1 at (258.80,190.00) startOffset 0 endOffset 1 width 36.00: "P"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {altGlyph} at (0,0) size 39x75
+          RenderSVGTSpan {altGlyph} at (154,0) size 39x75
             RenderSVGInlineText {#text} at (154,0) size 38x75
               chunk 1 text run 1 at (294.80,190.00) startOffset 0 endOffset 1 width 37.80: "Y"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {altGlyph} at (0,0) size 38x75
             RenderSVGInlineText {#text} at (0,0) size 38x75
               chunk 1 text run 1 at (50.00,270.00) startOffset 0 endOffset 1 width 37.80: "S"
-          RenderSVGTSpan {altGlyph} at (0,0) size 39x75
+          RenderSVGTSpan {altGlyph} at (37,0) size 39x75
             RenderSVGInlineText {#text} at (37,0) size 38x75
               chunk 1 text run 1 at (87.80,270.00) startOffset 0 endOffset 1 width 37.80: "A"
           RenderSVGInlineText {#text} at (75,0) size 38x75

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var init;
+    var sample;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest()
+    {
+        findMediaElement();
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer('video/mock; codecs="mock"');
+
+        // Make an init segment with 1 video track
+        run("init = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)])");
+        run('sourceBuffer.appendBuffer(init)');
+        await Promise.all([
+            waitFor(sourceBuffer, 'update'),
+            waitFor(video, 'loadedmetadata')
+        ]);
+
+        run('sample = makeASample(0, 0, 10, 1, 1, SAMPLE_FLAG.SYNC, 1)');
+
+        // This append changes the ready state to HAVE_ENOUGH_DATA and fires the playing event.
+        run('sourceBuffer.appendBuffer(sample)');
+
+        await Promise.all([
+            waitFor(video, 'loadeddata'),
+            waitFor(video, 'canplay'),
+            waitFor(sourceBuffer, 'update'),
+            waitFor(video, 'canplaythrough'),
+            testExpectedEventuallySilent('video.readyState', video.HAVE_ENOUGH_DATA)
+        ]);
+        testExpected('video.readyState', video.HAVE_ENOUGH_DATA);
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.end(0)', 10);
+
+        run('sample = makeASample(11, 11, 10, 1, 1, SAMPLE_FLAG.SYNC, 1)');
+        run('sourceBuffer.appendBuffer(sample)');
+        await waitFor(sourceBuffer, 'update'),
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpected('sourceBuffer.buffered.end(1)', 21);
+
+        run('video.currentTime = 9');
+        await waitFor(video, 'seeked');
+        testExpected('video.readyState', video.HAVE_FUTURE_DATA); // There's a gap ahead, can't play through.
+
+        // Fill gap.
+        run('sample = makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.SYNC, 1)');
+        run('sourceBuffer.appendBuffer(sample)');
+
+        waitForAndFail(video, 'canplay'); // canplay should never be fired as it means we went from HAVE_CURRENT_DATA to HAVE_FUTURE_DATA
+
+        await Promise.all([
+            waitFor(sourceBuffer, 'update'),
+            waitFor(video, 'canplaythrough')
+        ]);
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.end(0)', 21);
+        testExpected('video.readyState', video.HAVE_ENOUGH_DATA);
+
+        run('video.currentTime = 11');
+        await waitFor(video, 'seeked'),
+        testExpected('video.readyState', video.HAVE_ENOUGH_DATA);
+
+        run('video.currentTime = 20');
+        await waitFor(video, 'seeked'),
+        testExpected('video.readyState', video.HAVE_FUTURE_DATA);
+
+        run('video.currentTime = 21');
+        await waitFor(video, 'seeked');
+        testExpected('video.readyState', video.HAVE_CURRENT_DATA);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video controls width=960 height=510></video>
+</body>
+</html>

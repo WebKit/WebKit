@@ -41,9 +41,9 @@ namespace WebCore {
 
 String DOMURLMediaSource::createObjectURL(ScriptExecutionContext& scriptExecutionContext, MediaSource& source)
 {
-    // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
-    ASSERT(isMainThread());
-    return DOMURL::createPublicURL(scriptExecutionContext, source);
+    if (is<Document>(scriptExecutionContext))
+        return DOMURL::createPublicURL(scriptExecutionContext, source);
+    return nullString();
 }
 
 } // namespace WebCore

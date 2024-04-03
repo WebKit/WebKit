@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 775: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"world\". Selection should not extend into the"
           text run at (0,18) width 89: "input element."
       RenderBlock {DIV} at (0,104) size 784x24
-        RenderInline {SPAN} at (0,0) size 31x17
+        RenderInline {SPAN} at (0,3) size 31x17
           RenderText {#text} at (0,3) size 31x17
             text run at (0,3) width 31: "hello"
         RenderText {#text} at (31,3) size 4x17

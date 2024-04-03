@@ -39,6 +39,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/filesystemaccess"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/highlight"
+    "${WEBCORE_DIR}/Modules/identity"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
@@ -140,6 +141,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/csp"
     "${WEBCORE_DIR}/page/scrolling"
+    "${WEBCORE_DIR}/page/text-extraction"
     "${WEBCORE_DIR}/platform"
     "${WEBCORE_DIR}/platform/animation"
     "${WEBCORE_DIR}/platform/audio"
@@ -223,6 +225,7 @@ set(WebCore_IDL_INCLUDES
     Modules/filesystemaccess
     Modules/geolocation
     Modules/highlight
+    Modules/identity
     Modules/indexeddb
     Modules/mediacapabilities
     Modules/mediarecorder
@@ -369,6 +372,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/Highlight.idl
     Modules/highlight/HighlightRegistry.idl
 
+    Modules/identity/DigitalCredential.idl
+    Modules/identity/DigitalCredentialRequestOptions.idl
+    Modules/identity/IdentityCredentialProtocol.idl
+    Modules/identity/IdentityRequestProvider.idl
+    Modules/identity/Navigator+Identity.idl
+
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl
     Modules/indexeddb/IDBCursorWithValue.idl
@@ -431,6 +440,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/ManagedMediaSource.idl
     Modules/mediasource/ManagedSourceBuffer.idl
     Modules/mediasource/MediaSource.idl
+    Modules/mediasource/MediaSourceHandle.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
     Modules/mediasource/TextTrack+MediaSource.idl
@@ -449,6 +459,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
+    Modules/mediastream/MediaStreamTrackProcessor.idl
     Modules/mediastream/MediaTrackCapabilities.idl
     Modules/mediastream/MediaTrackConstraints.idl
     Modules/mediastream/MediaTrackSupportedConstraints.idl
@@ -741,7 +752,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/AuthenticatorResponse.idl
     Modules/webauthn/AuthenticatorTransport.idl
     Modules/webauthn/PublicKeyCredential.idl
-    Modules/webauthn/PublicKeyCredentialClientCapabilities.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl
@@ -925,6 +935,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSRule.idl
     css/CSSRuleList.idl
     css/CSSScopeRule.idl
+    css/CSSStartingStyleRule.idl
     css/CSSStyleDeclaration.idl
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl
@@ -1019,6 +1030,9 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/ContentVisibilityAutoStateChangeEvent.idl
+    dom/CreateHTMLCallback.idl
+    dom/CreateScriptCallback.idl
+    dom/CreateScriptURLCallback.idl
     dom/CustomElementRegistry.idl
     dom/CustomEvent.idl
     dom/CustomStateSet.idl
@@ -1111,6 +1125,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/PageTransitionEvent.idl
     dom/ParentNode.idl
     dom/PointerEvent.idl
+    dom/PointerLockOptions.idl
     dom/PopStateEvent.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
@@ -1141,6 +1156,12 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TouchEvent.idl
     dom/TouchList.idl
     dom/TreeWalker.idl
+    dom/TrustedHTML.idl
+    dom/TrustedScript.idl
+    dom/TrustedScriptURL.idl
+    dom/TrustedTypePolicy.idl
+    dom/TrustedTypePolicyFactory.idl
+    dom/TrustedTypePolicyOptions.idl
     dom/UIEvent.idl
     dom/UIEventInit.idl
     dom/ValidityStateFlags.idl
@@ -1148,6 +1169,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ViewTransitionUpdateCallback.idl
     dom/VisibilityState.idl
     dom/WheelEvent.idl
+    dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
     dom/XMLDocument.idl
 
     fileapi/Blob.idl
@@ -1323,6 +1345,7 @@ set(WebCore_NON_SVG_IDL_FILES
     inspector/InspectorAuditDOMObject.idl
     inspector/InspectorAuditResourcesObject.idl
     inspector/InspectorFrontendHost.idl
+    inspector/RTCLogsCallback.idl
 
     loader/COEPInheritenceViolationReportBody.idl
     loader/CORPViolationReportBody.idl
@@ -1492,7 +1515,6 @@ set(WebCore_SVG_IDL_FILES
     svg/Document+SVG.idl
     svg/SVGAElement.idl
     svg/SVGAngle.idl
-    svg/SVGAnimateColorElement.idl
     svg/SVGAnimateElement.idl
     svg/SVGAnimateMotionElement.idl
     svg/SVGAnimateTransformElement.idl
@@ -1850,6 +1872,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUVertexState.idl
     Modules/WebGPU/GPUVertexStepMode.idl
     Modules/WebGPU/NavigatorGPU.idl
+    Modules/WebGPU/WGSLLanguageFeatures.idl
 )
 
 set(WebCore_IDL_FILES
@@ -1879,7 +1902,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
-    ${WEBCORE_DIR}/css/ruby.css
     ${WEBCORE_DIR}/css/svg.css
     ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
@@ -1910,6 +1932,18 @@ if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
 endif ()
 
+if (UNIX)
+    check_function_exists(shm_open SHM_OPEN_EXISTS)
+    if (NOT SHM_OPEN_EXISTS)
+        set(CMAKE_REQUIRED_LIBRARIES rt)
+        check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
+        if (SHM_OPEN_REQUIRES_LIBRT)
+            list(APPEND WebCore_PRIVATE_LIBRARIES rt)
+        endif ()
+        unset(CMAKE_REQUIRED_LIBRARIES)
+    endif ()
+endif ()
+
 # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
 # these include directories, libraries or definitions need to be
 # added before the ANGLE directories.
@@ -1919,13 +1953,7 @@ if (USE_ANGLE_EGL)
         ANGLE::GLES
     )
 elseif (USE_LIBEPOXY)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBEPOXY_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${LIBEPOXY_LIBRARIES}
-    )
-    add_definitions(${LIBEPOXY_DEFINITIONS})
+    list(APPEND WebCore_LIBRARIES Epoxy::Epoxy)
 else ()
     list(APPEND WebCore_LIBRARIES OpenGL::GLES)
 
@@ -1998,7 +2026,6 @@ list(APPEND WebCore_CSS_VALUE_KEYWORDS
 if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         html/canvas/ANGLEInstancedArrays.cpp
-        html/canvas/EXTBlendFuncExtended.cpp
         html/canvas/EXTBlendMinMax.cpp
         html/canvas/EXTClipControl.cpp
         html/canvas/EXTColorBufferFloat.cpp
@@ -2032,6 +2059,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureHalfFloatLinear.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGL2RenderingContext.cpp
+        html/canvas/WebGLBlendFuncExtended.cpp
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLClipCullDistance.cpp
         html/canvas/WebGLColorBufferFloat.cpp
@@ -2079,7 +2107,6 @@ endif ()
 
 list(APPEND WebCore_IDL_FILES
     html/canvas/ANGLEInstancedArrays.idl
-    html/canvas/EXTBlendFuncExtended.idl
     html/canvas/EXTBlendMinMax.idl
     html/canvas/EXTClipControl.idl
     html/canvas/EXTColorBufferFloat.idl
@@ -2115,6 +2142,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/OESVertexArrayObject.idl
     html/canvas/WebGL2RenderingContext.idl
     html/canvas/WebGLActiveInfo.idl
+    html/canvas/WebGLBlendFuncExtended.idl
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLClipCullDistance.idl
     html/canvas/WebGLColorBufferFloat.idl
@@ -2205,7 +2233,7 @@ if (USE_LCMS)
 endif ()
 
 if (USE_WOFF2)
-  list(APPEND WebCore_LIBRARIES WOFF2::dec)
+    list(APPEND WebCore_LIBRARIES WOFF2::dec)
 endif ()
 
 if (USE_XDGMIME)
@@ -2547,8 +2575,6 @@ add_custom_command(
     COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/process-css-values.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${CSS_VALUE_PLATFORM_DEFINES}" --gperf-executable "${GPERF_EXECUTABLE}"
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.cpp)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/parser/CSSParser.cpp CSSValueKeywords.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMappings.h CSSValueKeywords.h)
 
 # Generate code and maps for CSS pseudo class & element selectors.
 add_custom_command(
@@ -2563,35 +2589,6 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAn
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSSelector.cpp CSSSelectorEnums.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSSelector.cpp CSSSelectorInlines.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/parser/CSSSelectorParser.cpp CSSSelectorInlines.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/dom/mac/ImageControlsMac.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/BaseDateAndTimeInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/ColorInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/FileInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLMeterElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/RangeInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/SearchInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/TextFieldInputType.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/ValidationMessage.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DateTimeEditElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DateTimeFieldElements.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/DetailsMarkerControl.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/MediaControlTextTrackContainerElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/ProgressShadowElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SliderThumbElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SpinButtonElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SwitchThumbElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/SwitchTrackElement.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/shadow/TextControlInnerElements.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/TextTrackCue.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/VTTCue.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/track/VTTRegion.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/page/CaptionUserPreferencesMediaAF.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/rendering/RenderTheme.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/RuleData.cpp UserAgentParts.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/StyleResolver.cpp UserAgentParts.h)
 
 # Generate user agent styles
 add_custom_command(
@@ -2601,8 +2598,6 @@ add_custom_command(
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/make-css-file-arrays.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WebCore_DERIVED_SOURCES_DIR}/UserAgentStyleSheets.h ${WebCore_DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp ${WebCore_USER_AGENT_STYLE_SHEETS}
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentStyleSheetsData.cpp)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/StyleResolver.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/style/UserAgentStyle.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
 if (WebCore_USER_AGENT_SCRIPTS)
     # Necessary variables:
@@ -2628,7 +2623,6 @@ add_custom_command(
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/make-css-file-arrays.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResources.h ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResourcesData.cpp ${WebCore_PLUG_INS_RESOURCES}
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResourcesData.cpp)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/dom/Document.cpp PlugInsResourcesData.cpp PlugInsResources.h)
 
 set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
@@ -2793,10 +2787,9 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames
 
 
 GENERATE_DOM_NAMES(MathML ${WEBCORE_DIR}/mathml/mathattrs.in ${WEBCORE_DIR}/mathml/mathtags.in)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/parser/HTMLTreeBuilder.cpp MathMLNames.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLNames.cpp)
 if (ENABLE_MATHML)
-    list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp)
+    list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/MathMLElementFactory.cpp ${WebCore_DERIVED_SOURCES_DIR}/JSMathMLElementWrapperFactory.cpp)
 endif ()
 
 GENERATE_DOM_NAMES(SVG ${WEBCORE_DIR}/svg/svgattrs.in ${WEBCORE_DIR}/svg/svgtags.in)

@@ -83,6 +83,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo hasVariableRasterizationRate = {
+        "hasVariableRasterizationRate",
+        FeatureCategory::MetalFeatures,
+        "The renderer supports variable rasterization rate",
+        &members,
+    };
+
     FeatureInfo allowInlineConstVertexData = {
         "allowInlineConstVertexData",
         FeatureCategory::MetalFeatures,
@@ -426,6 +433,14 @@ struct FeaturesMtl : FeatureSetBase
         FeatureCategory::MetalFeatures,
         "Always automatically resolve MSAA render buffers to single sampled texture.",
         &members, "http://crbug.com/1486094"
+    };
+
+    FeatureInfo injectAsmStatementIntoLoopBodies = {
+        "injectAsmStatementIntoLoopBodies",
+        FeatureCategory::MetalFeatures,
+        "Inject asm("") statements into loop bodies to force all loops to be treated as "
+        "having side effects and not optimized out.",
+        &members, "http://crbug.com/1513738"
     };
 
 };

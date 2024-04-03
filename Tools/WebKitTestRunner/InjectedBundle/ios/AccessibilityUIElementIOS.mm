@@ -46,6 +46,8 @@
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (UIAccessibilityHidden)
+- (NSString *)accessibilityBrailleLabel;
+- (NSString *)accessibilityBrailleRoleDescription;
 - (id)accessibilityFocusedUIElement;
 - (id)accessibilityHitTest:(CGPoint)point;
 - (id)accessibilityLinkedElement;
@@ -75,6 +77,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (void)_accessibilitySetValue:(NSString *)value;
 - (void)_accessibilitySetFocus:(BOOL)focus;
 - (BOOL)_accessibilityIsFocusedForTesting;
+- (BOOL)_accessibilityIsSwitch;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (UIAccessibilityTraits)_axTextAreaTrait;
@@ -230,28 +233,20 @@ JSValueRef AccessibilityUIElement::children() const
     return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>([m_element accessibilityElements]));
 }
 
-void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
 {
-    NSInteger childCount = [m_element accessibilityElementCount];
-    for (NSInteger k = 0; k < childCount; ++k) {
-        if (id child = [m_element accessibilityElementAtIndex:k])
-            elementVector.append(AccessibilityUIElement::create(child));
-    }
+    return getChildrenInRange(0, [m_element accessibilityElementCount]);
 }
 
-void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)
-{
-    NSUInteger childCount = [m_element accessibilityElementCount];
-    for (NSUInteger k = location; k < childCount && k < (location+length); ++k)
-        elementVector.append(AccessibilityUIElement::create([m_element accessibilityElementAtIndex:k]));
-}
-
-int AccessibilityUIElement::childrenCount()
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned location, unsigned length) const
 {
     Vector<RefPtr<AccessibilityUIElement>> children;
-    getChildren(children);
-
-    return children.size();
+    NSUInteger childCount = [m_element accessibilityElementCount];
+    for (NSUInteger k = location; k < childCount && k < (location + length); ++k) {
+        if (id child = [m_element accessibilityElementAtIndex:k])
+            children.append(AccessibilityUIElement::create(child));
+    }
+    return children;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
@@ -266,16 +261,6 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
 {
     return 0;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
-{
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildrenWithRange(children, index, 1);
-
-    if (children.size() == 1)
-        return children[0];
-    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
@@ -536,12 +521,22 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
-    return createJSString();
+    return concatenateAttributeAndValue(@"AXTitle", [m_element accessibilityLabel]);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
     return concatenateAttributeAndValue(@"AXLabel", [m_element accessibilityLabel]);
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const
+{
+    return concatenateAttributeAndValue(@"AXBrailleLabel", [m_element accessibilityBrailleLabel]);
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const
+{
+    return concatenateAttributeAndValue(@"AXBrailleRoleDescription", [m_element accessibilityBrailleRoleDescription]);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
@@ -901,6 +896,11 @@ bool AccessibilityUIElement::isTextArea() const
 bool AccessibilityUIElement::isSearchField() const
 {
     return ([m_element accessibilityTraits] & [m_element _axSearchFieldTrait]) == [m_element _axSearchFieldTrait];
+}
+
+bool AccessibilityUIElement::isSwitch() const
+{
+    return [m_element _accessibilityIsSwitch];
 }
 
 int AccessibilityUIElement::rowCount()

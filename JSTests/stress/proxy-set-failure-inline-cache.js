@@ -1,4 +1,6 @@
 //@ $skipModes << :lockdown if ($buildType == "debug")
+//@ skip if $architecture == "arm" and !$cloop
+
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error(`Bad value: ${actual}!`);

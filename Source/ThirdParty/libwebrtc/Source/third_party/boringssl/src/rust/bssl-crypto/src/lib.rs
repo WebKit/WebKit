@@ -21,49 +21,25 @@
     clippy::panic,
     clippy::expect_used
 )]
-#![cfg_attr(not(any(feature = "std", test)), no_std)]
 
-//! Rust BoringSSL bindings
-extern crate alloc;
+//! Rust boringssl binding
 
 extern crate core;
 
-/// Authenticated Encryption with Additional Data algorithms.
-pub mod aead;
-
-/// AES block operations.
+/// BoringSSL implemented plain aes operations.
 pub mod aes;
 
-/// Ciphers.
-pub mod cipher;
-
-/// Hash functions.
+/// BoringSSL implemented hash functions.
 pub mod digest;
 
-/// Ed25519, a signature scheme.
-pub mod ed25519;
-
-/// HKDF, a hash-based key derivation function.
+/// BoringSSL implemented hkdf operations.
 pub mod hkdf;
 
-/// HMAC, a hash-based message authentication code.
+/// BoringSSL implemented hmac operations.
 pub mod hmac;
 
-/// Random number generation.
+/// BoringSSL implemented cryptographically secure pseudo-random number generation.
 pub mod rand;
-
-/// X25519 elliptic curve operations.
-pub mod x25519;
-
-/// Memory-manipulation operations.
-pub mod mem;
-
-/// Elliptic curve diffie-hellman operations.
-pub mod ecdh;
-
-pub(crate) mod bn;
-pub(crate) mod ec;
-pub(crate) mod pkey;
 
 #[cfg(test)]
 mod test_helpers;
@@ -81,14 +57,10 @@ impl CSlice<'_> {
     /// Returns a raw pointer to the value, which is safe to pass over FFI.
     pub fn as_ptr<T>(&self) -> *const T {
         if self.0.is_empty() {
-            core::ptr::null()
+            std::ptr::null()
         } else {
             self.0.as_ptr() as *const T
         }
-    }
-
-    pub fn len(&self) -> usize {
-        self.0.len()
     }
 }
 
@@ -99,7 +71,7 @@ impl CSliceMut<'_> {
     /// Returns a raw pointer to the value, which is safe to pass over FFI.
     pub fn as_mut_ptr<T>(&mut self) -> *mut T {
         if self.0.is_empty() {
-            core::ptr::null_mut()
+            std::ptr::null_mut()
         } else {
             self.0.as_mut_ptr() as *mut T
         }
@@ -123,7 +95,7 @@ impl<'a> From<&'a mut [u8]> for CSliceMut<'a> {
 /// Implementations of `ForeignTypeRef` must guarantee the following:
 ///
 /// - `Self::from_ptr(x).as_ptr() == x`
-/// - `Self::from_ptr_mut(x).as_ptr() == x`
+/// - `Self::from_mut_ptr(x).as_ptr() == x`
 unsafe trait ForeignTypeRef: Sized {
     /// The raw C type.
     type CType;
@@ -155,27 +127,4 @@ unsafe trait ForeignTypeRef: Sized {
     fn as_ptr(&self) -> *mut Self::CType {
         self as *const _ as *mut _
     }
-}
-
-/// A helper trait implemented by types which has an owned reference to foreign types.
-///
-/// # Safety
-///
-/// Implementations of `ForeignType` must guarantee the following:
-///
-/// - `Self::from_ptr(x).as_ptr() == x`
-unsafe trait ForeignType {
-    /// The raw C type.
-    type CType;
-
-    /// Constructs an instance of this type from its raw type.
-    ///
-    /// # Safety
-    ///
-    /// - `ptr` must be a valid, immutable, instance of `CType`.
-    /// - Ownership of `ptr` is passed to the implementation, and will free `ptr` when dropped.
-    unsafe fn from_ptr(ptr: *mut Self::CType) -> Self;
-
-    /// Returns a raw pointer to the wrapped value.
-    fn as_ptr(&self) -> *mut Self::CType;
 }

@@ -26,10 +26,15 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "BackForwardController.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "Location.h"
+#include "Page.h"
+#include "PageConsoleClient.h"
+#include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
@@ -52,7 +57,7 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
     if (targetOrigin == "/"_s)
         targetSecurityOrigin = &sourceDocument.securityOrigin();
     else if (targetOrigin != "*"_s) {
-        targetSecurityOrigin = &SecurityOrigin::createFromString(targetOrigin).leakRef();
+        targetSecurityOrigin = SecurityOrigin::createFromString(targetOrigin);
         // It doesn't make sense target a postMessage at an opaque origin
         // because there's no way to represent an opaque origin in a string.
         if (targetSecurityOrigin->isOpaque())
@@ -68,6 +73,62 @@ Location& DOMWindow::location()
     return *m_location;
 }
 
+bool DOMWindow::closed() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return true;
+
+    RefPtr page = frame->page();
+    return !page || page->isClosing();
+}
+
+void DOMWindow::close(Document& document)
+{
+    if (!document.canNavigate(protectedFrame().get()))
+        return;
+    close();
+}
+
+void DOMWindow::close()
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return;
+
+    RefPtr page = frame->page();
+    if (!page)
+        return;
+
+    if (!frame->isMainFrame())
+        return;
+
+    if (!(page->openedByDOM() || page->backForward().count() <= 1)) {
+        checkedConsole()->addMessage(MessageSource::JS, MessageLevel::Warning, "Can't close the window since it was not opened by JavaScript"_s);
+        return;
+    }
+
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+    if (localFrame && !localFrame->checkedLoader()->shouldClose())
+        return;
+
+    ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
+
+    page->setIsClosing();
+    closePage();
+}
+
+PageConsoleClient* DOMWindow::console() const
+{
+    auto* frame = this->frame();
+    return frame && frame->page() ? &frame->page()->console() : nullptr;
+}
+
+CheckedPtr<PageConsoleClient> DOMWindow::checkedConsole() const
+{
+    return console();
+}
+
 RefPtr<Frame> DOMWindow::protectedFrame() const
 {
     return frame();
@@ -76,6 +137,44 @@ RefPtr<Frame> DOMWindow::protectedFrame() const
 WebCoreOpaqueRoot root(DOMWindow* window)
 {
     return WebCoreOpaqueRoot { window };
+}
+
+WindowProxy* DOMWindow::opener() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    RefPtr openerFrame = frame->opener();
+    if (!openerFrame)
+        return nullptr;
+
+    return &openerFrame->windowProxy();
+}
+
+WindowProxy* DOMWindow::top() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    if (!frame->page())
+        return nullptr;
+
+    return &frame->tree().top().windowProxy();
+}
+
+WindowProxy* DOMWindow::parent() const
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    RefPtr parentFrame = frame->tree().parent();
+    if (parentFrame)
+        return &parentFrame->windowProxy();
+
+    return &frame->windowProxy();
 }
 
 } // namespace WebCore

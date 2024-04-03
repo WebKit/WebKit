@@ -49,7 +49,7 @@ TEST_P(KTXCompressedTextureTest, CompressedTexImageETC1)
     GLint textureUniformLocation =
         glGetUniformLocation(textureProgram, essl1_shaders::Texture2DUniform());
     glUniform1i(textureUniformLocation, 0);
-    drawQuad(textureProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    drawQuad(textureProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_GL_NO_ERROR();
 
     // Uncompress ETC1 texture data to RGBA texture data

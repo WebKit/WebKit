@@ -52,7 +52,7 @@ void BackingStore::createTile(uint32_t tileID, float scale)
     update.tilesToCreate.append({ tileID, scale });
 }
 
-void BackingStore::updateTile(uint32_t tileID, const WebCore::SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void BackingStore::updateTile(uint32_t tileID, const WebCore::IntRect& updateRect, const WebCore::IntRect& tileRect, Ref<Buffer>&& buffer)
 {
     ASSERT(m_layerState.isFlushing);
     auto& update = m_layerState.update;
@@ -62,7 +62,7 @@ void BackingStore::updateTile(uint32_t tileID, const WebCore::SurfaceUpdateInfo&
     ASSERT(std::none_of(update.tilesToRemove.begin(), update.tilesToRemove.end(),
         [tileID](auto& tile) { return tile.tileID == tileID; }));
 
-    update.tilesToUpdate.append({ tileID, tileRect, updateInfo });
+    update.tilesToUpdate.append({ tileID, updateRect, tileRect, WTFMove(buffer) });
 }
 
 void BackingStore::removeTile(uint32_t tileID)

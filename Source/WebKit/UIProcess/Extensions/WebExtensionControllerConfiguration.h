@@ -28,6 +28,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIObject.h"
+#include "WebsiteDataStore.h"
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/RetainPtr.h>
@@ -67,6 +68,9 @@ public:
     WKWebViewConfiguration *webViewConfiguration();
     void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
 
+    WebsiteDataStore& defaultWebsiteDataStore() const;
+    void setDefaultWebsiteDataStore(WebsiteDataStore* dataStore) { m_defaultWebsiteDataStore = dataStore; }
+
     bool operator==(const WebExtensionControllerConfiguration&) const;
 
 #ifdef __OBJC__
@@ -81,6 +85,7 @@ private:
     bool m_temporary { false };
     String m_storageDirectory;
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
+    RefPtr<WebsiteDataStore> m_defaultWebsiteDataStore;
 };
 
 } // namespace WebKit

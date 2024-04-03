@@ -27,11 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
-
-OBJC_CLASS AVOutputContext;
-OBJC_CLASS NSData;
 
 namespace WebCore {
 
@@ -42,72 +38,33 @@ enum class MediaPlaybackTargetContextMockState : uint8_t {
 };
 
 enum class MediaPlaybackTargetContextType : uint8_t {
-    None,
     AVOutputContext,
-    SerializedAVOutputContext,
     Mock,
+    Serialized,
 };
 
 class MediaPlaybackTargetContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-
     using Type = MediaPlaybackTargetContextType;
     using MockState = MediaPlaybackTargetContextMockState;
 
-    MediaPlaybackTargetContext() = default;
-    WEBCORE_EXPORT explicit MediaPlaybackTargetContext(RetainPtr<AVOutputContext>&&);
-
-    MediaPlaybackTargetContext(RetainPtr<NSData>&& serializedOutputContext, bool hasActiveRoute)
-        : m_type(Type::SerializedAVOutputContext)
-        , m_serializedOutputContext(WTFMove(serializedOutputContext))
-        , m_cachedHasActiveRoute(hasActiveRoute)
-    {
-        ASSERT(m_serializedOutputContext);
-    }
-
-    MediaPlaybackTargetContext(const String& mockDeviceName, MockState state)
-        : m_type(Type::Mock)
-        , m_mockDeviceName(mockDeviceName)
-        , m_mockState(state)
-    {
-    }
+    WEBCORE_EXPORT virtual ~MediaPlaybackTargetContext() = default;
 
     Type type() const { return m_type; }
-    WEBCORE_EXPORT String deviceName() const;
-    WEBCORE_EXPORT bool hasActiveRoute() const;
-    bool supportsRemoteVideoPlayback() const;
+    WEBCORE_EXPORT virtual String deviceName() const = 0;
+    WEBCORE_EXPORT virtual bool hasActiveRoute() const = 0;
+    WEBCORE_EXPORT virtual bool supportsRemoteVideoPlayback() const = 0;
 
-    MockState mockState() const
+protected:
+    MediaPlaybackTargetContext(Type type)
+        : m_type(type)
     {
-        ASSERT(m_type == Type::Mock);
-        return m_mockState;
     }
-
-    RetainPtr<AVOutputContext> outputContext() const
-    {
-        ASSERT(m_type == Type::AVOutputContext);
-        return m_outputContext;
-    }
-
-    RetainPtr<NSData> serializedOutputContext() const
-    {
-        ASSERT(m_type == Type::SerializedAVOutputContext);
-        return m_serializedOutputContext;
-    }
-
-    WEBCORE_EXPORT bool serializeOutputContext();
-    WEBCORE_EXPORT bool deserializeOutputContext();
-
-    bool encodingRequiresPlatformData() const { return m_type == Type::AVOutputContext || m_type == Type::SerializedAVOutputContext; }
 
 private:
-    Type m_type { Type::None };
-    RetainPtr<AVOutputContext> m_outputContext;
-    RetainPtr<NSData> m_serializedOutputContext;
-    bool m_cachedHasActiveRoute { false };
-
-    String m_mockDeviceName;
-    MockState m_mockState { MockState::Unknown };
+    // This should be const, however IPC's Decoder's handling doesn't allow for const member.
+    Type m_type;
 };
 
 } // namespace WebCore

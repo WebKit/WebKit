@@ -127,10 +127,9 @@ private:
     WebCore::LocalFrame* dispatchCreatePage(const WebCore::NavigationAction&, WebCore::NewFrameOpenerPolicy) final;
     void dispatchShow() final;
 
-    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebCore::PolicyCheckIdentifier, const String&, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const WTF::String& frameName, WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&) final;
-    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, WebCore::PolicyDecisionMode, WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&) final;
-    void broadcastFrameRemovalToOtherProcesses() final { }
+    void dispatchDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, const String&, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNewWindowAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::FormState*, const WTF::String& frameName, std::optional<WebCore::HitTestResult>&&, WebCore::FramePolicyFunction&&) final;
+    void dispatchDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::FormState*, const String&, uint64_t, std::optional<WebCore::HitTestResult>&&, bool, WebCore::SandboxFlags, WebCore::PolicyDecisionMode, WebCore::FramePolicyFunction&&) final;
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final { }
     void cancelPolicyCheck() final;
 
@@ -161,7 +160,7 @@ private:
     bool shouldGoToHistoryItem(WebCore::HistoryItem&) const final;
 
     void didDisplayInsecureContent() final;
-    void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
+    void didRunInsecureContent(WebCore::SecurityOrigin&) final;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
@@ -211,7 +210,7 @@ private:
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
     RefPtr<WebCore::LocalFrame> createFrame(const WTF::AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
-    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
+    RefPtr<WebCore::Widget> createPlugin(WebCore::HTMLPlugInElement&, const URL&,
     const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
@@ -225,11 +224,12 @@ private:
 #endif
 
     RemoteAXObjectRef accessibilityRemoteObject() final { return 0; }
+    WebCore::IntPoint accessibilityRemoteFrameOffset() final { return { }; }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void setAXIsolatedTreeRoot(WebCore::AXCoreObject*) final { }
 #endif
 
-    RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, WebCore::PolicyAction defaultPolicy, NSURL *appLinkURL, NSURL* referrerURL);
+    RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction&&, WebCore::PolicyAction defaultPolicy, NSURL *appLinkURL, NSURL* referrerURL);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, WebCore::FormState*) const;
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
-#import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
@@ -38,8 +37,6 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
-#import <wtf/text/CString.h>
-#import <wtf/text/WTFString.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -49,44 +46,47 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
 namespace WebCore {
 
+Ref<PlaybackSessionInterfaceAVKit> PlaybackSessionInterfaceAVKit::create(PlaybackSessionModel& model)
+{
+    Ref interface = adoptRef(*new PlaybackSessionInterfaceAVKit(model));
+    interface->initialize();
+    return interface;
+}
+
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
-    : m_playerController(createWebAVPlayerController())
-    , m_playbackSessionModel(&model)
+    : PlaybackSessionInterfaceIOS(model)
+    , m_playerController(createWebAVPlayerController())
 {
     ASSERT(isUIThread());
-    model.addClient(*this);
     [m_playerController setPlaybackSessionInterface:this];
     [m_playerController setDelegate:&model];
-
-    durationChanged(model.duration());
-    currentTimeChanged(model.currentTime(), [[NSProcessInfo processInfo] systemUptime]);
-    bufferedTimeChanged(model.bufferedTime());
-    OptionSet<PlaybackSessionModel::PlaybackState> playbackState;
-    if (model.isPlaying())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Playing);
-    if (model.isStalled())
-        playbackState.add(PlaybackSessionModel::PlaybackState::Stalled);
-    rateChanged(playbackState, model.playbackRate(), model.defaultPlaybackRate());
-    seekableRangesChanged(model.seekableRanges(), model.seekableTimeRangesLastModifiedTime(), model.liveUpdateInterval());
-    canPlayFastReverseChanged(model.canPlayFastReverse());
-    audioMediaSelectionOptionsChanged(model.audioMediaSelectionOptions(), model.audioMediaSelectedIndex());
-    legibleMediaSelectionOptionsChanged(model.legibleMediaSelectionOptions(), model.legibleMediaSelectedIndex());
-    externalPlaybackChanged(model.externalPlaybackEnabled(), model.externalPlaybackTargetType(), model.externalPlaybackLocalizedDeviceName());
-    wirelessVideoPlaybackDisabledChanged(model.wirelessVideoPlaybackDisabled());
 }
 
 PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 {
     ASSERT(isUIThread());
-    [m_playerController setPlaybackSessionInterface:nullptr];
-    [m_playerController setExternalPlaybackActive:false];
-
     invalidate();
 }
 
-PlaybackSessionModel* PlaybackSessionInterfaceAVKit::playbackSessionModel() const
+WebAVPlayerController *PlaybackSessionInterfaceAVKit::playerController() const
 {
-    return m_playbackSessionModel;
+    return m_playerController.get();
+}
+
+WKSLinearMediaPlayer *PlaybackSessionInterfaceAVKit::linearMediaPlayer() const
+{
+    return nullptr;
+}
+
+void PlaybackSessionInterfaceAVKit::invalidate()
+{
+    if (!m_playbackSessionModel)
+        return;
+
+    [m_playerController setPlaybackSessionInterface:nullptr];
+    [m_playerController setExternalPlaybackActive:false];
+    [m_playerController setDelegate:nullptr];
+    PlaybackSessionInterfaceIOS::invalidate();
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
@@ -237,40 +237,12 @@ void PlaybackSessionInterfaceAVKit::volumeChanged(double volume)
     [m_playerController volumeChanged:volume];
 }
 
-void PlaybackSessionInterfaceAVKit::invalidate()
-{
-    if (!m_playbackSessionModel)
-        return;
-
-    [m_playerController setDelegate:nullptr];
-    m_playbackSessionModel->removeClient(*this);
-    m_playbackSessionModel = nullptr;
-}
-
-void PlaybackSessionInterfaceAVKit::modelDestroyed()
-{
-    ASSERT(isUIThread());
-    invalidate();
-    ASSERT(!m_playbackSessionModel);
-}
-
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionInterfaceAVKit::logIdentifier() const
+const char* PlaybackSessionInterfaceAVKit::logClassName() const
 {
-    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
-}
-
-const Logger* PlaybackSessionInterfaceAVKit::loggerPtr() const
-{
-    return m_playbackSessionModel ? m_playbackSessionModel->loggerPtr() : nullptr;
-}
-
-WTFLogChannel& PlaybackSessionInterfaceAVKit::logChannel() const
-{
-    return LogMedia;
+    return "PlaybackSessionInterfaceAVKit";
 }
 #endif
-
-}
+} // namespace WebCore
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)

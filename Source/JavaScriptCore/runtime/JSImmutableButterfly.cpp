@@ -222,11 +222,11 @@ JSImmutableButterfly* JSImmutableButterfly::createFromString(JSGlobalObject* glo
             value = jsSingleCharacterString(vm, characters[index]);
         else {
             ASSERT(size == 2);
-            UChar string[2] = {
+            const UChar string[2] = {
                 characters[index],
                 characters[index + 1],
             };
-            value = jsNontrivialString(vm, String(string, 2));
+            value = jsNontrivialString(vm, String(string));
         }
 
         result->setIndex(vm, resultIndex++, value);

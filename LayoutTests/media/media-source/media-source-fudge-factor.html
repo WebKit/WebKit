@@ -8,10 +8,6 @@
     var source;
     var sourceBuffer;
 
-    var requestLength = 200000;
-    var nextRequest = 0;
-    var totalLength = 100;
-
     if (window.internals)
         internals.initializeMockMediaSource();
 
@@ -32,10 +28,7 @@
 
         consoleWrite('Samples with presentation times after currentTime should not cause loadedData.');
         sourceBuffer.appendBuffer(makeASample(500, 500, 500, 1000, 1, SAMPLE_FLAG.SYNC));
-        setTimeout(notLoadedData, 50);
-    }
-
-    async function notLoadedData() {
+        await waitFor(sourceBuffer, 'update');
         testExpected('video.readyState', HTMLMediaElement.HAVE_METADATA);
 
         consoleWrite('Samples with presentation times very close to currentTime should cause loadedData.');
@@ -46,19 +39,15 @@
 
         consoleWrite('Samples with presentation end times very close to currentTime should not cause canPlay.');
         sourceBuffer.appendBuffer(makeASample(20, 20, 10, 1000, 1, SAMPLE_FLAG.SYNC));
-        setTimeout(notCanPlay, 50);
-    }
+        await waitFor(sourceBuffer, 'update');
 
-    function notCanPlay() {
         testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
 
         consoleWrite('Continuous samples with presentation end times after currentTime should cause canPlay.');
         sourceBuffer.appendBuffer(makeASample(30, 30, 470, 1000, 1, SAMPLE_FLAG.SYNC));
-        waitForEvent('canplay', canPlay);
-    }
-
-    function canPlay() {
+        await waitFor(video, 'canplay');
         testExpected('video.readyState', HTMLMediaElement.HAVE_FUTURE_DATA, '>=');
+
         endTest();
     }
     </script>

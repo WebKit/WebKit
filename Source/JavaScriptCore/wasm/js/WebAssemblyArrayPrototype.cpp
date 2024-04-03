@@ -33,16 +33,10 @@
 #include "JSObjectInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "StructureInlines.h"
-#include "WebAssemblyArrayPrototype.lut.h"
 
 namespace JSC {
 
-const ClassInfo WebAssemblyArrayPrototype::s_info = { "WebAssembly.Array"_s, &Base::s_info, &prototypeTableWebAssemblyArray, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayPrototype) };
-
-/* Source for WebAssemblyArrayPrototype.lut.h
- @begin prototypeTableWebAssemblyArray
- @end
- */
+const ClassInfo WebAssemblyArrayPrototype::s_info = { "WebAssembly.Array"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyArrayPrototype) };
 
 WebAssemblyArrayPrototype* WebAssemblyArrayPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

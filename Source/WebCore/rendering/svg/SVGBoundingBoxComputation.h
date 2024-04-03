@@ -19,8 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "RenderLayerModelObject.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

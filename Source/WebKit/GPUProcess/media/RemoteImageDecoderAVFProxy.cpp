@@ -35,6 +35,7 @@
 #include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <CoreGraphics/CGImage.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageDecoderAVFObjC.h>
 #include <wtf/Scope.h>
 
@@ -75,17 +76,23 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(ImageDecoderIdentifier identifier
         return;
 
     m_imageDecoders.take(identifier);
-    if (m_connectionToWebProcess && allowsExitUnderMemoryPressure())
-        m_connectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    if (allowsExitUnderMemoryPressure())
+        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(ImageDecoderIdentifier identifier)
 {
-    if (!m_connectionToWebProcess || !m_imageDecoders.contains(identifier))
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    if (!m_imageDecoders.contains(identifier))
         return;
 
     auto imageDecoder = m_imageDecoders.get(identifier);
-    m_connectionToWebProcess->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
+    connection->connection().send(Messages::RemoteImageDecoderAVFManager::EncodedDataStatusChanged(identifier, imageDecoder->frameCount(), imageDecoder->size(), imageDecoder->hasTrack()), 0);
 }
 
 void RemoteImageDecoderAVFProxy::setExpectedContentSize(ImageDecoderIdentifier identifier, long long expectedContentSize)
@@ -117,7 +124,7 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
     completionHandler(frameCount, imageDecoder->size(), imageDecoder->hasTrack(), WTFMove(frameInfos));
 }
 
-void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
 

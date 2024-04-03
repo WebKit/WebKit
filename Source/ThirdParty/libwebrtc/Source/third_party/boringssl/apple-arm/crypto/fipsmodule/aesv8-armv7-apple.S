@@ -1,9 +1,17 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if !defined(__has_feature)
+#define __has_feature(x) 0
+#endif
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_ARM) && defined(__APPLE__)
+#if !defined(OPENSSL_NO_ASM) && defined(__ARMEL__) && defined(__APPLE__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 #include <openssl/arm_arch.h>
 
 #if __ARM_MAX_ARCH__>=7
@@ -798,4 +806,8 @@ Lctr32_done:
 	ldmia	sp!,{r4,r5,r6,r7,r8,r9,r10,pc}
 
 #endif
-#endif  // !OPENSSL_NO_ASM && defined(OPENSSL_ARM) && defined(__APPLE__)
+#endif  // !OPENSSL_NO_ASM && defined(__ARMEL__) && defined(__APPLE__)
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
+#endif

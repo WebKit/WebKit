@@ -13,6 +13,8 @@ PASS Lack of cis:auto during box creation removes last remembered size
 PASS Last remembered size can be removed synchronously
 PASS Disconnected element can briefly keep last remembered size
 PASS Disconnected element ends up losing last remembered size
+PASS Disconnected element ends up losing last remembered size, parent removes all children
+PASS Disconnected element ends up losing last remembered size, the parent node is removed
 PASS Disconnected element ends up losing last remembered size even if size was 0x0
 PASS Last remembered size survives becoming inline
 PASS Last remembered size can be set to 0x0 after losing display:inline

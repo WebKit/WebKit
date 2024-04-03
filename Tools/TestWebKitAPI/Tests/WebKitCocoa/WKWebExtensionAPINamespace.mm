@@ -33,24 +33,48 @@ namespace TestWebKitAPI {
 
 TEST(WKWebExtensionAPINamespace, NoWebNavigationObjectWithoutPermission)
 {
-    auto *manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"webNavigation" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.webNavigation, 'undefined')",
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Deny the permission, since TestWebKitAPI auto grants all requested permissions.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    [manager loadAndRun];
 }
 
 TEST(WKWebExtensionAPINamespace, WebNavigationObjectWithPermission)
 {
-    auto *manifest = @{ @"manifest_version": @3, @"permissions": @[ @"webNavigation" ], @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"webNavigation" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.webNavigation, 'object')",
         @"browser.test.notifyPass()"
     ]);
+
+    // TestWebKitAPI auto grants all requested permissions.
 
     Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
 }
@@ -59,6 +83,7 @@ TEST(WKWebExtensionAPINamespace, NoNotificationsObjectWithoutPermission)
 {
     auto *manifest = @{
         @"manifest_version": @3,
+        @"permissions": @[ @"notifications" ],
         @"background": @{
             @"scripts": @[ @"background.js" ],
             @"type": @"module",
@@ -71,7 +96,13 @@ TEST(WKWebExtensionAPINamespace, NoNotificationsObjectWithoutPermission)
         @"browser.test.notifyPass()"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Deny the permission, since TestWebKitAPI auto grants all requested permissions.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:@"notifications"];
+
+    [manager loadAndRun];
 }
 
 TEST(WKWebExtensionAPINamespace, NotificationsObjectWithPermission)
@@ -88,6 +119,61 @@ TEST(WKWebExtensionAPINamespace, NotificationsObjectWithPermission)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.notifications, 'object')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    // TestWebKitAPI auto grants all requested permissions.
+
+    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPINamespace, NotificationsUnsupported)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"notifications" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.notifications, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.notifications"];
+
+    [manager loadAndRun];
+}
+
+
+TEST(WKWebExtensionAPINamespace, ObjectEquality)
+{
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"storage", @"tabs" ],
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.storage, browser.storage)",
+        @"browser.test.assertEq(browser.storage.local, browser.storage.local)",
+        @"browser.test.assertEq(browser.storage.session, browser.storage.session)",
+        @"browser.test.assertEq(browser.storage.sync, browser.storage.sync)",
+        @"browser.test.assertEq(browser.tabs, browser.tabs)",
+        @"browser.test.assertEq(browser.windows, browser.windows)",
+
         @"browser.test.notifyPass()"
     ]);
 

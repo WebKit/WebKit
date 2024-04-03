@@ -427,6 +427,34 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const PathArc& data)
     return ts;
 }
 
+FloatPoint PathClosedArc::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
+{
+    lastMoveToPoint = arc.center + FloatSize { arc.radius * cos(arc.startAngle), - arc.radius * sin(arc.startAngle) };
+    return lastMoveToPoint;
+}
+
+std::optional<FloatPoint> PathClosedArc::tryGetEndPointWithoutContext() const
+{
+    FloatPoint lastMoveToPoint;
+    return calculateEndPoint({ }, lastMoveToPoint);
+}
+
+void PathClosedArc::extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+{
+    arc.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+}
+
+void PathClosedArc::extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+{
+    arc.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathClosedArc& data)
+{
+    ts << "add closed arc " << data.arc.center << " " << data.arc.radius << " " << data.arc.startAngle  << " " << data.arc.endAngle  << " " << data.arc.direction;
+    return ts;
+}
+
 FloatPoint PathEllipse::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
 {
     lastMoveToPoint = center + FloatSize { radiusX * cos(startAngle), - radiusY * sin(startAngle) };

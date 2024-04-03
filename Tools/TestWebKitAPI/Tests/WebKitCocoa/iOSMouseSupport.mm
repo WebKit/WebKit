@@ -33,6 +33,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
+#import <WebCore/PointerEventTypeNames.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -649,7 +650,7 @@ TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
     tapAndWait();
 
     NSString *result = [webView objectByEvaluatingJavaScript:@"window.lastPointerEventType"];
-    EXPECT_WK_STREQ("mouse", result);
+    EXPECT_WK_STREQ(WebCore::mousePointerEventType(), result);
 
     EXPECT_TRUE(testHarness.mouseInteraction().enabled);
 

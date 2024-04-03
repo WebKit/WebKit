@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLMarqueeElement);
 using namespace HTMLNames;
 
 inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
     , ActiveDOMObject(document)
 {
     ASSERT(hasTagName(marqueeTag));
@@ -186,6 +186,12 @@ ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)
         return Exception { ExceptionCode::IndexSizeError };
     setIntegralAttribute(loopAttr, loop);
     return { };
+}
+
+void HTMLMarqueeElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
+{
+    HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
 }
 
 void HTMLMarqueeElement::suspend(ReasonForSuspension)

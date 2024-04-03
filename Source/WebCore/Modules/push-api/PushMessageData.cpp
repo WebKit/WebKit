@@ -64,7 +64,7 @@ ExceptionOr<JSC::JSValue> PushMessageData::json(JSDOMGlobalObject& globalObject)
 
 String PushMessageData::text()
 {
-    return TextResourceDecoder::textFromUTF8(m_data.data(), m_data.size());
+    return TextResourceDecoder::textFromUTF8(m_data.span());
 }
 
 } // namespace WebCore

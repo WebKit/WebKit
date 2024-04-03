@@ -49,7 +49,7 @@ typedef enum {
     WPE_PIXEL_FORMAT_ARGB8888
 } WPEPixelFormat;
 
-WPE_API WPEBufferSHM  *wpe_buffer_shm_new        (WPEDisplay    *display,
+WPE_API WPEBufferSHM  *wpe_buffer_shm_new        (WPEView       *view,
                                                   int            width,
                                                   int            height,
                                                   WPEPixelFormat format,

@@ -54,8 +54,6 @@ public:
     std::optional<double> bindingsCurrentTime() const;
     std::optional<Seconds> currentTime() const { return m_currentTime; }
 
-    EventInterface eventInterface() const override { return AnimationPlaybackEventInterfaceType; }
-
 private:
     AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime);
     AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);

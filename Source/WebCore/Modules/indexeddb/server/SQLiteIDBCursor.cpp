@@ -272,13 +272,13 @@ bool SQLiteIDBCursor::bindArguments()
     }
 
     auto buffer = serializeIDBKeyData(m_currentLowerKey);
-    if (m_statement->bindBlob(currentBindArgument++, buffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentUpperKey);
-    if (m_statement->bindBlob(currentBindArgument++, buffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (upper key)");
         return false;
     }
@@ -318,13 +318,13 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
     }
 
     auto buffer = serializeIDBKeyData(key);
-    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentIndexRecordValue);
-    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+    if (m_preIndexStatement->bindBlob(currentBindArgument++, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (value)");
         return false;
     }
@@ -511,7 +511,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
     ASSERT(record.rowID);
     auto keyDataSpan = statement->columnBlobAsSpan(1);
 
-    if (!deserializeIDBKeyData(keyDataSpan.data(), keyDataSpan.size(), record.record.key)) {
+    if (!deserializeIDBKeyData(keyDataSpan, record.record.key)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
         markAsErrored(record);
         return FetchResult::Failure;
@@ -534,7 +534,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
             record.record.value = { ThreadSafeDataBuffer::create(WTFMove(keyData)), blobURLs, blobFilePaths };
     } else {
-        if (!deserializeIDBKeyData(keyData.data(), keyData.size(), record.record.primaryKey)) {
+        if (!deserializeIDBKeyData(keyData.span(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             markAsErrored(record);
             return FetchResult::Failure;

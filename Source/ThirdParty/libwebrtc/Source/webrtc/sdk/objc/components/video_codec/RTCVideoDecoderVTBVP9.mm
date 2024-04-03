@@ -65,8 +65,9 @@ static uint8_t convertSubsampling(absl::optional<webrtc::Vp9YuvSubsampling> valu
     }
 }
 
-rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8_t* data, size_t size, int32_t width, int32_t height)
+std::pair<rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef>, bool> computeInputFormat(const uint8_t* data, size_t size, int32_t width, int32_t height)
 {
+
   constexpr size_t VPCodecConfigurationContentsSize = 12;
 
   auto result = webrtc::ParseUncompressedVp9Header(rtc::MakeArrayView(data, size));
@@ -74,7 +75,8 @@ rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8
   if (!result)
       return { };
   auto chromaSubsampling = convertSubsampling(result->sub_sampling);
-  uint8_t bitDepthChromaAndRange = (0xF & (uint8_t)result->bit_detph) << 4 | (0x7 & chromaSubsampling) << 1 | (0x1 & (uint8_t)result->color_range.value_or(webrtc::Vp9ColorRange::kStudio));
+  bool isVideoFullRange = result->color_range.value_or(webrtc::Vp9ColorRange::kStudio) == webrtc::Vp9ColorRange::kFull;
+  uint8_t bitDepthChromaAndRange = (0xF & (uint8_t)result->bit_detph) << 4 | (0x7 & chromaSubsampling) << 1 | (0x1 & isVideoFullRange);
 
   uint8_t record[VPCodecConfigurationContentsSize];
   memset((void*)record, 0, VPCodecConfigurationContentsSize);
@@ -99,14 +101,14 @@ rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> computeInputFormat(const uint8
 
   CMVideoFormatDescriptionRef formatDescription = nullptr;
   // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', width, height, (__bridge CFDictionaryRef)extensions, &formatDescription))
+  if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, 'vp09', width ? width : result->frame_width, height ? height : result->frame_height, (__bridge CFDictionaryRef)extensions, &formatDescription))
       return { };
 
-  return rtc::ScopedCF(formatDescription);
+  return std::make_pair(rtc::ScopedCF(formatDescription), isVideoFullRange);
 }
 
-static void overrideVP9ColorSpaceAttachments(CVImageBufferRef imageBuffer) {
-    CVBufferRemoveAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey);
+static void overrideVP9ColorSpaceAttachments(CVImageBufferRef imageBuffer, CGColorSpaceRef colorSpace) {
+    CVBufferSetAttachment(imageBuffer, kCVImageBufferCGColorSpaceKey, colorSpace, kCVAttachmentMode_ShouldPropagate);
     CVBufferSetAttachment(imageBuffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
     CVBufferSetAttachment(imageBuffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
     CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
@@ -123,6 +125,7 @@ struct RTCFrameDecodeParams {
 
 @interface RTCVideoDecoderVTBVP9 ()
 - (void)setError:(OSStatus)error;
+- (CGColorSpaceRef)colorSpace;
 @end
 
 CMSampleBufferRef VP9BufferToCMSampleBuffer(const uint8_t* buffer,
@@ -157,16 +160,16 @@ void vp9DecompressionOutputCallback(void *decoderRef,
                                  CVImageBufferRef imageBuffer,
                                  CMTime timestamp,
                                  CMTime duration) {
+  RTCVideoDecoderVTBVP9 *decoder = (__bridge RTCVideoDecoderVTBVP9 *)decoderRef;
   std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   if (status != noErr || !imageBuffer) {
-    RTCVideoDecoderVTBVP9 *decoder = (__bridge RTCVideoDecoderVTBVP9 *)decoderRef;
     [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     decodeParams->callback(nil);
     return;
   }
 
-  overrideVP9ColorSpaceAttachments(imageBuffer);
+  overrideVP9ColorSpaceAttachments(imageBuffer, decoder.colorSpace);
 
   RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
   RTCVideoFrame *decodedFrame =
@@ -180,6 +183,8 @@ void vp9DecompressionOutputCallback(void *decoderRef,
 // Decoder.
 @implementation RTCVideoDecoderVTBVP9 {
   CMVideoFormatDescriptionRef _videoFormat;
+  bool _isVideoFullRange;
+  CGColorSpaceRef _colorSpace;
   VTDecompressionSessionRef _decompressionSession;
   RTCVideoDecoderCallback _callback;
   OSStatus _error;
@@ -192,6 +197,8 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   self = [super init];
   if (self) {
     _shouldCheckFormat = true;
+    _isVideoFullRange = true;
+    _colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   }
   return self;
 }
@@ -199,6 +206,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
 - (void)dealloc {
   [self destroyDecompressionSession];
   [self setVideoFormat:nullptr];
+  CFRelease(_colorSpace);
 }
 
 - (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores {
@@ -233,13 +241,16 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   }
 
   if (_shouldCheckFormat || !_videoFormat) {
-    auto inputFormat = computeInputFormat(data, size, _width, _height);
+    auto result = computeInputFormat(data, size, _width, _height);
+    auto inputFormat = std::move(result.first);
+    bool isVideoFullRange = result.second;
     if (inputFormat) {
       _shouldCheckFormat = false;
       // Check if the video format has changed, and reinitialize decoder if
       // needed.
-      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
+      if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat) || isVideoFullRange != _isVideoFullRange) {
         [self setVideoFormat:inputFormat.get()];
+        _isVideoFullRange = isVideoFullRange;
         int resetDecompressionSessionError = [self resetDecompressionSession];
         if (resetDecompressionSessionError != WEBRTC_VIDEO_CODEC_OK) {
           [self setVideoFormat:nullptr];
@@ -291,6 +302,10 @@ void vp9DecompressionOutputCallback(void *decoderRef,
   _error = error;
 }
 
+- (CGColorSpaceRef)colorSpace {
+  return _colorSpace;
+}
+
 - (NSInteger)releaseDecoder {
   // Need to invalidate the session so that callbacks no longer occur and it
   // is safe to null out the callback.
@@ -328,7 +343,7 @@ void vp9DecompressionOutputCallback(void *decoderRef,
     kCVPixelBufferPixelFormatTypeKey
   };
   CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
-  int64_t nv12type = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+  int64_t nv12type = _isVideoFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
   CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &nv12type);
   CFTypeRef values[attributesSize] = {kCFBooleanTrue, ioSurfaceValue, pixelFormat};
   CFDictionaryRef attributes = CreateCFTypeDictionary(keys, values, attributesSize);

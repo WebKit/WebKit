@@ -36,7 +36,7 @@ div#image-overlay {
     font-family: system-ui;
 }
 
-:host(:not(img)) div#image-overlay:-webkit-full-screen-document {
+:host(:not(img)) div#image-overlay:-internal-fullscreen-document {
     display: none;
 }
 

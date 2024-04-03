@@ -125,9 +125,9 @@ void WebVTTParser::parseFileHeader(String&& data)
         m_client.newStyleSheetsParsed();
 }
 
-void WebVTTParser::parseBytes(const uint8_t* data, unsigned length)
+void WebVTTParser::parseBytes(std::span<const uint8_t> data)
 {
-    m_lineReader.append(m_decoder->decode(data, length));
+    m_lineReader.append(m_decoder->decode(data));
     parse();
 }
 
@@ -231,8 +231,7 @@ void WebVTTParser::parse()
 void WebVTTParser::fileFinished()
 {
     ASSERT(m_state != Finished);
-    constexpr uint8_t endLines[] = { '\n', '\n' };
-    parseBytes(endLines, 2);
+    parseBytes("\n\n"_span);
     m_state = Finished;
 }
 
@@ -703,7 +702,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
             break;
 
         auto language = !m_languageStack.isEmpty() ? m_languageStack.last() : emptyAtom();
-        auto child = WebVTTElementImpl::create(nodeType, language, document);
+        auto child = WebVTTElement::create(nodeType, language, document);
         if (!m_token.classes().isEmpty())
             child->setAttributeWithoutSynchronization(classAttr, m_token.classes());
 

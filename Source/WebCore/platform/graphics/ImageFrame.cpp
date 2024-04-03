@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,13 @@ namespace WebCore {
 
 ImageFrame::ImageFrame()
 {
+}
+
+ImageFrame::ImageFrame(Ref<NativeImage>&& nativeImage)
+    : m_nativeImage(WTFMove(nativeImage))
+{
+    m_size = m_nativeImage->size();
+    m_hasAlpha = m_nativeImage->hasAlpha();
 }
 
 ImageFrame::~ImageFrame()
@@ -96,11 +103,6 @@ unsigned ImageFrame::clear()
     return frameBytes;
 }
 
-IntSize ImageFrame::size() const
-{
-    return m_size;
-}
-
 bool ImageFrame::hasNativeImage(const std::optional<SubsamplingLevel>& subsamplingLevel) const
 {
     return m_nativeImage && (!subsamplingLevel || *subsamplingLevel >= m_subsamplingLevel);
@@ -114,14 +116,6 @@ bool ImageFrame::hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& s
 bool ImageFrame::hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions) const
 {
     return isComplete() && hasNativeImage(subsamplingLevel) && m_decodingOptions.isCompatibleWith(decodingOptions);
-}
-
-Color ImageFrame::singlePixelSolidColor() const
-{
-    if (!hasNativeImage() || m_size != IntSize(1, 1))
-        return Color();
-
-    return m_nativeImage->singlePixelSolidColor();
 }
 
 } // namespace WebCore

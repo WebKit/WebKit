@@ -33,6 +33,7 @@
 #include "JITCode.h"
 #include "Options.h"
 #include "PerfLog.h"
+#include "WasmCallee.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
@@ -42,31 +43,77 @@ size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
-LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
+static const char* profileName(LinkBuffer::Profile profile)
+{
+#define RETURN_LINKBUFFER_PROFILE_NAME(name) case LinkBuffer::Profile::name: return #name;
+    switch (profile) {
+        FOR_EACH_LINKBUFFER_PROFILE(RETURN_LINKBUFFER_PROFILE_NAME)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+#undef RETURN_LINKBUFFER_PROFILE_NAME
+    return "";
+}
+
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl(ASCIILiteral simpleName)
 {
     performFinalization();
     
     ASSERT(m_didAllocate);
-    if (m_executableMemory)
-        return CodeRef<LinkBufferPtrTag>(*m_executableMemory);
-    
-    return CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(m_code);
+    CodeRef<LinkBufferPtrTag> codeRef(m_executableMemory ? CodeRef<LinkBufferPtrTag>(*m_executableMemory) : CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(m_code));
+
+    if (UNLIKELY(Options::logJITCodeForPerf()))
+        logJITCodeForPerf(codeRef, simpleName);
+
+    return codeRef;
 }
 
-LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...)
+void LinkBuffer::logJITCodeForPerf(CodeRef<LinkBufferPtrTag>& codeRef, ASCIILiteral simpleName)
 {
-    CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
-
 #if OS(LINUX) || OS(DARWIN)
-    if (Options::logJITCodeForPerf()) {
-        StringPrintStream out;
-        va_list argList;
-        va_start(argList, format);
-        out.vprintf(format, argList);
-        va_end(argList);
-        PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
+    auto dumpSimpleName = [&](StringPrintStream& out, ASCIILiteral simpleName) {
+        if (simpleName.isNull())
+            out.print("unspecified");
+        else
+            out.print(simpleName);
+    };
+
+    StringPrintStream out;
+    out.print(profileName(m_profile), ": ");
+    switch (m_profile) {
+    case Profile::Baseline:
+    case Profile::DFG:
+    case Profile::FTL: {
+        if (m_ownerUID)
+            static_cast<CodeBlock*>(m_ownerUID)->dumpSimpleName(out);
+        else
+            dumpSimpleName(out, simpleName);
+        break;
+    }
+#if ENABLE(WEBASSEMBLY)
+    case Profile::WasmOMG:
+    case Profile::WasmBBQ: {
+        if (m_ownerUID)
+            out.print(makeString(static_cast<Wasm::Callee*>(m_ownerUID)->indexOrName()));
+        else
+            dumpSimpleName(out, simpleName);
+        break;
     }
 #endif
+    default:
+        dumpSimpleName(out, simpleName);
+        break;
+    }
+    if (!m_isRewriting)
+        PerfLog::log(out.toCString(), codeRef.code().untaggedPtr<const uint8_t*>(), codeRef.size());
+#else
+    UNUSED_PARAM(codeRef);
+    UNUSED_PARAM(simpleName);
+#endif
+}
+
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, ASCIILiteral simpleName, const char* format, ...)
+{
+    CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl(simpleName);
 
     if (!dumpDisassembly && !Options::logJIT())
         return result;
@@ -505,13 +552,6 @@ void LinkBuffer::performFinalization()
     MacroAssembler::cacheFlush(code(), m_size);
 }
 
-void LinkBuffer::runMainThreadFinalizationTasks()
-{
-    for (auto& task : m_mainThreadFinalizationTasks)
-        task->run();
-    m_mainThreadFinalizationTasks.clear();
-}
-
 #if DUMP_LINK_STATISTICS
 void LinkBuffer::dumpLinkStatistics(void* code, size_t initializeSize, size_t finalSize)
 {
@@ -578,19 +618,10 @@ void LinkBuffer::dumpProfileStatistics(std::optional<PrintStream*> outStream)
     Stat sortedStats[numberOfProfiles];
     PrintStream& out = outStream ? *outStream.value() : WTF::dataFile();
 
-#define RETURN_LINKBUFFER_PROFILE_NAME(name) case Profile::name: return #name;
-    auto name = [] (Profile profile) -> const char* {
-        switch (profile) {
-            FOR_EACH_LINKBUFFER_PROFILE(RETURN_LINKBUFFER_PROFILE_NAME)
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-#undef RETURN_LINKBUFFER_PROFILE_NAME
-
     size_t totalOfAllProfilesSize = 0;
     auto dumpStat = [&] (const Stat& stat) {
         char formattedName[21];
-        snprintf(formattedName, 21, "%20s", name(stat.profile));
+        snprintf(formattedName, 21, "%20s", profileName(stat.profile));
 
         const char* largerUnit = nullptr;
         double sizeInLargerUnit = stat.size;

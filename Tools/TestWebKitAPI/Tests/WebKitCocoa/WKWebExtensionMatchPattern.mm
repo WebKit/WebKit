@@ -413,6 +413,8 @@ TEST(WKWebExtensionMatchPattern, PatternDescriptions)
     EXPECT_NS_EQUAL(toPattern(@"http://*.example.com/*").description, @"http://*.example.com/*");
     EXPECT_NS_EQUAL(toPattern(@"file:///*").description, @"file:///*");
     EXPECT_NS_EQUAL(toPattern(@"file://localhost/*").description, @"file:///*");
+    EXPECT_NS_EQUAL(toPattern(@"file", @"", @"/*").description, @"file:///*");
+    EXPECT_NS_EQUAL(toPattern(@"file", @"localhost", @"/*").description, @"file:///*");
 }
 
 TEST(WKWebExtensionMatchPattern, MatchesAllHosts)

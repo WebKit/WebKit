@@ -34,6 +34,7 @@
 #include "VP9Utilities.h"
 #include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -48,17 +49,17 @@ static void ensureVideoTrackDebugCategoryInitialized()
     });
 }
 
-VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
-    , m_player(player)
+    , m_player(WTFMove(player))
 {
     ensureVideoTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
 }
 
-VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
-    , m_player(player)
+    , m_player(WTFMove(player))
 {
     ensureVideoTrackDebugCategoryInitialized();
     installUpdateConfigurationHandlers();
@@ -75,10 +76,11 @@ void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<Gst
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTFMove(caps));
 
-    if (!m_player)
+    RefPtr player = m_player.get();
+    if (!player)
         return;
 
-    auto codec = m_player->codecForStreamId(streamId);
+    auto codec = player->codecForStreamId(streamId);
     if (codec.isEmpty())
         return;
 
@@ -94,6 +96,13 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>
     GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
     if (!tags)
         return;
+
+    if (updateTrackIDFromTags(tags)) {
+        GST_DEBUG_OBJECT(objectForLogging(), "Video track ID set from container-specific-track-id tag %" G_GUINT64_FORMAT, *m_trackID);
+        notifyClients([trackID = *m_trackID](auto& client) {
+            client.idChanged(trackID);
+        });
+    }
 
     unsigned bitrate;
     if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
@@ -183,8 +192,9 @@ void VideoTrackPrivateGStreamer::setSelected(bool selected)
         return;
     VideoTrackPrivate::setSelected(selected);
 
-    if (m_player)
-        m_player->updateEnabledVideoTrack();
+    RefPtr player = m_player.get();
+    if (player)
+        player->updateEnabledVideoTrack();
 }
 
 #undef GST_CAT_DEFAULT

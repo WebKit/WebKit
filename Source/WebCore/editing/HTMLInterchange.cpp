@@ -41,8 +41,7 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
     if (node->renderer() && node->renderer()->style().preserveNewline())
         return in;
 
-    const char convertedSpaceString[] = "<span class=\"" AppleConvertedSpace "\">\xA0</span>";
-    static_assert((static_cast<unsigned char>('\xA0') == noBreakSpace), "ConvertedSpaceStringSpace is NoBreakSpace");
+    static NeverDestroyed<const String> convertedSpaceString { makeString("<span class=\"", AppleConvertedSpace, "\">", noBreakSpace, "</span>") };
 
     StringBuilder s;
 
@@ -61,24 +60,24 @@ String convertHTMLTextToInterchangeFormat(const String& in, const Text* node)
                 unsigned add = count % 3;
                 switch (add) {
                     case 0:
-                        s.append(convertedSpaceString, ' ', convertedSpaceString);
+                        s.append(convertedSpaceString.get(), ' ', convertedSpaceString.get());
                         add = 3;
                         break;
                     case 1:
                         if (i == 0 || i + 1 == in.length()) // at start or end of string
-                            s.append(convertedSpaceString);
+                            s.append(convertedSpaceString.get());
                         else
                             s.append(' ');
                         break;
                     case 2:
                         if (i == 0) {
                              // at start of string
-                            s.append(convertedSpaceString, ' ');
+                            s.append(convertedSpaceString.get(), ' ');
                         } else if (i + 2 == in.length()) {
                              // at end of string
-                            s.append(convertedSpaceString, convertedSpaceString);
+                            s.append(convertedSpaceString.get(), convertedSpaceString.get());
                         } else {
-                            s.append(convertedSpaceString, ' ');
+                            s.append(convertedSpaceString.get(), ' ');
                         }
                         break;
                 }

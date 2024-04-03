@@ -4,11 +4,12 @@ layer at (0,0) size 800x98
   RenderBlock {HTML} at (0,0) size 800x98
     RenderBody {BODY} at (8,8) size 784x82
       RenderAttachment {ATTACHMENT} at (1,1) size 266x80
-        RenderFlexibleBox {DIV} at (0,0) size 266x80 [bgcolor=#0000000C]
-          RenderGrid {DIV} at (14,14) size 52x52
-            RenderImage {IMG} at (0,0) size 52x52
-          RenderFlexibleBox {DIV} at (84,0) size 158x80
-            RenderGrid {DIV} at (0,40) size 158x0
+        RenderFlexibleBox {DIV} at (0,0) size 266x80 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 266x80 [bgcolor=#0000000C]
+            RenderGrid {DIV} at (14,14) size 52x52
+              RenderImage {IMG} at (0,0) size 52x52
+            RenderFlexibleBox {DIV} at (80,0) size 162x80
+              RenderGrid {DIV} at (0,40) size 162x0
       RenderText {#text} at (268,52) size 4x18
         text run at (268,52) width 4: " "
       RenderImage {IMG} at (272,46) size 20x20

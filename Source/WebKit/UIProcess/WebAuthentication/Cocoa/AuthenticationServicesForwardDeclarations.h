@@ -206,6 +206,15 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialClientDataCrossOriginValue) {
 
 @end
 
+@protocol ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest
+@property (nonatomic, readonly, nullable) ASPublicKeyCredentialClientData *clientData;
+@property (nonatomic, nullable, copy) NSArray<ASAuthorizationPlatformPublicKeyCredentialDescriptor *> *excludedCredentials;
+@property (nonatomic) BOOL shouldShowHybridTransport;
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialRegistrationRequest>
+@end
+
 typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperation) {
     ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationRead,
     ASAuthorizationPublicKeyCredentialLargeBlobAssertionOperationWrite,
@@ -250,6 +259,14 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionO
 @property (nonatomic, nullable, copy) ASAuthorizationPublicKeyCredentialLargeBlobAssertionInput *largeBlob;
 @end
 
+@protocol ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest
+@property (nonatomic, readonly, nullable) ASPublicKeyCredentialClientData *clientData;
+@property (nonatomic) BOOL shouldShowHybridTransport;
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialAssertionRequest () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialAssertionRequest>
+@end
+
 @interface ASAuthorizationPlatformPublicKeyCredentialProvider : NSObject <ASAuthorizationProvider>
 
 - (instancetype)initWithRelyingPartyIdentifier:(NSString *)relyingPartyIdentifier NS_DESIGNATED_INITIALIZER;
@@ -257,6 +274,11 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionO
 - (ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest *)createCredentialRegistrationRequestWithChallenge:(NSData *)challenge name:(NSString *)name userID:(NSData *)userID NS_SWIFT_NAME(createCredentialRegistrationRequest(challenge:name:userID:));
 
 - (ASAuthorizationPlatformPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithChallenge:(NSData *)challenge NS_SWIFT_NAME(createCredentialAssertionRequest(challenge:));
+
+- (ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest *)createCredentialRegistrationRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData name:(NSString *)name userID:(NSData *)userID;
+
+- (ASAuthorizationPlatformPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData;
+
 
 @property (nonatomic, readonly, copy) NSString *relyingPartyIdentifier;
 @end
@@ -267,6 +289,9 @@ typedef NS_ENUM(NSInteger, ASAuthorizationPublicKeyCredentialLargeBlobAssertionO
 
 - (ASAuthorizationPlatformPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData;
 
+@end
+
+@interface ASAuthorizationPlatformPublicKeyCredentialProvider () <ASAuthorizationWebBrowserPlatformPublicKeyCredentialProvider>
 @end
 
 typedef NSString *ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport;
@@ -307,11 +332,13 @@ typedef NSString *ASAuthorizationPublicKeyCredentialResidentKeyPreference;
 @end
 
 @interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertion : NSObject <ASAuthorizationPublicKeyCredentialAssertion>
+@property (nonatomic, readonly) BOOL appID;
 @end
 
 @interface ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest : ASAuthorizationRequest <ASAuthorizationPublicKeyCredentialAssertionRequest>
 
 @property (nonatomic, copy) NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor *> *allowedCredentials;
+@property (nonatomic, nullable, copy) NSString *appID;
 
 @end
 
@@ -323,8 +350,23 @@ typedef NSString *ASAuthorizationPublicKeyCredentialResidentKeyPreference;
 
 - (ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithChallenge:(NSData *)challenge NS_SWIFT_NAME(createCredentialAssertionRequest(challenge:));
 
+- (ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest *)createCredentialRegistrationRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData displayName:(NSString *)displayName name:(NSString *)name userID:(NSData *)userID;
+
+- (ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest *)createCredentialAssertionRequestWithClientData:(ASPublicKeyCredentialClientData *)clientData;
+
 @property (nonatomic, readonly, copy) NSString *relyingPartyIdentifier;
 
 @end
+
+extern NSErrorDomain const ASAuthorizationErrorDomain;
+
+typedef NS_ERROR_ENUM(ASAuthorizationErrorDomain, ASAuthorizationError) {
+    ASAuthorizationErrorUnknown = 1000,
+    ASAuthorizationErrorCanceled = 1001,
+    ASAuthorizationErrorInvalidResponse = 1002,
+    ASAuthorizationErrorNotHandled = 1003,
+    ASAuthorizationErrorFailed = 1004,
+    ASAuthorizationErrorNotInteractive = 1005,
+};
 
 NS_ASSUME_NONNULL_END

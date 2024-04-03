@@ -1,0 +1,214 @@
+[
+  {
+    "cmd": [],
+    "name": "ensure xcode",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Ensuring Xcode version 12c33 in [START_DIR]/cache/Xcode.app@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/mac_toolchain/mac_toolchain",
+      "install",
+      "-kind",
+      "ios",
+      "-xcode-version",
+      "12c33",
+      "-output-dir",
+      "[START_DIR]/cache/Xcode.app"
+    ],
+    "name": "ensure xcode.install xcode",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "xcode-select",
+      "-switch",
+      "[START_DIR]/cache/Xcode.app"
+    ],
+    "name": "ensure xcode.select xcode",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-gn"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-gn"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/ccache_mac/bin/ccache",
+      "-s"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CCACHE_COMPILERCHECK": "content",
+      "CCACHE_DIR": "[START_DIR]/cache/ccache",
+      "CCACHE_MAXFILES": "0",
+      "CCACHE_MAXSIZE": "50G",
+      "CHROME_HEADLESS": "1",
+      "MACOSX_DEPLOYMENT_TARGET": "10.13",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "ccache stats-start"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cache/work/skia/bin/gn",
+      "gen",
+      "[START_DIR]/cache/work/skia/out/Build-Mac-Clang-x86_64-Debug-ASAN/Debug",
+      "--args=cc=\"clang\" cc_wrapper=\"[START_DIR]/ccache_mac/bin/ccache\" cxx=\"clang++\" extra_cflags=[\"-DREBUILD_IF_CHANGED_xcode_build_version=12c33\", \"-O1\"] link_pool_depth=2 sanitize=\"ASAN\" skia_enable_spirv_validation=false skia_use_client_icu=true skia_use_libgrapheme=true target_cpu=\"x86_64\" werror=true"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CCACHE_COMPILERCHECK": "content",
+      "CCACHE_DIR": "[START_DIR]/cache/ccache",
+      "CCACHE_MAXFILES": "0",
+      "CCACHE_MAXSIZE": "50G",
+      "CHROME_HEADLESS": "1",
+      "MACOSX_DEPLOYMENT_TARGET": "10.13",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "gn gen"
+  },
+  {
+    "cmd": [
+      "ninja",
+      "-C",
+      "[START_DIR]/cache/work/skia/out/Build-Mac-Clang-x86_64-Debug-ASAN/Debug"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CCACHE_COMPILERCHECK": "content",
+      "CCACHE_DIR": "[START_DIR]/cache/ccache",
+      "CCACHE_MAXFILES": "0",
+      "CCACHE_MAXSIZE": "50G",
+      "CHROME_HEADLESS": "1",
+      "MACOSX_DEPLOYMENT_TARGET": "10.13",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "ninja"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/ccache_mac/bin/ccache",
+      "-s"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CCACHE_COMPILERCHECK": "content",
+      "CCACHE_DIR": "[START_DIR]/cache/ccache",
+      "CCACHE_MAXFILES": "0",
+      "CCACHE_MAXSIZE": "50G",
+      "CHROME_HEADLESS": "1",
+      "MACOSX_DEPLOYMENT_TARGET": "10.13",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "ccache stats-end"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
+      "[START_DIR]/cache/work/skia/out/Build-Mac-Clang-x86_64-Debug-ASAN/Debug",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Debug",
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+    ],
+    "infra_step": true,
+    "name": "copy build products"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang"
+    ],
+    "infra_step": true,
+    "name": "find XCode Clang version",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin",
+      "libclang_rt.*san_osx_dynamic.dylib"
+    ],
+    "infra_step": true,
+    "name": "find xSAN dylibs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@glob@[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib@@@",
+      "@@@STEP_LOG_LINE@glob@[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.tsan_osx_dynamic.dylib@@@",
+      "@@@STEP_LOG_LINE@glob@[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.ubsan_osx_dynamic.dylib@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Debug"
+    ],
+    "infra_step": true,
+    "name": "copy libclang_rt.asan_osx_dynamic.dylib"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.tsan_osx_dynamic.dylib",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Debug"
+    ],
+    "infra_step": true,
+    "name": "copy libclang_rt.tsan_osx_dynamic.dylib"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/cache/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.0/lib/darwin/libclang_rt.ubsan_osx_dynamic.dylib",
+      "[START_DIR]/[SWARM_OUT_DIR]/out/Debug"
+    ],
+    "infra_step": true,
+    "name": "copy libclang_rt.ubsan_osx_dynamic.dylib"
+  },
+  {
+    "name": "$result"
+  }
+]

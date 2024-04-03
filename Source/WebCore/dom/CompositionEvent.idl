@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://w3c.github.io/uievents/#idl-compositionevent
+
 [
     Exposed=Window
 ] interface CompositionEvent : UIEvent {
-    constructor([AtomString] DOMString type, optional CompositionEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional CompositionEventInit eventInitDict = {});
 
-    readonly attribute DOMString data;
+    readonly attribute USVString data;
 
+    // https://w3c.github.io/uievents/#idl-interface-CompositionEvent-initializers
+    // Originally introduced (and deprecated) in this specification
     undefined initCompositionEvent([AtomString] DOMString typeArg,
                               optional boolean canBubbleArg = false,
                               optional boolean cancelableArg = false,
                               optional WindowProxy? viewArg = null,
-                              optional DOMString dataArg = "undefined");
+                              optional DOMString dataArg = "");
 
 };
+
+// https://w3c.github.io/uievents/#idl-compositioneventinit
 
 dictionary CompositionEventInit : UIEventInit {
     DOMString data = "";

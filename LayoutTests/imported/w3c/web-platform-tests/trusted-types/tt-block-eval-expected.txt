@@ -1,0 +1,5 @@
+
+FAIL eval blocks if the default policy rejects a value. assert_throws_js: function "_ => {
+      eval('a="hello there"');
+    }" did not throw
+

@@ -42,13 +42,14 @@ class PerfLog {
     friend class LazyNeverDestroyed<PerfLog>;
 public:
     static void log(CString&&, const uint8_t* executableAddress, size_t);
+    static void flush();
 
 private:
     PerfLog();
     static PerfLog& singleton();
 
-    void write(const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
-    void flush() WTF_REQUIRES_LOCK(m_lock);
+    void write(const AbstractLocker&, const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
+    void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
     FILE* m_file { nullptr };
     void* m_marker { nullptr };

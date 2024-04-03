@@ -94,6 +94,11 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
     return MediaSourcePrivateGStreamer::AddStatus::Ok;
 }
 
+RefPtr<MediaPlayerPrivateInterface> MediaSourcePrivateGStreamer::player() const
+{
+    return &m_playerPrivate;
+}
+
 void MediaSourcePrivateGStreamer::durationChanged(const MediaTime& duration)
 {
     ASSERT(isMainThread());
@@ -137,11 +142,6 @@ MediaPlayer::ReadyState MediaSourcePrivateGStreamer::mediaPlayerReadyState() con
 void MediaSourcePrivateGStreamer::setMediaPlayerReadyState(MediaPlayer::ReadyState state)
 {
     m_playerPrivate.setReadyState(state);
-}
-
-MediaTime MediaSourcePrivateGStreamer::currentMediaTime() const
-{
-    return m_playerPrivate.currentMediaTime();
 }
 
 void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()

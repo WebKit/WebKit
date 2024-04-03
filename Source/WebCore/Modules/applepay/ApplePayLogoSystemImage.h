@@ -40,6 +40,7 @@ enum class ApplePayLogoStyle : bool {
 };
 
 class WEBCORE_EXPORT ApplePayLogoSystemImage final : public SystemImage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ApplePayLogoSystemImage> create(ApplePayLogoStyle applePayLogoStyle)
     {

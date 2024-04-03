@@ -53,10 +53,12 @@ class WebPageProxy;
 class WebProcessPool;
 class WebsiteDataStore;
 
+enum class WebNotificationIdentifierType;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
+
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
-
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
@@ -74,8 +76,8 @@ public:
 
     void getNotifications(const URL&, const String&, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
 
-    void providerDidShowNotification(uint64_t notificationID);
-    void providerDidClickNotification(uint64_t notificationID);
+    void providerDidShowNotification(WebNotificationIdentifier);
+    void providerDidClickNotification(WebNotificationIdentifier);
     void providerDidClickNotification(const WTF::UUID& notificationID);
     void providerDidCloseNotifications(API::Array* notificationIDs);
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
@@ -96,7 +98,7 @@ private:
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 
-    HashMap<uint64_t, WTF::UUID> m_globalNotificationMap;
+    HashMap<WebNotificationIdentifier, WTF::UUID> m_globalNotificationMap;
     HashMap<WTF::UUID, Ref<WebNotification>> m_notifications;
 };
 

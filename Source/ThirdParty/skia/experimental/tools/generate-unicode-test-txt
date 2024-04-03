@@ -1,0 +1,86 @@
+#! /usr/bin/env python
+
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import array, zlib, base64, sys
+
+#   import array, zlib, base64, sys, unicodedata
+#   def codepoints():
+#       for i in range(0x110000):
+#           try:
+#               u = ('\\U%08x' % i).decode('unicode-escape')
+#               n = unicodedata.name(u)
+#               c = unicodedata.category(u)
+#               if c[0] == 'C' or n.startswith('VARIATION '):
+#                   continue
+#               yield i
+#           except ValueError:
+#               pass
+#   def make_unicode_data():
+#       last = 0
+#       a = array.array('I')
+#       for i in codepoints():
+#         a.append(i - last - 1)
+#         last = i
+#       return base64.b64encode(zlib.compress(a.tostring(), 9))
+#   if __name__ == '__main__':
+#       b = make_unicode_data()
+#       for i in range(0, len(b), 76):
+#           print '  %s' % b[i:i+76]
+valid_codepoint_data = '''
+  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
+'''
+def codepoints():
+    i = 0
+    for increment in array.array('I', zlib.decompress(
+        base64.b64decode(valid_codepoint_data))).tolist():
+        i += increment + 1
+        yield i
+if sys.version_info[0] < 3:
+    def to_unicode(i):
+        return ('\\U%08x' % i).decode('unicode-escape').encode('UTF-8')
+else:
+    def to_unicode(i):
+        return chr(i)
+if __name__ == '__main__':
+    o = sys.stdout
+    o.write(to_unicode(0xFEFF))
+    last_row = -1
+    for i in codepoints():
+        row = i - (i & 63)
+        if last_row != row:
+            if row:
+                o.write('\n' if row % 1024 else '\n\n')
+            o.write('U+%06x ' % row)
+            last_row = row
+        o.write(' ' + to_unicode(i))
+    o.write('\n')

@@ -26,6 +26,7 @@
 
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
+#include "DocumentInlines.h"
 #include "Font.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
@@ -483,6 +484,11 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
 }
 
 HTMLInputElement& RenderTextControlSingleLine::inputElement() const
+{
+    return downcast<HTMLInputElement>(RenderTextControl::textFormControlElement());
+}
+
+Ref<HTMLInputElement> RenderTextControlSingleLine::protectedInputElement() const
 {
     return downcast<HTMLInputElement>(RenderTextControl::textFormControlElement());
 }

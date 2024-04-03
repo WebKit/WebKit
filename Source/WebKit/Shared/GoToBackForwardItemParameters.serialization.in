@@ -28,6 +28,6 @@
     std::optional<WebKit::WebsitePoliciesData> websitePolicies;
     bool lastNavigationWasAppInitiated;
     std::optional<WebKit::NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
-    std::optional<String> topPrivatelyControlledDomain;
-    WebKit::SandboxExtension::Handle sandboxExtensionHandle;
+    String publicSuffix;
+    WebKit::SandboxExtensionHandle sandboxExtensionHandle;
 };

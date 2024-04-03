@@ -29,5 +29,5 @@
     EnabledBySetting=WebGPUEnabled
 ]
 interface mixin GPUObjectBase {
-    attribute USVString? label; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=236723 This is supposed to be (USVString or undefined) but our bindings generator can't handle that.
+    attribute USVString label;
 };

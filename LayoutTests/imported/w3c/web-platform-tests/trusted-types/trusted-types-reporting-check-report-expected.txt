@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: [Report Only] Refused to create a TrustedTypePolicy named 'three' because it violates the following Content Security Policy directive: "trusted-types one two"
+
+PASS Violation report status OK.
+

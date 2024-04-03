@@ -22,7 +22,6 @@
 #include "config.h"
 #include "WidthIterator.h"
 
-#include "CharacterProperties.h"
 #include "ComposedCharacterClusterTextIterator.h"
 #include "Font.h"
 #include "FontCascade.h"
@@ -31,6 +30,7 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 
@@ -187,8 +187,12 @@ bool WidthIterator::hasExtraSpacing() const
 
 static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
 {
-    ASSERT(index < glyphBuffer.size());
-    glyphBuffer.shrink(index);
+#if USE(CG)
+    ASSERT(index >= 0);
+#endif
+    auto unsignedIndex = static_cast<unsigned>(index);
+    ASSERT(unsignedIndex < glyphBuffer.size());
+    glyphBuffer.shrink(unsignedIndex);
 }
 
 static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, char32_t character)
@@ -367,7 +371,7 @@ static void updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, 
 template <typename TextIterator>
 inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer& glyphBuffer)
 {
-    // The core logic here needs to match FontCascade::widthForSimpleText()
+    // The core logic here needs to match FontCascade::widthForTextUsingSimplifiedMeasuring()
     FloatRect bounds;
     auto fontDescription = m_font->fontDescription();
     Ref primaryFont = m_font->primaryFont();
@@ -804,7 +808,7 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
         advanceInternal(textIterator, glyphBuffer);
     } else {
 #if USE(CLUSTER_AWARE_WIDTH_ITERATOR)
-        ComposedCharacterClusterTextIterator textIterator(m_run->data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
+        ComposedCharacterClusterTextIterator textIterator(m_run->span16(m_currentCharacterIndex), m_currentCharacterIndex, offset);
 #else
         SurrogatePairAwareTextIterator textIterator(m_run->data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
 #endif

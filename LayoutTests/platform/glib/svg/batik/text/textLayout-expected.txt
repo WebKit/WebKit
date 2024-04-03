@@ -92,7 +92,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (40,232) size 114x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 62x9
             chunk 1 text run 1 at (40.00,240.00) startOffset 0 endOffset 18 width 62.00: "textLength=\"120\", "
-          RenderSVGTSpan {tspan} at (0,0) size 114x9
+          RenderSVGTSpan {tspan} at (0,10) size 114x9
             RenderSVGInlineText {#text} at (0,10) size 114x9
               chunk 1 text run 1 at (40.00,250.00) startOffset 0 endOffset 31 width 114.00: "lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (185,203) size 114x49
@@ -102,7 +102,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (185,232) size 114x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 56x9
             chunk 1 text run 1 at (185.00,240.00) startOffset 0 endOffset 16 width 56.00: "textLength=\"70\" "
-          RenderSVGTSpan {tspan} at (0,0) size 114x9
+          RenderSVGTSpan {tspan} at (0,10) size 114x9
             RenderSVGInlineText {#text} at (0,10) size 114x9
               chunk 1 text run 1 at (185.00,250.00) startOffset 0 endOffset 31 width 114.00: "lengthAdjust=\"spacingAndGlyphs\""
       RenderSVGContainer {g} at (290,203) size 120x39

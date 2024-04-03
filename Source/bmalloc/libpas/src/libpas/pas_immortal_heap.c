@@ -94,6 +94,8 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
         }
     }
 
+    PAS_PROFILE(IMMORTAL_HEAP_ALLOCATION, aligned_bump, size);
+
     return (void*)aligned_bump;
 }
 

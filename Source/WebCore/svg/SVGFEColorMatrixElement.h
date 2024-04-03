@@ -28,20 +28,20 @@ namespace WebCore {
 
 template<>
 struct SVGPropertyTraits<ColorMatrixType> {
-    static unsigned highestEnumValue() { return FECOLORMATRIX_TYPE_LUMINANCETOALPHA; }
+    static unsigned highestEnumValue() { return enumToUnderlyingType(ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA); }
 
     static String toString(ColorMatrixType type)
     {
         switch (type) {
-        case FECOLORMATRIX_TYPE_UNKNOWN:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
             return emptyString();
-        case FECOLORMATRIX_TYPE_MATRIX:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
             return "matrix"_s;
-        case FECOLORMATRIX_TYPE_SATURATE:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
             return "saturate"_s;
-        case FECOLORMATRIX_TYPE_HUEROTATE:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
             return "hueRotate"_s;
-        case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+        case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
             return "luminanceToAlpha"_s;
         }
 
@@ -52,14 +52,14 @@ struct SVGPropertyTraits<ColorMatrixType> {
     static ColorMatrixType fromString(const String& value)
     {
         if (value == "matrix"_s)
-            return FECOLORMATRIX_TYPE_MATRIX;
+            return ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX;
         if (value == "saturate"_s)
-            return FECOLORMATRIX_TYPE_SATURATE;
+            return ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE;
         if (value == "hueRotate"_s)
-            return FECOLORMATRIX_TYPE_HUEROTATE;
+            return ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE;
         if (value == "luminanceToAlpha"_s)
-            return FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
-        return FECOLORMATRIX_TYPE_UNKNOWN;
+            return ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
+        return ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN;
     }
 };
 
@@ -91,7 +91,7 @@ private:
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, FECOLORMATRIX_TYPE_MATRIX) };
+    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX) };
     Ref<SVGAnimatedNumberList> m_values { SVGAnimatedNumberList::create(this) };
 };
 

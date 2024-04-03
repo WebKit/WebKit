@@ -17,7 +17,7 @@ layer at (0,0) size 800x404
           text run at (0,0) width 410: "This paragraph should be justified (the right and left margins "
           text run at (409,0) width 110: "should line up). "
         RenderInline {SPAN} at (0,0) size 784x252 [color=#C0C0C0]
-          RenderText {#text} at (518,0) size 784x252
+          RenderText {#text} at (0,0) size 784x252
             text run at (518,0) width 266: "This is just lovely dummy text. Dummy"
             text run at (0,18) width 89: "text. Dummy "
             text run at (88,18) width 529: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
@@ -49,7 +49,7 @@ layer at (0,0) size 800x404
             text run at (238,216) width 546: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text."
             text run at (0,234) width 571: "This is just lovely dummy text. This is just lovely dummy text. Dummy text. Dummy "
             text run at (570,234) width 126: "text. Dummy text. "
-        RenderText {#text} at (695,234) size 784x36
+        RenderText {#text} at (0,234) size 784x36
           text run at (695,234) width 89: "This sentence"
           text run at (0,252) width 173: "should be at the end of the "
           text run at (172,252) width 125: "block, not justified."

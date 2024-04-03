@@ -6,13 +6,13 @@ layer at (0,0) size 800x325
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 60x19
           text run at (0,0) width 60: "Tests for "
-        RenderInline {A} at (0,0) size 310x19 [color=#0000EE]
+        RenderInline {A} at (59,0) size 310x19 [color=#0000EE]
           RenderText {#text} at (59,0) size 310x19
             text run at (59,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=24552"
       RenderBlock (anonymous) at (0,36) size 784x125
         RenderText {#text} at (120,105) size 4x19
           text run at (120,105) width 4: " "
-        RenderInline {A} at (0,0) size 62x19 [color=#0000EE]
+        RenderInline {A} at (124,105) size 62x19 [color=#0000EE]
           RenderText {#text} at (124,105) size 62x19
             text run at (124,105) width 62: "Link here"
         RenderText {#text} at (0,0) size 0x0

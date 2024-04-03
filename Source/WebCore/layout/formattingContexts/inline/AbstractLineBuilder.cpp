@@ -33,10 +33,11 @@
 namespace WebCore {
 namespace Layout {
 
-AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+AbstractLineBuilder::AbstractLineBuilder(InlineFormattingContext& inlineFormattingContext, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
     : m_line(inlineFormattingContext)
     , m_inlineItemList(inlineItemList)
     , m_inlineFormattingContext(inlineFormattingContext)
+    , m_rootBox(rootBox)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
 {
 }
@@ -93,11 +94,6 @@ void AbstractLineBuilder::setIntrinsicWidthMode(IntrinsicWidthMode intrinsicWidt
 {
     m_intrinsicWidthMode = intrinsicWidthMode;
     m_inlineContentBreaker.setIsMinimumInIntrinsicWidthMode(m_intrinsicWidthMode == IntrinsicWidthMode::Minimum);
-}
-
-const ElementBox& AbstractLineBuilder::root() const
-{
-    return formattingContext().root();
 }
 
 const RenderStyle& AbstractLineBuilder::rootStyle() const

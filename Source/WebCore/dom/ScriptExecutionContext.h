@@ -42,6 +42,7 @@
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/NativePromise.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -94,12 +95,22 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
+enum class ScriptExecutionContextType : uint8_t {
+    Document,
+    WorkerOrWorkletGlobalScope,
+    EmptyScriptExecutionContext
+};
+
 class ScriptExecutionContext : public SecurityContext, public TimerAlignment {
 public:
-    explicit ScriptExecutionContext(ScriptExecutionContextIdentifier = { });
+    using Type = ScriptExecutionContextType;
+
+    explicit ScriptExecutionContext(Type, ScriptExecutionContextIdentifier = { });
     virtual ~ScriptExecutionContext();
 
-    virtual bool isDocument() const { return false; }
+    bool isDocument() const { return m_type == Type::Document; }
+    bool isWorkerOrWorkletGlobalScope() const { return m_type == Type::WorkerOrWorkletGlobalScope; }
+    bool isEmptyScriptExecutionContext() const { return m_type == Type::EmptyScriptExecutionContext; }
     virtual bool isWorkerGlobalScope() const { return false; }
     virtual bool isServiceWorkerGlobalScope() const { return false; }
     virtual bool isWorkletGlobalScope() const { return false; }
@@ -189,8 +200,10 @@ public:
     WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);
     static CrossOriginMode crossOriginMode();
 
-    void ref() { refScriptExecutionContext(); }
-    void deref() { derefScriptExecutionContext(); }
+    WEBCORE_EXPORT void ref();
+    WEBCORE_EXPORT void deref();
+    WEBCORE_EXPORT void refAllowingPartiallyDestroyed();
+    WEBCORE_EXPORT void derefAllowingPartiallyDestroyed();
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
@@ -264,8 +277,8 @@ public:
     // These two methods are used when CryptoKeys are serialized into IndexedDB. As a side effect, it is also
     // used for things that utilize the same structure clone algorithm, for example, message passing between
     // worker and document.
-    virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) = 0;
-    virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) = 0;
+    virtual std::optional<Vector<uint8_t>> wrapCryptoKey(const Vector<uint8_t>& key) = 0;
+    virtual std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& wrappedKey) = 0;
 
     int timerNestingLevel() const { return m_timerNestingLevel; }
     void setTimerNestingLevel(int timerNestingLevel) { m_timerNestingLevel = timerNestingLevel; }
@@ -331,6 +344,26 @@ public:
     void addDeferredPromise(Ref<DeferredPromise>&&);
     RefPtr<DeferredPromise> takeDeferredPromise(DeferredPromise*);
 
+    template<typename Promise, typename Task>
+    void enqueueTaskWhenSettled(Ref<Promise>&& promise, TaskSource taskSource, Task&& task)
+    {
+        auto request = makeUnique<NativePromiseRequest>();
+        WeakPtr weakRequest { *request };
+        auto command = promise->whenSettled(nativePromiseDispatcher(), [weakThis = WeakPtr { *this }, taskSource, task = WTFMove(task), request = WTFMove(request)] (auto&& result) mutable {
+            request->complete();
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            protectedThis->eventLoop().queueTask(taskSource, [task = WTFMove(task), result = WTFMove(result)] () mutable {
+                task(WTFMove(result));
+            });
+        });
+        if (weakRequest) {
+            m_nativePromiseRequests.add(*weakRequest);
+            command->track(*weakRequest);
+        }
+    }
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -358,15 +391,15 @@ protected:
     void regenerateIdentifier();
 
 private:
+
+    std::unique_ptr<ContentSecurityPolicy> makeEmptyContentSecurityPolicy() final;
+
     // The following addMessage function is deprecated.
     // Callers should try to create the ConsoleMessage themselves.
     virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;
     virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
 
     bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, CachedScript*, bool);
-
-    virtual void refScriptExecutionContext() = 0;
-    virtual void derefScriptExecutionContext() = 0;
 
     void dispatchMessagePortEvents();
 
@@ -376,6 +409,7 @@ private:
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
+    RefCountedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;
@@ -412,12 +446,16 @@ private:
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
     ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ReasonForSuspension>(-1) };
 
+    Type m_type;
     bool m_activeDOMObjectsAreSuspended { false };
     bool m_activeDOMObjectsAreStopped { false };
     bool m_inDispatchErrorEvent { false };
     mutable bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willprocessMessageWithMessagePortsSoon { false };
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
+
+    RefPtr<RefCountedSerialFunctionDispatcher> m_nativePromiseDispatcher;
+    WeakHashSet<NativePromiseRequest> m_nativePromiseRequests;
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

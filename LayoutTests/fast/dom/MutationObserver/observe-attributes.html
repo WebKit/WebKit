@@ -769,6 +769,141 @@ function testStyleAttributePropertyAccessIgnoreNoop() {
     start();
 }
 
+function testAttributeStyleMapAccess() {
+    var div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that modifying an elements attiuteStyleMap property dispatches Mutation Records.');
+
+        mutations = null;
+        observer = new MutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; height: 200px;');
+        observer.observe(div, { attributes: true });
+        div.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'red'));
+        div.attributeStyleMap.set('height', CSS.px(100));
+        div.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'blue'));
+
+        setTimeout(checkAndContinue, 0);
+    }
+
+    function checkAndContinue() {
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"style"');
+        shouldBe('mutations[0].oldValue', 'null');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"style"');
+        shouldBe('mutations[1].oldValue', 'null');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"style"');
+        shouldBe('mutations[2].oldValue', 'null');
+
+        mutations = null;
+        div.getAttribute('style');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...mutation record created.');
+
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testAttributeStyleMapAccessOldValue() {
+    var div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that modifying an elements attiuteStyleMap property dispatches Mutation Records with correct oldValues.');
+
+        mutations = null;
+        observer = new MutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; height: 200px;');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'red'));
+        div.attributeStyleMap.set('height', CSS.px(100));
+        div.attributeStyleMap.set('color', CSSStyleValue.parse('color', 'blue'));
+
+        setTimeout(checkAndContinue, 0);
+    }
+
+    function checkAndContinue() {
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"style"');
+        shouldBe('mutations[0].oldValue', '"color: yellow; height: 200px;"');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"style"');
+        shouldBe('mutations[1].oldValue', '"color: red; height: 200px;"');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"style"');
+        shouldBe('mutations[2].oldValue', '"color: red; height: 100px;"');
+
+        mutations = null;
+        div.getAttribute('style');
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        debug('...mutation record created.');
+
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testAttributeStyleMapAccessIgnoreNoop() {
+    var div, path;
+    var observer;
+
+    function start() {
+        debug('Testing that a no-op attiuteStyleMap property mutation does not create Mutation Records.');
+
+        mutations = null;
+        observer = new MutationObserver(function(m) {
+            mutations = m;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('style', 'color: yellow; height: 100px;');
+        observer.observe(div, { attributes: true });
+        div.attributeStyleMap.delete('width');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations', 'null');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
 function testMutateThroughAttrNodeValue() {
     var observer;
 
@@ -948,6 +1083,9 @@ var tests = [
     testStyleAttributePropertyAccess,
     testStyleAttributePropertyAccessOldValue,
     testStyleAttributePropertyAccessIgnoreNoop,
+    testAttributeStyleMapAccess,
+    testAttributeStyleMapAccessOldValue,
+    testAttributeStyleMapAccessIgnoreNoop,
     testMutateThroughAttrNodeValue,
     testSetAndRemoveAttributeNode,
     testMixedNodeAndElementOperations,

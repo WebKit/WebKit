@@ -44,14 +44,11 @@ static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
     // FIXME: We should consider moving the Performance object to be owned by the
     // the ScriptExecutionContext to avoid this.
 
-    if (is<Document>(scriptExecutionContext)) {
-        if (auto window = downcast<Document>(scriptExecutionContext).domWindow())
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+        if (auto window = document->domWindow())
             return window->performance().now();
-        return 0;
-    }
-
-    if (is<WorkerGlobalScope>(scriptExecutionContext))
-        return downcast<WorkerGlobalScope>(scriptExecutionContext).performance().now();
+    } else if (RefPtr workerGlobal = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+        return workerGlobal->performance().now();
 
     return 0;
 }

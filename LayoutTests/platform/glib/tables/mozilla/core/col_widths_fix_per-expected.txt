@@ -35,10 +35,10 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 498x80
           RenderTableRow {TR} at (0,2) size 498x76
             RenderTableCell {TD} at (2,29) size 233x22 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 77x17
+              RenderText {#text} at (2,29) size 77x17
                 text run at (2,2) width 77: "fooooooooo"
             RenderTableCell {TD} at (236,29) size 233x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 77x17
+              RenderText {#text} at (2,29) size 77x17
                 text run at (2,2) width 77: "fooooooooo"
             RenderTableCell {TD} at (471,2) size 25x76 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x71

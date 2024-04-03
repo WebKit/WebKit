@@ -64,6 +64,17 @@ ScrollToOptions* toScrollToOptions(JSContextRef context, JSValueRef argument)
     return &options;
 }
 
+TextExtractionOptions* toTextExtractionOptions(JSContextRef context, JSValueRef argument)
+{
+    if (!JSValueIsObject(context, argument))
+        return nullptr;
+
+    static TextExtractionOptions options;
+    options.clipToBounds = booleanProperty(context, (JSObjectRef)argument, "clipToBounds", false);
+    options.includeRects = booleanProperty(context, (JSObjectRef)argument, "includeRects", false);
+    return &options;
+}
+
 UIScriptController::UIScriptController(UIScriptContext& context)
     : m_context(&context)
 {

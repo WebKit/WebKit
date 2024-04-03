@@ -325,6 +325,8 @@ class PLSProgram
     }
 
     GLuint get() const { return mProgram; }
+    operator GLuint() { return get(); }
+    operator GLuint() const { return get(); }
 
     void bind()
     {
@@ -2581,8 +2583,8 @@ TEST_P(PixelLocalStorageTest, PLSWithSamplers)
         pixelLocalStoreANGLE(pls2, value);
         pixelLocalStoreANGLE(pls1, vec4(0, 1, 1, 1));
     })");
-    glUniform1i(glGetUniformLocation(mProgram.get(), "tex0"), 0);
-    glUniform1i(glGetUniformLocation(mProgram.get(), "tex1"), 3);
+    glUniform1i(glGetUniformLocation(mProgram, "tex0"), 0);
+    glUniform1i(glGetUniformLocation(mProgram, "tex1"), 3);
 
     glFramebufferPixelLocalClearValuefvANGLE(1, ClearF(1, 1, 0, 1));
     glBeginPixelLocalStorageANGLE(
@@ -5355,6 +5357,7 @@ TEST_P(PixelLocalStorageValidationTest, LoseContext)
     // context objects are properly disposed of.
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageValidationTest);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageValidationTest,
                        WithRobustness(ES31_NULL()).enable(Feature::EmulatePixelLocalStorage),
                        WithRobustness(ES31_NULL())
@@ -6224,6 +6227,7 @@ TEST_P(PixelLocalStorageCompilerTest, FunctionArguments)
     ASSERT_GL_NO_ERROR();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageCompilerTest);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageCompilerTest,
                        ES31_NULL().enable(Feature::EmulatePixelLocalStorage),
                        ES31_NULL()
@@ -6259,6 +6263,7 @@ TEST_P(PixelLocalStorageTestPreES3, UnsupportedClientVersion)
     ASSERT_GL_NO_ERROR();
 }
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTestPreES3);
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageTestPreES3,
                        ES1_NULL().enable(Feature::EmulatePixelLocalStorage),
                        ES2_NULL().enable(Feature::EmulatePixelLocalStorage));

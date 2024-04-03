@@ -91,7 +91,7 @@ class MediaController
 
     get isFullscreen()
     {
-        return this.media.webkitSupportsPresentationMode ? this.media.webkitPresentationMode === "fullscreen" : this.media.webkitDisplayingFullscreen;
+        return this.media.webkitSupportsPresentationMode ? this.media.webkitPresentationMode === "fullscreen" || this.media.webkitPresentationMode === "in-window" : this.media.webkitDisplayingFullscreen;
     }
 
     get layoutTraits()

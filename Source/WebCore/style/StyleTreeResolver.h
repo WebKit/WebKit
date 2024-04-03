@@ -46,6 +46,7 @@ namespace Style {
 
 class Resolver;
 struct MatchResult;
+struct PseudoElementIdentifier;
 struct ResolutionContext;
 struct ResolvedStyle;
 
@@ -75,10 +76,11 @@ private:
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, const RenderStyle* existingStyle, ResolutionType);
 
     ElementUpdate createAnimatedElementUpdate(ResolvedStyle&&, const Styleable&, Change, const ResolutionContext&);
+    std::unique_ptr<RenderStyle> resolveStartingStyle(const ResolvedStyle&, const Styleable&, const ResolutionContext&) const;
     HashSet<AnimatableCSSProperty> applyCascadeAfterAnimation(RenderStyle&, const HashSet<AnimatableCSSProperty>&, bool isTransition, const MatchResult&, const Element&, const ResolutionContext&);
 
-    std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
-    std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, PseudoId, const ElementUpdate&);
+    std::optional<ElementUpdate> resolvePseudoElement(Element&, const PseudoElementIdentifier&, const ElementUpdate&);
+    std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, const PseudoElementIdentifier&, const ElementUpdate&);
     std::optional<ResolvedStyle> resolveAncestorFirstLinePseudoElement(Element&, const ElementUpdate&);
     std::optional<ResolvedStyle> resolveAncestorFirstLetterPseudoElement(Element&, const ElementUpdate&, ResolutionContext&);
 
@@ -90,7 +92,7 @@ private:
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;
 
-        Scope(Document&);
+        Scope(Document&, Update&);
         Scope(ShadowRoot&, Scope& enclosingScope);
         ~Scope();
     };
@@ -109,7 +111,10 @@ private:
     };
 
     Scope& scope() { return m_scopeStack.last(); }
+    const Scope& scope() const { return m_scopeStack.last(); }
+
     Parent& parent() { return m_parentStack.last(); }
+    const Parent& parent() const { return m_parentStack.last(); }
 
     void pushScope(ShadowRoot&);
     void pushEnclosingScope();
@@ -119,12 +124,12 @@ private:
     void popParent();
     void popParentsToDepth(unsigned depth);
 
-    static DescendantsToResolve computeDescendantsToResolve(Change, Validity, DescendantsToResolve);
+    DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const RenderStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const RenderStyle*, DescendantsToResolve, Change parentChange);
     static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     ResolutionContext makeResolutionContext();
-    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, PseudoId);
+    ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&);
     std::optional<ResolutionContext> makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const RenderStyle& inheritStyle);
     const Parent* boxGeneratingParent() const;
     const RenderStyle* parentBoxStyle() const;

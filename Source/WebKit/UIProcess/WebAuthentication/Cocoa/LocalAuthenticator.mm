@@ -83,12 +83,12 @@ using CBOR = cbor::CBORValue;
 namespace LocalAuthenticatorInternal {
 
 // Credential ID is currently SHA-1 of the corresponding public key.
-const uint16_t credentialIdLength = 20;
-const uint64_t counter = 0;
+constexpr uint16_t credentialIdLength = 20;
+constexpr uint64_t counter = 0;
 // This aaguid is unattested.
-const uint8_t aaguid[] = { 0xFB, 0xFC, 0x30, 0x07, 0x15, 0x4E, 0x4E, 0xCC, 0x8C, 0x0B, 0x6E, 0x02, 0x05, 0x57, 0xD7, 0xBD }; // Randomly generated.
+constexpr std::array<uint8_t, 16> aaguid = { 0xFB, 0xFC, 0x30, 0x07, 0x15, 0x4E, 0x4E, 0xCC, 0x8C, 0x0B, 0x6E, 0x02, 0x05, 0x57, 0xD7, 0xBD }; // Randomly generated.
 
-const char kLargeBlobMapKey[] = "largeBlob";
+constexpr char kLargeBlobMapKey[] = "largeBlob";
 
 static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
 {
@@ -120,7 +120,7 @@ static inline uint8_t authDataFlags(ClientDataType type, LocalConnection::UserVe
 
 static inline Vector<uint8_t> aaguidVector()
 {
-    static NeverDestroyed<Vector<uint8_t>> aaguidVector = { aaguid, aaguidLength };
+    static NeverDestroyed<Vector<uint8_t>> aaguidVector = { aaguid };
     return aaguidVector;
 }
 
@@ -137,7 +137,7 @@ static inline RetainPtr<NSData> toNSData(ArrayBuffer* buffer)
 
 static inline Ref<ArrayBuffer> toArrayBuffer(NSData *data)
 {
-    return ArrayBuffer::create(reinterpret_cast<const uint8_t*>(data.bytes), data.length);
+    return ArrayBuffer::create(span(data));
 }
 
 static inline Ref<ArrayBuffer> toArrayBuffer(const Vector<uint8_t>& data)
@@ -152,6 +152,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         (id)kSecClass: (id)kSecClassKey,
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (id)kSecAttrAccessGroup: @(LocalAuthenticatorAccessGroup),
         (id)kSecAttrLabel: rpId,
         (id)kSecReturnAttributes: @YES,
         (id)kSecMatchLimit: (id)kSecMatchLimitAll,
@@ -170,7 +171,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity(sortedAttributesArray.count);
     for (NSDictionary *attributes in sortedAttributesArray) {
-        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(makeVector(attributes[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return std::nullopt;
@@ -394,7 +395,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         auto retainAttributesArray = adoptCF(attributesArrayRef);
         NSDictionary *dict = (NSDictionary *)attributesArrayRef;
 
-        auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(dict[(id)kSecAttrApplicationTag]));
+        auto decodedResponse = cbor::CBORReader::read(makeVector(dict[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
             return WebCore::ExceptionData { ExceptionCode::UnknownError, "Could not read credential."_s };
@@ -514,7 +515,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     Vector<uint8_t> credentialId;
     {
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-        digest->addBytes(nsPublicKeyData.bytes, nsPublicKeyData.length);
+        digest->addBytes(span(nsPublicKeyData));
         credentialId = digest->computeHash();
         m_provisionalCredentialId = toNSData(credentialId);
 
@@ -581,7 +582,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     {
         Vector<cbor::CBORValue> cborArray;
         for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
+            cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
@@ -754,7 +755,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     };
 
     NSDictionary *updateParams = @{
-        (id)kSecAttrLabel: requestOptions.rpId,
+        (id)kSecAttrApplicationLabel: nsCredentialId.get(),
     };
     auto status = SecItemUpdate((__bridge CFDictionaryRef)query, (__bridge CFDictionaryRef)updateParams);
     if (status)

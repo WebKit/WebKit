@@ -66,6 +66,7 @@ public:
 
     static const UIDNA& internationalDomainNameTranscoder();
     static bool isInUserInfoEncodeSet(UChar);
+    static bool isSpecialCharacterForFragmentDirective(UChar);
 
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
     WTF_EXPORT_PRIVATE static std::optional<String> formURLDecode(StringView input);
@@ -118,13 +119,12 @@ private:
     template<bool(*isInCodeSet)(char32_t), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> std::optional<LCharBuffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    template<typename CharacterType> LCharBuffer percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
-    static LCharBuffer percentDecode(const LChar*, size_t);
+    template<typename CharacterType> LCharBuffer percentDecode(std::span<const LChar>, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    static LCharBuffer percentDecode(std::span<const LChar>);
     bool hasForbiddenHostCodePoint(const LCharBuffer&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(char32_t);
-    void appendToASCIIBuffer(const char*, size_t);
-    void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
+    void appendToASCIIBuffer(std::span<const LChar>);
     template<typename CharacterType> void encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);

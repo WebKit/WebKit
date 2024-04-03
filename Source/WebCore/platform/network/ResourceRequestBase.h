@@ -66,7 +66,7 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false)
+        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false)
             : m_url(url)
             , m_firstPartyForCookies(firstPartyForCookies)
             , m_timeoutInterval(timeoutInterval)
@@ -83,6 +83,7 @@ public:
             , m_privacyProxyFailClosedForUnreachableNonMainHosts(privacyProxyFailClosedForUnreachableNonMainHosts)
             , m_useAdvancedPrivacyProtections(useAdvancedPrivacyProtections)
             , m_didFilterLinkDecoration(didFilterLinkDecoration)
+            , m_isPrivateTokenUsageByThirdPartyAllowed(isPrivateTokenUsageByThirdPartyAllowed)
         {
         }
         
@@ -108,6 +109,7 @@ public:
         bool m_privacyProxyFailClosedForUnreachableNonMainHosts : 1 { false };
         bool m_useAdvancedPrivacyProtections : 1 { false };
         bool m_didFilterLinkDecoration : 1 { false };
+        bool m_isPrivateTokenUsageByThirdPartyAllowed : 1 { false };
     };
 
     ResourceRequestBase(RequestData&& requestData)
@@ -270,6 +272,9 @@ public:
 
     bool didFilterLinkDecoration() const { return m_requestData.m_didFilterLinkDecoration; }
     WEBCORE_EXPORT void setDidFilterLinkDecoration(bool);
+
+    bool isPrivateTokenUsageByThirdPartyAllowed() const { return m_requestData.m_isPrivateTokenUsageByThirdPartyAllowed; }
+    void setIsPrivateTokenUsageByThirdPartyAllowed(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request

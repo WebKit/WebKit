@@ -5,12 +5,12 @@
 	<key>EXAppExtensionAttributes</key>
 	<dict>
 		<key>EXExtensionPointIdentifier</key>
-		<string>com.apple.webkit.networking.extension</string>
+		<string>com.apple.web-browser-engine.networking</string>
 	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleExecutable</key>
-	<string>${PRODUCT_BUNDLE_EXECUTABLE}</string>
+	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleVersion</key>
 	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleName</key>

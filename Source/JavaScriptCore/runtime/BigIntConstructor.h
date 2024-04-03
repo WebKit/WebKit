@@ -38,7 +38,7 @@ public:
     using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static BigIntConstructor* create(VM& vm, Structure* structure, BigIntPrototype* bigIntPrototype, GetterSetter*)
+    static BigIntConstructor* create(VM& vm, Structure* structure, BigIntPrototype* bigIntPrototype)
     {
         BigIntConstructor* constructor = new (NotNull, allocateCell<BigIntConstructor>(vm)) BigIntConstructor(vm, structure);
         constructor->finishCreation(vm, bigIntPrototype);

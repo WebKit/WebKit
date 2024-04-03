@@ -11,7 +11,7 @@
 </style>
 
 <div>
-  <template shadowroot=open>
+  <template shadowrootmode=open>
     <style>
     .box {
       width: 10px;
@@ -29,7 +29,7 @@
 </div>
 
 <span>
-  <template shadowroot=open>
+  <template shadowrootmode=open>
     <style>
     .box {
       width: 10px;
@@ -47,7 +47,7 @@
 </span>
 
 <div>
-  <template shadowroot=open>
+  <template shadowrootmode=open>
     <style>
     .box {
       width: 10px;
@@ -58,7 +58,7 @@
     <div style="position: relative">
       <div class=box></div>
       <div>
-        <template shadowroot=open>
+        <template shadowrootmode=open>
           <style>
           .box {
             width: 10px;
@@ -78,19 +78,6 @@
   <div class=box></div>
   <div id=target3 style="position: absolute" class=box></div>
 </div>
-
-<script>
-// TODO delete this when all browsers support declarative shadowdom
-(function attachShadowRoots(root) {
-  root.querySelectorAll("template[shadowroot]").forEach(template => {
-    const mode = template.getAttribute("shadowroot");
-    const shadowRoot = template.parentNode.attachShadow({ mode });
-    shadowRoot.appendChild(template.content);
-    template.remove();
-    attachShadowRoots(shadowRoot);
-  });
-})(document);
-</script>
 
 <script>
 test(() => {

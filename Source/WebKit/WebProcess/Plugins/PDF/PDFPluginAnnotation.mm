@@ -26,14 +26,15 @@
 #import "config.h"
 #import "PDFPluginAnnotation.h"
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
-#import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
+#import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
-#import <Quartz/Quartz.h>
+#import <CoreGraphics/CoreGraphics.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
@@ -48,16 +49,18 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/Page.h>
 
+#import "PDFKitSoftLink.h"
+
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+RefPtr<PDFPluginAnnotation> PDFPluginAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
     if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()])
-        return PDFPluginTextAnnotation::create(annotation, pdfLayerController, plugin);
+        return PDFPluginTextAnnotation::create(annotation, plugin);
     if ([annotation isKindOfClass:getPDFAnnotationChoiceWidgetClass()])
-        return PDFPluginChoiceAnnotation::create(annotation, pdfLayerController, plugin);
+        return PDFPluginChoiceAnnotation::create(annotation, plugin);
 
     return nullptr;
 }
@@ -70,7 +73,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     Ref element = createAnnotationElement();
     m_element = element.copyRef();
 
-    element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
+    if (!element->hasClass())
+        element->setAttributeWithoutSynchronization(classAttr, "annotation"_s);
     element->setAttributeWithoutSynchronization(x_apple_pdf_annotationAttr, "true"_s);
     element->addEventListener(eventNames().changeEvent, *m_eventListener, false);
     element->addEventListener(eventNames().blurEvent, *m_eventListener, false);
@@ -103,15 +107,13 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 
 void PDFPluginAnnotation::updateGeometry()
 {
-    IntSize documentSize(m_pdfLayerController.contentSizeRespectingZoom);
-    NSRect annotationRect = NSRectFromCGRect([m_pdfLayerController boundsForAnnotation:m_annotation.get()]);
+    auto annotationRect = m_plugin->pluginBoundsForAnnotation(m_annotation);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSUnitType::CSS_PX);
     styledElement->setInlineStyleProperty(CSSPropertyHeight, annotationRect.size.height, CSSUnitType::CSS_PX);
-    IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
-    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x - scrollPosition.x(), CSSUnitType::CSS_PX);
-    styledElement->setInlineStyleProperty(CSSPropertyTop, documentSize.height() - annotationRect.origin.y - annotationRect.size.height - scrollPosition.y(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyLeft, annotationRect.origin.x, CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyTop, annotationRect.origin.y, CSSUnitType::CSS_PX);
 }
 
 bool PDFPluginAnnotation::handleEvent(Event& event)
@@ -132,4 +134,4 @@ void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptEx
 
 } // namespace WebKit
 
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
+#endif // ENABLE(PDF_PLUGIN) && PLATFORM(MAC)

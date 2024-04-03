@@ -47,20 +47,15 @@ Ref<MediaRecorderErrorEvent> MediaRecorderErrorEvent::create(const AtomString& t
 }
 
 MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Init&& init, Ref<DOMException>&& exception, IsTrusted isTrusted)
-    : Event(type, WTFMove(init), isTrusted)
+    : Event(EventInterfaceType::MediaRecorderErrorEvent, type, WTFMove(init), isTrusted)
     , m_domError(WTFMove(exception))
 {
 }
 
 MediaRecorderErrorEvent::MediaRecorderErrorEvent(const AtomString& type, Exception&& exception)
-    : Event(type, Event::CanBubble::No, Event::IsCancelable::No)
+    : Event(EventInterfaceType::MediaRecorderErrorEvent, type, Event::CanBubble::No, Event::IsCancelable::No)
     , m_domError(DOMException::create(exception))
 {
-}
-
-EventInterface MediaRecorderErrorEvent::eventInterface() const
-{
-    return MediaRecorderErrorEventInterfaceType;
 }
 
 } // namespace WebCore

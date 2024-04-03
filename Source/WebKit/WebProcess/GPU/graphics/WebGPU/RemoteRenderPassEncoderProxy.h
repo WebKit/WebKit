@@ -75,7 +75,7 @@ private:
     void setPipeline(const WebCore::WebGPU::RenderPipeline&) final;
 
     void setIndexBuffer(const WebCore::WebGPU::Buffer&, WebCore::WebGPU::IndexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
-    void setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer&, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
+    void setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer*, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64>) final;
 
     void draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount,
         std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance) final;

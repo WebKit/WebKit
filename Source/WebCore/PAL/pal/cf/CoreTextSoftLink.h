@@ -30,6 +30,7 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreText)
 
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreText, CTFontCopyColorGlyphCoverage, CFBitVectorRef, (CTFontRef font), (font))
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreText, CTFontManagerCreateMemorySafeFontDescriptorFromData, CTFontDescriptorRef, (CFDataRef data), (data));
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, OTSVG)
 

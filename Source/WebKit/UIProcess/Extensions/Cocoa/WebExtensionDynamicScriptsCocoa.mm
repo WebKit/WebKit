@@ -101,11 +101,27 @@ SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParamet
     return { SourcePair { parameters.code.value_or(parameters.function.value_or(parameters.css.value_or(""_s))), std::nullopt } };
 }
 
-void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab *tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResultHolder&)>&& completionHandler)
+class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
+    WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    template<typename... Args>
+    static Ref<InjectionResultHolder> create(Args&&... args)
+    {
+        return adoptRef(*new InjectionResultHolder(std::forward<Args>(args)...));
+    }
+
+    InjectionResultHolder() = default;
+
+    InjectionResults results;
+};
+
+void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebExtensionTab *tab, const WebExtensionScriptInjectionParameters& parameters, WebExtensionContext& context, CompletionHandler<void(InjectionResults&&)>&& completionHandler)
 {
     auto injectionResults = InjectionResultHolder::create();
     auto aggregator = MainRunLoopCallbackAggregator::create([injectionResults, completionHandler = WTFMove(completionHandler)]() mutable {
-        completionHandler(injectionResults);
+        completionHandler(WTFMove(injectionResults->results));
     });
 
     [webView _frames:makeBlockPtr([webView = RetainPtr { webView }, tab, context = Ref { context }, scriptPairs, executionWorld = Ref { executionWorld }, injectionResults, aggregator, parameters](_WKFrameTreeNode *mainFrame) mutable {
@@ -193,13 +209,6 @@ WebExtensionScriptInjectionResultParameters toInjectionResultParameters(id resul
         parameters.error = errorMessage;
 
     return parameters;
-}
-
-WebExtensionRegisteredScript::WebExtensionRegisteredScript(WebExtensionContext& extensionContext, const WebExtensionRegisteredScriptParameters& parameters)
-    : m_extensionContext(extensionContext)
-    , m_parameters(parameters)
-{
-
 }
 
 void WebExtensionRegisteredScript::updateParameters(const WebExtensionRegisteredScriptParameters& parameters)

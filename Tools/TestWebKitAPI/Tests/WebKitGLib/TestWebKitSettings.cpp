@@ -63,10 +63,15 @@ static void testWebKitSettings(Test*, gconstpointer)
     Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
     ALLOW_DEPRECATED_DECLARATIONS_END
     
-    // Offline application cache is true by default.
-    g_assert_true(webkit_settings_get_enable_offline_web_application_cache(settings));
-    webkit_settings_set_enable_offline_web_application_cache(settings, FALSE);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // Offline application cache is deprecated and always false.
+    // Make warnings non-fatal for this test to make it pass.
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     g_assert_false(webkit_settings_get_enable_offline_web_application_cache(settings));
+    webkit_settings_set_enable_offline_web_application_cache(settings, TRUE);
+    g_assert_false(webkit_settings_get_enable_offline_web_application_cache(settings));
+    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Local storage is enable by default.
     g_assert_true(webkit_settings_get_enable_html5_local_storage(settings));

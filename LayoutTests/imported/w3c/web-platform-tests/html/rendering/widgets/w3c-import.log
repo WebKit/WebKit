@@ -15,10 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-number.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-input-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-select.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/field-sizing-textarea.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked.html

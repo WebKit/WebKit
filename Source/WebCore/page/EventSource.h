@@ -55,6 +55,10 @@ public:
     static ExceptionOr<Ref<EventSource>> create(ScriptExecutionContext&, const String& url, const Init&);
     virtual ~EventSource();
 
+    using EventTarget::weakPtrFactory;
+    using EventTarget::WeakValueType;
+    using EventTarget::WeakPtrImplType;
+
     const String& url() const;
     bool withCredentials() const;
 
@@ -73,7 +77,7 @@ public:
 private:
     EventSource(ScriptExecutionContext&, const URL&, const Init&);
 
-    EventTargetInterface eventTargetInterface() const final { return EventSourceEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     void refEventTarget() final { ref(); }

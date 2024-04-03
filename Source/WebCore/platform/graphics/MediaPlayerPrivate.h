@@ -65,12 +65,14 @@ public:
 #endif
     virtual void cancelLoad() = 0;
 
-    virtual void prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
+    virtual void prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepareToPlay, bool prepareToRender)
     {
         setPrivateBrowsingMode(privateMode);
         setPreload(preload);
         setPreservesPitch(preservesPitch);
-        if (prepare)
+        if (prepareToPlay)
+            this->prepareToPlay();
+        if (prepareToRender)
             prepareForRendering();
     }
 
@@ -121,19 +123,18 @@ public:
     virtual void setVisibleForCanvas(bool visible) { setPageIsVisible(visible); }
     virtual void setVisibleInViewport(bool) { }
 
-    virtual float duration() const { return 0; }
-    virtual double durationDouble() const { return duration(); }
-    virtual MediaTime durationMediaTime() const { return MediaTime::createWithDouble(durationDouble()); }
+    virtual MediaTime duration() const { return MediaTime::zeroTime(); }
 
-    virtual float currentTime() const { return 0; }
-    virtual double currentTimeDouble() const { return currentTime(); }
-    virtual MediaTime currentMediaTime() const { return MediaTime::createWithDouble(currentTimeDouble()); }
-    virtual bool currentMediaTimeMayProgress() const { return readyState() >= MediaPlayer::ReadyState::HaveFutureData; }
+    WEBCORE_EXPORT virtual MediaTime currentOrPendingSeekTime() const;
+    virtual MediaTime currentTime() const { return MediaTime::zeroTime(); }
+    virtual bool timeIsProgressing() const { return !paused(); }
 
     virtual bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) { return false; }
 
     virtual MediaTime getStartDate() const { return MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()); }
 
+    virtual void willSeekToTarget(const MediaTime& time) { m_pendingSeekTime = time; }
+    virtual MediaTime pendingSeekTime() const { return m_pendingSeekTime; }
     virtual void seekToTarget(const SeekTarget&) = 0;
     virtual bool seeking() const = 0;
 
@@ -148,6 +149,9 @@ public:
     virtual void setPreservesPitch(bool) { }
     virtual void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) { }
 
+    // Indicates whether playback is currently paused indefinitely: such as having been paused
+    // explictly by the HTMLMediaElement or through remote media playback control.
+    // This excludes video potentially playing but having stalled.
     virtual bool paused() const = 0;
 
     virtual void setVolume(float) { }
@@ -168,10 +172,8 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
 
     WEBCORE_EXPORT virtual const PlatformTimeRanges& seekable() const;
-    virtual float maxTimeSeekable() const { return 0; }
-    virtual MediaTime maxMediaTimeSeekable() const { return MediaTime::createWithDouble(maxTimeSeekable()); }
-    virtual double minTimeSeekable() const { return 0; }
-    virtual MediaTime minMediaTimeSeekable() const { return MediaTime::createWithDouble(minTimeSeekable()); }
+    virtual MediaTime maxTimeSeekable() const { return MediaTime::zeroTime(); }
+    virtual MediaTime minTimeSeekable() const { return MediaTime::zeroTime(); }
     virtual const PlatformTimeRanges& buffered() const = 0;
     virtual double seekableTimeRangesLastModifiedTime() const { return 0; }
     virtual double liveUpdateInterval() const { return 0; }
@@ -295,7 +297,7 @@ public:
 
     virtual size_t extraMemoryCost() const
     {
-        MediaTime duration = this->durationMediaTime();
+        MediaTime duration = this->duration();
         if (!duration)
             return 0;
 
@@ -308,6 +310,8 @@ public:
     virtual bool ended() const { return false; }
 
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() { return std::nullopt; }
+    using VideoPlaybackQualityMetricsPromise = MediaPlayer::VideoPlaybackQualityMetricsPromise;
+    WEBCORE_EXPORT virtual Ref<VideoPlaybackQualityMetricsPromise> asyncVideoPlaybackQualityMetrics();
 
     virtual void notifyTrackModeChanged() { }
 
@@ -322,7 +326,7 @@ public:
     virtual AVPlayer *objCAVFoundationAVPlayer() const { return nullptr; }
 #endif
 
-    virtual bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) { return false; }
+    virtual bool performTaskAtTime(Function<void()>&&, const MediaTime&) { return false; }
 
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
 
@@ -351,8 +355,22 @@ public:
 
     virtual void isLoopingChanged() { }
 
+    virtual void setShouldCheckHardwareSupport(bool value) { m_shouldCheckHardwareSupport = value; }
+    bool shouldCheckHardwareSupport() const { return m_shouldCheckHardwareSupport; }
+
+    virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) { }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    virtual const String& defaultSpatialTrackingLabel() const { return emptyString(); }
+    virtual void setDefaultSpatialTrackingLabel(const String&) { }
+    virtual const String& spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(const String&) { }
+#endif
+
 protected:
     mutable PlatformTimeRanges m_seekable;
+    bool m_shouldCheckHardwareSupport { false };
+    MediaTime m_pendingSeekTime { MediaTime::invalidTime() };
 };
 
 }

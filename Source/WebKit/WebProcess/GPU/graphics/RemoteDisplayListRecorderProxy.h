@@ -112,6 +112,7 @@ private:
 #if ENABLE(INLINE_PATH_DATA)
     void recordFillLine(const WebCore::PathDataLine&) final;
     void recordFillArc(const WebCore::PathArc&) final;
+    void recordFillClosedArc(const WebCore::PathClosedArc&) final;
     void recordFillQuadCurve(const WebCore::PathDataQuadCurve&) final;
     void recordFillBezierCurve(const WebCore::PathDataBezierCurve&) final;
 #endif
@@ -127,6 +128,7 @@ private:
     void recordStrokeLine(const WebCore::PathDataLine&) final;
     void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&) final;
     void recordStrokeArc(const WebCore::PathArc&) final;
+    void recordStrokeClosedArc(const WebCore::PathClosedArc&) final;
     void recordStrokeQuadCurve(const WebCore::PathDataQuadCurve&) final;
     void recordStrokeBezierCurve(const WebCore::PathDataBezierCurve&) final;
 #endif
@@ -153,16 +155,13 @@ private:
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameWriter& ensureSharedVideoFrameWriter();
-#endif
-
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     ThreadSafeWeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
     WebCore::RenderingMode m_renderingMode;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter;
+    Lock m_sharedVideoFrameWriterLock;
+    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter WTF_GUARDED_BY_LOCK(m_sharedVideoFrameWriterLock);
 #endif
 };
 

@@ -16,6 +16,6 @@ layer at (0,0) size 800x134
         RenderBlock (floating) {P} at (19,37) size 80x18
           RenderText {#text} at (0,0) size 8x17
             text run at (0,0) width 8: "4"
-        RenderText {#text} at (179,19) size 88x35
+        RenderText {#text} at (99,19) size 88x35
           text run at (179,19) width 8: "3"
           text run at (99,37) width 88: "5                    "

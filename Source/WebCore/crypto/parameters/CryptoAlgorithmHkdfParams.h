@@ -46,7 +46,7 @@ public:
         if (!m_saltVector.isEmpty() || !salt.length())
             return m_saltVector;
 
-        m_saltVector.append(salt.data(), salt.length());
+        m_saltVector.append(salt.span());
         return m_saltVector;
     }
 
@@ -55,7 +55,7 @@ public:
         if (!m_infoVector.isEmpty() || !info.length())
             return m_infoVector;
 
-        m_infoVector.append(info.data(), info.length());
+        m_infoVector.append(info.span());
         return m_infoVector;
     }
 

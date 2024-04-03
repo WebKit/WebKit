@@ -7,9 +7,18 @@ RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
 RUN(sourceBuffer.abort())
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)
+EXPECTED (video.readyState == '1') OK
 Append a media segment.
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
 EVENT(update)
+EVENT(loadeddata)
+EVENT(canplay)
+EXPECTED (video.readyState == '3') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) >= '1.9') OK
+RUN(source.endOfStream())
+EVENT(sourceended)
 EVENT(canplaythrough)
+EXPECTED (video.readyState == '4') OK
 END OF TEST
 

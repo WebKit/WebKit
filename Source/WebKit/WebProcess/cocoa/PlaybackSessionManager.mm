@@ -158,6 +158,12 @@ void PlaybackSessionInterfaceContext::volumeChanged(double volume)
         m_manager->volumeChanged(m_contextId, volume);
 }
 
+void PlaybackSessionInterfaceContext::isInWindowFullscreenActiveChanged(bool isInWindow)
+{
+    if (m_manager)
+        m_manager->isInWindowFullscreenActiveChanged(m_contextId, isInWindow);
+}
+
 #pragma mark - PlaybackSessionManager
 
 Ref<PlaybackSessionManager> PlaybackSessionManager::create(WebPage& page)
@@ -418,6 +424,11 @@ void PlaybackSessionManager::isPictureInPictureSupportedChanged(PlaybackSessionC
     m_page->send(Messages::PlaybackSessionManagerProxy::PictureInPictureSupportedChanged(contextId, supported));
 }
 
+void PlaybackSessionManager::isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier contextId, bool inWindow)
+{
+    m_page->send(Messages::PlaybackSessionManagerProxy::IsInWindowFullscreenActiveChanged(contextId, inWindow));
+}
+
 #pragma mark Messages from PlaybackSessionManagerProxy:
 
 void PlaybackSessionManager::play(PlaybackSessionContextIdentifier contextId)
@@ -510,10 +521,27 @@ void PlaybackSessionManager::handleControlledElementIDRequest(PlaybackSessionCon
         m_page->send(Messages::PlaybackSessionManagerProxy::HandleControlledElementIDResponse(contextId, element->getIdAttribute()));
 }
 
+void PlaybackSessionManager::toggleFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
+    ensureModel(contextId).toggleFullscreen();
+}
+
 void PlaybackSessionManager::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).togglePictureInPicture();
+}
+
+void PlaybackSessionManager::enterFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
+    ensureModel(contextId).enterFullscreen();
+}
+
+void PlaybackSessionManager::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    ensureModel(contextId).toggleInWindowFullscreen();
 }
 
 void PlaybackSessionManager::toggleMuted(PlaybackSessionContextIdentifier contextId)
@@ -545,6 +573,13 @@ void PlaybackSessionManager::sendRemoteCommand(PlaybackSessionContextIdentifier 
     UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
     ensureModel(contextId).sendRemoteCommand(command, argument);
 }
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManager::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    ensureModel(contextId).setSpatialTrackingLabel(label);
+}
+#endif
 
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManager::sendLogIdentifierForMediaElement(HTMLMediaElement& mediaElement)

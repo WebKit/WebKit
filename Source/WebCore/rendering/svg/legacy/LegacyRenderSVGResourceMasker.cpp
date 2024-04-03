@@ -52,7 +52,7 @@ void LegacyRenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markF
 
 void LegacyRenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_masker.remove(&client);
+    m_masker.remove(client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -62,11 +62,11 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
 
-    bool missingMaskerData = !m_masker.contains(&renderer);
+    bool missingMaskerData = !m_masker.contains(renderer);
     if (missingMaskerData)
-        m_masker.set(&renderer, makeUnique<MaskerData>());
+        m_masker.set(renderer, makeUnique<MaskerData>());
 
-    MaskerData* maskerData = m_masker.get(&renderer);
+    MaskerData* maskerData = m_masker.get(renderer);
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 
@@ -80,15 +80,12 @@ bool LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
         auto maskColorSpace = DestinationColorSpace::SRGB();
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        const SVGRenderStyle& svgStyle = style().svgStyle();
-        if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
+        if (style().svgStyle().colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
             maskColorSpace = DestinationColorSpace::LinearSRGB();
 #endif
             drawColorSpace = DestinationColorSpace::LinearSRGB();
         }
-#endif
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
         maskerData->maskImage = context->createScaledImageBuffer(repaintRect, scale, maskColorSpace, RenderingMode::Unaccelerated);
         if (!maskerData->maskImage)
@@ -138,14 +135,14 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
     }
 
     // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(maskElement())) {
+    for (auto& child : childrenOfType<SVGElement>(protectedMaskElement())) {
         auto renderer = child.renderer();
         if (!renderer)
             continue;
         if (renderer->needsLayout())
             return false;
         const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
             continue;
         SVGRenderingContext::renderSubtreeToContext(context, *renderer, maskContentTransformation);
     }
@@ -176,7 +173,7 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
         if (!childNode->isSVGElement() || !renderer)
             continue;
         const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+        if (style.display() == DisplayType::None || style.usedVisibility() != Visibility::Visible)
              continue;
         m_maskContentBoundaries[repaintRectCalculation].unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(repaintRectCalculation)));
     }
@@ -185,7 +182,8 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
 FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     FloatRect objectBoundingBox = object.objectBoundingBox();
-    FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);
+    Ref maskElement = this->maskElement();
+    FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(maskElement.ptr(), maskElement->maskUnits(), objectBoundingBox);
 
     // Resource was not layouted yet. Give back clipping rect of the mask.
     if (selfNeedsLayout())
@@ -195,7 +193,7 @@ FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject&
         calculateMaskContentRepaintRect(repaintRectCalculation);
 
     FloatRect maskRect = m_maskContentBoundaries[repaintRectCalculation];
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+    if (maskElement->maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());

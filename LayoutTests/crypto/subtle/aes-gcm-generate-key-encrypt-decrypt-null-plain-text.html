@@ -24,10 +24,10 @@ crypto.subtle.generateKey({name: "aes-gcm", length: 256}, true, ["decrypt", "enc
     debug("Encrypting...");
     return crypto.subtle.encrypt(aesGcmParams, key, asciiToUint8Array(plainText));
 }).then(function(result) {
-    cipherText = result;
-    shouldNotBeEqualToString("bytesToASCIIString(cipherText)", plainText);
+    ciphertext = result;
+    shouldNotBeEqualToString("bytesToASCIIString(ciphertext)", plainText);
     debug("Decrypting...");
-    return crypto.subtle.decrypt(aesGcmParams, key, cipherText);
+    return crypto.subtle.decrypt(aesGcmParams, key, ciphertext);
 }).then(function(result) {
     decryptedText = result;
 

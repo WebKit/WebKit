@@ -110,9 +110,9 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     auto r = adoptRef(*new FetchResponse(&context, WTFMove(body), WTFMove(headers), { }));
     r->suspendIfNeeded();
 
-    AtomString mimeType { extractMIMETypeFromMediaType(contentType) };
-    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
-    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
+    auto mimeType = extractMIMETypeFromMediaType(contentType);
+    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? String { defaultMIMEType() } : WTFMove(mimeType));
+    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
     if (auto expectedContentLength = parseContentLength(r->m_headers->fastGet(HTTPHeaderName::ContentLength)))
         r->m_internalResponse.setExpectedContentLength(*expectedContentLength);
@@ -120,7 +120,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     // 3. Set response’s response’s status to init["status"].
     r->m_internalResponse.setHTTPStatusCode(init.status);
     // 4. Set response’s response’s status message to init["statusText"].
-    r->m_internalResponse.setHTTPStatusText(init.statusText);
+    r->m_internalResponse.setHTTPStatusText(init.statusText.releaseString());
 
     return r;
 }
@@ -351,9 +351,7 @@ FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& re
 {
 }
 
-FetchResponse::Loader::~Loader()
-{
-}
+FetchResponse::Loader::~Loader() = default;
 
 void FetchResponse::Loader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
@@ -368,7 +366,7 @@ void FetchResponse::Loader::didReceiveData(const SharedBuffer& buffer)
     ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
 
     if (m_consumeDataCallback) {
-        auto chunk = buffer.dataAsSpanForContiguousData();
+        auto chunk = buffer.span();
         m_consumeDataCallback(&chunk);
         return;
     }
@@ -424,7 +422,7 @@ void FetchResponse::Loader::consumeDataByChunk(ConsumeDataByChunkCallback&& cons
         return;
 
     auto contiguousBuffer = data->makeContiguous();
-    auto chunk = contiguousBuffer->dataAsSpanForContiguousData();
+    auto chunk = contiguousBuffer->span();
     m_consumeDataCallback(&chunk);
 }
 
@@ -484,7 +482,7 @@ void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPaddin
 
 void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 {
-    body().consumer().append(SharedBuffer::create(chunk->data(), chunk->byteLength()));
+    body().consumer().append(SharedBuffer::create(chunk->span()));
 }
 
 void FetchResponse::consumeBodyAsStream()

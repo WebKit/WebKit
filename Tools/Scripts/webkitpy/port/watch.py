@@ -55,9 +55,6 @@ class WatchPort(DevicePort):
             return None
         return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=WatchPort.port_name)
 
-    def test_expectations_file_position(self):
-        return 4
-
     def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []
         if self.device_version() == self.CURRENT_VERSION:

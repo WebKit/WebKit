@@ -28,6 +28,8 @@
 #include "RegExpInlines.h"
 #include "YarrJIT.h"
 #include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace JSC {
 
@@ -420,55 +422,136 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
 #endif
 
 #if ENABLE(REGEXP_TRACING)
-    void RegExp::printTraceData()
-    {
-        char formattedPattern[41];
-        char rawPattern[41];
+void RegExp::printTraceHeader()
+{
+    dataLogF("\nRegExp Tracing\n");
+    dataLogF("Regular Expression");
+    for (unsigned i = 0; i < SameLineFormatedRegExpnWidth - 16; ++i)
+        dataLogF(" ");
+    dataLogF("    8 Bit       16 Bit     match()    Matches    Average\n");
+    dataLogF(" <Match only / Match>");
+    for (unsigned i = 0; i < RegExp::SameLineFormatedRegExpnWidth - 21; ++i)
+        dataLogF(" ");
+    dataLogF("    JIT Addr     JIT Addr     calls      found   String len\n");
+    for (unsigned i = 0; i < RegExp::SameLineFormatedRegExpnWidth; ++i)
+        dataLogF("-");
 
-        strncpy(rawPattern, pattern().utf8().data(), 40);
-        rawPattern[40]= '\0';
+    dataLogF("+------------+------------+----------+----------+-----------\n");
+}
 
-        int pattLen = strlen(rawPattern);
+void RegExp::printTraceData()
+{
+    char formattedRegExp[SameLineFormatedRegExpnWidth + 1];
+    char rawPatternBuffer[SameLineFormatedRegExpnWidth + 1];
+    String rawPattern;
 
-        snprintf(formattedPattern, 41, (pattLen <= 38) ? "/%.38s/" : "/%.36s...", rawPattern);
+    memset(formattedRegExp, ' ', SameLineFormatedRegExpnWidth);
+    formattedRegExp[SameLineFormatedRegExpnWidth] = '\0';
 
-#if ENABLE(YARR_JIT)
-        const size_t jitAddrSize = 20;
-        char jit8BitMatchOnlyAddr[jitAddrSize] { };
-        char jit16BitMatchOnlyAddr[jitAddrSize] { };
-        char jit8BitMatchAddr[jitAddrSize] { };
-        char jit16BitMatchAddr[jitAddrSize] { };
-        switch (m_state) {
-        case ParseError:
-        case NotCompiled:
-            break;
-        case ByteCode:
-            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "fallback    ");
-            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "----      ");
-            snprintf(jit8BitMatchAddr, jitAddrSize, "fallback    ");
-            snprintf(jit16BitMatchAddr, jitAddrSize, "----      ");
-            break;
-        case JITCode: {
-            Yarr::YarrCodeBlock& codeBlock = *m_regExpJITCode.get();
-            snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "0x%014" PRIxPTR, reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchOnlyAddr()));
-            snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "0x%014" PRIxPTR, reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchOnlyAddr()));
-            snprintf(jit8BitMatchAddr, jitAddrSize, "0x%014" PRIxPTR, reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchAddr()));
-            snprintf(jit16BitMatchAddr, jitAddrSize, "0x%014" PRIxPTR, reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchAddr()));
-            break;
+    auto patternCStr = pattern().utf8(); // Hold a reference so it doesn't get destroyed.
+    auto patternStr = patternCStr.data();
+    auto patternLength = pattern().length();
+
+    auto appendRawPatternBuffer = [&] (size_t& index) {
+        if (!index)
+            return;
+
+        rawPatternBuffer[index] = '\0';
+
+        rawPattern = makeString(rawPattern, rawPatternBuffer);
+
+        index = 0;
+    };
+
+    // Escape literal TAB characters.
+    size_t dstIdx = 0;
+    for (size_t srcIdx = 0; srcIdx < patternLength; ++srcIdx) {
+        auto c = patternStr[srcIdx];
+        if (c == '\t') {
+            rawPatternBuffer[dstIdx++] = '\\';
+            if (dstIdx >= SameLineFormatedRegExpnWidth)
+                appendRawPatternBuffer(dstIdx);
+            c = 't';
         }
-        }
-#else
-        const char* jit8BitMatchOnlyAddr = "JIT Off";
-        const char* jit16BitMatchOnlyAddr = "";
-        const char* jit8BitMatchAddr = "JIT Off";
-        const char* jit16BitMatchAddr = "";
-#endif
-        unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
-        unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
 
-        printf("%-40.40s %16.16s %16.16s %10d %10d %10u\n", formattedPattern, jit8BitMatchOnlyAddr, jit16BitMatchOnlyAddr, m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
-        printf("                                         %16.16s %16.16s %10d %10d %10u\n", jit8BitMatchAddr, jit16BitMatchAddr, m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
+        rawPatternBuffer[dstIdx++] = c;
+        if (dstIdx >= SameLineFormatedRegExpnWidth)
+            appendRawPatternBuffer(dstIdx);
     }
+
+    appendRawPatternBuffer(dstIdx);
+
+    if (rawPattern.length() + strlen(Yarr::flagsString(flags()).data()) + 2 <= SameLineFormatedRegExpnWidth) {
+        String result = makeString('/', rawPattern, '/', Yarr::flagsString(flags()).data());
+        memcpy(formattedRegExp, result.utf8().data(), result.length());
+        formattedRegExp[result.length()] = '\0';
+    } else
+        dataLogF("/%s/%s\n", rawPattern.utf8().data(), Yarr::flagsString(flags()).data());
+
+    constexpr int addrWidth = 12;
+#if ENABLE(YARR_JIT)
+    constexpr char hexDigits[] = "0123456789abcdef";
+    constexpr char fallback[] = "fallback  ";
+    constexpr char dashes[] = "----    ";
+
+    String jit8BitMatchOnlyAddr;
+    String jit16BitMatchOnlyAddr;
+    String jit8BitMatchAddr;
+    String jit16BitMatchAddr;
+
+    auto formatAddress = [&] (void* addr) {
+        constexpr int jitAddrSignificantWidth = addrWidth - 2;
+        uintptr_t addrAsUint = reinterpret_cast<uintptr_t>(addr);
+
+        String formatResult;
+        for (int digit = jitAddrSignificantWidth; digit; --digit) {
+            auto nibble = (addrAsUint >> ((digit - 1) * 4)) & 0xf;
+            if (!formatResult.length()) {
+                if (!nibble && digit > 8)
+                    continue;
+
+                formatResult = makeString("0x");
+            }
+            formatResult = makeString(formatResult, hexDigits[nibble]);
+        }
+
+        return formatResult;
+    };
+
+    switch (m_state) {
+    case ParseError:
+    case NotCompiled:
+        break;
+    case ByteCode:
+        jit8BitMatchOnlyAddr = makeString(fallback);
+        jit16BitMatchOnlyAddr = makeString(dashes);
+        jit8BitMatchAddr = makeString(fallback);
+        jit16BitMatchAddr = makeString(dashes);
+        break;
+    case JITCode: {
+        Yarr::YarrCodeBlock& codeBlock = *m_regExpJITCode.get();
+        jit8BitMatchOnlyAddr = formatAddress(codeBlock.get8BitMatchOnlyAddr());
+        jit16BitMatchOnlyAddr = formatAddress(codeBlock.get16BitMatchOnlyAddr());
+        jit8BitMatchAddr = formatAddress(codeBlock.get8BitMatchAddr());
+        jit16BitMatchAddr = formatAddress(codeBlock.get16BitMatchAddr());
+        break;
+    }
+    }
+#else
+    constexpr char jitOff[] = "JIT Off";
+    String jit8BitMatchOnlyAddr = makeString(jitOff);
+    String jit16BitMatchOnlyAddr;
+    String jit8BitMatchAddr = makeString(jitOff);
+    String jit16BitMatchAddr;
+#endif
+    unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
+    unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
+
+    dataLogF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8().data(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8().data(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
+    for (unsigned i = 0; i < SameLineFormatedRegExpnWidth; ++i)
+        dataLog(" ");
+    dataLogF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, jit8BitMatchAddr.utf8().data(), addrWidth, addrWidth, jit16BitMatchAddr.utf8().data(), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);
+}
 #endif
 
 void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)

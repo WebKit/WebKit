@@ -9,6 +9,8 @@
 
 #include "libANGLE/validationCL_autogen.h"
 
+#include "common/string_utils.h"
+
 #include "libANGLE/cl_utils.h"
 
 #define ANGLE_VALIDATE_VERSION(version, major, minor)          \
@@ -454,7 +456,9 @@ cl_int ValidateImageForDevice(const Image &image,
 
     // CL_INVALID_VALUE if the region being read or written
     // specified by origin and region is out of bounds.
-    if (!image.isRegionValid(origin, region))
+
+    if (!image.isRegionValid(cl::MemOffsets{origin[0], origin[1], origin[2]},
+                             cl::Coordinate{region[0], region[1], region[2]}))
     {
         return CL_INVALID_VALUE;
     }
@@ -746,6 +750,11 @@ cl_int ValidateCreateContextFromType(const cl_context_properties *properties,
     if (!Device::IsValidType(device_type))
     {
         return CL_INVALID_DEVICE_TYPE;
+    }
+
+    if (!platform->hasDeviceType(device_type))
+    {
+        return CL_DEVICE_NOT_FOUND;
     }
 
     // CL_INVALID_VALUE if pfn_notify is NULL but user_data is not NULL.
@@ -1161,6 +1170,37 @@ cl_int ValidateBuildProgram(cl_program program,
         return CL_INVALID_OPERATION;
     }
 
+    // If program was created with clCreateProgramWithBinary and device does not have a valid
+    // program binary loaded
+    std::vector<size_t> binSizes{prog.getDevices().size()};
+    std::vector<std::vector<unsigned char *>> bins{prog.getDevices().size()};
+    if (IsError(prog.getInfo(ProgramInfo::BinarySizes, binSizes.size() * sizeof(size_t),
+                             binSizes.data(), nullptr)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    for (size_t i = 0; i < prog.getDevices().size(); ++i)
+    {
+        cl_program_binary_type binType;
+        bins.at(i).resize(binSizes[i]);
+
+        if (IsError(prog.getInfo(ProgramInfo::Binaries, sizeof(unsigned char *) * bins.size(),
+                                 bins.data(), nullptr)))
+        {
+            return CL_INVALID_VALUE;
+        }
+        if (IsError(prog.getBuildInfo(prog.getDevices()[i]->getNative(),
+                                      ProgramBuildInfo::BinaryType, sizeof(cl_program_binary_type),
+                                      &binType, nullptr)))
+        {
+            return CL_INVALID_VALUE;
+        }
+        if ((binType != CL_PROGRAM_BINARY_TYPE_NONE) && bins[i].empty())
+        {
+            return CL_INVALID_BINARY;
+        }
+    }
+
     return CL_SUCCESS;
 }
 
@@ -1197,6 +1237,18 @@ cl_int ValidateGetProgramInfo(cl_program program,
         default:
             // All remaining possible values for param_name are valid for all versions.
             break;
+    }
+
+    // CL_INVALID_VALUE if size in bytes specified by param_value_size is < size of return type
+    // as described in the Program Object Queries table and param_value is not NULL.
+    if (param_value != nullptr)
+    {
+        size_t valueSizeRet = 0;
+        if (IsError(prog.getInfo(param_name, 0, nullptr, &valueSizeRet)) ||
+            param_value_size < valueSizeRet)
+        {
+            return CL_INVALID_VALUE;
+        }
     }
 
     return CL_SUCCESS;
@@ -1239,6 +1291,18 @@ cl_int ValidateGetProgramBuildInfo(cl_program program,
             break;
     }
 
+    // CL_INVALID_VALUE if size in bytes specified by param_value_size is < size of return type
+    // as described in the Program Object Queries table and param_value is not NULL.
+    if (param_value != nullptr)
+    {
+        size_t valueSizeRet = 0;
+        if (IsError(prog.getBuildInfo(device, param_name, 0, nullptr, &valueSizeRet)) ||
+            param_value_size < valueSizeRet)
+        {
+            return CL_INVALID_VALUE;
+        }
+    }
+
     return CL_SUCCESS;
 }
 
@@ -1249,11 +1313,68 @@ cl_int ValidateCreateKernel(cl_program program, const char *kernel_name)
     {
         return CL_INVALID_PROGRAM;
     }
+    cl::Program &prog = program->cast<cl::Program>();
 
     // CL_INVALID_VALUE if kernel_name is NULL.
     if (kernel_name == nullptr)
     {
         return CL_INVALID_VALUE;
+    }
+
+    // CL_INVALID_PROGRAM_EXECUTABLE if there is no successfully built executable for program.
+    std::vector<cl_device_id> associatedDevices;
+    size_t associatedDeviceCount = 0;
+    bool isAnyDeviceProgramBuilt = false;
+    if (IsError(prog.getInfo(ProgramInfo::Devices, 0, nullptr, &associatedDeviceCount)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    associatedDevices.resize(associatedDeviceCount / sizeof(cl_device_id));
+    if (IsError(prog.getInfo(ProgramInfo::Devices, associatedDeviceCount, associatedDevices.data(),
+                             nullptr)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    for (const cl_device_id &device : associatedDevices)
+    {
+        cl_build_status status = CL_BUILD_NONE;
+        if (IsError(prog.getBuildInfo(device, ProgramBuildInfo::Status, sizeof(cl_build_status),
+                                      &status, nullptr)))
+        {
+            return CL_INVALID_PROGRAM;
+        }
+
+        if (status == CL_BUILD_SUCCESS)
+        {
+            isAnyDeviceProgramBuilt = true;
+            break;
+        }
+    }
+    if (!isAnyDeviceProgramBuilt)
+    {
+        return CL_INVALID_PROGRAM_EXECUTABLE;
+    }
+
+    // CL_INVALID_KERNEL_NAME if kernel_name is not found in program.
+    std::string kernelNames;
+    size_t kernelNamesSize = 0;
+    if (IsError(prog.getInfo(ProgramInfo::KernelNames, 0, nullptr, &kernelNamesSize)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    kernelNames.resize(kernelNamesSize);
+    if (IsError(
+            prog.getInfo(ProgramInfo::KernelNames, kernelNamesSize, kernelNames.data(), nullptr)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    std::vector<std::string> tokenizedKernelNames =
+        angle::SplitString(kernelNames.c_str(), ";", angle::WhitespaceHandling::TRIM_WHITESPACE,
+                           angle::SplitResult::SPLIT_WANT_NONEMPTY);
+    if (std::find(tokenizedKernelNames.begin(), tokenizedKernelNames.end(), kernel_name) ==
+        tokenizedKernelNames.end())
+    {
+        return CL_INVALID_KERNEL_NAME;
     }
 
     return CL_SUCCESS;
@@ -1268,6 +1389,19 @@ cl_int ValidateCreateKernelsInProgram(cl_program program,
     if (!Program::IsValid(program))
     {
         return CL_INVALID_PROGRAM;
+    }
+
+    // CL_INVALID_VALUE if kernels is not NULL and num_kernels is less than the number of kernels in
+    // program.
+    size_t kernelCount = 0;
+    cl::Program &prog  = program->cast<cl::Program>();
+    if (IsError(prog.getInfo(ProgramInfo::NumKernels, sizeof(size_t), &prog, nullptr)))
+    {
+        return CL_INVALID_PROGRAM;
+    }
+    if (kernels != nullptr && num_kernels < kernelCount)
+    {
+        return CL_INVALID_VALUE;
     }
 
     return CL_SUCCESS;
@@ -1364,6 +1498,7 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         // when the specified arg_value is not a valid sampler object.
         else if (typeName == "sampler_t")
         {
+            static_assert(sizeof(cl_mem) == sizeof(cl_sampler), "api object size check failed");
             if (!Sampler::IsValid(*static_cast<const cl_sampler *>(arg_value)))
             {
                 return CL_INVALID_SAMPLER;
@@ -1373,6 +1508,8 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         // when the specified arg_value is not a valid device queue object.
         else if (typeName == "queue_t")
         {
+            static_assert(sizeof(cl_mem) == sizeof(cl_command_queue),
+                          "api object size check failed");
             const cl_command_queue queue = *static_cast<const cl_command_queue *>(arg_value);
             if (!CommandQueue::IsValid(queue) || !queue->cast<CommandQueue>().isOnDevice())
             {
@@ -2952,6 +3089,13 @@ cl_int ValidateCompileProgram(cl_program program,
         return CL_INVALID_PROGRAM;
     }
 
+    // CL_INVALID_OPERATION if we do not have source code.
+    if (prog.getSource().empty())
+    {
+        ERR() << "No OpenCL C source available from program object (" << &prog << ")!";
+        return CL_INVALID_OPERATION;
+    }
+
     // CL_INVALID_VALUE if device_list is NULL and num_devices is greater than zero,
     // or if device_list is not NULL and num_devices is zero.
     if ((device_list != nullptr) != (num_devices != 0u))
@@ -3015,6 +3159,69 @@ cl_int ValidateLinkProgram(cl_context context,
         return CL_INVALID_CONTEXT;
     }
     const Context &ctx = context->cast<Context>();
+
+    // CL_INVALID_OPERATION if the compilation or build of a program executable for any of the
+    // devices listed in device_list by a previous call to clCompileProgram or clBuildProgram for
+    // program has not completed.
+    for (size_t i = 0; i < num_devices; ++i)
+    {
+        Device &device = device_list[i]->cast<Device>();
+        for (size_t j = 0; j < num_input_programs; ++j)
+        {
+            cl_build_status buildStatus = CL_BUILD_NONE;
+            Program &program            = input_programs[j]->cast<Program>();
+            if (IsError(program.getBuildInfo(device.getNative(), ProgramBuildInfo::Status,
+                                             sizeof(cl_build_status), &buildStatus, nullptr)))
+            {
+                return CL_INVALID_PROGRAM;
+            }
+
+            if (buildStatus != CL_BUILD_SUCCESS)
+            {
+                return CL_INVALID_OPERATION;
+            }
+        }
+    }
+
+    // CL_INVALID_OPERATION if the rules for devices containing compiled binaries or libraries as
+    // described in input_programs argument below are not followed.
+    //
+    // All programs specified by input_programs contain a compiled binary or library for the device.
+    // In this case, a link is performed to generate a program executable for this device.
+    //
+    // None of the programs contain a compiled binary or library for that device. In this case, no
+    // link is performed and there will be no program executable generated for this device.
+    //
+    // All other cases will return a CL_INVALID_OPERATION error.
+    BitField libraryOrObject(CL_PROGRAM_BINARY_TYPE_LIBRARY |
+                             CL_PROGRAM_BINARY_TYPE_COMPILED_OBJECT);
+    for (size_t i = 0; i < num_devices; ++i)
+    {
+        bool foundAnyLibraryOrObject = false;
+        Device &device               = device_list[i]->cast<Device>();
+        for (size_t j = 0; j < num_input_programs; ++j)
+        {
+            cl_program_binary_type binaryType = CL_PROGRAM_BINARY_TYPE_NONE;
+            Program &program                  = input_programs[j]->cast<Program>();
+            if (IsError(program.getBuildInfo(device.getNative(), ProgramBuildInfo::BinaryType,
+                                             sizeof(cl_program_binary_type), &binaryType, nullptr)))
+            {
+                return CL_INVALID_PROGRAM;
+            }
+
+            if (libraryOrObject.isNotSet(binaryType))
+            {
+                if (foundAnyLibraryOrObject)
+                {
+                    return CL_INVALID_OPERATION;
+                }
+            }
+            else
+            {
+                foundAnyLibraryOrObject = true;
+            }
+        }
+    }
 
     // CL_INVALID_VALUE if device_list is NULL and num_devices is greater than zero,
     // or if device_list is not NULL and num_devices is zero.

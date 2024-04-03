@@ -37,7 +37,7 @@ class WebAssemblyMemoryPrototype;
 class WebAssemblyMemoryConstructor final : public InternalFunction {
 public:
     typedef InternalFunction Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyMemoryConstructor* create(VM&, Structure*, WebAssemblyMemoryPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

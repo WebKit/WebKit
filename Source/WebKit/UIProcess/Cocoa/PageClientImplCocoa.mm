@@ -30,6 +30,7 @@
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -153,6 +154,13 @@ void PageClientImplCocoa::storeAppHighlight(const WebCore::AppHighlight &highlig
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void PageClientImplCocoa::removeTextIndicatorStyleForID(const WTF::UUID& uuid)
+{
+    [m_webView _removeTextIndicatorStyleForID:uuid];
+}
+#endif
+
 void PageClientImplCocoa::pageClosed()
 {
     m_alternativeTextUIController->clear();
@@ -172,12 +180,26 @@ void PageClientImplCocoa::gpuProcessDidExit()
 }
 #endif
 
-WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(NSTextAlternatives *alternatives)
+#if ENABLE(MODEL_PROCESS)
+void PageClientImplCocoa::modelProcessDidFinishLaunching()
+{
+    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+}
+
+void PageClientImplCocoa::modelProcessDidExit()
+{
+    [m_webView willChangeValueForKey:@"_modelProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_modelProcessIdentifier"];
+}
+#endif
+
+WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(PlatformTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
 }
 
-void PageClientImplCocoa::replaceDictationAlternatives(NSTextAlternatives *alternatives, WebCore::DictationContext context)
+void PageClientImplCocoa::replaceDictationAlternatives(PlatformTextAlternatives *alternatives, WebCore::DictationContext context)
 {
     m_alternativeTextUIController->replaceAlternatives(alternatives, context);
 }
@@ -192,7 +214,7 @@ Vector<String> PageClientImplCocoa::dictationAlternatives(WebCore::DictationCont
     return makeVector<String>(platformDictationAlternatives(dictationContext).alternativeStrings);
 }
 
-NSTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::DictationContext dictationContext)
+PlatformTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
@@ -256,5 +278,17 @@ WindowKind PageClientImplCocoa::windowKind()
         return WindowKind::InProcessSnapshotting;
     return WindowKind::Normal;
 }
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void PageClientImplCocoa::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView)
+{
+    [m_webView _textReplacementSession:sessionUUID showInformationForReplacementWithUUID:replacementUUID relativeToRect:selectionBoundsInRootView];
+}
+
+void PageClientImplCocoa::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState state, const WTF::UUID& replacementUUID)
+{
+    [m_webView _textReplacementSession:sessionUUID updateState:state forReplacementWithUUID:replacementUUID];
+}
+#endif
 
 }

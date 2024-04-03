@@ -72,17 +72,13 @@ TIntermTyped &GetArg(const TIntermAggregate &call, size_t index);
 // Sets the argument of a function call at the given index.
 void SetArg(TIntermAggregate &call, size_t index, TIntermTyped &arg);
 
-// Returns the field index within the given struct for the given field name.
-// Returns -1 if the struct has no field with the given name.
-int GetFieldIndex(const TStructure &structure, const ImmutableString &fieldName);
-
-// Accesses a field for the given variable with the given field name.
-// The variable must be a struct instance.
-TIntermBinary &AccessField(const TVariable &structInstanceVar, const ImmutableString &fieldName);
+// Accesses a field for the given node with the given field name.
+// The node must be a struct instance.
+TIntermBinary &AccessField(const TVariable &structInstanceVar, const Name &field);
 
 // Accesses a field for the given node with the given field name.
 // The node must be a struct instance.
-TIntermBinary &AccessField(TIntermTyped &object, const ImmutableString &fieldName);
+TIntermBinary &AccessField(TIntermTyped &object, const Name &field);
 
 // Accesses a field for the given node by its field index.
 // The node must be a struct instance.

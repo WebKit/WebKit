@@ -4379,4 +4379,16 @@ void CaptureGetFramebufferPixelLocalStorageParameterivRobustANGLE_params(
 {
     CaptureGetParameter(glState, pname, sizeof(GLint) * bufSize, paramCapture);
 }
+
+void CaptureFramebufferFoveationConfigQCOM_providedFeatures(const State &glState,
+                                                            bool isCallValid,
+                                                            FramebufferID framebufferPacked,
+                                                            GLuint numLayers,
+                                                            GLuint focalPointsPerLayer,
+                                                            GLuint requestedFeatures,
+                                                            GLuint *providedFeatures,
+                                                            angle::ParamCapture *paramCapture)
+{
+    UNIMPLEMENTED();
+}
 }  // namespace gl

@@ -23,7 +23,7 @@ layer at (0,0) size 785x1432
           RenderTableSection {TBODY} at (2,2) size 381x42
             RenderTableRow {TR} at (0,2) size 381x38
               RenderTableCell {TD} at (2,2) size 377x38 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (20,1) size 370x36
+                RenderText {#text} at (6,1) size 370x36
                   text run at (20,1) width 356: "This is a table. It should sit on the same line as the float"
                   text run at (6,19) width 5 RTL: "."
                   text run at (10,19) width 366: "and wrap as needed to fit within the remaining line width"
@@ -44,7 +44,7 @@ layer at (8,416) size 569x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 569x2 [color=#808080] [border: (1px inset #808080)]
 layer at (189,816) size 388x73 clip at (206,818) size 369x54
   RenderBlock {DIV} at (180,0) size 389x73 [border: (2px solid #0000FF)]
-    RenderText {#text} at (51,2) size 367x54
+    RenderText {#text} at (20,2) size 367x54
       text run at (51,2) width 336: "This is an overflow:scroll region. It should sit on the"
       text run at (20,20) width 367: "same line as the float and wrap as needed to fit within the"
       text run at (249,38) width 5 RTL: "."

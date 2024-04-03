@@ -56,6 +56,7 @@
 #include "CSSPropertyNames.h"
 #include "CommonVM.h"
 #include "CookieJar.h"
+#include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "ElementChildIteratorInlines.h"
@@ -102,20 +103,6 @@ HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const UR
 
 HTMLDocument::~HTMLDocument() = default;
 
-int HTMLDocument::width()
-{
-    updateLayoutIgnorePendingStylesheets();
-    RefPtr frameView = view();
-    return frameView ? frameView->contentsWidth() : 0;
-}
-
-int HTMLDocument::height()
-{
-    updateLayoutIgnorePendingStylesheets();
-    RefPtr frameView = view();
-    return frameView ? frameView->contentsHeight() : 0;
-}
-
 Ref<DocumentParser> HTMLDocument::createParser()
 {
     return HTMLDocumentParser::create(*this, parserContentPolicy());
@@ -133,13 +120,13 @@ std::optional<std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLColl
         return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<HTMLCollection> { WTFMove(collection) } };
     }
 
-    auto& element = *documentNamedItem(name);
-    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element); UNLIKELY(iframe)) {
+    Ref element = *documentNamedItem(name);
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element.get()); UNLIKELY(iframe)) {
         if (RefPtr domWindow = iframe->contentWindow())
             return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
     }
 
-    return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { &element } };
+    return std::variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { WTFMove(element) } };
 }
 
 bool HTMLDocument::isSupportedPropertyName(const AtomString& name) const

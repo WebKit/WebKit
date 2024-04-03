@@ -35,16 +35,16 @@ from datetime import datetime, timezone
 from twisted.internet import defer
 
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
-                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
-                       StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
-                       WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
-                       macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
+                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
+                        StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPESkiaBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
+                        WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory, macOSBuildFactory, macOSBuildOnlyFactory,
+                        macOSWK1Factory, macOSWK2Factory, ServicesFactory, UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
-def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
+def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True, setup_force_schedulers=True, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
     with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
         config = json.load(config_json)
     if is_test_mode_enabled:
@@ -97,7 +97,8 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=os.path.
             scheduler['userpass'] = [(passwords.get('BUILDBOT_TRY_USERNAME', 'sampleuser'), passwords.get('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
         if schedulerClassName == 'AnyBranchScheduler' and schedulerName:
             scheduler['change_filter'] = ChangeFilter(filter_fn=filter_fn)
-        c['schedulers'].append(schedulerClass(**scheduler))
+        if setup_main_schedulers is True:
+            c['schedulers'].append(schedulerClass(**scheduler))
 
     forceScheduler = ForceScheduler(
         name='try_build',
@@ -114,7 +115,8 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path=os.path.
         properties=[StringParameter(name='patch_id', label='Patch id (not bug number)', regex=r'^[4-9]\d{5}$', required=True, maxsize=6),
                     StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying patch (optional)', required=False, maxsize=40)],
     )
-    c['schedulers'].append(forceScheduler)
+    if setup_force_schedulers is True:
+        c['schedulers'].append(forceScheduler)
 
 
 # Copied from https://github.com/buildbot/buildbot/blob/master/master/buildbot/util/async_sort.py

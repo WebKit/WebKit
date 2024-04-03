@@ -53,6 +53,10 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#include "GraphicsContextCG.h"
+#endif
+
 namespace WebCore {
 
 static FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator&, const MarkedText&);
@@ -80,7 +84,10 @@ TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& pa
     , m_paintOffset(paintOffset)
     , m_paintRect(computePaintRect(paintOffset))
     , m_isFirstLine(m_textBox.isFirstLine())
-    , m_isCombinedText(is<RenderCombineText>(m_renderer) && downcast<RenderCombineText>(m_renderer).isCombined())
+    , m_isCombinedText([&] {
+        auto* combineTextRenderer = dynamicDowncast<RenderCombineText>(m_renderer);
+        return combineTextRenderer && combineTextRenderer->isCombined();
+    }())
     , m_isPrinting(m_document.printing())
     , m_haveSelection(computeHaveSelection())
     , m_containsComposition(m_renderer.textNode() && m_renderer.frame().editor().compositionNode() == m_renderer.textNode())
@@ -168,7 +175,7 @@ void TextBoxPainter<TextBoxPath>::paintBackground()
 #endif
         if (shouldPaintCompositionBackground)
             return true;
-        if (m_document.markers().hasMarkers())
+        if (CheckedPtr markers = m_document.markersIfExists(); markers && markers->hasMarkers())
             return true;
         if (m_document.hasHighlight())
             return true;
@@ -291,7 +298,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
             return true;
         if (shouldPaintSelectionForeground)
             return true;
-        if (m_document.markers().hasMarkers())
+        if (CheckedPtr markers = m_document.markersIfExists(); markers && markers->hasMarkers())
             return true;
         if (m_document.hasHighlight())
             return true;
@@ -494,7 +501,7 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
     float emphasisMarkOffset = 0;
     const AtomString& emphasisMark = m_emphasisMarkExistsAndIsAbove ? m_style.textEmphasisMarkString() : nullAtom();
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().intAscent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().intDescent() + font.emphasisMarkAscent(emphasisMark);
 
     TextPainter textPainter { context, font, m_style };
     textPainter.setStyle(markedText.style.textStyles);
@@ -559,7 +566,7 @@ static inline float computedAutoTextDecorationThickness(const RenderStyle& style
 
 static inline float computedLinethroughCenter(const RenderStyle& styleToUse, float textDecorationThickness, float autoTextDecorationThickness)
 {
-    auto center = 2 * styleToUse.metricsOfPrimaryFont().floatAscent() / 3 + autoTextDecorationThickness / 2;
+    auto center = 2 * styleToUse.metricsOfPrimaryFont().ascent() / 3 + autoTextDecorationThickness / 2;
     return center - textDecorationThickness / 2;
 }
 
@@ -661,7 +668,10 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             auto overlineOffset = [&] {
                 if (!computedTextDecorationType.contains(TextDecorationLine::Overline))
                     return 0.f;
-                return autoTextDecorationThickness - textDecorationThickness - (decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f);
+                auto baseOffset = overlineOffsetForTextBoxPainting(*decoratingBox.inlineBox, decoratingBox.style);
+                baseOffset += (autoTextDecorationThickness - textDecorationThickness);
+                auto wavyOffset = decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
+                return baseOffset - wavyOffset;
             };
 
             return TextDecorationPainter::BackgroundDecorationGeometry {
@@ -672,7 +682,7 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
                 underlineOffset(),
                 overlineOffset(),
                 computedLinethroughCenter(decoratingBox.style, textDecorationThickness, autoTextDecorationThickness),
-                decoratingBox.style.metricsOfPrimaryFont().ascent() + 2.f,
+                decoratingBox.style.metricsOfPrimaryFont().intAscent() + 2.f,
                 wavyStrokeParameters(decoratingBox.style.computedFontSize())
             };
         };
@@ -813,7 +823,7 @@ void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float wi
         // All other marked text underlines are 1px thick.
         // If there's not enough space the underline will touch or overlap characters.
         int lineThickness = 1;
-        int baseline = m_style.metricsOfPrimaryFont().ascent();
+        int baseline = m_style.metricsOfPrimaryFont().intAscent();
         if (underline.thick && m_logicalRect.height() - baseline >= 2)
             lineThickness = 2;
 
@@ -840,7 +850,7 @@ void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float wi
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = m_style.metricsOfPrimaryFont().ascent();
+    int baseline = m_style.metricsOfPrimaryFont().intAscent();
     if (m_logicalRect.height() - baseline >= 2)
         lineThickness = 2;
 
@@ -1031,14 +1041,32 @@ FloatRect LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const Le
     return result;
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/TextBoxPainterAdditions.cpp>
+#else
+static void drawUnifiedTextReplacementUnderline(GraphicsContext&, const FloatRect&, IntSize) { }
+#endif
+
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& markedText)
 {
-    // Never print spelling/grammar markers (5327887)
+    // Never print document markers (rdar://5327887)
     if (m_document.printing())
         return;
 
     auto bounds = calculateDocumentMarkerBounds(makeIterator(), markedText);
+    bounds.moveBy(m_paintRect.location());
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    if (markedText.type == MarkedText::Type::UnifiedTextReplacement) {
+        drawUnifiedTextReplacementUnderline(m_paintInfo.context(), bounds,  m_renderer.frame().view()->size());
+        return;
+    }
+#endif
 
     auto lineStyleMode = [&] {
         switch (markedText.type) {
@@ -1065,7 +1093,6 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
     if (auto* marker = markedText.marker)
         lineStyleColor = lineStyleColor.colorWithAlphaMultipliedBy(marker->opacity());
 
-    bounds.moveBy(m_paintRect.location());
     m_paintInfo.context().drawDotsForDocumentMarker(bounds, { lineStyleMode, lineStyleColor });
 }
 
@@ -1086,7 +1113,7 @@ FloatRect TextBoxPainter<TextBoxPath>::computePaintRect(const LayoutPoint& paint
 FloatRect calculateDocumentMarkerBounds(const InlineIterator::TextBoxIterator& textBox, const MarkedText& markedText)
 {
     auto& font = textBox->fontCascade();
-    auto ascent = font.metricsOfPrimaryFont().ascent();
+    auto ascent = font.metricsOfPrimaryFont().intAscent();
     auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
     auto y = ascent + 0.11035 * fontSize;
     auto height = 0.13247 * fontSize;
@@ -1123,7 +1150,7 @@ const FontCascade& TextBoxPainter<TextBoxPath>::fontCascade() const
 template<typename TextBoxPath>
 FloatPoint TextBoxPainter<TextBoxPath>::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
-    FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().metricsOfPrimaryFont().ascent() };
+    FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().metricsOfPrimaryFont().intAscent() };
     if (m_isCombinedText) {
         if (auto newOrigin = downcast<RenderCombineText>(m_renderer).computeTextOrigin(paintRect))
             textOrigin = newOrigin.value();

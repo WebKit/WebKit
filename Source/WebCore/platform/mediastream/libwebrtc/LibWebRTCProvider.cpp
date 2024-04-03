@@ -30,6 +30,7 @@
 
 #include "ContentType.h"
 #include "LibWebRTCAudioModule.h"
+#include "LibWebRTCUtils.h"
 #include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
@@ -245,19 +246,6 @@ void LibWebRTCProvider::setLoggingLevel(WTFLogLevel level)
     setRTCLogging(level);
 }
 
-void LibWebRTCProvider::setVP9VTBSupport(bool value)
-{
-    m_supportsVP9VTB = value;
-
-    m_videoDecodingCapabilities = { };
-    m_videoEncodingCapabilities = { };
-}
-
-bool LibWebRTCProvider::isSupportingVP9VTB() const
-{
-    return m_supportsVP9VTB;
-}
-
 bool LibWebRTCProvider::isEnumeratingAllNetworkInterfacesEnabled() const
 {
     return m_enableEnumeratingAllNetworkInterfaces;
@@ -309,6 +297,9 @@ void LibWebRTCProvider::clearFactory()
 {
     m_audioModule = nullptr;
     m_factory = nullptr;
+
+    m_videoDecodingCapabilities = { };
+    m_videoEncodingCapabilities = { };
 }
 
 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread)
@@ -436,11 +427,6 @@ static inline std::optional<cricket::MediaType> typeFromKind(const String& kind)
     return { };
 }
 
-static inline String fromStdString(const std::string& value)
-{
-    return String::fromUTF8(value.data(), value.length());
-}
-
 static inline std::optional<uint16_t> toChannels(absl::optional<int> numChannels)
 {
     if (!numChannels)
@@ -456,7 +442,7 @@ static inline RTCRtpCapabilities toRTCRtpCapabilities(const webrtc::RtpCapabilit
         StringBuilder sdpFmtpLineBuilder;
         bool hasParameter = false;
         for (auto& parameter : codec.parameters) {
-            sdpFmtpLineBuilder.append(hasParameter ? ";" : "", StringView(parameter.first.data(), parameter.first.length()), '=', StringView(parameter.second.data(), parameter.second.length()));
+            sdpFmtpLineBuilder.append(hasParameter ? ";" : "", StringView(std::span(parameter.first)), '=', StringView(std::span(parameter.second)));
             hasParameter = true;
         }
         String sdpFmtpLine;
@@ -552,11 +538,11 @@ std::optional<MediaCapabilitiesDecodingInfo> LibWebRTCProvider::videoDecodingCap
         info.smooth = isVPSoftwareDecoderSmooth(configuration);
     } else if (equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
         auto decodingInfo = computeVPParameters(configuration);
-        if (decodingInfo && !decodingInfo->supported && isSupportingVP9VTB()) {
+        if (decodingInfo && !decodingInfo->supported && isSupportingVP9HardwareDecoder()) {
             info.supported = false;
             return { info };
         }
-        info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : true;
+        info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : isSupportingVP9HardwareDecoder();
         info.smooth = decodingInfo ? decodingInfo->smooth : isVPSoftwareDecoderSmooth(configuration);
     } else if (equalLettersIgnoringASCIICase(containerType, "video/h264"_s)) {
         // FIXME: Provide more granular H.264 decoder information.

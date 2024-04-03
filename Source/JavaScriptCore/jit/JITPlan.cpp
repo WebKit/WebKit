@@ -34,6 +34,8 @@
 #include "JSCellInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/SystemTracing.h>
 
 namespace JSC {
 
@@ -172,9 +174,21 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
         dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
 #endif // ENABLE(DFG_JIT)
 
+    CString signpostMessage;
+    UNUSED_VARIABLE(signpostMessage);
+    if (UNLIKELY(Options::useCompilerSignpost())) {
+        StringPrintStream stream;
+        stream.print(m_mode, " ", *m_codeBlock, " instructions size = ", m_codeBlock->instructionsSize());
+        signpostMessage = stream.toCString();
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
+    }
+
     CompilationPath path = compileInThreadImpl();
 
     RELEASE_ASSERT((path == CancelPath) == (m_stage == JITPlanStage::Canceled));
+
+    if (UNLIKELY(Options::useCompilerSignpost()))
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, signpostMessage.data());
 
     if (LIKELY(!computeCompileTimes))
         return;
@@ -238,6 +252,13 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
             dataLog(" (DFG: ", (m_timeBeforeFTL - before).milliseconds(), ", B3: ", (after - m_timeBeforeFTL).milliseconds(), ")");
         dataLog(".\n");
     }
+}
+
+void JITPlan::runMainThreadFinalizationTasks()
+{
+    auto tasks = std::exchange(m_mainThreadFinalizationTasks, { });
+    for (auto& task : tasks)
+        task->run();
 }
 
 } // namespace JSC

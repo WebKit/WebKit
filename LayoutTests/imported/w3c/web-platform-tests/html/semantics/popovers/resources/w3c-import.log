@@ -15,5 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-hover-hide-common.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-invoking-attribute.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-styles.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-top-layer-nesting.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/resources/popover-utils.js

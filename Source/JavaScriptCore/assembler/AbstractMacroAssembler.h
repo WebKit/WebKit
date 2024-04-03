@@ -813,7 +813,7 @@ public:
         
         void append(const JumpList& other)
         {
-            m_jumps.append(other.m_jumps.begin(), other.m_jumps.size());
+            m_jumps.appendVector(other.m_jumps);
         }
 
         bool empty() const

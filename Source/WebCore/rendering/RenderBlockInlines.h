@@ -37,17 +37,17 @@ inline LayoutUnit RenderBlock::endOffsetForContent(RenderFragmentContainer* frag
     return !style().isLeftToRightDirection() ? logicalLeftOffsetForContent(fragment) : logicalWidth() - logicalRightOffsetForContent(fragment);
 }
 
-inline LayoutUnit RenderBlock::endOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText, LayoutUnit logicalHeight) const
+inline LayoutUnit RenderBlock::endOffsetForLine(LayoutUnit position, LayoutUnit logicalHeight) const
 {
-    return !style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight)
-        : logicalWidth() - logicalRightOffsetForLine(position, shouldIndentText, logicalHeight);
+    return !style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, logicalHeight)
+        : logicalWidth() - logicalRightOffsetForLine(position, logicalHeight);
 }
 
-inline LayoutUnit RenderBlock::endOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot shouldIndentText, RenderFragmentContainer* fragment, LayoutUnit logicalHeight) const
+inline LayoutUnit RenderBlock::endOffsetForLineInFragment(LayoutUnit position, RenderFragmentContainer* fragment, LayoutUnit logicalHeight) const
 {
     return !style().isLeftToRightDirection()
-        ? logicalLeftOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight)
-        : logicalWidth() - logicalRightOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight);
+        ? logicalLeftOffsetForLineInFragment(position, fragment, logicalHeight)
+        : logicalWidth() - logicalRightOffsetForLineInFragment(position, fragment, logicalHeight);
 }
 
 inline bool RenderBlock::shouldSkipCreatingRunsForObject(RenderObject& object)
@@ -60,17 +60,17 @@ inline LayoutUnit RenderBlock::startOffsetForContent(RenderFragmentContainer* fr
     return style().isLeftToRightDirection() ? logicalLeftOffsetForContent(fragment) : logicalWidth() - logicalRightOffsetForContent(fragment);
 }
 
-inline LayoutUnit RenderBlock::startOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText, LayoutUnit logicalHeight) const
+inline LayoutUnit RenderBlock::startOffsetForLine(LayoutUnit position, LayoutUnit logicalHeight) const
 {
-    return style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight)
-        : logicalWidth() - logicalRightOffsetForLine(position, shouldIndentText, logicalHeight);
+    return style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, logicalHeight)
+        : logicalWidth() - logicalRightOffsetForLine(position, logicalHeight);
 }
 
-inline LayoutUnit RenderBlock::startOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot shouldIndentText, RenderFragmentContainer* fragment, LayoutUnit logicalHeight) const
+inline LayoutUnit RenderBlock::startOffsetForLineInFragment(LayoutUnit position, RenderFragmentContainer* fragment, LayoutUnit logicalHeight) const
 {
     return style().isLeftToRightDirection()
-        ? logicalLeftOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight)
-        : logicalWidth() - logicalRightOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight);
+        ? logicalLeftOffsetForLineInFragment(position, fragment, logicalHeight)
+        : logicalWidth() - logicalRightOffsetForLineInFragment(position, fragment, logicalHeight);
 }
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ public:
 
     JS_EXPORT_PRIVATE ~StreamingCompiler();
 
-    void addBytes(const uint8_t* bytes, size_t length) { m_parser.addBytes(bytes, length); }
+    void addBytes(std::span<const uint8_t> bytes) { m_parser.addBytes(bytes); }
     JS_EXPORT_PRIVATE void finalize(JSGlobalObject*);
     JS_EXPORT_PRIVATE void fail(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void cancel();

@@ -48,7 +48,7 @@ function SearchBar(callback, suites) {
                                 };
                                 element.onmouseout = () => {mouseCount = mouseCount > 0 ? mouseCount - 1 : 0};
                                 element.onclick = () => {
-                                    callback({suite: key, test: test});
+                                    callback([{suite: key, test: test}], false);
                                     closeSearch();
                                 }
                             }
@@ -187,7 +187,7 @@ function SearchBar(callback, suites) {
 
                 } else if (event.keyCode == 0x0D /* VK_RETURN */) {
                     if (candidatesRef.state.selected)
-                        callback(candidatesRef.state.selected);
+                        callback([candidatesRef.state.selected], false);
                     else {
                         let pairs = [];
                         Object.keys(candidates).forEach(suite => {
@@ -200,7 +200,7 @@ function SearchBar(callback, suites) {
                         });
                         if (!pairs.length)
                             return;
-                        callback(...pairs);
+                        callback(pairs, false);
                     }
                     closeSearch();
                 } else if (event.keyCode == 0x1B /* DOM_VK_ESCAPE */)
@@ -238,7 +238,7 @@ function SearchBar(callback, suites) {
                             });
                             outstanding -= 1;
                             if (outstanding <= 0) {
-                                callback(...pairs);
+                                callback(pairs, true);
                                 closeSearch();
                             }
                         });

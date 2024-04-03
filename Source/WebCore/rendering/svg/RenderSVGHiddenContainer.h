@@ -20,7 +20,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
 
 namespace WebCore {
@@ -37,8 +36,6 @@ public:
 protected:
     void layout() override;
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
@@ -51,6 +48,7 @@ private:
     void absoluteQuads(Vector<FloatQuad>&, bool*) const final { }
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject* = nullptr) const final { }
 
+protected:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { return false; }
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const override { }
     void updateFromStyle() override { }
@@ -60,5 +58,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isRenderSVGHiddenContainer())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

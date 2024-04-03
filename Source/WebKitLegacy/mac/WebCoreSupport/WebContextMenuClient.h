@@ -55,7 +55,6 @@ public:
     bool isSpeaking() const override;
     void speak(const WTF::String&) override;
     void stopSpeaking() override;
-    void searchWithSpotlight() override;
     void showContextMenu() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -75,6 +74,10 @@ public:
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     void handleTranslation(const WebCore::TranslationContextMenuInfo&) final;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    void handleSwapCharacters(WebCore::IntRect selectionBoundsInRootView) final;
 #endif
 
 private:

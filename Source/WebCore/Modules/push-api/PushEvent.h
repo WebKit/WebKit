@@ -39,7 +39,6 @@ public:
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, std::optional<Vector<uint8_t>>&&, IsTrusted);
     ~PushEvent();
 
-    EventInterface eventInterface() const final { return PushEventInterfaceType; }
     PushMessageData* data() { return m_data.get(); }
 
 private:

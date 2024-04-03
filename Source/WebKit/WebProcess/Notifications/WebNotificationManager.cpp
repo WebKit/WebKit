@@ -93,9 +93,9 @@ template<typename U> static bool sendNotificationMessageWithAsyncReply(U&& messa
 }
 #endif // ENABLE(NOTIFICATIONS)
 
-const char* WebNotificationManager::supplementName()
+ASCIILiteral WebNotificationManager::supplementName()
 {
-    return "WebNotificationManager";
+    return "WebNotificationManager"_s;
 }
 
 WebNotificationManager::WebNotificationManager(WebProcess& process)

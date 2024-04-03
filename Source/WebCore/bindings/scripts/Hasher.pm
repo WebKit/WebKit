@@ -243,10 +243,10 @@ sub wyhash {
 
 
 sub GenerateHashValue($$) {
-    my ($string, $isMac) = @_;
+    my ($string, $useWYHash) = @_;
     my @chars = split(/ */, $string);
     my $charCount = scalar @chars;
-    if ($isMac) {
+    if ($useWYHash) {
         if ($charCount <= 48) {
             return superFastHash(@chars);
         }

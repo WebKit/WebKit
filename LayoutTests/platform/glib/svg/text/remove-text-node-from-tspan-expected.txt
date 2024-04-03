@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {html} at (0,0) size 800x8
+    RenderBody {body} at (8,8) size 784x0
+layer at (0,0) size 800x600
+  RenderBlock (positioned) {svg} at (0,0) size 800x600
+    RenderInline {text} at (0,0) size 80x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {tspan} at (0,0) size 0x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {tspan} at (0,0) size 38x17
+        RenderText {#text} at (0,0) size 38x17
+          text run at (0,0) width 38: "PASS"
+      RenderText {#text} at (37,0) size 5x17
+        text run at (37,0) width 5: " "
+      RenderInline {tspan} at (41,0) size 39x17
+        RenderText {#text} at (41,0) size 39x17
+          text run at (41,0) width 39: "PASS"
+      RenderText {#text} at (0,0) size 0x0
+    RenderText {#text} at (0,0) size 0x0

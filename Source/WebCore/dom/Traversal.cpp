@@ -40,18 +40,14 @@ NodeIteratorBase::NodeIteratorBase(Node& rootNode, unsigned whatToShow, RefPtr<N
 }
 
 // https://dom.spec.whatwg.org/#concept-node-filter
-ExceptionOr<unsigned short> NodeIteratorBase::acceptNode(Node& node)
+ExceptionOr<unsigned short> NodeIteratorBase::acceptNodeSlowCase(Node& node)
 {
+    ASSERT(m_filter);
     if (m_isActive)
         return Exception { ExceptionCode::InvalidStateError, "Recursive filters are not allowed"_s };
 
-    // The bit twiddling here is done to map DOM node types, which are given as integers from
-    // 1 through 14, to whatToShow bit masks.
-    if (!(((1 << (node.nodeType() - 1)) & m_whatToShow)))
+    if (!matchesWhatToShow(node))
         return NodeFilter::FILTER_SKIP;
-
-    if (!m_filter)
-        return NodeFilter::FILTER_ACCEPT;
 
     SetForScope isActive(m_isActive, true);
     auto callbackResult = m_filter->acceptNode(node);

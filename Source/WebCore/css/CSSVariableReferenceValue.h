@@ -47,7 +47,7 @@ class BuilderState;
 
 enum CSSPropertyID : uint16_t;
 
-class CSSVariableReferenceValue : public CSSValue {
+class CSSVariableReferenceValue final : public CSSValue {
 public:
     static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange&, const CSSParserContext&);
     static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&&);

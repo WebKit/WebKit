@@ -44,20 +44,3 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t {
 };
 
 } // namespace IPC
-
-namespace WTF {
-
-template<> struct EnumTraits<IPC::MessageFlags> {
-    using values = EnumValues<
-        IPC::MessageFlags
-        , IPC::MessageFlags::DispatchMessageWhenWaitingForSyncReply
-        , IPC::MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply
-        , IPC::MessageFlags::UseFullySynchronousModeForTesting
-        , IPC::MessageFlags::MaintainOrderingWithAsyncMessages
-#if ENABLE(IPC_TESTING_API)
-        , IPC::MessageFlags::SyncMessageDeserializationFailure
-#endif
-    >;
-};
-
-} // namespace WTF

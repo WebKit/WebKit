@@ -67,9 +67,6 @@ class GLibPort(Port):
     def _built_executables_path(self, *path):
         return self._build_path(*(('bin',) + path))
 
-    def _built_libraries_path(self, *path):
-        return self._build_path(*(('lib',) + path))
-
     def _prepend_to_env_value(self, new_value, current_value):
         if len(current_value) > 0:
             return new_value + ":" + current_value
@@ -98,6 +95,8 @@ class GLibPort(Port):
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DMABUF_SINK_DISABLED')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HARNESS_DUMP_DIR')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HOLE_PUNCH_QUIRK')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_QUIRKS')
         self._copy_value_from_environ_if_set(environment, 'AT_SPI_BUS_ADDRESS')
         for gst_variable in ('DEBUG', 'DEBUG_DUMP_DOT_DIR', 'DEBUG_FILE', 'DEBUG_NO_COLOR',
                              'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
@@ -105,12 +104,20 @@ class GLibPort(Port):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
 
         gst_feature_rank_override = os.environ.get('GST_PLUGIN_FEATURE_RANK')
-        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
+        # Disable hardware-accelerated encoders and decoders. Depending on the underlying platform
+        # they might be selected and decrease tests reproducibility. They can still be re-enabled by
+        # setting the GST_PLUGIN_FEATURE_RANK variable accordingly when calling run-webkit-tests.
+        downranked_elements = ['vah264dec', 'vah264enc', 'vah265dec', 'vah265enc', 'vaav1dec', 'vaav1enc', 'vajpegdec','vavp9dec']
+
+        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max,' + ','.join(['%s:0' % element for element in downranked_elements])
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
 
         environment['WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS'] = '1'
         environment['WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING'] = '1'
+
+        # Disable SIMD optimization in GStreamer's ORC. Some bots (WPE release) crash in ORC's optimizations.
+        environment['ORC_CODE'] = 'backup'
 
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.

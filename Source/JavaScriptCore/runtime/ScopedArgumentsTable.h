@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class WatchpointSet;
+
 // This class's only job is to hold onto the list of ScopeOffsets for each argument that a
 // function has. Most of the time, the BytecodeGenerator will create one of these and it will
 // never be modified subsequently. There is a rare case where a ScopedArguments object is created
@@ -67,6 +69,7 @@ public:
     ScopedArgumentsTable* trySetLength(VM&, uint32_t newLength);
     
     ScopeOffset get(uint32_t i) const { return at(i); }
+    WatchpointSet* getWatchpointSet(uint32_t i) const { return m_watchpointSets.at(i); }
     
     void lock()
     {
@@ -74,7 +77,9 @@ public:
     }
     
     ScopedArgumentsTable* trySet(VM&, uint32_t index, ScopeOffset);
-    
+    void trySetWatchpointSet(uint32_t index, WatchpointSet* watchpoints);
+    void clearWatchpointSet(uint32_t index) { m_watchpointSets[index] = nullptr; }
+
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
@@ -90,12 +95,13 @@ private:
     ScopeOffset& at(uint32_t i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
-        return m_arguments.get(length())[i];
+        return m_arguments.get()[i];
     }
     
     uint32_t m_length;
     bool m_locked; // Being locked means that there are multiple references to this object and none of them expect to see the others' modifications. This means that modifications need to make a copy first.
     ArgumentsPtr m_arguments;
+    Vector<WatchpointSet*> m_watchpointSets;
 };
 
 } // namespace JSC

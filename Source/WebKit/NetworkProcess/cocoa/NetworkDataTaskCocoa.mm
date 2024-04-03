@@ -39,6 +39,7 @@
 #import "WebPrivacyHelpers.h"
 #import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/OriginAccessPatterns.h>
@@ -182,6 +183,15 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
         session->setFirstPartyHostIPAddress(requestURL.host().toString(), ipAddress);
 }
 
+static void adjustNetworkServiceTypeIfNecessary(WebCore::ResourceRequestRequester requester, NSMutableURLRequest *mutableRequest)
+{
+    if (requester == WebCore::ResourceRequestRequester::Media) {
+        if (mutableRequest.networkServiceType == NSURLNetworkServiceTypeDefault || mutableRequest.networkServiceType == NSURLNetworkServiceTypeBackground)
+            mutableRequest.networkServiceType = NSURLNetworkServiceTypeVideo;
+    } else if (requester == WebCore::ResourceRequestRequester::Beacon)
+        mutableRequest.networkServiceType = NSURLNetworkServiceTypeBackground;
+}
+
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters)
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
     , NetworkTaskCocoa(session, parameters.shouldRelaxThirdPartyCookieBlocking)
@@ -189,7 +199,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     , m_frameID(parameters.webFrameID)
     , m_pageID(parameters.webPageID)
     , m_webPageProxyID(parameters.webPageProxyID)
-    , m_isForMainResourceNavigationForAnyFrame(parameters.isMainResourceNavigationForAnyFrame)
+    , m_isForMainResourceNavigationForAnyFrame(!!parameters.mainResourceNavigationDataForAnyFrame)
     , m_sourceOrigin(parameters.sourceOrigin)
 {
     auto request = parameters.request;
@@ -225,6 +235,8 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     ASSERT(nsRequest);
     RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
 
+    adjustNetworkServiceTypeIfNecessary(request.requester(), mutableRequest.get());
+
     if (parameters.isMainFrameNavigation
         || parameters.hadMainFrameMainResourcePrivateRelayed
         || request.url().host() == request.firstPartyForCookies().host()) {
@@ -252,6 +264,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     if ([mutableRequest respondsToSelector:@selector(_setWebSearchContent:)] && advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::WebSearchContent))
         [mutableRequest _setWebSearchContent:YES];
+
+#if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
+    if ([mutableRequest respondsToSelector:@selector(_setAllowPrivateAccessTokensForThirdParty:)] && parameters.request.isPrivateTokenUsageByThirdPartyAllowed())
+        [mutableRequest _setAllowPrivateAccessTokensForThirdParty:YES];
+#endif
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
@@ -405,7 +422,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
     const auto& previousRequest = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
-    if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
+    if (redirectResponse.httpStatusCode() == httpStatus307TemporaryRedirect || redirectResponse.httpStatusCode() == httpStatus308PermanentRedirect) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         auto body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
@@ -414,7 +431,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
-    } else if (redirectResponse.httpStatusCode() == 303) { // FIXME: (rdar://problem/13706454).
+    } else if (redirectResponse.httpStatusCode() == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 
@@ -524,7 +541,7 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
             auto credential = m_session->networkStorageSession() ? m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace()) : WebCore::Credential();
             if (!credential.isEmpty() && credential != m_initialCredential) {
                 ASSERT(credential.persistence() == WebCore::CredentialPersistence::None);
-                if (challenge.failureResponse().httpStatusCode() == 401) {
+                if (challenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized) {
                     // Store the credential back, possibly adding it as a default for this directory.
                     if (auto* storageSession = m_session->networkStorageSession())
                         storageSession->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());

@@ -49,31 +49,15 @@ class WebExtensionTab;
 namespace WebExtensionDynamicScripts {
 
 using InjectionResults = Vector<WebExtensionScriptInjectionResultParameters>;
-using Error = std::optional<String>;
 
 using SourcePair = std::pair<String, std::optional<URL>>;
 using SourcePairs = Vector<std::optional<SourcePair>>;
 
 using InjectionTime = WebExtension::InjectionTime;
+using InjectedContentData = WebExtension::InjectedContentData;
 
 using UserScriptVector = Vector<Ref<API::UserScript>>;
 using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
-
-class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
-    WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    template<typename... Args>
-    static Ref<InjectionResultHolder> create(Args&&... args)
-    {
-        return adoptRef(*new InjectionResultHolder(std::forward<Args>(args)...));
-    }
-
-    InjectionResultHolder() { };
-
-    InjectionResults results;
-};
 
 class WebExtensionRegisteredScript : public RefCounted<WebExtensionRegisteredScript> {
     WTF_MAKE_NONCOPYABLE(WebExtensionRegisteredScript);
@@ -94,16 +78,24 @@ public:
 
     void addUserScript(const String& identifier, API::UserScript&);
     void addUserStyleSheet(const String& identifier, API::UserStyleSheet&);
-
     void removeUserScriptsAndStyleSheets(const String& identifier);
+
+    void updateInjectedContent(InjectedContentData& injectedContent) { m_injectedContent = injectedContent; }
+    const InjectedContentData& injectedContent() const { return m_injectedContent; }
 
     WebExtensionRegisteredScriptParameters parameters() const { return m_parameters; };
 
 private:
-    explicit WebExtensionRegisteredScript(WebExtensionContext&, const WebExtensionRegisteredScriptParameters&);
+    explicit WebExtensionRegisteredScript(WebExtensionContext& extensionContext, const WebExtensionRegisteredScriptParameters& parameters, const InjectedContentData& injectedContent)
+        : m_extensionContext(extensionContext)
+        , m_parameters(parameters)
+        , m_injectedContent(injectedContent)
+    {
+    }
 
     WeakPtr<WebExtensionContext> m_extensionContext;
     WebExtensionRegisteredScriptParameters m_parameters;
+    InjectedContentData m_injectedContent;
 
     HashMap<String, UserScriptVector> m_userScriptsMap;
     HashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;
@@ -116,7 +108,7 @@ std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, RefPtr<WebExtension>);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 
-void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResultHolder&)>&&);
+void executeScript(std::optional<SourcePairs>, WKWebView *, API::ContentWorld&, WebExtensionTab*, const WebExtensionScriptInjectionParameters&, WebExtensionContext&, CompletionHandler<void(InjectionResults&&)>&&);
 void injectStyleSheets(SourcePairs, WKWebView *, API::ContentWorld&, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 void removeStyleSheets(SourcePairs, WKWebView *, WebCore::UserContentInjectedFrames, WebExtensionContext&);
 

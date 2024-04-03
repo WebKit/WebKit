@@ -15,6 +15,7 @@
 #include "common/Optional.h"
 #include "libANGLE/renderer/gl/DisplayGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
+
 #include "libANGLE/renderer/gl/glx/FunctionsGLX.h"
 
 namespace rx
@@ -96,7 +97,7 @@ class DisplayGLX : public DisplayGL
 
     RendererGL *getRenderer() const override;
 
-    bool isX11() const override;
+    angle::NativeWindowSystem getWindowSystem() const override;
 
   private:
     egl::Error initializeContext(glx::FBConfig config,

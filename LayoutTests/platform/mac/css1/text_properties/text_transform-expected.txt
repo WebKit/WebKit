@@ -30,10 +30,10 @@ layer at (0,0) size 785x732
         RenderText {#text} at (0,0) size 743x36
           text run at (0,0) width 743: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last word in"
           text run at (0,18) width 336: "this sentence should have one, and only one, capital "
-        RenderInline {SPAN} at (0,0) size 39x18
+        RenderInline {SPAN} at (335,18) size 39x18
           RenderText {#text} at (335,18) size 18x18
             text run at (335,18) width 18: "Le"
-          RenderInline {SPAN} at (0,0) size 10x18
+          RenderInline {SPAN} at (352,18) size 10x18
             RenderText {#text} at (352,18) size 10x18
               text run at (352,18) width 10: "tt"
           RenderText {#text} at (361,18) size 13x18
@@ -45,8 +45,8 @@ layer at (0,0) size 785x732
           text run at (0,0) width 702: "THIS PARAGRAPH IS UPPERCASED AND SMALL CHARACTERS IN THE SOURCE (E.G. A AND \x{C5})"
           text run at (0,18) width 351: "SHOULD THEREFORE APPEAR IN UPPERCASE. "
           text run at (350,18) width 278: "IN THE LAST SENTENCE, HOWEVER, "
-        RenderInline {SPAN} at (0,0) size 753x36
-          RenderText {#text} at (627,18) size 753x36
+        RenderInline {SPAN} at (0,18) size 753x36
+          RenderText {#text} at (0,18) size 753x36
             text run at (627,18) width 126: "the last eight words"
             text run at (0,36) width 155: "should not be uppercase"
         RenderText {#text} at (154,36) size 5x18
@@ -58,12 +58,12 @@ layer at (0,0) size 785x732
         RenderTableSection {TBODY} at (1,1) size 767x296
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x270
             RenderTableCell {TD} at (0,148) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,126) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x270 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x36
@@ -79,10 +79,10 @@ layer at (0,0) size 785x732
                 RenderText {#text} at (0,0) size 743x36
                   text run at (0,0) width 743: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last word in"
                   text run at (0,18) width 336: "this sentence should have one, and only one, capital "
-                RenderInline {SPAN} at (0,0) size 39x18
+                RenderInline {SPAN} at (335,18) size 39x18
                   RenderText {#text} at (335,18) size 18x18
                     text run at (335,18) width 18: "Le"
-                  RenderInline {SPAN} at (0,0) size 10x18
+                  RenderInline {SPAN} at (352,18) size 10x18
                     RenderText {#text} at (352,18) size 10x18
                       text run at (352,18) width 10: "tt"
                   RenderText {#text} at (361,18) size 13x18
@@ -94,8 +94,8 @@ layer at (0,0) size 785x732
                   text run at (0,0) width 702: "THIS PARAGRAPH IS UPPERCASED AND SMALL CHARACTERS IN THE SOURCE (E.G. A AND \x{C5})"
                   text run at (0,18) width 351: "SHOULD THEREFORE APPEAR IN UPPERCASE. "
                   text run at (350,18) width 278: "IN THE LAST SENTENCE, HOWEVER, "
-                RenderInline {SPAN} at (0,0) size 710x36
-                  RenderText {#text} at (627,18) size 710x36
+                RenderInline {SPAN} at (0,18) size 710x36
+                  RenderText {#text} at (0,18) size 710x36
                     text run at (627,18) width 83: "the last eight"
                     text run at (0,36) width 198: "words should not be uppercase"
                 RenderText {#text} at (197,36) size 5x18

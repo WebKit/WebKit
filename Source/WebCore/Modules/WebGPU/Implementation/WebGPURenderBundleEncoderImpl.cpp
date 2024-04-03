@@ -55,9 +55,9 @@ void RenderBundleEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat i
     wgpuRenderBundleEncoderSetIndexBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
-void RenderBundleEncoderImpl::setVertexBuffer(Index32 slot, const Buffer& buffer, std::optional<Size64> offset, std::optional<Size64> size)
+void RenderBundleEncoderImpl::setVertexBuffer(Index32 slot, const Buffer* buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderBundleEncoderSetVertexBuffer(m_backing.get(), slot, m_convertToBackingContext->convertToBacking(buffer), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderBundleEncoderSetVertexBuffer(m_backing.get(), slot, buffer ? m_convertToBackingContext->convertToBacking(*buffer) : nullptr, offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderBundleEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,
@@ -115,7 +115,7 @@ void RenderBundleEncoderImpl::insertDebugMarker(String&& markerLabel)
     wgpuRenderBundleEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().data());
 }
 
-Ref<RenderBundle> RenderBundleEncoderImpl::finish(const RenderBundleDescriptor& descriptor)
+RefPtr<RenderBundle> RenderBundleEncoderImpl::finish(const RenderBundleDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();
 

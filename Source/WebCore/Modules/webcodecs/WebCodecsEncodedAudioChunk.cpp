@@ -32,7 +32,7 @@
 namespace WebCore {
 
 WebCodecsEncodedAudioChunk::WebCodecsEncodedAudioChunk(Init&& init)
-    : m_storage { WebCodecsEncodedAudioChunkStorage::create(init.type, init.timestamp, init.duration, std::span<const uint8_t> { init.data.data(), init.data.length() }) }
+    : m_storage { WebCodecsEncodedAudioChunkStorage::create(init.type, init.timestamp, init.duration, init.data.span()) }
 {
 }
 

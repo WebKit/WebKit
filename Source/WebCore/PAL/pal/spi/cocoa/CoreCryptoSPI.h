@@ -64,7 +64,24 @@ const struct ccdigest_info *ccsha512_di(void);
 #define    CCSHA512_STATE_SIZE   64
 extern const struct ccdigest_info ccsha512_ltc_di;
 
+#if __has_feature(bounds_attributes)
+#define cc_sized_by(x) __attribute__((sized_by(x)))
+#else
+#define cc_sized_by(x)
+#endif // __has_feature(bounds_attributes)
+
+#if HAVE(CORE_CRYPTO_SIGNATURES_INT_RETURN_VALUE)
+
+int cccurve25519(ccec25519key, const ccec25519secretkey, const ccec25519base);
+int cccurve25519_make_pub(ccec25519pubkey, const ccec25519secretkey);
+int cccurve25519_make_key_pair(struct ccrng_state *, ccec25519pubkey, ccec25519secretkey);
+int cced25519_make_key_pair(const struct ccdigest_info *, struct ccrng_state *, ccec25519pubkey pk, ccec25519secretkey sk);
+int cced25519_sign(const struct ccdigest_info *, ccec25519signature, size_t len, const void *cc_sized_by(len) msg, const ccec25519pubkey, const ccec25519secretkey);
+
+#else
+
 void cccurve25519(ccec25519key out, const ccec25519secretkey sk, const ccec25519base);
+
 inline void cccurve25519_make_priv(struct ccrng_state *rng, ccec25519secretkey sk)
 {
     ccrng_generate(rng, 32, sk);
@@ -84,17 +101,15 @@ inline void cccurve25519_make_key_pair(struct ccrng_state *rng, ccec25519pubkey 
     cccurve25519_make_pub(pk, sk);
 }
 
-int cced25519_make_pub(const struct ccdigest_info *, ccec25519pubkey pk, const ccec25519secretkey sk);
-
 void cced25519_make_key_pair(const struct ccdigest_info *, struct ccrng_state *, ccec25519pubkey pk, ccec25519secretkey sk);
 
-#if __has_feature(bounds_attributes)
-#define cc_sized_by(x) __attribute__((sized_by(x)))
-#else
-#define cc_sized_by(x)
-#endif // __has_feature(bounds_attributes)
-
 void cced25519_sign(const struct ccdigest_info *, ccec25519signature, size_t len, const void *cc_sized_by(len) msg, const ccec25519pubkey pk, const ccec25519secretkey sk);
+
+#endif
+
+int cced25519_make_pub(const struct ccdigest_info *, ccec25519pubkey pk, const ccec25519secretkey sk);
+
+
 int cced25519_verify(const struct ccdigest_info *, size_t len, const void *cc_sized_by(len) msg, const ccec25519signature, const ccec25519pubkey pk);
 
 #endif // USE(APPLE_INTERNAL_SDK)

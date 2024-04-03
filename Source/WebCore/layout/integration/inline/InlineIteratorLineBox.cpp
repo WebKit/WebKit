@@ -164,18 +164,18 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
 RenderObject::HighlightState LineBox::ellipsisSelectionState() const
 {
     auto lastLeafBox = this->lastLeafBox();
-    if (!lastLeafBox || !lastLeafBox->isText())
+    if (!lastLeafBox)
         return RenderObject::HighlightState::None;
 
-    auto& text = downcast<InlineIterator::TextBox>(*lastLeafBox);
-    if (text.selectionState() == RenderObject::HighlightState::None)
+    auto* text = dynamicDowncast<InlineIterator::TextBox>(*lastLeafBox);
+    if (!text || text->selectionState() == RenderObject::HighlightState::None)
         return RenderObject::HighlightState::None;
 
-    auto selectionRange = text.selectableRange();
+    auto selectionRange = text->selectableRange();
     if (!selectionRange.truncation)
         return RenderObject::HighlightState::None;
 
-    auto [selectionStart, selectionEnd] = formattingContextRoot().view().selection().rangeForTextBox(text.renderer(), selectionRange);
+    auto [selectionStart, selectionEnd] = formattingContextRoot().view().selection().rangeForTextBox(text->renderer(), selectionRange);
     return selectionStart <= *selectionRange.truncation && selectionEnd >= *selectionRange.truncation ? RenderObject::HighlightState::Inside : RenderObject::HighlightState::None;
 }
 

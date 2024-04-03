@@ -115,6 +115,7 @@ TEST(WKWebExtensionAPIExtension, GetURL)
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
+    [_WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
@@ -143,7 +144,7 @@ TEST(WKWebExtensionAPIExtension, GetBackgroundPageFromBackground)
 
         @"const backgroundPage = browser.extension.getBackgroundPage()",
 
-        @"browser.test.assertEq(backgroundPage, window, 'Should be able to get the background window from itself')",
+        @"browser.test.assertTrue(backgroundPage === window, 'Should be able to get the background window from itself')",
         @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
     ]);
 
@@ -309,6 +310,10 @@ TEST(WKWebExtensionAPIExtension, GetViewsForTab)
 
 TEST(WKWebExtensionAPIExtension, GetViewsForMultipleTabs)
 {
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
     auto *backgroundScript = Util::constructScript(@[
         @"let tabCount = 0",
 
@@ -342,11 +347,18 @@ TEST(WKWebExtensionAPIExtension, GetViewsForMultipleTabs)
 
     auto *testHTML = @"<script type='module' src='test.js'></script>";
 
-    Util::loadAndRunExtension(extensionManifest, @{
+    auto *resources = @{
         @"background.js": backgroundScript,
         @"test.html": testHTML,
         @"test.js": testScript
-    });
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:extensionManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost()];
+
+    [manager loadAndRun];
 }
 
 TEST(WKWebExtensionAPIExtension, GetViewsForPopup)

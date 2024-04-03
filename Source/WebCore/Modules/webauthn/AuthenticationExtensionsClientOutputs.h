@@ -45,9 +45,20 @@ struct AuthenticationExtensionsClientOutputs {
         std::optional<bool> written;
     };
 
+    struct PRFValues {
+        RefPtr<ArrayBuffer> first;
+        RefPtr<ArrayBuffer> second;
+    };
+
+    struct PRFOutputs {
+        std::optional<bool> enabled;
+        std::optional<AuthenticationExtensionsClientOutputs::PRFValues> results;
+    };
+
     std::optional<bool> appid;
     std::optional<CredentialPropertiesOutput> credProps;
     std::optional<LargeBlobOutputs> largeBlob;
+    std::optional<PRFOutputs> prf;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
     WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientOutputs> fromCBOR(const Vector<uint8_t>&);

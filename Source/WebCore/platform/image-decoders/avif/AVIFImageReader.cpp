@@ -29,7 +29,6 @@
 #if USE(AVIF)
 
 #include "AVIFImageReader.h"
-
 #include "AVIFImageDecoder.h"
 
 namespace WebCore {
@@ -38,6 +37,11 @@ AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
     : m_decoder(WTFMove(decoder))
     , m_avifDecoder(avifDecoderCreate())
 {
+    // Allow the PixelInformationProperty ('pixi') to be missing in AV1 image
+    // items. libheif v1.11.0 or older does not add the 'pixi' item property to
+    // AV1 image items. (This issue has been corrected in libheif v1.12.0.).
+    // See the definition of AVIF_STRICT_PIXI_REQUIRED in avif.h.
+    m_avifDecoder->strictFlags &= ~AVIF_STRICT_PIXI_REQUIRED;
 }
 
 AVIFImageReader::~AVIFImageReader() = default;
@@ -94,11 +98,13 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
 
     avifRGBImage decodedRGBImage;
     avifRGBImageSetDefaults(&decodedRGBImage, m_avifDecoder->image);
+
     decodedRGBImage.depth = 8;
     decodedRGBImage.alphaPremultiplied = m_decoder->premultiplyAlpha();
     decodedRGBImage.format = AVIF_RGB_FORMAT_BGRA;
     decodedRGBImage.rowBytes = imageSize.width() * sizeof(uint32_t);
     decodedRGBImage.pixels = reinterpret_cast<uint8_t*>(buffer.backingStore()->pixelAt(0, 0));
+
     if (avifImageYUVToRGB(m_avifDecoder->image, &decodedRGBImage) != AVIF_RESULT_OK) {
         m_decoder->setFailed();
         return;
@@ -114,6 +120,6 @@ size_t AVIFImageReader::imageCount() const
     return m_avifDecoder->imageCount;
 }
 
-}
+} // namespace WebCore
 
 #endif // USE(AVIF)

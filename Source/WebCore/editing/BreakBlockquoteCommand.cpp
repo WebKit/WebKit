@@ -68,10 +68,10 @@ void BreakBlockquoteCommand::doApply()
     // pos is a position equivalent to the caret.  We use downstream() so that pos will 
     // be in the first node that we need to move (there are a few exceptions to this, see below).
     Position pos = endingSelection().start().downstream();
-    
+
     // Find the top-most blockquote from the start.
-    RefPtr topBlockquote = highestEnclosingNodeOfType(pos, isMailBlockquote);
-    if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
+    RefPtr topBlockquote = dynamicDowncast<Element>(highestEnclosingNodeOfType(pos, isMailBlockquote));
+    if (!topBlockquote || !topBlockquote->parentNode())
         return;
 
     auto breakNode = [&]() -> Ref<HTMLElement> {
@@ -127,13 +127,12 @@ void BreakBlockquoteCommand::doApply()
     auto startNode = pos.protectedDeprecatedNode();
     ASSERT(startNode);
     // Split at pos if in the middle of a text node.
-    if (is<Text>(*startNode)) {
-        Ref textNode = downcast<Text>(*startNode);
+    if (RefPtr textNode = dynamicDowncast<Text>(*startNode)) {
         if (static_cast<unsigned>(pos.deprecatedEditingOffset()) >= textNode->length()) {
             if (RefPtr nextNode = NodeTraversal::next(*startNode))
                 startNode = WTFMove(nextNode);
         } else if (pos.deprecatedEditingOffset() > 0)
-            splitTextNode(textNode, pos.deprecatedEditingOffset());
+            splitTextNode(*textNode, pos.deprecatedEditingOffset());
     } else if (pos.deprecatedEditingOffset() > 0) {
         if (RefPtr child = startNode->traverseToChildAt(pos.deprecatedEditingOffset()))
             startNode = WTFMove(child);
@@ -153,7 +152,7 @@ void BreakBlockquoteCommand::doApply()
         ancestors.append(node.copyRef());
     
     // Insert a clone of the top blockquote after the break.
-    auto clonedBlockquote = downcast<Element>(*topBlockquote).cloneElementWithoutChildren(document());
+    auto clonedBlockquote = topBlockquote->cloneElementWithoutChildren(document());
     insertNodeAfter(clonedBlockquote.copyRef(), breakNode);
     
     // Clone startNode's ancestors into the cloned blockquote.
@@ -170,8 +169,10 @@ void BreakBlockquoteCommand::doApply()
             // find the first one so that we know where to start numbering.
             while (listChildNode && !listChildNode->hasTagName(liTag))
                 listChildNode = listChildNode->nextSibling();
-            if (listChildNode && is<RenderListItem>(listChildNode->renderer()))
-                setNodeAttribute(clonedChild, startAttr, AtomString::number(downcast<RenderListItem>(*listChildNode->renderer()).value()));
+            if (listChildNode) {
+                if (auto* listItemRenderer = dynamicDowncast<RenderListItem>(listChildNode->renderer()))
+                    setNodeAttribute(clonedChild, startAttr, AtomString::number(listItemRenderer->value()));
+            }
         }
             
         appendNode(clonedChild.copyRef(), clonedAncestor.releaseNonNull());

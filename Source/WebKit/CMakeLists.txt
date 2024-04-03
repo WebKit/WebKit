@@ -14,6 +14,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/graphics/WebGPU"
     "${WEBKIT_DIR}/GPUProcess/media"
     "${WEBKIT_DIR}/GPUProcess/webrtc"
+    "${WEBKIT_DIR}/ModelProcess"
     "${WEBKIT_DIR}/NetworkProcess"
     "${WEBKIT_DIR}/NetworkProcess/Classifier"
     "${WEBKIT_DIR}/NetworkProcess/Cookies"
@@ -62,6 +63,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/Agents"
     "${WEBKIT_DIR}/UIProcess/Launcher"
     "${WEBKIT_DIR}/UIProcess/Media"
+    "${WEBKIT_DIR}/UIProcess/Model"
     "${WEBKIT_DIR}/UIProcess/Network"
     "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols"
     "${WEBKIT_DIR}/UIProcess/Notifications"
@@ -191,6 +193,10 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayer
     GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager
 
+    ModelProcess/ModelConnectionToWebProcess
+    ModelProcess/ModelProcess
+    ModelProcess/ModelProcessModelPlayerManagerProxy
+
     NetworkProcess/Cookies/WebCookieManager
 
     NetworkProcess/NetworkBroadcastChannelRegistry
@@ -252,6 +258,8 @@ set(WebKit_MESSAGES_IN_FILES
 
     UIProcess/GPU/GPUProcessProxy
 
+    UIProcess/Model/ModelProcessProxy
+
     UIProcess/Inspector/RemoteWebInspectorUIProxy
     UIProcess/Inspector/WebInspectorUIProxy
 
@@ -273,20 +281,21 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy
     WebProcess/GPU/graphics/RemoteImageBufferProxy
+    WebProcess/GPU/graphics/RemoteImageBufferSetProxy
     WebProcess/GPU/graphics/RemoteRenderingBackendProxy
 
     WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy
 
     WebProcess/GPU/media/RemoteAudioHardwareListener
     WebProcess/GPU/media/MediaPlayerPrivateRemote
-    WebProcess/GPU/media/MediaSourcePrivateRemote
+    WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver
     WebProcess/GPU/media/RemoteAudioSession
     WebProcess/GPU/media/RemoteAudioSourceProviderManager
     WebProcess/GPU/media/RemoteCDMInstance
     WebProcess/GPU/media/RemoteCDMInstanceSession
     WebProcess/GPU/media/RemoteLegacyCDMSession
     WebProcess/GPU/media/RemoteRemoteCommandListener
-    WebProcess/GPU/media/SourceBufferPrivateRemote
+    WebProcess/GPU/media/SourceBufferPrivateRemoteMessageReceiver
 
     WebProcess/GPU/webrtc/LibWebRTCCodecs
     WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor
@@ -300,6 +309,9 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Inspector/WebInspectorUI
 
     WebProcess/MediaSession/RemoteMediaSessionCoordinator
+
+    WebProcess/Model/ModelProcessConnection
+    WebProcess/Model/ModelProcessModelPlayer
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager
@@ -360,6 +372,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in
     GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in
 
+    ModelProcess/ModelProcessCreationParameters.serialization.in
+
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
     NetworkProcess/NetworkSessionCreationParameters.serialization.in
@@ -372,13 +386,15 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     NetworkProcess/storage/FileSystemStorageError.serialization.in
 
+    Platform/IPC/ConnectionHandle.serialization.in
     Platform/IPC/FormDataReference.serialization.in
+    Platform/IPC/IPCEvent.serialization.in
     Platform/IPC/IPCSemaphore.serialization.in
+    Platform/IPC/MessageFlags.serialization.in
+    Platform/IPC/ObjectIdentifierReference.serialization.in
     Platform/IPC/SharedBufferReference.serialization.in
     Platform/IPC/SharedFileHandle.serialization.in
     Platform/IPC/StreamServerConnection.serialization.in
-
-    Platform/SharedMemory.serialization.in
 
     Shared/AccessibilityPreferences.serialization.in
     Shared/AuxiliaryProcessCreationParameters.serialization.in
@@ -401,6 +417,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/FrameInfoData.serialization.in
     Shared/FrameTreeCreationParameters.serialization.in
     Shared/FrameTreeNodeData.serialization.in
+    Shared/FullScreenMediaDetails.serialization.in
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/GPUProcessPreferencesForWebProcess.serialization.in
     Shared/GoToBackForwardItemParameters.serialization.in
@@ -411,12 +428,16 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/LocalFrameCreationParameters.serialization.in
     Shared/MediaPlaybackState.serialization.in
     Shared/Model.serialization.in
+    Shared/ModelProcessConnectionParameters.serialization.in
+    Shared/MonotonicObjectIdentifier.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
+    Shared/NetworkProcessPreferencesForWebProcess.serialization.in
     Shared/Pasteboard.serialization.in
     Shared/PlatformPopupMenuData.serialization.in
     Shared/PolicyDecision.serialization.in
     Shared/PrintInfo.serialization.in
+    Shared/ProcessQualified.serialization.in
     Shared/RTCNetwork.serialization.in
     Shared/RTCPacketOptions.serialization.in
     Shared/RemoteWorkerInitializationData.serialization.in
@@ -427,8 +448,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/SandboxExtension.serialization.in
     Shared/ScrollingAccelerationCurve.serialization.in
     Shared/SessionState.serialization.in
-    Shared/ShareableBitmap.serialization.in
-    Shared/ShareableResource.serialization.in
     Shared/SyntheticEditingCommandType.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
@@ -521,6 +540,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUImageCopyTexture.serialization.in
     Shared/WebGPU/WebGPUImageCopyTextureTagged.serialization.in
     Shared/WebGPU/WebGPUImageDataLayout.serialization.in
+    Shared/WebGPU/WebGPUInternalError.serialization.in
     Shared/WebGPU/WebGPUMultisampleState.serialization.in
     Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
     Shared/WebGPU/WebGPUOrigin2D.serialization.in
@@ -565,12 +585,15 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/XR/PlatformXR.serialization.in
     Shared/XR/XRSystem.serialization.in
 
+    UIProcess/Extensions/WebExtension.serialization.in
+
     WebProcess/GPU/GPUProcessConnectionInfo.serialization.in
 
     WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in
     WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in
 
     WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
+    WebProcess/GPU/media/MediaTimeUpdateData.serialization.in
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
@@ -582,7 +605,11 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     WebProcess/MediaStream/MediaDeviceSandboxExtensions.serialization.in
 
+    WebProcess/Model/ModelProcessConnectionInfo.serialization.in
+
     WebProcess/Network/NetworkProcessConnectionInfo.serialization.in
+
+    WebProcess/UserContent/InjectUserScriptImmediately.serialization.in
 
     WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in
 )
@@ -627,13 +654,7 @@ set(PluginProcess_LIBRARIES WebKit)
 # these include directories, libraries or definitions need to be
 # added before the ANGLE directories.
 if (USE_LIBEPOXY)
-    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBEPOXY_INCLUDE_DIRS}
-    )
-    list(APPEND WebKit_PRIVATE_LIBRARIES
-        ${LIBEPOXY_LIBRARIES}
-    )
-    add_definitions(${LIBEPOXY_DEFINITIONS})
+    list(APPEND WebKit_PRIVATE_LIBRARIES Epoxy::Epoxy)
 elseif (USE_ANGLE_EGL)
     # Prepend to make sure the ANGLE headers are found before system headers
     list(PREPEND WebKit_PRIVATE_LIBRARIES
@@ -661,18 +682,6 @@ endif ()
 
 if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WebKit_PRIVATE_LIBRARIES atomic)
-endif ()
-
-if (UNIX)
-    check_function_exists(shm_open SHM_OPEN_EXISTS)
-    if (NOT SHM_OPEN_EXISTS)
-        set(CMAKE_REQUIRED_LIBRARIES rt)
-        check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
-        if (SHM_OPEN_REQUIRES_LIBRT)
-            list(APPEND WebKit_PRIVATE_LIBRARIES rt)
-        endif ()
-        unset(CMAKE_REQUIRED_LIBRARIES)
-    endif ()
 endif ()
 
 macro(ADD_WEBKIT_PREFIX_HEADER _target)

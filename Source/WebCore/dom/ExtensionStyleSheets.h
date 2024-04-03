@@ -29,10 +29,12 @@
 
 #include "UserStyleSheet.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -47,8 +49,9 @@ class Node;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
+class WeakPtrImplWithEventTargetData;
 
-class ExtensionStyleSheets {
+class ExtensionStyleSheets : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ExtensionStyleSheets(Document&);
@@ -83,7 +86,7 @@ public:
 private:
     Ref<Document> protectedDocument() const;
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     RefPtr<CSSStyleSheet> m_pageUserSheet;
 

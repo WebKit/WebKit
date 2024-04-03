@@ -27,11 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <wtf/text/WTFString.h>
-
-namespace WebKit {
-class WebPageProxy;
-}
+#import <wtf/Forward.h>
 
 @class WKWebViewConfiguration;
 @protocol WKWebViewContentProvider;
@@ -40,10 +36,6 @@ class WebPageProxy;
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
-- (void)addPage:(WebKit::WebPageProxy&)page;
-- (void)removePage:(WebKit::WebPageProxy&)page;
-
-- (void)registerProvider:(Class <WKWebViewContentProvider>)contentProvider forMIMEType:(const String&)mimeType;
 - (Class <WKWebViewContentProvider>)providerForMIMEType:(const String&)mimeType;
 
 - (Vector<String>)_mimeTypesWithCustomContentProviders;

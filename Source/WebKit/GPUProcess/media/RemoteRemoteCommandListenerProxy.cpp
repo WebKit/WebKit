@@ -50,8 +50,8 @@ void RemoteRemoteCommandListenerProxy::updateSupportedCommands(Vector<WebCore::P
     m_supportedCommands.add(registeredCommands.begin(), registeredCommands.end());
     m_supportsSeeking = supportsSeeking;
 
-    if (m_gpuConnection)
-        m_gpuConnection->updateSupportedRemoteCommands();
+    if (auto connection = m_gpuConnection.get())
+        connection->updateSupportedRemoteCommands();
 }
 
 }

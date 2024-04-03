@@ -92,6 +92,34 @@ TEST(HSTS, Basic)
     EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/");
 }
 
+TEST(HSTS, ThirdPartyFetch)
+{
+    auto httpsServer = hstsServer();
+
+    constexpr auto html = "<script>"
+        "async function doTest() {"
+        "  const response = await fetch('http://example.com/');"
+        "  alert(await response.text() + (response.redirected ? ', redirected' : ', not redirected'));"
+        "}"
+        "doTest();"
+        "</script>"_s;
+
+    HTTPServer httpServer({
+        { "http://example.com/"_s, { {{ "Access-Control-Allow-Origin"_s, "http://example.org"_s }}, "hi"_s }},
+        { "http://example.org/"_s, { html }},
+    });
+
+    auto [webView, delegate] = hstsWebViewAndDelegate(httpsServer, httpServer);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/");
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.org/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "hi, not redirected");
+    EXPECT_EQ(httpServer.totalRequests(), 2u);
+}
+
 TEST(HSTS, ThirdParty)
 {
     auto httpsServer = hstsServer();

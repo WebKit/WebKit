@@ -1,0 +1,49 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_filegroup")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "Font.cpp",
+        "Font.h",
+        "RangeSelector.cpp",
+        "RangeSelector.h",
+        "TextAdapter.cpp",
+        "TextAdapter.h",
+        "TextAnimator.cpp",
+        "TextAnimator.h",
+        "TextShaper.cpp",
+        "TextValue.cpp",
+        "TextValue.h",
+    ],
+    visibility = ["//modules/skottie/src:__pkg__"],
+)
+
+# TODO(kjlubick) delete this after fixing G3
+skia_filegroup(
+    name = "srcs_without_textshaper",
+    srcs = [
+        "Font.cpp",
+        "Font.h",
+        "RangeSelector.cpp",
+        "RangeSelector.h",
+        "TextAdapter.cpp",
+        "TextAdapter.h",
+        "TextAnimator.cpp",
+        "TextAnimator.h",
+        "TextValue.cpp",
+        "TextValue.h",
+    ],
+    visibility = ["//modules/skottie/src:__pkg__"],
+)
+
+skia_filegroup(
+    name = "text_shaper_srcs",
+    srcs = [
+        "TextShaper.cpp",
+    ],
+    visibility = ["//modules/skottie:__pkg__"],
+)

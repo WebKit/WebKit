@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OESFBORenderMipmap);
 OESFBORenderMipmap::OESFBORenderMipmap(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::OESFBORenderMipmap)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_fbo_render_mipmap"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_OES_fbo_render_mipmap"_s);
 }
 
 OESFBORenderMipmap::~OESFBORenderMipmap() = default;

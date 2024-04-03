@@ -1,0 +1,276 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (3,0.69) size 156x46
+  RenderSVGTransformableContainer {g} at (3,0.69) size 155.17x44.70
+layer at (14,0.69) size 108x12
+  RenderSVGText {text} at (11,0) size 108x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 108x12
+      chunk 1 text run 1 at (14.00,10.00) startOffset 0 endOffset 26 width 107.77: "Basic test of 'textLength'"
+layer at (10,10.69) size 125x12
+  RenderSVGText {text} at (7,10) size 126x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 126x12
+      chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 30 width 125.01: "and 'lengthAdjust' attributes."
+layer at (3,22.63) size 156x24
+  RenderSVGTransformableContainer {g} at (0,21.94) size 155.17x22.77
+layer at (3,22.63) size 156x10
+  RenderSVGTransformableContainer {g} at (0,0) size 155.17x9.22
+layer at (3,22.63) size 52x9
+  RenderSVGText {text} at (0,0) size 52x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 52x10
+      chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 51.59: "Line to Stretch"
+layer at (75,22.63) size 83x9
+  RenderSVGText {text} at (72,0) size 84x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 84x10
+      chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-22.63) size 0x0
+layer at (2,32) size 54x0
+  RenderSVGPath {line} at (2,32) size 54x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=56.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (56,32) size 0x4
+  RenderSVGPath {line} at (56,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=56.00] [y1=32.00] [x2=56.00] [y2=36.00]
+layer at (74,32) size 84x0
+  RenderSVGPath {line} at (74,32) size 84x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=158.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (158,32) size 0x4
+  RenderSVGPath {line} at (158,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=158.00] [y1=32.00] [x2=158.00] [y2=36.00]
+layer at (6,32.38) size 125x14
+  RenderSVGTransformableContainer {g} at (3,9.75) size 124.38x13.02
+layer at (6,32.38) size 49x7
+  RenderSVGText {text} at (0,0) size 50x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x7
+      chunk 1 text run 1 at (6.00,38.00) startOffset 0 endOffset 19 width 49.37: "textLength: default"
+layer at (6,38.38) size 54x7
+  RenderSVGText {text} at (0,6) size 55x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 55x7
+      chunk 1 text run 1 at (6.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
+layer at (76,32.38) size 49x7
+  RenderSVGText {text} at (70,0) size 50x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x7
+      chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 19 width 49.37: "textLength: default"
+layer at (76,38.38) size 54x7
+  RenderSVGText {text} at (70,6) size 55x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 55x7
+      chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
+layer at (3,22.63) size 137x24
+  RenderSVGTransformableContainer {g} at (0,21.94) size 137x22.77
+layer at (3,22.63) size 137x10
+  RenderSVGTransformableContainer {g} at (0,0) size 137x9.22
+layer at (3,22.63) size 65x9
+  RenderSVGText {text} at (0,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.45: "L"
+      chunk 1 text run 2 at (8.41,30.00) startOffset 1 endOffset 2 width 1.78: "i"
+      chunk 1 text run 3 at (11.14,30.00) startOffset 2 endOffset 3 width 4.45: "n"
+      chunk 1 text run 4 at (16.55,30.00) startOffset 3 endOffset 4 width 4.45: "e"
+      chunk 1 text run 5 at (21.96,30.00) startOffset 4 endOffset 5 width 2.22: " "
+      chunk 1 text run 6 at (25.14,30.00) startOffset 5 endOffset 6 width 2.22: "t"
+      chunk 1 text run 7 at (28.32,30.00) startOffset 6 endOffset 7 width 4.45: "o"
+      chunk 1 text run 8 at (33.73,30.00) startOffset 7 endOffset 8 width 2.22: " "
+      chunk 1 text run 9 at (36.91,30.00) startOffset 8 endOffset 9 width 5.34: "S"
+      chunk 1 text run 10 at (43.20,30.00) startOffset 9 endOffset 10 width 2.22: "t"
+      chunk 1 text run 11 at (46.38,30.00) startOffset 10 endOffset 11 width 2.66: "r"
+      chunk 1 text run 12 at (50.00,30.00) startOffset 11 endOffset 12 width 4.45: "e"
+      chunk 1 text run 13 at (55.41,30.00) startOffset 12 endOffset 13 width 2.22: "t"
+      chunk 1 text run 14 at (58.59,30.00) startOffset 13 endOffset 14 width 4.00: "c"
+      chunk 1 text run 15 at (63.55,30.00) startOffset 14 endOffset 15 width 4.45: "h"
+layer at (75,22.63) size 65x9
+  RenderSVGText {text} at (72,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.22: "t"
+      chunk 1 text run 2 at (76.47,30.00) startOffset 1 endOffset 2 width 4.45: "h"
+      chunk 1 text run 3 at (80.16,30.00) startOffset 2 endOffset 3 width 1.78: "i"
+      chunk 1 text run 4 at (81.18,30.00) startOffset 3 endOffset 4 width 4.00: "s"
+      chunk 1 text run 5 at (84.42,30.00) startOffset 4 endOffset 5 width 2.22: " "
+      chunk 1 text run 6 at (85.89,30.00) startOffset 5 endOffset 6 width 1.78: "i"
+      chunk 1 text run 7 at (86.91,30.00) startOffset 6 endOffset 7 width 4.00: "s"
+      chunk 1 text run 8 at (90.15,30.00) startOffset 7 endOffset 8 width 2.22: " "
+      chunk 1 text run 9 at (91.62,30.00) startOffset 8 endOffset 9 width 4.45: "a"
+      chunk 1 text run 10 at (95.31,30.00) startOffset 9 endOffset 10 width 2.22: " "
+      chunk 1 text run 11 at (96.78,30.00) startOffset 10 endOffset 11 width 1.78: "l"
+      chunk 1 text run 12 at (97.80,30.00) startOffset 11 endOffset 12 width 1.78: "i"
+      chunk 1 text run 13 at (98.82,30.00) startOffset 12 endOffset 13 width 4.45: "n"
+      chunk 1 text run 14 at (102.51,30.00) startOffset 13 endOffset 14 width 4.45: "e"
+      chunk 1 text run 15 at (106.20,30.00) startOffset 14 endOffset 15 width 2.22: " "
+      chunk 1 text run 16 at (107.67,30.00) startOffset 15 endOffset 16 width 2.22: "t"
+      chunk 1 text run 17 at (109.14,30.00) startOffset 16 endOffset 17 width 4.45: "o"
+      chunk 1 text run 18 at (112.83,30.00) startOffset 17 endOffset 18 width 2.22: " "
+      chunk 1 text run 19 at (114.29,30.00) startOffset 18 endOffset 19 width 4.00: "s"
+      chunk 1 text run 20 at (117.54,30.00) startOffset 19 endOffset 20 width 4.45: "q"
+      chunk 1 text run 21 at (121.23,30.00) startOffset 20 endOffset 21 width 4.45: "u"
+      chunk 1 text run 22 at (124.92,30.00) startOffset 21 endOffset 22 width 4.45: "e"
+      chunk 1 text run 23 at (128.61,30.00) startOffset 22 endOffset 23 width 4.45: "e"
+      chunk 1 text run 24 at (132.31,30.00) startOffset 23 endOffset 24 width 4.00: "z"
+      chunk 1 text run 25 at (135.55,30.00) startOffset 24 endOffset 25 width 4.45: "e"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-22.63) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
+layer at (6,32.38) size 134x14
+  RenderSVGTransformableContainer {g} at (3,9.75) size 133.72x13.02
+layer at (6,32.38) size 62x7
+  RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 62x7
+      chunk 1 text run 1 at (6.00,38.00) startOffset 0 endOffset 22 width 61.71: "textLength: 25% longer"
+layer at (6,38.38) size 54x7
+  RenderSVGText {text} at (0,6) size 55x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 55x7
+      chunk 1 text run 1 at (6.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
+layer at (76,32.38) size 64x7
+  RenderSVGText {text} at (70,0) size 64x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 64x7
+      chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.71: "textLength: 15% shorter"
+layer at (76,38.38) size 54x7
+  RenderSVGText {text} at (70,6) size 55x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 55x7
+      chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
+layer at (3,22.63) size 137x24
+  RenderSVGTransformableContainer {g} at (0,21.94) size 137x22.77
+layer at (3,22.63) size 137x10
+  RenderSVGTransformableContainer {g} at (0,0) size 137x9.22
+layer at (3,22.63) size 65x9
+  RenderSVGText {text} at (0,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 1 width 4.45: "L"
+      chunk 1 text run 2 at (8.41,30.00) startOffset 1 endOffset 2 width 1.78: "i"
+      chunk 1 text run 3 at (11.14,30.00) startOffset 2 endOffset 3 width 4.45: "n"
+      chunk 1 text run 4 at (16.55,30.00) startOffset 3 endOffset 4 width 4.45: "e"
+      chunk 1 text run 5 at (21.96,30.00) startOffset 4 endOffset 5 width 2.22: " "
+      chunk 1 text run 6 at (25.14,30.00) startOffset 5 endOffset 6 width 2.22: "t"
+      chunk 1 text run 7 at (28.32,30.00) startOffset 6 endOffset 7 width 4.45: "o"
+      chunk 1 text run 8 at (33.73,30.00) startOffset 7 endOffset 8 width 2.22: " "
+      chunk 1 text run 9 at (36.91,30.00) startOffset 8 endOffset 9 width 5.34: "S"
+      chunk 1 text run 10 at (43.20,30.00) startOffset 9 endOffset 10 width 2.22: "t"
+      chunk 1 text run 11 at (46.38,30.00) startOffset 10 endOffset 11 width 2.66: "r"
+      chunk 1 text run 12 at (50.00,30.00) startOffset 11 endOffset 12 width 4.45: "e"
+      chunk 1 text run 13 at (55.41,30.00) startOffset 12 endOffset 13 width 2.22: "t"
+      chunk 1 text run 14 at (58.59,30.00) startOffset 13 endOffset 14 width 4.00: "c"
+      chunk 1 text run 15 at (63.55,30.00) startOffset 14 endOffset 15 width 4.45: "h"
+layer at (75,22.63) size 65x9
+  RenderSVGText {text} at (72,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 1 width 2.22: "t"
+      chunk 1 text run 2 at (76.47,30.00) startOffset 1 endOffset 2 width 4.45: "h"
+      chunk 1 text run 3 at (80.16,30.00) startOffset 2 endOffset 3 width 1.78: "i"
+      chunk 1 text run 4 at (81.18,30.00) startOffset 3 endOffset 4 width 4.00: "s"
+      chunk 1 text run 5 at (84.42,30.00) startOffset 4 endOffset 5 width 2.22: " "
+      chunk 1 text run 6 at (85.89,30.00) startOffset 5 endOffset 6 width 1.78: "i"
+      chunk 1 text run 7 at (86.91,30.00) startOffset 6 endOffset 7 width 4.00: "s"
+      chunk 1 text run 8 at (90.15,30.00) startOffset 7 endOffset 8 width 2.22: " "
+      chunk 1 text run 9 at (91.62,30.00) startOffset 8 endOffset 9 width 4.45: "a"
+      chunk 1 text run 10 at (95.31,30.00) startOffset 9 endOffset 10 width 2.22: " "
+      chunk 1 text run 11 at (96.78,30.00) startOffset 10 endOffset 11 width 1.78: "l"
+      chunk 1 text run 12 at (97.80,30.00) startOffset 11 endOffset 12 width 1.78: "i"
+      chunk 1 text run 13 at (98.82,30.00) startOffset 12 endOffset 13 width 4.45: "n"
+      chunk 1 text run 14 at (102.51,30.00) startOffset 13 endOffset 14 width 4.45: "e"
+      chunk 1 text run 15 at (106.20,30.00) startOffset 14 endOffset 15 width 2.22: " "
+      chunk 1 text run 16 at (107.67,30.00) startOffset 15 endOffset 16 width 2.22: "t"
+      chunk 1 text run 17 at (109.14,30.00) startOffset 16 endOffset 17 width 4.45: "o"
+      chunk 1 text run 18 at (112.83,30.00) startOffset 17 endOffset 18 width 2.22: " "
+      chunk 1 text run 19 at (114.29,30.00) startOffset 18 endOffset 19 width 4.00: "s"
+      chunk 1 text run 20 at (117.54,30.00) startOffset 19 endOffset 20 width 4.45: "q"
+      chunk 1 text run 21 at (121.23,30.00) startOffset 20 endOffset 21 width 4.45: "u"
+      chunk 1 text run 22 at (124.92,30.00) startOffset 21 endOffset 22 width 4.45: "e"
+      chunk 1 text run 23 at (128.61,30.00) startOffset 22 endOffset 23 width 4.45: "e"
+      chunk 1 text run 24 at (132.31,30.00) startOffset 23 endOffset 24 width 4.00: "z"
+      chunk 1 text run 25 at (135.55,30.00) startOffset 24 endOffset 25 width 4.45: "e"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-22.63) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
+layer at (3,32.38) size 137x14
+  RenderSVGTransformableContainer {g} at (0,9.75) size 136.72x13.02
+layer at (3,32.38) size 62x7
+  RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 62x7
+      chunk 1 text run 1 at (3.00,38.00) startOffset 0 endOffset 22 width 61.71: "textLength: 25% longer"
+layer at (3,38.38) size 57x7
+  RenderSVGText {text} at (0,6) size 58x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x7
+      chunk 1 text run 1 at (3.00,44.00) startOffset 0 endOffset 21 width 57.04: "lengthAdjust: spacing"
+layer at (76,32.38) size 64x7
+  RenderSVGText {text} at (73,0) size 64x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 64x7
+      chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.71: "textLength: 15% shorter"
+layer at (76,38.38) size 57x7
+  RenderSVGText {text} at (73,6) size 58x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x7
+      chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 57.04: "lengthAdjust: spacing"
+layer at (3,22.63) size 137x24
+  RenderSVGTransformableContainer {g} at (0,21.94) size 137x22.77
+layer at (3,22.63) size 137x10
+  RenderSVGTransformableContainer {g} at (0,0) size 137x9.22
+layer at (3,22.63) size 65x9
+  RenderSVGText {text} at (0,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (3.00,30.00) startOffset 0 endOffset 15 width 51.59: "Line to Stretch"
+layer at (75,22.63) size 65x9
+  RenderSVGText {text} at (72,0) size 65x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x10
+      chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-3,-22.63) size 0x0
+layer at (2,32) size 67x0
+  RenderSVGPath {line} at (2,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=69.00] [y2=32.00]
+layer at (2,32) size 0x4
+  RenderSVGPath {line} at (2,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=2.00] [y1=32.00] [x2=2.00] [y2=36.00]
+layer at (69,32) size 0x4
+  RenderSVGPath {line} at (69,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=69.00] [y1=32.00] [x2=69.00] [y2=36.00]
+layer at (74,32) size 67x0
+  RenderSVGPath {line} at (74,32) size 67x0 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=141.00] [y2=32.00]
+layer at (74,32) size 0x4
+  RenderSVGPath {line} at (74,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.00] [y1=32.00] [x2=74.00] [y2=36.00]
+layer at (141,32) size 0x4
+  RenderSVGPath {line} at (141,32) size 0x4 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=141.00] [y1=32.00] [x2=141.00] [y2=36.00]
+layer at (6,32.38) size 134x14
+  RenderSVGTransformableContainer {g} at (3,9.75) size 133.72x13.02
+layer at (6,32.38) size 62x7
+  RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 62x7
+      chunk 1 text run 1 at (6.00,38.00) startOffset 0 endOffset 22 width 61.71: "textLength: 25% longer"
+layer at (6,38.38) size 48x7
+  RenderSVGText {text} at (0,6) size 49x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 49x7
+      chunk 1 text run 1 at (6.00,44.00) startOffset 0 endOffset 17 width 48.03: "lengthAdjust: sAG"
+layer at (76,32.38) size 64x7
+  RenderSVGText {text} at (70,0) size 64x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 64x7
+      chunk 1 text run 1 at (76.00,38.00) startOffset 0 endOffset 23 width 63.71: "textLength: 20% shorter"
+layer at (76,38.38) size 48x7
+  RenderSVGText {text} at (70,6) size 49x7 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 49x7
+      chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 17 width 48.03: "lengthAdjust: sAG"
+layer at (10,109.63) size 58x10
+  RenderSVGTransformableContainer {g} at (10,109.63) size 57.38x9.22
+layer at (10,109.63) size 57x9
+  RenderSVGText {text} at (0,0) size 58x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x10
+      chunk 1 text run 1 at (10.00,117.00) startOffset 0 endOffset 16 width 57.37: "$Revision: 1.8 $"
+layer at (1,1) size 158x118
+  RenderSVGRect {rect} at (1,1) size 158x118 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

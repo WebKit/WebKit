@@ -17,12 +17,15 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TiledBackingStoreClient_h
-#define TiledBackingStoreClient_h
-
-namespace WebCore {
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+
+namespace Nicosia {
+class Buffer;
+}
+
+namespace WebCore {
 
 class GraphicsContext;
 class SurfaceUpdateInfo;
@@ -33,12 +36,10 @@ public:
     virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
-    virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
+    virtual void updateTile(uint32_t tileID, const IntRect&, const IntRect&, Ref<Nicosia::Buffer>&&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
 };
 
-#endif
+} // namespace WebCore
 
-}
-
-#endif
+#endif // USE(COORDINATED_GRAPHICS)

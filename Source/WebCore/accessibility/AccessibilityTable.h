@@ -50,6 +50,7 @@ public:
     void updateRoleAfterChildrenCreation() final { }
 
     virtual bool isAriaTable() const { return false; }
+    bool hasGridAriaRole() const;
 
     void addChildren() final;
     void clearChildren() final;
@@ -109,7 +110,7 @@ protected:
 
 private:
     virtual bool computeIsTableExposableThroughAccessibility() const;
-    void titleElementText(Vector<AccessibilityText>&) const final;
+    void labelText(Vector<AccessibilityText>&) const final;
     HTMLTableElement* tableElement() const;
 
     void ensureRow(unsigned);

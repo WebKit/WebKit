@@ -50,7 +50,7 @@ auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> 
         if (buffer.position() == begin)
             return { };
 
-        auto dataTypeName = StringView(begin, buffer.position() - begin);
+        auto dataTypeName = StringView(std::span(begin, buffer.position() - begin));
         if (!skipExactly(buffer, '>'))
             return { };
 
@@ -75,7 +75,7 @@ auto CSSCustomPropertySyntax::parseComponent(StringParsingBuffer<CharacterType> 
         ++buffer;
 
     auto ident = [&] {
-        auto tokenizer = CSSTokenizer::tryCreate(StringView(begin, buffer.position() - begin).toStringWithoutCopying());
+        auto tokenizer = CSSTokenizer::tryCreate(StringView(std::span(begin, buffer.position() - begin)).toStringWithoutCopying());
         if (!tokenizer)
             return nullAtom();
 

@@ -19,6 +19,8 @@ var tagNamesAlwaysFocused = ["A",
                              "SELECT",
                              "TEXTAREA",
                              "AUDIO",
+                             "OBJECT",
+                             "EMBED",
                              "VIDEO"];
 
 var tagNamesTransferFocused = ["LABEL"]; // labels always transfer focus to the labeled element

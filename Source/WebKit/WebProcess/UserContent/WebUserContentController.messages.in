@@ -28,15 +28,15 @@ messages -> WebUserContentController {
     RemoveContentWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
     AddUserScripts(Vector<WebKit::WebUserScriptData> userScripts, enum:bool WebKit::InjectUserScriptImmediately immediately);
-    RemoveUserScript(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
+    RemoveUserScript(WebKit::ContentWorldIdentifier worldIdentifier, WebKit::UserScriptIdentifier identifier);
     RemoveAllUserScripts(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
     AddUserStyleSheets(Vector<WebKit::WebUserStyleSheetData> userStyleSheets);
-    RemoveUserStyleSheet(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
+    RemoveUserStyleSheet(WebKit::ContentWorldIdentifier worldIdentifier, WebKit::UserStyleSheetIdentifier identifier);
     RemoveAllUserStyleSheets(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
     AddUserScriptMessageHandlers(Vector<WebKit::WebScriptMessageHandlerData> scriptMessageHandlers);
-    RemoveUserScriptMessageHandler(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
+    RemoveUserScriptMessageHandler(WebKit::ContentWorldIdentifier worldIdentifier, WebKit::ScriptMessageHandlerIdentifier identifier);
     RemoveAllUserScriptMessageHandlersForWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
     RemoveAllUserScriptMessageHandlers();
 

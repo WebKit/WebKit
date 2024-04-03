@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 #include <cstddef>
 #include <span>
 #include <wtf/Atomics.h>
@@ -74,7 +74,7 @@ class StreamConnectionBuffer {
 public:
     ~StreamConnectionBuffer();
 
-    using Handle = WebKit::SharedMemory::Handle;
+    using Handle = WebCore::SharedMemory::Handle;
     Handle createHandle();
 
     size_t wrapOffset(size_t offset) const
@@ -121,7 +121,7 @@ public:
     static constexpr bool sharedMemorySizeIsValid(size_t size) { return headerSize() < size && size <= headerSize() + maximumSize(); }
 
 protected:
-    StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&);
+    StreamConnectionBuffer(Ref<WebCore::SharedMemory>&&);
     StreamConnectionBuffer(StreamConnectionBuffer&&) = default;
     StreamConnectionBuffer& operator=(StreamConnectionBuffer&&) = default;
 
@@ -139,7 +139,7 @@ protected:
     static constexpr size_t headerSize() { return roundUpToMultipleOf<alignof(std::max_align_t)>(sizeof(Header)); }
 
     size_t m_dataSize { 0 };
-    Ref<WebKit::SharedMemory> m_sharedMemory;
+    Ref<WebCore::SharedMemory> m_sharedMemory;
 };
 
 }

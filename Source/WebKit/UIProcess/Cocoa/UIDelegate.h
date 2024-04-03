@@ -88,7 +88,7 @@ private:
 
     private:
         // API::UIClient
-        void createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&&, Ref<API::NavigationAction>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&) final;
+        void createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&&, WebCore::WindowFeatures&&, Ref<API::NavigationAction>&&, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&&) final;
         void close(WebPageProxy*) final;
         void fullscreenMayReturnToInline(WebPageProxy*) final;
         void didEnterFullscreen(WebPageProxy*) final;
@@ -102,7 +102,6 @@ private:
         bool canRunBeforeUnloadConfirmPanel() const final;
         void runBeforeUnloadConfirmPanel(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
         void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
-        void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
         bool lockScreenOrientation(WebPageProxy&, WebCore::ScreenOrientationType) final;
         void unlockScreenOrientation(WebPageProxy&) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
@@ -177,7 +176,7 @@ private:
         void confirmPDFOpening(WebPageProxy&, const WTF::URL&, FrameInfoData&&, CompletionHandler<void(bool)>&&) final;
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
-
+        void requestWebAuthenticationConditonalMediationRegistration(WTF::String&&, CompletionHandler<void(bool)>&&) final;
 #endif
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
@@ -207,6 +206,7 @@ private:
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler : 1;
+        bool webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler : 1;
         bool webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestGeolocationPermissionForFrameDecisionHandler : 1;
         bool webViewRequestGeolocationPermissionForOriginDecisionHandler : 1;
@@ -287,6 +287,7 @@ private:
         bool webViewShouldAllowPDFAtURLToOpenFromFrameCompletionHandler : 1;
 #if ENABLE(WEB_AUTHN)
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
+        bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler : 1;
 #endif
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;

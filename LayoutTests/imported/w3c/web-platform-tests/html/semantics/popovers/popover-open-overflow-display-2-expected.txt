@@ -1,0 +1,8 @@
+
+PASS Absolute popover inside absolute element
+PASS Absolute element inside absolute popover
+PASS Fixed popover inside fixed element
+PASS Fixed element inside fixed popover
+PASS Absolute popover inside fixed element
+PASS Fixed element inside absolute popover
+

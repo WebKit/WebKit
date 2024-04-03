@@ -26,7 +26,6 @@
 // https://fullscreen.spec.whatwg.org/#api
 [
     Conditional=FULLSCREEN_API,
-    EnabledBySetting=UnprefixedFullscreenAPIEnabled,
     DisabledByQuirk=shouldDisableElementFullscreen,
     ImplementedBy=DocumentOrShadowRootFullscreen
 ] partial interface mixin DocumentOrShadowRoot {

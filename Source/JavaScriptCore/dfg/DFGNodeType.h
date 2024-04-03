@@ -452,6 +452,7 @@ namespace JSC { namespace DFG {
     macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate) \
     macro(ToPropertyKey, NodeResultJS | NodeMustGenerate) \
+    macro(ToPropertyKeyOrNumber, NodeResultJS | NodeMustGenerate) \
     macro(ToString, NodeResultJS | NodeMustGenerate) \
     macro(ToNumber, NodeResultJS | NodeMustGenerate) \
     macro(ToNumeric, NodeResultJS | NodeMustGenerate) \
@@ -468,7 +469,9 @@ namespace JSC { namespace DFG {
     macro(MakeRope, NodeResultJS) \
     macro(MakeAtomString, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
+    macro(InByValMegamorphic, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
+    macro(InByIdMegamorphic, NodeResultBoolean | NodeMustGenerate) \
     macro(HasPrivateName, NodeResultBoolean | NodeMustGenerate) \
     macro(HasPrivateBrand, NodeResultBoolean | NodeMustGenerate) \
     macro(ProfileType, NodeMustGenerate) \

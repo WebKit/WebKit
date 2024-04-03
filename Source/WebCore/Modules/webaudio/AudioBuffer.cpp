@@ -76,9 +76,9 @@ ExceptionOr<Ref<AudioBuffer>> AudioBuffer::create(const AudioBufferOptions& opti
     return buffer;
 }
 
-RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
+RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(std::span<const uint8_t> data, bool mixToMono, float sampleRate)
 {
-    RefPtr<AudioBus> bus = createBusFromInMemoryAudioFile(data, dataSize, mixToMono, sampleRate);
+    RefPtr bus = createBusFromInMemoryAudioFile(data, mixToMono, sampleRate);
     if (!bus)
         return nullptr;
     return adoptRef(*new AudioBuffer(*bus));

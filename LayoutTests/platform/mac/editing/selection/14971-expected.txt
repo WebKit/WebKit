@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 36: "Hello"
         RenderText {#text} at (35,0) size 5x18
           text run at (35,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 41x18
+        RenderInline {SPAN} at (39,0) size 41x18
           RenderText {#text} at (39,0) size 41x18
             text run at (39,0) width 41: "World"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body

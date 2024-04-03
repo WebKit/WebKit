@@ -12,9 +12,9 @@ if 'dev' in hostname:
 if 'uat' in hostname:
     custom_suffix = '-uat'
 
-S3_DEFAULT_BUCKET = f'archives{custom_suffix}.webkit.org'
-S3_EWS_BUCKET = f'ews-archives{custom_suffix}.webkit.org'
-S3_MINIFIED_BUCKET = f'minified-archives{custom_suffix}.webkit.org'
+S3_DEFAULT_BUCKET = f'archives.webkit{custom_suffix}.org'
+S3_EWS_BUCKET = f'ews-archives.webkit{custom_suffix}.org'
+S3_MINIFIED_BUCKET = f'minified-archives.webkit{custom_suffix}.org'
 S3_REGION_PREFIX = f'https://s3-us-west-2.amazonaws.com'
 
 def uploadToS3(archive_path, bucket, identifier, revision):

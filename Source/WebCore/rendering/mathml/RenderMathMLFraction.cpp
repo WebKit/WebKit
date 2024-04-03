@@ -262,7 +262,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
 {
     RenderMathMLBlock::paint(info, paintOffset);
     LayoutUnit thickness = lineThickness();
-    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().visibility() != Visibility::Visible || !isValid() || !thickness)
+    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible || !isValid() || !thickness)
         return;
 
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(0_lu, fractionAscent() - mathAxisHeight()));

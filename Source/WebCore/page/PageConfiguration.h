@@ -59,10 +59,12 @@ class CacheStorageProvider;
 class ChromeClient;
 class ContextMenuClient;
 class CookieJar;
+class CryptoClient;
 class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
+class Frame;
 class HistoryItemClient;
 class InspectorClient;
 class LocalFrameLoaderClient;
@@ -102,6 +104,7 @@ public:
         UniqueRef<ProgressTrackerClient>&&,
         std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&&,
         FrameIdentifier mainFrameIdentifier,
+        RefPtr<Frame>&& mainFrameOpener,
         UniqueRef<SpeechRecognitionProvider>&&,
         UniqueRef<MediaRecorderProvider>&&,
         Ref<BroadcastChannelRegistry>&&,
@@ -115,7 +118,8 @@ public:
 #if ENABLE(APPLE_PAY)
         UniqueRef<PaymentCoordinatorClient>&&,
 #endif
-        UniqueRef<ChromeClient>&&
+        UniqueRef<ChromeClient>&&,
+        UniqueRef<CryptoClient>&&
     );
     WEBCORE_EXPORT ~PageConfiguration();
     PageConfiguration(PageConfiguration&&);
@@ -153,6 +157,7 @@ public:
     std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>> clientForMainFrame;
 
     FrameIdentifier mainFrameIdentifier;
+    RefPtr<Frame> mainFrameOpener;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -183,6 +188,7 @@ public:
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };
+    std::optional<std::pair<uint16_t, uint16_t>> portsForUpgradingInsecureSchemeForTesting;
 
     UniqueRef<StorageProvider> storageProvider;
 
@@ -195,6 +201,7 @@ public:
     Ref<HistoryItemClient> historyItemClient;
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
+    UniqueRef<CryptoClient> cryptoClient;
 };
 
 }

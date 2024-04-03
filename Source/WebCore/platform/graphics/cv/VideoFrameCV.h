@@ -56,6 +56,9 @@ public:
 private:
     friend struct IPC::ArgumentCoder<VideoFrameCV, void>;
     WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, std::optional<PlatformVideoColorSpace>&&);
+    VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&);
+
+    Ref<VideoFrame> clone() final;
 
     const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
 };

@@ -49,8 +49,6 @@ public:
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
     double playbackTime() const { return m_playbackTime; }
 
-    EventInterface eventInterface() const override;
-
 private:
     AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime);
     AudioProcessingEvent(const AtomString&, AudioProcessingEventInit&&);

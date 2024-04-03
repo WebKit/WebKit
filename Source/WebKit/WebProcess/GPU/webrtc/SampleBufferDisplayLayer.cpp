@@ -52,7 +52,6 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
     , m_gpuProcessConnection(&WebProcess::singleton().ensureGPUProcessConnection())
     , m_manager(manager)
     , m_connection(m_gpuProcessConnection.get()->connection())
-    , m_identifier(SampleBufferDisplayLayerIdentifier::generate())
 {
     manager.addLayer(*this);
     auto gpuProcessConnection = m_gpuProcessConnection.get();
@@ -61,7 +60,7 @@ SampleBufferDisplayLayer::SampleBufferDisplayLayer(SampleBufferDisplayLayerManag
 
 void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool shouldMaintainAspectRatio, CompletionHandler<void(bool)>&& callback)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size, shouldMaintainAspectRatio }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { identifier(), hideRootLayer, size, shouldMaintainAspectRatio }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
         m_hostingContextID = contextId;
@@ -73,13 +72,13 @@ void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, bool
 void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
 {
     ASSERT(m_hostingContextID);
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetLogIdentifier { logIdentifier }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetLogIdentifier { logIdentifier }, identifier());
 }
 #endif
 
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { m_identifier }, 0);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { identifier() }, 0);
     if (m_manager)
         m_manager->removeLayer(*this);
 }
@@ -91,34 +90,34 @@ bool SampleBufferDisplayLayer::didFail() const
 
 void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateDisplayMode { hideDisplayLayer, hideRootLayer }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateDisplayMode { hideDisplayLayer, hideRootLayer }, identifier());
 }
 
 void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
 {
-    m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { m_identifier, bounds, WTFMove(fence) }, m_identifier);
+    m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { identifier(), bounds, WTFMove(fence) }, identifier());
 }
 
 void SampleBufferDisplayLayer::flush()
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Flush { }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Flush { }, identifier());
 }
 
 void SampleBufferDisplayLayer::flushAndRemoveImage()
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::FlushAndRemoveImage { }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::FlushAndRemoveImage { }, identifier());
 }
 
 void SampleBufferDisplayLayer::play()
 {
     m_paused = false;
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Play { }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Play { }, identifier());
 }
 
 void SampleBufferDisplayLayer::pause()
 {
     m_paused = true;
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, identifier());
 }
 
 void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFrame)
@@ -126,7 +125,7 @@ void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFram
     auto size = videoFrame.presentationSize();
     WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
     SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), blackFrameSize };
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(sharedVideoFrame) }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(sharedVideoFrame) }, identifier());
 }
 
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
@@ -135,18 +134,18 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
         return;
 
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
-        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
-        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTFMove(handle) }, m_identifier); }
+        [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, identifier()); },
+        [this](SharedMemory::Handle&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTFMove(handle) }, identifier()); }
     );
     if (!sharedVideoFrame)
         return;
 
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(*sharedVideoFrame) }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { WTFMove(*sharedVideoFrame) }, identifier());
 }
 
 void SampleBufferDisplayLayer::clearVideoFrames()
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::ClearVideoFrames { }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::ClearVideoFrames { }, identifier());
 }
 
 PlatformLayer* SampleBufferDisplayLayer::rootLayer()
@@ -173,7 +172,7 @@ void SampleBufferDisplayLayer::gpuProcessConnectionDidClose(GPUProcessConnection
 
 void SampleBufferDisplayLayer::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetShouldMaintainAspectRatio { shouldMaintainAspectRatio }, m_identifier);
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetShouldMaintainAspectRatio { shouldMaintainAspectRatio }, identifier());
 }
 
 }

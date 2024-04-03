@@ -251,7 +251,7 @@ bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents& cookie)
 #endif
 }
 
-bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateData, SharedBuffer& frameData, OpusCookieContents& cookie)
+bool parseOpusPrivateData(std::span<const uint8_t> codecPrivateData, SharedBuffer& frameData, OpusCookieContents& cookie)
 {
 #if ENABLE(OPUS)
     // https://tools.ietf.org/html/rfc7845
@@ -280,45 +280,44 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateDa
     //      |                                                               |
     //      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-    if (codecPrivateSize < kOpusHeaderSize)
+    if (codecPrivateData.size() < kOpusHeaderSize)
         return { };
 
     // 1. Magic Signature:
     //
     //     This is an 8-octet (64-bit) field that allows codec
     //     identification and is human readable.
-    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData), 8))
+    if (strncmp("OpusHead", reinterpret_cast<const char*>(codecPrivateData.data()), 8))
         return false;
 
     // 2. Version (8 bits, unsigned):
-    cookie.version = *(codecPrivateData + 8);
+    cookie.version = codecPrivateData[8];
 
     // 3. Output Channel Count 'C' (8 bits, unsigned):
-    cookie.channelCount = *(codecPrivateData + 9);
+    cookie.channelCount = codecPrivateData[9];
 
     // 4. Pre-skip (16 bits, unsigned, little endian):
-    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData + 10), true);
+    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData.data() + 10), true);
 
     // 5. Input Sample Rate (32 bits, unsigned, little endian):
-    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData + 12), true);
+    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData.data() + 12), true);
 
     // 6. Output Gain (16 bits, signed, little endian):
-    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData + 16), true);
+    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData.data() + 16), true);
 
     // 7. Channel Mapping Family (8 bits, unsigned):
-    cookie.mappingFamily = *(codecPrivateData + 18);
+    cookie.mappingFamily = codecPrivateData[18];
 
     if (!parseOpusTOCData(frameData, cookie))
         return false;
 
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    cookie.cookieData = SharedBuffer::create(codecPrivateData, codecPrivateSize);
+    cookie.cookieData = SharedBuffer::create(codecPrivateData);
 #endif
 
     return true;
 
 #else
-    UNUSED_PARAM(codecPrivateSize);
     UNUSED_PARAM(codecPrivateData);
     UNUSED_PARAM(frameData);
     UNUSED_PARAM(cookie);
@@ -330,7 +329,7 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const uint8_t* codecPrivateDa
 static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& cookie)
 {
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    return { cookie.cookieData->data(), cookie.cookieData->size() };
+    return { cookie.cookieData->span() };
 #else
     auto samplesPerPacket = cookie.framesPerPacket * (cookie.frameDuration.seconds() * cookie.sampleRate);
 
@@ -409,7 +408,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
 #if ENABLE(VORBIS)
 static constexpr uint32_t kAudioFormatVorbis = 'vorb';
 
-static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, const uint8_t* codecPrivateData)
+static Vector<uint8_t> cookieFromVorbisCodecPrivate(std::span<const uint8_t> codecPrivateData)
 {
     // https://tools.ietf.org/html/draft-ietf-cellar-codec-03
     // 6.4.15. A_VORBIS
@@ -425,14 +424,14 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
     //   codec setup header.
 
     const int vorbisMinimumCookieSize = 3;
-    if (codecPrivateSize < vorbisMinimumCookieSize) {
-        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu)", codecPrivateSize);
+    if (codecPrivateData.size() < vorbisMinimumCookieSize) {
+        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu)", codecPrivateData.size());
         return { };
     }
 
     Vector<uint8_t> cookieData;
 #if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
-    cookieData.append(codecPrivateData, codecPrivateSize);
+    cookieData.append(codecPrivateData);
     cookieData[0] = 2;
 
     return cookieData;
@@ -442,29 +441,29 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(size_t codecPrivateSize, con
     const uint16_t idHeaderSize = codecPrivateData[1];
     const uint16_t commentHeaderSize = codecPrivateData[2];
     const uint16_t calculatedHeaderSize = 1 + idHeaderSize + commentHeaderSize;
-    if (1 + idHeaderSize + commentHeaderSize > codecPrivateSize) {
-        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu) for header sizes (%d)", codecPrivateSize, calculatedHeaderSize);
+    if (1 + idHeaderSize + commentHeaderSize > codecPrivateData.size()) {
+        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu) for header sizes (%d)", codecPrivateData.size(), calculatedHeaderSize);
         return { };
     }
 
     const unsigned char* idHeader = &codecPrivateData[3];
     const unsigned char* commentHeader = idHeader + idHeaderSize;
     const unsigned char* codecSetupHeader = commentHeader + commentHeaderSize;
-    const uint16_t codecSetupHeaderSize = codecPrivateSize - idHeaderSize - commentHeaderSize - 2 - 1;
+    const uint16_t codecSetupHeaderSize = codecPrivateData.size() - idHeaderSize - commentHeaderSize - 2 - 1;
 
-    if ((idHeaderSize + commentHeaderSize + codecSetupHeaderSize + 3) > codecPrivateSize) {
-        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private header size is invalid - id = %d, comment = %d, header = %d, chunk size = %zu", idHeaderSize, commentHeaderSize, codecSetupHeaderSize, codecPrivateSize);
+    if ((idHeaderSize + commentHeaderSize + codecSetupHeaderSize + 3) > codecPrivateData.size()) {
+        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private header size is invalid - id = %d, comment = %d, header = %d, chunk size = %zu", idHeaderSize, commentHeaderSize, codecSetupHeaderSize, codecPrivateData.size());
         return { };
     }
 
-    cookieData.append(reinterpret_cast_ptr<const uint8_t*>(&idHeaderSize), sizeof(idHeaderSize));
-    cookieData.append(idHeader, idHeaderSize);
+    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&idHeaderSize), sizeof(idHeaderSize) });
+    cookieData.append(std::span { idHeader, idHeaderSize });
 
-    cookieData.append(reinterpret_cast_ptr<const uint8_t*>(&commentHeaderSize), sizeof(commentHeaderSize));
-    cookieData.append(commentHeader, commentHeaderSize);
+    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&commentHeaderSize), sizeof(commentHeaderSize) });
+    cookieData.append(std::span { commentHeader, commentHeaderSize });
 
-    cookieData.append(reinterpret_cast_ptr<const uint8_t*>(&codecSetupHeaderSize), sizeof(codecSetupHeaderSize));
-    cookieData.append(codecSetupHeader, codecSetupHeaderSize);
+    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&codecSetupHeaderSize), sizeof(codecSetupHeaderSize) });
+    cookieData.append(std::span { codecSetupHeader, codecSetupHeaderSize });
 
     return cookieData;
 #endif
@@ -499,19 +498,18 @@ bool registerVorbisDecoderIfNeeded()
 #endif
 }
 
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const uint8_t* privateData)
+RefPtr<AudioInfo> createVorbisAudioInfo(std::span<const uint8_t> privateData)
 {
 #if ENABLE(VORBIS)
     if (!isVorbisDecoderAvailable())
         return nullptr;
 
-    auto cookieData = cookieFromVorbisCodecPrivate(privateDataSize, privateData);
+    auto cookieData = cookieFromVorbisCodecPrivate(privateData);
     if (!cookieData.size())
         return nullptr;
 
     return createAudioInfoForFormat(kAudioFormatVorbis, WTFMove(cookieData));
 #else
-    UNUSED_PARAM(privateDataSize);
     UNUSED_PARAM(privateData);
     return nullptr;
 #endif

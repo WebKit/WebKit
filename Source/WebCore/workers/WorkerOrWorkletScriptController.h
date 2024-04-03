@@ -30,6 +30,7 @@
 #include "WorkerThreadType.h"
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
@@ -52,7 +53,7 @@ class WorkerConsoleClient;
 class WorkerOrWorkletGlobalScope;
 class WorkerScriptFetcher;
 
-class WorkerOrWorkletScriptController {
+class WorkerOrWorkletScriptController : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletScriptController);
     WTF_MAKE_FAST_ALLOCATED;
 public:

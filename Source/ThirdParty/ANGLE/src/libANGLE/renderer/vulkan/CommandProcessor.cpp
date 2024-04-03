@@ -9,8 +9,8 @@
 
 #include "libANGLE/renderer/vulkan/CommandProcessor.h"
 #include "common/system_utils.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/SyncVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -543,7 +543,7 @@ void CommandProcessor::handleError(VkResult errorCode,
     mErrors.emplace(error);
 }
 
-CommandProcessor::CommandProcessor(RendererVk *renderer, CommandQueue *commandQueue)
+CommandProcessor::CommandProcessor(vk::Renderer *renderer, CommandQueue *commandQueue)
     : Context(renderer),
       mTaskQueue(kMaxCommandProcessorTasksLimit),
       mCommandQueue(commandQueue),
@@ -832,7 +832,7 @@ void CommandProcessor::destroy(Context *context)
     }
 }
 
-void CommandProcessor::handleDeviceLost(RendererVk *renderer)
+void CommandProcessor::handleDeviceLost(vk::Renderer *renderer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandProcessor::handleDeviceLost");
     // Take mTaskEnqueueMutex lock so that no one is able to add more work to the queue while we
@@ -1069,7 +1069,7 @@ void CommandQueue::destroy(Context *context)
         }
     }
 
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
 
     // Assigns an infinite "last completed" serial to force garbage to delete.
     mLastCompletedSerials.fill(Serial::Infinite());
@@ -1099,8 +1099,7 @@ void CommandQueue::destroy(Context *context)
 angle::Result CommandQueue::init(Context *context, const DeviceQueueMap &queueMap)
 {
     std::lock_guard<std::mutex> lock(mMutex);
-    // In case of RendererVk gets re-initialized, we can't rely on constructor to do initialization
-    // for us.
+    // In case Renderer gets re-initialized, we can't rely on constructor to do initialization.
     mLastSubmittedSerials.fill(kZeroSerial);
     mLastCompletedSerials.fill(kZeroSerial);
 
@@ -1117,7 +1116,7 @@ angle::Result CommandQueue::init(Context *context, const DeviceQueueMap &queueMa
     return angle::Result::Continue;
 }
 
-void CommandQueue::handleDeviceLost(RendererVk *renderer)
+void CommandQueue::handleDeviceLost(vk::Renderer *renderer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::handleDeviceLost");
     VkDevice device = renderer->getDevice();
@@ -1154,7 +1153,7 @@ void CommandQueue::handleDeviceLost(RendererVk *renderer)
 
 angle::Result CommandQueue::postSubmitCheck(Context *context)
 {
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
 
     // Update mLastCompletedQueueSerial immediately in case any command has been finished.
     ANGLE_TRY(checkAndCleanupCompletedCommands(context));
@@ -1292,7 +1291,7 @@ angle::Result CommandQueue::waitForResourceUseToFinishWithUserTimeout(Context *c
     return angle::Result::Continue;
 }
 
-bool CommandQueue::isBusy(RendererVk *renderer) const
+bool CommandQueue::isBusy(vk::Renderer *renderer) const
 {
     // No lock is needed here since we are accessing atomic variables only.
     size_t maxIndex = renderer->getLargestQueueSerialIndexEverAllocated();
@@ -1361,8 +1360,8 @@ angle::Result CommandQueue::submitCommands(Context *context,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::submitCommands");
     std::unique_lock<std::mutex> lock(mMutex);
-    RendererVk *renderer = context->getRenderer();
-    VkDevice device      = renderer->getDevice();
+    vk::Renderer *renderer = context->getRenderer();
+    VkDevice device        = renderer->getDevice();
 
     ++mPerfCounters.commandQueueSubmitCallsTotal;
     ++mPerfCounters.commandQueueSubmitCallsPerFrame;
@@ -1498,7 +1497,7 @@ angle::Result CommandQueue::queueSubmit(Context *context,
                                         const QueueSerial &submitQueueSerial)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::queueSubmit");
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
 
     // Lock relay to ensure the ordering of submission strictly follow the context's submission
     // order. This lock relay (first take mMutex and then mQueueSubmitMutex, and then release
@@ -1571,7 +1570,7 @@ void CommandQueue::resetPerFramePerfCounters()
 
 angle::Result CommandQueue::retireFinishedCommandsAndCleanupGarbage(Context *context)
 {
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
     if (!renderer->isAsyncCommandBufferResetEnabled())
     {
         // Do immediate command buffer reset

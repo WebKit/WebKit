@@ -65,11 +65,10 @@ WebUserContentControllerProxy* WebUserContentControllerProxy::get(UserContentCon
 }
     
 WebUserContentControllerProxy::WebUserContentControllerProxy()
-    : m_identifier(UserContentControllerIdentifier::generate())
-    , m_userScripts(API::Array::create())
+    : m_userScripts(API::Array::create())
     , m_userStyleSheets(API::Array::create())
 {
-    webUserContentControllerProxies().add(m_identifier, *this);
+    webUserContentControllerProxies().add(identifier(), *this);
 }
 
 WebUserContentControllerProxy::~WebUserContentControllerProxy()
@@ -80,7 +79,7 @@ WebUserContentControllerProxy::~WebUserContentControllerProxy()
         world->userContentControllerProxyDestroyed(*this);
     }
     
-    webUserContentControllerProxies().remove(m_identifier);
+    webUserContentControllerProxies().remove(identifier());
     for (auto& process : m_processes) {
         process.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), identifier());
         process.didDestroyWebUserContentControllerProxy(*this);
@@ -327,13 +326,13 @@ void WebUserContentControllerProxy::removeAllUserMessageHandlers()
     m_scriptMessageHandlers.clear();
 }
 
-void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, uint64_t messageHandlerID, const IPC::DataReference& dataReference, CompletionHandler<void(IPC::DataReference&&, const String&)>&& reply)
+void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pageProxyID, FrameInfoData&& frameInfoData, ScriptMessageHandlerIdentifier messageHandlerID, std::span<const uint8_t> dataReference, CompletionHandler<void(std::span<const uint8_t>, const String&)>&& reply)
 {
     auto page = WebProcessProxy::webPage(pageProxyID);
     if (!page)
         return;
 
-    if (!HashMap<uint64_t, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
+    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID))
         return;
 
     RefPtr<WebScriptMessageHandler> handler = m_scriptMessageHandlers.get(messageHandlerID);

@@ -76,6 +76,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         endif ()
     endif ()
 
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "QCC")
+        set(COMPILER_IS_QCC ON)
+        set(COMPILER_IS_GCC_OR_CLANG ON)
+    endif ()
+
     if (CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG)
         set(COMPILER_IS_GCC_OR_CLANG ON)
     endif ()

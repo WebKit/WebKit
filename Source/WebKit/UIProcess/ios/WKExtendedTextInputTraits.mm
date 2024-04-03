@@ -33,8 +33,31 @@
 @implementation WKExtendedTextInputTraits {
     RetainPtr<UITextContentType> _textContentType;
     RetainPtr<UIColor> _insertionPointColor;
-    RetainPtr<UIColor> _selectionBarColor;
+    RetainPtr<UIColor> _selectionHandleColor;
     RetainPtr<UIColor> _selectionHighlightColor;
+    RetainPtr<UITextInputPasswordRules> _passwordRules;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+#if USE(BROWSERENGINEKIT)
+    self.typingAdaptationEnabled = YES;
+#endif
+    self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+    return self;
+}
+
+- (void)setPasswordRules:(UITextInputPasswordRules *)rules
+{
+    _passwordRules = adoptNS(rules.copy);
+}
+
+- (UITextInputPasswordRules *)passwordRules
+{
+    return adoptNS([_passwordRules copy]).autorelease();
 }
 
 - (void)setTextContentType:(UITextContentType)type
@@ -44,7 +67,7 @@
 
 - (UITextContentType)textContentType
 {
-    return _textContentType.get();
+    return adoptNS([_textContentType copy]).autorelease();
 }
 
 - (void)setInsertionPointColor:(UIColor *)color
@@ -57,15 +80,31 @@
     return _insertionPointColor.get();
 }
 
+#if USE(BROWSERENGINEKIT)
+
+- (void)setSelectionHandleColor:(UIColor *)color
+{
+    _selectionHandleColor = color;
+}
+
+- (UIColor *)selectionHandleColor
+{
+    return _selectionHandleColor.get();
+}
+
+#else
+
 - (void)setSelectionBarColor:(UIColor *)color
 {
-    _selectionBarColor = color;
+    _selectionHandleColor = color;
 }
 
 - (UIColor *)selectionBarColor
 {
-    return _selectionBarColor.get();
+    return _selectionHandleColor.get();
 }
+
+#endif
 
 - (void)setSelectionHighlightColor:(UIColor *)color
 {
@@ -82,7 +121,11 @@
     static constexpr auto selectionHighlightAlphaComponent = 0.2;
     BOOL shouldUseTintColor = tintColor && tintColor != UIColor.systemBlueColor;
     self.insertionPointColor = shouldUseTintColor ? tintColor : nil;
+#if USE(BROWSERENGINEKIT)
+    self.selectionHandleColor = shouldUseTintColor ? tintColor : nil;
+#else
     self.selectionBarColor = shouldUseTintColor ? tintColor : nil;
+#endif
     self.selectionHighlightColor = shouldUseTintColor ? [tintColor colorWithAlphaComponent:selectionHighlightAlphaComponent] : nil;
 }
 

@@ -7,10 +7,10 @@ layer at (0,0) size 800x286
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
         RenderInline {I} at (0,0) size 743x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+          RenderInline {A} at (104,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9669"
-          RenderText {#text} at (451,0) size 743x35
+          RenderText {#text} at (0,0) size 743x35
             text run at (451,0) width 5: " "
             text run at (455,0) width 288: "Incomplete repaint when changing an inline's"
             text run at (0,18) width 43: "border"
@@ -22,10 +22,10 @@ layer at (0,0) size 800x286
           text run at (0,18) width 192: "adipiscing, enim in scelerisque"
           text run at (0,36) width 64: "convallis, "
           text run at (64,36) width 42: "augue "
-        RenderInline {SPAN} at (0,0) size 35x47 [border: (30px solid #0000FF) none]
+        RenderInline {SPAN} at (106,6) size 35x47 [border: (30px solid #0000FF) none]
           RenderText {#text} at (106,36) size 35x17
             text run at (106,36) width 35: "purus"
-        RenderText {#text} at (141,36) size 195x89
+        RenderText {#text} at (0,36) size 195x89
           text run at (141,36) width 54: " eleifend"
           text run at (0,54) width 151: "lacus, at sagittis eros leo"
           text run at (0,72) width 135: "pulvinar velit. Integer"

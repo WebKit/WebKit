@@ -53,7 +53,7 @@ WebCore::NotificationData WebPushMessage::notificationPayloadToCoreData() const
         silent = notificationPayload->options->silent;
 
         CString dataCString = notificationPayload->options->dataJSONString.utf8();
-        dataJSON = { dataCString.dataAsUInt8Ptr(), dataCString.length() };
+        dataJSON = dataCString.span();
     }
 
     return {

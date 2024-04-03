@@ -57,6 +57,11 @@ NSError *toAPI(WebExtensionMessagePort::Error error)
         errorCode = _WKWebExtensionMessagePortErrorNotConnected;
         message = (NSString *)error.value().second.value_or("Message port is not connected and cannot send messages."_s);
         break;
+
+    case WebKit::WebExtensionMessagePort::ErrorType::MessageInvalid:
+        errorCode = _WKWebExtensionMessagePortErrorMessageInvalid;
+        message = (NSString *)error.value().second.value_or("Message is not JSON-serializable."_s);
+        break;
     }
 
     return [NSError errorWithDomain:_WKWebExtensionMessagePortErrorDomain code:errorCode userInfo:@{ NSDebugDescriptionErrorKey: message }];
@@ -93,11 +98,6 @@ bool WebExtensionMessagePort::isDisconnected() const
 
 void WebExtensionMessagePort::disconnect(Error error)
 {
-    if (isDisconnected())
-        return;
-
-    m_extensionContext->portDisconnect(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
-
     remove();
 }
 
@@ -117,6 +117,7 @@ void WebExtensionMessagePort::remove()
         return;
 
     m_extensionContext->removeNativePort(*this);
+    m_extensionContext->firePortDisconnectEventIfNeeded(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, m_channelIdentifier);
     m_extensionContext = nullptr;
 }
 
@@ -127,9 +128,12 @@ void WebExtensionMessagePort::sendMessage(id message, CompletionHandler<void(Err
         return;
     }
 
-    THROW_UNLESS(isValidJSONObject(message, { JSONOptions::FragmentsAllowed }), @"Message object is not JSON-serializable");
+    if (!isValidJSONObject(message, JSONOptions::FragmentsAllowed)) {
+        completionHandler({ { ErrorType::MessageInvalid, std::nullopt } });
+        return;
+    }
 
-    m_extensionContext->portPostMessage(WebExtensionContentWorldType::Main, m_channelIdentifier, encodeJSONString(message, { JSONOptions::FragmentsAllowed }) );
+    m_extensionContext->portPostMessage(WebExtensionContentWorldType::Native, WebExtensionContentWorldType::Main, std::nullopt, m_channelIdentifier, encodeJSONString(message, JSONOptions::FragmentsAllowed) );
 
     completionHandler(std::nullopt);
 }

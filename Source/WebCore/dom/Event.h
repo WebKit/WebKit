@@ -29,9 +29,9 @@
 #include "EventOptions.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WTF {
@@ -72,6 +72,8 @@ public:
     const AtomString& type() const { return m_type; }
     void setType(const AtomString& type) { m_type = type; }
 
+    enum EventInterfaceType interfaceType() const { return static_cast<enum EventInterfaceType>(m_eventInterface); }
+
     EventTarget* target() const { return m_target.get(); }
     void setTarget(RefPtr<EventTarget>&&);
 
@@ -101,8 +103,6 @@ public:
 
     bool legacyReturnValue() const { return !m_wasCanceled; }
     void setLegacyReturnValue(bool);
-
-    virtual EventInterface eventInterface() const { return EventInterfaceType; }
 
     virtual bool isBeforeTextInsertedEvent() const { return false; }
     virtual bool isBeforeUnloadEvent() const { return false; }
@@ -155,17 +155,17 @@ public:
     virtual String debugDescription() const;
 
 protected:
-    explicit Event(IsTrusted = IsTrusted::No);
-    Event(const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
-    Event(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, IsTrusted isTrusted = IsTrusted::Yes);
-    Event(const AtomString& type, const EventInit&, IsTrusted);
+    explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
+    Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
+    Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, IsTrusted isTrusted = IsTrusted::Yes);
+    Event(enum EventInterfaceType, const AtomString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget() { }
 
     bool isConstructedFromInitializer() const { return m_isConstructedFromInitializer; }
 
 private:
-    explicit Event(MonotonicTime createTime, const AtomString& type, IsTrusted, CanBubble, IsCancelable, IsComposed);
+    explicit Event(MonotonicTime createTime, enum EventInterfaceType, const AtomString& type, IsTrusted, CanBubble, IsCancelable, IsComposed);
 
     void setCanceledFlagIfPossible();
 
@@ -189,10 +189,14 @@ private:
     // See step 4 of https://dom.spec.whatwg.org/#inner-event-creation-steps
     unsigned m_isConstructedFromInitializer : 1 { false };
 
+    unsigned m_eventInterface : 7 { 0 };
+
+    // 10-bits left.
+
     AtomString m_type;
 
     RefPtr<EventTarget> m_currentTarget;
-    CheckedPtr<const EventPath> m_eventPath;
+    SingleThreadWeakPtr<const EventPath> m_eventPath;
     RefPtr<EventTarget> m_target;
     MonotonicTime m_createTime;
 

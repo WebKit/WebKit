@@ -58,7 +58,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._recordingFrames = [];
         this._recordingBufferUsed = 0;
 
-        // COMPATIBILITY (macOS X.0, iOS X.0): `Canvas.canvasSizeChanged` did not exist yet.
+        // COMPATIBILITY (macOS 14.2, iOS 17.2): `Canvas.canvasSizeChanged` did not exist yet.
         if (!InspectorBackend.hasEvent("Canvas.canvasSizeChanged")) {
             console.assert(!size);
 
@@ -112,7 +112,7 @@ WI.Canvas = class Canvas extends WI.Object
             console.error("Invalid canvas context type", payload.contextType);
         }
 
-        // COMPATIBILITY (macOS X.0, iOS X.0): `width` and `height` did not exist yet.
+        // COMPATIBILITY (macOS 14.2, iOS 17.2): `width` and `height` did not exist yet.
         let size = ("width" in payload && "height" in payload) ? new WI.Size(payload.width, payload.height) : null;
 
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `backtrace` was renamed to `stackTrace`.
@@ -395,7 +395,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        // COMPATIBILITY (macOS X.0, iOS X.0): `width` and `height` did not exist yet.
+        // COMPATIBILITY (macOS 14.2, iOS 17.2): `width` and `height` did not exist yet.
         if (this._size?.equals(size))
             return;
 

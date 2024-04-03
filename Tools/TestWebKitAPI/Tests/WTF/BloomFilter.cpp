@@ -45,7 +45,7 @@ static Vector<SHA1::Digest> generateRandomDigests(size_t hashCount)
     SHA1 sha1;
     for (unsigned i = 0; i < hashCount; ++i) {
         double random = cryptographicallyRandomUnitInterval();
-        sha1.addBytes(reinterpret_cast<uint8_t*>(&random), sizeof(double));
+        sha1.addBytes(std::span { reinterpret_cast<uint8_t*>(&random), sizeof(double) });
         SHA1::Digest digest;
         sha1.computeHash(digest);
         hashes.append(digest);

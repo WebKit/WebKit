@@ -28,6 +28,7 @@
 
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
+#include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
@@ -83,16 +84,28 @@ void RenderTreeUpdater::GeneratedContent::updateCounters()
     update();
 }
 
+static KeyframeEffectStack* keyframeEffectStackForElementAndPseudoId(const Element& element, PseudoId pseudoId)
+{
+    return element.keyframeEffectStack(pseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { pseudoId }));
+}
+
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
 {
     if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
         return elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement->hostElement(), pseudoId);
 
     if (element) {
-        if (auto* stack = element->keyframeEffectStack(pseudoId))
+        if (auto* stack = keyframeEffectStackForElementAndPseudoId(*element, pseudoId))
             return stack->requiresPseudoElement();
     }
 
+    return false;
+}
+
+static bool elementHasDisplayAnimationForPseudoId(const Element& element, PseudoId pseudoId)
+{
+    if (auto* stack = keyframeEffectStackForElementAndPseudoId(element, pseudoId))
+        return stack->containsProperty(CSSPropertyDisplay);
     return false;
 }
 
@@ -128,9 +141,9 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle(pseudoId) : nullptr;
+    auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle({ pseudoId }) : nullptr;
 
-    if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
+    if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId) && !elementHasDisplayAnimationForPseudoId(current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
@@ -155,7 +168,7 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         // For display:contents we create an inline wrapper that inherits its
         // style from the display:contents style.
         auto contentsStyle = RenderStyle::createPtr();
-        contentsStyle->setStyleType(pseudoId);
+        contentsStyle->setPseudoElementType(pseudoId);
         contentsStyle->inheritFrom(*updateStyle);
         contentsStyle->copyContentFrom(*updateStyle);
         contentsStyle->copyPseudoElementsFrom(*updateStyle);
@@ -163,12 +176,16 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdate));
         auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
-        pseudoElement->storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
+        pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
     } else {
         auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
         Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdate));
-        pseudoElement->clearDisplayContentsStyle();
+        if (updateStyle->display() == DisplayType::None) {
+            auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+            pseudoElement->storeDisplayContentsOrNoneStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
+        } else
+            pseudoElement->clearDisplayContentsOrNoneStyle();
     }
 
     auto* pseudoElementRenderer = pseudoElement->renderer();
@@ -200,7 +217,7 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
         return;
     }
 
-    auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.style());
+    auto style = renderer.getCachedPseudoStyle({ PseudoId::Backdrop }, &renderer.style());
     if (!style || style->display() == DisplayType::None) {
         destroyBackdropIfNeeded();
         return;

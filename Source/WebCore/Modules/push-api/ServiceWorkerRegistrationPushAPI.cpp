@@ -64,9 +64,9 @@ ServiceWorkerRegistrationPushAPI* ServiceWorkerRegistrationPushAPI::from(Service
     return supplement;
 }
 
-const char* ServiceWorkerRegistrationPushAPI::supplementName()
+ASCIILiteral ServiceWorkerRegistrationPushAPI::supplementName()
 {
-    return "ServiceWorkerRegistrationPushAPI";
+    return "ServiceWorkerRegistrationPushAPI"_s;
 }
 
 }

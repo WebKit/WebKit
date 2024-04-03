@@ -24,14 +24,14 @@ class ImmutableStringBuilder
 
     ImmutableStringBuilder &operator<<(const ImmutableString &str);
 
-    ImmutableStringBuilder &operator<<(const char *str);
+    ImmutableStringBuilder &operator<<(const char *str) { return *this << ImmutableString(str); }
 
-    ImmutableStringBuilder &operator<<(const char &c);
+    ImmutableStringBuilder &operator<<(char c);
 
     // This invalidates the ImmutableStringBuilder, so it should only be called once.
     operator ImmutableString();
 
-    void appendDecimal(const uint32_t &i);
+    void appendDecimal(uint32_t i);
 
     template <typename T>
     void appendHex(T number)

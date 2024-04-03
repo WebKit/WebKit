@@ -59,4 +59,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(DistantLightSource, LS_DISTANT)
+SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(DistantLightSource, LightType::LS_DISTANT)

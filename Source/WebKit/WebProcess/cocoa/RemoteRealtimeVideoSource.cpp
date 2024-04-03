@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -78,13 +79,18 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
 
         clone = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager(), pageIdentifier()));
 
+        clone->m_registerOwnerCallback = m_registerOwnerCallback;
         clone->setSettings(RealtimeMediaSourceSettings { settings() });
         clone->setCapabilities(RealtimeMediaSourceCapabilities { capabilities() });
 
         manager().addSource(*clone);
         manager().remoteCaptureSampleManager().addSource(*clone);
         proxy().createRemoteCloneSource(clone->identifier(), pageIdentifier());
+
+        bool isNewClonedSource = true;
+        clone->m_registerOwnerCallback(*clone, isNewClonedSource);
     });
+
     return clone.releaseNonNull();
 }
 

@@ -77,12 +77,12 @@ NetworkSocketChannel::~NetworkSocketChannel()
     }
 }
 
-void NetworkSocketChannel::sendString(const IPC::DataReference& message, CompletionHandler<void()>&& callback)
+void NetworkSocketChannel::sendString(std::span<const uint8_t> message, CompletionHandler<void()>&& callback)
 {
     m_socket->sendString(message, WTFMove(callback));
 }
 
-void NetworkSocketChannel::sendData(const IPC::DataReference& data, CompletionHandler<void()>&& callback)
+void NetworkSocketChannel::sendData(std::span<const uint8_t> data, CompletionHandler<void()>&& callback)
 {
     m_socket->sendData(data, WTFMove(callback));
 }
@@ -114,9 +114,9 @@ void NetworkSocketChannel::didReceiveText(const String& text)
     send(Messages::WebSocketChannel::DidReceiveText { text });
 }
 
-void NetworkSocketChannel::didReceiveBinaryData(const uint8_t* data, size_t length)
+void NetworkSocketChannel::didReceiveBinaryData(std::span<const uint8_t> data)
 {
-    send(Messages::WebSocketChannel::DidReceiveBinaryData { { data, length } });
+    send(Messages::WebSocketChannel::DidReceiveBinaryData { data });
 }
 
 void NetworkSocketChannel::didClose(unsigned short code, const String& reason)

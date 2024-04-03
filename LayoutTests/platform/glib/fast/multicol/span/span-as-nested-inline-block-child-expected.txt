@@ -17,7 +17,7 @@ layer at (8,8) size 384x192
           text run at (0,0) width 368: "This text should be below the previous text, but still on the"
           text run at (0,18) width 24: "left."
     RenderText {#text} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 368x89
+    RenderInline {SPAN} at (0,102) size 368x89
       RenderText {#text} at (0,102) size 368x89
         text run at (0,102) width 368: "The beginning of this text should start next to or below the"
         text run at (0,120) width 362: "previous text, and still in the left column. However, when"

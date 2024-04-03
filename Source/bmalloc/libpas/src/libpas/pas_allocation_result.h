@@ -93,7 +93,10 @@ pas_allocation_result_zero(pas_allocation_result result,
     if (size >= (1ULL << PAS_VA_BASED_ZERO_MEMORY_SHIFT))
         return pas_allocation_result_zero_large_slow(result, size);
 
-    pas_zero_memory((void*)result.begin, size);
+    PAS_PROFILE(ZERO_ALLOCATION_RESULT, result.begin);
+    void* memory = (void*)result.begin;
+    pas_zero_memory(memory, size);
+
     return pas_allocation_result_create_success_with_zero_mode(result.begin, pas_zero_mode_is_all_zero);
 }
 

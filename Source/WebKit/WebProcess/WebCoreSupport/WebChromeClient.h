@@ -35,7 +35,7 @@ class RegistrableDomain;
 enum class CookieConsentDecisionResult : uint8_t;
 enum class DidFilterLinkDecoration : bool;
 enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessWasGranted : uint8_t;
 struct TextRecognitionOptions;
 }
 
@@ -152,9 +152,6 @@ private:
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
 
     void exceededDatabaseQuota(WebCore::LocalFrame&, const String& databaseName, WebCore::DatabaseDetails) final { }
-
-    void reachedMaxAppCacheSize(int64_t spaceNeeded) final;
-    void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin&, int64_t spaceNeeded) final;
     
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient&, const WebCore::Color&) final;
@@ -245,7 +242,6 @@ private:
     bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply() final;
 
 #if PLATFORM(WIN)
-    void setLastSetCursorToCurrentCursor() final { }
     void AXStartFrameLoad() final { }
     void AXFinishFrameLoad() final { }
 #endif
@@ -328,7 +324,7 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard) final;
-    void enterFullScreenForElement(WebCore::Element&) final;
+    void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard) final;
     void exitFullScreenForElement(WebCore::Element*) final;
 #endif
 
@@ -393,9 +389,6 @@ private:
 #endif
 
     void setTextIndicator(const WebCore::TextIndicatorData&) const final;
-
-    bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
-    bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const final;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&, const WebCore::IntRect&) final;

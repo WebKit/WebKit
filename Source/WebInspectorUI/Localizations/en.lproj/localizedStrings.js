@@ -31,6 +31,7 @@ localizedStrings["%d Failed (plural)"] = "%d Failed";
 localizedStrings["%d Failed (singular)"] = "%d Failed";
 localizedStrings["%d Frame"] = "%d Frame";
 localizedStrings["%d Frames"] = "%d Frames";
+localizedStrings["%d Hz"] = "%d Hz";
 localizedStrings["%d More\u2026"] = "%d More\u2026";
 localizedStrings["%d Passed (plural)"] = "%d Passed";
 localizedStrings["%d Passed (singular)"] = "%d Passed";
@@ -51,6 +52,8 @@ localizedStrings["%d resource"] = "%d resource";
 localizedStrings["%d resources"] = "%d resources";
 localizedStrings["%dpx"] = "%dpx";
 localizedStrings["%dpx\u00B2"] = "%dpx\u00B2";
+localizedStrings["%dx%d (%dfps)"] = "%dx%d (%dfps)";
+localizedStrings["%dx%d (%dx)"] = "%dx%d (%dx)";
 localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
 /* Label for case-insensitive match pattern of an event breakpoint. */
@@ -174,6 +177,7 @@ localizedStrings["All items in \u0022%s\u0022 must be valid DOM nodes"] = "All i
 /* Label for setting that allows the user to inspect the Web Inspector user interface. */
 localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Allow Inspecting Web Inspector";
 localizedStrings["Allow media capture on insecure sites"] = "Allow media capture on insecure sites";
+localizedStrings["Allow page to clear Console"] = "Allow page to clear Console";
 /* Label for checkbox that controls whether network throttling functionality is enabled. */
 localizedStrings["Allow throttling"] = "Allow throttling";
 localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location.";
@@ -219,6 +223,12 @@ localizedStrings["Attribute"] = "Attribute";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
 localizedStrings["Attribute Modified @ DOM Breakpoint"] = "Attribute Modified";
 localizedStrings["Attributes"] = "Attributes";
+/* Title for Audio Codec row in Media Sidebar */
+localizedStrings["Audio Codec @ Media Sidebar"] = "Audio Codec";
+/* Title for Audio Details section in Media Sidebar */
+localizedStrings["Audio Details @ Media Sidebar"] = "Audio Details";
+/* Title for Audio Format row in Media Sidebar */
+localizedStrings["Audio Format @ Media Sidebar"] = "Audio Format";
 localizedStrings["Audit"] = "Audit";
 localizedStrings["Audit Error: %s"] = "Audit Error: %s";
 /* Name of Audit Tab */
@@ -325,6 +335,8 @@ localizedStrings["Catch Variables"] = "Catch Variables";
 localizedStrings["Categories"] = "Categories";
 localizedStrings["Certificate"] = "Certificate";
 localizedStrings["Changes"] = "Changes";
+/* Title for Channels row in Media Sidebar */
+localizedStrings["Channels @ Media Sidebar"] = "Channels";
 localizedStrings["Character Data"] = "Character Data";
 localizedStrings["Charge \u201C%s\u201D to Callers"] = "Charge \u201C%s\u201D to Callers";
 localizedStrings["Checked"] = "Checked";
@@ -355,6 +367,7 @@ localizedStrings["Clear log (%s or %s)"] = "Clear log (%s or %s)";
 localizedStrings["Clear object store"] = "Clear object store";
 localizedStrings["Clear samples"] = "Clear samples";
 localizedStrings["Clear watch expressions"] = "Clear watch expressions";
+localizedStrings["Clear:"] = "Clear:";
 localizedStrings["Click Listener"] = "Click Listener";
 localizedStrings["Click to create a Local Override from this content"] = "Click to create a Local Override from this content";
 localizedStrings["Click to import a file and create a Local Override\nShift-click to create a Local Override from this content"] = "Click to import a file and create a Local Override\nShift-click to create a Local Override from this content";
@@ -385,6 +398,10 @@ localizedStrings["Code"] = "Code";
 localizedStrings["Collapse All"] = "Collapse All";
 localizedStrings["Collapse columns"] = "Collapse columns";
 localizedStrings["Collect garbage"] = "Collect garbage";
+/* Title for Color Primaries row in Media Sidebar */
+localizedStrings["Color Primaries @ Media Sidebar"] = "Color Primaries";
+/* Title for Color Range row in Media Sidebar */
+localizedStrings["Color Range @ Media Sidebar"] = "Color Range";
 /* Label for input to override the preference for color scheme. */
 localizedStrings["Color scheme @ User Preferences Overrides"] = "Color scheme";
 /* Section header for the group of CSS variables with colors as values */
@@ -590,6 +607,8 @@ localizedStrings["Done"] = "Done";
 localizedStrings["Download"] = "Download";
 localizedStrings["Download Web Archive"] = "Download Web Archive";
 localizedStrings["Dropped Element"] = "Dropped Element";
+/* Format string for Dropped Frame count in Media Sidebar */
+localizedStrings["Dropped Frame Format @ Media Sidebar"] = "%d dropped of %d";
 localizedStrings["Dropped Node"] = "Dropped Node";
 localizedStrings["Duplicate Audit"] = "Duplicate Audit";
 localizedStrings["Duplicate Selector"] = "Duplicate Selector";
@@ -801,8 +820,12 @@ localizedStrings["Frames"] = "Frames";
 localizedStrings["Frames %d \u2013 %d"] = "Frames %d \u2013 %d";
 /* Title for list of HTML subframe JavaScript execution contexts */
 localizedStrings["Frames @ Execution Context Picker"] = "Frames";
+/* Title for Frames row in Media Sidebar */
+localizedStrings["Frames @ Media Sidebar Frame Count"] = "Frames";
 localizedStrings["Full Garbage Collection"] = "Full Garbage Collection";
 localizedStrings["Full URL"] = "Full URL";
+/* Value string for Full Range color in the Media Sidebar */
+localizedStrings["Full range @ Media Sidebar"] = "Full range";
 localizedStrings["Full-Screen"] = "Full-Screen";
 localizedStrings["Full-Screen from \u201C%s\u201D"] = "Full-Screen from \u201C%s\u201D";
 /* Property value for `font-variant-alternates: full-width`. */
@@ -814,6 +837,8 @@ localizedStrings["Garbage Collection"] = "Garbage Collection";
 localizedStrings["General"] = "General";
 /* Text indicating that the local override will block the network activity with a general error. */
 localizedStrings["General @ Local Override Type"] = "General";
+/* Title for General Section in Media Sidebar */
+localizedStrings["General @ Media Sidebar"] = "General";
 localizedStrings["Getter"] = "Getter";
 localizedStrings["Global Code"] = "Global Code";
 localizedStrings["Global Lexical Environment"] = "Global Lexical Environment";
@@ -1030,6 +1055,8 @@ localizedStrings["Map to File @ Resource Preview"] = "Map to File";
 localizedStrings["Mapped to \u201C%s\u201D"] = "Mapped to \u201C%s\u201D";
 localizedStrings["Mass"] = "Mass";
 localizedStrings["Matching"] = "Matching";
+/* Title for Matrix Coefficients row in Media Sidebar */
+localizedStrings["Matrix Coefficients @ Media Sidebar"] = "Matrix Coefficients";
 localizedStrings["Max Comparison"] = "Max Comparison";
 localizedStrings["Maximum"] = "Maximum";
 localizedStrings["Maximum CPU Usage: %s"] = "Maximum CPU Usage: %s";
@@ -1062,6 +1089,7 @@ localizedStrings["Mixed"] = "Mixed";
 localizedStrings["Modifications are saved automatically and will apply the next time the Console Snippet is run."] = "Modifications are saved automatically and will apply the next time the Console Snippet is run.";
 localizedStrings["Modifications made here will take effect on the next load of any page or sub-frame."] = "Modifications made here will take effect on the next load of any page or sub-frame.";
 localizedStrings["Module Code"] = "Module Code";
+localizedStrings["Mono"] = "Mono";
 localizedStrings["More information is available at <https://webkit.org/web-inspector/console-snippets/>."] = "More information is available at <https://webkit.org/web-inspector/console-snippets/>.";
 localizedStrings["More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>."] = "More information is available at <https://webkit.org/web-inspector/inspector-bootstrap-script/>.";
 localizedStrings["Multi-Entry"] = "Multi-Entry";
@@ -1372,6 +1400,8 @@ localizedStrings["Requesting \u201C%s\u201D"] = "Requesting \u201C%s\u201D";
 localizedStrings["Required"] = "Required";
 /* Context menu action for resetting the breakpoint to its initial configuration. */
 localizedStrings["Reset Breakpoint @ Breakpoint Context Menu"] = "Reset Breakpoint";
+/* Title for Resolution row in Media Sidebar */
+localizedStrings["Resolution @ Media Sidebar"] = "Resolution";
 localizedStrings["Resource"] = "Resource";
 localizedStrings["Resource Size"] = "Resource Size";
 localizedStrings["Resource Type"] = "Resource Type";
@@ -1433,6 +1463,8 @@ localizedStrings["Run Console Snippet\u2026"] = "Run Console Snippet\u2026";
 localizedStrings["Run console commands as if inside a user gesture"] = "Run console commands as if inside a user gesture";
 localizedStrings["Running the \u201C%s\u201D audit"] = "Running the \u201C%s\u201D audit";
 localizedStrings["SVG"] = "SVG";
+/* Title for Sample Rate row in Media Sidebar */
+localizedStrings["Sample Rate @ Media Sidebar"] = "Sample Rate";
 localizedStrings["Samples"] = "Samples";
 localizedStrings["Save %d"] = "Save %d";
 localizedStrings["Save File"] = "Save File";
@@ -1578,6 +1610,8 @@ localizedStrings["Some examples of ways to use this script include (but are not 
 localizedStrings["Sort Ascending"] = "Sort Ascending";
 localizedStrings["Sort Descending"] = "Sort Descending";
 localizedStrings["Source"] = "Source";
+/* Title for Source row in Media Sidebar */
+localizedStrings["Source @ Media Sidebar"] = "Source";
 localizedStrings["Source Map loading errors"] = "Source Map loading errors";
 localizedStrings["Source Maps:"] = "Source Maps:";
 localizedStrings["Sources"] = "Sources";
@@ -1612,6 +1646,7 @@ localizedStrings["Step (%s or %s)"] = "Step (%s or %s)";
 localizedStrings["Step into (%s or %s)"] = "Step into (%s or %s)";
 localizedStrings["Step out (%s or %s)"] = "Step out (%s or %s)";
 localizedStrings["Step over (%s or %s)"] = "Step over (%s or %s)";
+localizedStrings["Stereo"] = "Stereo";
 localizedStrings["Stiffness"] = "Stiffness";
 localizedStrings["Stop"] = "Stop";
 localizedStrings["Stop Audit"] = "Stop Audit";
@@ -1781,6 +1816,8 @@ localizedStrings["Traces:"] = "Traces:";
 localizedStrings["Track sizes @ Layout Panel Overlay Options"] = "Track Sizes";
 /* Property value for `font-variant-alternates: traditional`. */
 localizedStrings["Traditional Forms @ Font Details Sidebar Property Value"] = "Traditional Forms";
+/* Title for Transfer Function row in Media Sidebar */
+localizedStrings["Transfer Function @ Media Sidebar"] = "Transfer Function";
 /* Amount of data sent over the network for a single resource */
 localizedStrings["Transfer Size"] = "Transfer Size";
 localizedStrings["Transferred"] = "Transferred";
@@ -1837,10 +1874,20 @@ localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
+/* Title for Video Codec row in Media Sidebar */
+localizedStrings["Video Codec @ Media Sidebar"] = "Video Codec";
+/* Title for Video Details section in Media Sidebar */
+localizedStrings["Video Details @ Media Sidebar"] = "Video Details";
+/* Title for Video Format row in Media Sidebar */
+localizedStrings["Video Format @ Media Sidebar"] = "Video Format";
+/* Value string for Video Range color in the Media Sidebar */
+localizedStrings["Video range @ Media Sidebar"] = "Video range";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";
 localizedStrings["View Shader"] = "View Shader";
 localizedStrings["Viewport"] = "Viewport";
+/* Title for Viewport row in Media Sidebar */
+localizedStrings["Viewport @ Media Sidebar"] = "Viewport";
 localizedStrings["Visible"] = "Visible";
 localizedStrings["Waiting"] = "Waiting";
 localizedStrings["Waiting for animations created by CSS."] = "Waiting for animations created by CSS.";

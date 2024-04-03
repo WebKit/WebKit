@@ -69,7 +69,11 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , URL&& mainDocumentURL
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    , bool pageHasExtensionController
+#endif
     , bool linkPreconnectEarlyHintsEnabled
+    , bool shouldRecordFrameLoadForStorageAccess
     ) : NetworkLoadParameters(WTFMove(networkLoadParameters))
         , identifier(identifier)
         , maximumBufferingTime(maximumBufferingTime)
@@ -104,7 +108,11 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , mainDocumentURL(WTFMove(mainDocumentURL))
         , userContentControllerIdentifier(userContentControllerIdentifier)
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+        , pageHasExtensionController(pageHasExtensionController)
+#endif
         , linkPreconnectEarlyHintsEnabled(linkPreconnectEarlyHintsEnabled)
+        , shouldRecordFrameLoadForStorageAccess(shouldRecordFrameLoadForStorageAccess)
 {
     if (httpBody) {
         request.setHTTPBody(WTFMove(httpBody));

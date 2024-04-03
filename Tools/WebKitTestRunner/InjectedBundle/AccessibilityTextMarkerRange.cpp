@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityTextMarker.h"
 
 #include "AccessibilityUIElement.h"
@@ -74,5 +72,3 @@ JSClassRef AccessibilityTextMarkerRange::wrapperClass()
 }
     
 } // namespace WTR
-#endif // ENABLE(ACCESSIBILITY)
-

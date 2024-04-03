@@ -99,6 +99,12 @@ enum
     // ANGLE_shader_pixel_local_storage: keep the maximum number of supported planes reasonably
     // similar on all platforms.
     IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES = 8,
+
+    // QCOM foveated rendering constants
+    // We support a max of 1 layer and 2 focal points, for now
+    // TODO (anglebug.com/8484): Implement support for multiple layers
+    IMPLEMENTATION_MAX_NUM_LAYERS   = 1,
+    IMPLEMENTATION_MAX_FOCAL_POINTS = 2,
 };
 
 namespace limits

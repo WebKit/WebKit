@@ -34,7 +34,7 @@
 namespace WebKit {
 
 class WebExtensionAPINotifications : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINotifications, notifications);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINotifications, notifications, notifications);
 
 public:
 #if PLATFORM(COCOA)

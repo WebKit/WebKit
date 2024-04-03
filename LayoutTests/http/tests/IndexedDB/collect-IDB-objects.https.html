@@ -39,8 +39,7 @@ var promise = new Promise((resolve, reject) => {
                 nukeArray(frames);
                 frames = null;
                 return frameIdentifiers;
-            }
-        );
+            }, { gcCount:100, documentCount:50 });
         resolve(promise);
     };
 });

@@ -94,7 +94,7 @@ bool EmailInputType::supportsSelectionAPI() const
 void EmailInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == multipleAttr)
-        element()->setValueFromRenderer(sanitizeValue(element()->value()));
+        element()->setValueInternal(sanitizeValue(element()->value()), TextFieldEventBehavior::DispatchNoEvent);
 
     BaseTextInputType::attributeChanged(name);
 }
@@ -102,9 +102,13 @@ void EmailInputType::attributeChanged(const QualifiedName& name)
 String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
     // Passing a lambda instead of a function name helps the compiler inline isHTMLLineBreak.
-    String noLineBreakValue = proposedValue.removeCharacters([](auto character) {
-        return isHTMLLineBreak(character);
-    });
+    String noLineBreakValue = proposedValue;
+    if (UNLIKELY(containsHTMLLineBreak(proposedValue))) {
+        noLineBreakValue = proposedValue.removeCharacters([](auto character) {
+            return isHTMLLineBreak(character);
+        });
+    }
+
     ASSERT(element());
     if (!element()->multiple())
         return noLineBreakValue.trim(isASCIIWhitespace);

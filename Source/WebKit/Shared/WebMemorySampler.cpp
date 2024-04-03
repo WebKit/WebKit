@@ -127,7 +127,9 @@ bool WebMemorySampler::isRunning() const
     
 void WebMemorySampler::initializeTempLogFile()
 {
-    m_sampleLogFilePath = FileSystem::openTemporaryFile(processName(), m_sampleLogFile);
+    auto result = FileSystem::openTemporaryFile(processName());
+    m_sampleLogFilePath = result.first;
+    m_sampleLogFile = result.second;
     writeHeaders();
 }
 

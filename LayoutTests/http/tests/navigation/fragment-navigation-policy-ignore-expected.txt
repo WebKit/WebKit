@@ -1,0 +1,11 @@
+Policy delegate: attempt to load http://127.0.0.1:8000/navigation/fragment-navigation-policy-ignore.html#test with navigation type 'other'
+Checks that the client does not prevent a fragment navigation on modern WebKit via the decidePolicyForNavigationAction delegate when activated via JavaScript. The opposite it true for legacy WebKit.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.location.href is "http://127.0.0.1:8000/navigation/fragment-navigation-policy-ignore.html#test"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

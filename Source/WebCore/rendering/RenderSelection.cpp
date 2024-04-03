@@ -183,7 +183,7 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
             
             auto* block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
-                LOG_WITH_STREAM(Scrolling, stream << " added block " << *block);
+                LOG_WITH_STREAM(Selection, stream << " added block " << *block);
                 auto& blockSelectionGeometry = renderers.add(*block, nullptr).iterator->value;
                 if (blockSelectionGeometry)
                     break;

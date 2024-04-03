@@ -47,9 +47,6 @@ public:
 private:
     ApplePayValidateMerchantEvent(const AtomString& type, URL&& validationURL);
 
-    // Event.
-    EventInterface eventInterface() const override;
-
     const URL m_validationURL;
 };
 

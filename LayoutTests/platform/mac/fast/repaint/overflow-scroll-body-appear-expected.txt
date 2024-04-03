@@ -9,7 +9,7 @@ layer at (0,0) size 785x2092
       RenderBlock {P} at (0,34) size 769x18
         RenderText {#text} at (0,0) size 120x18
           text run at (0,0) width 120: "This is the test for "
-        RenderInline {A} at (0,0) size 390x18 [color=#0000EE]
+        RenderInline {A} at (119,0) size 390x18 [color=#0000EE]
           RenderText {#text} at (119,0) size 390x18
             text run at (119,0) width 390: "Bug 36461 - No vertical scrollbar after the CSS class change"
         RenderText {#text} at (508,0) size 5x18

@@ -1,0 +1,19 @@
+10 instructions
+
+[immutable slots]
+i0 = 0
+i1 = 0x3F800000 (1.0)
+
+store_src_rg                   xy = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_constant                  x = 0
+copy_slot_unmasked             $0 = x
+label                          label 0
+copy_constant                  $1 = 0x3F800000 (1.0)
+copy_constant                  $2 = 0
+copy_constant                  x = 0x3F800000 (1.0)
+copy_slot_unmasked             $3 = x
+label                          label 0x00000002
+copy_2_slots_unmasked          rg = $2..3
+label                          label 0x00000001
+load_src                       src.rgba = $0..3

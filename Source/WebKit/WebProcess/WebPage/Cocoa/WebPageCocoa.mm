@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "EditorState.h"
+#import "GPUProcessConnection.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
@@ -44,6 +45,7 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentInlines.h>
 #import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DragImage.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -65,6 +67,7 @@
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
+#import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
@@ -75,7 +78,9 @@
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
@@ -88,6 +93,10 @@
 
 #if USE(EXTENSIONKIT)
 #import "WKProcessExtension.h"
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#import "UnifiedTextReplacementController.h"
 #endif
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
@@ -103,9 +112,16 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
     platformInitializeAccessibility();
 
 #if ENABLE(MEDIA_STREAM)
-    if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
-        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, parameters.shouldCaptureDisplayInGPUProcess, m_page->settings().webRTCRemoteVideoFrameEnabled());
-#endif
+    if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>()) {
+        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, parameters.shouldCaptureDisplayInGPUProcess,
+#if ENABLE(WEB_RTC)
+            m_page->settings().webRTCRemoteVideoFrameEnabled()
+#else
+            false
+#endif // ENABLE(WEB_RTC)
+        );
+    }
+#endif // ENABLE(MEDIA_STREAM)
 #if USE(LIBWEBRTC)
     LibWebRTCCodecs::setCallbacks(m_page->settings().webRTCPlatformCodecsInGPUProcessEnabled(), m_page->settings().webRTCRemoteVideoFrameEnabled());
     LibWebRTCCodecs::setWebRTCMediaPipelineAdditionalLoggingEnabled(m_page->settings().webRTCMediaPipelineAdditionalLoggingEnabled());
@@ -141,27 +157,21 @@ void WebPage::setHasLaunchedWebContentProcess()
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+    WebCore::PublicSuffixStore::singleton().addPublicSuffix(parameters.publicSuffix);
     m_dataDetectionReferenceDate = parameters.dataDetectionReferenceDate;
 }
 
-void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)
+void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, WebCore::NowPlayingInfo&&)>&& completionHandler)
 {
-    bool hasActiveSession = false;
-    String title = emptyString();
-    double duration = NAN;
-    double elapsedTime = NAN;
-    uint64_t uniqueIdentifier = 0;
-    bool registeredAsNowPlayingApplication = false;
     if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
-        hasActiveSession = sharedManager->hasActiveNowPlayingSession();
-        title = sharedManager->lastUpdatedNowPlayingTitle();
-        duration = sharedManager->lastUpdatedNowPlayingDuration();
-        elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
-        uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64();
-        registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
+        if (auto nowPlayingInfo = sharedManager->nowPlayingInfo()) {
+            bool registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
+            completionHandler(registeredAsNowPlayingApplication, WTFMove(*nowPlayingInfo));
+            return;
+        }
     }
 
-    completionHandler(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
+    completionHandler(false, { });
 }
 
 #if ENABLE(PDF_PLUGIN)
@@ -202,7 +212,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     auto result = localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->view()->windowToContents(roundedIntPoint(floatPoint)), hitType);
 
-    RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -210,32 +220,33 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!rangeResult)
         return;
 
-    auto [range, options] = WTFMove(*rangeResult);
-    performDictionaryLookupForRange(*frame, range, options, TextIndicatorPresentationTransition::Bounce);
+    performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
 }
 
 void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
 {
-    auto result = DictionaryLookup::rangeForSelection(selection);
-    if (!result)
+    auto range = DictionaryLookup::rangeForSelection(selection);
+    if (!range)
         return;
 
-    auto [range, options] = WTFMove(*result);
-    performDictionaryLookupForRange(frame, range, options, presentationTransition);
+    performDictionaryLookupForRange(frame, *range, presentationTransition);
 }
 
 void WebPage::performDictionaryLookupOfCurrentSelection()
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    performDictionaryLookupForSelection(frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
-}
-    
-void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
-{
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, options, presentationTransition)));
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    performDictionaryLookupForSelection(*frame, frame->selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
 }
 
-DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, const SimpleRange& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+void WebPage::performDictionaryLookupForRange(LocalFrame& frame, const SimpleRange& range, TextIndicatorPresentationTransition presentationTransition)
+{
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, presentationTransition)));
+}
+
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, const SimpleRange& range, TextIndicatorPresentationTransition presentationTransition)
 {
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
@@ -256,9 +267,8 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     const RenderStyle* style = range.startContainer().renderStyle();
-    float scaledAscent = style ? style->metricsOfPrimaryFont().ascent() * pageScaleFactor() : 0;
+    float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
-    dictionaryPopupInfo.platformData.options = options;
 
 #if PLATFORM(MAC)
     auto attributedString = editingAttributedString(range, IncludeImages::No).nsAttributedString();
@@ -299,12 +309,29 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     return dictionaryPopupInfo;
 }
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    m_unifiedTextReplacementController->getTextIndicatorForID(uuid, WTFMove(completionHandler));
+}
+
+void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    // FIXME: Turn on/off the visibility.
+
+    completionHandler();
+}
+
+#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+
 void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& replacementEditingRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, InsertTextOptions&& options)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
 
     if (replacementEditingRange.location != notFound) {
-        auto replacementRange = EditingRange::toRange(frame, replacementEditingRange);
+        auto replacementRange = EditingRange::toRange(*frame, replacementEditingRange);
         if (replacementRange)
             frame->selection().setSelection(VisibleSelection { *replacementRange });
     }
@@ -329,7 +356,10 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
 
 void WebPage::addDictationAlternative(const String& text, DictationContext context, CompletionHandler<void(bool)>&& completion)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         completion(false);
@@ -353,7 +383,7 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
     auto targetOffset = characterCount(*searchRange);
     targetOffset -= std::min<uint64_t>(targetOffset, text.length());
-    auto matchRange = findClosestPlainText(*searchRange, text, { Backwards, DoNotRevealSelection }, targetOffset);
+    auto matchRange = findClosestPlainText(*searchRange, text, { FindOption::Backwards, FindOption::DoNotRevealSelection }, targetOffset);
     if (matchRange.collapsed()) {
         completion(false);
         return;
@@ -365,7 +395,10 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
 void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document) {
         completion({ });
@@ -390,7 +423,10 @@ void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<Dic
 
 void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     RefPtr document = frame->document();
     if (!document)
         return;
@@ -408,10 +444,48 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
     }, DocumentMarker::Type::DictationAlternatives);
 }
 
-void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
+void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken, FrameIdentifier frameID)
 {
-    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(span(remoteToken.get()), frameID));
+}
+
+void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int processIdentifier)
+{
+#if PLATFORM(MAC)
+    if (registerStatus)
+        [NSAccessibilityRemoteUIElement registerRemoteUIProcessIdentifier:processIdentifier];
+    else
+        [NSAccessibilityRemoteUIElement unregisterRemoteUIProcessIdentifier:processIdentifier];
+#else
+    UNUSED_PARAM(registerStatus);
+    UNUSED_PARAM(processIdentifier);
+#endif
+}
+
+void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    auto* renderer = coreLocalFrame->contentRenderer();
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ }, 0);
+    }
+
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken);
+
+    // Get our remote token data and send back to the RemoteFrame.
+    completionHandler(span(accessibilityRemoteTokenData().get()), getpid());
 }
 
 #if ENABLE(APPLE_PAY)
@@ -425,7 +499,8 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    completionHandler(is<LocalFrame>(m_page->mainFrame()) ? attributedString(makeRangeSelectingNodeContents(Ref { *downcast<LocalFrame>(m_page->mainFrame()).document() })) : AttributedString());
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(Ref { *localFrame->document() })) : AttributedString());
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)
@@ -587,6 +662,8 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         }
 
         postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
+
+        postLayoutData.canEnableWritingSuggestions = selection.canEnableWritingSuggestions();
     }
 
     if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
@@ -600,19 +677,16 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
-#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
-    return completionHandler({ });
-#else
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
         return completionHandler({ });
 
-    auto* pluginView = pluginViewForFrame(webFrame->coreLocalFrame());
-    if (!pluginView)
-        return completionHandler({ });
-    
-    completionHandler(FloatSize(pluginView->pdfDocumentSizeForPrinting()));
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = pluginViewForFrame(webFrame->coreLocalFrame()))
+        return completionHandler(pluginView->pdfDocumentSizeForPrinting());
 #endif
+
+    completionHandler({ });
 }
 
 #if ENABLE(DATA_DETECTION)
@@ -634,7 +708,7 @@ class OverridePasteboardForSelectionReplacement {
     WTF_MAKE_NONCOPYABLE(OverridePasteboardForSelectionReplacement);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OverridePasteboardForSelectionReplacement(const Vector<String>& types, const IPC::DataReference& data)
+    OverridePasteboardForSelectionReplacement(const Vector<String>& types, std::span<const uint8_t> data)
         : m_types(types)
     {
         for (auto& type : types)
@@ -653,9 +727,12 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
 {
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
     auto element = elementForContext(elementContext);
     if (!element || !element->isContentEditable())
         return;
@@ -680,7 +757,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
 
     {
         OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
-        IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
+        IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
         frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName(), EditAction::RemoveBackground);
 
         auto position = frame->selection().selection().visibleStart();
@@ -720,7 +797,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t> data)
 {
     OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
     readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
@@ -728,12 +805,26 @@ void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, co
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)
 {
-    Ref frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler(false);
     if (frame->selection().isNone())
         return completionHandler(false);
     frame->editor().readSelectionFromPasteboard(pasteboardName);
     completionHandler(true);
 }
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+void WebPage::insertMultiRepresentationHEIC(std::span<const uint8_t> data)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+    if (frame->selection().isNone())
+        return;
+    frame->editor().insertMultiRepresentationHEIC(data);
+}
+#endif
 
 std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWithResult(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
@@ -800,7 +891,7 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (m_allowedQueryParametersForAdvancedPrivacyProtections.isEmpty()) {
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to allow query parameters (missing data)");
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to hide query parameters from script (missing data)");
         return url;
     }
 
@@ -832,6 +923,131 @@ void WebPage::setMediaEnvironment(const String& mediaEnvironment)
         gpuProcessConnection->setMediaEnvironment(identifier(), mediaEnvironment);
 }
 #endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+void WebPage::willBeginTextReplacementSession(const WTF::UUID& uuid, WebUnifiedTextReplacementType type, CompletionHandler<void(const Vector<WebUnifiedTextReplacementContextData>&)>&& completionHandler)
+{
+    m_unifiedTextReplacementController->willBeginTextReplacementSession(uuid, type, WTFMove(completionHandler));
+}
+
+void WebPage::didBeginTextReplacementSession(const WTF::UUID& uuid, const Vector<WebUnifiedTextReplacementContextData>& contexts)
+{
+    m_unifiedTextReplacementController->didBeginTextReplacementSession(uuid, contexts);
+}
+
+void WebPage::textReplacementSessionDidReceiveReplacements(const WTF::UUID& uuid, const Vector<WebTextReplacementData>& replacements, const WebUnifiedTextReplacementContextData& context, bool finished)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveReplacements(uuid, replacements, context, finished);
+}
+
+void WebPage::textReplacementSessionDidUpdateStateForReplacement(const WTF::UUID& uuid, WebTextReplacementData::State state, const WebTextReplacementData& replacement, const WebUnifiedTextReplacementContextData& context)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidUpdateStateForReplacement(uuid, state, replacement, context);
+}
+
+void WebPage::didEndTextReplacementSession(const WTF::UUID& uuid, bool accepted)
+{
+    m_unifiedTextReplacementController->didEndTextReplacementSession(uuid, accepted);
+}
+
+void WebPage::textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID& uuid, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebUnifiedTextReplacementContextData& context)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveTextWithReplacementRange(uuid, attributedText, range, context);
+}
+
+void WebPage::textReplacementSessionDidReceiveEditAction(const WTF::UUID& uuid, WebKit::WebTextReplacementData::EditAction action)
+{
+    m_unifiedTextReplacementController->textReplacementSessionDidReceiveEditAction(uuid, action);
+}
+
+void WebPage::textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect rect)
+{
+    send(Messages::WebPageProxy::TextReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(sessionUUID, replacementUUID, rect));
+}
+
+void WebPage::textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementData::State state, const WTF::UUID& replacementUUID)
+{
+    send(Messages::WebPageProxy::TextReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID));
+}
+
+#endif
+
+std::optional<SimpleRange> WebPage::autocorrectionContextRange()
+{
+    // The algorithm this function uses is essentially:
+    //
+    // 1. Get the current start and end positions of the selection.
+    //
+    // 2. Ideally, the selection range will simply just be extended to the edges of the sentence each
+    //    position is part of. If this has enough words and characters, the algorithm is finished.
+    //
+    // 3. Otherwise, leave the end position alone, and start moving the start position backwards,
+    //    word-by-word, until the minimum word count / maximum context length has been reached.
+
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame)
+        return std::nullopt;
+
+    VisiblePosition contextStartPosition;
+
+    VisiblePosition startPosition = frame->selection().selection().start();
+    VisiblePosition endPosition = frame->selection().selection().end();
+
+    constexpr unsigned minContextWordCount = 10;
+    constexpr unsigned maxContextLength = 100;
+
+    auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+
+    // If the start position is at the very start of the editable content, we can't go back any more
+    // than that, so use the original start position if that is the case.
+    if (startPosition != firstPositionInEditableContent) {
+        // Otherwise, start going backwards to find an ideal start position.
+
+        contextStartPosition = startPosition;
+        unsigned totalContextLength = 0;
+
+        // Keep trying to go back as much as possible until the minimum word count or context length
+        // has been reached; and only go back word-by-word, so that the range doesn't cut off part
+        // of a word.
+        for (unsigned i = 0; i < minContextWordCount; ++i) {
+            auto previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
+            if (previousPosition.isNull())
+                break;
+
+            auto currentWordRange = makeSimpleRange(previousPosition, contextStartPosition);
+            if (currentWordRange) {
+                auto currentWord = WebCore::plainTextReplacingNoBreakSpace(*currentWordRange);
+                totalContextLength += currentWord.length();
+            }
+
+            if (totalContextLength >= maxContextLength)
+                break;
+
+            contextStartPosition = previousPosition;
+        }
+
+        // If the beginning of the sentence the original position is a part of is before the new start position,
+        // use that, since it will not cut off a sentence, and will provide at least equal or more context.
+        VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
+        if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
+            contextStartPosition = sentenceContextStartPosition;
+    }
+
+    // Otherwise, just use the original start position.
+    if (contextStartPosition.isNull())
+        contextStartPosition = startPosition;
+
+    // If the end position is at the very end of the editable content, we can't go forward any more
+    // than that, so use the original end position if that is the case.
+    if (endPosition != endOfEditableContent(endPosition)) {
+        // Otherwise, move the end position to the end of the sentence the original end position is part of, if applicable.
+        VisiblePosition nextPosition = endOfSentence(endPosition);
+        if (nextPosition.isNotNull() && nextPosition > endPosition)
+            endPosition = nextPosition;
+    }
+
+    return makeSimpleRange(contextStartPosition, endPosition);
+}
 
 } // namespace WebKit
 

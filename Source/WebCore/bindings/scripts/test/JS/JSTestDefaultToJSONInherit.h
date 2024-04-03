@@ -32,8 +32,9 @@ public:
     using DOMWrapped = TestDefaultToJSONInherit;
     static JSTestDefaultToJSONInherit* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl)
     {
-        JSTestDefaultToJSONInherit* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInherit>(globalObject->vm())) JSTestDefaultToJSONInherit(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestDefaultToJSONInherit* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInherit>(vm)) JSTestDefaultToJSONInherit(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -60,6 +61,9 @@ public:
     {
         return static_cast<TestDefaultToJSONInherit&>(Base::wrapped());
     }
+
+    Ref<TestDefaultToJSONInherit> protectedWrapped() const;
+
 protected:
     JSTestDefaultToJSONInherit(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONInherit>&&);
 

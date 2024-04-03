@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86_64"
+//@ skip if $cloop or not (["arm64", "x86_64", "arm"].include? $architecture)
 
 let s = `
 for (let i = 0; i < 10000; i++) {

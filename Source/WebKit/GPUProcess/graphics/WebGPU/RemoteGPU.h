@@ -42,6 +42,8 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore::WebGPU {
 class GPU;
@@ -68,7 +70,7 @@ class ObjectHeap;
 struct RequestAdapterOptions;
 }
 
-class RemoteGPU final : public IPC::StreamMessageReceiver {
+class RemoteGPU final : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGPU> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteGPU> create(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
@@ -113,7 +115,7 @@ private:
 
     void createCompositorIntegration(WebGPUIdentifier);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<WebCore::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());

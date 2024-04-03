@@ -9,10 +9,13 @@
 #ifndef LIBANGLE_ANGLETYPES_H_
 #define LIBANGLE_ANGLETYPES_H_
 
+#include <anglebase/sha1.h>
 #include "common/Color.h"
 #include "common/FixedVector.h"
+#include "common/MemoryBuffer.h"
 #include "common/PackedEnums.h"
 #include "common/bitset_utils.h"
+#include "common/hash_utils.h"
 #include "common/vector_utils.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Error.h"
@@ -514,7 +517,11 @@ using VertexArrayBufferBindingMask = angle::BitSet<MAX_VERTEX_ATTRIB_BINDINGS>;
 using AttributesMask = angle::BitSet<MAX_VERTEX_ATTRIBS>;
 
 // Used in Program
-using UniformBlockBindingMask = angle::BitSet<IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+using ProgramUniformBlockMask = angle::BitSet<IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+template <typename T>
+using ProgramUniformBlockArray = std::array<T, IMPLEMENTATION_MAX_COMBINED_SHADER_UNIFORM_BUFFERS>;
+template <typename T>
+using UniformBufferBindingArray = std::array<T, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;
 
 // Used in Framebuffer / Program
 using DrawBufferMask = angle::BitSet8<IMPLEMENTATION_MAX_DRAW_BUFFERS>;
@@ -1006,22 +1013,15 @@ using DrawBuffersVector = angle::FixedVector<T, IMPLEMENTATION_MAX_DRAW_BUFFERS>
 template <typename T>
 using AttribArray = std::array<T, MAX_VERTEX_ATTRIBS>;
 
+template <typename T>
+using AttribVector = angle::FixedVector<T, MAX_VERTEX_ATTRIBS>;
+
 using ActiveTextureMask = angle::BitSet<IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 
 template <typename T>
 using ActiveTextureArray = std::array<T, IMPLEMENTATION_MAX_ACTIVE_TEXTURES>;
 
 using ActiveTextureTypeArray = ActiveTextureArray<TextureType>;
-
-template <typename T>
-using UniformBuffersArray = std::array<T, IMPLEMENTATION_MAX_UNIFORM_BUFFER_BINDINGS>;
-template <typename T>
-using StorageBuffersArray = std::array<T, IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS>;
-template <typename T>
-using AtomicCounterBuffersArray = std::array<T, IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>;
-using AtomicCounterBufferMask   = angle::BitSet<IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>;
-template <typename T>
-using ImagesArray = std::array<T, IMPLEMENTATION_MAX_IMAGE_UNITS>;
 
 using ImageUnitMask = angle::BitSet<IMPLEMENTATION_MAX_IMAGE_UNITS>;
 
@@ -1182,6 +1182,69 @@ inline DestT *SafeGetImplAs(SrcT *src)
 
 namespace angle
 {
+enum class NativeWindowSystem
+{
+    X11,
+    Wayland,
+    Gbm,
+    Other,
+};
+
+struct FeatureOverrides
+{
+    std::vector<std::string> enabled;
+    std::vector<std::string> disabled;
+    bool allDisabled = false;
+};
+
+// 160-bit SHA-1 hash key used for hasing a program.  BlobCache opts in using fixed keys for
+// simplicity and efficiency.
+static constexpr size_t kBlobCacheKeyLength = angle::base::kSHA1Length;
+using BlobCacheKey                          = std::array<uint8_t, kBlobCacheKeyLength>;
+class BlobCacheValue  // To be replaced with std::span when C++20 is required
+{
+  public:
+    BlobCacheValue() : mPtr(nullptr), mSize(0) {}
+    BlobCacheValue(const uint8_t *ptr, size_t size) : mPtr(ptr), mSize(size) {}
+
+    // A very basic struct to hold the pointer and size together.  The objects of this class
+    // don't own the memory.
+    const uint8_t *data() { return mPtr; }
+    size_t size() { return mSize; }
+
+    const uint8_t &operator[](size_t pos) const
+    {
+        ASSERT(pos < mSize);
+        return mPtr[pos];
+    }
+
+  private:
+    const uint8_t *mPtr;
+    size_t mSize;
+};
+
+bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer *compressedData);
+bool DecompressBlob(const uint8_t *compressedData,
+                    const size_t compressedSize,
+                    size_t maxUncompressedDataSize,
+                    MemoryBuffer *uncompressedData);
+}  // namespace angle
+
+namespace std
+{
+template <>
+struct hash<angle::BlobCacheKey>
+{
+    // Simple routine to hash four ints.
+    size_t operator()(const angle::BlobCacheKey &key) const
+    {
+        return angle::ComputeGenericHash(key.data(), key.size());
+    }
+};
+}  // namespace std
+
+namespace angle
+{
 // Under certain circumstances, such as for increased parallelism, the backend may defer an
 // operation to be done at the end of a call after the locks have been unlocked.  The entry point
 // function passes an |UnlockedTailCall| through the frontend to the backend.  If it is set, the
@@ -1312,6 +1375,94 @@ using UniqueObjectPointer = std::unique_ptr<ObjT, DestroyThenDelete<ObjT, Contex
 namespace gl
 {
 class State;
+
+// Focal Point information for foveated rendering
+struct FocalPoint
+{
+    float focalX;
+    float focalY;
+    float gainX;
+    float gainY;
+    float foveaArea;
+
+    constexpr FocalPoint() : focalX(0), focalY(0), gainX(0), gainY(0), foveaArea(0) {}
+
+    FocalPoint(float fX, float fY, float gX, float gY, float fArea)
+        : focalX(fX), focalY(fY), gainX(gX), gainY(gY), foveaArea(fArea)
+    {}
+    FocalPoint(const FocalPoint &other)            = default;
+    FocalPoint &operator=(const FocalPoint &other) = default;
+
+    bool operator==(const FocalPoint &other) const
+    {
+        return focalX == other.focalX && focalY == other.focalY && gainX == other.gainX &&
+               gainY == other.gainY && foveaArea == other.foveaArea;
+    }
+    bool operator!=(const FocalPoint &other) const { return !(*this == other); }
+};
+
+constexpr FocalPoint kInvalidFocalPoint = FocalPoint();
+
+class FoveationState
+{
+  public:
+    FoveationState()
+    {
+        mConfigured          = false;
+        mFoveatedFeatureBits = 0;
+        mMinPixelDensity     = 0.0f;
+        mFocalPoints.fill(kInvalidFocalPoint);
+    }
+    FoveationState &operator=(const FoveationState &other) = default;
+
+    void configure() { mConfigured = true; }
+    bool isConfigured() const { return mConfigured; }
+    bool isFoveated() const
+    {
+        // Consider foveated if ANY focal point is valid
+        return std::any_of(
+            mFocalPoints.begin(), mFocalPoints.end(),
+            [](const FocalPoint &focalPoint) { return (focalPoint != kInvalidFocalPoint); });
+    }
+    bool operator==(const FoveationState &other) const
+    {
+        return mConfigured == other.mConfigured &&
+               mFoveatedFeatureBits == other.mFoveatedFeatureBits &&
+               mMinPixelDensity == other.mMinPixelDensity && mFocalPoints == other.mFocalPoints;
+    }
+    bool operator!=(const FoveationState &other) const { return !(*this == other); }
+
+    void setFoveatedFeatureBits(const GLuint features) { mFoveatedFeatureBits = features; }
+    GLuint getFoveatedFeatureBits() const { return mFoveatedFeatureBits; }
+    void setMinPixelDensity(const GLfloat density) { mMinPixelDensity = density; }
+    GLfloat getMinPixelDensity() const { return mMinPixelDensity; }
+    GLuint getMaxNumFocalPoints() const { return gl::IMPLEMENTATION_MAX_FOCAL_POINTS; }
+    void setFocalPoint(uint32_t layer, uint32_t focalPointIndex, const FocalPoint &focalPoint)
+    {
+        mFocalPoints[getIndex(layer, focalPointIndex)] = focalPoint;
+    }
+    const FocalPoint &getFocalPoint(uint32_t layer, uint32_t focalPointIndex) const
+    {
+        return mFocalPoints[getIndex(layer, focalPointIndex)];
+    }
+    GLuint getSupportedFoveationFeatures() const { return GL_FOVEATION_ENABLE_BIT_QCOM; }
+
+  private:
+    size_t getIndex(uint32_t layer, uint32_t focalPointIndex) const
+    {
+        ASSERT(layer < IMPLEMENTATION_MAX_NUM_LAYERS &&
+               focalPointIndex < IMPLEMENTATION_MAX_FOCAL_POINTS);
+        return (layer * IMPLEMENTATION_MAX_FOCAL_POINTS) + focalPointIndex;
+    }
+    bool mConfigured;
+    GLuint mFoveatedFeatureBits;
+    GLfloat mMinPixelDensity;
+
+    static constexpr size_t kMaxFocalPoints =
+        IMPLEMENTATION_MAX_NUM_LAYERS * IMPLEMENTATION_MAX_FOCAL_POINTS;
+    std::array<FocalPoint, kMaxFocalPoints> mFocalPoints;
+};
+
 }  // namespace gl
 
 #endif  // LIBANGLE_ANGLETYPES_H_

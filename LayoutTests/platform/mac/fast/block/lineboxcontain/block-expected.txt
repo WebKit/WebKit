@@ -14,7 +14,7 @@ layer at (0,0) size 800x162
         RenderBlock {DIV} at (320,0) size 64x128 [bgcolor=#008000]
         RenderBR {BR} at (384,0) size 0x64
         RenderBlock {DIV} at (0,0) size 64x128 [bgcolor=#008000]
-        RenderInline {SPAN} at (0,0) size 320x64 [color=#008000]
+        RenderInline {SPAN} at (64,64) size 320x64 [color=#008000]
           RenderText {#text} at (64,64) size 320x64
             text run at (64,64) width 320: "xxxxx"
         RenderText {#text} at (0,0) size 0x0

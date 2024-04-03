@@ -17,13 +17,13 @@ PASS CSSStyleDeclaration is immutable
 PASS Unknown pseudo-element with a known identifier: backdrop
 FAIL Unknown pseudo-element with a known identifier: file-selector-button assert_equals: Should return the ::file-selector-button style expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 PASS Unknown pseudo-element with a known identifier: grammar-error
-FAIL Unknown pseudo-element with a known identifier: highlight(name) assert_equals: Should return the ::highlight(name) style expected "rgb(0, 128, 0)" but got ""
+PASS Unknown pseudo-element with a known identifier: highlight(name)
 PASS Unknown pseudo-element with a known identifier: marker
 FAIL Unknown pseudo-element with a known identifier: placeholder assert_equals: Should return the ::placeholder style expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 PASS Unknown pseudo-element with a known identifier: spelling-error
 PASS Unknown pseudo-element with a known identifier: view-transition
-FAIL Unknown pseudo-element with a known identifier: view-transition-image-pair(name) assert_equals: Should return the ::view-transition-image-pair(name) style expected "rgb(0, 128, 0)" but got ""
-FAIL Unknown pseudo-element with a known identifier: view-transition-group(name) assert_equals: Should return the ::view-transition-group(name) style expected "rgb(0, 128, 0)" but got ""
-FAIL Unknown pseudo-element with a known identifier: view-transition-old(name) assert_equals: Should return the ::view-transition-old(name) style expected "rgb(0, 128, 0)" but got ""
-FAIL Unknown pseudo-element with a known identifier: view-transition-new(name) assert_equals: Should return the ::view-transition-new(name) style expected "rgb(0, 128, 0)" but got ""
+PASS Unknown pseudo-element with a known identifier: view-transition-image-pair(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-group(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-old(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-new(name)
 

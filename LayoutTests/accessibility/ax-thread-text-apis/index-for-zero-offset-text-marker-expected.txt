@@ -1,0 +1,15 @@
+This test ensures we can get the index of a zero offset text marker without crashing.
+
+PASS: axElement.indexForTextMarker(startMarker) === 39
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is static text
+with a line break.
+This is text inside a p tag
+with a line break
+
+This is text inside a div
+with a line break
+This is text in a p tag with no line break

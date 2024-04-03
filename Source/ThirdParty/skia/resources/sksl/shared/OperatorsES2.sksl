@@ -1,0 +1,25 @@
+uniform half4 colorGreen, colorRed;
+uniform half unknownInput;
+
+half4 main(float2 coords) {
+    float x = 1, y = 2;
+    int z = 3;
+    x = x - x + y * x * x * (y - x);
+    y = x / y / x;
+    z = (z / 2 * 3 + 4) - 2;
+    bool b = (x > 4) == x < 2 || 2 >= unknownInput && y <= x;
+    bool c = unknownInput > 2;
+    bool d = b ^^ !!c;
+    bool e = b && c;
+    bool f = !!b || c;
+    x += 12;
+    x -= 12;
+    x *= y /= 10;
+    x = 6;
+    y = float(b) * float(c) * float(d) * float(e) * float(f);
+    y = 6;
+    z = z - 1;
+    z = 6;
+
+    return (x == 6 && y == 6 && z == 6) ? colorGreen : colorRed;
+}

@@ -49,7 +49,7 @@ public:
     virtual void insert(SegmentedString&&) = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
-    virtual void appendBytes(DocumentWriter&, const uint8_t* bytes, size_t length) = 0;
+    virtual void appendBytes(DocumentWriter&, std::span<const uint8_t>) = 0;
     virtual void flush(DocumentWriter&) = 0;
 
     virtual void append(RefPtr<StringImpl>&&) = 0;
@@ -116,7 +116,7 @@ private:
 
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be nullptr after the parser is stopped.
-    CheckedPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

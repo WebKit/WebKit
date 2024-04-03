@@ -46,7 +46,7 @@ layer at (0,0) size 785x794
           text run at (233,306) width 152: "ignore this float text"
           text run at (0,324) width 257: "ignore this float text ignore this float"
       RenderBlock {DIV} at (0,154) size 769x468 [color=#C0C0C0]
-        RenderText {#text} at (384,0) size 769x468
+        RenderText {#text} at (0,0) size 769x468
           text run at (384,0) width 385: "this is some dummy text this is some dummy text this is"
           text run at (384,18) width 98: "some dummy "
           text run at (481,18) width 288: "text this is some dummy text this is some"

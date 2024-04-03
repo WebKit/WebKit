@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 758x18
           text run at (0,0) width 758: "Mousing over the yellow square below should not cause an assertion failure or crash. This tests for regressions against"
-        RenderInline {A} at (0,0) size 32x18 [color=#0000EE]
+        RenderInline {A} at (0,18) size 32x18 [color=#0000EE]
           RenderText {#text} at (0,18) size 32x18
             text run at (0,18) width 32: "6931"
         RenderText {#text} at (32,18) size 4x18

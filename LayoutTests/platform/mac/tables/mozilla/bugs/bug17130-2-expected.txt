@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 156x18
           text run at (0,0) width 156: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 508x18 [color=#0000EE]
+        RenderInline {A} at (156,0) size 508x18 [color=#0000EE]
           RenderText {#text} at (156,0) size 508x18
             text run at (156,0) width 508: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
       RenderBlock {H4} at (0,39) size 784x19
@@ -16,15 +16,15 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
             RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 144x18 [color=#FFCC00]
+              RenderInline {FONT} at (1,1) size 144x18 [color=#FFCC00]
                 RenderText {#text} at (1,1) size 8x18
                   text run at (1,1) width 8: "  "
-                RenderInline {SPAN} at (0,0) size 42x18
+                RenderInline {SPAN} at (9,1) size 42x18
                   RenderText {#text} at (9,1) size 42x18
                     text run at (9,1) width 42: "CNET"
                 RenderText {#text} at (50,1) size 14x18
                   text run at (50,1) width 14: " : "
-                RenderInline {SPAN} at (0,0) size 74x18
+                RenderInline {SPAN} at (63,1) size 74x18
                   RenderText {#text} at (63,1) size 74x18
                     text run at (63,1) width 74: "Downloads"
                 RenderText {#text} at (136,1) size 9x18
@@ -38,6 +38,6 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]
             RenderTableCell {TD} at (2,2) size 780x20 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 144x18 [color=#FFCC00]
+              RenderInline {FONT} at (1,1) size 144x18 [color=#FFCC00]
                 RenderText {#text} at (1,1) size 144x18
                   text run at (1,1) width 144: "  CNET : Downloads :"

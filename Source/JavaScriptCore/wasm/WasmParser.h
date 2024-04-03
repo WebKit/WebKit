@@ -63,6 +63,7 @@ public:
 
     const uint8_t* source() const { return m_source; }
     size_t length() const { return m_sourceLength; }
+    std::span<const uint8_t> sourceSpan() const { return { m_source, m_sourceLength }; }
     size_t offset() const { return m_offset; }
 
 protected:
@@ -176,10 +177,10 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t s
     if (!result.tryReserveCapacity(stringLength))
         return false;
 
-    const uint8_t* stringStart = source() + m_offset;
+    auto* stringStart = source() + m_offset;
 
     // We don't cache the UTF-16 characters since it seems likely the string is ASCII.
-    if (UNLIKELY(!charactersAreAllASCII(stringStart, stringLength))) {
+    if (UNLIKELY(!charactersAreAllASCII(std::span { stringStart, stringLength }))) {
         Vector<UChar, 1024> buffer(stringLength);
         UChar* bufferStart = buffer.data();
 

@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <cairo.h>
 #include <glib-object.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -27,6 +26,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
+
+#if USE(CAIRO) || PLATFORM(GTK)
+#include <cairo.h>
+#endif
 
 #if PLATFORM(GTK) && USE(GTK4)
 #include <webkit/webkit.h>
@@ -295,6 +298,7 @@ public:
         g_log_set_always_fatal(static_cast<GLogLevelFlags>(fatalMask));
     }
 
+#if USE(CAIRO) || PLATFORM(GTK)
     static bool cairoSurfacesEqual(cairo_surface_t* s1, cairo_surface_t* s2)
     {
         return (cairo_image_surface_get_format(s1) == cairo_image_surface_get_format(s2)
@@ -305,6 +309,7 @@ public:
                 const_cast<const void*>(reinterpret_cast<void*>(cairo_image_surface_get_data(s2))),
                 cairo_image_surface_get_height(s1)*cairo_image_surface_get_stride(s1)));
     }
+#endif
 
     HashSet<GObject*> m_watchedObjects;
     GRefPtr<WebKitWebContext> m_webContext;

@@ -2,6 +2,7 @@ configure_file(wpe-platform-drm.pc.in ${CMAKE_BINARY_DIR}/wpe-platform-drm-${WPE
 configure_file(wpe-platform-drm-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-platform-drm-${WPE_API_VERSION}-uninstalled.pc @ONLY)
 
 set(WPEPlatformDRM_SOURCES
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/RefPtrUdev.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRM.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMCursor.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMCursorTheme.cpp
@@ -9,12 +10,14 @@ set(WPEPlatformDRM_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMSession.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDRMSessionLogind.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDisplayDRM.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEMonitorDRM.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEViewDRM.cpp
 )
 
 set(WPEPlatformDRM_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/wpe-drm.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEDisplayDRM.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEMonitorDRM.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/drm/WPEViewDRM.h
 )
 

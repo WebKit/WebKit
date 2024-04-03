@@ -189,6 +189,7 @@ const ProcEntry g_procTable[] = {
     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
     {"glBindImageTexture", P(GL_BindImageTexture)},
     DESKTOP_ONLY("glBindImageTextures", GL_BindImageTextures)
+    {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
@@ -512,6 +513,8 @@ const ProcEntry g_procTable[] = {
     {"glFogx", P(GL_Fogx)},
     {"glFogxv", P(GL_Fogxv)},
     {"glFramebufferFetchBarrierEXT", P(GL_FramebufferFetchBarrierEXT)},
+    {"glFramebufferFoveationConfigQCOM", P(GL_FramebufferFoveationConfigQCOM)},
+    {"glFramebufferFoveationParametersQCOM", P(GL_FramebufferFoveationParametersQCOM)},
     {"glFramebufferMemorylessPixelLocalStorageANGLE", P(GL_FramebufferMemorylessPixelLocalStorageANGLE)},
     {"glFramebufferParameteri", P(GL_FramebufferParameteri)},
     {"glFramebufferParameteriMESA", P(GL_FramebufferParameteriMESA)},
@@ -1405,6 +1408,7 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glTextureBarrier", GL_TextureBarrier)
     DESKTOP_ONLY("glTextureBuffer", GL_TextureBuffer)
     DESKTOP_ONLY("glTextureBufferRange", GL_TextureBufferRange)
+    {"glTextureFoveationParametersQCOM", P(GL_TextureFoveationParametersQCOM)},
     DESKTOP_ONLY("glTextureParameterIiv", GL_TextureParameterIiv)
     DESKTOP_ONLY("glTextureParameterIuiv", GL_TextureParameterIuiv)
     DESKTOP_ONLY("glTextureParameterf", GL_TextureParameterf)

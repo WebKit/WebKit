@@ -18,7 +18,7 @@ Registrable domain: 127.0.0.1
         localhost
     TopFrameUniqueRedirectsFrom:
         localhost
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: Yes
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -32,7 +32,7 @@ Registrable domain: localhost
         127.0.0.1
     TopFrameUniqueRedirectsFrom:
         127.0.0.1
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     SubframeUnderTopFrameDomains:
         127.0.0.1
     isPrevalentResource: Yes

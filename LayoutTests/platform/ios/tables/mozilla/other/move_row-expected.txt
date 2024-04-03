@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,122) size 45x22 [r=5 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 43x19
                 text run at (1,1) width 43: "Row 5"
-      RenderBlock (anonymous) at (0,146) size 784x22
+      RenderBlock (anonymous) at (0,146) size 784x23
         RenderTextControl {INPUT} at (0,1) size 22x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (22,0) size 4x19
           text run at (22,0) width 4: " "

@@ -1,3 +1,0 @@
-Tests whether we switch back to a hidpi backing store when rasterized content is added to the canvas layer.
-
-

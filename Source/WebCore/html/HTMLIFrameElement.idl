@@ -25,7 +25,7 @@
     JSGenerateToNativeObject
 ] interface HTMLIFrameElement : HTMLElement {
     [Reflect, URL, CEReactions=NotNeeded] attribute USVString src;
-    [Reflect, CEReactions=NotNeeded] attribute DOMString srcdoc;
+    [Reflect, CEReactions=NotNeeded] attribute HTMLString srcdoc;
     [Reflect, CEReactions=NotNeeded] attribute DOMString name;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
     [Reflect, CEReactions=NotNeeded] attribute DOMString allow;
@@ -49,3 +49,5 @@
     [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
 
 };
+
+typedef [StringContext=TrustedHTML] DOMString HTMLString;

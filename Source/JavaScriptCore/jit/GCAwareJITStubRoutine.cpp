@@ -29,12 +29,14 @@
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
 #include "Heap.h"
 #include "VM.h"
 #include "JITStubRoutineSet.h"
 #include "JSCellInlines.h"
+#include "SharedJITStubSet.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -92,19 +94,34 @@ PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine(Type type, cons
 
 void PolymorphicAccessJITStubRoutine::observeZeroRefCountImpl()
 {
-    if (m_vm.m_sharedJITStubs)
+    if (m_isInSharedJITStubSet) {
+        ASSERT(m_vm.m_sharedJITStubs);
         m_vm.m_sharedJITStubs->remove(this);
+    }
     Base::observeZeroRefCountImpl();
 }
 
-unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases, const FixedVector<StructureID>& weakStructures)
+unsigned PolymorphicAccessJITStubRoutine::computeHash(const FixedVector<RefPtr<AccessCase>>& cases)
 {
     Hasher hasher;
     for (auto& key : cases)
         WTF::add(hasher, key->hash());
-    for (auto& structureID : weakStructures)
-        WTF::add(hasher, structureID.bits());
     return hasher.hash();
+}
+
+void PolymorphicAccessJITStubRoutine::addedToSharedJITStubSet()
+{
+    m_isInSharedJITStubSet = true;
+    // Since this stub no longer belongs to any CodeBlocks (since it is shared),
+    // identifiers need to be owned by this stub itself.
+    m_identifiers = FixedVector<Identifier>(m_cases.size());
+    unsigned index = 0;
+    for (auto& accessCase : m_cases) {
+        auto identifier = Identifier::fromUid(m_vm, accessCase->uid());
+        accessCase->updateIdentifier(CacheableIdentifier::createFromSharedStub(identifier.impl()));
+        m_identifiers[index] = WTFMove(identifier);
+        ++index;
+    }
 }
 
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(

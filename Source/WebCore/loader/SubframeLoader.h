@@ -31,6 +31,7 @@
 #pragma once
 
 #include "FrameLoader.h"
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ public:
 private:
     bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
     LocalFrame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
-    RefPtr<LocalFrame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const String& referrer);
+    RefPtr<LocalFrame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& name, const URL& referrer);
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
@@ -71,9 +72,10 @@ private:
     URL completeURL(const String&) const;
 
     bool shouldConvertInvalidURLsToBlank() const;
+    Ref<LocalFrame> protectedFrame() const;
 
     bool m_containsPlugins { false };
-    LocalFrame& m_frame;
+    WeakRef<LocalFrame> m_frame;
 };
 
 } // namespace WebCore

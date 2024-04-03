@@ -34,6 +34,7 @@
 #include "RemoteCDMInstanceIdentifier.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #include <WebCore/CDMPrivate.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -71,7 +72,7 @@ public:
     void addSession(const RemoteCDMInstanceSessionIdentifier&, std::unique_ptr<RemoteCDMInstanceSessionProxy>&&);
     void removeSession(const RemoteCDMInstanceSessionIdentifier&);
 
-    GPUConnectionToWebProcess* gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
+    RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     bool allowsExitUnderMemoryPressure() const;
 
@@ -89,7 +90,7 @@ private:
     void createCDM(const String& keySystem, CompletionHandler<void(RemoteCDMIdentifier&&, RemoteCDMConfiguration&&)>&&);
     void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
 
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDMProxy>> m_proxies;
     HashMap<RemoteCDMInstanceIdentifier, std::unique_ptr<RemoteCDMInstanceProxy>> m_instances;
     HashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;

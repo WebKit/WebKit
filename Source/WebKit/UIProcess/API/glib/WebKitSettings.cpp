@@ -682,20 +682,17 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:enable-offline-web-application-cache:
      *
-     * Whether to enable HTML5 offline web application cache support. Offline
-     * web application cache allows web applications to run even when
-     * the user is not connected to the network.
+     * Unsupported setting. This property does nothing.
      *
-     * HTML5 offline web application specification is available at
-     * http://dev.w3.org/html5/spec/offline.html.
+     * Deprecated: 2.44
      */
     sObjProperties[PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE] =
         g_param_spec_boolean(
             "enable-offline-web-application-cache",
             _("Enable offline web application cache"),
             _("Whether to enable offline web application cache."),
-            TRUE,
-            readWriteConstructParamFlags);
+            FALSE,
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-html5-local-storage:
@@ -1777,13 +1774,15 @@ void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* 
  *
  * Get the #WebKitSettings:enable-offline-web-application-cache property.
  *
- * Returns: %TRUE If HTML5 offline web application cache support is enabled or %FALSE otherwise.
+ * Returns: %FALSE.
+ *
+ * Deprecated: 2.44
  */
 gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->offlineWebApplicationCacheEnabled();
+    return FALSE;
 }
 
 /**
@@ -1791,19 +1790,16 @@ gboolean webkit_settings_get_enable_offline_web_application_cache(WebKitSettings
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * Set the #WebKitSettings:enable-offline-web-application-cache property.
+ * Setting no longer supported. This function does nothing.
+ *
+ * Deprecated: 2.44
  */
 void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->offlineWebApplicationCacheEnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setOfflineWebApplicationCacheEnabled(enabled);
-    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE]);
+    if (enabled)
+        g_warning("webkit_settings_set_enable_offline_web_application_cache is deprecated and does nothing.");
 }
 
 /**
@@ -3751,8 +3747,6 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
         }
         break;
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER:
-        if (HardwareAccelerationManager::singleton().forceHardwareAcceleration())
-            return;
         if (priv->preferences->acceleratedCompositingEnabled()) {
             priv->preferences->setAcceleratedCompositingEnabled(false);
             changed = true;

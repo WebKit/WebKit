@@ -59,7 +59,7 @@ static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& global
 }
 
 FetchEvent::FetchEvent(JSC::JSGlobalObject& globalObject, const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : ExtendableEvent(type, initializer, isTrusted)
+    : ExtendableEvent(EventInterfaceType::FetchEvent, type, initializer, isTrusted)
     , m_request(initializer.request.releaseNonNull())
     , m_clientId(WTFMove(initializer.clientId))
     , m_resultingClientId(WTFMove(initializer.resultingClientId))

@@ -87,13 +87,7 @@ jsargs=(
     --plan jetstream2
     --diagnose-directory="$BASE/jetstream"
     --generate-pgo-profiles
-    --count 1
-)
-
-sp2args=(
-    --plan speedometer2
-    --diagnose-directory="$BASE/speedometer2"
-    --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
@@ -101,6 +95,7 @@ sp3args=(
     --plan speedometer3
     --diagnose-directory="$BASE/speedometer3"
     --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
@@ -108,18 +103,17 @@ mmargs=(
     --plan motionmark
     --diagnose-directory="$BASE/motionmark"
     --generate-pgo-profiles
+    --http-server-type builtin
     --count 1
 )
 
 if [[ -n $APP ]] ; then
    jsargs+=(--browser-path "$APP")
-   sp2args+=(--browser-path "$APP")
    sp3args+=(--browser-path "$APP")
    mmargs+=(--browser-path "$APP")
    deployment_target=$(vtool -show-build "$APP"/Contents/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
 else
    jsargs+=(--build-directory $BUILD)
-   sp2args+=(--build-directory $BUILD)
    sp3args+=(--build-directory $BUILD)
    mmargs+=(--build-directory $BUILD)
    deployment_target=$(vtool -show-build "$BUILD"/JavaScriptCore.framework/Versions/A/JavaScriptCore | grep -m1 minos | tr -d -c .0-9)
@@ -134,9 +128,6 @@ SPTH='OpenSource/Tools/Scripts'
 $SPTH/run-benchmark "${jsargs[@]}"
 $SPTH/pgo-profile merge "$BASE/jetstream"
 
-$SPTH/run-benchmark "${sp2args[@]}"
-$SPTH/pgo-profile merge "$BASE/speedometer2"
-
 $SPTH/run-benchmark "${sp3args[@]}"
 $SPTH/pgo-profile merge "$BASE/speedometer3"
 
@@ -145,7 +136,7 @@ $SPTH/pgo-profile merge "$BASE/motionmark"
 
 rm *.result
 
-$SPTH/pgo-profile combine --jetstream "$BASE/jetstream" --speedometer2 "$BASE/speedometer2" --speedometer3 "$BASE/speedometer3" --motionmark "$BASE/motionmark" --output "$BASE/output"
+$SPTH/pgo-profile combine --jetstream "$BASE/jetstream" --speedometer3 "$BASE/speedometer3" --motionmark "$BASE/motionmark" --output "$BASE/output"
 
 mkdir -p "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"
 $SPTH/pgo-profile compress --input "$BASE/output" --output "$BASE/Internal/WebKit/WebKitAdditions/Profiling/$target_triple"

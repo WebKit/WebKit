@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 255x18
           text run at (0,0) width 255: "This test checks for regressions against "
         RenderInline {A} at (0,0) size 784x36 [color=#0000EE]
-          RenderText {#text} at (254,0) size 784x36
+          RenderText {#text} at (0,0) size 784x36
             text run at (254,0) width 530: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
             text run at (0,18) width 118: "issues (flickr.com)"
         RenderText {#text} at (117,18) size 604x18

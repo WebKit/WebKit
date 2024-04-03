@@ -63,7 +63,7 @@ public:
     virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const { return true; }
 
     virtual bool platformCALayerUseGiantTiles() const { return false; }
-    virtual bool platformCALayerUseCSS3DTransformInteroperability() const { return false; }
+    virtual bool platformCALayerCSSUnprefixedBackdropFilterEnabled() const { return false; }
 
     virtual bool isCommittingChanges() const { return false; }
 
@@ -74,6 +74,8 @@ public:
     virtual bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const { return false; }
 
     virtual bool platformCALayerShouldPaintUsingCompositeCopy() const { return false; }
+
+    virtual bool platformCALayerNeedsPlatformContext(const PlatformCALayer*) const { return false; }
 
 protected:
     virtual ~PlatformCALayerClient() = default;

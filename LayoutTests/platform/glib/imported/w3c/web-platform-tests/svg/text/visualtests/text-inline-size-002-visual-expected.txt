@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (90.00,114.80) startOffset 0 endOffset 27 width 192.00: "Lorem ipsum dolor sit amet,"
           RenderSVGInlineText {#text} at (192,0) size 5x18
             chunk 1 text run 1 at (282.00,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 188x18
+          RenderSVGTSpan {tspan} at (0,20) size 188x18
             RenderSVGInlineText {#text} at (0,20) size 188x18
               chunk 1 text run 1 at (90.00,134.80) startOffset 0 endOffset 29 width 187.20: "consectetur adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
               chunk 1 (middle anchor) text run 1 at (141.90,114.80) startOffset 0 endOffset 27 width 192.00: "Lorem ipsum dolor sit amet,"
           RenderSVGInlineText {#text} at (192,0) size 5x18
             chunk 1 (middle anchor) text run 1 at (333.90,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 188x18
+          RenderSVGTSpan {tspan} at (4,20) size 188x18
             RenderSVGInlineText {#text} at (4,20) size 188x18
               chunk 1 (middle anchor) text run 1 at (146.40,134.80) startOffset 0 endOffset 29 width 187.20: "consectetur adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
               chunk 1 (end anchor) text run 1 at (193.80,114.80) startOffset 0 endOffset 27 width 192.00: "Lorem ipsum dolor sit amet,"
           RenderSVGInlineText {#text} at (192,0) size 5x18
             chunk 1 (end anchor) text run 1 at (385.80,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 188x18
+          RenderSVGTSpan {tspan} at (9,20) size 188x18
             RenderSVGInlineText {#text} at (9,20) size 188x18
               chunk 1 (end anchor) text run 1 at (202.80,134.80) startOffset 0 endOffset 29 width 187.20: "consectetur adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0

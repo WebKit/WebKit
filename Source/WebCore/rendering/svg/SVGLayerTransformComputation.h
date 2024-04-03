@@ -19,7 +19,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderAncestorIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
@@ -70,7 +69,7 @@ public:
             ancestorContainer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first();
         }
 
-        TransformState transformState(m_renderer.settings().css3DTransformInteroperabilityEnabled(), TransformState::ApplyTransformDirection, FloatPoint { });
+        TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint { });
         transformState.setTransformMatrixTracking(trackingMode);
 
         renderer->mapLocalToContainer(ancestorContainer, transformState, { UseTransforms, ApplyContainerFlip });
@@ -123,7 +122,7 @@ public:
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
         ctm.scale(m_renderer.document().deviceScaleFactor());
         if (!m_renderer.document().isSVGDocument())
-            ctm.scale(m_renderer.style().effectiveZoom());
+            ctm.scale(m_renderer.style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / sqrtOfTwoDouble);
     }
 
@@ -132,5 +131,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

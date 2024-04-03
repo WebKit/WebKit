@@ -102,7 +102,6 @@ struct NetworkSessionCreationParameters {
     bool shouldRunServiceWorkersOnMainThreadForTesting { false };
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
-    bool appHasRequestedCrossWebsiteTrackingPermission { false };
     std::optional<bool> useNetworkLoader { std::nullopt };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;
@@ -110,6 +109,7 @@ struct NetworkSessionCreationParameters {
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
     bool isBlobRegistryTopOriginPartitioningEnabled { false };
+    bool shouldSendPrivateTokenIPCForTesting { false };
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Standard };
     uint64_t perOriginStorageQuota;
@@ -132,7 +132,9 @@ struct NetworkSessionCreationParameters {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled { false };
 #endif
-
+#if HAVE(NW_PROXY_CONFIG)
+    std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> proxyConfigData;
+#endif
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };
 

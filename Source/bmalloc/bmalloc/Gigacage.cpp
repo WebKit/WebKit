@@ -98,8 +98,6 @@ size_t runwaySize(Kind kind)
     switch (kind) {
     case Kind::Primitive:
         return gigacageRunway;
-    case Kind::JSValue:
-        return 0;
     case Kind::NumberOfKinds:
         RELEASE_BASSERT_NOT_REACHED();
     }

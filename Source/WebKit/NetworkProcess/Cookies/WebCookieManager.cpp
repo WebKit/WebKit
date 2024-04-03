@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
+#include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -43,9 +44,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-const char* WebCookieManager::supplementName()
+ASCIILiteral WebCookieManager::supplementName()
 {
-    return "WebCookieManager";
+    return "WebCookieManager"_s;
 }
 
 WebCookieManager::WebCookieManager(NetworkProcess& process)
@@ -157,6 +158,7 @@ void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(PAL::SessionID sessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
+    RELEASE_LOG(Storage, "WebCookieManager::setHTTPCookieAcceptPolicy set policy %d for session %" PRIu64, static_cast<int>(policy), sessionID.toUInt64());
     platformSetHTTPCookieAcceptPolicy(sessionID, policy, [policy, process = protectedProcess(), completionHandler = WTFMove(completionHandler)] () mutable {
         process->cookieAcceptPolicyChanged(policy);
         completionHandler();

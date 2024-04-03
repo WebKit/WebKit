@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "CharacterProperties.h"
 #include "DashArray.h"
 #include "Font.h"
 #include "FontCascadeDescription.h"
@@ -36,6 +35,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
 // "X11/X.h" defines Complex to 0 and conflicts
@@ -137,14 +137,14 @@ public:
 
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
-    WEBCORE_EXPORT float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
+    float widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection = TextDirection::LTR) const;
     WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
     static float width(TextLayout&, unsigned from, unsigned len, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr);
     float widthOfSpaceString() const
     {
-        return width(TextRun { String { &space, 1 } });
+        return width(TextRun { StringView(WTF::span(space)) });
     }
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
@@ -193,6 +193,7 @@ public:
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
+    bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
     const Font* fontForCombiningCharacterSequence(StringView) const;
 
@@ -231,9 +232,10 @@ private:
     GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForTextUsingWidthIterator(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
+    WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, float*) const;
 
     std::optional<GlyphData> getEmphasisMarkGlyphData(const AtomString&) const;
     const Font* fontForEmphasisMark(const AtomString&) const;
@@ -242,7 +244,7 @@ private:
     static bool canExpandAroundIdeographsInComplexText();
 
     GlyphBuffer layoutComplexText(const TextRun&, unsigned from, unsigned to, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    float floatWidthForComplexText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float widthForTextUsingComplexTextController(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
 
@@ -307,6 +309,7 @@ public:
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    WEBCORE_EXPORT RefPtr<FontCascadeFonts> protectedFonts() const;
     bool isLoadingCustomFonts() const;
 
     static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);
@@ -344,6 +347,8 @@ private:
         bool operator==(const Spacing& other) const = default;
     };
 
+    static constexpr unsigned bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache = 2;
+
     mutable FontCascadeDescription m_fontDescription;
     Spacing m_spacing;
     mutable RefPtr<FontCascadeFonts> m_fonts;
@@ -351,35 +356,37 @@ private:
     bool m_useBackslashAsYenSymbol { false };
     bool m_enableKerning { false }; // Computed from m_fontDescription.
     bool m_requiresShaping { false }; // Computed from m_fontDescription.
+    mutable WTF::BitSet<256 * bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache> m_canUseSimplifiedTextMeasuringForAutoVariantCache;
 };
 
 inline const Font& FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
-    return m_fonts->primaryFont(m_fontDescription);
+    return protectedFonts()->primaryFont(m_fontDescription);
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     ASSERT(m_fonts);
-    return m_fonts->realizeFallbackRangesAt(m_fontDescription, index);
+    return protectedFonts()->realizeFallbackRangesAt(m_fontDescription, index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
     ASSERT(m_fonts);
-    return m_fonts->isFixedPitch(m_fontDescription);
+    return protectedFonts()->isFixedPitch(m_fontDescription);
 }
 
 inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
 {
     ASSERT(m_fonts);
-    return m_fonts->canTakeFixedPitchFastContentMeasuring(m_fontDescription);
+    return protectedFonts()->canTakeFixedPitchFastContentMeasuring(m_fontDescription);
 }
 
 inline FontSelector* FontCascade::fontSelector() const
 {
-    return m_fonts ? m_fonts->fontSelector() : nullptr;
+    RefPtr fonts = m_fonts;
+    return fonts ? fonts->fontSelector() : nullptr;
 }
 
 inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, float position, Font::SyntheticBoldInclusion syntheticBoldInclusion) const
@@ -397,6 +404,18 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     // However, regardless of that, the space characters that are fed into the width calculation need to have their correct width, including the synthetic bold.
     // So, we've already got synthetic bold applied, so if we're supposed to exclude it, we need to subtract it out here.
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
+}
+
+inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection) const
+{
+    if (text.isNull() || text.isEmpty())
+        return 0;
+    ASSERT(codePath(TextRun(text)) != CodePath::Complex);
+    float* cacheEntry = protectedFonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    if (cacheEntry && !std::isnan(*cacheEntry))
+        return *cacheEntry;
+
+    return widthForSimpleTextSlow(text, textDirection, cacheEntry);
 }
 
 bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);

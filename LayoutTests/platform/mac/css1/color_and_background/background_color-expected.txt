@@ -24,15 +24,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,193) size 784x54 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 663x18
           text run at (0,0) width 663: "This element's background should be green, and the last word in this sentence should also have a green "
-        RenderInline {SPAN} at (0,0) size 77x18
+        RenderInline {SPAN} at (662,0) size 77x18
           RenderText {#text} at (662,0) size 77x18
             text run at (662,0) width 77: "background"
-        RenderText {#text} at (738,0) size 775x54
+        RenderText {#text} at (0,0) size 775x54
           text run at (738,0) width 9: ". "
           text run at (746,0) width 29: "This"
           text run at (0,18) width 726: "is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
           text run at (0,36) width 187: "\"sentence,\" which was set to "
-        RenderInline {CODE} at (0,0) size 87x15
+        RenderInline {CODE} at (186,38) size 87x15
           RenderText {#text} at (186,38) size 87x15
             text run at (186,38) width 87: "transparent"
         RenderText {#text} at (272,36) size 403x18
@@ -46,12 +46,12 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x190
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x164
             RenderTableCell {TD} at (0,95) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,73) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x164 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x18 [bgcolor=#008000]
@@ -63,14 +63,14 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,72) size 762x54 [bgcolor=#008000]
                 RenderText {#text} at (0,0) size 663x18
                   text run at (0,0) width 663: "This element's background should be green, and the last word in this sentence should also have a green "
-                RenderInline {SPAN} at (0,0) size 77x18
+                RenderInline {SPAN} at (662,0) size 77x18
                   RenderText {#text} at (662,0) size 77x18
                     text run at (662,0) width 77: "background"
-                RenderText {#text} at (738,0) size 758x54
+                RenderText {#text} at (0,0) size 758x54
                   text run at (738,0) width 5: "."
                   text run at (0,18) width 758: "This is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
                   text run at (0,36) width 187: "\"sentence,\" which was set to "
-                RenderInline {CODE} at (0,0) size 87x15
+                RenderInline {CODE} at (186,38) size 87x15
                   RenderText {#text} at (186,38) size 87x15
                     text run at (186,38) width 87: "transparent"
                 RenderText {#text} at (272,36) size 403x18

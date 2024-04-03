@@ -9,7 +9,7 @@
 
 #include "libANGLE/renderer/vulkan/win32/DisplayVkWin32.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include <windows.h>
 

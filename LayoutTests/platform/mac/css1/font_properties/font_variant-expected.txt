@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,144) size 784x18
         RenderText {#text} at (0,0) size 577x18
           text run at (0,0) width 577: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
-        RenderInline {SPAN} at (0,0) size 50x18
+        RenderInline {SPAN} at (576,0) size 50x18
           RenderText {#text} at (576,0) size 50x18
             text run at (576,0) width 50: "Normal"
         RenderText {#text} at (625,0) size 5x18
@@ -28,12 +28,12 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 650x86
           RenderTableRow {TR} at (0,0) size 650x26
             RenderTableCell {TD} at (0,0) size 650x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x18
+              RenderInline {STRONG} at (4,4) size 161x18
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 650x60
             RenderTableCell {TD} at (0,43) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
+              RenderText {#text} at (4,21) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 638x60 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 630x18
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
               RenderBlock {P} at (4,38) size 630x18
                 RenderText {#text} at (0,0) size 577x18
                   text run at (0,0) width 577: "This Paragraph should be in Small Caps, but the Last Word in the Sentence should be "
-                RenderInline {SPAN} at (0,0) size 50x18
+                RenderInline {SPAN} at (576,0) size 50x18
                   RenderText {#text} at (576,0) size 50x18
                     text run at (576,0) width 50: "Normal"
                 RenderText {#text} at (625,0) size 5x18

@@ -254,8 +254,12 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
     WebView *newWebView;
 
 #if ENABLE(FULLSCREEN_API)
-    if (frame.document() && frame.document()->fullscreenManager().currentFullscreenElement())
-        frame.document()->fullscreenManager().cancelFullscreen();
+    if (RefPtr document = frame.document()) {
+        if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
+            if (fullscreenManager->currentFullscreenElement())
+                fullscreenManager->cancelFullscreen();
+        }
+    }
 #endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
@@ -678,21 +682,6 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
-{
-    // FIXME: Free some space.
-}
-
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin, int64_t totalSpaceNeeded)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
-    CallUIDelegate(m_webView, @selector(webView:exceededApplicationCacheOriginQuotaForSecurityOrigin:totalSpaceNeeded:), webOrigin.get(), static_cast<NSUInteger>(totalSpaceNeeded));
-
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
@@ -1049,8 +1038,9 @@ bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool 
 #endif
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element)
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
+    UNUSED_PARAM(mode);
     SEL selector = @selector(webView:enterFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
         auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:&element]);
@@ -1076,38 +1066,6 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 }
 
 #endif // ENABLE(FULLSCREEN_API)
-
-bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
-{
-    SEL selector = @selector(webCryptoMasterKeyForWebView:);
-    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        NSData *keyData = CallUIDelegate(m_webView, selector);
-        Vector<uint8_t> masterKey;
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
-        return wrapSerializedCryptoKey(masterKey, key, wrappedKey);
-    }
-    
-    auto masterKey = defaultWebCryptoMasterKey();
-    if (!masterKey)
-        return false;
-    return wrapSerializedCryptoKey(WTFMove(*masterKey), key, wrappedKey);
-}
-
-bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
-{
-    SEL selector = @selector(webCryptoMasterKeyForWebView:);
-    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        Vector<uint8_t> masterKey;
-        NSData *keyData = CallUIDelegate(m_webView, selector);
-        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
-        return unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
-    }
-
-    auto masterKey = defaultWebCryptoMasterKey();
-    if (!masterKey)
-        return false;
-    return unwrapSerializedCryptoKey(WTFMove(*masterKey), wrappedKey, key);
-}
 
 #if ENABLE(SERVICE_CONTROLS)
 
@@ -1171,9 +1129,7 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 #if HAVE(WEBGPU_IMPLEMENTATION)
 RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
-    return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
-        callOnMainRunLoop(WTFMove(workItem));
-    });
+    return nullptr;
 }
 #endif
 

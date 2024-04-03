@@ -119,9 +119,7 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
 
     virtual egl::Error waitUntilWorkScheduled();
 
-    virtual bool isX11() const;
-    virtual bool isWayland() const;
-    virtual bool isGBM() const;
+    virtual angle::NativeWindowSystem getWindowSystem() const;
 
     virtual bool supportsDmaBufFormat(EGLint format) const;
     virtual egl::Error queryDmaBufFormats(EGLint max_formats, EGLint *formats, EGLint *num_formats);

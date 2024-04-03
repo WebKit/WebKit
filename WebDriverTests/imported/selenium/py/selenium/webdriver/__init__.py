@@ -15,15 +15,37 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from .safari.webdriver import WebDriver as Safari  # noqa
-from .webkitgtk.webdriver import WebDriver as WebKitGTK  # noqa
-from .webkitgtk.options import Options as WebKitGTKOptions  # noqa
-from .wpewebkit.webdriver import WebDriver as WPEWebKit  # noqa
-from .wpewebkit.options import Options as WPEWebKitOptions  # noqa
-from .remote.webdriver import WebDriver as Remote  # noqa
-from .common.desired_capabilities import DesiredCapabilities  # noqa
 from .common.action_chains import ActionChains  # noqa
-from .common.touch_actions import TouchActions  # noqa
+from .common.desired_capabilities import DesiredCapabilities  # noqa
+from .common.keys import Keys  # noqa
 from .common.proxy import Proxy  # noqa
+from .remote.webdriver import WebDriver as Remote  # noqa
+from .safari.options import Options as SafariOptions
+from .safari.service import Service as SafariService  # noqa
+from .safari.webdriver import WebDriver as Safari  # noqa
+from .webkitgtk.options import Options as WebKitGTKOptions  # noqa
+from .webkitgtk.service import Service as WebKitGTKService  # noqa
+from .webkitgtk.webdriver import WebDriver as WebKitGTK  # noqa
+from .wpewebkit.options import Options as WPEWebKitOptions  # noqa
+from .wpewebkit.service import Service as WPEWebKitService  # noqa
+from .wpewebkit.webdriver import WebDriver as WPEWebKit  # noqa
 
-__version__ = '4.0.0a7'
+__version__ = "4.19.0.dev202403101143"
+
+# We need an explicit __all__ because the above won't otherwise be exported.
+__all__ = [
+    "Safari",
+    "SafariOptions",
+    "SafariService",
+    "WebKitGTK",
+    "WebKitGTKOptions",
+    "WebKitGTKService",
+    "WPEWebKit",
+    "WPEWebKitOptions",
+    "WPEWebKitService",
+    "Remote",
+    "DesiredCapabilities",
+    "ActionChains",
+    "Proxy",
+    "Keys",
+]

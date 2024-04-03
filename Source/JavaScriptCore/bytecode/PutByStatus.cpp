@@ -62,6 +62,7 @@ PutByStatus PutByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     switch (instruction->opcodeID()) {
     case op_put_by_id:
         break;
+    case op_enumerator_put_by_val:
     case op_put_by_val:
     case op_put_by_val_direct:
         return PutByStatus(NoInformation);

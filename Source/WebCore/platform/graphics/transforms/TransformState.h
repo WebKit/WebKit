@@ -44,30 +44,27 @@ public:
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };
     enum TransformMatrixTracking { DoNotTrackTransformMatrix, TrackSVGCTMMatrix, TrackSVGScreenCTMMatrix };
 
-    TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad& quad)
+    TransformState(TransformDirection mappingDirection, const FloatPoint& p, const FloatQuad& quad)
         : m_lastPlanarPoint(p)
         , m_lastPlanarQuad(quad)
         , m_mapPoint(true)
         , m_mapQuad(true)
-        , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
         , m_direction(mappingDirection)
     {
     }
     
-    TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatPoint& p)
+    TransformState(TransformDirection mappingDirection, const FloatPoint& p)
         : m_lastPlanarPoint(p)
         , m_mapPoint(true)
         , m_mapQuad(false)
-        , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
         , m_direction(mappingDirection)
     {
     }
     
-    TransformState(bool useCSS3DTransformInterop, TransformDirection mappingDirection, const FloatQuad& quad)
+    TransformState(TransformDirection mappingDirection, const FloatQuad& quad)
         : m_lastPlanarQuad(quad)
         , m_mapPoint(false)
         , m_mapQuad(true)
-        , m_useCSS3DTransformInterop(useCSS3DTransformInterop)
         , m_direction(mappingDirection)
     {
     }
@@ -144,7 +141,6 @@ private:
     bool m_accumulatingTransform { false };
     bool m_mapPoint;
     bool m_mapQuad;
-    bool m_useCSS3DTransformInterop;
     TransformMatrixTracking m_tracking { DoNotTrackTransformMatrix };
     TransformDirection m_direction;
 };

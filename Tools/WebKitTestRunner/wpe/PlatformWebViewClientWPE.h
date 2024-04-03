@@ -47,7 +47,7 @@ private:
     void addToWindow() override;
     void removeFromWindow() override;
 
-    cairo_surface_t* snapshot() override;
+    PlatformImage snapshot() override;
 
     GRefPtr<WPEDisplay> m_display;
     GRefPtr<WPEBuffer> m_buffer;

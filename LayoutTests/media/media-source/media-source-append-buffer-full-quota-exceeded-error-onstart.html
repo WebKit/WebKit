@@ -39,7 +39,7 @@
         sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
         initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
         // Set a buffer size that is less than the init segment length.
-        internals.settings.setMaximumSourceBufferSize(30);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 30);
         exception = await appendBuffer(initSegment);
         waitFor(sourceBuffer, 'error');
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');

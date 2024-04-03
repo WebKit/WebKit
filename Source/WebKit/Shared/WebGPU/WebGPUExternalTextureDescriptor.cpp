@@ -41,7 +41,7 @@ std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacki
         return std::nullopt;
 
     std::optional<WebCore::MediaPlayerIdentifier> optionalMediaIdentifier { std::nullopt };
-    if (auto* mediaIdentifier = std::get_if<WebCore::MediaPlayerIdentifier>(&externalTextureDescriptor.videoBacking))
+    if (auto* mediaIdentifier = std::get_if<std::optional<WebCore::MediaPlayerIdentifier>>(&externalTextureDescriptor.videoBacking))
         optionalMediaIdentifier = *mediaIdentifier;
     return { { WTFMove(*base), optionalMediaIdentifier, externalTextureDescriptor.colorSpace
 #if PLATFORM(COCOA) && ENABLE(VIDEO)

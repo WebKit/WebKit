@@ -1,0 +1,246 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+is_skia_standalone = true
+
+# It's best to keep the names and defaults of is_foo flags consistent with Chrome.
+
+declare_args() {
+  is_official_build = false
+  is_component_build = false
+  ndk = ""
+
+  # Android 5.0, Lollipop
+  ndk_api = 21
+
+  sanitize = ""
+
+  ar = "ar"
+  cc = "cc"
+  cxx = "c++"
+
+  win_sdk = "C:/Program Files (x86)/Windows Kits/10"
+  win_sdk_version = ""
+
+  win_vc = ""
+  win_toolchain_version = ""
+
+  clang_win = ""
+  clang_win_version = ""
+
+  ios_min_target = ""
+  ios_use_simulator =
+      target_os == "ios" && (target_cpu == "x86" || target_cpu == "x64")
+
+  # Enable -H, which prints the include tree during compilation.
+  # For use by external tools for analyzing include files.
+  show_includes = false
+}
+declare_args() {
+  is_debug = !is_official_build
+
+  # This affects Skia's ABI; must be set consistently for Skia and dependents.
+  is_trivial_abi = !is_official_build
+}
+
+assert(!(is_debug && is_official_build))
+
+if (target_cpu == "wasm") {
+  target_os = "wasm"
+}
+
+# Platform detection
+if (target_os == "") {
+  target_os = host_os
+  if (ndk != "") {
+    target_os = "android"
+  }
+}
+if (current_os == "") {
+  current_os = target_os
+}
+
+is_android = current_os == "android"
+is_fuchsia = current_os == "fuchsia"
+is_ios = current_os == "ios" || current_os == "tvos"
+is_tvos = current_os == "tvos"
+is_linux = current_os == "linux"
+is_mac = current_os == "mac"
+is_wasm = current_os == "wasm"
+is_win = current_os == "win"
+
+# This is just to make the Dawn build files happy. Skia itself uses target_os = "linux"
+# for ChromeOS, so this variable will not affect Skia proper.
+is_chromeos = false
+
+# This is to make the ANGLE build files happy. Skia always uses is_mac and/or is_ios.
+is_apple = is_mac || is_ios
+
+if (target_cpu == "") {
+  target_cpu = host_cpu
+  if (is_android || is_ios) {
+    target_cpu = "arm64"
+  }
+}
+if (target_cpu == "x86_64") {
+  target_cpu = "x64"
+}
+if (current_cpu == "") {
+  current_cpu = target_cpu
+}
+
+is_clang = is_android || is_ios || is_mac || is_fuchsia || is_wasm ||
+           (cc == "clang" && cxx == "clang++") || clang_win != ""
+if (!is_clang && !is_win) {
+  is_clang = exec_script("//gn/is_clang.py",
+                         [
+                           cc,
+                           cxx,
+                         ],
+                         "value")
+}
+
+if (is_android) {
+  ndk_host = ""
+  ndk_target = ""
+
+  if (host_os == "linux") {
+    ndk_host = "linux-x86_64"
+  } else if (host_os == "mac") {
+    ndk_host = "darwin-x86_64"
+  } else if (host_os == "win") {
+    ndk_host = "windows-x86_64"
+  }
+
+  if (target_cpu == "arm64") {
+    ndk_target = "aarch64-linux-android"
+  } else if (target_cpu == "arm") {
+    ndk_target = "armv7a-linux-androideabi"
+  } else if (target_cpu == "x64") {
+    ndk_target = "x86_64-linux-android"
+  } else if (target_cpu == "x86") {
+    ndk_target = "i686-linux-android"
+  }
+}
+
+if (target_os == "win") {
+  # By default we look for 2017 (Enterprise, Pro, and Community), then 2015. If MSVC is installed in a
+  # non-default location, you can set win_vc to inform us where it is.
+
+  if (win_vc == "") {
+    win_vc = exec_script("//gn/find_msvc.py", [], "trim string")
+  }
+  assert(win_vc != "")  # Could not find VC installation. Set win_vc to your VC
+                        # directory.
+}
+
+if (target_os == "win") {
+  if (win_toolchain_version == "") {
+    win_toolchain_version = exec_script("//gn/highest_version_dir.py",
+                                        [
+                                          "$win_vc/Tools/MSVC",
+                                          "[0-9]{2}\.[0-9]{2}\.[0-9]{5}",
+                                        ],
+                                        "trim string")
+  }
+  if (win_sdk_version == "") {
+    win_sdk_version = exec_script("//gn/highest_version_dir.py",
+                                  [
+                                    "$win_sdk/Include",
+                                    "[0-9]{2}\.[0-9]\.[0-9]{5}\.[0-9]",
+                                  ],
+                                  "trim string")
+  }
+  if (clang_win != "" && clang_win_version == "") {
+    clang_win_version = exec_script("//gn/highest_version_dir.py",
+                                    [
+                                      "$clang_win/lib/clang",
+                                      "[0-9]+\.[0-9]+\.[0-9]+",
+                                    ],
+                                    "trim string")
+  }
+}
+
+# A component is either a static or a shared library.
+template("component") {
+  _component_mode = "static_library"
+  if (is_component_build) {
+    _component_mode = "shared_library"
+  }
+
+  target(_component_mode, target_name) {
+    forward_variables_from(invoker, "*")
+  }
+}
+
+# Default configs
+default_configs = [
+  "//gn/skia:default",
+  "//gn/skia:no_exceptions",
+  "//gn/skia:no_rtti",
+]
+if (!is_debug) {
+  default_configs += [
+    "//gn/skia:optimize",
+    "//gn/skia:NDEBUG",
+  ]
+}
+if (is_trivial_abi) {
+  default_configs += [ "//gn/skia:trivial_abi" ]
+}
+if (!is_official_build) {
+  default_configs += [ "//gn/skia:debug_symbols" ]
+}
+default_configs += [ "//gn/skia:extra_flags" ]
+
+set_defaults("executable") {
+  configs = [ "//gn/skia:executable" ] + default_configs
+}
+
+set_defaults("source_set") {
+  configs = default_configs
+}
+
+set_defaults("static_library") {
+  configs = default_configs
+}
+
+set_defaults("shared_library") {
+  configs = default_configs
+}
+
+set_defaults("component") {
+  configs = default_configs
+  if (!is_component_build) {
+    complete_static_lib = true
+  }
+}
+
+skia_target_default_configs = []
+if (!is_official_build) {
+  skia_target_default_configs += [ "//gn/skia:warnings" ]
+}
+
+skia_header_target_default_configs = []
+if (!is_official_build) {
+  skia_header_target_default_configs +=
+      [ "//gn/skia:warnings_for_public_headers" ]
+}
+
+if (is_win) {
+  # Windows tool chain
+  set_default_toolchain("//gn/toolchain:msvc")
+  default_toolchain_name = "msvc"
+  host_toolchain = "msvc_host"
+} else if (is_wasm) {
+  set_default_toolchain("//gn/toolchain:wasm")
+  default_toolchain_name = "wasm"
+  host_toolchain = "wasm"
+} else {
+  # GCC-like toolchains, including Clang.
+  set_default_toolchain("//gn/toolchain:gcc_like")
+  default_toolchain_name = "gcc_like"
+  host_toolchain = "gcc_like_host"
+}

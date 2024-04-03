@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock (floating) at (2,3) size 48x81
           RenderText at (0,-45) size 48x198
             text run at (0,-45) width 48: "J"
-        RenderText {#text} at (51,36) size 397x108
+        RenderText {#text} at (0,36) size 397x108
           text run at (51,36) width 346: "ust an example of first-letter. This letter should span 3"
           text run at (51,54) width 340: "lines of text, and so it should align itself cleanly with"
           text run at (51,72) width 337: "the cap-height of the H lining up with the cap-height"

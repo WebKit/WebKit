@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=ACCESSIBILITY,
-] interface AccessibilityUIElement {
+interface AccessibilityUIElement {
     boolean isEqual(AccessibilityUIElement otherElement);
     readonly attribute DOMString domIdentifier;
 
@@ -51,6 +49,8 @@
     readonly attribute DOMString language;
     readonly attribute DOMString helpText;
     readonly attribute DOMString valueDescription;
+    readonly attribute DOMString brailleLabel;
+    readonly attribute DOMString brailleRoleDescription;
     readonly attribute DOMString url;
     readonly attribute DOMString speakAs;
     readonly attribute DOMString liveRegionRelevant;
@@ -78,10 +78,11 @@
     undefined setValue(DOMString value);
 
     readonly attribute DOMString stringValue;
+    readonly attribute DOMString dateValue;
     readonly attribute long intValue;
     readonly attribute long minValue;
     readonly attribute long maxValue;
-    
+
     readonly attribute boolean isAtomicLiveRegion;
     readonly attribute boolean isBusy;
     readonly attribute boolean isEnabled;
@@ -128,7 +129,7 @@
     readonly attribute DOMString lineRectsAndText;
 
     readonly attribute object children;
-    readonly attribute long childrenCount;
+    readonly attribute unsigned long childrenCount;
     readonly attribute long selectedChildrenCount;
     readonly attribute long rowCount;
     readonly attribute long columnCount;
@@ -301,6 +302,7 @@
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     undefined assistiveTechnologySimulatedFocus();
     readonly attribute boolean isSearchField;
+    readonly attribute boolean isSwitch;
     readonly attribute boolean isTextArea;
     readonly attribute boolean isMarkAnnotation;
     readonly attribute boolean supportsExpanded;

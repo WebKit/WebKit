@@ -29,9 +29,12 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "MessageSenderInlines.h"
+#import "PlaybackSessionInterfaceLMK.h"
 #import "PlaybackSessionManagerMessages.h"
 #import "PlaybackSessionManagerProxyMessages.h"
+#import "VideoReceiverEndpointMessage.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <WebCore/NullPlaybackSessionInterface.h>
 #import <WebCore/PlaybackSessionInterfaceAVKit.h>
@@ -66,6 +69,20 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
     if (m_manager)
         m_manager->sendRemoteCommand(m_contextId, command, argument);
 }
+
+void PlaybackSessionModelContext::setVideoReceiverEndpoint(const WebCore::VideoReceiverEndpoint& endpoint)
+{
+    if (m_manager)
+        m_manager->setVideoReceiverEndpoint(m_contextId, endpoint);
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionModelContext::setSpatialTrackingLabel(const String& label)
+{
+    if (m_manager)
+        m_manager->setSpatialTrackingLabel(m_contextId, label);
+}
+#endif
 
 void PlaybackSessionModelContext::play()
 {
@@ -176,11 +193,32 @@ void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t index)
         m_manager->selectLegibleMediaOption(m_contextId, index);
 }
 
+void PlaybackSessionModelContext::toggleFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->toggleFullscreen(m_contextId);
+}
+
 void PlaybackSessionModelContext::togglePictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->togglePictureInPicture(m_contextId);
+}
+
+void PlaybackSessionModelContext::enterFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (RefPtr manager = m_manager.get())
+        manager->enterFullscreen(m_contextId);
+}
+
+void PlaybackSessionModelContext::toggleInWindowFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_manager)
+        m_manager->toggleInWindow(m_contextId);
 }
 
 void PlaybackSessionModelContext::toggleMuted()
@@ -357,6 +395,13 @@ void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
         client.pictureInPictureActiveChanged(active);
 }
 
+void PlaybackSessionModelContext::isInWindowFullscreenActiveChanged(bool active)
+{
+    m_isInWindowFullscreenActive = active;
+    for (auto& client : m_clients)
+        client.isInWindowFullscreenActiveChanged(active);
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger* PlaybackSessionModelContext::loggerPtr() const
 {
@@ -411,7 +456,16 @@ void PlaybackSessionManagerProxy::invalidate()
 PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
     Ref<PlaybackSessionModelContext> model = PlaybackSessionModelContext::create(*this, contextId);
-    Ref<PlatformPlaybackSessionInterface> interface = PlatformPlaybackSessionInterface::create(model);
+
+    RefPtr<PlatformPlaybackSessionInterface> interface;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_page->preferences().linearMediaPlayerEnabled())
+        interface = PlaybackSessionInterfaceLMK::create(model);
+    else
+        interface = PlaybackSessionInterfaceAVKit::create(model);
+#else
+    interface = PlatformPlaybackSessionInterface::create(model);
+#endif
 
     return std::make_tuple(WTFMove(model), WTFMove(interface));
 }
@@ -572,6 +626,11 @@ void PlaybackSessionManagerProxy::pictureInPictureSupportedChanged(PlaybackSessi
     ensureModel(contextId).pictureInPictureSupportedChanged(supported);
 }
 
+void PlaybackSessionManagerProxy::isInWindowFullscreenActiveChanged(PlaybackSessionContextIdentifier contextId, bool active)
+{
+    ensureModel(contextId).isInWindowFullscreenActiveChanged(active);
+}
+
 void PlaybackSessionManagerProxy::handleControlledElementIDResponse(PlaybackSessionContextIdentifier contextId, String identifier) const
 {
 #if PLATFORM(MAC)
@@ -656,9 +715,24 @@ void PlaybackSessionManagerProxy::selectLegibleMediaOption(PlaybackSessionContex
     m_page->send(Messages::PlaybackSessionManager::SelectLegibleMediaOption(contextId, index));
 }
 
+void PlaybackSessionManagerProxy::toggleFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::ToggleFullscreen(contextId));
+}
+
 void PlaybackSessionManagerProxy::togglePictureInPicture(PlaybackSessionContextIdentifier contextId)
 {
     m_page->send(Messages::PlaybackSessionManager::TogglePictureInPicture(contextId));
+}
+
+void PlaybackSessionManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::EnterFullscreen(contextId));
+}
+
+void PlaybackSessionManagerProxy::toggleInWindow(PlaybackSessionContextIdentifier contextId)
+{
+    m_page->send(Messages::PlaybackSessionManager::ToggleInWindow(contextId));
 }
 
 void PlaybackSessionManagerProxy::toggleMuted(PlaybackSessionContextIdentifier contextId)
@@ -687,6 +761,43 @@ void PlaybackSessionManagerProxy::sendRemoteCommand(PlaybackSessionContextIdenti
     if (m_page)
         m_page->send(Messages::PlaybackSessionManager::SendRemoteCommand(contextId, command, argument));
 }
+
+void PlaybackSessionManagerProxy::setVideoReceiverEndpoint(PlaybackSessionContextIdentifier contextId, const WebCore::VideoReceiverEndpoint& endpoint)
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    auto interface = controlsManagerInterface();
+    if (!interface || !interface->playerIdentifier())
+        return;
+
+    WebCore::MediaPlayerIdentifier playerIdentifier = *interface->playerIdentifier();
+
+    Ref process = m_page->protectedProcess();
+    WebCore::ProcessIdentifier processIdentifier = process->coreProcessIdentifier();
+
+    Ref gpuProcess = process->processPool().ensureProtectedGPUProcess();
+    RefPtr connection = gpuProcess->protectedConnection();
+    if (!connection)
+        return;
+
+    OSObjectPtr xpcConnection = connection->xpcConnection();
+    if (!xpcConnection)
+        return;
+
+    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), WTFMove(playerIdentifier), endpoint);
+    xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
+#else
+    UNUSED_PARAM(contextId);
+    UNUSED_PARAM(endpoint);
+#endif
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+void PlaybackSessionManagerProxy::setSpatialTrackingLabel(PlaybackSessionContextIdentifier contextId, const String& label)
+{
+    if (m_page)
+        m_page->send(Messages::PlaybackSessionManager::SetSpatialTrackingLabel(contextId, label));
+}
+#endif
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 {

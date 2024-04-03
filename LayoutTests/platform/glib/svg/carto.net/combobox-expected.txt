@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (240,52) size 210x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x13
           chunk 1 text run 1 at (240.00,62.00) startOffset 0 endOffset 6 width 26.88: "Fruits"
-        RenderSVGTSpan {tspan} at (0,0) size 210x13
+        RenderSVGTSpan {tspan} at (0,20) size 210x13
           RenderSVGInlineText {#text} at (0,20) size 210x13
             chunk 1 text run 1 at (240.00,82.00) startOffset 0 endOffset 42 width 209.92: "This comboBox allows only single selection"
       RenderSVGText {text} at (240,302) size 31x13 contains 1 chunk(s)
@@ -23,16 +23,16 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (240,323) size 105x43 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 104x13
           chunk 1 text run 1 at (240.00,333.00) startOffset 0 endOffset 19 width 103.68: "This comboBox gives"
-        RenderSVGTSpan {tspan} at (0,0) size 105x13
+        RenderSVGTSpan {tspan} at (0,15) size 105x13
           RenderSVGInlineText {#text} at (0,15) size 105x13
             chunk 1 text run 1 at (240.00,348.00) startOffset 0 endOffset 19 width 104.96: "feedback on changes"
-        RenderSVGTSpan {tspan} at (0,0) size 73x13
+        RenderSVGTSpan {tspan} at (0,30) size 73x13
           RenderSVGInlineText {#text} at (0,30) size 73x13
             chunk 1 text run 1 at (240.00,363.00) startOffset 0 endOffset 16 width 72.96: "in the selection"
       RenderSVGText {text} at (50,390) size 168x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 168x13
           chunk 1 text run 1 at (50.00,400.00) startOffset 0 endOffset 33 width 167.68: "The Following Roses are selected:"
-        RenderSVGTSpan {tspan} at (0,0) size 0x1
+        RenderSVGTSpan {tspan} at (-50,-391) size 0x1
           RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGText {text} at (240,552) size 39x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 39x13
@@ -106,7 +106,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (220,202) size 336x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 199x13
           chunk 1 text run 1 at (220.00,212.00) startOffset 0 endOffset 39 width 198.40: "Communities of Kt. Aargau (Switzerland)"
-        RenderSVGTSpan {tspan} at (0,0) size 336x13
+        RenderSVGTSpan {tspan} at (0,20) size 336x13
           RenderSVGInlineText {#text} at (0,20) size 336x13
             chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 67 width 335.36: "Note that one can also transform the group containing the combo box"
     RenderSVGContainer {g} at (38,429) size 135x102

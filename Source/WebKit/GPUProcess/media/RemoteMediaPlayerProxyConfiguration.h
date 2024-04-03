@@ -49,7 +49,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
     WebCore::LayoutRect playerContentBoxRect;
     Vector<String> preferredAudioCharacteristics;
-#if ENABLE(AVF_CAPTIONS)
+#if PLATFORM(COCOA)
     Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
 #endif
     WebCore::SecurityOriginData documentSecurityOrigin;

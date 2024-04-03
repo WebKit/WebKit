@@ -62,16 +62,16 @@ void SVGForeignObjectElement::attributeChanged(const QualifiedName& name, const 
 
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::yAttr:
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     case AttributeNames::widthAttr:
-        m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_width }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
         break;
     case AttributeNames::heightAttr:
-        m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_height }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
         break;
     default:
         break;
@@ -100,11 +100,9 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGForeignObjectElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    document().setMayHaveRenderedSVGForeignObjects();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    protectedDocument()->setMayHaveRenderedSVGForeignObjects();
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGForeignObject>(*this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGForeignObject>(*this, WTFMove(style));
 }
 

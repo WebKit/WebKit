@@ -37,6 +37,12 @@
 #import <WebCore/VideoFrameCV.h>
 #import <wtf/MachSendRight.h>
 
+#if USE(EXTENSIONKIT)
+#import <BrowserEngineKit/BELayerHierarchy.h>
+#import <BrowserEngineKit/BELayerHierarchyHandle.h>
+#import <BrowserEngineKit/BELayerHierarchyHostingTransactionCoordinator.h>
+#endif
+
 namespace WebKit {
 
 void RemoteMediaPlayerProxy::setVideoLayerSizeIfPossible(const WebCore::FloatSize& size)
@@ -102,17 +108,26 @@ void RemoteMediaPlayerProxy::requestHostingContextID(CompletionHandler<void(Laye
 void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRight&& machSendRight)
 {
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
-    if (m_inlineLayerHostingContext)
+
+#if USE(EXTENSIONKIT)
+    RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;
+#endif
+
+    if (m_inlineLayerHostingContext) {
+#if USE(EXTENSIONKIT)
+        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(machSendRight.sendRight());
+        [hostingUpdateCoordinator addLayerHierarchy:m_inlineLayerHostingContext->hostable().get()];
+#else
         m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
+#endif
+    }
 
     m_configuration.videoLayerSize = size;
     setVideoLayerSizeIfPossible(size);
 
     m_player->setVideoLayerSizeFenced(size, WTFMove(machSendRight));
-
 #if USE(EXTENSIONKIT)
-    if (m_inlineLayerHostingContext)
-        m_inlineLayerHostingContext->commit();
+    [hostingUpdateCoordinator commit];
 #endif
 }
 

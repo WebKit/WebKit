@@ -131,7 +131,7 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier));
 }
 
-void IDBServer::openDatabase(const IDBRequestData& requestData)
+void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDatabase");
     ASSERT(!isMainThread());
@@ -149,7 +149,7 @@ void IDBServer::openDatabase(const IDBRequestData& requestData)
     uniqueIDBDatabase.openDatabaseConnection(*connection, requestData);
 }
 
-void IDBServer::deleteDatabase(const IDBRequestData& requestData)
+void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().loggingString().utf8().data());
     ASSERT(!isMainThread());
@@ -187,13 +187,18 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     transaction->abort();
 }
 
+UniqueIDBDatabaseTransaction* IDBServer::idbTransaction(const IDBRequestData& requestData) const
+{
+    return m_transactions.get(requestData.transactionIdentifier());
+}
+
 void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
 {
     LOG(IndexedDB, "IDBServer::createObjectStore");
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -207,7 +212,7 @@ void IDBServer::deleteObjectStore(const IDBRequestData& requestData, const Strin
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -221,7 +226,7 @@ void IDBServer::renameObjectStore(const IDBRequestData& requestData, uint64_t ob
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -235,7 +240,7 @@ void IDBServer::clearObjectStore(const IDBRequestData& requestData, uint64_t obj
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -248,7 +253,7 @@ void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -262,7 +267,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectSt
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -276,7 +281,7 @@ void IDBServer::renameIndex(const IDBRequestData& requestData, uint64_t objectSt
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -290,7 +295,7 @@ void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& ke
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -303,7 +308,7 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordD
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -316,7 +321,7 @@ void IDBServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAll
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -329,7 +334,7 @@ void IDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeDat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -342,7 +347,7 @@ void IDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRang
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -355,7 +360,7 @@ void IDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -368,14 +373,14 @@ void IDBServer::iterateCursor(const IDBRequestData& requestData, const IDBIterat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    auto transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
     transaction->iterateCursor(requestData, data);
 }
 
-void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+void IDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBServer::establishTransaction");
     ASSERT(!isMainThread());
@@ -391,7 +396,7 @@ void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, cons
         m_uniqueIDBDatabaseMap.remove(database->identifier());
 }
 
-void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");
     ASSERT(!isMainThread());
@@ -404,10 +409,10 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
         return;
     }
 
-    transaction->commit(pendingRequestCount);
+    transaction->commit(handledRequestResultsCount);
 }
 
-void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
+void IDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::didFinishHandlingVersionChangeTransaction - %s", transactionIdentifier.loggingString().utf8().data());
     ASSERT(!isMainThread());
@@ -420,9 +425,9 @@ void IDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConne
     connection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
-void IDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+void IDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::databaseConnectionPendingClose - %" PRIu64, databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBServer::databaseConnectionPendingClose - %" PRIu64, databaseConnectionIdentifier.toUInt64());
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
@@ -433,9 +438,9 @@ void IDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdenti
     databaseConnection->connectionPendingCloseFromClient();
 }
 
-void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+void IDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
 {
-    LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier);
+    LOG(IndexedDB, "IDBServer::databaseConnectionClosed - %" PRIu64, databaseConnectionIdentifier.toUInt64());
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
@@ -449,7 +454,7 @@ void IDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
         m_uniqueIDBDatabaseMap.remove(database->identifier());
 }
 
-void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
+void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::abortOpenAndUpgradeNeeded");
     ASSERT(!isMainThread());
@@ -467,7 +472,7 @@ void IDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier,
     databaseConnection->connectionClosedFromClient();
 }
 
-void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void IDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     LOG(IndexedDB, "IDBServer::didFireVersionChangeEvent");
     ASSERT(!isMainThread());
@@ -477,7 +482,7 @@ void IDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier,
         databaseConnection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
 }
 
-void IDBServer::openDBRequestCancelled(const IDBRequestData& requestData)
+void IDBServer::openDBRequestCancelled(const IDBOpenRequestData& requestData)
 {
     LOG(IndexedDB, "IDBServer::openDBRequestCancelled");
     ASSERT(!isMainThread());

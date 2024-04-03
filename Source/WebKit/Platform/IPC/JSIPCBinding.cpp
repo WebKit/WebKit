@@ -194,14 +194,14 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, W
     return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect"_s);
 }
 
-bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, unsigned index, JSC::JSValue value, DataReference buffer)
+bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, unsigned index, JSC::JSValue value, std::span<const uint8_t> buffer)
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
 
     if (value.isUndefined()) {
         auto arrayBuffer = JSC::ArrayBuffer::create(buffer);
         if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode()))
-            value = JSC::JSArrayBuffer::create(globalObject->vm(), structure, WTFMove(arrayBuffer));
+            value = JSC::JSArrayBuffer::create(Ref { globalObject->vm() }, structure, WTFMove(arrayBuffer));
     }
 
     array->putDirectIndex(globalObject, index, value);

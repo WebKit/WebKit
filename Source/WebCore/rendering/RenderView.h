@@ -210,6 +210,9 @@ public:
     void unregisterContainerQueryBox(const RenderBox&);
     const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
 
+    SingleThreadWeakPtr<RenderElement> viewTransitionRoot() const;
+    void setViewTransitionRoot(RenderElement& renderer);
+
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -279,6 +282,8 @@ private:
 
     SingleThreadWeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
     SingleThreadWeakHashSet<const RenderBox> m_containerQueryBoxes;
+
+    SingleThreadWeakPtr<RenderElement> m_viewTransitionRoot;
 };
 
 } // namespace WebCore

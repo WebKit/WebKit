@@ -41,6 +41,9 @@
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/user.h>
+#elif OS(QNX)
+#include <fcntl.h>
+#include <sys/procfs.h>
 #endif
 
 namespace WTF {
@@ -66,7 +69,7 @@ void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical)
     if (ReliefLogger::loggingEnabled())
         LOG(MemoryPressure, "Got memory pressure notification (%s)", isCritical ? "critical" : "non-critical");
 
-    setMemoryPressureStatus(MemoryPressureStatus::SystemCritical);
+    setMemoryPressureStatus(SystemMemoryPressureStatus::Critical);
 
     ensureOnMainThread([this, isCritical] {
         respondToMemoryPressure(isCritical ? Critical::Yes : Critical::No);
@@ -75,7 +78,7 @@ void MemoryPressureHandler::triggerMemoryPressureEvent(bool isCritical)
     if (ReliefLogger::loggingEnabled() && isUnderMemoryPressure())
         LOG(MemoryPressure, "System is no longer under memory pressure.");
 
-    setMemoryPressureStatus(MemoryPressureStatus::Normal);
+    setMemoryPressureStatus(SystemMemoryPressureStatus::Normal);
 }
 
 void MemoryPressureHandler::install()
@@ -127,6 +130,19 @@ static size_t processMemoryUsage()
         return 0;
 
     return static_cast<size_t>(info.ki_rssize - info.ki_tsize) * pageSize;
+#elif OS(QNX)
+    int fd = open("/proc/self/ctl", O_RDONLY);
+    if (fd == -1)
+        return 0;
+
+    procfs_asinfo info;
+    int rc = devctl(fd, DCMD_PROC_ASINFO, &info, sizeof(info), nullptr);
+    close(fd);
+
+    if (rc)
+        return 0;
+
+    return static_cast<size_t>(info.rss);
 #else
 #error "Missing a platform specific way of determining the memory usage"
 #endif

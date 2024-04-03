@@ -172,6 +172,8 @@ ScreenCaptureKitCaptureSource::~ScreenCaptureKitCaptureSource()
 {
     if (!m_sessionSource)
         ScreenCaptureKitSharingSessionManager::singleton().cancelPendingSessionForDevice(m_captureDevice);
+
+    clearSharingSession();
 }
 
 bool ScreenCaptureKitCaptureSource::start()
@@ -204,12 +206,34 @@ void ScreenCaptureKitCaptureSource::stop()
         });
     });
     [contentStream() stopCaptureWithCompletionHandler:stopHandler.get()];
-    m_sessionSource = nullptr;
+
+    if (m_sessionSource) {
+        m_contentFilter = m_sessionSource->contentFilter();
+        m_sessionSource = nullptr;
+    }
+}
+
+void ScreenCaptureKitCaptureSource::end()
+{
+    stop();
+    clearSharingSession();
+}
+
+void ScreenCaptureKitCaptureSource::clearSharingSession()
+{
+    if (!m_sharingSession)
+        return;
+
+    ScreenCaptureKitSharingSessionManager::singleton().cleanupSharingSession(m_sharingSession.get());
+    m_sharingSession = nullptr;
 }
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)
 {
     ASSERT(isMainThread());
+
+    if (!m_isRunning)
+        return;
 
     ERROR_LOG_IF(loggerPtr() && error, LOGIDENTIFIER, message, " with error '", error.get(), "'");
     ERROR_LOG_IF(loggerPtr() && !error, LOGIDENTIFIER, message);
@@ -296,9 +320,22 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     if (m_frameRate)
         [m_streamConfiguration setMinimumFrameInterval:PAL::CMTimeMakeWithSeconds(1 / m_frameRate, 1000)];
 
-    if (m_width && m_height) {
-        [m_streamConfiguration setWidth:m_width];
-        [m_streamConfiguration setHeight:m_height];
+    auto width = m_width;
+    auto height = m_height;
+
+    if (!width && !height) {
+        width = m_contentSize.width();
+        height = m_contentSize.height();
+    } else if (!m_contentSize.isEmpty()) {
+        if (!width)
+            width = height * m_contentSize.aspectRatio();
+        else
+            height = width / m_contentSize.aspectRatio();
+    }
+
+    if (width && height) {
+        [m_streamConfiguration setWidth:width];
+        [m_streamConfiguration setHeight:height];
     }
 
     return m_streamConfiguration;
@@ -314,7 +351,30 @@ void ScreenCaptureKitCaptureSource::startContentStream()
     if (!m_captureHelper)
         m_captureHelper = adoptNS([[WebCoreScreenCaptureKitHelper alloc] initWithCallback:this]);
 
-    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_captureDevice, streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
+    if (!m_contentFilter && !m_sharingSession) {
+        auto filterAndSession = ScreenCaptureKitSharingSessionManager::singleton().contentFilterAndSharingSessionFromCaptureDevice(m_captureDevice);
+        m_contentFilter = WTFMove(filterAndSession.first);
+        m_sharingSession = WTFMove(filterAndSession.second);
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+        m_contentSize = FloatSize { m_contentFilter.get().contentRect.size };
+        m_contentSize.scale(m_contentFilter.get().pointPixelScale);
+#endif
+    }
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    if (!m_contentFilter) {
+        sessionFailedWithError(nil, "Unkown display device - no content filter"_s);
+        return;
+    }
+#else
+    if (!m_sharingSession) {
+        sessionFailedWithError(nil, "Unkown display device - no sharing session"_s);
+        return;
+    }
+#endif
+
+    m_sessionSource = ScreenCaptureKitSharingSessionManager::singleton().createSessionSourceForDevice(*this, m_contentFilter.get(), m_sharingSession.get(), streamConfiguration().get(), (SCStreamDelegate*)m_captureHelper.get());
     if (!m_sessionSource) {
         sessionFailedWithError(nil, "Failed to allocate stream"_s);
         return;
@@ -430,7 +490,23 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
 
     auto attachments = (__bridge NSArray *)PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), false);
     SCFrameStatus status = SCFrameStatusStopped;
+
+    double contentScale = 1;
+    double scaleFactor = 1;
+    FloatSize contentSize;
     [attachments enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *attachment, NSUInteger, BOOL *stop) {
+        if (auto scaleFactorNumber = (NSNumber *)attachment[SCStreamFrameInfoScaleFactor])
+            scaleFactor = [scaleFactorNumber floatValue];
+
+        if (auto contentScaleNumber = (NSNumber *)attachment[SCStreamFrameInfoContentScale])
+            contentScale = [contentScaleNumber floatValue];
+
+        if (auto contentRectDictionary = (CFDictionaryRef)attachment[SCStreamFrameInfoContentRect]) {
+            CGRect contentRect;
+            if (CGRectMakeWithDictionaryRepresentation(contentRectDictionary, &contentRect))
+                contentSize = FloatSize { contentRect.size };
+        }
+
         auto statusNumber = (NSNumber *)attachment[SCStreamFrameInfoStatus];
         if (!statusNumber)
             return;
@@ -451,6 +527,17 @@ void ScreenCaptureKitCaptureSource::streamDidOutputVideoSampleBuffer(RetainPtr<C
     }
 
     m_currentFrame = WTFMove(sampleBuffer);
+
+    if (scaleFactor != 1)
+        contentSize.scale(scaleFactor);
+    if (contentScale && contentScale != 1)
+        contentSize.scale(1 / contentScale);
+
+    if (m_contentSize != contentSize) {
+        m_contentSize = contentSize;
+        m_streamConfiguration = nullptr;
+        updateStreamConfiguration();
+    }
 
     auto intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(m_currentFrame.get()), true, true));
     if (!m_intrinsicSize || *m_intrinsicSize != intrinsicSize) {

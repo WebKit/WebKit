@@ -31,7 +31,7 @@
 
 #import "UIKitSPI.h"
 
-@class UIScrollEvent;
+@class WKBEScrollViewScrollUpdate;
 
 namespace WebKit {
 enum class TapHandlingResult : uint8_t;
@@ -177,6 +177,10 @@ enum class TapHandlingResult : uint8_t;
 + (void)_clearLockdownModeWarningNeeded;
 #endif
 
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKBEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion;
+#endif
+
 - (UIColor *)_insertionPointColor;
 
 - (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event;
@@ -208,6 +212,8 @@ enum class TapHandlingResult : uint8_t;
 - (void)_resetUnobscuredSafeAreaInsets;
 - (void)_resetObscuredInsets;
 
+- (void)_overrideZoomScaleParametersWithMinimumZoomScale:(CGFloat)minimumZoomScale maximumZoomScale:(CGFloat)maximumZoomScale allowUserScaling:(BOOL)allowUserScaling;
+- (void)_clearOverrideZoomScaleParameters;
 @end
 
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);

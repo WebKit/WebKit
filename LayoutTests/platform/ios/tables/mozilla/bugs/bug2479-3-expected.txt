@@ -10,7 +10,7 @@ layer at (0,0) size 800x792
         RenderText {#text} at (0,0) size 752x34
           text run at (0,0) width 752: "If you have any comments to make regarding this"
           text run at (0,17) width 208: "test, e-mail "
-        RenderInline {A} at (0,0) size 432x17 [color=#0000EE]
+        RenderInline {A} at (208,17) size 432x17 [color=#0000EE]
           RenderText {#text} at (208,17) size 432x17
             text run at (208,17) width 432: "py8ieh=eviltests@bath.ac.uk"
         RenderText {#text} at (640,17) size 16x17
@@ -37,14 +37,14 @@ layer at (0,0) size 800x792
         RenderBlock (anonymous) at (13,47) size 758x70
           RenderText {#text} at (0,0) size 288x17
             text run at (0,0) width 288: "then your browser "
-          RenderInline {EM} at (0,0) size 192x17
+          RenderInline {EM} at (288,0) size 192x17
             RenderText {#text} at (288,0) size 192x17
               text run at (288,0) width 192: "does support"
-          RenderText {#text} at (480,0) size 736x36
+          RenderText {#text} at (0,0) size 736x36
             text run at (480,0) width 256: " table values on"
             text run at (0,19) width 164: "'display'. "
-          RenderInline {STRONG} at (0,0) size 731x51
-            RenderText {#text} at (163,19) size 731x51
+          RenderInline {STRONG} at (0,19) size 731x51
+            RenderText {#text} at (0,19) size 731x51
               text run at (163,19) width 545: "If this paragraphs flows without"
               text run at (0,36) width 731: "any undue breaks, then you should mark your"
               text run at (0,53) width 663: "browser as not supporting table values!"
@@ -70,7 +70,7 @@ layer at (0,0) size 800x792
         RenderText {#text} at (0,0) size 350x25
           text run at (0,0) width 350: "Submit Results"
       RenderBlock {FORM} at (0,549) size 784x39
-        RenderBlock {P} at (0,0) size 784x38
+        RenderBlock {P} at (0,0) size 784x39
           RenderText {#text} at (0,0) size 640x17
             text run at (0,0) width 640: "How does your browser fare on this test?"
           RenderMenuList {SELECT} at (0,17) size 234x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
@@ -79,7 +79,7 @@ layer at (0,0) size 800x792
                 text run at (0,0) width 139: "The test renders correctly."
           RenderText {#text} at (234,18) size 16x17
             text run at (234,18) width 16: " "
-          RenderInline {LABEL} at (0,0) size 299x17
+          RenderInline {LABEL} at (250,18) size 299x17
             RenderText {#text} at (250,18) size 144x17
               text run at (250,18) width 144: "Comment: "
             RenderTextControl {INPUT} at (394,17) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -93,7 +93,7 @@ layer at (0,0) size 800x792
       RenderBlock {P} at (0,621) size 784x18
         RenderText {#text} at (0,0) size 160x17
           text run at (0,0) width 160: "Up to the "
-        RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+        RenderInline {A} at (160,0) size 176x17 [color=#0000EE]
           RenderText {#text} at (160,0) size 176x17
             text run at (160,0) width 176: "Table Tests"
         RenderText {#text} at (336,0) size 16x17
@@ -101,7 +101,7 @@ layer at (0,0) size 800x792
       RenderBlock {P} at (0,654) size 784x18
         RenderText {#text} at (0,0) size 160x17
           text run at (0,0) width 160: "Up to the "
-        RenderInline {A} at (0,0) size 240x17 [color=#0000EE]
+        RenderInline {A} at (160,0) size 240x17 [color=#0000EE]
           RenderText {#text} at (160,0) size 240x17
             text run at (160,0) width 240: "Evil Tests Page"
         RenderText {#text} at (400,0) size 16x17
@@ -109,12 +109,12 @@ layer at (0,0) size 800x792
       RenderBlock {P} at (0,687) size 784x35
         RenderText {#text} at (0,0) size 432x17
           text run at (0,0) width 432: "This page is maintained by "
-        RenderInline {A} at (0,0) size 176x17 [color=#0000EE]
+        RenderInline {A} at (432,0) size 176x17 [color=#0000EE]
           RenderText {#text} at (432,0) size 176x17
             text run at (432,0) width 176: "Ian Hickson"
         RenderText {#text} at (0,17) size 16x17
           text run at (0,17) width 16: "("
-        RenderInline {A} at (0,0) size 272x17 [color=#0000EE]
+        RenderInline {A} at (16,17) size 272x17 [color=#0000EE]
           RenderText {#text} at (16,17) size 272x17
             text run at (16,17) width 272: "py8ieh@bath.ac.uk"
         RenderText {#text} at (288,17) size 32x17

@@ -16,10 +16,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,60) size 758x39
           text run at (0,60) width 758: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
           text run at (0,80) width 200: "expands to fit the height of the "
-        RenderInline {I} at (0,0) size 137x19
+        RenderInline {I} at (199,80) size 137x19
           RenderText {#text} at (199,80) size 137x19
             text run at (199,80) width 137: "content inside the div"
-        RenderText {#text} at (335,80) size 779x39
+        RenderText {#text} at (0,80) size 779x39
           text run at (335,80) width 444: ", not the height of the div. This behavior does not occur if the content"
           text run at (0,100) width 88: "is not floated."
         RenderBR {BR} at (87,100) size 1x19

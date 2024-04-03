@@ -108,6 +108,8 @@ public:
     virtual float pageScaleFactor() const { return 1; }
     virtual float zoomedOutPageScaleFactor() const { return 0; }
 
+    virtual std::optional<float> customContentsScale(const GraphicsLayer*) const { return { }; }
+
     virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const { return 1; }
     virtual bool paintsOpaquelyAtNonIntegralScales(const GraphicsLayer*) const { return false; }
 
@@ -120,7 +122,7 @@ public:
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const { return true; }
 
     virtual bool useGiantTiles() const { return false; }
-    virtual bool useCSS3DTransformInteroperability() const { return false; }
+    virtual bool cssUnprefixedBackdropFilterEnabled() const { return false; }
 
     virtual bool needsPixelAligment() const { return false; }
 
@@ -131,6 +133,8 @@ public:
     virtual TransformationMatrix transformMatrixForProperty(AnimatedProperty) const { return { }; }
 
     virtual bool layerContainsBitmapOnly(const GraphicsLayer*) const { return false; }
+
+    virtual bool layerNeedsPlatformContext(const GraphicsLayer*) const { return false; }
 
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not

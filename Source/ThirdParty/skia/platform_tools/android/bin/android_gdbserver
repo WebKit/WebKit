@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# android_gdbserver: Pushes gdbserver. Starts debugging environment.
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $SCRIPT_DIR/utils/android_setup.sh
+source $SCRIPT_DIR/utils/setup_adb.sh
+
+APP_NAME=${APP_ARGS[0]}
+
+TARGET_EXE="${SKIA_OUT}/${APP_NAME}"
+if [ ! -f "$TARGET_EXE" ]
+then
+  echo "Unable to find ${TARGET_EXE}."
+  exit 1
+fi
+
+IS_64_BIT="false"
+GN_TARGET_CPU=$(gn args --list=target_cpu $SKIA_OUT                     \
+               | grep "Current value = "                                \
+               | sed -e s/"Current value = "// -e s/\"//g -e s/" "//g)
+if [[ $GN_TARGET_CPU == *64* ]]; then
+  IS_64_BIT="true"
+fi
+
+# We need the debug symbols from these files
+GDB_TMP_DIR=$SKIA_OUT/android_gdb_tmp
+mkdir -p $GDB_TMP_DIR
+
+echo "Copying symbol files"
+if [[ $IS_64_BIT == "true" ]]; then
+  SYSTEM_LIBRARY_PATH=/system/lib64
+  echo "64 bit!"
+else
+  SYSTEM_LIBRARY_PATH=/system/lib
+fi
+for library_file in \
+    libc.so \
+    libc++.so \
+    libstdc++.so \
+    libm.so \
+    liblog.so \
+    libz.so \
+    libsigchain.so \
+    libcutils.so \
+    libunwind.so \
+    libbacktrace.so \
+    libutils.so \
+    libEGL.so \
+    libGLESv2.so \
+    ; do
+    ANDROID_LS=`$ADB $DEVICE_SERIAL shell -x ls -ld ${SYSTEM_LIBRARY_PATH}/${library_file}`
+    if [ "${ANDROID_LS:0:1}" == "-" ]; then
+      adb_pull_if_needed "${SYSTEM_LIBRARY_PATH}/${library_file}" $GDB_TMP_DIR
+    fi
+done
+
+if [[ $IS_64_BIT == "true" ]]; then
+  adb_pull_if_needed /system/bin/linker64 $GDB_TMP_DIR
+else
+  adb_pull_if_needed /system/bin/linker $GDB_TMP_DIR
+fi
+
+echo "Pushing app..."
+cp "$TARGET_EXE" $GDB_TMP_DIR
+adb_push_if_needed "${TARGET_EXE}" /data/local/tmp
+
+echo "Pushing gdbserver..."
+adb_push_if_needed $SKIA_OUT/gdbserver /data/local/tmp
+
+echo "Setting up port forward"
+$ADB forward "tcp:5039" "tcp:5039"
+
+# Kill all previous instances of gdbserver and the app to rid all port overriding errors.
+echo "Killing any running Skia processes."
+set +e
+$ADB shell ps | grep gdbserver | awk '{print $2}' | xargs $ADB shell kill 2> /dev/null
+$ADB shell ps | grep ${APP_NAME} | awk '{print $2}' | xargs $ADB shell kill 2> /dev/null
+set -e
+
+# Starting up gdbserver in android shell
+echo "Starting gdbserver with command: ${APP_ARGS[@]}"
+$ADB shell /data/local/tmp/gdbserver :5039 /data/local/tmp/${APP_ARGS[@]} &

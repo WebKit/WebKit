@@ -760,6 +760,20 @@ static ElementType* typedArrayMergeSort(VM& vm, Vector<ElementType, 16>& src, Ve
     return from;
 }
 
+static ALWAYS_INLINE bool coerceComparatorResultToBoolean(JSGlobalObject* globalObject, ThrowScope& scope, JSValue comparatorResult)
+{
+    if (LIKELY(comparatorResult.isInt32()))
+        return comparatorResult.asInt32() < 0;
+
+    // See https://bugs.webkit.org/show_bug.cgi?id=47825 on boolean special-casing
+    if (comparatorResult == jsBoolean(false))
+        return true;
+
+    double value = comparatorResult.toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    return value < 0;
+}
+
 template<typename ViewClass>
 static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& vm, JSGlobalObject* globalObject, ViewClass* thisObject, JSValue comparatorValue)
 {
@@ -821,13 +835,9 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
 
             JSValue jsResult = cachedCall.call();
             RETURN_IF_EXCEPTION(scope, { });
-
-            if (LIKELY(jsResult.isInt32()))
-                return jsResult.asInt32() < 0;
-
-            double value = jsResult.toNumber(globalObject);
+            bool result = coerceComparatorResultToBoolean(globalObject, scope, jsResult);
             RETURN_IF_EXCEPTION(scope, { });
-            return value < 0;
+            return result;
         });
         RETURN_IF_EXCEPTION(scope, { });
     } else {
@@ -851,13 +861,9 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
 
             JSValue jsResult = call(globalObject, comparatorValue, callData, jsUndefined(), args);
             RETURN_IF_EXCEPTION(scope, { });
-
-            if (LIKELY(jsResult.isInt32()))
-                return jsResult.asInt32() < 0;
-
-            double value = jsResult.toNumber(globalObject);
+            bool result = coerceComparatorResultToBoolean(globalObject, scope, jsResult);
             RETURN_IF_EXCEPTION(scope, { });
-            return value < 0;
+            return result;
         });
         RETURN_IF_EXCEPTION(scope, { });
     }

@@ -156,7 +156,7 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, co
             pasteboardTypes.append(type->string());
 
         for (auto item : dataArray->elementsOfType<API::Data>()) {
-            auto buffer = SharedBuffer::create(item->bytes(), item->size());
+            auto buffer = SharedBuffer::create(item->span());
             pasteboardData.append(WTFMove(buffer));
         }
     }

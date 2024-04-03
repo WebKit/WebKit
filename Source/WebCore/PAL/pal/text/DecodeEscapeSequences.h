@@ -96,13 +96,13 @@ struct URLEscapeSequence {
         return runEnd;
     }
 
-    static Vector<char, 512> decodeRun(StringView run)
+    static Vector<uint8_t, 512> decodeRun(StringView run)
     {
         // For URL escape sequences, we know that findEndOfRun() has given us a run where every %-sign introduces
         // a valid escape sequence, but there may be characters between the sequences.
-        Vector<char, 512> buffer;
+        Vector<uint8_t, 512> buffer;
         buffer.grow(run.length()); // Unescaping hex sequences only makes the length smaller.
-        char* p = buffer.data();
+        uint8_t* p = buffer.data();
         while (!run.isEmpty()) {
             if (run[0] == '%') {
                 *p++ = (toASCIIHexValue(run[1]) << 4) | toASCIIHexValue(run[2]);
@@ -121,8 +121,8 @@ struct URLEscapeSequence {
     {
         auto buffer = decodeRun(run);
         if (!encoding.isValid())
-            return PAL::UTF8Encoding().decode(buffer.data(), buffer.size());
-        return encoding.decode(buffer.data(), buffer.size());
+            return PAL::UTF8Encoding().decode(buffer.span());
+        return encoding.decode(buffer.span());
     }
 };
 

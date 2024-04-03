@@ -72,3 +72,22 @@ TEST_F(ImmutableStringBuilderTest, AppendHexUint64)
     ImmutableString str = strBuilder;
     EXPECT_EQ(std::string("feedcafe9876beef"), str.data());
 }
+
+// Test writing a decimal using ImmutableStringBuilder of exact size.
+TEST_F(ImmutableStringBuilderTest, AppendDecimal)
+{
+    ImmutableStringBuilder b1(1);
+    b1.appendDecimal(1);
+    ImmutableString s1 = b1;
+    EXPECT_EQ(std::string("1"), s1.data());
+
+    ImmutableStringBuilder b20(2);
+    b20.appendDecimal(20);
+    ImmutableString s20 = b20;
+    EXPECT_EQ(std::string("20"), s20.data());
+
+    ImmutableStringBuilder b30000(5);
+    b30000.appendDecimal(30000);
+    ImmutableString s30000 = b30000;
+    EXPECT_EQ(std::string("30000"), s30000.data());
+}

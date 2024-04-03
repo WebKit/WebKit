@@ -69,7 +69,7 @@ def config_argument_parser():
 
     parser.add_argument('browser_args', nargs='*', help='Additional arguments to pass to the browser process. These are positional arguments and must follow all other arguments. If the pass through arguments begin with a dash, use `--` before the argument list begins.')
 
-    parser.add_argument('--http-server-type', default="twisted", choices=["twisted", "builtin"], help="Specify the http server to use for the webserver benchmark runner.")
+    parser.add_argument('--http-server-type', default="builtin", choices=["twisted", "builtin"], help="Specify the http server to use for the webserver benchmark runner. Default is `builtin`.")
 
     return parser
 

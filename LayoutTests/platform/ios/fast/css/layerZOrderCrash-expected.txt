@@ -12,7 +12,7 @@ layer at (8,28) size 59x96
     RenderTableSection {TBODY} at (0,0) size 60x96
       RenderTableRow {TR} at (0,2) size 60x22
         RenderTableCell {TD} at (2,2) size 56x22 [r=0 c=0 rs=1 cs=1]
-          RenderInline {A} at (0,0) size 25x19 [color=#0000EE]
+          RenderInline {A} at (1,1) size 25x19 [color=#0000EE]
             RenderText {#text} at (1,1) size 25x19
               text run at (1,1) width 25: "link"
       RenderTableRow {TR} at (0,26) size 60x68

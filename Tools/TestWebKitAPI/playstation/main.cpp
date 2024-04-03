@@ -40,6 +40,9 @@ int main(int argc, char** argv)
 {
     loadLibraryOrExit(ICU_LOAD_AT);
 #if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit)
+#if defined(LCMS2_LOAD_AT)
+    loadLibraryOrExit(LCMS2_LOAD_AT);
+#endif
     loadLibraryOrExit(PNG_LOAD_AT);
 #if defined(JPEG_LOAD_AT)
     loadLibraryOrExit(JPEG_LOAD_AT);
@@ -47,10 +50,18 @@ int main(int argc, char** argv)
 #if defined(WebP_LOAD_AT)
     loadLibraryOrExit(WebP_LOAD_AT);
 #endif
+#if defined(Brotli_LOAD_AT)
+    loadLibraryOrExit(Brotli_LOAD_AT);
+#endif
+#if defined(JPEGXL_LOAD_AT)
+    loadLibraryOrExit(JPEGXL_LOAD_AT);
+#endif
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
+#if USE(CAIRO) && defined(Cairo_LOAD_AT)
     loadLibraryOrExit(Cairo_LOAD_AT);
+#endif
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
 #endif
 #if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit) || defined(BUILDING_TestJavaScriptCore)

@@ -54,6 +54,11 @@ PlatformLayer* DummyModelPlayer::layer()
     return nullptr;
 }
 
+std::optional<LayerHostingContextIdentifier> DummyModelPlayer::layerHostingContextIdentifier()
+{
+    return std::nullopt;
+}
+
 void DummyModelPlayer::sizeDidChange(LayoutSize)
 {
 }

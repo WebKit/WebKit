@@ -49,6 +49,13 @@
 
 namespace WTR {
 
+void AccessibilityController::platformInitialize()
+{
+    // Override the client identifier to be kAXClientTypeWebKitTesting which is treated the same as the VoiceOver identifier in isolated tree mode.
+    // This also allows to enable some APIs during testing only for unit test purposes, not for other clients consumption.
+    _AXSetClientIdentificationOverride((AXClientType)kAXClientTypeWebKitTesting);
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
     auto page = InjectedBundle::singleton().page()->page();
@@ -149,8 +156,6 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AccessibilityController::updateIsolatedTreeMode()
 {
-    // Override the client identifier to be kAXClientTypeWebKitTesting which is treated the same as the VoiceOver identifier, and thus requests are handled in isolated tree mode.
-    _AXSetClientIdentificationOverride(m_accessibilityIsolatedTreeMode ? (AXClientType)kAXClientTypeWebKitTesting : kAXClientTypeNoActiveRequestFound);
     _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeSecondaryThread : AXSIsolatedTreeModeOff);
 }
 #endif

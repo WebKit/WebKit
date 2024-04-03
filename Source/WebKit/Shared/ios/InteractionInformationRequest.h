@@ -28,9 +28,9 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
-#include "ShareableBitmap.h"
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionGeometry.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextIndicator.h>
 #include <wtf/text/WTFString.h>
 

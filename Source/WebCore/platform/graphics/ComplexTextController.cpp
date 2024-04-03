@@ -25,7 +25,6 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
-#include "CharacterProperties.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
@@ -35,6 +34,7 @@
 #include <unicode/ubrk.h>
 #include <unicode/utf16.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -211,7 +211,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 }
 
                 unsigned stringLength = complexTextRun.stringLength();
-                CachedTextBreakIterator cursorPositionIterator(StringView(complexTextRun.characters(), stringLength), nullptr, 0, TextBreakIterator::CaretMode { }, nullAtom());
+                CachedTextBreakIterator cursorPositionIterator(complexTextRun.span(), { }, TextBreakIterator::CaretMode { }, nullAtom());
                 unsigned clusterStart;
                 if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
@@ -262,7 +262,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     return 0;
 }
 
-bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter, unsigned& markCount)
+void ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter)
 {
     unsigned remainingCharacters = m_end - currentIndex;
     ASSERT(remainingCharacters);
@@ -279,19 +279,15 @@ bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedText
     unsigned i = 0;
     U16_NEXT(buffer, i, bufferLength, baseCharacter);
     if (U_IS_SURROGATE(baseCharacter)) {
-        markCount = 0;
         currentIndex += i;
-        return false;
+        return;
     }
 
     int delta = remainingCharacters;
     if (auto following = graphemeClusterIterator.following(currentIndex))
         delta = *following - currentIndex;
 
-    markCount = delta - 1;
     currentIndex += delta;
-
-    return true;
 }
 
 void ComplexTextController::collectComplexTextRuns()
@@ -328,17 +324,15 @@ void ComplexTextController::collectComplexTextRuns()
     const Font* synthesizedFont = nullptr;
     const Font* smallSynthesizedFont = nullptr;
 
-    CachedTextBreakIterator graphemeClusterIterator(m_run.text(), nullptr, 0, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
+    CachedTextBreakIterator graphemeClusterIterator(m_run.text(), { }, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
-    unsigned markCount;
     char32_t baseCharacter;
-    if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
-        return;
+    advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
     // We don't perform font fallback on the capitalized characters when small caps is synthesized.
     // We may want to change this code to do so in the future; if we do, then the logic in initiateFontLoadingByAccessingGlyphDataIfApplicable()
     // would need to be updated accordingly too.
-    nextFont = m_font.fontForCombiningCharacterSequence({ baseOfString, currentIndex });
+    nextFont = m_font.fontForCombiningCharacterSequence(std::span { baseOfString, currentIndex });
 
     bool isSmallCaps = false;
     bool nextIsSmallCaps = false;
@@ -360,8 +354,7 @@ void ComplexTextController::collectComplexTextRuns()
         isSmallCaps = nextIsSmallCaps;
         auto previousIndex = currentIndex;
 
-        if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
-            return;
+        advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter);
 
         if (synthesizedFont) {
             if (auto capitalizedBase = capitalized(baseCharacter)) {
@@ -379,7 +372,7 @@ void ComplexTextController::collectComplexTextRuns()
             }
         }
 
-        nextFont = m_font.fontForCombiningCharacterSequence({ baseOfString + previousIndex, currentIndex - previousIndex });
+        nextFont = m_font.fontForCombiningCharacterSequence(std::span { baseOfString + previousIndex, currentIndex - previousIndex });
 
         capitalizedBase = capitalized(baseCharacter);
         if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {

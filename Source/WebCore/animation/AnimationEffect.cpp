@@ -39,13 +39,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AnimationEffect);
 
-AnimationEffect::AnimationEffect()
-{
-}
+AnimationEffect::AnimationEffect() = default;
 
-AnimationEffect::~AnimationEffect()
-{
-}
+AnimationEffect::~AnimationEffect() = default;
 
 void AnimationEffect::setAnimation(WebAnimation* animation)
 {
@@ -59,8 +55,8 @@ void AnimationEffect::setAnimation(WebAnimation* animation)
 
 EffectTiming AnimationEffect::getBindingsTiming() const
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
-        declarativeAnimation->flushPendingStyleChanges();
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+        styleOriginatedAnimation->flushPendingStyleChanges();
 
     EffectTiming timing;
     timing.delay = secondsToWebAnimationsAPITime(m_timing.delay);
@@ -102,8 +98,8 @@ BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<Seconds> startTi
 
 ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
 {
-    if (auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(animation()))
-        declarativeAnimation->flushPendingStyleChanges();
+    if (auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(animation()))
+        styleOriginatedAnimation->flushPendingStyleChanges();
     return getComputedTiming();
 }
 

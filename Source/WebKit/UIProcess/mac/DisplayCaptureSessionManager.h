@@ -48,6 +48,7 @@ public:
     ~DisplayCaptureSessionManager();
 
     void promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType, WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void cancelGetDisplayMediaPrompt(WebPageProxy&);
     bool canRequestDisplayCapturePermission();
     void setIndexOfDeviceSelectedForTesting(std::optional<unsigned> index) { m_indexOfDeviceSelectedForTesting = index; }
 

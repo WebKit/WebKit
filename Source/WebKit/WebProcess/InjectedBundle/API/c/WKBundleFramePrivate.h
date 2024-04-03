@@ -38,7 +38,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frame);

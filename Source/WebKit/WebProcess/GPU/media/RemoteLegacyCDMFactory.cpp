@@ -65,9 +65,9 @@ void RemoteLegacyCDMFactory::registerFactory()
     );
 }
 
-const char* RemoteLegacyCDMFactory::supplementName()
+ASCIILiteral RemoteLegacyCDMFactory::supplementName()
 {
-    return "RemoteLegacyCDMFactory";
+    return "RemoteLegacyCDMFactory"_s;
 }
 
 GPUProcessConnection& RemoteLegacyCDMFactory::gpuProcessConnection()

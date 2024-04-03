@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 776x35
           text run at (0,0) width 776: "(1) Table with 2 columns. Relative width value for first column is \"1*\" and for column 2 is \"3*\". Table width is 100%. The"
           text run at (0,18) width 710: "first column should span 1/4 of the window width and the second column should span 3/4 of the window width. "
-        RenderInline {B} at (0,0) size 730x35
-          RenderText {#text} at (710,18) size 730x35
+        RenderInline {B} at (0,18) size 730x35
+          RenderText {#text} at (0,18) size 730x35
             text run at (710,18) width 20: "5.0"
             text run at (0,36) width 147: "renders this correctly."
       RenderTable {TABLE} at (0,70) size 784x28 [border: (1px outset #808080)]
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 761x35
           text run at (0,0) width 761: "(2) Table with 1 column. Relative width value for column is \"0*\" with table width of 100%. The column should span the"
           text run at (0,18) width 360: "minimum width necessary to hold the column's contents. "
-        RenderInline {B} at (0,0) size 62x17
+        RenderInline {B} at (360,18) size 62x17
           RenderText {#text} at (360,18) size 62x17
             text run at (360,18) width 62: "Problem."
       RenderTable {TABLE} at (0,202) size 784x28 [border: (1px outset #808080)]
@@ -48,8 +48,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 776x35
           text run at (0,0) width 776: "(3) Table with 2 columns. Relative width value for first column is \"0*\" and for column 2 is \"3*\". Table width is 100%. The"
           text run at (0,18) width 743: "first column should span the minimum width necessary to hold the column's contents. The second column should ????"
-        RenderInline {B} at (0,0) size 770x35
-          RenderText {#text} at (743,18) size 770x35
+        RenderInline {B} at (0,18) size 770x35
+          RenderText {#text} at (0,18) size 770x35
             text run at (743,18) width 27: "The"
             text run at (0,36) width 697: "first column is rendered properly, but there seems to be a problem with the width of the second column."
       RenderTable {TABLE} at (0,352) size 784x28 [border: (1px outset #808080)]

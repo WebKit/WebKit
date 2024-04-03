@@ -30,6 +30,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -73,7 +74,10 @@ private:
     void sampleRateDidChange(const WebCore::AudioSession&) final;
     void configurationDidChange(const WebCore::AudioSession&);
 
-    GPUProcess& m_gpuProcess;
+    bool hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude);
+    bool hasActiveNotInterruptedProxy();
+
+    WeakRef<GPUProcess> m_gpuProcess;
     WeakHashSet<RemoteAudioSessionProxy> m_proxies;
 };
 

@@ -27,7 +27,7 @@
 #import "_WKActivatedElementInfoInternal.h"
 
 #import "CocoaImage.h"
-#import "ShareableBitmap.h"
+#import <WebCore/ShareableBitmap.h>
 #import <wtf/RetainPtr.h>
 
 #if USE(APPKIT)
@@ -42,7 +42,7 @@
     RetainPtr<NSString> _title;
     WebCore::IntPoint _interactionLocation;
     RetainPtr<NSString> _ID;
-    RefPtr<WebKit::ShareableBitmap> _image;
+    RefPtr<WebCore::ShareableBitmap> _image;
     RetainPtr<NSString> _imageMIMEType;
     RetainPtr<CocoaImage> _cocoaImage;
 #if PLATFORM(IOS_FAMILY)
@@ -103,7 +103,7 @@
     return [self _initWithType:type URL:url imageURL:information.imageURL information:information];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type image:(WebKit::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
+- (instancetype)_initWithType:(_WKActivatedElementType)type image:(WebCore::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
 {
     return [self _initWithType:type URL:information.url imageURL:information.imageURL image:image userInfo:nil information:information];
 }
@@ -113,7 +113,7 @@
     return [self _initWithType:type URL:url imageURL:imageURL image:information.image.get() userInfo:nil information:information];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url image:(WebKit::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url image:(WebCore::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
 {
     return [self _initWithType:type URL:url imageURL:information.imageURL image:image userInfo:nil information:information];
 }
@@ -123,7 +123,7 @@
     return [self _initWithType:type URL:url imageURL:imageURL image:information.image.get() userInfo:userInfo information:information];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL image:(WebCore::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information
 {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     auto animationsAtPoint = information.animationsAtPoint;
@@ -135,7 +135,7 @@
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating canShowAnimationControls:(BOOL)canShowAnimationControls animationsUnderElement:(Vector<WebCore::ElementAnimationContext>)animationsUnderElement userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebCore::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating canShowAnimationControls:(BOOL)canShowAnimationControls animationsUnderElement:(Vector<WebCore::ElementAnimationContext>)animationsUnderElement userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;

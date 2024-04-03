@@ -53,6 +53,7 @@ class MachSendRight;
 namespace WebCore {
 class FloatSize;
 class Node;
+class ShareableBitmapHandle;
 }
 
 namespace WebKit {
@@ -63,7 +64,6 @@ class LayerHostingContext;
 class WebPage;
 class PlaybackSessionInterfaceContext;
 class PlaybackSessionManager;
-class ShareableBitmapHandle;
 class VideoPresentationManager;
 
 class VideoPresentationInterfaceContext
@@ -146,7 +146,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
-    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, ShareableBitmapHandle&&);
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, WebCore::ShareableBitmapHandle&&);
     void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
     void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 
@@ -202,11 +202,11 @@ protected:
 
     WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
-    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier, WebCore::WeakPtrImplWithEventTargetData> m_videoElements;
+    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier> m_videoElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
-    WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
+    WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
     WTF::Function<void(LayerHostingContextID, const WebCore::FloatSize&)> m_setupFullscreenHandler;
 };

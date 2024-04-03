@@ -68,9 +68,11 @@ public:
     void setReplicatedLayer(GraphicsLayer*) override;
     void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
     void setPosition(const WebCore::FloatPoint&) override;
+    void syncPosition(const WebCore::FloatPoint&) override;
     void setAnchorPoint(const WebCore::FloatPoint3D&) override;
     void setSize(const WebCore::FloatSize&) override;
     void setBoundsOrigin(const WebCore::FloatPoint&) override;
+    void syncBoundsOrigin(const WebCore::FloatPoint&) override;
     void setTransform(const WebCore::TransformationMatrix&) override;
     void setChildrenTransform(const WebCore::TransformationMatrix&) override;
     void setPreserves3D(bool) override;

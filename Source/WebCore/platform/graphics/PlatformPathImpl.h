@@ -27,6 +27,8 @@
 
 #if USE(CG)
 #include "PathCG.h"
-#else
+#elif USE(CAIRO)
 #include "PathCairo.h"
+#elif USE(SKIA)
+#include "PathSkia.h"
 #endif

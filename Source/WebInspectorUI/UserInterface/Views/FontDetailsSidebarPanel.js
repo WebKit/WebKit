@@ -29,4 +29,11 @@ WI.FontDetailsSidebarPanel = class FontDetailsSidebarPanel extends WI.GeneralSty
     {
         super("style-font", WI.UIString("Font"), WI.FontDetailsPanel);
     }
+
+    supportsDOMNode(nodeToInspect)
+    {
+        if (nodeToInspect.isMediaElement())
+            return false;
+        return super.supportsDOMNode(nodeToInspect);
+    }
 };

@@ -44,5 +44,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, ScreenCaptureKit, SCContent
 #endif
 
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoStatus, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoScaleFactor, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoContentScale, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, SCStreamFrameInfoContentRect, NSString *, PAL_EXPORT)
 
 #endif // PLATFORM(MAC)

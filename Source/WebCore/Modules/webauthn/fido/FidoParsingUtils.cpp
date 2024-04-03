@@ -34,9 +34,7 @@ namespace fido {
 
 Vector<uint8_t> getInitPacketData(const Vector<uint8_t>& data)
 {
-    Vector<uint8_t> result;
-    result.append(data.data(), data.size() > kHidInitPacketDataSize ? kHidInitPacketDataSize : data.size());
-    return result;
+    return data.subvector(0, std::min(kHidInitPacketDataSize, data.size()));
 }
 
 Vector<uint8_t> getContinuationPacketData(const Vector<uint8_t>& data, size_t beginPosition)
@@ -44,9 +42,7 @@ Vector<uint8_t> getContinuationPacketData(const Vector<uint8_t>& data, size_t be
     if (beginPosition > data.size())
         return { };
 
-    Vector<uint8_t> result;
-    result.append(data.data() + beginPosition, data.size() > kHidContinuationPacketDataSize + beginPosition ? kHidContinuationPacketDataSize : data.size() - beginPosition);
-    return result;
+    return data.subspan(beginPosition, std::min(kHidContinuationPacketDataSize, data.size() - beginPosition));
 }
 
 } // namespace fido

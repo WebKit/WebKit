@@ -29,7 +29,6 @@
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
 #include "PolicyDecision.h"
-#include "ShareableBitmap.h"
 #include "TransactionID.h"
 #include "WKBase.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -42,6 +41,7 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -76,6 +76,7 @@ class WebKeyboardEvent;
 class WebImage;
 class WebMouseEvent;
 class WebPage;
+class WebRemoteFrameClient;
 struct FrameInfoData;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
@@ -98,6 +99,7 @@ public:
 
     static RefPtr<WebFrame> fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreLocalFrame() const;
+    RefPtr<WebCore::LocalFrame> protectedCoreLocalFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
 
@@ -110,9 +112,9 @@ public:
     WebCore::FrameIdentifier frameID() const;
 
     enum class ForNavigationAction : bool { No, Yes };
-    uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListeners();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, PolicyDecision&&);
+    void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
     void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>);
     void didFinishLoadInAnotherProcess();
@@ -192,8 +194,6 @@ public:
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
 
-    void documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess);
-
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener : public CanMakeWeakPtr<LoadListener> {
     public:
@@ -217,7 +217,9 @@ public:
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
-    WebLocalFrameLoaderClient* frameLoaderClient() const;
+    WebLocalFrameLoaderClient* localFrameLoaderClient() const;
+    WebRemoteFrameClient* remoteFrameClient() const;
+    WebFrameLoaderClient* frameLoaderClient() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections();
@@ -236,6 +238,8 @@ public:
     bool handleKeyEvent(const WebKeyboardEvent&);
 
     bool isFocused() const;
+
+    String frameTextForTesting(bool);
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
@@ -247,7 +251,6 @@ private:
     WeakPtr<WebPage> m_page;
 
     struct PolicyCheck {
-        WebCore::PolicyCheckIdentifier corePolicyIdentifier;
         ForNavigationAction forNavigationAction { ForNavigationAction::No };
         WebCore::FramePolicyFunction policyFunction;
     };

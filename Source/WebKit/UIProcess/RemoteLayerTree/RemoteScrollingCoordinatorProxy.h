@@ -99,7 +99,7 @@ public:
     virtual void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&) { }
     virtual void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
     void continueWheelEventHandling(const WebWheelEvent&, WebCore::WheelEventHandlingResult);
-    virtual void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool /* wasHandled */) { }
+    virtual void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, std::optional<WebCore::ScrollingNodeID>, std::optional<WebCore::WheelScrollGestureState>, bool /* wasHandled */) { }
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
@@ -108,7 +108,7 @@ public:
     const RemoteLayerTreeHost* layerTreeHost() const;
     WebPageProxy& webPageProxy() const { return m_webPageProxy; }
 
-    std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction&);
+    std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(const RemoteScrollingCoordinatorTransaction&, std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
     bool hasScrollableMainFrame() const;
@@ -174,6 +174,7 @@ public:
     
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
     void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int);
+    void receivedLastScrollingTreeNodeDidScrollReply();
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
@@ -184,7 +185,6 @@ protected:
     virtual void didReceiveWheelEvent(bool /* wasHandled */) { }
 
     void sendUIStateChangedIfNecessary();
-    void receivedLastScrollingTreeNodeDidScrollReply();
 
 private:
     WebPageProxy& m_webPageProxy;

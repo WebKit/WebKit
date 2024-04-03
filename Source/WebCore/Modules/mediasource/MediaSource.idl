@@ -44,10 +44,15 @@ enum ReadyState {
     JSGenerateToNativeObject,
     ActiveDOMObject,
     Conditional=MEDIA_SOURCE,
+    ConditionalForWorker=MEDIA_SOURCE_IN_WORKERS,
     EnabledBySetting=MediaSourceEnabled,
-    Exposed=Window
+    EnabledForContext,
+    Exposed=(Window,DedicatedWorker)
 ] interface MediaSource : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor();
+
+    [SameObject, Exposed=DedicatedWorker, Conditional=MEDIA_SOURCE_IN_WORKERS, EnabledBySetting=MediaSourceInWorkerEnabled]
+    readonly attribute MediaSourceHandle handle;
 
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;
@@ -55,21 +60,20 @@ enum ReadyState {
     // Subset of sourceBuffers that provide data for the selected/enabled tracks.
     readonly attribute SourceBufferList activeSourceBuffers;
 
-    attribute unrestricted double duration;
-
-    [NewObject] SourceBuffer addSourceBuffer(DOMString type);
-    undefined removeSourceBuffer(SourceBuffer buffer);
-
     readonly attribute ReadyState readyState;
-    
-    undefined endOfStream(optional EndOfStreamError error);
-
-    [CallWith=CurrentScriptExecutionContext] static boolean isTypeSupported(DOMString type);
-
-    undefined setLiveSeekableRange(double start, double end);
-    undefined clearLiveSeekableRange();
-
+    attribute unrestricted double duration;
     attribute EventHandler onsourceopen;
     attribute EventHandler onsourceended;
     attribute EventHandler onsourceclose;
+
+    [Conditional=MEDIA_SOURCE_IN_WORKERS, CallWith=CurrentScriptExecutionContext]
+    static readonly attribute boolean canConstructInDedicatedWorker;
+
+    [NewObject] SourceBuffer addSourceBuffer(DOMString type);
+    undefined removeSourceBuffer(SourceBuffer buffer);
+    undefined endOfStream(optional EndOfStreamError error);
+    undefined setLiveSeekableRange(double start, double end);
+    undefined clearLiveSeekableRange();
+    [CallWith=CurrentScriptExecutionContext] static boolean isTypeSupported(DOMString type);
+
 };

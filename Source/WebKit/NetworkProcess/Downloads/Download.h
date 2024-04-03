@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
 #include "DownloadMonitor.h"
@@ -71,9 +70,9 @@ public:
 
     ~Download();
 
-    void resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
+    void resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&&);
     enum class IgnoreDidFailCallback : bool { No, Yes };
-    void cancel(CompletionHandler<void(const IPC::DataReference&)>&&, IgnoreDidFailCallback);
+    void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&, IgnoreDidFailCallback);
 #if PLATFORM(COCOA)
     void publishProgress(const URL&, SandboxExtension::Handle&&);
 #endif
@@ -86,7 +85,7 @@ public:
     void didCreateDestination(const String& path);
     void didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     void didFinish();
-    void didFail(const WebCore::ResourceError&, const IPC::DataReference& resumeData);
+    void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
 
     void applicationDidEnterBackground() { m_monitor.applicationDidEnterBackground(); }
     void applicationWillEnterForeground() { m_monitor.applicationWillEnterForeground(); }
@@ -99,7 +98,7 @@ private:
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
 
-    void platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&&);
+    void platformCancelNetworkLoad(CompletionHandler<void(std::span<const uint8_t>)>&&);
     void platformDestroyDownload();
 
     DownloadManager& m_downloadManager;
@@ -119,7 +118,7 @@ private:
     IgnoreDidFailCallback m_ignoreDidFailCallback { IgnoreDidFailCallback::No };
     DownloadMonitor m_monitor { *this };
     unsigned m_testSpeedMultiplier { 1 };
-    CompletionHandler<void(const IPC::DataReference&)> m_cancelCompletionHandler;
+    CompletionHandler<void(std::span<const uint8_t>)> m_cancelCompletionHandler;
 };
 
 } // namespace WebKit

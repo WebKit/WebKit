@@ -1,0 +1,8 @@
+One
+Two
+Three
+Four
+
+FAIL forward assert_equals: expected "e\n\nTwo\n\nTh" but got "e\nTwo\nTh"
+FAIL backward assert_equals: expected "e\n\nTwo\n\nTh" but got "e\nTwo\nTh"
+

@@ -22,6 +22,7 @@
 #include <openssl/arm_arch.h>
 #include <openssl/mem.h>
 
+extern uint32_t OPENSSL_armcap_P;
 
 void OPENSSL_cpuid_setup(void) {
   unsigned long hwcap = 0, hwcap2 = 0;

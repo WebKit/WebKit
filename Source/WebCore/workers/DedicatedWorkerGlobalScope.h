@@ -96,7 +96,7 @@ private:
 
     Type type() const final { return Type::DedicatedWorker; }
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     void prepareForDestruction() final;
 
@@ -113,6 +113,10 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DedicatedWorkerGlobalScope)
-    static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker; }
+    static bool isType(const WebCore::ScriptExecutionContext& context)
+    {
+        auto* global = dynamicDowncast<WebCore::WorkerGlobalScope>(context);
+        return global && global->type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker;
+    }
     static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker; }
 SPECIALIZE_TYPE_TRAITS_END()

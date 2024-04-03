@@ -28,10 +28,14 @@
 #endif
 
 #import "config.h"
-#import "APIData.h"
 #import "CocoaHelpers.h"
+
+#import "APIData.h"
+#import "JSWebExtensionWrapper.h"
 #import "Logging.h"
 #import "WKNSData.h"
+#import <JavaScriptCore/JavaScriptCore.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 
 namespace WebKit {
@@ -267,8 +271,18 @@ id parseJSON(API::Data& json, JSONOptionSet options, NSError **error)
 
 NSString *encodeJSONString(id object, JSONOptionSet options, NSError **error)
 {
+#if JSC_OBJC_API_ENABLED
+    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+        if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
+            return nil;
+
+        return value._toJSONString;
+    }
+#endif
+
     if (auto *data = encodeJSONData(object, options, error))
         return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
     return nil;
 }
 
@@ -276,6 +290,15 @@ NSData *encodeJSONData(id object, JSONOptionSet options, NSError **error)
 {
     if (!object)
         return nil;
+
+#if JSC_OBJC_API_ENABLED
+    if (JSValue *value = dynamic_objc_cast<JSValue>(object)) {
+        if (!options.contains(JSONOptions::FragmentsAllowed) && !value._isDictionary)
+            return nil;
+
+        return [value._toJSONString dataUsingEncoding:NSUTF8StringEncoding];
+    }
+#endif
 
     ASSERT(isValidJSONObject(object, options));
 
@@ -303,6 +326,19 @@ NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *dictionary)
     }
 
     return [newDictionary copy];
+}
+
+NSDictionary *dictionaryWithKeys(NSDictionary *dictionary, NSArray *keys)
+{
+    if (!dictionary.count || !keys.count)
+        return @{ };
+
+    auto *keysSet = [NSSet setWithArray:keys];
+
+    return filterObjects(dictionary, ^bool(id key, id) {
+        return dictionary[key] && [keysSet containsObject:key];
+    });
+
 }
 
 NSDictionary *mergeDictionaries(NSDictionary *dictionaryA, NSDictionary *dictionaryB)
@@ -397,6 +433,13 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
     return result;
 }
 
+void callAfterRandomDelay(Function<void()>&& completionHandler)
+{
+    // Random delay between 100 and 500 milliseconds.
+    auto delay = Seconds::fromMilliseconds(100) + Seconds::fromMilliseconds((static_cast<double>(arc4random()) / static_cast<double>(UINT32_MAX)) * 400);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr(WTFMove(completionHandler)).get());
+}
+
 NSDate *toAPI(const WallTime& time)
 {
     if (time.isNaN())
@@ -419,38 +462,39 @@ WallTime toImpl(NSDate *date)
     return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
-NSSet *toAPI(HashSet<String>& set)
+NSSet *toAPI(const HashSet<URL>& set)
+{
+    NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
+    for (auto& element : set)
+        [result addObject:static_cast<NSURL *>(element)];
+    return [result copy];
+}
+
+NSSet *toAPI(const HashSet<String>& set)
 {
     NSMutableSet *result = [[NSMutableSet alloc] initWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
-
     return [result copy];
 }
 
-NSArray *toAPIArray(HashSet<String>& set)
+NSArray *toAPIArray(const HashSet<String>& set)
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:set.size()];
     for (auto& element : set)
         [result addObject:static_cast<NSString *>(element)];
-
     return [result copy];
 }
 
-Vector<String> toImpl(NSArray *array)
-{
-    return Vector<String>(array.count, [array](size_t i) {
-        return (NSString *)array[i];
-    });
-}
-
-HashSet<String> toImplSet(NSArray *array)
+HashSet<String> toImpl(NSSet *set)
 {
     HashSet<String> result;
-    result.reserveInitialCapacity(array.count);
+    result.reserveInitialCapacity(set.count);
 
-    for (NSString *element in array)
-        result.addVoid(element);
+    for (id element in set) {
+        if (auto *string = dynamic_objc_cast<NSString>(element))
+            result.addVoid(string);
+    }
 
     return result;
 }

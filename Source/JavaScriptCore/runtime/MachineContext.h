@@ -44,6 +44,7 @@ template<typename T = void*> T framePointer(const PlatformRegisters&);
 inline CodePtr<PlatformRegistersLRPtrTag> linkRegister(const PlatformRegisters&);
 inline std::optional<CodePtr<PlatformRegistersPCPtrTag>> instructionPointer(const PlatformRegisters&);
 inline void setInstructionPointer(PlatformRegisters&, CodePtr<CFunctionPtrTag>);
+inline void setInstructionPointer(PlatformRegisters&, void *);
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
 template<size_t N> void* argumentPointer(const PlatformRegisters&);
@@ -357,6 +358,15 @@ static inline void*& framePointerImpl(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.rbp);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.gpr[29]);
+#else
+#error Unknown Architecture
+#endif
+
 #else
 #error Need a way to get the frame pointer for another thread on this platform
 #endif
@@ -454,6 +464,19 @@ inline void setInstructionPointer(PlatformRegisters& regs, CodePtr<CFunctionPtrT
     instructionPointerImpl(regs) = value.taggedPtr();
 #endif
 }
+
+inline void setInstructionPointer(PlatformRegisters& regs, void* value)
+{
+#if USE(PLATFORM_REGISTERS_WITH_PROFILE)
+    WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, value);
+#elif USE(DARWIN_REGISTER_MACROS) && HAVE(HARDENED_MACH_EXCEPTIONS) && CPU(ARM64E)
+    __darwin_arm_thread_state64_set_presigned_pc_fptr(regs, value);
+#elif USE(DARWIN_REGISTER_MACROS)
+    __darwin_arm_thread_state64_set_pc_fptr(regs, value);
+#else
+    instructionPointerImpl(regs) = value;
+#endif
+}
 #endif // OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
 
 
@@ -511,6 +534,15 @@ static inline void*& instructionPointerImpl(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_PC]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.rip);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.elr);
 #else
 #error Unknown Architecture
 #endif
@@ -671,6 +703,15 @@ inline void*& argumentPointer<1>(mcontext_t& machineContext)
 #error Unknown Architecture
 #endif
 
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.rsi);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.gpr[1]);
+#else
+#error Unknown Architecture
+#endif
+
 #else
 #error Need a way to get the frame pointer for another thread on this platform
 #endif
@@ -802,6 +843,15 @@ inline void*& llintInstructionPointer(mcontext_t& machineContext)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[12]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[14]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.r8);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*&>((uintptr_t&) machineContext.cpu.gpr[4]);
 #else
 #error Unknown Architecture
 #endif

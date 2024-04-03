@@ -98,7 +98,7 @@ FileTest::ReadResult FileTest::ReadNext() {
   ClearTest();
 
   static const size_t kBufLen = 8192 * 4;
-  auto buf = std::make_unique<char[]>(kBufLen);
+  std::unique_ptr<char[]> buf(new char[kBufLen]);
 
   bool in_instruction_block = false;
   is_at_new_instruction_block_ = false;
@@ -409,7 +409,8 @@ int FileTestMain(FileTestFunc run_test, void *arg, const char *path) {
 }
 
 int FileTestMain(const FileTest::Options &opts) {
-  auto reader = std::make_unique<FileLineReader>(opts.path);
+  std::unique_ptr<FileLineReader> reader(
+      new FileLineReader(opts.path));
   if (!reader->is_open()) {
     fprintf(stderr, "Could not open file %s: %s.\n", opts.path,
             strerror(errno));

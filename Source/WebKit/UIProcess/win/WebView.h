@@ -122,7 +122,7 @@ private:
     void updateChildWindowGeometries();
 
     void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const IPC::DataReference&);
+    void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, std::span<const uint8_t>);
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 

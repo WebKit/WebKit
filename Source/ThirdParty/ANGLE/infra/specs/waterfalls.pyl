@@ -22,7 +22,7 @@
       'android-arm64-exp-pixel6': {  # android-arm64-pixel6 below for android-arm64-test
         'os_type': 'android',
         'mixins': [
-          'android_t',
+          'android_u',
           'oriole',
           'gpu-swarming-pool',
           'limited_capacity_bot',
@@ -30,6 +30,17 @@
         'test_suites': {
           'gtest_tests': 'android_vulkan_gtests',
           'isolated_scripts': 'isolated_scripts_group_pixel6',
+        },
+      },
+      'android-arm64-exp-s22': {
+        'os_type': 'android',
+        'mixins': [
+          'gpu-swarming-pool',
+          'samsung_s22',
+        ],
+        'test_suites': {
+          'gtest_tests': 'android_vulkan_gtests',
+          'isolated_scripts': 'isolated_scripts_group_s22',
         },
       },
       'android-arm64-pixel4': {

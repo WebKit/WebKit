@@ -37,7 +37,6 @@
 #include "ChromeClient.h"
 #include "ComputedStyleExtractor.h"
 #include "DOMPromiseProxy.h"
-#include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
@@ -50,6 +49,7 @@
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "RenderElement.h"
+#include "StyleOriginatedAnimation.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyledElement.h"
@@ -191,7 +191,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
         newEffect->animation()->setEffect(nullptr);
 
     // 6. Let the target effect of animation be new effect.
-    // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
+    // In the case of a style-originated animation, we don't want to remove the animation from the relevant maps because
     // while the effect was set via the API, the element still has a transition or animation set up and we must
     // not break the timeline-to-animation relationship.
 
@@ -199,7 +199,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
 
     // This object could be deleted after clearing the effect relationship.
     Ref protectedThis { *this };
-    setEffectInternal(WTFMove(newEffect), isDeclarativeAnimation());
+    setEffectInternal(WTFMove(newEffect), isStyleOriginatedAnimation());
 
     // 7. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
     // and the synchronously notify flag set to false.
@@ -252,10 +252,10 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get())) {
         if (auto target = keyframeEffect->targetStyleable()) {
-            // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
+            // In the case of a dstyle-originated animation, we don't want to remove the animation from the relevant maps because
             // while the timeline was set via the API, the element still has a transition or animation set up and we must
             // not break the relationship.
-            if (!isDeclarativeAnimation())
+            if (!isStyleOriginatedAnimation())
                 target->animationWasRemoved(*this);
             target->animationWasAdded(*this);
         }
@@ -706,7 +706,7 @@ Seconds WebAnimation::effectEndTime() const
     return m_effect ? m_effect->endTime() : 0_s;
 }
 
-void WebAnimation::cancel()
+void WebAnimation::cancel(Silently silently)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " cancel() (current time is " << currentTime() << ")");
 
@@ -762,7 +762,7 @@ void WebAnimation::cancel()
     // 3. Make animation's start time unresolved.
     m_startTime = std::nullopt;
 
-    timingDidChange(DidSeek::No, SynchronouslyNotify::No);
+    timingDidChange(DidSeek::No, SynchronouslyNotify::No, silently);
 
     invalidateEffect();
 
@@ -1495,8 +1495,8 @@ bool WebAnimation::isReplaceable() const
 
     // The existence of the animation is not prescribed by markup. That is, it is not a CSS animation with an owning element,
     // nor a CSS transition with an owning element.
-    auto* declarativeAnimation = dynamicDowncast<DeclarativeAnimation>(*this);
-    if (declarativeAnimation && declarativeAnimation->owningElement())
+    auto* styleOriginatedAnimation = dynamicDowncast<StyleOriginatedAnimation>(*this);
+    if (styleOriginatedAnimation && styleOriginatedAnimation->owningElement())
         return false;
 
     // The animation's play state is finished.
@@ -1584,7 +1584,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return styleDeclaration->copyProperties();
     }();
 
-    auto& keyframeStack = styledElement->ensureKeyframeEffectStack(PseudoId::None);
+    auto& keyframeStack = styledElement->ensureKeyframeEffectStack({ });
 
     auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
@@ -1676,7 +1676,7 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
 
 bool WebAnimation::isSkippedContentAnimation() const
 {
-    if (auto animation = dynamicDowncast<DeclarativeAnimation>(this)) {
+    if (auto animation = dynamicDowncast<StyleOriginatedAnimation>(this)) {
         if (auto element = animation->owningElement())
             return element->element.renderer() && element->element.renderer()->isSkippedContent();
     }

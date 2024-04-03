@@ -232,7 +232,7 @@ public:
 
     JITPutByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
-        JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, ECMAMode, AccessType);
+        JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, AccessType);
     
     void generateFastPath(CCallHelpers&);
     void generateBaselineDataICFastPath(JIT&);
@@ -243,17 +243,13 @@ public:
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,
         AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier propertyName,
-        JSValueRegs baseRegs, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, ECMAMode ecmaMode)
+        JSValueRegs baseRegs, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR)
     {
         JITByIdGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, propertyName, baseRegs, valueRegs, stubInfoGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>)
             stubInfo.usedRegisters.remove(scratchGPR);
         else
             UNUSED_PARAM(scratchGPR);
-        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>)
-            stubInfo.ecmaMode = ecmaMode;
-        else
-            UNUSED_PARAM(ecmaMode);
     }
 };
 
@@ -264,7 +260,7 @@ public:
 
     JITPutByValGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSetBuilder& usedRegisters,
-        JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode);
+        JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR);
 
     CCallHelpers::Jump slowPathJump() const
     {
@@ -280,7 +276,7 @@ public:
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,
         AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters,
-        JSValueRegs baseRegs, JSValueRegs propertyRegs, JSValueRegs valueRegs, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode ecmaMode)
+        JSValueRegs baseRegs, JSValueRegs propertyRegs, JSValueRegs valueRegs, GPRReg arrayProfileGPR, GPRReg stubInfoGPR)
     {
         JITInlineCacheGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>) {
@@ -305,10 +301,6 @@ public:
             UNUSED_PARAM(stubInfoGPR);
             UNUSED_PARAM(arrayProfileGPR);
         }
-        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>)
-            stubInfo.ecmaMode = ecmaMode;
-        else
-            UNUSED_PARAM(ecmaMode);
     }
 
     JSValueRegs m_base;

@@ -33,13 +33,14 @@
 [
     LegacyNoInterfaceObject,
 ] interface CommandLineAPIHost {
-    undefined clearConsoleMessages();
     undefined copyText(DOMString text);
 
     [CallWith=CurrentGlobalObject] undefined inspect(any objectToInspect, any hints);
     [CallWith=CurrentGlobalObject] any inspectedObject();
 
     [CallWith=CurrentGlobalObject] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
+
+    [Conditional=WEB_RTC, CallWith=CurrentGlobalObject] undefined gatherRTCLogs(RTCLogsCallback? callback);
 
     DOMString databaseId(Database database);
     DOMString storageId(Storage storage);

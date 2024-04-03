@@ -55,6 +55,9 @@ private:
     void updateToStorage(CompletionHandler<void()>&&);
     void updateTimerFired() { updateToStorage([] { }); }
 
+    CheckedPtr<NetworkStorageManager> checkedManager() const;
+    RefPtr<WebCore::SWServer> protectedServer() const;
+
     WeakPtr<WebCore::SWServer> m_server;
     WeakPtr<NetworkStorageManager> m_manager;
     WebCore::Timer m_updateTimer;

@@ -73,10 +73,12 @@ public:
     {
         if (isDetached())
             return nullptr;
-        return m_baseAddress.getMayBeNull(m_byteLength);
+        return m_baseAddress.getMayBeNull();
     }
 
     void* data() const { return baseAddress(); }
+    std::span<const uint8_t> span() const { return { static_cast<const uint8_t*>(data()), byteLength() }; }
+    Vector<uint8_t> toVector() const { return span(); }
 
     size_t byteOffsetRaw() const { return m_byteOffset; }
 
@@ -199,7 +201,7 @@ protected:
     size_t m_byteOffset;
     size_t m_byteLength;
 
-    using BaseAddress = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+    using BaseAddress = CagedPtr<Gigacage::Primitive, void>;
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     BaseAddress m_baseAddress;
 

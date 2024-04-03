@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.43.4
+================
+
+What's new in WebKitGTK 2.43.4?
+
+  - Remove key event reinjection in GTK4 to make keyboard shortcuts work in web sites.
+  - Use the new GTK API to create a GdkTexture from a DMA-BUF buffer when available.
+  - Fix rendering when GTK is using the vulkan renderer.
+  - Fix gamepads detection by correctly handling focused window in GTK4.
+  - Fix rendering after history navigation.
+  - Write bwrapinfo.json to disk for xdg-desktop-portal.
+  - Fixed several memory leaks in media backend.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.43.3
 ================
 

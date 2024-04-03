@@ -57,8 +57,8 @@ private:
 
     WGPUCommandEncoder backing() const { return m_backing.get(); }
 
-    Ref<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) final;
-    Ref<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) final;
+    RefPtr<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) final;
+    RefPtr<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) final;
 
     void copyBufferToBuffer(
         const Buffer& source,
@@ -100,7 +100,7 @@ private:
         const Buffer& destination,
         Size64 destinationOffset) final;
 
-    Ref<CommandBuffer> finish(const CommandBufferDescriptor&) final;
+    RefPtr<CommandBuffer> finish(const CommandBufferDescriptor&) final;
 
     void setLabelInternal(const String&) final;
 

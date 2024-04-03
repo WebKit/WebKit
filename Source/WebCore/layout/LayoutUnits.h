@@ -105,30 +105,6 @@ inline void Point::moveBy(LayoutPoint offset)
     y += offset.y();
 }
 
-// Margin, border, padding
-struct HorizontalEdges {
-    LayoutUnit left;
-    LayoutUnit right;
-};
-
-struct VerticalEdges {
-    LayoutUnit top;
-    LayoutUnit bottom;
-};
-
-struct Edges {
-    HorizontalEdges horizontal;
-    VerticalEdges vertical;
-
-    LayoutUnit width() const { return horizontal.left + horizontal.right; }
-    LayoutUnit height() const { return vertical.top + vertical.bottom; }
-};
-
-inline Edges operator/(const Edges& edge, size_t value)
-{
-    return { { edge.horizontal.left / value, edge.horizontal.right / value }, { edge.vertical.top / value, edge.vertical.bottom / value } };
-}
-
 struct ContentWidthAndMargin {
     LayoutUnit contentWidth;
     UsedHorizontalMargin usedMargin;

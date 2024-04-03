@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/msl/TranslatorMSL.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
 #include "compiler/translator/tree_ops/msl/ReduceInterfaceBlocks.h"
@@ -102,7 +102,7 @@ class Reducer : public TIntermRebuild
             auto it = mLiftedMap.find(ib);
             if (it != mLiftedMap.end())
             {
-                return AccessField(*(it->second), var.name());
+                return AccessField(*(it->second), Name(var));
             }
         }
         return symbolNode;
@@ -113,10 +113,7 @@ class Reducer : public TIntermRebuild
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool sh::ReduceInterfaceBlocks(TCompiler &compiler,
-                               TIntermBlock &root,
-                               IdGen &idGen,
-                               TSymbolTable *symbolTable)
+bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen &idGen)
 {
     Reducer reducer(compiler, idGen);
     if (!reducer.rebuildRoot(root))
@@ -124,7 +121,7 @@ bool sh::ReduceInterfaceBlocks(TCompiler &compiler,
         return false;
     }
 
-    if (!SeparateDeclarations(&compiler, &root, symbolTable))
+    if (!SeparateDeclarations(compiler, root))
     {
         return false;
     }

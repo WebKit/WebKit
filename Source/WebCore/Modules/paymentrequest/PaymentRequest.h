@@ -133,7 +133,7 @@ private:
     void suspend(ReasonForSuspension) final;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return PaymentRequestEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::PaymentRequest; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     bool isPaymentRequest() const final { return true; }
     void refEventTarget() final { ref(); }

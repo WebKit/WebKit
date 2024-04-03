@@ -27,9 +27,11 @@
 #include "config.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "ScriptExecutionContext.h"
 #include "XMLHttpRequest.h"
 #include "XMLHttpRequestProgressEvent.h"
 

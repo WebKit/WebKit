@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (100,100) size 100x100
+  RenderSVGPath {path} at (100,100) size 100x100 [stroke={[type=SOLID] [color=#0000FF] [stroke width=20.00] [dash array={25.00}] [path length=200.00]}] [data="M 100 100 L 200 100 L 200 200 L 100 200 Z"]

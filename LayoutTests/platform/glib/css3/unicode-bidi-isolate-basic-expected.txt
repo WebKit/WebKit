@@ -18,7 +18,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,0) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 5x17
@@ -26,7 +26,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,18) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 8x17
@@ -34,7 +34,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,36) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 7x17
@@ -42,7 +42,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,54) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 5x17
@@ -50,7 +50,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,72) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 8x17
@@ -58,7 +58,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,90) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 7x17
@@ -66,7 +66,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,108) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 5x17
@@ -74,7 +74,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,126) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 8x17
@@ -82,7 +82,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,144) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 7x17
@@ -90,7 +90,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,162) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 5x17
@@ -98,7 +98,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,180) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 8x17
@@ -106,7 +106,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,198) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 7x17
@@ -114,7 +114,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,216) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 5x17
@@ -122,7 +122,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,234) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 8x17
@@ -130,7 +130,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,252) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 7x17
@@ -138,7 +138,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,270) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 5x17
@@ -146,7 +146,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,288) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 8x17
@@ -154,7 +154,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,306) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 7x17
@@ -162,7 +162,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,324) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5: ")"
       RenderText {#text} at (16,0) size 5x17
@@ -170,7 +170,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,342) size 27x18
       RenderText {#text} at (13,0) size 11x17
         text run at (13,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (8,0) size 5x17
         RenderText {#text} at (8,0) size 5x17
           text run at (8,0) width 5: ")"
       RenderText {#text} at (0,0) size 8x17
@@ -178,7 +178,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,360) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5: ")"
       RenderText {#text} at (16,0) size 7x17
@@ -186,7 +186,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,378) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (16,0) size 5x17
@@ -194,7 +194,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,400) size 27x18
       RenderText {#text} at (13,0) size 11x17
         text run at (13,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (8,0) size 5x17
         RenderText {#text} at (8,0) size 5x17
           text run at (8,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (0,0) size 8x17
@@ -202,7 +202,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,418) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (16,0) size 7x17
@@ -210,7 +210,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,436) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (11,0) size 8x17
         RenderText {#text} at (11,0) size 8x17
           text run at (11,0) width 8: "b"
       RenderText {#text} at (19,0) size 5x17
@@ -218,7 +218,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,454) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (0,0) size 8x17
@@ -226,7 +226,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,472) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (11,0) size 8x17
         RenderText {#text} at (11,0) size 8x17
           text run at (11,0) width 8: "b"
       RenderText {#text} at (19,0) size 7x17
@@ -234,7 +234,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,490) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: ")"
       RenderText {#text} at (16,0) size 5x17
@@ -242,7 +242,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,508) size 27x18
       RenderText {#text} at (13,0) size 11x17
         text run at (13,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (8,0) size 5x17
         RenderText {#text} at (8,0) size 5x17
           text run at (8,0) width 5 RTL: ")"
       RenderText {#text} at (0,0) size 8x17
@@ -250,7 +250,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,526) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: ")"
       RenderText {#text} at (16,0) size 7x17
@@ -258,7 +258,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,544) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (16,0) size 5x17
@@ -266,7 +266,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,562) size 27x18
       RenderText {#text} at (13,0) size 11x17
         text run at (13,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (8,0) size 5x17
         RenderText {#text} at (8,0) size 5x17
           text run at (8,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (0,0) size 8x17
@@ -274,7 +274,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,580) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (16,0) size 7x17
@@ -282,7 +282,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,598) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (11,0) size 8x17
         RenderText {#text} at (11,0) size 8x17
           text run at (11,0) width 8: "b"
       RenderText {#text} at (19,0) size 5x17
@@ -290,7 +290,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,616) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (0,0) size 8x17
@@ -298,7 +298,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,634) size 27x18
       RenderText {#text} at (0,0) size 11x17
         text run at (0,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (11,0) size 8x17
         RenderText {#text} at (11,0) size 8x17
           text run at (11,0) width 8: "b"
       RenderText {#text} at (19,0) size 7x17
@@ -306,7 +306,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,652) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 5x17
@@ -314,7 +314,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,670) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 8x17
@@ -322,7 +322,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,688) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5: ")"
       RenderText {#text} at (12,0) size 7x17
@@ -330,7 +330,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,706) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 5x17
@@ -338,7 +338,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,724) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 8x17
@@ -346,7 +346,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,742) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 7x17
@@ -354,7 +354,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,760) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 5x17
@@ -362,7 +362,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,778) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 8x17
@@ -370,7 +370,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,800) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 7x17
@@ -378,7 +378,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,818) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 5x17
@@ -386,7 +386,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,836) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 8x17
@@ -394,7 +394,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,854) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: ")"
       RenderText {#text} at (12,0) size 7x17
@@ -402,7 +402,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,872) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 5x17
@@ -410,7 +410,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,890) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 8x17
@@ -418,7 +418,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,908) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (7,0) size 5x17
         RenderText {#text} at (7,0) size 5x17
           text run at (7,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (12,0) size 7x17
@@ -426,7 +426,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,926) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 5x17
@@ -434,7 +434,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,944) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 8x17
@@ -442,7 +442,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,962) size 27x18
       RenderText {#text} at (0,0) size 7x17
         text run at (0,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (7,0) size 8x17
         RenderText {#text} at (7,0) size 8x17
           text run at (7,0) width 8: "b"
       RenderText {#text} at (15,0) size 7x17
@@ -450,7 +450,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,980) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (10,0) size 5x17
@@ -458,7 +458,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,998) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (7,0) size 8x17
@@ -466,7 +466,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1016) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (8,0) size 7x17
@@ -474,7 +474,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1034) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (10,0) size 5x17
@@ -482,7 +482,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1052) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (7,0) size 8x17
@@ -490,7 +490,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1070) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (8,0) size 7x17
@@ -498,7 +498,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1088) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (7,0) size 5x17
@@ -506,7 +506,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1106) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (4,0) size 8x17
@@ -514,7 +514,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1124) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (5,0) size 7x17
@@ -522,7 +522,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1142) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (10,0) size 5x17
@@ -530,7 +530,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1160) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (7,0) size 8x17
@@ -538,7 +538,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1178) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (8,0) size 7x17
@@ -546,7 +546,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1200) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (10,0) size 5x17
@@ -554,7 +554,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1218) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (7,0) size 8x17
@@ -562,7 +562,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1236) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (8,0) size 7x17
@@ -570,7 +570,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1254) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (7,0) size 5x17
@@ -578,7 +578,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1272) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (4,0) size 8x17
@@ -586,7 +586,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1290) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7 RTL: "\""
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (5,0) size 7x17
@@ -594,7 +594,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1308) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5: ")"
       RenderText {#text} at (6,0) size 5x17
@@ -602,7 +602,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1326) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5: ")"
       RenderText {#text} at (3,0) size 8x17
@@ -610,7 +610,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1344) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5: ")"
       RenderText {#text} at (4,0) size 7x17
@@ -618,7 +618,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1362) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (6,0) size 5x17
@@ -626,7 +626,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1380) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (3,0) size 8x17
@@ -634,7 +634,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1398) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (4,0) size 7x17
@@ -642,7 +642,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1416) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (3,0) size 5x17
@@ -650,7 +650,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1434) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (0,0) size 8x17
@@ -658,7 +658,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1452) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (1,0) size 7x17
@@ -666,7 +666,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1470) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: ")"
       RenderText {#text} at (6,0) size 5x17
@@ -674,7 +674,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1488) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: ")"
       RenderText {#text} at (3,0) size 8x17
@@ -682,7 +682,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1506) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: ")"
       RenderText {#text} at (4,0) size 7x17
@@ -690,7 +690,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1524) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (6,0) size 5x17
@@ -698,7 +698,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1542) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (3,0) size 8x17
@@ -706,7 +706,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1560) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (11,0) size 5x17
         RenderText {#text} at (11,0) size 5x17
           text run at (11,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (4,0) size 7x17
@@ -714,7 +714,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1578) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (3,0) size 5x17
@@ -722,7 +722,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1600) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (0,0) size 8x17
@@ -730,7 +730,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1618) size 27x18
       RenderText {#text} at (16,0) size 11x17
         text run at (16,0) width 11 RTL: "\x{5E9}"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (8,0) size 8x17
         RenderText {#text} at (8,0) size 8x17
           text run at (8,0) width 8: "b"
       RenderText {#text} at (1,0) size 7x17
@@ -738,7 +738,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1636) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (10,0) size 5x17
@@ -746,7 +746,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1654) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (7,0) size 8x17
@@ -754,7 +754,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1672) size 27x18
       RenderText {#text} at (8,0) size 7x17
         text run at (8,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5: ")"
       RenderText {#text} at (20,0) size 7x17
@@ -762,7 +762,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1690) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (10,0) size 5x17
@@ -770,7 +770,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1708) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (7,0) size 8x17
@@ -778,7 +778,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1726) size 27x18
       RenderText {#text} at (8,0) size 7x17
         text run at (8,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (20,0) size 7x17
@@ -786,7 +786,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1744) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (7,0) size 5x17
@@ -794,7 +794,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1762) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (4,0) size 8x17
@@ -802,7 +802,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1780) size 27x18
       RenderText {#text} at (5,0) size 7x17
         text run at (5,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (20,0) size 7x17
@@ -810,7 +810,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1798) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (10,0) size 5x17
@@ -818,7 +818,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1816) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (7,0) size 8x17
@@ -826,7 +826,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1834) size 27x18
       RenderText {#text} at (8,0) size 7x17
         text run at (8,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: ")"
       RenderText {#text} at (20,0) size 7x17
@@ -834,7 +834,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1852) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (10,0) size 5x17
@@ -842,7 +842,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1870) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (7,0) size 8x17
@@ -850,7 +850,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1888) size 27x18
       RenderText {#text} at (8,0) size 7x17
         text run at (8,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 5x17
+      RenderInline {SPAN} at (15,0) size 5x17
         RenderText {#text} at (15,0) size 5x17
           text run at (15,0) width 5 RTL: "\x{5E0}"
       RenderText {#text} at (20,0) size 7x17
@@ -858,7 +858,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1906) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (7,0) size 5x17
@@ -866,7 +866,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1924) size 27x18
       RenderText {#text} at (20,0) size 7x17
         text run at (20,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (4,0) size 8x17
@@ -874,7 +874,7 @@ layer at (8,62) size 27x1960 backgroundClip at (0,0) size 800x600 clip at (0,0) 
     RenderBlock {DIV} at (0,1942) size 27x18
       RenderText {#text} at (5,0) size 7x17
         text run at (5,0) width 7: "a"
-      RenderInline {SPAN} at (0,0) size 8x17
+      RenderInline {SPAN} at (12,0) size 8x17
         RenderText {#text} at (12,0) size 8x17
           text run at (12,0) width 8: "b"
       RenderText {#text} at (20,0) size 7x17

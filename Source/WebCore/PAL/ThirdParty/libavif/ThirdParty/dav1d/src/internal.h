@@ -292,7 +292,7 @@ struct Dav1dFrameContext {
         int prog_sz;
         int pal_sz, pal_idx_sz, cf_sz;
         // start offsets per tile
-        int *tile_start_off;
+        unsigned *tile_start_off;
     } frame_thread;
 
     // loopfilter

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const createDiv = test => {
+    const div = document.createElement("div");
+    test.add_cleanup(() => div.remove());
+    return document.body.appendChild(div);
+}
+
+const animationFrame = async => new Promise(requestAnimationFrame);
+
+const animationReadyToAnimateAccelerated = async animation => {
+    await animation.ready;
+    await animationFrame();
+    await animationFrame();
+    await animationFrame();
+}
+
+const duration = 1000 * 1000; // 1000s.
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const firstAnimation = target.animate({ transform: ["translateX(100px)", "translateX(200px)"] }, { fill: "both", duration });
+    await animationReadyToAnimateAccelerated(firstAnimation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    firstAnimation.finish();
+    const secondAnimation = target.animate({ transform: ["translateX(400px)", "translateX(300px)"] }, { fill: "both", duration });
+    await animationReadyToAnimateAccelerated(secondAnimation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+
+    secondAnimation.effect.updateTiming({ direction: 'reverse' });
+    await animationFrame();
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Changing 'direction' to 'reverse' in flight should immediately prevent acceleration of the entire effect stack.");
+
+</script>
+</body>

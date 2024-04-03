@@ -51,8 +51,6 @@ public:
         return adoptRef(*new WebKitMediaKeyNeededEvent(type, initializer, isTrusted));
     }
 
-    EventInterface eventInterface() const override;
-
     Uint8Array* initData() const { return m_initData.get(); }
 
 private:

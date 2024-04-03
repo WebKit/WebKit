@@ -962,11 +962,31 @@ Token Lexer<T>::lexNumber()
 
     auto* end = m_code - (suffix ? 1 : 0);
     if (!fract && !exponent) {
+        auto length = static_cast<size_t>(end - integral);
+        if (length > 19)
+            return makeToken(TokenType::Invalid);
+
+        char ascii[20];
+        const char* asciiStart;
+        const char* asciiEnd;
+        if constexpr (sizeof(T) == 1) {
+            asciiStart = bitwise_cast<const char*>(integral);
+            asciiEnd = bitwise_cast<const char*>(end);
+        } else {
+            for (unsigned i = 0; i < length; ++i) {
+                auto digit = integral[i];
+                RELEASE_ASSERT(isASCIIHexDigit(digit));
+                ascii[i] = digit;
+            }
+            ascii[length] = '\0';
+            asciiStart = ascii;
+            asciiEnd = ascii + length;
+        }
+
         int64_t result;
         auto base = isHex ? 16 : 10;
-        // FIXME: this will not work for utf16
-        auto remaining = std::from_chars(bitwise_cast<const char*>(integral), bitwise_cast<const char*>(end), result, base);
-        ASSERT(remaining.ptr == bitwise_cast<const char*>(end));
+        auto remaining = std::from_chars(asciiStart, asciiEnd, result, base);
+        RELEASE_ASSERT(remaining.ptr == asciiEnd);
         if (remaining.ec == std::errc::result_out_of_range)
             return makeToken(TokenType::Invalid);
         return convert(result);

@@ -22,8 +22,10 @@
 #include "config.h"
 #include "RenderSVGResourceRadialGradient.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceRadialGradientInlines.h"
+#include "RenderSVGShape.h"
+#include "SVGElementTypeHelpers.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -42,10 +44,11 @@ void RenderSVGResourceRadialGradient::collectGradientAttributesIfNeeded()
     if (m_attributes.has_value())
         return;
 
-    radialGradientElement().synchronizeAllAttributes();
+    Ref radialGradientElement = this->radialGradientElement();
+    radialGradientElement->synchronizeAllAttributes();
 
     auto attributes = RadialGradientAttributes { };
-    if (radialGradientElement().collectGradientAttributes(attributes))
+    if (radialGradientElement->collectGradientAttributes(attributes))
         m_attributes = WTFMove(attributes);
 }
 
@@ -54,11 +57,12 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
     if (!m_attributes)
         return nullptr;
 
-    auto centerPoint = SVGLengthContext::resolvePoint(&radialGradientElement(), m_attributes->gradientUnits(), m_attributes->cx(), m_attributes->cy());
-    auto radius = SVGLengthContext::resolveLength(&radialGradientElement(), m_attributes->gradientUnits(), m_attributes->r());
+    Ref radialGradientElement = this->radialGradientElement();
+    auto centerPoint = SVGLengthContext::resolvePoint(radialGradientElement.ptr(), m_attributes->gradientUnits(), m_attributes->cx(), m_attributes->cy());
+    auto radius = SVGLengthContext::resolveLength(radialGradientElement.ptr(), m_attributes->gradientUnits(), m_attributes->r());
 
-    auto focalPoint = SVGLengthContext::resolvePoint(&radialGradientElement(), m_attributes->gradientUnits(), m_attributes->fx(), m_attributes->fy());
-    auto focalRadius = SVGLengthContext::resolveLength(&radialGradientElement(), m_attributes->gradientUnits(), m_attributes->fr());
+    auto focalPoint = SVGLengthContext::resolvePoint(radialGradientElement.ptr(), m_attributes->gradientUnits(), m_attributes->fx(), m_attributes->fy());
+    auto focalRadius = SVGLengthContext::resolveLength(radialGradientElement.ptr(), m_attributes->gradientUnits(), m_attributes->fr());
 
     return Gradient::create(
         Gradient::RadialData { focalPoint, centerPoint, focalRadius, radius, 1 },
@@ -70,5 +74,3 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

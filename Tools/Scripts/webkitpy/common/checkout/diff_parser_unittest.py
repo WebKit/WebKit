@@ -33,10 +33,17 @@ from webkitcorepy import StringIO, string_utils
 
 import webkitpy.common.checkout.diff_parser as diff_parser
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
+from webkitpy.common.system.logtesting import LogTesting
 
 
 class DiffParserTest(unittest.TestCase):
     maxDiff = None
+
+    def setUp(self):
+        self._log = LogTesting.setUp(self)
+
+    def tearDown(self):
+        self._log.tearDown()
 
     def test_diff_parser(self, parser=None):
         if not parser:
@@ -184,3 +191,120 @@ index b48b162..f300960 100644
 
         self.assertMultiLineEqual(output, ''.join(diff_parser.git_diff_to_svn_diff(x) for x in shortfmt.readlines()))
         self.assertMultiLineEqual(output, ''.join(diff_parser.git_diff_to_svn_diff(x) for x in inputfmt.readlines()))
+
+    def test_git_format_patch_single(self):
+        formatted = StringIO(
+            """From 83b1e976448acf70d873dffd089692987bb2b5cd Mon Sep 17 00:00:00 2001
+From: Oliver Smith <osmith@example.com>
+Date: Fri, 17 Nov 2023 14:05:22 +0000
+Subject: [PATCH] Real fix
+
+---
+ x | 2 +-
+ y | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/x b/x
+index d00491f..62d8fe9 100644
+--- a/x
++++ b/x
+@@ -1 +1 @@
+-1
++X
+diff --git a/y b/y
+index 0cfbf08..9bda8c3 100644
+--- a/y
++++ b/y
+@@ -1 +1 @@
+-2
++Y
+--\x20
+2.39.2 (Apple Git-144)
+
+"""
+        )
+
+        parser = diff_parser.DiffParser(formatted.readlines())
+
+        x_diff = parser.files["x"]
+        self.assertEqual([(1, 0, "1"), (0, 1, "X")], x_diff.lines)
+        y_diff = parser.files["y"]
+        self.assertEqual([(1, 0, "2"), (0, 1, "Y"), (2, 0, "- ")], y_diff.lines)
+
+        self._log.assertMessages([])
+
+    def test_git_format_patch_multiple(self):
+        formatted = StringIO(
+            """From 8e5e41cb8a94750fdb9aa9a43915a5e0f971ac9e Mon Sep 17 00:00:00 2001
+From: Oliver Smith <osmith@example.com>
+Date: Fri, 17 Nov 2023 14:05:09 +0000
+Subject: [PATCH 1/2] Fix
+
+---
+ x | 2 +-
+ y | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/x b/x
+index f70f10e..d00491f 100644
+--- a/x
++++ b/x
+@@ -1 +1 @@
+-A
++1
+diff --git a/y b/y
+index 223b783..0cfbf08 100644
+--- a/y
++++ b/y
+@@ -1 +1 @@
+-B
++2
+--\x20
+2.39.2 (Apple Git-144)
+
+
+From 83b1e976448acf70d873dffd089692987bb2b5cd Mon Sep 17 00:00:00 2001
+From: Oliver Smith <osmith@example.com>
+Date: Fri, 17 Nov 2023 14:05:22 +0000
+Subject: [PATCH 2/2] Real fix
+
+---
+ x | 2 +-
+ y | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/x b/x
+index d00491f..62d8fe9 100644
+--- a/x
++++ b/x
+@@ -1 +1 @@
+-1
++X
+diff --git a/y b/y
+index 0cfbf08..9bda8c3 100644
+--- a/y
++++ b/y
+@@ -1 +1 @@
+-2
++Y
+--\x20
+2.39.2 (Apple Git-144)
+
+"""
+        )
+
+        parser = diff_parser.DiffParser(formatted.readlines())
+
+        x_diff = parser.files["x"]
+        self.assertEqual([(1, 0, "1"), (0, 1, "X")], x_diff.lines)
+        y_diff = parser.files["y"]
+        self.assertEqual([(1, 0, "2"), (0, 1, "Y"), (2, 0, "- ")], y_diff.lines)
+
+        self._log.assertMessages(
+            [
+                "ERROR: Unexpected diff format when parsing a chunk: 'From 83b1e976448acf70d873dffd089692987bb2b5cd Mon Sep 17 00:00:00 2001'\n",
+                "ERROR: Unexpected diff format when parsing a chunk: 'From: Oliver Smith <osmith@example.com>'\n",
+                "ERROR: Unexpected diff format when parsing a chunk: 'Date: Fri, 17 Nov 2023 14:05:22 +0000'\n",
+                "ERROR: Unexpected diff format when parsing a chunk: 'Subject: [PATCH 2/2] Real fix'\n",
+            ]
+        )

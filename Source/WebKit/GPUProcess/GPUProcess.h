@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,10 @@
 #include "AuxiliaryProcess.h"
 #include "GPUProcessPreferences.h"
 #include "SandboxExtension.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/IntDegrees.h>
-#include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
@@ -74,8 +73,10 @@ class RemoteAudioSessionProxyManager;
 class GPUProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<GPUProcess> {
     WTF_MAKE_NONCOPYABLE(GPUProcess);
 public:
-    explicit GPUProcess(AuxiliaryProcessInitializationParameters&&);
+    GPUProcess();
     ~GPUProcess();
+
+    static GPUProcess& singleton();
     static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::GPU;
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
@@ -112,22 +113,22 @@ public:
     WCSharedSceneContextHolder& sharedSceneContext() { return m_sharedSceneContext; }
 #endif
 
-#if ENABLE(VP9)
-    void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
-#endif
-
     void tryExitIfUnusedAndUnderMemoryPressure();
 
     const String& applicationVisibleName() const { return m_applicationVisibleName; }
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+#if USE(EXTENSIONKIT)
+    void resolveBookmarkDataForCacheDirectory(const std::span<const uint8_t>& bookmarkData);
+#endif
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 #endif
 
 private:
@@ -174,6 +175,7 @@ private:
 #endif
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
+    void cancelGetDisplayMediaPrompt();
 #endif
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
@@ -240,10 +242,10 @@ private:
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
-#if ENABLE(VP9)
-    bool m_enableVP8Decoder { false };
-    bool m_enableVP9Decoder { false };
-    bool m_enableVP9SWDecoder { false };
+#if ENABLE(VP9) && PLATFORM(COCOA)
+    bool m_haveEnabledVP8Decoder { false };
+    bool m_haveEnabledVP9Decoder { false };
+    bool m_haveEnabledVP9SWDecoder { false };
 #endif
 
 };

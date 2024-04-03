@@ -37,7 +37,7 @@ class WebAssemblyArrayPrototype;
 class WebAssemblyArrayConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static WebAssemblyArrayConstructor* create(VM&, Structure*, WebAssemblyArrayPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

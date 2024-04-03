@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaConstraintType.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,22 +42,39 @@ public:
     {
         return adoptRef(*new OverconstrainedError(constraint, message));
     }
+    static Ref<OverconstrainedError> create(MediaConstraintType invalidConstraint, const String& message)
+    {
+        return adoptRef(*new OverconstrainedError(invalidConstraint, message));
+    }
 
-    String constraint() const { return m_constraint; }
+    String constraint() const;
     String message() const { return m_message; }
     String name() const { return "OverconstrainedError"_s; }
 
 protected:
-    explicit OverconstrainedError(const String& constraint, const String& message)
+    OverconstrainedError(const String& constraint, const String& message)
         : m_constraint(constraint)
+        , m_message(message)
+    {
+    }
+    OverconstrainedError(MediaConstraintType invalidConstraint, const String& message)
+        : m_invalidConstraint(invalidConstraint)
         , m_message(message)
     {
     }
 
 private:
-    String m_constraint;
+    mutable String m_constraint;
+    MediaConstraintType m_invalidConstraint;
     String m_message;
 };
+
+inline String OverconstrainedError::constraint() const
+{
+    if (m_constraint.isNull())
+        m_constraint = convertToString(m_invalidConstraint);
+    return m_constraint;
+}
 
 } // namespace WebCore
 

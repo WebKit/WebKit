@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "InitializeThreading.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
+#include "RegisterTZoneTypes.h"
 #include "StackAlignment.h"
 #include <limits>
 #include <wtf/Compiler.h>
@@ -40,6 +41,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PtrTag.h>
+#include <wtf/TZoneMallocInitialization.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
@@ -260,7 +262,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
     CCallHelpers jit;
     generate(jit);
     LinkBuffer linkBuffer(jit, nullptr);
-    return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, "testmasm compilation");
+    return FINALIZE_CODE(linkBuffer, JSEntryPtrTag, nullptr, "testmasm compilation");
 }
 
 template<typename T, typename... Arguments>
@@ -1784,36 +1786,33 @@ void testExtractSignedBitfield64()
 
 void testExtractRegister32()
 {
-    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     uint32_t datasize = CHAR_BIT * sizeof(uint32_t);
 
     for (auto n : int32Operands()) {
         for (auto m : int32Operands()) {
-            for (auto lsb : imms) {
-                if (lsb < datasize) {
-                    auto extractRegister32 = compile([=] (CCallHelpers& jit) {
-                        emitFunctionPrologue(jit);
+            for (uint32_t lsb = 0; lsb < datasize; ++lsb) {
+                auto extractRegister32 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
 
-                        jit.extractRegister32(GPRInfo::argumentGPR0, 
-                            GPRInfo::argumentGPR1, 
-                            CCallHelpers::TrustedImm32(lsb), 
-                            GPRInfo::returnValueGPR);
+                    jit.extractRegister32(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(lsb),
+                        GPRInfo::returnValueGPR);
 
-                        emitFunctionEpilogue(jit);
-                        jit.ret();
-                    });
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
 
-                    // ((n & mask) << highWidth) | (m >> lowWidth)
-                    // Where: highWidth = datasize - lowWidth
-                    //        mask = (1 << lowWidth) - 1
-                    uint32_t highWidth = datasize - lsb;
-                    uint32_t mask = (1U << lsb) - 1U;
-                    uint32_t left = highWidth == datasize ? 0U : (n & mask) << highWidth;
-                    uint32_t right = (static_cast<uint32_t>(m) >> lsb);
-                    uint32_t rhs = left | right;
-                    uint32_t lhs = invoke<uint32_t>(extractRegister32, n, m);
-                    CHECK_EQ(lhs, rhs);
-                }
+                // Test pattern: d = ((n & mask) << highWidth) | (m >>> lowWidth)
+                // Where: highWidth = datasize - lowWidth
+                //        mask = (1 << lowWidth) - 1
+                uint32_t highWidth = datasize - lsb;
+                uint32_t mask = (1U << (lsb % 32)) - 1U;
+                uint32_t left = (n & mask) << (highWidth % 32);
+                uint32_t right = (static_cast<uint32_t>(m) >> (lsb % 32));
+                uint32_t rhs = left | right;
+                uint32_t lhs = invoke<uint32_t>(extractRegister32, n, m);
+                CHECK_EQ(lhs, rhs);
             }
         }
     }
@@ -1821,33 +1820,33 @@ void testExtractRegister32()
 
 void testExtractRegister64()
 {
-    Vector<uint32_t> imms = { 0, 1, 5, 7, 30, 31, 32, 42, 56, 62, 63, 64 };
     uint64_t datasize = CHAR_BIT * sizeof(uint64_t);
 
     for (auto n : int64Operands()) {
         for (auto m : int64Operands()) {
-            for (auto lsb : imms) {
-                if (lsb < datasize) {
-                    auto extractRegister64 = compile([=] (CCallHelpers& jit) {
-                        emitFunctionPrologue(jit);
+            for (uint32_t lsb = 0; lsb < datasize; ++lsb) {
+                auto extractRegister64 = compile([=] (CCallHelpers& jit) {
+                    emitFunctionPrologue(jit);
 
-                        jit.extractRegister64(GPRInfo::argumentGPR0, 
-                            GPRInfo::argumentGPR1, 
-                            CCallHelpers::TrustedImm32(lsb), 
-                            GPRInfo::returnValueGPR);
+                    jit.extractRegister64(GPRInfo::argumentGPR0,
+                        GPRInfo::argumentGPR1,
+                        CCallHelpers::TrustedImm32(lsb),
+                        GPRInfo::returnValueGPR);
 
-                        emitFunctionEpilogue(jit);
-                        jit.ret();
-                    });
+                    emitFunctionEpilogue(jit);
+                    jit.ret();
+                });
 
-                    uint64_t highWidth = datasize - lsb;
-                    uint64_t mask = (1ULL << lsb) - 1ULL;
-                    uint64_t left = highWidth == datasize ? 0ULL : (n & mask) << highWidth;
-                    uint64_t right = (static_cast<uint64_t>(m) >> lsb);
-                    uint64_t rhs = left | right;
-                    uint64_t lhs = invoke<uint64_t>(extractRegister64, n, m);
-                    CHECK_EQ(lhs, rhs);
-                }
+                // Test pattern: d = ((n & mask) << highWidth) | (m >>> lowWidth)
+                // Where: highWidth = datasize - lowWidth
+                //        mask = (1 << lowWidth) - 1
+                uint64_t highWidth = datasize - lsb;
+                uint64_t mask = (1ULL << (lsb % 64)) - 1ULL;
+                uint64_t left = (n & mask) << (highWidth % 64);
+                uint64_t right = (static_cast<uint64_t>(m) >> (lsb % 64));
+                uint64_t rhs = left | right;
+                uint64_t lhs = invoke<uint64_t>(extractRegister64, n, m);
+                CHECK_EQ(lhs, rhs);
             }
         }
     }
@@ -5888,57 +5887,6 @@ void testStoreImmediateBaseIndex()
 #endif
 }
 
-static void testCagePreservesPACFailureBit()
-{
-#if GIGACAGE_ENABLED
-    // Placate ASan builds and any environments that disables the Gigacage.
-    if (!Gigacage::shouldBeEnabled())
-        return;
-
-    RELEASE_ASSERT(!Gigacage::disablingPrimitiveGigacageIsForbidden());
-    auto cage = compile([] (CCallHelpers& jit) {
-        emitFunctionPrologue(jit);
-        constexpr GPRReg storageGPR = GPRInfo::argumentGPR0;
-        constexpr GPRReg lengthGPR = GPRInfo::argumentGPR1;
-        constexpr GPRReg scratchGPR = GPRInfo::argumentGPR2;
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, storageGPR, lengthGPR, scratchGPR);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        emitFunctionEpilogue(jit);
-        jit.ret();
-    });
-
-    void* ptr = Gigacage::tryMalloc(Gigacage::Primitive, 1);
-    void* taggedPtr = tagArrayPtr(ptr, 1);
-    RELEASE_ASSERT(hasOneBitSet(Gigacage::maxSize(Gigacage::Primitive) << 2));
-    void* notCagedPtr = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(ptr) + (Gigacage::maxSize(Gigacage::Primitive) << 2));
-    CHECK_NOT_EQ(Gigacage::caged(Gigacage::Primitive, notCagedPtr), notCagedPtr);
-    void* taggedNotCagedPtr = tagArrayPtr(notCagedPtr, 1);
-
-    if (!isARM64E())
-        CHECK_EQ(invoke<void*>(cage, taggedPtr, 2), ptr);
-
-    CHECK_EQ(invoke<void*>(cage, taggedPtr, 1), ptr);
-
-    auto cageWithoutAuthentication = compile([] (CCallHelpers& jit) {
-        emitFunctionPrologue(jit);
-        jit.cageWithoutUntagging(Gigacage::Primitive, GPRInfo::argumentGPR0);
-        jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
-        emitFunctionEpilogue(jit);
-        jit.ret();
-    });
-
-    CHECK_EQ(invoke<void*>(cageWithoutAuthentication, taggedPtr), taggedPtr);
-    if (isARM64E()) {
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedNotCagedPtr);
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(notCagedPtr, 1));
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), taggedPtr);
-        CHECK_NOT_EQ(invoke<void*>(cageWithoutAuthentication, taggedNotCagedPtr), tagArrayPtr(ptr, 1));
-    }
-
-    Gigacage::free(Gigacage::Primitive, ptr);
-#endif
-}
-
 static void testBranchIfType()
 {
     using JSC::JSType;
@@ -6305,8 +6253,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testStoreBaseIndex());
     RUN(testStoreImmediateBaseIndex());
 
-    RUN(testCagePreservesPACFailureBit());
-
     RUN(testBranchIfType());
     RUN(testBranchIfNotType());
 #if CPU(X86_64) || CPU(ARM64)
@@ -6361,8 +6307,15 @@ static void run(const char*)
 
 #endif // ENABLE(JIT)
 
-int main(int argc, char** argv)
+int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 {
+#if USE(TZONE_MALLOC)
+    const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
+    WTF_TZONE_INIT(boothash);
+    JSC::registerTZoneTypes();
+    WTF_TZONE_REGISTRATION_DONE();
+#endif
+
     const char* filter = nullptr;
     switch (argc) {
     case 1:

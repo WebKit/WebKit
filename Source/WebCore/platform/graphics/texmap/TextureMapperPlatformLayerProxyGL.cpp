@@ -42,7 +42,10 @@ static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
 
 namespace WebCore {
 
-TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL() = default;
+TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL(bool disableBufferInvalidation)
+    : m_disableBufferInvalidation(disableBufferInvalidation)
+{
+}
 
 TextureMapperPlatformLayerProxyGL::~TextureMapperPlatformLayerProxyGL()
 {
@@ -101,10 +104,12 @@ void TextureMapperPlatformLayerProxyGL::invalidate()
             m_targetLayer = nullptr;
         }
 
-        m_currentBuffer = nullptr;
-        m_pendingBuffer = nullptr;
-        m_releaseUnusedBuffersTimer = nullptr;
-        m_usedBuffers.clear();
+        if (!m_disableBufferInvalidation) {
+            m_currentBuffer = nullptr;
+            m_pendingBuffer = nullptr;
+            m_releaseUnusedBuffersTimer = nullptr;
+            m_usedBuffers.clear();
+        }
 
         // Clear the timer and dispatch the update function manually now.
         m_compositorThreadUpdateTimer = nullptr;

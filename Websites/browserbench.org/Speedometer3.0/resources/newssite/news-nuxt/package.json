@@ -1,0 +1,26 @@
+{
+    "name": "nuxt-app",
+    "private": true,
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "lint:fix": "eslint . --fix",
+        "pretty:check": "prettier --check ./",
+        "pretty:fix": "prettier --write ./",
+        "format": "npm run pretty:fix ; npm run lint:fix"
+    },
+    "devDependencies": {
+        "@nuxt/eslint-config": "^0.1.1",
+        "@types/node": "^18",
+        "eslint": "^8.41.0",
+        "nuxt": "^3.5.2",
+        "prettier": "^2.8.8"
+    },
+    "dependencies": {
+        "http-server": "^14.1.1",
+        "news-site-css": "file:../news-site-css"
+    }
+}

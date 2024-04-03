@@ -43,7 +43,3 @@ struct TextCheckerState {
 };
 
 } // namespace WebKit
-
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::TextCheckerState> : SimpleArgumentCoder<WebKit::TextCheckerState> { };
-};

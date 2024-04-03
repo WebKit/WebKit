@@ -92,6 +92,8 @@ public:
     ~BaselineJITCode() override;
     PCToCodeOriginMap* pcToCodeOriginMap() override { return m_pcToCodeOriginMap.get(); }
 
+    CodeLocationLabel<JSInternalPtrTag> getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex) const;
+
     FixedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;
     FixedVector<BaselineUnlinkedStructureStubInfo> m_unlinkedStubInfos;
     FixedVector<SimpleJumpTable> m_switchJumpTables;

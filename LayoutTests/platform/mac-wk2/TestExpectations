@@ -12,6 +12,7 @@ editing/pasteboard/dom-paste [ Pass ]
 fast/attachment/cocoa [ Pass ]
 fast/attachment/mac [ Pass ]
 fast/css/mac [ Pass ]
+fast/element-targeting [ Pass ]
 fast/events/cursors [ Pass ]
 fast/forms/date/date-editable-components [ Pass ]
 fast/forms/datetimelocal/datetimelocal-editable-components [ Pass ]
@@ -21,6 +22,7 @@ fast/forms/select/mac-wk2 [ Pass ]
 fast/sandbox/mac [ Pass ]
 fast/scrolling/mac [ Pass ]
 fast/speechsynthesis/mac [ Pass ]
+fast/text-extraction [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 imported/w3c/web-platform-tests/web-share [ Pass ]
@@ -34,6 +36,8 @@ scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
 view-gestures [ Pass ]
 http/tests/swipe [ Pass ]
+http/tests/pdf [ Pass ]
+pdf/unifiedpdf [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
 
@@ -65,18 +69,10 @@ fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
 webkit.org/b/229423 [ BigSur Debug arm64 ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Pass Crash ]
 
+http/tests/paymentrequest/ApplePayModifier-disbursementPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/removing-allowpaymentrequest.https.sub.html [ Skip ]
-webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/setting-allowpaymentrequest.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
@@ -91,6 +87,9 @@ imported/w3c/web-platform-tests/payment-request/payment-request-abort-method.htt
 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ WontFix ]
 imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ WontFix ]
 
+imported/w3c/web-platform-tests/media-source/dedicated-worker/ [ Pass ]
+# Test has non deterministic output as it measures how many main thread loops it takes to execute action in worker.
+imported/w3c/web-platform-tests/media-source/dedicated-worker/mediasource-worker-play-terminate-worker.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]
@@ -544,8 +543,6 @@ webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-e
 webkit.org/b/162999 [ Monterey+ Debug ] accessibility/mac/native-text-control-set-selected-textmarker-range.html [ Pass Failure ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
-webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
-
 webkit.org/b/172544 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html [ Pass Failure ]
 
 webkit.org/b/139820 fast/frames/lots-of-objects.html [ Pass Timeout ]
@@ -695,9 +692,6 @@ webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 
-# This test times out, likely because appcache still loads in WebProcess, not NetworkProcess
-webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
-
 ### END OF (5) Features that are not supported in WebKit2, on Mavericks
 ########################################
 
@@ -717,8 +711,8 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 http/tests/inspector/network/local-resource-override-mapped-to-directory.html [ Pass ]
 http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Pass ]
 
-# Network throttling is currently only enabled on Cocoa platforms.
-http/tests/inspector/network/setEmulatedConditions.html [ Pass ]
+# Network throttling is currently disabled pending rdar://122224142 (Per process network link conditioner SPI).
+http/tests/inspector/network/setEmulatedConditions.html [ Skip ]
 
 # Content Extensions tests must be enabled explicitly on mac-wk2.
 http/tests/contentextensions [ Pass ]
@@ -939,14 +933,11 @@ webkit.org/b/186362 [ Release ] http/tests/resourceLoadStatistics/prevalent-reso
 
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
-# Local authenticator tests require restricted keychain entitlement, which cannot be signed with ad hoc signing.
-# Therefore, tests fail on OpenSource bots. They will be covered by Internal bots.
-http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html [ Skip ]
-http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Skip ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Failure Crash ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Failure Crash ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Failure Crash ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Failure Crash ]
+webkit.org/b/271207 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Failure Crash ]
 
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
 
@@ -1001,6 +992,12 @@ webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Fa
 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Pass Failure ]
 
+# After `media-elements/track` enablement - below lists tests fail:
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-missed.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Pass Failure ]
+
 #rdar://92833592 ([ Ventura ] 4x imported/w3c/web-platform-tests/webrtc-encoded-transform/ are flaky text failures)
 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Pass Failure ]
@@ -1018,10 +1015,6 @@ webkit.org/b/228934 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Pass
 webkit.org/b/207209 inspector/heap/getPreview.html [ Pass Failure Timeout ]
 
 webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html [ Pass Crash ]
-
-webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failure ]
-
-webkit.org/b/207303 loader/stateobjects/pushstate-size-iframe.html [ Pass Crash ]
 
 webkit.org/b/229820 [ BigSur Debug arm64 ] loader/stateobjects/pushstate-size.html [ Pass Crash ]
 
@@ -1051,8 +1044,6 @@ webkit.org/b/208390 [ Debug ] fast/css-custom-paint/delay-repaint.html [ Pass Fa
 webkit.org/b/208577 [ Release ] fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208590 [ Debug ] fast/events/beforeunload-prompt.html [ Pass Crash ]
-
-webkit.org/b/208889 fast/images/decode-render-animated-image.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/209006 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Pass Failure ]
 
@@ -1086,8 +1077,6 @@ webkit.org/b/212413 fast/mediastream/mock-media-source-webaudio.html [ Pass Time
 
 webkit.org/b/212721 svg/custom/textPath-change-id.svg [ Pass ImageOnlyFailure ]
 
-webkit.org/b/212042 [ Debug ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-reveal.html [ Pass Timeout ]
-
 webkit.org/b/213461 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
 
 webkit.org/b/213652 webrtc/video-autoplay1.html [ Pass Failure ]
@@ -1104,8 +1093,6 @@ webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash Failure ]
 
 webkit.org/b/230485 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Failure ]
-
-webkit.org/b/230653 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
 
 webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
@@ -1189,7 +1176,6 @@ webkit.org/b/230696 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.
 
 # rdar://65269589 ([ macOS and iOS ] media/vp9.html is failing consistently.)
 [ Monterey+ ] media/vp9.html [ Pass ]
-[ Monterey+ ] webrtc/vp9-vtb.html [ Pass ]
 
 webkit.org/b/214997 [ Release ] http/tests/workers/service/basic-install-event-waitUntil-reject.html [ Pass Timeout ]
 
@@ -1341,14 +1327,9 @@ webkit.org/b/225533 [ BigSur Release arm64 ] mathml/scripts-removeChild.html [ P
 
 webkit.org/b/225666 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
 
-webkit.org/b/225665 [ Release arm64 ] http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr Slow ]
-
 webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow ]
 
 webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
-
-# rdar://82047046 ([ Mac wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html is a flaky timeout)
-http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Pass Timeout ]
 
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
 
@@ -1422,7 +1403,7 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 #rdar://82032946 ([Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail)
 [ Monterey+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
-# webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
+# webkit.org/b/228200 Setting multiple test expectations for Montery on OpenSource:
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
 
@@ -1587,7 +1568,7 @@ webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/rep
 
 # NOTIFICATION_EVENT is Ventura+
 [ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
 [ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 [ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 [ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
@@ -1600,7 +1581,7 @@ webkit.org/b/253343 [ Ventura+ ] http/tests/workers/service/shownotification-all
 [ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-late.https.html [ Pass ]
 [ Ventura+ ] http/wpt/service-workers/push-console-messages-showNotification-sync.https.html [ Pass ]
 
-webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
+webkit.org/b/242164 [ Monterey+ ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
 webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
 
@@ -1626,8 +1607,6 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
-
-webkit.org/b/248734 media/video-inaccurate-duration-ended.html [ Crash ]
 
 webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
 
@@ -1737,11 +1716,9 @@ fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ]
 [ Debug Ventura arm64 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass Crash ]
 [ Debug arm64 ] media/track/track-css-visible-stroke.html [ Pass Crash ]
 [ Ventura Debug arm64 ] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Crash ]
-media/track/track-cues-missed.html [ Pass Crash ]
 media/track/video-track-addition-and-frame-removal.html [ Pass Crash ]
 media/track/track-cue-left-align.html [ Pass Crash ]
 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Pass Crash ]
-media/track/track-cue-mutable-fragment.html [ Pass Crash ]
 http/tests/workers/service/postmessage-after-terminating-hung-worker.html [ Pass Crash ]
 fast/mediastream/getUserMedia-video-rescaling.html [ Pass Crash ]
 media/video-source-load.html [ Pass Crash ]
@@ -1837,14 +1814,6 @@ imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.
 # rdar://99153669 ([ iOS macOS ] 4X imported/w3c/web-platform-tests/html/cross-origin-opener-policy/(Layout tests) are flaky failures (244358))
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Crash ]
 
-# Failing after OS migration rdar://112624778 (Migrate macOS Sonoma test expectations to OpenSource, add expectation files to Down-Levels (259373))
-compositing/backing/inline-block-no-backing.html [ Pass Failure ]
-compositing/backing/whitespace-nodes-no-backing.html [ Pass Failure ]
-compositing/fixed-image-loading.html [ Pass Failure ]
-compositing/tiling/huge-layer-img.html [ Pass Failure ]
-compositing/visibility/visibility-image-layers-dynamic.html [ Pass Failure ]
-editing/input/caret-at-the-edge-of-contenteditable.html [ Pass ImageOnlyFailure Failure ]
-
 webkit.org/b/261005 swipe/pushState-cached-back-swipe.html [ Pass Failure Timeout ]
 
 webkit.org/b/227761 imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.html [ Pass Failure ]
@@ -1862,8 +1831,7 @@ webkit.org/b/263044 imported/w3c/web-platform-tests/webrtc-stats/supported-stats
 # webkit.org/b/261308 Batch mark expectations for flaky imported/w3c/web-platform-tests
 [ Monterey+ X86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Pass Failure ]
-[ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Pass Failure ]
-[ Monterey+ X86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+
 
 webkit.org/b/261344 requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
 
@@ -1885,18 +1853,11 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Monterey+ ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure Crash ]
 [ Sonoma ] http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]
 
-# rdar://114452082 (REGRESSION (262124@main?): [ Sonoma wk2 ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html is a consistent failure)
-[ Sonoma+ ] imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
-
-# rdar://114294654 (REGRESSION (265615@main): [ Sonoma ] fast/attachment/cocoa/wide-attachment-rendering.html is a constant failure)
-[ Sonoma+ ] fast/attachment/cocoa/wide-attachment-rendering.html [ Failure ]
+[ Monterey Ventura ] media/media-vp8-webm.html [ ImageOnlyFailure ] # Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
 
 webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
 webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
-
-webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
-webkit.org/b/263227 imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html [ Pass Failure ]
 
 webkit.org/b/261356 [ Debug ] fast/mediastream/device-change-event-2.html [ Pass Timeout ] # CHANGE TO [ Pass Timeout ] WITHOUT DEBUG AFTER FIX ACCORDING TO webkit.org/b/188924
 
@@ -1905,28 +1866,31 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 webkit.org/b/263754 [ Sonoma+ x86_64 ] css3/filters/effect-drop-shadow-clip-abspos.html [ ImageOnlyFailure ]
 
 # WebGPU
-http/tests/webgpu/webgpu/api/operation/compute_pipeline/overrides.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/device/lost.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/reflection.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/adapter/requestDevice.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/render_pipeline/overrides.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/memory_sync/texture/same_subresource.html [ Pass ]
-http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.html [ Pass ]
+http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]
+http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
+
+http/tests/webgpu/webgpu/api/operation/compute_pipeline/overrides.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/device/lost.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/stencil.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/reflection.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/rendering/draw.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapterInfo.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestAdapter.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/adapter/requestDevice.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/overrides.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/single_buffer.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/memory_sync/texture/same_subresource.html [ Skip ]
+http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.html [ Skip ]
 
 webkit.org/b/263920 svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
 
@@ -1935,8 +1899,6 @@ webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filt
 webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
 
 webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
-
-webkit.org/b/265414 [ Monterey+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
 
 # rdar://118901410 (NEW TEST (271087@main): [ macOS x86_64 wk2 ] 2 tests in http/wpt/webcodecs are a constant failure)
 http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
@@ -1962,3 +1924,71 @@ webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerRemove.html [ Pass Crash ]
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerFire.html [ Pass Crash ]
+
+webkit.org/b/267384 [ Sonoma+ ] fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/267670 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/267778 [ Sonoma+ Release ] fast/forms/listbox-padding-clip-selected.html [  Pass ImageOnlyFailure ]
+
+webkit.org/b/267880 [ Sonoma+ ] fast/scrolling/mac/scrollbars/select-overlay-scrollbar-reveal.html [ Pass Timeout ]
+
+webkit.org/b/267885 [ Sonoma+ Release ] fast/scrolling/rtl-scrollbars-overlay-no-push-contents.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/267891 [ Sonoma+ Release ] fast/css/nested-table-with-collapsed-borders.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/267796 [ Monterey+ Release ] imported/w3c/web-platform-tests/requestidlecallback/deadline-max-rAF-dynamic.html [ Pass Failure ]
+
+webkit.org/b/268018 [ Sonoma+ Release ] fast/images/text-recognition/mac/select-word-in-transparent-image-overlay.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/271059 [ Monterey x86_64 ] http/wpt/webrtc/video-script-transform.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] http/wpt/webrtc/video-script-transform-simulcast.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/h264.https.html [ Pass Failure ]
+webkit.org/b/271059 [ Monterey x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
+
+webkit.org/b/268200 [ Sonoma+ Release ] inspector/console/console-screenshot.html [ Pass Failure ]
+
+webkit.org/b/268494 [ Monterey+ Release ] media/track/media-element-enqueue-event-crash.html [ Pass Crash ]
+
+webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallback/callback-multiple-calls.html [ Pass Failure ]
+
+# webkit.org/b/269003 Umbrella bug for flaky test failures impacting EWS 
+[ Monterey+ Release X86_64 ] compositing/clipping/border-radius-async-overflow-non-stacking.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edge.html [ Pass ImageOnlyFailure ]
+[ Monterey+ Release ] media/audio-session-category-unmute-mute.html [ Pass Failure ]
+[ Monterey+ Release ] media/audio-session-category.html [ Pass Failure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/269639 http/tests/site-isolation/window-properties.html [ Skip ]
+
+#webkit.org/b/269301  (2X imported/w3c/web-platform-tests/webcodecs/videoFrame (layout-tests) are constant failures)
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.html [ Failure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.worker.html [ Failure ]
+
+webkit.org/b/268398 [ Sonoma+ ] compositing/plugins/pdf/pdf-in-iframe-scrolling-tree-after-back.html [ Pass Failure ]
+
+webkit.org/b/269581 http/tests/site-isolation/mouse-events/context-menu-event-twice.html [ Skip ]
+
+# webkit.org/b/269798 REGRESSION (274409@main): [ macOS wk2 ] 2 tests in http/tests/navigation/ping-attribute are flaky
+[ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Pass Failure ]
+[ Monterey+ ] http/tests/navigation/ping-attribute/area-cross-origin-from-https-UpgradeMixedContent.html [ Pass Failure ]
+
+webkit.org/b/269996 [ Monterey+ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/offscreen-element-modified-before-coming-onscreen.html [ Skip ]
+
+# webkit.org/b/270092  (REGRESSION (275274@main): [ Sonoma+ wk2 ] Multiple compositing/plugins/pdf/pdf are constant failures)
+[ Sonoma+ ] compositing/plugins/pdf/pdf-in-embed.html [ Failure ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-in-styled-embed.html [ Failure ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree-dynamic.html [ Failure Timeout ]
+[ Sonoma+ ] compositing/plugins/pdf/pdf-scrolling-tree.html [ Failure ]
+
+webkit.org/b/270235 [ Ventura+ Debug x86_64 ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Timeout ]
+
+# webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
+
+webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure Timeout ]
+
+webkit.org/b/271318 [ Debug ] http/wpt/webauthn/public-key-credential-get-failure-local-silent.https.html [ Skip ]

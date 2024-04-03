@@ -32,7 +32,14 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SetForScope.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+#import "UIKitUtilities.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#endif
 
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
@@ -40,6 +47,10 @@
 @implementation WKBaseScrollView {
     RetainPtr<UIPanGestureRecognizer> _axisLockingPanGestureRecognizer;
     UIAxis _axesToPreventMomentumScrolling;
+    BOOL _isBeingRemovedFromSuperview;
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    HashSet<WebCore::IntRect> _overlayRegionRects;
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -49,8 +60,10 @@
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING) && !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING) && !USE(BROWSERENGINEKIT)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self._allowsAsyncScrollEvent = YES;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     _axesToPreventMomentumScrolling = UIAxisNeither;
@@ -113,6 +126,17 @@
         break;
     }
 
+    switch ([_axisLockingPanGestureRecognizer state]) {
+    case UIGestureRecognizerStateCancelled:
+    case UIGestureRecognizerStateFailed:
+        return;
+    case UIGestureRecognizerStatePossible:
+    case UIGestureRecognizerStateBegan:
+    case UIGestureRecognizerStateChanged:
+    case UIGestureRecognizerStateEnded:
+        break;
+    }
+
     auto axesToPrevent = self._axesToPreventScrollingFromDelegate;
     if (axesToPrevent == UIAxisNeither)
         return;
@@ -135,41 +159,33 @@
         [panGesture setTranslation:adjustedTranslation inView:nil];
 }
 
+- (void)removeFromSuperview
+{
+    SetForScope removeFromSuperviewScope { _isBeingRemovedFromSuperview, YES };
+
+    [super removeFromSuperview];
+}
+
 - (UIAxis)_axesToPreventScrollingFromDelegate
 {
+    if (_isBeingRemovedFromSuperview || !self.window)
+        return UIAxisNeither;
     auto delegate = self.baseScrollViewDelegate;
     return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
 
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
 
-- (BOOL)_subclassHandlesAsyncScrollEvent
-{
-    return YES;
-}
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
-- (void)_asynchronouslyHandleScrollEvent:(UIScrollEvent *)event completion:(void (^)(BOOL handled))completion
-{
-    auto delegate = retainPtr(self.baseScrollViewDelegate);
-    if (!delegate)
-        return completion(NO);
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKBaseScrollViewAdditions.mm>)
+#import <WebKitAdditions/WKBaseScrollViewAdditions.mm>
+#else
+- (BOOL)_hasEnoughContentForOverlayRegions { return false; }
+- (void)_updateOverlayRegionRects:(HashSet<WebCore::IntRect>&)overlayRegions { }
+- (void)_updateOverlayRegions:(NSArray<NSData *> *)overlayRegions { }
+#endif
 
-    [delegate scrollView:self handleScrollEvent:event completion:completion];
-}
-
-#endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
-
-#if HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
-
-- (UIScrollView *)_actingParentScrollView
-{
-    if (![self.baseScrollViewDelegate respondsToSelector:@selector(actingParentScrollViewForScrollView:)])
-        return nil;
-
-    return [self.baseScrollViewDelegate actingParentScrollViewForScrollView:self];
-}
-
-#endif // HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
 #pragma mark - UIGestureRecognizerDelegate
 

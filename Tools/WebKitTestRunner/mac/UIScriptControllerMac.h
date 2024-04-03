@@ -71,7 +71,7 @@ private:
     void sendEventStream(JSStringRef, JSValueRef) override;
 
     NSTableView *dataListSuggestionsTableView() const;
-    JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long, bool) const override;
+    JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool) const override;
 
     int64_t pasteboardChangeCount() const final;
 };

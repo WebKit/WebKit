@@ -29,8 +29,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MutationEvent);
 
+MutationEvent::MutationEvent()
+    : Event(EventInterfaceType::MutationEvent)
+{
+}
+
 MutationEvent::MutationEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Node* relatedNode, const String& prevValue, const String& newValue)
-    : Event(type, canBubble, cancelable)
+    : Event(EventInterfaceType::MutationEvent, type, canBubble, cancelable)
     , m_relatedNode(relatedNode)
     , m_prevValue(prevValue)
     , m_newValue(newValue)
@@ -49,11 +54,6 @@ void MutationEvent::initMutationEvent(const AtomString& type, bool canBubble, bo
     m_newValue = newValue;
     m_attrName = attrName;
     m_attrChange = attrChange;
-}
-
-EventInterface MutationEvent::eventInterface() const
-{
-    return MutationEventInterfaceType;
 }
 
 } // namespace WebCore

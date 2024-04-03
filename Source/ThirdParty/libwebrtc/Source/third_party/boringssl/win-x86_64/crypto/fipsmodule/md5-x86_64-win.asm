@@ -6,7 +6,6 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
-%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -28,7 +27,6 @@ $L$SEH_begin_md5_block_asm_data_order:
 
 
 
-_CET_ENDBR
 	push	rbp
 
 	push	rbx
@@ -702,7 +700,7 @@ $L$end:
 $L$epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	ret
+	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_md5_block_asm_data_order:
 EXTERN	__imp_RtlVirtualUnwind
@@ -783,7 +781,7 @@ $L$in_prologue:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	ret
+	DB	0F3h,0C3h		;repret
 
 
 section	.pdata rdata align=4

@@ -46,6 +46,7 @@ extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
 #define WEBCONTENT_SERVICE_INITIALIZER WebContentServiceInitializer
 #define NETWORK_SERVICE_INITIALIZER NetworkServiceInitializer
 #define GPU_SERVICE_INITIALIZER GPUServiceInitializer
+#define MODEL_SERVICE_INITIALIZER ModelServiceInitializer
 
 namespace WebKit {
 

@@ -56,6 +56,8 @@ PASS Parsing: <http://foo.com:b@d/> against <http://example.org/foo/bar>
 PASS Parsing: <http://foo.com/\@> against <http://example.org/foo/bar>
 PASS Parsing: <http:\\foo.com\> against <http://example.org/foo/bar>
 PASS Parsing: <http:\\a\b:c\d@foo.com\> against <http://example.org/foo/bar>
+PASS Parsing: <http://a:b@c\> against <about:blank>
+PASS Parsing: <ws://a@b\c> against <about:blank>
 PASS Parsing: <foo:/> against <http://example.org/foo/bar>
 PASS Parsing: <foo:/bar.com/> against <http://example.org/foo/bar>
 PASS Parsing: <foo://///////> against <http://example.org/foo/bar>
@@ -682,4 +684,12 @@ PASS Parsing: <stun://test:test> against <about:blank>
 PASS Parsing: <stun://[:1]> against <about:blank>
 PASS Parsing: <w://x:0> against <about:blank>
 PASS Parsing: <west://x:0> against <about:blank>
+PASS Parsing: <///test> against <http://example.org/>
+PASS Parsing: <///\//\//test> against <http://example.org/>
+PASS Parsing: <///example.org/path> against <http://example.org/>
+PASS Parsing: <///example.org/../path> against <http://example.org/>
+PASS Parsing: <///example.org/../../> against <http://example.org/>
+PASS Parsing: <///example.org/../path/../../> against <http://example.org/>
+PASS Parsing: <///example.org/../path/../../path> against <http://example.org/>
+PASS Parsing: </\/\//example.org/../path> against <http://example.org/>
 

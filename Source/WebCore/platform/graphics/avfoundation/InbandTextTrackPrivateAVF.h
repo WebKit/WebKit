@@ -50,6 +50,8 @@ class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
     virtual ~InbandTextTrackPrivateAVF();
 
+    TrackID id() const final { return m_trackID; }
+
     void setMode(InbandTextTrackPrivate::Mode) override;
 
     int trackIndex() const override { return m_index; }
@@ -79,7 +81,7 @@ public:
     virtual bool readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex, RefPtr<JSC::ArrayBuffer>&, MediaTime&, CMFormatDescriptionRef&);
     
 protected:
-    InbandTextTrackPrivateAVF(AVFInbandTrackParent*, CueFormat);
+    InbandTextTrackPrivateAVF(AVFInbandTrackParent*, TrackID, CueFormat);
 
     Ref<InbandGenericCue> processCueAttributes(CFAttributedStringRef);
     void processAttributedStrings(CFArrayRef, const MediaTime&);
@@ -110,6 +112,7 @@ private:
     bool m_hasBeenReported;
     bool m_seeking;
     bool m_haveReportedVTTHeader;
+    const TrackID m_trackID { 0 };
 };
 
 } // namespace WebCore

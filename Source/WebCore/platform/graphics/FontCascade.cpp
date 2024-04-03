@@ -308,7 +308,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     }
 
     bool hasWordSpacingOrLetterSpacing = wordSpacing() || letterSpacing();
-    float* cacheEntry = m_fonts->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, glyphOverflow);
+    float* cacheEntry = protectedFonts()->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), enableKerning() || requiresShaping(), hasWordSpacingOrLetterSpacing, glyphOverflow);
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
@@ -318,42 +318,33 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
 
     float result;
     if (codePathToUse == CodePath::Complex)
-        result = floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
+        result = widthForTextUsingComplexTextController(run, fallbackFonts, glyphOverflow);
     else
-        result = floatWidthForSimpleText(run, fallbackFonts, glyphOverflow);
+        result = widthForTextUsingWidthIterator(run, fallbackFonts, glyphOverflow);
 
     if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
         *cacheEntry = result;
     return result;
 }
-
-template<typename CharacterType>
-static void addGlyphsFromText(GlyphBuffer& glyphBuffer, const Font& font, const CharacterType* characters, unsigned length)
+NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, float* cacheEntry) const
 {
-    for (unsigned i = 0; i < length; ++i) {
-        auto glyph = font.glyphForCharacter(characters[i]);
-        glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
-    }
-}
-
-float FontCascade::widthForSimpleText(StringView text, TextDirection textDirection) const
-{
-    if (text.isNull() || text.isEmpty())
-        return 0;
-    ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
-    if (cacheEntry && !std::isnan(*cacheEntry))
-        return *cacheEntry;
-
     GlyphBuffer glyphBuffer;
-    auto& font = primaryFont();
-    ASSERT(!font.syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
+    Ref font = primaryFont();
+    ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
+
+    auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, const auto* characters, unsigned length) {
+        for (unsigned i = 0; i < length; ++i) {
+            auto glyph = font.glyphForCharacter(characters[i]);
+            glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
+        }
+    };
+
     if (text.is8Bit())
         addGlyphsFromText(glyphBuffer, font, text.characters8(), text.length());
     else
         addGlyphsFromText(glyphBuffer, font, text.characters16(), text.length());
 
-    auto initialAdvance = font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
+    auto initialAdvance = font->applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     auto width = 0.f;
     for (size_t i = 0; i < glyphBuffer.size(); ++i)
         width += WebCore::width(glyphBuffer.advanceAt(i));
@@ -373,7 +364,7 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     if (whitespaceIsCollapsed)
         return text.length() * monospaceCharacterWidth;
 
-    float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    float* cacheEntry = protectedFonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
@@ -428,7 +419,38 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
 
     auto emojiPolicy = resolveEmojiPolicy(m_fontDescription.variantEmoji(), c);
 
-    return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant, emojiPolicy);
+    return protectedFonts()->glyphDataForCharacter(c, m_fontDescription, variant, emojiPolicy);
+}
+
+
+bool FontCascade::canUseSimplifiedTextMeasuring(char32_t character, FontVariant fontVariant, bool whitespaceIsCollapsed, const Font& primaryFont) const
+{
+    if (character == tabCharacter && !whitespaceIsCollapsed)
+        return false;
+
+    // We cache whitespaceIsCollapsed = true result. false case is handled above.
+    whitespaceIsCollapsed = true;
+    bool isCacheable = fontVariant == AutoVariant && isLatin1(character);
+    size_t baseIndex = static_cast<size_t>(character) * bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache;
+    if (isCacheable) {
+        static_assert(0 < bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache);
+        static_assert(1 < bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache);
+        if (m_canUseSimplifiedTextMeasuringForAutoVariantCache.get(baseIndex))
+            return m_canUseSimplifiedTextMeasuringForAutoVariantCache.get(baseIndex + 1);
+    }
+
+    bool result = WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed);
+    if (result) {
+        constexpr bool mirror = false;
+        auto glyphData = glyphDataForCharacter(character, mirror, fontVariant);
+        result = glyphData.isValid() && glyphData.font == &primaryFont;
+    }
+
+    if (isCacheable) {
+        m_canUseSimplifiedTextMeasuringForAutoVariantCache.set(baseIndex, true);
+        m_canUseSimplifiedTextMeasuringForAutoVariantCache.set(baseIndex + 1, result);
+    }
+    return result;
 }
 
 // For font families where any of the fonts don't have a valid entry in the OS/2 table
@@ -1225,7 +1247,8 @@ bool FontCascade::canReceiveTextEmphasis(char32_t c)
 
 bool FontCascade::isLoadingCustomFonts() const
 {
-    return m_fonts && m_fonts->isLoadingCustomFonts();
+    RefPtr fonts = m_fonts;
+    return fonts && fonts->isLoadingCustomFonts();
 }
 
 enum class GlyphUnderlineType : uint8_t {
@@ -1314,7 +1337,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markFontData)
         return 0;
 
-    return markFontData->fontMetrics().ascent();
+    return markFontData->fontMetrics().intAscent();
 }
 
 int FontCascade::emphasisMarkDescent(const AtomString& mark) const
@@ -1328,7 +1351,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markFontData)
         return 0;
 
-    return markFontData->fontMetrics().descent();
+    return markFontData->fontMetrics().intDescent();
 }
 
 const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
@@ -1343,15 +1366,15 @@ const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
 
 int FontCascade::emphasisMarkHeight(const AtomString& mark) const
 {
-    if (auto* font = fontForEmphasisMark(mark))
-        return font->fontMetrics().height();
+    if (RefPtr font = fontForEmphasisMark(mark))
+        return font->fontMetrics().intHeight();
     return { };
 }
 
 float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
 {
-    if (auto* font = fontForEmphasisMark(mark))
-        return font->fontMetrics().floatHeight();
+    if (RefPtr font = fontForEmphasisMark(mark))
+        return font->fontMetrics().height();
     return { };
 }
 
@@ -1437,21 +1460,21 @@ inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotRead
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(glyphBuffer.isFlattened());
-    const Font* fontData = &glyphBuffer.fontAt(0);
+    RefPtr fontData = &glyphBuffer.fontAt(0);
     FloatPoint startPoint = point;
     float nextX = startPoint.x() + WebCore::width(glyphBuffer.advanceAt(0));
     float nextY = startPoint.y() + height(glyphBuffer.advanceAt(0));
     unsigned lastFrom = 0;
     unsigned nextGlyph = 1;
     while (nextGlyph < glyphBuffer.size()) {
-        const Font& nextFontData = glyphBuffer.fontAt(nextGlyph);
+        RefPtr nextFontData = &glyphBuffer.fontAt(nextGlyph);
 
-        if (&nextFontData != fontData) {
+        if (nextFontData != fontData) {
             if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
                 context.drawGlyphs(*fontData, glyphBuffer.glyphs(lastFrom), glyphBuffer.advances(lastFrom), nextGlyph - lastFrom, startPoint, m_fontDescription.usedFontSmoothing());
 
             lastFrom = nextGlyph;
-            fontData = &nextFontData;
+            fontData = WTFMove(nextFontData);
             startPoint.setX(nextX);
             startPoint.setY(nextY);
         }
@@ -1518,7 +1541,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForTextUsingWidthIterator(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -1526,8 +1549,8 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakH
     it.finalize(glyphBuffer);
 
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intAscent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(it.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intDescent()));
         glyphOverflow->left = ceilf(it.firstGlyphOverflow());
         glyphOverflow->right = ceilf(it.lastGlyphOverflow());
     }
@@ -1535,12 +1558,12 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakH
     return it.runWidthSoFar();
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::widthForTextUsingComplexTextController(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {
-        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
-        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intAscent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().intDescent()));
         glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
         glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalAdvance().width()));
     }
@@ -1591,7 +1614,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (run.rtl()) {
-        delta -= floatWidthForSimpleText(run);
+        delta -= widthForTextUsingWidthIterator(run);
         while (1) {
             offset = it.currentCharacterIndex();
             float w;
@@ -1717,10 +1740,9 @@ static void findPathIntersections(GlyphIterationState& state, const PathElement&
 class GlyphToPathTranslator {
 public:
     GlyphToPathTranslator(const TextRun& textRun, const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin)
-        : m_index(0)
-        , m_textRun(textRun)
+        : m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
-        , m_fontData(&glyphBuffer.fontAt(m_index))
+        , m_fontData(glyphBuffer.fontAt(m_index))
         , m_translation(AffineTransform::makeTranslation(toFloatSize(textOrigin)))
     {
 #if USE(CG)
@@ -1728,23 +1750,23 @@ public:
 #endif
     }
 
-    bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
+    bool containsMorePaths() { return m_index != m_glyphBuffer->size(); }
     Path path();
     std::pair<float, float> extents();
     GlyphUnderlineType underlineType();
     void advance();
 
 private:
-    unsigned m_index;
-    const TextRun& m_textRun;
-    const GlyphBuffer& m_glyphBuffer;
-    const Font* m_fontData;
+    unsigned m_index { 0 };
+    CheckedRef<const TextRun> m_textRun;
+    CheckedRef<const GlyphBuffer> m_glyphBuffer;
+    Ref<const Font> m_fontData;
     AffineTransform m_translation;
 };
 
 Path GlyphToPathTranslator::path()
 {
-    Path path = m_fontData->pathForGlyph(m_glyphBuffer.glyphAt(m_index));
+    Path path = Ref { m_fontData }->pathForGlyph(m_glyphBuffer->glyphAt(m_index));
     path.transform(m_translation);
     return path;
 }
@@ -1752,7 +1774,7 @@ Path GlyphToPathTranslator::path()
 std::pair<float, float> GlyphToPathTranslator::extents()
 {
     auto beginning = m_translation.mapPoint(FloatPoint(0, 0));
-    auto advance = m_glyphBuffer.advanceAt(m_index);
+    auto advance = m_glyphBuffer->advanceAt(m_index);
     auto end = m_translation.mapSize(size(advance));
     return std::make_pair(beginning.x(), beginning.x() + end.width());
 }
@@ -1764,11 +1786,16 @@ auto GlyphToPathTranslator::underlineType() -> GlyphUnderlineType
 
 void GlyphToPathTranslator::advance()
 {
-    GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
+    GlyphBufferAdvance advance = m_glyphBuffer->advanceAt(m_index);
     m_translation.translate(size(advance));
     ++m_index;
-    if (m_index < m_glyphBuffer.size())
-        m_fontData = &m_glyphBuffer.fontAt(m_index);
+    if (m_index < m_glyphBuffer->size())
+        m_fontData = m_glyphBuffer->fontAt(m_index);
+}
+
+RefPtr<FontCascadeFonts> FontCascade::protectedFonts() const
+{
+    return m_fonts;
 }
 
 DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const

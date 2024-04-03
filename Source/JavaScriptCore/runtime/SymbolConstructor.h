@@ -38,7 +38,7 @@ public:
     typedef InternalFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype, GetterSetter*)
+    static SymbolConstructor* create(VM& vm, Structure* structure, SymbolPrototype* prototype)
     {
         SymbolConstructor* constructor = new (NotNull, allocateCell<SymbolConstructor>(vm)) SymbolConstructor(vm, structure);
         constructor->finishCreation(vm, prototype);

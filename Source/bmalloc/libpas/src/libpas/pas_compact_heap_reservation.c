@@ -46,6 +46,10 @@ pas_aligned_allocation_result pas_compact_heap_reservation_try_allocate(size_t s
     uintptr_t padding_start;
     uintptr_t allocation_start;
     uintptr_t allocation_end;
+
+    // PAS_INTERNAL_MIN_ALIGN is the alignment used to compact pointers, so we
+    // have to align to at least that alignment.
+    PAS_ASSERT(alignment >= PAS_INTERNAL_MIN_ALIGN);
     
     pas_heap_lock_assert_held();
     

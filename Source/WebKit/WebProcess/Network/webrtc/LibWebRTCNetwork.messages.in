@@ -23,9 +23,9 @@
 #if USE(LIBWEBRTC)
 
 messages -> LibWebRTCNetwork NotRefCounted {
-    SignalReadPacket(WebCore::LibWebRTCSocketIdentifier socketIdentifier, IPC::DataReference data, WebKit::RTCNetwork::IPAddress address, uint16_t port, int64_t timestamp)
+    SignalReadPacket(WebCore::LibWebRTCSocketIdentifier socketIdentifier, std::span<const uint8_t> data, WebKit::RTC::Network::IPAddress address, uint16_t port, int64_t timestamp)
     SignalSentPacket(WebCore::LibWebRTCSocketIdentifier socketIdentifier, int packetSize, int64_t timestamp)
-    SignalAddressReady(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebKit::RTCNetwork::SocketAddress address)
+    SignalAddressReady(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebKit::RTC::Network::SocketAddress address)
     SignalConnect(WebCore::LibWebRTCSocketIdentifier socketIdentifier)
     SignalClose(WebCore::LibWebRTCSocketIdentifier socketIdentifier, int error)
     SignalUsedInterface(WebCore::LibWebRTCSocketIdentifier socketIdentifier, String interfaceName)

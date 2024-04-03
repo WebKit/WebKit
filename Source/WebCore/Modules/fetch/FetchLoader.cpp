@@ -94,6 +94,8 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     if (context.settingsValues().fetchPriorityEnabled)
         options.fetchPriorityHint = request.fetchPriorityHint();
 
+    options.shouldEnableContentExtensionsCheck = request.shouldEnableContentExtensionsCheck() ? ShouldEnableContentExtensionsCheck::Yes : ShouldEnableContentExtensionsCheck::No;
+
     ResourceRequest fetchRequest = request.resourceRequest();
 
     ASSERT(context.contentSecurityPolicy());
@@ -113,7 +115,7 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
         options.referrerPolicy = ReferrerPolicy::NoReferrer;
         referrer = String();
     } else
-        referrer = (referrer == "client"_s) ? context.url().strippedForUseAsReferrer() : URL(context.url(), referrer).strippedForUseAsReferrer();
+        referrer = (referrer == "client"_s) ? context.url().strippedForUseAsReferrer().string : URL(context.url(), referrer).strippedForUseAsReferrer().string;
     if (options.referrerPolicy == ReferrerPolicy::EmptyString)
         options.referrerPolicy = context.referrerPolicy();
 

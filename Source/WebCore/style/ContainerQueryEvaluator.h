@@ -26,8 +26,8 @@
 
 #include "ContainerQuery.h"
 #include "GenericMediaQueryEvaluator.h"
-#include "SelectorMatchingState.h"
 #include "StyleScopeOrdinal.h"
+#include "StyleUpdate.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -36,14 +36,19 @@ class Element;
 
 namespace Style {
 
+struct ContainerQueryEvaluationState {
+    Vector<Ref<const Element>> sizeQueryContainers;
+    CheckedPtr<Style::Update> styleUpdate;
+};
+
 class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
 public:
     enum class SelectionMode : uint8_t { Element, PseudoElement, PartPseudoElement };
-    ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, SelectorMatchingState*);
+    ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, ContainerQueryEvaluationState*);
 
     bool evaluate(const CQ::ContainerQuery&) const;
 
-    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const CachedQueryContainers* = nullptr);
+    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const ContainerQueryEvaluationState* = nullptr);
 
 private:
     std::optional<MQ::FeatureEvaluationContext> featureEvaluationContextForQuery(const CQ::ContainerQuery&) const;
@@ -51,7 +56,7 @@ private:
     const Ref<const Element> m_element;
     const SelectionMode m_selectionMode;
     const ScopeOrdinal m_scopeOrdinal;
-    SelectorMatchingState* m_selectorMatchingState;
+    ContainerQueryEvaluationState* m_evaluationState { nullptr };
 };
 
 }

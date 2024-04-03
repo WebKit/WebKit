@@ -69,11 +69,12 @@ private:
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
-    HashSet<IntRect> m_interactionRects;
+    HashMap<IntRect, InteractionRegion::ContentHint> m_interactionRectsAndContentHints;
     HashSet<IntRect> m_occlusionRects;
+    HashSet<IntRect> m_elementGuardRects;
     HashSet<ElementIdentifier> m_containerRemovalCandidates;
     HashSet<ElementIdentifier> m_containersToRemove;
-    HashMap<ElementIdentifier, Vector<FloatRect>> m_discoveredRectsByElement;
+    HashMap<ElementIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;
 #endif
 };
 

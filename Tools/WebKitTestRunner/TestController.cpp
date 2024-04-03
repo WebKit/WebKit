@@ -786,6 +786,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
     m_userContentController = adoptWK(WKUserContentControllerCreate());
     WKPageConfigurationSetUserContentController(pageConfiguration.get(), userContentController());
+    WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(pageConfiguration.get(), options.insecureUpgradePort(), options.secureUpgradePort());
     return pageConfiguration;
 }
 
@@ -1475,7 +1476,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
         return 0;
 
     if (length >= 7 && strstr(pathOrURL, "file://")) {
-        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(pathOrURL + 7, length - 7))) {
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ pathOrURL + 7, length - 7 }))) {
             printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
             return 0;
         }
@@ -1510,7 +1511,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     }
 
     auto cPath = buffer.get();
-    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(cPath + 7, strlen(cPath) - 7))) {
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ cPath + 7, strlen(cPath) - 7 }))) {
         printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
         return 0;
     }
@@ -1525,6 +1526,7 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
     merge(features, platformSpecificFeatureDefaultsForTest(command));
     merge(features, featureDefaultsFromSelfComparisonHeader(command, TestOptions::keyTypeMapping()));
     merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));
+    merge(features, featureFromAdditionalHeaderOption(command, TestOptions::keyTypeMapping()));
     merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
 
     return TestOptions { features };
@@ -3261,7 +3263,7 @@ void getAllStorageAccessEntriesCallback(void* userData, WKArrayRef domainList)
         auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(domain));
         auto stringLength = WKStringGetUTF8CString(domain, buffer.data(), buffer.size());
 
-        resultDomains.append(String::fromUTF8(buffer.data(), stringLength - 1));
+        resultDomains.append(String::fromUTF8({ buffer.data(), stringLength - 1 }));
     }
 
     if (context->completionHandler)
@@ -3776,10 +3778,14 @@ void TestController::setStatisticsTopFrameUniqueRedirectFrom(WKStringRef host, W
     WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom(websiteDataStore(), host, hostRedirectedFrom);
 }
 
-void TestController::setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost)
+void TestController::setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost, bool wasFiltered)
 {
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(websiteDataStore(), fromHost, toHost, &context, resourceStatisticsVoidResultCallback);
+#if PLATFORM(COCOA)
+    platformSetStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost, wasFiltered, &context, &resourceStatisticsVoidResultCallback);
+#else
+    WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(websiteDataStore(), fromHost, toHost, wasFiltered, &context, resourceStatisticsVoidResultCallback);
+#endif
     runUntil(context.done, noTimeout);
 }
 
@@ -4304,6 +4310,13 @@ void TestController::setShouldAllowDeviceOrientationAndMotionAccess(bool value)
 {
     m_shouldAllowDeviceOrientationAndMotionAccess = value;
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
+}
+
+void TestController::setRequestStorageAccessThrowsExceptionUntilReload(bool enabled)
+{
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(m_mainWebView->page()));
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetBoolValueForKeyForTesting(preferences, enabled, toWK("RequestStorageAccessThrowsExceptionUntilReload").get());
 }
 
 } // namespace WTR

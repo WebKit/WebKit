@@ -10,25 +10,25 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (0,-93) size 171x117 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,75) size 11x22
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "F"
-          RenderSVGTSpan {tspan} at (0,0) size 5x22
+          RenderSVGTSpan {tspan} at (10,75) size 5x22
             RenderSVGInlineText {#text} at (10,75) size 4x22
               chunk 1 text run 1 at (11.00,0.00) startOffset 0 endOffset 1 width 4.00: "l"
-          RenderSVGTSpan {tspan} at (0,0) size 57x116
+          RenderSVGTSpan {tspan} at (14,0) size 57x116
             RenderSVGInlineText {#text} at (14,0) size 56x116
               chunk 1 text run 1 at (14.99,0.00) startOffset 0 endOffset 1 width 55.62: "a"
-          RenderSVGTSpan {tspan} at (0,0) size 11x22
+          RenderSVGTSpan {tspan} at (70,75) size 11x22
             RenderSVGInlineText {#text} at (70,75) size 6x22
               chunk 1 text run 1 at (70.61,0.00) startOffset 0 endOffset 1 width 5.00: "t"
-            RenderSVGTSpan {tspan} at (0,0) size 6x22
+            RenderSVGTSpan {tspan} at (75,75) size 6x22
               RenderSVGInlineText {#text} at (75,75) size 6x22
                 chunk 1 text run 1 at (75.61,0.00) startOffset 0 endOffset 1 width 5.00: "t"
-          RenderSVGTSpan {tspan} at (0,0) size 11x22
+          RenderSVGTSpan {tspan} at (130,75) size 11x22
             RenderSVGInlineText {#text} at (130,75) size 11x22
               chunk 1 text run 1 at (130.61,0.00) startOffset 0 endOffset 1 width 10.01: "e"
-          RenderSVGTSpan {tspan} at (0,0) size 11x22
+          RenderSVGTSpan {tspan} at (140,75) size 11x22
             RenderSVGInlineText {#text} at (140,75) size 11x22
               chunk 1 text run 1 at (140.62,0.00) startOffset 0 endOffset 1 width 10.01: "n"
-          RenderSVGTSpan {tspan} at (0,0) size 11x22
+          RenderSVGTSpan {tspan} at (150,75) size 11x22
             RenderSVGInlineText {#text} at (150,75) size 11x22
               chunk 1 text run 1 at (150.63,0.00) startOffset 0 endOffset 1 width 10.01: "e"
           RenderSVGInlineText {#text} at (160,75) size 11x22

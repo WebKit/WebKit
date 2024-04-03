@@ -503,7 +503,7 @@ static void softUpdateTest(IsAppInitiated isAppInitiated)
     }
 
     isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     while (!isDone) {
         [webView2 _appPrivacyReportTestingData: ^(struct WKAppPrivacyReportTestingData data) {
             if (!data.didPerformSoftUpdate)
@@ -545,7 +545,7 @@ static void runWebProcessPlugInTest(IsAppInitiated isAppInitiated)
     [webView _test_waitForDidFinishNavigation];
 
     isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
         EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
@@ -722,7 +722,7 @@ static void loadSimulatedRequestTest(IsAppInitiated isAppInitiated)
     [delegate waitForDidFinishNavigation];
 
     static bool isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
         EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
@@ -768,7 +768,7 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
     EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
 
     isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
         EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
@@ -815,7 +815,7 @@ static void restoreFromInteractionStateTest(IsAppInitiated isAppInitiated)
     EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
 
     isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
         EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
@@ -848,7 +848,7 @@ static void loadFileTest(IsAppInitiated isAppInitiated)
     [webView _test_waitForDidFinishNavigation];
 
     static bool isDone = false;
-    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes;
     [webView _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
         EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
         EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);

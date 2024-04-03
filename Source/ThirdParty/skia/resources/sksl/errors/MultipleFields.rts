@@ -1,0 +1,9 @@
+struct Varyings {
+  float var;
+  float var;
+};
+
+
+/*%%*
+field 'var' was already defined in the same struct ('Varyings')
+*%%*/

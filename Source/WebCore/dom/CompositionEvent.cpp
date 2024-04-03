@@ -33,16 +33,19 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CompositionEvent);
 
-CompositionEvent::CompositionEvent() = default;
+CompositionEvent::CompositionEvent()
+    : UIEvent(EventInterfaceType::CompositionEvent)
+{
+}
 
 CompositionEvent::CompositionEvent(const AtomString& type, RefPtr<WindowProxy>&& view, const String& data)
-    : UIEvent(type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
+    : UIEvent(EventInterfaceType::CompositionEvent, type, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
     , m_data(data)
 {
 }
 
 CompositionEvent::CompositionEvent(const AtomString& type, const Init& initializer)
-    : UIEvent(type, initializer)
+    : UIEvent(EventInterfaceType::CompositionEvent, type, initializer)
     , m_data(initializer.data)
 {
 }
@@ -57,11 +60,6 @@ void CompositionEvent::initCompositionEvent(const AtomString& type, bool canBubb
     initUIEvent(type, canBubble, cancelable, WTFMove(view), 0);
 
     m_data = data;
-}
-
-EventInterface CompositionEvent::eventInterface() const
-{
-    return CompositionEventInterfaceType;
 }
 
 bool CompositionEvent::isCompositionEvent() const

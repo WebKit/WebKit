@@ -378,7 +378,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
 
     // Torture test time: make sure it still works if we issue a bunch of different requests all at
     // once. Each request should finish and return exactly the same data.
-    int numIterations = 25;
+    static constexpr int numIterations = 25;
     GRefPtr<WebKitWebView> views[numIterations];
     test->m_uriSchemeRequestCallbackUsesTestWebView = false;
     for (int i = 0; i < numIterations; i++) {

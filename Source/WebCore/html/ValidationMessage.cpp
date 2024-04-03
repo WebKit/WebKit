@@ -134,7 +134,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     m_messageHeading->removeChildren();
     m_messageBody->removeChildren();
 
-    auto& document = m_messageHeading->document();
+    Ref document = m_messageHeading->document();
     auto lines = StringView(m_message).split('\n');
     auto it = lines.begin();
     if (it != lines.end()) {
@@ -147,7 +147,7 @@ void ValidationMessage::setMessageDOMAndStartTimer()
         }
     }
 
-    int magnification = document.page() ? document.page()->settings().validationMessageTimerMagnification() : -1;
+    int magnification = document->page() ? document->page()->settings().validationMessageTimerMagnification() : -1;
     if (magnification <= 0)
         m_timer = nullptr;
     else {
@@ -255,11 +255,12 @@ bool ValidationMessage::shadowTreeContains(const Node& node) const
 void ValidationMessage::deleteBubbleTree()
 {
     ASSERT(!validationMessageClient());
-    if (m_bubble) {
-        ScriptDisallowedScope::EventAllowedScope allowedScope(*m_element->userAgentShadowRoot());
+    if (RefPtr bubble = m_bubble) {
+        Ref shadowRoot = *m_element->userAgentShadowRoot();
+        ScriptDisallowedScope::EventAllowedScope allowedScope(shadowRoot);
         m_messageHeading = nullptr;
         m_messageBody = nullptr;
-        m_element->userAgentShadowRoot()->removeChild(*m_bubble);
+        shadowRoot->removeChild(*bubble);
         m_bubble = nullptr;
     }
     m_message = String();

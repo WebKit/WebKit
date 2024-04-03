@@ -20,6 +20,7 @@ depends:
 - sdk/gst-plugin-audiofx.bst
 - sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugin-dav1d.bst
+- sdk/gst-plugin-livesync.bst
 - sdk/gst-plugin-rtp.bst
 - sdk/gtk.bst
 - sdk/icecc.bst

@@ -39,6 +39,13 @@ public:
     String customCSSText() const;
     bool equals(const CSSFontStyleWithAngleValue&) const;
 
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_obliqueAngle.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
+
 private:
     CSSFontStyleWithAngleValue(Ref<CSSPrimitiveValue>&& obliqueAngle);
 

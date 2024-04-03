@@ -54,7 +54,7 @@ public:
 private:
     SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
 
-    EventTargetInterface eventTargetInterface() const final { return SharedWorkerGlobalScopeEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SharedWorkerGlobalScope; }
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Sharedworker; }
 
     String m_name;
@@ -63,6 +63,10 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedWorkerGlobalScope)
-static bool isType(const WebCore::ScriptExecutionContext& context) { return is<WebCore::WorkerGlobalScope>(context) && downcast<WebCore::WorkerGlobalScope>(context).type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
+static bool isType(const WebCore::ScriptExecutionContext& context)
+{
+    auto* global = dynamicDowncast<WebCore::WorkerGlobalScope>(context);
+    return global && global->type() == WebCore::WorkerGlobalScope::Type::SharedWorker;
+}
 static bool isType(const WebCore::WorkerGlobalScope& context) { return context.type() == WebCore::WorkerGlobalScope::Type::SharedWorker; }
 SPECIALIZE_TYPE_TRAITS_END()

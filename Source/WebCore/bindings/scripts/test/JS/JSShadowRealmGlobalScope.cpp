@@ -118,12 +118,12 @@ void JSShadowRealmGlobalScope::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsShadowRealmGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSShadowRealmGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSShadowRealmGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSShadowRealmGlobalScope::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsShadowRealmGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSShadowRealmGlobalScope& thisObject)
@@ -180,7 +180,7 @@ void JSShadowRealmGlobalScopeOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
 {
     auto* jsShadowRealmGlobalScope = static_cast<JSShadowRealmGlobalScope*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsShadowRealmGlobalScope->wrapped(), jsShadowRealmGlobalScope);
+    uncacheWrapper(world, jsShadowRealmGlobalScope->protectedWrapped().ptr(), jsShadowRealmGlobalScope);
 }
 
 ShadowRealmGlobalScope* JSShadowRealmGlobalScope::toWrapped(JSC::VM&, JSC::JSValue value)

@@ -14,6 +14,9 @@
 
 #include <limits>
 
+#define USE_SYSTEM_ZLIB
+#include "compression_utils_portable.h"
+
 namespace gl
 {
 namespace
@@ -1067,6 +1070,78 @@ GLsizeiptr GetBoundBufferAvailableSize(const OffsetBindingPointer<Buffer> &bindi
    //
 namespace angle
 {
+bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer *compressedData)
+{
+    uLong uncompressedSize       = static_cast<uLong>(cacheSize);
+    uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
+
+    // Allocate memory.
+    if (!compressedData->resize(expectedCompressedSize))
+    {
+        ERR() << "Failed to allocate memory for compression";
+        return false;
+    }
+
+    int zResult = zlib_internal::GzipCompressHelper(compressedData->data(), &expectedCompressedSize,
+                                                    cacheData, uncompressedSize, nullptr, nullptr);
+
+    if (zResult != Z_OK)
+    {
+        ERR() << "Failed to compress cache data: " << zResult;
+        return false;
+    }
+
+    // Resize it to expected size.
+    if (!compressedData->resize(expectedCompressedSize))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool DecompressBlob(const uint8_t *compressedData,
+                    const size_t compressedSize,
+                    size_t maxUncompressedDataSize,
+                    MemoryBuffer *uncompressedData)
+{
+    // Call zlib function to decompress.
+    uint32_t uncompressedSize =
+        zlib_internal::GetGzipUncompressedSize(compressedData, compressedSize);
+
+    if (uncompressedSize > maxUncompressedDataSize)
+    {
+        ERR() << "Decompressed data size is larger than the maximum supported (" << uncompressedSize
+              << " vs " << maxUncompressedDataSize << ")";
+        return false;
+    }
+
+    // Allocate enough memory.
+    if (!uncompressedData->resize(uncompressedSize))
+    {
+        ERR() << "Failed to allocate memory for decompression";
+        return false;
+    }
+
+    uLong destLen = uncompressedSize;
+    int zResult   = zlib_internal::GzipUncompressHelper(
+        uncompressedData->data(), &destLen, compressedData, static_cast<uLong>(compressedSize));
+
+    if (zResult != Z_OK)
+    {
+        WARN() << "Failed to decompress data: " << zResult << "\n";
+        return false;
+    }
+
+    // Resize it to expected size.
+    if (!uncompressedData->resize(destLen))
+    {
+        return false;
+    }
+
+    return true;
+}
+
 UnlockedTailCall::UnlockedTailCall() = default;
 
 UnlockedTailCall::~UnlockedTailCall()

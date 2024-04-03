@@ -63,9 +63,9 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
     m_remoteCaptureSampleManager.stopListeningForIPC();
 }
 
-const char* UserMediaCaptureManager::supplementName()
+ASCIILiteral UserMediaCaptureManager::supplementName()
 {
-    return "UserMediaCaptureManager";
+    return "UserMediaCaptureManager"_s;
 }
 
 void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIProcess, bool shouldCaptureAudioInGPUProcess, bool shouldCaptureVideoInUIProcess, bool shouldCaptureVideoInGPUProcess, bool shouldCaptureDisplayInUIProcess, bool shouldCaptureDisplayInGPUProcess, bool shouldUseGPUProcessRemoteFrames)
@@ -176,16 +176,16 @@ void UserMediaCaptureManager::applyConstraintsSucceeded(RealtimeMediaSourceIdent
     }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier identifier, String&& failedConstraint, String&& message)
+void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifier identifier, WebCore::MediaConstraintType invalidConstraint, String&& message)
 {
     auto iterator = m_sources.find(identifier);
     if (iterator == m_sources.end())
         return;
 
     switchOn(iterator->value, [&](Ref<RemoteRealtimeAudioSource>& source) {
-        source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
+        source->applyConstraintsFailed(invalidConstraint, WTFMove(message));
     }, [&](Ref<RemoteRealtimeVideoSource>& source) {
-        source->applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
+        source->applyConstraintsFailed(invalidConstraint, WTFMove(message));
     }, [](std::nullptr_t) { });
 }
 

@@ -54,12 +54,12 @@ static const float minimumAttachedWidth = 500;
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebInspector> WebInspector::create(WebPage* page)
+Ref<WebInspector> WebInspector::create(WebPage& page)
 {
     return adoptRef(*new WebInspector(page));
 }
 
-WebInspector::WebInspector(WebPage* page)
+WebInspector::WebInspector(WebPage& page)
     : m_page(page)
 {
 }

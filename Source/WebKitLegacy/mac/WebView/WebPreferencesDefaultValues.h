@@ -61,7 +61,6 @@ bool defaultNeedsKeyboardEventDisambiguationQuirks();
 
 bool defaultAttachmentElementEnabled();
 bool defaultShouldRestrictBaseURLSchemes();
-bool defaultUseLegacyBackgroundSizeShorthandBehavior();
 bool defaultAllowDisplayOfInsecureContent();
 bool defaultAllowRunningOfInsecureContent();
 bool defaultShouldConvertInvalidURLsToBlank();

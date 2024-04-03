@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AXObjectCache.h"
 
-#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "AXIsolatedObject.h"
 #import "AccessibilityObject.h"
@@ -287,7 +287,7 @@ void AXObjectCache::setShouldRepostNotificationsForTests(bool value)
 
 static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, NSString *notification, id userInfo, bool skipSystemNotification = false)
 {
-    if (id associatedPluginParent = [object associatedPluginParent])
+    if (id associatedPluginParent = [object _associatedPluginParent])
         object = associatedPluginParent;
 
     // To simplify monitoring for notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back
@@ -360,6 +360,9 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         break;
     case AXLayoutComplete:
         macNotification = @"AXLayoutComplete";
+        break;
+    case AXLabelChanged:
+        macNotification = NSAccessibilityTitleChangedNotification;
         break;
     case AXLoadComplete:
     case AXFrameLoadComplete:
@@ -503,7 +506,49 @@ static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optio
 }
 #endif
 
-void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
+AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObject& object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
+{
+    if (!object.isTextControl() && !object.editableAncestor())
+        return originalIntent;
+
+    if (originalIntent.selection.direction != AXTextSelectionDirectionDiscontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
+        m_lastTextFieldAXID = object.objectID();
+        m_lastSelection = selection;
+        return originalIntent;
+    }
+
+    auto intent = originalIntent;
+    if (m_lastSelection.isCaret() && selection.isCaret()) {
+        // Cursor movement
+        if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionMove;
+            intent.selection.direction = AXTextSelectionDirectionNext;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionMove;
+            intent.selection.direction = AXTextSelectionDirectionPrevious;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        }
+    } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
+        // Selection
+        if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionExtend;
+            intent.selection.direction = AXTextSelectionDirectionNext;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeTypeSelectionExtend;
+            intent.selection.direction = AXTextSelectionDirectionPrevious;
+            intent.selection.granularity = AXTextSelectionGranularityCharacter;
+        }
+    }
+
+    m_lastTextFieldAXID = object.objectID();
+    m_lastSelection = selection;
+
+    return intent;
+}
+
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
 {
     if (!object)
         object = rootWebArea();
@@ -515,6 +560,8 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     processQueuedIsolatedNodeUpdates();
 #endif
+
+    auto intent = inferDirectionFromIntent(*object, originalIntent, selection);
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
@@ -708,17 +755,17 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 static bool isTestAXClientType(AXClientType client)
 {
     return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
 }
 
-bool AXObjectCache::isTestClient()
+bool AXObjectCache::clientIsInTestMode()
 {
     return UNLIKELY(isTestAXClientType(_AXGetClientForCurrentRequestUntrusted()));
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
     auto client = _AXGetClientForCurrentRequestUntrusted();
@@ -990,4 +1037,4 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
 
 }
 
-#endif // ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

@@ -34,13 +34,13 @@ class Builder
   public:
     Builder(TCompiler *compiler,
             TSymbolTable *symbolTable,
+            const AdvancedBlendEquations &advancedBlendEquations,
             const DriverUniform *driverUniforms,
-            std::vector<ShaderVariable> *uniforms,
-            const AdvancedBlendEquations &advancedBlendEquations)
+            InputAttachmentMap *inputAttachmentMap)
         : mCompiler(compiler),
           mSymbolTable(symbolTable),
           mDriverUniforms(driverUniforms),
-          mUniforms(uniforms),
+          mInputAttachmentMap(inputAttachmentMap),
           mAdvancedBlendEquations(advancedBlendEquations)
     {}
 
@@ -60,7 +60,7 @@ class Builder
     TCompiler *mCompiler;
     TSymbolTable *mSymbolTable;
     const DriverUniform *mDriverUniforms;
-    std::vector<ShaderVariable> *mUniforms;
+    InputAttachmentMap *mInputAttachmentMap;
     const AdvancedBlendEquations &mAdvancedBlendEquations;
 
     // The color input and output.  Output is the blend source, and input is the destination.
@@ -212,15 +212,7 @@ void Builder::createSubpassInputVar(TIntermBlock *root)
     subpassInputDecl->appendDeclarator(subpassInputSymbol);
     root->insertStatement(0, subpassInputDecl);
 
-    // Add the new subpass input to the list of uniforms.
-    ShaderVariable subpassInputUniform;
-    subpassInputUniform.active    = true;
-    subpassInputUniform.staticUse = true;
-    subpassInputUniform.name.assign(kSubpassInputName);
-    subpassInputUniform.mappedName.assign(kSubpassInputName);
-    subpassInputUniform.isFragmentInOut = true;
-    subpassInputUniform.location        = inputAttachmentIndex;
-    mUniforms->push_back(subpassInputUniform);
+    (*mInputAttachmentMap)[inputAttachmentIndex] = mSubpassInputVar;
 }
 
 TIntermTyped *Float(float f)
@@ -1083,10 +1075,6 @@ void Builder::generatePreamble(TIntermBlock *blendBlock)
     TIntermSymbol *subpassInputData = MakeVariable(mSymbolTable, "ANGLELastFragData", vec4Type);
 
     // Initialize it with subpassLoad() result.
-
-    // TODO: support interaction with multisampled framebuffers.  For example, the sample ID needs
-    // to be provided to the built-in call here.  http://anglebug.com/6195
-
     TIntermSequence subpassArguments  = {new TIntermSymbol(mSubpassInputVar)};
     TIntermTyped *subpassLoadFuncCall = CreateBuiltInFunctionCallNode(
         "subpassLoad", &subpassArguments, *mSymbolTable, kESSLInternalBackendBuiltIns);
@@ -1250,11 +1238,12 @@ void Builder::generateEquationSwitch(TIntermBlock *blendBlock)
 bool EmulateAdvancedBlendEquations(TCompiler *compiler,
                                    TIntermBlock *root,
                                    TSymbolTable *symbolTable,
+                                   const AdvancedBlendEquations &advancedBlendEquations,
                                    const DriverUniform *driverUniforms,
-                                   std::vector<ShaderVariable> *uniforms,
-                                   const AdvancedBlendEquations &advancedBlendEquations)
+                                   InputAttachmentMap *inputAttachmentMapOut)
 {
-    Builder builder(compiler, symbolTable, driverUniforms, uniforms, advancedBlendEquations);
+    Builder builder(compiler, symbolTable, advancedBlendEquations, driverUniforms,
+                    inputAttachmentMapOut);
     return builder.build(root);
 }  // namespace
 

@@ -1,0 +1,64 @@
+CONSOLE MESSAGE: Error: Problem parsing d="M 20 100 H 40#90"
+CONSOLE MESSAGE: Error: Problem parsing d="M 20 160 H 40#90"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (64.59,40) size 321x248
+  RenderSVGTransformableContainer {g} at (64.59,40) size 319.52x248
+layer at (64.59,40) size 320x248
+  RenderSVGTransformableContainer {g} at (0,0) size 319.52x248
+layer at (220,40) size 161x8
+  RenderSVGRect {rect} at (155.41,0) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=220.00] [y=40.00] [width=160.00] [height=8.00]
+layer at (220,80) size 161x8
+  RenderSVGRect {rect} at (155.41,40) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=220.00] [y=80.00] [width=160.00] [height=8.00]
+layer at (220,120) size 161x8
+  RenderSVGRect {rect} at (155.41,80) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=220.00] [y=120.00] [width=160.00] [height=8.00]
+layer at (220,160) size 161x8
+  RenderSVGRect {rect} at (155.41,120) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=220.00] [y=160.00] [width=160.00] [height=8.00]
+layer at (64.59,200) size 320x8
+  RenderSVGRect {rect} at (0,160) size 319.52x8 [fill={[type=SOLID] [color=#FFD700]}] [x=64.60] [y=200.00] [width=319.50] [height=8.00]
+layer at (140,240) size 161x8
+  RenderSVGRect {rect} at (75.41,200) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=140.00] [y=240.00] [width=160.00] [height=8.00]
+layer at (220,280) size 161x8
+  RenderSVGRect {rect} at (155.41,240) size 160x8 [fill={[type=SOLID] [color=#FFD700]}] [x=220.00] [y=280.00] [width=160.00] [height=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (-64.59,-40) size 0x0
+layer at (20,40) size 20x0
+  RenderSVGPath {path} at (20,40) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 40 L 40 40"]
+layer at (20,40) size 20x0
+  RenderSVGPath {path} at (20,40) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 40 L 40 40"]
+layer at (20,60) size 20x0
+  RenderSVGPath {path} at (20,60) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 60 L 40 60"]
+layer at (20,60) size 20x0
+  RenderSVGPath {path} at (20,60) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 60 L 40 60"]
+layer at (20,80) size 20x0
+  RenderSVGPath {path} at (20,80) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 80 L 40 80"]
+layer at (20,80) size 20x0
+  RenderSVGPath {path} at (20,80) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 80 L 40 80"]
+layer at (20,100) size 20x0
+  RenderSVGPath {path} at (20,100) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 100 L 40 100"]
+layer at (20,100) size 20x0
+  RenderSVGPath {path} at (20,100) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 100 L 40 100"]
+layer at (0.59,120) size 41x0
+  RenderSVGPath {path} at (0.59,120) size 39.91x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 120 L 40.5 120 L 0.6 120"]
+layer at (0.59,120) size 41x0
+  RenderSVGPath {path} at (0.59,120) size 39.91x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 120 L 40.5 120 L 0.6 120"]
+layer at (10,140) size 20x0
+  RenderSVGPath {path} at (10,140) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 140 L 30 140 L 10 140"]
+layer at (10,140) size 20x0
+  RenderSVGPath {path} at (10,140) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 140 L 30 140 L 10 140"]
+layer at (20,160) size 20x0
+  RenderSVGPath {path} at (20,160) size 20x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 160 L 40 160"]
+layer at (20,160) size 20x0
+  RenderSVGPath {path} at (20,160) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 160 L 40 160"]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

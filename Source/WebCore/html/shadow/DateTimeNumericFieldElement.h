@@ -58,7 +58,9 @@ protected:
     void setValueAsInteger(int, EventBehavior = DispatchNoEvent) final;
     void stepDown() final;
     void stepUp() final;
-    int valueAsInteger() const final;
+    int valueAsInteger() const final { return m_hasValue ? m_value : -1; }
+    int placeholderValueAsInteger() const final { return m_placeholderValue; }
+
 
 private:
     // DateTimeFieldElement functions:
@@ -74,6 +76,7 @@ private:
 
     const Range m_range;
     const String m_placeholder;
+    int m_placeholderValue { 0 };
     int m_value { 0 };
     bool m_hasValue { false };
     StringBuilder m_typeAheadBuffer;

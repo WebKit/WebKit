@@ -110,7 +110,7 @@ TEST(WTF_CheckedPtr, Basic)
         EXPECT_EQ(checkedObject.ptrCount(), 2u);
         EXPECT_EQ(ptr1.get(), &checkedObject);
         EXPECT_EQ(ptr2.get(), &checkedObject);
-        EXPECT_EQ(ptr3.get(), nullptr);
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr3.get(), nullptr);
     }
 }
 
@@ -260,7 +260,7 @@ TEST(WTF_CheckedPtr, DerivedClass)
         EXPECT_EQ(checkedObject.ptrCount(), 2u);
         EXPECT_EQ(ptr1.get(), nullptr);
         EXPECT_EQ(ptr2.get(), &checkedObject);
-        EXPECT_EQ(ptr3.get(), nullptr);
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr3.get(), nullptr);
         EXPECT_EQ(ptr4.get(), &checkedObject);
     }
 }

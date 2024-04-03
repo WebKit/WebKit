@@ -52,7 +52,7 @@ unsigned CollectionIndexCache<Collection, Iterator>::computeNodeCountUpdatingLis
 
     unsigned oldCapacity = m_cachedList.capacity();
     while (current) {
-        m_cachedList.append(&*current);
+        m_cachedList.append(*current);
         unsigned traversed;
         collection.collectionTraverseForward(current, 1, traversed);
         ASSERT(traversed == (current ? 1 : 0));
@@ -131,7 +131,7 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         return nullptr;
 
     if (m_listValid)
-        return m_cachedList[index];
+        return m_cachedList[index].get();
 
     if (m_current) {
         if (index > m_currentIndex)

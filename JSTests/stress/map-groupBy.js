@@ -116,13 +116,49 @@ shouldBeObject(Map.groupBy([0, 1, 2, 3], (x) => objectWithValueOfThatThrows).get
 shouldBeObject(Map.groupBy([0, 1, 2, 3], (x) => symbol).get(symbol), [0, 1, 2, 3]);
 
 
+// String
+
+shouldBeMap(Map.groupBy("", (x) => x === "" ? "a" : "b"), []);
+shouldBeMap(Map.groupBy("", (x) => x === ""), []);
+
+shouldBeMap(Map.groupBy("wxyz", (x) => x < "y" ? "a" : "b"), [["a", ["w", "x"]], ["b", ["y", "z"]]]);
+shouldBeMap(Map.groupBy("wxyz", (x) => x < "y"), [[true, ["w", "x"]], [false, ["y", "z"]]]);
+
+shouldBeMap(Map.groupBy(String("wxyz"), (x) => x < "y" ? "a" : "b"), [["a", ["w", "x"]], ["b", ["y", "z"]]]);
+shouldBeMap(Map.groupBy(String("wxyz"), (x) => x < "y"), [[true, ["w", "x"]], [false, ["y", "z"]]]);
+
+shouldBeMap(Map.groupBy(new String("wxyz"), (x) => x < "y" ? "a" : "b"), [["a", ["w", "x"]], ["b", ["y", "z"]]]);
+shouldBeMap(Map.groupBy(new String("wxyz"), (x) => x < "y"), [[true, ["w", "x"]], [false, ["y", "z"]]]);
+
+
 // Invalid parameters
 
 try {
     shouldBeMap(Map.groupBy(null, () => {}), []);
     notReached();
 } catch (e) {
-    shouldBe(String(e), "TypeError: Map.groupBy requires that the first argument must be an object");
+    shouldBe(String(e), "TypeError: Map.groupBy requires that the first argument not be null or undefined");
+}
+
+try {
+    shouldBeMap(Map.groupBy(undefined, () => {}), []);
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Map.groupBy requires that the first argument not be null or undefined");
+}
+
+try {
+    shouldBeMap(Map.groupBy({}, () => {}), []);
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Map.groupBy requires that the property of the first argument, items[Symbol.iterator] be a function");
+}
+
+try {
+    shouldBeMap(Map.groupBy(0, () => {}), []);
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Map.groupBy requires that the property of the first argument, items[Symbol.iterator] be a function");
 }
 
 try {

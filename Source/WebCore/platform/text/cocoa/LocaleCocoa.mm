@@ -112,7 +112,7 @@ const Vector<String>& LocaleCocoa::monthLabels()
         m_monthLabels = makeVector<String>(array);
         return m_monthLabels;
     }
-    m_monthLabels = { WTF::monthFullName, std::size(WTF::monthFullName) };
+    m_monthLabels = std::span { WTF::monthFullName };
     return m_monthLabels;
 }
 
@@ -203,7 +203,7 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
         m_shortMonthLabels = makeVector<String>(array);
         return m_shortMonthLabels;
     }
-    m_shortMonthLabels = { WTF::monthName, std::size(WTF::monthName) };
+    m_shortMonthLabels = std::span { WTF::monthName };
     return m_shortMonthLabels;
 }
 
@@ -245,26 +245,43 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
 
 #endif
 
-using CanonicalLocaleMap = HashMap<AtomString, AtomString>;
+using CanonicalLocaleMap = HashMap<AtomString, RetainPtr<CFStringRef>>;
 
-static CanonicalLocaleMap& canonicalLocaleMap()
+struct LocaleCache {
+    AtomString m_key;
+    RetainPtr<CFStringRef> m_value;
+    CanonicalLocaleMap m_map;
+};
+
+
+static LocaleCache& localeCache()
 {
-    static NeverDestroyed<CanonicalLocaleMap> canonicalLocaleMap;
-    return canonicalLocaleMap.get();
+    static MainThreadNeverDestroyed<LocaleCache> localeCache;
+    return localeCache.get();
 }
 
-AtomString LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
+RetainPtr<CFStringRef> LocaleCocoa::canonicalLanguageIdentifierFromString(const AtomString& string)
 {
     if (string.isEmpty())
-        return string;
-    return canonicalLocaleMap().ensure(string, [&] {
-        return [NSLocale canonicalLanguageIdentifierFromString:string];
+        return CFSTR("");
+
+    auto& cache = localeCache();
+    if (cache.m_key == string)
+        return cache.m_value;
+    auto result = cache.m_map.ensure(string, [&] {
+        return (__bridge CFStringRef)[NSLocale canonicalLanguageIdentifierFromString:string];
     }).iterator->value;
+    cache.m_key = string;
+    cache.m_value = result;
+    return result;
 }
 
 void LocaleCocoa::releaseMemory()
 {
-    canonicalLocaleMap().clear();
+    auto& cache = localeCache();
+    cache.m_key = { };
+    cache.m_value = { };
+    cache.m_map.clear();
 }
 
 void LocaleCocoa::initializeLocaleData()

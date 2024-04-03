@@ -28,6 +28,7 @@
 #include "DecodingOptions.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
+#include "ImageTypes.h"
 #include <initializer_list>
 #include <wtf/Forward.h>
 
@@ -40,7 +41,9 @@ struct ImagePaintingOptions {
         || std::is_same_v<Type, DecodingMode>
         || std::is_same_v<Type, ImageOrientation>
         || std::is_same_v<Type, ImageOrientation::Orientation>
-        || std::is_same_v<Type, InterpolationQuality>;
+        || std::is_same_v<Type, InterpolationQuality>
+        || std::is_same_v<Type, AllowImageSubsampling>
+        || std::is_same_v<Type, ShowDebugBackground>;
 
     // This is a single-argument initializer to support pattern of
     // ImageDrawResult drawImage(..., ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
@@ -83,6 +86,8 @@ struct ImagePaintingOptions {
     DecodingMode decodingMode() const { return m_decodingMode; }
     ImageOrientation orientation() const { return m_orientation; }
     InterpolationQuality interpolationQuality() const { return m_interpolationQuality; }
+    AllowImageSubsampling allowImageSubsampling() const { return m_allowImageSubsampling; }
+    ShowDebugBackground showDebugBackground() const { return m_showDebugBackground; }
 
 private:
     void setOption(CompositeOperator compositeOperator) { m_compositeOperator = compositeOperator; }
@@ -91,12 +96,16 @@ private:
     void setOption(ImageOrientation orientation) { m_orientation = orientation.orientation(); }
     void setOption(ImageOrientation::Orientation orientation) { m_orientation = orientation; }
     void setOption(InterpolationQuality interpolationQuality) { m_interpolationQuality = interpolationQuality; }
+    void setOption(AllowImageSubsampling allowImageSubsampling) { m_allowImageSubsampling = allowImageSubsampling; }
+    void setOption(ShowDebugBackground showDebugBackground) { m_showDebugBackground = showDebugBackground; }
 
     BlendMode m_blendMode : 5 { BlendMode::Normal };
     DecodingMode m_decodingMode : 3 { DecodingMode::Synchronous };
     CompositeOperator m_compositeOperator : 4 { CompositeOperator::SourceOver };
     ImageOrientation::Orientation m_orientation : 4 { ImageOrientation::Orientation::None };
     InterpolationQuality m_interpolationQuality : 4 { InterpolationQuality::Default };
+    AllowImageSubsampling m_allowImageSubsampling : 1 { AllowImageSubsampling::No };
+    ShowDebugBackground m_showDebugBackground : 1 { ShowDebugBackground::No };
 };
 static_assert(sizeof(ImagePaintingOptions) <= sizeof(uint64_t), "Pass by value");
 

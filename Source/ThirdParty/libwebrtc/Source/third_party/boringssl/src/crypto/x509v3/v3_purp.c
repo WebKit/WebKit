@@ -177,9 +177,10 @@ X509_PURPOSE *X509_PURPOSE_get0(int idx) {
   return sk_X509_PURPOSE_value(xptable, idx - X509_PURPOSE_COUNT);
 }
 
-int X509_PURPOSE_get_by_sname(const char *sname) {
+int X509_PURPOSE_get_by_sname(char *sname) {
+  int i;
   X509_PURPOSE *xptmp;
-  for (int i = 0; i < X509_PURPOSE_get_count(); i++) {
+  for (i = 0; i < X509_PURPOSE_get_count(); i++) {
     xptmp = X509_PURPOSE_get0(i);
     if (!strcmp(xptmp->sname, sname)) {
       return i;
@@ -208,7 +209,8 @@ int X509_PURPOSE_get_by_id(int purpose) {
 
 int X509_PURPOSE_add(int id, int trust, int flags,
                      int (*ck)(const X509_PURPOSE *, const X509 *, int),
-                     const char *name, const char *sname, void *arg) {
+                     char *name, char *sname, void *arg) {
+  int idx;
   X509_PURPOSE *ptmp;
   char *name_dup, *sname_dup;
 
@@ -217,7 +219,7 @@ int X509_PURPOSE_add(int id, int trust, int flags,
   // This will always be set for application modified trust entries
   flags |= X509_PURPOSE_DYNAMIC_NAME;
   // Get existing entry if any
-  int idx = X509_PURPOSE_get_by_id(id);
+  idx = X509_PURPOSE_get_by_id(id);
   // Need a new entry
   if (idx == -1) {
     if (!(ptmp = OPENSSL_malloc(sizeof(X509_PURPOSE)))) {

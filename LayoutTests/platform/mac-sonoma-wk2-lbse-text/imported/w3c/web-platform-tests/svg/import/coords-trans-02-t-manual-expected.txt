@@ -1,0 +1,56 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 197x73
+  RenderSVGTransformableContainer {g} at (0,0) size 196.03x73
+layer at (0,0) size 197x73
+  RenderSVGTransformableContainer {g} at (0,0) size 196.03x73
+layer at (0,0) size 197x73
+  RenderSVGTransformableContainer {g} at (0,0) size 196.03x73
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x2
+  RenderSVGRect {rect} at (0,0) size 20x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=2.00]
+layer at (0,0) size 2x20
+  RenderSVGRect {rect} at (0,0) size 2x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=2.00] [height=20.00]
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x2
+  RenderSVGRect {rect} at (0,0) size 20x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=2.00]
+layer at (0,0) size 2x20
+  RenderSVGRect {rect} at (0,0) size 2x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=2.00] [height=20.00]
+layer at (40,28.83) size 157x45
+  RenderSVGTransformableContainer {g} at (40,28.83) size 156.03x44.17
+layer at (40,28.83) size 91x14
+  RenderSVGText {text} at (0,0) size 91x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 91x14
+      chunk 1 text run 1 at (40.00,40.00) startOffset 0 endOffset 18 width 90.71: "translate (50, 50)"
+layer at (48,48) size 5x6
+  RenderSVGRect {rect} at (8,19.17) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=48.00] [width=5.00] [height=5.00]
+layer at (68,48) size 5x6
+  RenderSVGRect {rect} at (28,19.17) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=68.00] [y=48.00] [width=5.00] [height=5.00]
+layer at (48,68) size 5x6
+  RenderSVGRect {rect} at (8,39.17) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=68.00] [width=5.00] [height=5.00]
+layer at (140,28.83) size 56x14
+  RenderSVGText {text} at (100,0) size 57x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 57x14
+      chunk 1 text run 1 at (140.00,40.00) startOffset 0 endOffset 11 width 56.02: "rotate(-90)"
+layer at (148,68) size 5x6
+  RenderSVGRect {rect} at (108,39.17) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=148.00] [y=68.00] [width=5.00] [height=5.00]
+layer at (148,48) size 5x6
+  RenderSVGRect {rect} at (108,19.17) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=148.00] [y=48.00] [width=5.00] [height=5.00]
+layer at (168,68) size 5x6
+  RenderSVGRect {rect} at (128,39.17) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=168.00] [y=68.00] [width=5.00] [height=5.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

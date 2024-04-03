@@ -113,6 +113,7 @@ class AdministrativePage {
     private $prefix;
     private $column_to_be_ordered_by;
     private $column_info;
+    private $db;
 
     function __construct($db, $table, $prefix, $column_info) {
         $this->db = $db;

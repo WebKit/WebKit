@@ -134,10 +134,6 @@ public:
 
     bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    using UnspecifiedBoolType = void (CheckedPtr::*)() const;
-    operator UnspecifiedBoolType() const { return m_ptr ? &CheckedPtr::unspecifiedBoolTypeInstance : nullptr; }
-
     ALWAYS_INLINE explicit operator bool() const { return PtrTraits::unwrap(m_ptr); }
 
     ALWAYS_INLINE T* get() const { return PtrTraits::unwrap(m_ptr); }
@@ -233,16 +229,20 @@ public:
 private:
     template<typename OtherType, typename OtherPtrTraits> friend class CheckedPtr;
 
-    void unspecifiedBoolTypeInstance() const { }
-
     ALWAYS_INLINE void refIfNotNull()
     {
+        // FIXME: Enable this assertion once all clients conform.
+        // static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+
         if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
             ptr->incrementPtrCount();
     }
 
     ALWAYS_INLINE void derefIfNotNull()
     {
+        // FIXME: Enable this assertion once all clients conform.
+        // static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+
         if (T* ptr = PtrTraits::unwrap(m_ptr); LIKELY(ptr))
             ptr->decrementPtrCount();
     }

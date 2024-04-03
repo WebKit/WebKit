@@ -28,15 +28,16 @@
 
 #include "PendingScriptClient.h"
 #include "Timer.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class Document;
 class ScriptElement;
 class LoadableScript;
+class WeakPtrImplWithEventTargetData;
 
 class ScriptRunner : public PendingScriptClient {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
@@ -63,7 +64,7 @@ private:
 
     void notifyFinished(PendingScript&) override;
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
     Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
     HashSet<Ref<PendingScript>> m_pendingAsyncScripts;

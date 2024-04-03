@@ -55,8 +55,6 @@ BINLINE const char* name(Kind kind)
     switch (kind) {
     case Primitive:
         return "Primitive";
-    case JSValue:
-        return "JSValue";
     case NumberOfKinds:
         break;
     }
@@ -68,8 +66,7 @@ constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
 
 #if GIGACAGE_ENABLED
 
-constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 2) * bmalloc::Sizes::GB;
-constexpr size_t jsValueGigacageSize = (hasCapacityToUseLargeGigacage ? 16 : 2) * bmalloc::Sizes::GB;
+constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 4) * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 
@@ -83,18 +80,14 @@ constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacag
 
 
 static_assert(bmalloc::isPowerOfTwo(primitiveGigacageSize));
-static_assert(bmalloc::isPowerOfTwo(jsValueGigacageSize));
 static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide);
-static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide);
 
 constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 
 constexpr size_t primitiveGigacageMask = gigacageSizeToMask(primitiveGigacageSize);
-constexpr size_t jsValueGigacageMask = gigacageSizeToMask(jsValueGigacageSize);
 
 // These constants are needed by the LLInt.
 constexpr ptrdiff_t offsetOfPrimitiveGigacageBasePtr = Kind::Primitive * sizeof(void*);
-constexpr ptrdiff_t offsetOfJSValueGigacageBasePtr = Kind::JSValue * sizeof(void*);
 
 extern "C" BEXPORT bool disablePrimitiveGigacageRequested;
 
@@ -144,8 +137,6 @@ BINLINE size_t maxSize(Kind kind)
     switch (kind) {
     case Primitive:
         return static_cast<size_t>(primitiveGigacageSize);
-    case JSValue:
-        return static_cast<size_t>(jsValueGigacageSize);
     case NumberOfKinds:
         break;
     }
@@ -171,7 +162,6 @@ template<typename Func>
 void forEachKind(const Func& func)
 {
     func(Primitive);
-    func(JSValue);
 }
 
 template<typename T>

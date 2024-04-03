@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: TypeError: Module name, 'bare/to-bare' does not resolve to a valid URL.
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare/bare
+
+
+PASS bare/bare: <script src type=module>
+PASS bare/bare: <script src type=text/javascript>
+PASS bare/bare: static import
+PASS bare/bare: dynamic import (from module)
+PASS bare/bare: dynamic import (from text/javascript)
+PASS bare/cross-origin-bare: <script src type=module>
+PASS bare/cross-origin-bare: <script src type=text/javascript>
+PASS bare/cross-origin-bare: static import
+PASS bare/cross-origin-bare: dynamic import (from module)
+PASS bare/cross-origin-bare: dynamic import (from text/javascript)
+PASS bare/to-data: <script src type=module>
+PASS bare/to-data: <script src type=text/javascript>
+PASS bare/to-data: static import
+PASS bare/to-data: dynamic import (from module)
+PASS bare/to-data: dynamic import (from text/javascript)
+PASS bare/to-bare: <script src type=module>
+PASS bare/to-bare: <script src type=text/javascript>
+PASS bare/to-bare: static import
+PASS bare/to-bare: dynamic import (from module)
+PASS bare/to-bare: dynamic import (from text/javascript)
+

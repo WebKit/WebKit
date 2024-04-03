@@ -6,8 +6,8 @@
 //
 #include "compiler/translator/tree_ops/msl/FixTypeConstructors.h"
 #include <unordered_map>
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 using namespace sh;
 ////////////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SharedStringHashTable.h"
 
-#include "SharedMemory.h"
+#include <WebCore/SharedMemory.h>
 
 namespace WebKit {
 

@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-backdrop-filter
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -80,8 +80,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-background-image-blur-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-background-image-blur.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-update-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-update-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-update.html
@@ -122,6 +124,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-clip-stacking-context-002-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-clip-stacking-context-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-clip-stacking-context-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/blur-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/clip-under-filter-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/clip-under-filter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/clip-under-filter-002-expected.html
@@ -194,8 +199,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-sepia.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-reference-large-svg-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-reference-large-svg-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/css-reference-large-svg-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-clipped-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/dynamic-filter-changes-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/dynamic-filter-changes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/effect-reference-add-hw-001-expected.html
@@ -389,6 +401,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feflood-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feimage-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feoffset-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-feoffset-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/svg-filter-vs-clip-path-expected.html

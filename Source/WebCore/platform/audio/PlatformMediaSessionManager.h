@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MediaUniqueIdentifier.h"
+#include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Timer.h"
@@ -87,8 +88,10 @@ public:
     bool has(PlatformMediaSession::MediaType) const;
     int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
+    bool hasActiveAudioSession() const;
     bool canProduceAudio() const;
 
+    virtual std::optional<NowPlayingInfo> nowPlayingInfo() const { return { }; }
     virtual bool hasActiveNowPlayingSession() const { return false; }
     virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
@@ -185,6 +188,8 @@ public:
     virtual void resetSessionState() { };
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
+
+    WeakPtr<PlatformMediaSession> bestEligibleSessionForRemoteControls(const Function<bool(const PlatformMediaSession&)>&, PlatformMediaSession::PlaybackControlsPurpose);
 
 protected:
     friend class PlatformMediaSession;

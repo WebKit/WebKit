@@ -58,7 +58,7 @@ enum {
 
 namespace WTR {
 
-PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
+PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const TestOptions& options)
     : m_windowIsKey(true)
     , m_options(options)
 {
@@ -68,11 +68,10 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     if (m_options.noUseRemoteLayerTree())
         [[NSUserDefaults standardUserDefaults] setValue:@NO forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
 
-    auto copiedConfiguration = adoptNS([configuration copy]);
-    WKPreferencesSetThreadedScrollingEnabled((__bridge WKPreferencesRef)[copiedConfiguration preferences], m_options.useThreadedScrolling());
+    WKPreferencesSetThreadedScrollingEnabled((__bridge WKPreferencesRef)[(__bridge WKWebViewConfiguration *)configuration preferences], m_options.useThreadedScrolling());
 
     NSRect rect = NSMakeRect(0, 0, options.viewWidth(), options.viewHeight());
-    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:copiedConfiguration.get()];
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:(__bridge WKWebViewConfiguration *)configuration];
     [m_view _setWindowOcclusionDetectionEnabled:NO];
 
     NSScreen *firstScreen = [[NSScreen screens] objectAtIndex:0];

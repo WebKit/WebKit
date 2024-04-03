@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 182x47
           RenderTableRow {TR} at (0,0) size 182x47
             RenderTableCell {TD} at (0,4) size 138x39 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,0) size 136x37
+              RenderText {#text} at (1,5) size 136x36
                 text run at (1,1) width 136: "xxxxxxxxxxxxxxxxx"
                 text run at (1,19) width 100: "xxxxxx xxxxxx"
             RenderTableCell {TD} at (138,0) size 44x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (18,15) size 20x1
               RenderText {#text} at (38,2) size 34x17
                 text run at (38,2) width 34: "page "
-              RenderInline {FONT} at (0,0) size 28x41
-                RenderInline {B} at (0,0) size 28x41
+              RenderInline {FONT} at (72,0) size 28x41
+                RenderInline {B} at (72,0) size 28x41
                   RenderText {#text} at (72,0) size 28x41
                     text run at (72,0) width 28: "12 /"
                     text run at (82,21) width 18: "13"

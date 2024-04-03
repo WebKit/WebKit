@@ -1,0 +1,39 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Copy of existing test. Remove after AX_THREAD_TEXT_APIS enabled is the default. -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="textarea">abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789</textarea>
+<br>
+<div contenteditable="true" id="contenteditable">abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789</div>
+<br>
+
+<script>
+var output = "Test for lineIndexForTextMarker in editable text elements. The text contains soft and hard linebreaks.\n\n";
+
+function logLineIndexesForElement(elementID) {
+    output += `${elementID}:\n`;
+    var p = accessibilityController.accessibleElementById(elementID).children[0];
+    var range = p.textMarkerRangeForElement(p);
+    var length = p.textMarkerRangeLength(range);
+    var current = p.startTextMarkerForTextMarkerRange(range);
+    for (let i = 0; i < length; ++i) {
+        const next = p.nextTextMarker(current);
+        let character = p.stringForTextMarkerRange(p.textMarkerRangeForMarkers(current, next));
+        output += `${i} ${character} ${p.lineIndexForTextMarker(next)}\n`;
+        current = next;
+    }
+}
+
+if (window.accessibilityController) {
+    logLineIndexesForElement("textarea");
+    output += "\n";
+    logLineIndexesForElement("contenteditable");
+    debug(output);
+}
+</script>
+</body>
+</html>

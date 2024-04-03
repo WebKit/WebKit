@@ -378,6 +378,9 @@ void RealtimeMediaSource::start()
     m_isProducingData = true;
     startProducingData();
 
+    if (m_registerOwnerCallback)
+        m_registerOwnerCallback(*this, false);
+
     if (!m_isProducingData)
         return;
 
@@ -426,10 +429,20 @@ void RealtimeMediaSource::end(Observer* callingObserver)
     m_isEnded = true;
     didEnd();
 
+    if (m_registerOwnerCallback)
+        m_registerOwnerCallback(*this, false);
+
     forEachObserver([&callingObserver](auto& observer) {
         if (&observer != callingObserver)
             observer.sourceStopped();
     });
+}
+
+void RealtimeMediaSource::registerOwnerCallback(OwnerCallback&& callback)
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_registerOwnerCallback);
+    m_registerOwnerCallback = WTFMove(callback);
 }
 
 void RealtimeMediaSource::captureFailed()
@@ -446,10 +459,10 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<int>, std::
     return true;
 }
 
-bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstraint> widthConstraint, std::optional<IntConstraint> heightConstraint, std::optional<DoubleConstraint> frameRateConstraint, std::optional<DoubleConstraint> zoomConstraint, String& badConstraint, double& distance)
+std::optional<MediaConstraintType> RealtimeMediaSource::hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> widthConstraint, std::optional<IntConstraint> heightConstraint, std::optional<DoubleConstraint> frameRateConstraint, std::optional<DoubleConstraint> zoomConstraint, double& distance)
 {
     if (!widthConstraint && !heightConstraint && !frameRateConstraint && !zoomConstraint)
-        return true;
+        return { };
 
     auto& capabilities = this->capabilities();
 
@@ -457,77 +470,73 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
 
     std::optional<int> width;
     if (widthConstraint && capabilities.supportsWidth()) {
-        double constraintDistance = fitnessDistance(*widthConstraint);
+        double constraintDistance = fitnessDistance(MediaConstraintType::Width, *widthConstraint);
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.width();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [", range.longRange().min, ", ", range.longRange().max, "]");
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed width constraint, capabilities are [", range.min(), ", ", range.max(), "]");
 #endif
-            badConstraint = widthConstraint->name();
-            return false;
+            return MediaConstraintType::Width;
         }
 
         distance = std::min(distance, constraintDistance);
         if (widthConstraint->isMandatory()) {
             auto range = capabilities.width();
-            width = widthConstraint->valueForCapabilityRange(size().width(), range.longRange());
+            width = widthConstraint->valueForCapabilityRange(size().width(), range);
         }
     }
 
     std::optional<int> height;
     if (heightConstraint && capabilities.supportsHeight()) {
-        double constraintDistance = fitnessDistance(*heightConstraint);
+        double constraintDistance = fitnessDistance(MediaConstraintType::Height, *heightConstraint);
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.height();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed height constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed height constraint, capabilities are [%d, %d]", range.min(), range.max());
 #endif
-            badConstraint = heightConstraint->name();
-            return false;
+            return MediaConstraintType::Height;
         }
 
         distance = std::min(distance, constraintDistance);
         if (heightConstraint->isMandatory()) {
             auto range = capabilities.height();
-            height = heightConstraint->valueForCapabilityRange(size().height(), range.longRange());
+            height = heightConstraint->valueForCapabilityRange(size().height(), range);
         }
     }
 
     std::optional<double> frameRate;
     if (frameRateConstraint && capabilities.supportsFrameRate()) {
-        double constraintDistance = fitnessDistance(*frameRateConstraint);
+        double constraintDistance = fitnessDistance(MediaConstraintType::FrameRate, *frameRateConstraint);
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.frameRate();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed frame rate constraint, capabilities are [", range.min(), ", ", range.max(), "]");
 #endif
-            badConstraint = frameRateConstraint->name();
-            return false;
+            return MediaConstraintType::FrameRate;
         }
 
         distance = std::min(distance, constraintDistance);
         if (frameRateConstraint->isMandatory()) {
             auto range = capabilities.frameRate();
-            frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range.doubleRange());
+            frameRate = frameRateConstraint->valueForCapabilityRange(this->frameRate(), range);
         }
     }
 
     std::optional<double> zoom;
     if (zoomConstraint && capabilities.supportsZoom()) {
-        double constraintDistance = fitnessDistance(*zoomConstraint);
+        double constraintDistance = fitnessDistance(MediaConstraintType::Zoom, *zoomConstraint);
         if (std::isinf(constraintDistance)) {
 #if !RELEASE_LOG_DISABLED
             auto range = capabilities.zoom();
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [%d, %d]", range.longRange().min, range.longRange().max);
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::supportsSizeFrameRateAndZoom failed zoom constraint, capabilities are [", range.min(), ", ", range.max(), "]");
 #endif
-            badConstraint = zoomConstraint->name();
-            return false;
+            return MediaConstraintType::Zoom;
         }
 
         distance = std::min(distance, constraintDistance);
         if (zoomConstraint->isMandatory()) {
             auto range = capabilities.zoom();
-            zoom = zoomConstraint->valueForCapabilityRange(this->zoom(), range.doubleRange());
+            zoom = zoomConstraint->valueForCapabilityRange(this->zoom(), range);
         }
     }
 
@@ -535,183 +544,221 @@ bool RealtimeMediaSource::supportsSizeFrameRateAndZoom(std::optional<IntConstrai
     if (!supportsSizeFrameRateAndZoom(width, height, WTFMove(frameRate), WTFMove(zoom))) {
         // Let's try without frame rate and zoom constraints if not mandatory.
         if ((!frameRateConstraint || !frameRateConstraint->isMandatory()) && (!zoomConstraint || !zoomConstraint->isMandatory()) && supportsSizeFrameRateAndZoom(WTFMove(width), WTFMove(height), { }, { }))
-            return true;
+            return { };
 
         if (widthConstraint)
-            badConstraint = widthConstraint->name();
+            return MediaConstraintType::Width;
         else if (heightConstraint)
-            badConstraint = heightConstraint->name();
+            return MediaConstraintType::Height;
         else
-            badConstraint = frameRateConstraint->name();
-        return false;
+            return MediaConstraintType::FrameRate;
     }
 
-    return true;
+    return { };
 }
 
-double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
+double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, const IntConstraint& constraint)
 {
     auto& capabilities = this->capabilities();
 
-    switch (constraint.constraintType()) {
-    case MediaConstraintType::Width: {
-        ASSERT(constraint.isInt());
+    switch (constraintType) {
+    case MediaConstraintType::Width:
         if (!capabilities.supportsWidth())
             return 0;
 
-        auto range = capabilities.width();
-        return downcast<IntConstraint>(constraint).fitnessDistance(range.longRange());
-        break;
-    }
-
-    case MediaConstraintType::Height: {
-        ASSERT(constraint.isInt());
+        return constraint.fitnessDistance(capabilities.width());
+    case MediaConstraintType::Height:
         if (!capabilities.supportsHeight())
             return 0;
 
-        auto range = capabilities.height();
-        return downcast<IntConstraint>(constraint).fitnessDistance(range.longRange());
-        break;
-    }
-
-    case MediaConstraintType::FrameRate: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsFrameRate())
-            return 0;
-
-        auto range = capabilities.frameRate();
-        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
-        break;
-    }
-
-    case MediaConstraintType::AspectRatio: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsAspectRatio())
-            return 0;
-
-        auto range = capabilities.aspectRatio();
-        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
-        break;
-    }
-
-    case MediaConstraintType::Volume: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsVolume())
-            return 0;
-
-        auto range = capabilities.volume();
-        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
-        break;
-    }
-
-    case MediaConstraintType::SampleRate: {
-        ASSERT(constraint.isInt());
+        return constraint.fitnessDistance(capabilities.height());
+    case MediaConstraintType::SampleRate:
         if (!capabilities.supportsSampleRate())
             return 0;
 
         if (auto discreteRates = discreteSampleRates())
-            return downcast<IntConstraint>(constraint).fitnessDistance(*discreteRates);
+            return constraint.fitnessDistance(*discreteRates);
 
-        auto range = capabilities.sampleRate();
-        return downcast<IntConstraint>(constraint).fitnessDistance(range.longRange());
-        break;
-    }
-
-    case MediaConstraintType::SampleSize: {
-        ASSERT(constraint.isInt());
+        return constraint.fitnessDistance(capabilities.sampleRate());
+    case MediaConstraintType::SampleSize:
         if (!capabilities.supportsSampleSize())
             return 0;
 
         if (auto discreteSizes = discreteSampleSizes())
-            return downcast<IntConstraint>(constraint).fitnessDistance(*discreteSizes);
+            return constraint.fitnessDistance(*discreteSizes);
 
-        auto range = capabilities.sampleSize();
-        return downcast<IntConstraint>(constraint).fitnessDistance(range.longRange());
-        break;
-    }
-
-    case MediaConstraintType::FacingMode: {
-        ASSERT(constraint.isString());
-        if (!capabilities.supportsFacingMode())
-            return 0;
-
-        auto supportedModes = capabilities.facingMode().map([](auto& mode) {
-            return convertEnumerationToString(mode);
-        });
-        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
-        break;
-    }
-
-    case MediaConstraintType::EchoCancellation: {
-        ASSERT(constraint.isBoolean());
-        if (!capabilities.supportsEchoCancellation())
-            return 0;
-
-        bool echoCancellationReadWrite = capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
-        return downcast<BooleanConstraint>(constraint).fitnessDistance(echoCancellationReadWrite);
-        break;
-    }
-
+        return constraint.fitnessDistance(capabilities.sampleSize());
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::EchoCancellation:
     case MediaConstraintType::DeviceId:
-        ASSERT(constraint.isString());
-        ASSERT(!hashedId().isEmpty());
-        return downcast<StringConstraint>(constraint).fitnessDistance(hashedId());
-        break;
-
-    case MediaConstraintType::GroupId: {
-        ASSERT(constraint.isString());
-        if (!capabilities.supportsDeviceId())
-            return 0;
-
-        return downcast<StringConstraint>(constraint).fitnessDistance(settings().groupId());
-        break;
-    }
-
-    case MediaConstraintType::WhiteBalanceMode: {
-        ASSERT(constraint.isString());
-        if (!capabilities.supportsWhiteBalanceMode())
-            return 0;
-
-        auto supportedModes = capabilities.whiteBalanceModes().map([](auto& mode) {
-            return convertEnumerationToString(mode);
-        });
-        return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
-        break;
-    }
-
-    case MediaConstraintType::Zoom: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsZoom())
-            return 0;
-
-        auto range = capabilities.zoom();
-        return downcast<DoubleConstraint>(constraint).fitnessDistance(range.doubleRange());
-        break;
-    }
-
-    case MediaConstraintType::Torch: {
-        ASSERT(constraint.isBoolean());
-        if (!capabilities.supportsTorch())
-            return 0;
-
-        auto& booleanConstraint = downcast<BooleanConstraint>(constraint);
-        if (booleanConstraint.isMandatory())
-            return 0;
-
-        return booleanConstraint.fitnessDistance(capabilities.torch());
-        break;
-    }
-
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::Torch:
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
     case MediaConstraintType::FocusDistance:
-        break;
-
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
-        // Unknown (or unsupported) constraints should be ignored.
         break;
     }
 
+    return 0;
+}
+
+double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, const DoubleConstraint& constraint)
+{
+    auto& capabilities = this->capabilities();
+
+    switch (constraintType) {
+    case MediaConstraintType::FrameRate:
+        if (!capabilities.supportsFrameRate())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.frameRate());
+    case MediaConstraintType::AspectRatio:
+        if (!capabilities.supportsAspectRatio())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.aspectRatio());
+    case MediaConstraintType::Volume:
+        if (!capabilities.supportsVolume())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.volume());
+    case MediaConstraintType::Zoom:
+        if (!capabilities.supportsZoom())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.zoom());
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::Torch:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::Unknown:
+        break;
+    }
+
+    return 0;
+}
+
+double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, const StringConstraint& constraint)
+{
+    auto& capabilities = this->capabilities();
+
+    switch (constraintType) {
+    case MediaConstraintType::FacingMode:
+        if (!capabilities.supportsFacingMode())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.facingMode().map([](auto& mode) {
+            return convertEnumerationToString(mode);
+        }));
+    case MediaConstraintType::DeviceId:
+        ASSERT(constraint.isString());
+        ASSERT(!hashedId().isEmpty());
+        return constraint.fitnessDistance(hashedId());
+    case MediaConstraintType::GroupId:
+        if (!capabilities.supportsDeviceId())
+            return 0;
+
+        return constraint.fitnessDistance(settings().groupId());
+    case MediaConstraintType::WhiteBalanceMode:
+        if (!capabilities.supportsWhiteBalanceMode())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.whiteBalanceModes().map([](auto& mode) {
+            return convertEnumerationToString(mode);
+        }));
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::Torch:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::Unknown:
+        break;
+    }
+
+    return 0;
+}
+
+double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, const BooleanConstraint& constraint)
+{
+    auto& capabilities = this->capabilities();
+
+    switch (constraintType) {
+    case MediaConstraintType::EchoCancellation:
+        if (!capabilities.supportsEchoCancellation())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
+    case MediaConstraintType::Torch:
+        if (!capabilities.supportsTorch())
+            return 0;
+
+        if (constraint.isMandatory())
+            return 0;
+
+        return constraint.fitnessDistance(capabilities.torch());
+    case MediaConstraintType::BackgroundBlur:
+        return 0;
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::Unknown:
+        break;
+    }
+
+    return 0;
+}
+
+double RealtimeMediaSource::fitnessDistance(MediaConstraintType constraintType, const MediaConstraint& constraint)
+{
+    switch (constraint.dataType()) {
+    case MediaConstraint::DataType::Integer:
+        return fitnessDistance(constraintType, downcast<const IntConstraint>(constraint));
+    case MediaConstraint::DataType::Double:
+        return fitnessDistance(constraintType, downcast<const DoubleConstraint>(constraint));
+    case MediaConstraint::DataType::Boolean:
+        return fitnessDistance(constraintType, downcast<const BooleanConstraint>(constraint));
+    case MediaConstraint::DataType::String:
+        return fitnessDistance(constraintType, downcast<const StringConstraint>(constraint));
+    }
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -744,12 +791,12 @@ void RealtimeMediaSource::setSizeFrameRateAndZoom(std::optional<int> width, std:
         setZoom(zoom.value());
 }
 
-void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
+void RealtimeMediaSource::applyConstraint(MediaConstraintType constraintType, const MediaConstraint& constraint)
 {
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, constraint.name());
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, constraintType);
 
     auto& capabilities = this->capabilities();
-    switch (constraint.constraintType()) {
+    switch (constraintType) {
     case MediaConstraintType::Width:
         ASSERT_NOT_REACHED();
         break;
@@ -773,7 +820,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.zoom();
-        applyNumericConstraint(downcast<DoubleConstraint>(constraint), zoom(), { }, range.doubleRange().min, range.doubleRange().max, *this, &RealtimeMediaSource::setZoom);
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), zoom(), { }, range.min(), range.max(), *this, &RealtimeMediaSource::setZoom);
         break;
     }
 
@@ -783,7 +830,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.sampleRate();
-        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleRate(), discreteSampleRates(), range.longRange().min, range.longRange().max, *this, &RealtimeMediaSource::setSampleRate);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleRate(), discreteSampleRates(), range.min(), range.max(), *this, &RealtimeMediaSource::setSampleRate);
         break;
     }
 
@@ -793,7 +840,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.sampleSize();
-        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleSize(), { }, range.longRange().min, range.longRange().max, *this, &RealtimeMediaSource::setSampleSize);
+        applyNumericConstraint(downcast<IntConstraint>(constraint), sampleSize(), { }, range.min(), range.max(), *this, &RealtimeMediaSource::setSampleSize);
         break;
     }
 
@@ -863,7 +910,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return;
 
         auto range = capabilities.volume();
-        applyNumericConstraint(downcast<DoubleConstraint>(constraint), volume(), { }, range.doubleRange().min, range.doubleRange().max, *this, &RealtimeMediaSource::setVolume);
+        applyNumericConstraint(downcast<DoubleConstraint>(constraint), volume(), { }, range.min(), range.max(), *this, &RealtimeMediaSource::setVolume);
         break;
     }
 
@@ -876,6 +923,11 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         const BooleanConstraint& boolConstraint = downcast<BooleanConstraint>(constraint);
         if (boolConstraint.getExact(setting) || boolConstraint.getIdeal(setting))
             setTorch(setting);
+        break;
+    }
+    case MediaConstraintType::BackgroundBlur: {
+        ASSERT(constraint.isBoolean());
+        // FIXME: Add support
         break;
     }
 
@@ -896,7 +948,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     }
 }
 
-bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint)
+std::optional<MediaConstraintType> RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, MediaTrackConstraintSetMap& candidates)
 {
     double minimumDistance = std::numeric_limits<double>::infinity();
 
@@ -919,36 +971,35 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     //    properties as ideal values. Let candidates be the set of settings dictionaries for which the fitness
     //    distance is finite.
 
-    failedConstraint = emptyString();
-
     // Check width, height, frame rate and zoom jointly, because while they may be supported individually the combination may not be supported.
-    double distance = std::numeric_limits<double>::infinity();
-    if (!supportsSizeFrameRateAndZoom(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), constraints.mandatoryConstraints.zoom(), failedConstraint, minimumDistance))
-        return false;
+    if (auto invalidConstraint = hasInvalidSizeFrameRateAndZoomConstraints(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), constraints.mandatoryConstraints.zoom(), minimumDistance))
+        return invalidConstraint;
 
-    constraints.mandatoryConstraints.filter([&](auto& constraint) {
-        if (!supportsConstraint(constraint))
+    double distance = std::numeric_limits<double>::infinity();
+    std::optional<MediaConstraintType> invalidConstraint;
+    constraints.mandatoryConstraints.filter([&](auto constraintType, auto& constraint) {
+        if (!supportsConstraint(constraintType))
             return false;
 
-        if (constraint.constraintType() == MediaConstraintType::Width || constraint.constraintType() == MediaConstraintType::Height || constraint.constraintType() == MediaConstraintType::FrameRate || constraint.constraintType() == MediaConstraintType::Zoom) {
-            candidates.set(constraint);
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom) {
+            candidates.set(constraintType, constraint);
             return false;
         }
 
-        double constraintDistance = fitnessDistance(constraint);
+        double constraintDistance = fitnessDistance(constraintType, constraint);
         if (std::isinf(constraintDistance)) {
-            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraint.constraintType()));
-            failedConstraint = constraint.name();
+            ERROR_LOG_IF(m_logger, LOGIDENTIFIER, "RealtimeMediaSource::selectSettings failed constraint %d", static_cast<int>(constraintType));
+            invalidConstraint = constraintType;
             return true;
         }
 
         distance = std::min(distance, constraintDistance);
-        candidates.set(constraint);
+        candidates.set(constraintType, constraint);
         return false;
     });
 
-    if (!failedConstraint.isEmpty())
-        return false;
+    if (invalidConstraint)
+        return invalidConstraint;
 
     minimumDistance = distance;
 
@@ -967,19 +1018,18 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
         bool supported = false;
 
         if (advancedConstraint.width() || advancedConstraint.height() || advancedConstraint.frameRate() || advancedConstraint.zoom()) {
-            String dummy;
-            if (!supportsSizeFrameRateAndZoom(advancedConstraint.width(), advancedConstraint.height(), advancedConstraint.frameRate(), advancedConstraint.zoom(), dummy, constraintDistance))
+            if (auto invalidConstraint = hasInvalidSizeFrameRateAndZoomConstraints(advancedConstraint.width(), advancedConstraint.height(), advancedConstraint.frameRate(), advancedConstraint.zoom(), constraintDistance))
                 continue;
 
             supported = true;
         }
 
-        advancedConstraint.forEach([&](const MediaConstraint& constraint) {
+        advancedConstraint.forEach([&](auto constraintType, const MediaConstraint& constraint) {
 
-            if (constraint.constraintType() == MediaConstraintType::Width || constraint.constraintType() == MediaConstraintType::Height || constraint.constraintType() == MediaConstraintType::FrameRate || constraint.constraintType() == MediaConstraintType::Zoom)
+            if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)
                 return;
 
-            distance = fitnessDistance(constraint);
+            distance = fitnessDistance(constraintType, constraint);
             constraintDistance += distance;
             if (!std::isinf(distance))
                 supported = true;
@@ -1003,92 +1053,52 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         if (!supportedConstraints.isEmpty()) {
             auto& advancedConstraint = supportedConstraints[0].second;
-            advancedConstraint.forEach([&](const MediaConstraint& constraint) {
-                candidates.merge(constraint);
+            advancedConstraint.forEach([&](auto constraintType, const MediaConstraint& constraint) {
+                candidates.merge(constraintType, constraint);
             });
 
             minimumDistance = std::min(minimumDistance, supportedConstraints[0].first);
         }
     }
 
-    return true;
+    return { };
 }
 
-bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
+bool RealtimeMediaSource::supportsConstraint(MediaConstraintType constraintType)
 {
     auto& capabilities = this->capabilities();
 
-    switch (constraint.constraintType()) {
+    switch (constraintType) {
     case MediaConstraintType::Width:
-        ASSERT(constraint.isInt());
         return capabilities.supportsWidth();
-        break;
-
     case MediaConstraintType::Height:
-        ASSERT(constraint.isInt());
         return capabilities.supportsHeight();
-        break;
-
     case MediaConstraintType::FrameRate:
-        ASSERT(constraint.isDouble());
         return capabilities.supportsFrameRate();
-        break;
-
     case MediaConstraintType::AspectRatio:
-        ASSERT(constraint.isDouble());
         return capabilities.supportsAspectRatio();
-        break;
-
     case MediaConstraintType::Volume:
-        ASSERT(constraint.isDouble());
         return capabilities.supportsVolume();
-        break;
-
     case MediaConstraintType::SampleRate:
-        ASSERT(constraint.isInt());
         return capabilities.supportsSampleRate();
-        break;
-
     case MediaConstraintType::SampleSize:
-        ASSERT(constraint.isInt());
         return capabilities.supportsSampleSize();
-        break;
-
     case MediaConstraintType::FacingMode:
-        ASSERT(constraint.isString());
         return capabilities.supportsFacingMode();
-        break;
-
     case MediaConstraintType::EchoCancellation:
-        ASSERT(constraint.isBoolean());
         return capabilities.supportsEchoCancellation();
-        break;
-
     case MediaConstraintType::DeviceId:
-        ASSERT(constraint.isString());
         return capabilities.supportsDeviceId();
-        break;
-
     case MediaConstraintType::GroupId:
-        ASSERT(constraint.isString());
         return capabilities.supportsDeviceId();
-        break;
-
     case MediaConstraintType::WhiteBalanceMode:
-        ASSERT(constraint.isString());
         return capabilities.supportsWhiteBalanceMode();
-        break;
-
     case MediaConstraintType::Zoom:
-        ASSERT(constraint.isDouble());
         return capabilities.supportsZoom();
-        break;
-
     case MediaConstraintType::Torch:
-        ASSERT(constraint.isBoolean());
         return capabilities.supportsTorch();
-        break;
-
+    case MediaConstraintType::BackgroundBlur:
+        return capabilities.supportsBackgroundBlur();
     case MediaConstraintType::DisplaySurface:
     case MediaConstraintType::LogicalSurface:
         // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
@@ -1096,31 +1106,28 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint)
         // Since the source of media cannot be changed after a MediaStreamTrack has been returned,
         // these constraints cannot be changed by an application.
         return false;
-        break;
-
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Unknown:
-        // Unknown (or unsupported) constraints should be ignored.
         break;
     }
     
     return false;
 }
 
-bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraints, String& invalidConstraint)
+std::optional<MediaConstraintType> RealtimeMediaSource::hasAnyInvalidConstraint(const MediaConstraints& constraints)
 {
     ASSERT(constraints.isValid);
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
-    FlattenedConstraint candidates;
-    if (!selectSettings(constraints, candidates, invalidConstraint))
-        return false;
+    MediaTrackConstraintSetMap candidates;
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
+        return invalidConstraint;
 
     m_fitnessScore = 0;
-    for (auto& variant : candidates) {
-        double distance = fitnessDistance(variant);
-        switch (variant.constraintType()) {
+    candidates.forEach([&] (auto constraintType, auto& variant) {
+        double distance = fitnessDistance(constraintType, variant);
+        switch (constraintType) {
         case MediaConstraintType::DeviceId:
             m_fitnessScore += distance ? 1 : 32;
             break;
@@ -1143,54 +1150,47 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
         case MediaConstraintType::WhiteBalanceMode:
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
+        case MediaConstraintType::BackgroundBlur:
         case MediaConstraintType::Unknown:
             m_fitnessScore += distance ? 1 : 2;
             break;
         }
-    }
+    });
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, "fitness distance : ", m_fitnessScore);
 
-    return true;
+    return { };
 }
 
 RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaConstraints& constraints)
 {
-    FlattenedConstraint candidates;
-    String invalidConstraint;
-    if (!selectSettings(constraints, candidates, invalidConstraint))
+    MediaTrackConstraintSetMap candidates;
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
         return { };
     return extractVideoFrameSizeConstraints(candidates);
 }
 
-RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const FlattenedConstraint& constraints)
+RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap& constraints)
 {
     VideoFrameSizeConstraints result;
     auto& capabilities = this->capabilities();
 
-    if (auto* constraint = constraints.find(MediaConstraintType::Width)) {
-        ASSERT(constraint->isInt());
-        if (capabilities.supportsWidth()) {
-            auto range = capabilities.width();
-            result.width = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().width(), range.longRange());
-        }
+    if (auto constraint = constraints.width()) {
+        if (capabilities.supportsWidth())
+            result.width = constraint->valueForCapabilityRange(size().width(), capabilities.width());
     }
 
-    if (auto* constraint = constraints.find(MediaConstraintType::Height)) {
-        ASSERT(constraint->isInt());
-        if (capabilities.supportsHeight()) {
-            auto range = capabilities.height();
-            result.height = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().height(), range.longRange());
-        }
+    if (auto constraint = constraints.height()) {
+        if (capabilities.supportsHeight())
+            result.height = constraint->valueForCapabilityRange(size().height(), capabilities.height());
     }
 
-    if (auto* constraint = constraints.find(MediaConstraintType::AspectRatio)) {
-        ASSERT(constraint->isDouble());
+    if (auto constraint = constraints.aspectRatio()) {
         if (capabilities.supportsAspectRatio()) {
             auto size = this->size();
             auto range = capabilities.aspectRatio();
             auto currentAspectRatio = size.width() ? size.width() / static_cast<double>(size.height()) : 0;
-            if (auto aspectRatio = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(currentAspectRatio, range.doubleRange())) {
+            if (auto aspectRatio = constraint->valueForCapabilityRange(currentAspectRatio, range)) {
                 if (!result.width && result.height)
                     result.width = *result.height * aspectRatio;
                 if (result.width && !result.height)
@@ -1199,18 +1199,17 @@ RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideo
         }
     }
 
-    if (auto* constraint = constraints.find(MediaConstraintType::FrameRate)) {
-        ASSERT(constraint->isDouble());
+    if (auto constraint = constraints.frameRate()) {
         if (capabilities.supportsFrameRate()) {
             auto range = capabilities.frameRate();
-            result.frameRate = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->frameRate(), range.doubleRange());
+            result.frameRate = constraint->valueForCapabilityRange(this->frameRate(), range);
         }
     }
 
     return result;
 }
 
-void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraints)
+void RealtimeMediaSource::applyConstraints(const MediaTrackConstraintSetMap& constraints)
 {
     if (constraints.isEmpty())
         return;
@@ -1220,24 +1219,23 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
     auto videoFrameSizeConstraints = extractVideoFrameSizeConstraints(constraints);
 
     std::optional<double> zoom;
-    if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Zoom)) {
-        ASSERT(constraint->isDouble());
+    if (auto constraint = constraints.zoom()) {
         auto& capabilities = this->capabilities();
         if (capabilities.supportsZoom()) {
             auto range = capabilities.zoom();
-            zoom = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->zoom(), range.doubleRange());
+            zoom = constraint->valueForCapabilityRange(this->zoom(), range);
         }
     }
 
     if (videoFrameSizeConstraints.width || videoFrameSizeConstraints.height || videoFrameSizeConstraints.frameRate || zoom)
         setSizeFrameRateAndZoom(videoFrameSizeConstraints.width, videoFrameSizeConstraints.height, videoFrameSizeConstraints.frameRate, WTFMove(zoom));
 
-    for (auto& variant : constraints) {
-        if (variant.constraintType() == MediaConstraintType::Width || variant.constraintType() == MediaConstraintType::Height || variant.constraintType() == MediaConstraintType::AspectRatio || variant.constraintType() == MediaConstraintType::FrameRate || variant.constraintType() == MediaConstraintType::Zoom)
-            continue;
+    constraints.forEach([&] (auto constraintType, auto& constraint) {
+        if (constraintType == MediaConstraintType::Width || constraintType == MediaConstraintType::Height || constraintType == MediaConstraintType::AspectRatio || constraintType == MediaConstraintType::FrameRate || constraintType == MediaConstraintType::Zoom)
+            return;
 
-        applyConstraint(variant);
-    }
+        applyConstraint(constraintType, constraint);
+    });
 
     endApplyingConstraints();
 }
@@ -1248,10 +1246,9 @@ std::optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::a
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
-    FlattenedConstraint candidates;
-    String failedConstraint;
-    if (!selectSettings(constraints, candidates, failedConstraint))
-        return ApplyConstraintsError { failedConstraint, "Invalid constraint"_s };
+    MediaTrackConstraintSetMap candidates;
+    if (auto invalidConstraint = selectSettings(constraints, candidates))
+        return ApplyConstraintsError { *invalidConstraint, "Invalid constraint"_s };
 
     applyConstraints(candidates);
     return { };

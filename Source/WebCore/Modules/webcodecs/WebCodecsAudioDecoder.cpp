@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -59,9 +60,7 @@ WebCodecsAudioDecoder::WebCodecsAudioDecoder(ScriptExecutionContext& context, In
 {
 }
 
-WebCodecsAudioDecoder::~WebCodecsAudioDecoder()
-{
-}
+WebCodecsAudioDecoder::~WebCodecsAudioDecoder() = default;
 
 static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {

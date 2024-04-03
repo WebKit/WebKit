@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/ProcessQualified.h>
+#include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
@@ -43,15 +44,13 @@ struct WebTransportStreamIdentifierType;
 using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
-class NetworkTransportSession : public IPC::MessageReceiver, public IPC::MessageSender {
+class NetworkTransportSession : public IPC::MessageReceiver, public IPC::MessageSender, public Identified<WebTransportSessionIdentifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static void initialize(NetworkConnectionToWebProcess&, URL&&, CompletionHandler<void(std::unique_ptr<NetworkTransportSession>&&)>&&);
 
     NetworkTransportSession(NetworkConnectionToWebProcess&);
     ~NetworkTransportSession();
-
-    WebTransportSessionIdentifier identifier() const { return m_identifier; }
 
     void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&);
     void createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebTransportStreamIdentifier>)>&&);
@@ -72,7 +71,6 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WebTransportSessionIdentifier m_identifier;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportReceiveStream>> m_receiveStreams;
     HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportSendStream>> m_sendStreams;

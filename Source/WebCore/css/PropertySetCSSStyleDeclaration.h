@@ -53,7 +53,7 @@ public:
     StyleSheetContents* contextStyleSheet() const;
 
 protected:
-    enum MutationType { NoChanges, PropertyChanged };
+    enum class MutationType : uint8_t { NoChanges, StyleAttributeChanged, PropertyChanged };
 
     virtual CSSParserContext cssParserContext() const;
 

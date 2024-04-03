@@ -33,21 +33,22 @@
 
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
 static const size_t maximumLineLength = 76;
 
-static const char crlfLineEnding[] = "\r\n";
+static constexpr auto crlfLineEnding = "\r\n"_s;
 
-static size_t lengthOfLineEndingAtIndex(const uint8_t* input, size_t inputLength, size_t index)
+static size_t lengthOfLineEndingAtIndex(std::span<const uint8_t> input, size_t index)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(index < inputLength);
+    ASSERT_WITH_SECURITY_IMPLICATION(index < input.size());
     if (input[index] == '\n')
         return 1; // Single LF.
 
     if (input[index] == '\r') {
-        if ((index + 1) == inputLength || input[index + 1] != '\n')
+        if ((index + 1) == input.size() || input[index + 1] != '\n')
             return 1; // Single CR (Classic Mac OS).
         return 2; // CR-LF.
     }
@@ -57,16 +58,16 @@ static size_t lengthOfLineEndingAtIndex(const uint8_t* input, size_t inputLength
 
 Vector<uint8_t> quotedPrintableEncode(const Vector<uint8_t>& input)
 {
-    return quotedPrintableEncode(input.data(), input.size());
+    return quotedPrintableEncode(input.span());
 }
 
-Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
+Vector<uint8_t> quotedPrintableEncode(std::span<const uint8_t> input)
 {
     Vector<uint8_t> out;
-    out.reserveInitialCapacity(inputLength);
+    out.reserveInitialCapacity(input.size());
     size_t currentLineLength = 0;
-    for (size_t i = 0; i < inputLength; ++i) {
-        bool isLastCharacter = (i == inputLength - 1);
+    for (size_t i = 0; i < input.size(); ++i) {
+        bool isLastCharacter = (i == input.size() - 1);
         uint8_t currentCharacter = input[i];
         bool requiresEncoding = false;
         // All non-printable ASCII characters and = require encoding.
@@ -74,14 +75,14 @@ Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
             requiresEncoding = true;
 
         // Space and tab characters have to be encoded if they appear at the end of a line.
-        if (!requiresEncoding && (currentCharacter == '\t' || currentCharacter == ' ') && (isLastCharacter || lengthOfLineEndingAtIndex(input, inputLength, i + 1)))
+        if (!requiresEncoding && (currentCharacter == '\t' || currentCharacter == ' ') && (isLastCharacter || lengthOfLineEndingAtIndex(input, i + 1)))
             requiresEncoding = true;
 
         // End of line should be converted to CR-LF sequences.
         if (!isLastCharacter) {
-            size_t lengthOfLineEnding = lengthOfLineEndingAtIndex(input, inputLength, i);
+            size_t lengthOfLineEnding = lengthOfLineEndingAtIndex(input, i);
             if (lengthOfLineEnding) {
-                out.append(crlfLineEnding, strlen(crlfLineEnding));
+                out.append(crlfLineEnding.span8());
                 currentLineLength = 0;
                 i += (lengthOfLineEnding - 1); // -1 because we'll ++ in the for() above.
                 continue;
@@ -97,7 +98,7 @@ Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
         // Insert a soft line break if necessary.
         if (currentLineLength + lengthOfEncodedCharacter > maximumLineLength) {
             out.append('=');
-            out.append(crlfLineEnding, strlen(crlfLineEnding));
+            out.append(crlfLineEnding.span8());
             currentLineLength = 0;
         }
 
@@ -118,23 +119,20 @@ Vector<uint8_t> quotedPrintableEncode(const uint8_t* input, size_t inputLength)
 
 Vector<uint8_t> quotedPrintableDecode(const Vector<uint8_t>& input)
 {
-    return quotedPrintableDecode(input.data(), input.size());
+    return quotedPrintableDecode(input.span());
 }
 
-Vector<uint8_t> quotedPrintableDecode(const uint8_t* data, size_t dataLength)
+Vector<uint8_t> quotedPrintableDecode(std::span<const uint8_t> data)
 {
     Vector<uint8_t> out;
-    if (!dataLength)
-        return out;
-
-    for (size_t i = 0; i < dataLength; ++i) {
+    for (size_t i = 0; i < data.size(); ++i) {
         char currentCharacter = data[i];
         if (currentCharacter != '=') {
             out.append(currentCharacter);
             continue;
         }
         // We are dealing with a '=xx' sequence.
-        if (dataLength - i < 3) {
+        if (data.size() - i < 3) {
             // Unfinished = sequence, append as is.
             out.append(currentCharacter);
             continue;

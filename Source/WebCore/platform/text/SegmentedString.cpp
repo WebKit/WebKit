@@ -252,7 +252,7 @@ SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(const ch
         auto character = m_currentCharacter;
         if (characterMismatch(character, literal[i], lettersIgnoringASCIICase)) {
             if (i)
-                pushBack(String { consumedCharacters, i });
+                pushBack(String({ consumedCharacters, i }));
             return DidNotMatch;
         }
         advancePastNonNewline();

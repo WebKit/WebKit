@@ -9,22 +9,22 @@ layer at (0,0) size 800x311
       RenderBlock {p} at (0,59) size 784x61
         RenderText {#text} at (0,0) size 29x19
           text run at (0,0) width 29: "The "
-        RenderInline {code} at (0,0) size 9x14
+        RenderInline {code} at (28,5) size 9x14
           RenderText {#text} at (28,5) size 9x14
             text run at (28,5) width 9: "x"
         RenderText {#text} at (36,0) size 32x19
           text run at (36,0) width 32: " and "
-        RenderInline {code} at (0,0) size 9x14
+        RenderInline {code} at (67,5) size 9x14
           RenderText {#text} at (67,5) size 9x14
             text run at (67,5) width 9: "y"
         RenderText {#text} at (75,0) size 166x19
           text run at (75,0) width 166: " attributes on a root-most "
-        RenderInline {code} at (0,0) size 40x14
+        RenderInline {code} at (240,5) size 40x14
           RenderText {#text} at (240,5) size 40x14
             text run at (240,5) width 40: "<svg>"
         RenderText {#text} at (279,0) size 440x19
           text run at (279,0) width 440: " element should be ignored, as specified by SVG 1.1. The root-most "
-        RenderInline {code} at (0,0) size 40x14
+        RenderInline {code} at (718,5) size 40x14
           RenderText {#text} at (718,5) size 40x14
             text run at (718,5) width 40: "<svg>"
         RenderText {#text} at (0,20) size 756x39
@@ -33,7 +33,7 @@ layer at (0,0) size 800x311
       RenderBlock {p} at (0,135) size 784x21
         RenderText {#text} at (0,0) size 28x19
           text run at (0,0) width 28: "See "
-        RenderInline {a} at (0,0) size 71x19 [color=#0000EE]
+        RenderInline {a} at (27,0) size 71x19 [color=#0000EE]
           RenderText {#text} at (27,0) size 71x19
             text run at (27,0) width 71: "Bug 13828"
         RenderText {#text} at (97,0) size 5x19

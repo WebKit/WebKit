@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+
+.tall-content {
+    height: 10000px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div>Top <a href="https://apple.com">link</a></div>
+<div class="tall-content"></div>
+<div>Bottom <a href="https://webkit.org">link</a></div>
+<script>
+jsTestIsAsync = true;
+
+function parseRect(outputString) {
+    const [x, y, width, height] = JSON.parse([...outputString.matchAll(/rect=(\[.*\])/g)][0][1]);
+    return { x, y, width, height };
+}
+
+addEventListener("load", async () => {
+    await UIHelper.renderingUpdate();
+    scrollTo(0, document.scrollingElement.scrollHeight);
+    await UIHelper.renderingUpdate();
+
+    const extractionResult = await UIHelper.requestTextExtraction({
+        clipToBounds: true,
+        includeRects: true
+    });
+
+    rootResult = extractionResult.split("\n").filter(line => line.includes("ROOT"))[0];
+    textResults = extractionResult.split("\n").filter(line => line.includes("TEXT"));
+
+    shouldBe("textResults.length", "1");
+
+    rootRect = parseRect(rootResult);
+    textRect = parseRect(textResults[0]);
+
+    shouldBeTrue(`textResults[0].includes("Bottom link")`);
+    shouldBeGreaterThanOrEqual("rootRect.height", "10000");
+    shouldBeLessThanOrEqual("rootRect.y", "-5000");
+    shouldBeLessThanOrEqual("textRect.y", "5000");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

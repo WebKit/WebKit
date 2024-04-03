@@ -50,7 +50,7 @@ Ref<SpotLightSource> SpotLightSource::create(const FloatPoint3D& position, const
 }
 
 SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& pointsAt, float specularExponent, float limitingConeAngle)
-    : LightSource(LS_SPOT)
+    : LightSource(LightType::LS_SPOT)
     , m_position(position)
     , m_pointsAt(pointsAt)
     , m_specularExponent(clampTo<float>(specularExponent, 1.0f, 128.0f))

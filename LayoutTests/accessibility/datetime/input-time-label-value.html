@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="time" id="inputtime1" aria-label="Meeting time:" min="07:00" max="09:00" step="300" placeholder="00:00 AM" value="08:30" />
+<label for="inputtime2">Meeting time:</label><input type="time" id="inputtime2" min="07:00" max="09:00" step="300" placeholder="00:00 AM" value="08:30" />
+<label><input type="time" id="inputtime3" min="07:00" max="09:00" step="300" placeholder="00:00 AM" value="08:30">Meeting time:</label>
+<input type="time" id="inputtime4" min="07:00" max="09:00" step="300" value="15:45:12">
+<input type="time" id="inputtime5" />
+
+<script>
+let output = "This tests input type=time label and value properties.\n\n";
+
+if (window.accessibilityController) {
+    let platform = accessibilityController.platformName;
+    var inputtime = null;
+    function outputDateTimeElement(id) {
+        inputtime = accessibilityController.accessibleElementById(id);
+        output += `${inputtime.domIdentifier}:\n`;
+        output += expect("inputtime.title", "'AXTitle: Meeting time:'");
+        output += `${inputtime.stringValue}\n`;
+        if (platform == "mac")
+            output += expect("inputtime.dateValue", "'AXDateValue: 1970-01-01 08:30:00 +0000'");
+        else
+            output += "\n";
+    }
+
+    for (let i = 1; i <= 3; ++i)
+        outputDateTimeElement(`inputtime${i}`);
+
+    // Case 4: no label.
+    inputtime = accessibilityController.accessibleElementById("inputtime4");
+    output += "inputtime4:\n";
+    output += expect("inputtime.title", "'AXTitle: '");
+    output += `${inputtime.stringValue}\n`;
+    if (platform == "mac")
+        output += expect("inputtime.dateValue", "'AXDateValue: 1970-01-01 15:45:12 +0000'");
+    else
+        output += "\n";
+
+    // Case 5: no label, no value.
+    inputtime = accessibilityController.accessibleElementById("inputtime5");
+    output += "inputtime5:\n";
+    output += expect("inputtime.title", "'AXTitle: '");
+    output += `${inputtime.stringValue}\n`;
+    if (platform == "mac")
+        output += expect("inputtime.dateValue", "'AXDateValue: 1970-01-01 12:30:00 +0000'");
+    else
+        output += "\n";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -28,6 +28,10 @@ function ErrorDisplay(json) {
     </div>`;
 }
 
+function intersection(listA, listB) {
+    return listA.filter(value => listB.includes(value));
+}
+
 function queryToParams(query) {
     if (!query)
         return {};
@@ -59,6 +63,17 @@ function paramsToQuery(json) {
                 return;
             result += (result ? '&' : '') + encodeURIComponent(parameter) + '=' + encodeURIComponent(value);
         });
+    }
+    return result;
+}
+
+function mergeQueries(queryA, queryB) {
+    let result = {...queryA};
+    for (const key in queryB) {
+        if (!Object.hasOwn(result, key))
+            result[key] = queryB[key];
+        else
+            result[key] = intersection(result[key], queryB[key]);
     }
     return result;
 }
@@ -218,4 +233,4 @@ function elapsedTime(startTimestamp, endTimestamp)
     return result;
 }
 
-export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, escapeEndpoint, linkify, percentage, elapsedTime};
+export {deepCompare, ErrorDisplay, intersection, queryToParams, paramsToQuery, mergeQueries, QueryModifier, escapeHTML, escapeEndpoint, linkify, percentage, elapsedTime};

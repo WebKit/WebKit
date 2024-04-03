@@ -72,7 +72,7 @@ PASS role: definition
 PASS role: deletion
 PASS role: dialog
 PASS role: document
-FAIL role: emphasis assert_equals: <div role="emphasis">x</div> expected "emphasis" but got "generic"
+PASS role: emphasis
 PASS role: feed
 PASS role: figure
 PASS role: generic
@@ -98,7 +98,7 @@ PASS role: separator
 PASS role: slider
 PASS role: spinbutton
 PASS role: status
-FAIL role: strong assert_equals: <div role="strong">x</div> expected "strong" but got "generic"
+PASS role: strong
 PASS role: subscript
 PASS role: suggestion
 PASS role: superscript

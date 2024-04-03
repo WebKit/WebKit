@@ -699,8 +699,8 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_REX: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
-        if (fontMetrics.hasXHeight())
-            return fontMetrics.xHeight() * value;
+        if (fontMetrics.xHeight())
+            return fontMetrics.xHeight().value() * value;
         auto& fontDescription = fontCascadeForUnit->fontDescription();
         return ((propertyToCompute == CSSPropertyFontSize) ? fontDescription.specifiedSize() : fontDescription.computedSize()) / 2.0 * value;
     }
@@ -708,9 +708,9 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_RCAP: {
         ASSERT(fontCascadeForUnit);
         auto& fontMetrics = fontCascadeForUnit->metricsOfPrimaryFont();
-        if (fontMetrics.hasCapHeight())
-            return fontMetrics.floatCapHeight() * value;
-        return fontMetrics.ascent() * value;
+        if (fontMetrics.capHeight())
+            return fontMetrics.capHeight().value() * value;
+        return fontMetrics.intAscent() * value;
     }
     case CSSUnitType::CSS_CH:
     case CSSUnitType::CSS_RCH:
@@ -719,7 +719,7 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_RIC:
         ASSERT(fontCascadeForUnit);
-        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth() * value;
+        return fontCascadeForUnit->metricsOfPrimaryFont().ideogramWidth().value_or(0) * value;
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
@@ -808,7 +808,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         if (!element)
             return { };
 
-        auto mode = conversionData.style()->styleType() == PseudoId::None
+        auto mode = conversionData.style()->pseudoElementType() == PseudoId::None
             ? Style::ContainerQueryEvaluator::SelectionMode::Element
             : Style::ContainerQueryEvaluator::SelectionMode::PseudoElement;
 
@@ -933,7 +933,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     case CSSUnitType::CSS_LH:
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
-            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().lineSpacing();
+            value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
         } else
             value *= conversionData.computedLineHeightForFontUnits();
         break;
@@ -1765,20 +1765,32 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     // return std::optional<double> instead of having this check here.
 
     bool isFixedNumberConversion = lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    if (!isFixedNumberConversion)
+        return true;
+
     auto dependencies = computedStyleDependencies();
     if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return !isFixedNumberConversion;
+        return false;
 
     if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return !isFixedNumberConversion;
+        return false;
 
     if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return !isFixedNumberConversion;
+        return false;
 
-    if (dependencies.viewportDimensions && conversionData.defaultViewportFactor().isEmpty())
-        return !isFixedNumberConversion;
+    if (dependencies.viewportDimensions && !conversionData.renderView())
+        return false;
 
     return true;
+}
+
+IterationStatus CSSPrimitiveValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+{
+    if (auto* calc = cssCalcValue()) {
+        if (func(const_cast<CSSCalcValue&>(*calc)) == IterationStatus::Done)
+            return IterationStatus::Done;
+    }
+    return IterationStatus::Continue;
 }
 
 } // namespace WebCore

@@ -1,0 +1,10 @@
+This test verifies that selecting backwards after typing with inline predictions does not cause a crash. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

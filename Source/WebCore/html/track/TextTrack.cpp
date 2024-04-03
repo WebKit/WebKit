@@ -36,7 +36,6 @@
 
 #include "CommonAtomStrings.h"
 #include "DataCue.h"
-#include "Document.h"
 #include "Event.h"
 #include "SourceBuffer.h"
 #include "TextTrackClient.h"
@@ -118,16 +117,16 @@ TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, co
 {
 }
 
-Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
 {
-    auto textTrack = adoptRef(*new TextTrack(document, kind, id, label, language, AddTrack));
+    auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
 
-Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
+Ref<TextTrack> TextTrack::create(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
 {
-    auto textTrack = adoptRef(*new TextTrack(document, kind, id, label, language, AddTrack));
+    auto textTrack = adoptRef(*new TextTrack(context, kind, id, label, language, AddTrack));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
@@ -141,10 +140,18 @@ TextTrack::~TextTrack()
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->setTrack(nullptr);
     }
-    if (m_regions) {
-        for (size_t i = 0; i < m_regions->length(); ++i)
-            m_regions->item(i)->setTrack(nullptr);
-    }
+}
+
+inline RefPtr<TextTrackCueList> TextTrack::protectedCues() const
+{
+    return m_cues.copyRef();
+}
+
+void TextTrack::didMoveToNewDocument(Document& newDocument)
+{
+    TrackBase::didMoveToNewDocument(newDocument);
+    ActiveDOMObject::didMoveToNewDocument(newDocument);
+    protectedCues()->didMoveToNewDocument(newDocument);
 }
 
 TextTrackList* TextTrack::textTrackList() const
@@ -162,12 +169,6 @@ void TextTrack::clearClient(TextTrackClient& client)
 {
     ASSERT(m_clients.contains(client));
     m_clients.remove(client);
-}
-
-Document& TextTrack::document() const
-{
-    ASSERT(scriptExecutionContext());
-    return downcast<Document>(*scriptExecutionContext());
 }
 
 bool TextTrack::enabled() const
@@ -303,6 +304,11 @@ TextTrackCueList* TextTrack::cues()
     if (m_mode == Mode::Disabled)
         return nullptr;
     return &ensureTextTrackCueList();
+}
+
+RefPtr<TextTrackCueList> TextTrack::protectedCues()
+{
+    return cues();
 }
 
 void TextTrack::removeAllCues()

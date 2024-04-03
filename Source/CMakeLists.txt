@@ -30,6 +30,10 @@ if (USE_LIBWEBRTC)
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/libwebrtc)
 endif ()
 
+if (USE_SKIA)
+    add_subdirectory(ThirdParty/skia)
+endif ()
+
 if (ENABLE_WEBINSPECTORUI)
     add_subdirectory(WebInspectorUI)
 endif ()

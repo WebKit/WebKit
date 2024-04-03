@@ -39,7 +39,7 @@ class SharedBuffer;
 WEBCORE_EXPORT bool isVorbisDecoderAvailable();
 WEBCORE_EXPORT bool registerVorbisDecoderIfNeeded();
 static constexpr size_t kVorbisMinimumFrameDataSize = 1;
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t, const uint8_t*);
+RefPtr<AudioInfo> createVorbisAudioInfo(std::span<const uint8_t>);
 
 struct OpusCookieContents {
     uint8_t version { 0 };
@@ -63,7 +63,7 @@ WEBCORE_EXPORT bool isOpusDecoderAvailable();
 WEBCORE_EXPORT bool registerOpusDecoderIfNeeded();
 static constexpr size_t kOpusHeaderSize = 19;
 static constexpr size_t kOpusMinimumFrameDataSize = 2;
-bool parseOpusPrivateData(size_t privateDataSize, const uint8_t* privateData, SharedBuffer& frameData, OpusCookieContents&);
+bool parseOpusPrivateData(std::span<const uint8_t> privateData, SharedBuffer& frameData, OpusCookieContents&);
 bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents&);
 RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
 

@@ -273,7 +273,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
         Vector<CGSize, 256> translations(count);
         CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
 
-        auto ascentDelta = font.fontMetrics().floatAscent(IdeographicBaseline) - font.fontMetrics().floatAscent();
+        auto ascentDelta = font.fontMetrics().ascent(IdeographicBaseline) - font.fontMetrics().ascent();
         fillVectorWithVerticalGlyphPositions(positions, translations.data(), advances, count, point, ascentDelta, CGContextGetTextMatrix(context));
         CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     } else {
@@ -504,7 +504,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
         // The first category are characters with Emoji=Yes and Emoji_Presentation=Yes.
         // The second category are characters with Emoji=Yes and Emoji_Presentation=No.
         // The third category are characters with Emoji=No.
-        if (u_hasBinaryProperty(character, UCHAR_EMOJI_PRESENTATION))
+        if (isEmojiWithPresentationByDefault(character))
             return ResolvedEmojiPolicy::RequireEmoji;
         return ResolvedEmojiPolicy::NoPreference;
     case FontVariantEmoji::Text:

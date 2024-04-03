@@ -40,10 +40,14 @@ CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, dou
 {
     // Flatten nesting of CalcExpressionBlendLength as a speculative fix for rdar://problem/30533005.
     // CalcExpressionBlendLength is only used as a result of animation and they don't nest in normal cases.
-    if (m_from.isCalculated() && m_from.calculationValue().expression().type() == CalcExpressionNodeType::BlendLength)
-        m_from = downcast<CalcExpressionBlendLength>(m_from.calculationValue().expression()).from();
-    if (m_to.isCalculated() && m_to.calculationValue().expression().type() == CalcExpressionNodeType::BlendLength)
-        m_to = downcast<CalcExpressionBlendLength>(m_to.calculationValue().expression()).to();
+    if (m_from.isCalculated()) {
+        if (auto* blendLength = dynamicDowncast<CalcExpressionBlendLength>(m_from.calculationValue().expression()))
+            m_from = blendLength->from();
+    }
+    if (m_to.isCalculated()) {
+        if (auto* blendLength =  dynamicDowncast<CalcExpressionBlendLength>(m_to.calculationValue().expression()))
+            m_to = blendLength->to();
+    }
 }
 
 float CalcExpressionBlendLength::evaluate(float maxValue) const
@@ -53,7 +57,8 @@ float CalcExpressionBlendLength::evaluate(float maxValue) const
 
 bool CalcExpressionBlendLength::operator==(const CalcExpressionNode& other) const
 {
-    return is<CalcExpressionBlendLength>(other) && *this == downcast<CalcExpressionBlendLength>(other);
+    auto* otherBlendLength = dynamicDowncast<CalcExpressionBlendLength>(other);
+    return otherBlendLength && *this == *otherBlendLength;
 }
 
 void CalcExpressionBlendLength::dump(TextStream& ts) const

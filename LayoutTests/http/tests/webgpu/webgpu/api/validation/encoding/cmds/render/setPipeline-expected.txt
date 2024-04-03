@@ -1,1 +1,4 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :invalid_pipeline:
+PASS :pipeline,device_mismatch:
+

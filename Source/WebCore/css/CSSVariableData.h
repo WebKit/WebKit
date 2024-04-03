@@ -51,6 +51,8 @@ public:
 
     bool operator==(const CSSVariableData& other) const;
 
+    String serialize() const;
+
 private:
     CSSVariableData(const CSSParserTokenRange&, const CSSParserContext&);
     template<typename CharacterType> void updateBackingStringsInTokens();

@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 39 width 276.60: "Lorem ipsum dolor sit amet, consectetur"
           RenderSVGInlineText {#text} at (276,0) size 5x18
             chunk 1 text run 1 at (356.60,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 103x18
+          RenderSVGTSpan {tspan} at (0,20) size 103x18
             RenderSVGInlineText {#text} at (0,20) size 103x18
               chunk 1 text run 1 at (80.00,134.80) startOffset 0 endOffset 17 width 102.60: "adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
               chunk 1 (middle anchor) text run 1 at (99.60,114.80) startOffset 0 endOffset 39 width 276.60: "Lorem ipsum dolor sit amet, consectetur"
           RenderSVGInlineText {#text} at (276,0) size 5x18
             chunk 1 (middle anchor) text run 1 at (376.20,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 103x18
+          RenderSVGTSpan {tspan} at (89,20) size 103x18
             RenderSVGInlineText {#text} at (89,20) size 103x18
               chunk 1 (middle anchor) text run 1 at (188.70,134.80) startOffset 0 endOffset 17 width 102.60: "adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
               chunk 1 (end anchor) text run 1 at (119.20,114.80) startOffset 0 endOffset 39 width 276.60: "Lorem ipsum dolor sit amet, consectetur"
           RenderSVGInlineText {#text} at (276,0) size 5x18
             chunk 1 (end anchor) text run 1 at (395.80,114.80) startOffset 0 endOffset 1 width 4.20: " "
-          RenderSVGTSpan {tspan} at (0,0) size 103x18
+          RenderSVGTSpan {tspan} at (178,20) size 103x18
             RenderSVGInlineText {#text} at (178,20) size 103x18
               chunk 1 (end anchor) text run 1 at (297.40,134.80) startOffset 0 endOffset 17 width 102.60: "adipisicing elit,"
           RenderSVGInlineText {#text} at (0,0) size 0x0

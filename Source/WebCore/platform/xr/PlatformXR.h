@@ -45,6 +45,11 @@ class SecurityOriginData;
 
 namespace PlatformXR {
 
+enum class Layout : uint8_t {
+    Shared,
+    Layered,
+};
+
 enum class SessionMode : uint8_t {
     Inline,
     ImmersiveVr,
@@ -244,12 +249,27 @@ struct FrameData {
         Vector<WebCore::FloatPoint> bounds;
     };
 
+#if PLATFORM(COCOA)
+    static constexpr auto LayerSetupSizeMax = std::numeric_limits<uint16_t>::max();
+    struct LayerSetupData {
+        std::array<std::array<uint16_t, 2>, 2> physicalSize;
+        std::array<WebCore::IntRect, 2> viewports;
+        std::array<std::span<const float>, 2> horizontalSamples;
+        std::span<const float> verticalSamples;
+        WebCore::IntSize screenSize;
+        std::array<uint16_t, 2> framebufferSize;
+        MachSendRight completionSyncEvent;
+    };
+#endif
+
     struct LayerData {
 #if PLATFORM(COCOA)
+        std::optional<LayerSetupData> layerSetup = { std::nullopt };
+        uint64_t renderingFrameIndex { 0 };
         std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
         std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
-        std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #else
+        WebCore::IntSize framebufferSize;
         PlatformGLObject opaqueTexture { 0 };
 #endif
     };

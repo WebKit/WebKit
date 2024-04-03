@@ -41,7 +41,7 @@ public:
 
 private:
     void stripByteOrderMark() final { m_shouldStripByteOrderMark = true; }
-    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     bool handlePartialSequence(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush);

@@ -66,12 +66,6 @@ else
 
 debug("");
 
-debug("Check that the old values still work.");
-shouldBe("window.CSSRule.KEYFRAME_RULE", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
-shouldBe("window.CSSRule.KEYFRAMES_RULE", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
-
-debug("")
-
 var keyframes1 = document.styleSheets.item(0).cssRules.item(0);
 
 shouldBe("keyframes1.type", "window.CSSRule.KEYFRAMES_RULE");

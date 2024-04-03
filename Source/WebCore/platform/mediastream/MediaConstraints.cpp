@@ -90,16 +90,13 @@ double StringConstraint::fitnessDistance(const Vector<String>& values) const
     return minimumDistance;
 }
 
-void StringConstraint::merge(const MediaConstraint& other)
+void StringConstraint::merge(const StringConstraint& other)
 {
-    ASSERT(other.isString());
-    const StringConstraint& typedOther = downcast<StringConstraint>(other);
-
-    if (typedOther.isEmpty())
+    if (other.isEmpty())
         return;
 
     Vector<String> values;
-    if (typedOther.getExact(values)) {
+    if (other.getExact(values)) {
         if (m_exact.isEmpty())
             m_exact = values;
         else {
@@ -110,7 +107,7 @@ void StringConstraint::merge(const MediaConstraint& other)
         }
     }
 
-    if (typedOther.getIdeal(values)) {
+    if (other.getIdeal(values)) {
         if (m_ideal.isEmpty())
             m_ideal = values;
         else {
@@ -122,106 +119,47 @@ void StringConstraint::merge(const MediaConstraint& other)
     }
 }
 
-void FlattenedConstraint::set(const MediaConstraint& constraint)
+void MediaTrackConstraintSetMap::forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&& callback) const
 {
-    if (find(constraint.constraintType()))
-        return;
-
-    append(constraint);
-}
-
-void FlattenedConstraint::merge(const MediaConstraint& constraint)
-{
-    for (auto& variant : *this) {
-        if (variant.constraintType() != constraint.constraintType())
-            continue;
-
-        switch (variant.dataType()) {
-        case MediaConstraint::DataType::Integer:
-            ASSERT(constraint.isInt());
-            downcast<const IntConstraint>(variant).merge(downcast<const IntConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::Double:
-            ASSERT(constraint.isDouble());
-            downcast<const DoubleConstraint>(variant).merge(downcast<const DoubleConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::Boolean:
-            ASSERT(constraint.isBoolean());
-            downcast<const BooleanConstraint>(variant).merge(downcast<const BooleanConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::String:
-            ASSERT(constraint.isString());
-            downcast<const StringConstraint>(variant).merge(downcast<const StringConstraint>(constraint));
-            return;
-        case MediaConstraint::DataType::None:
-            ASSERT_NOT_REACHED();
-            return;
-        }
-    }
-
-    append(constraint);
-}
-
-void FlattenedConstraint::append(const MediaConstraint& constraint)
-{
-#if ASSERT_ENABLED
-    ++m_generation;
-#endif
-
-    m_variants.append(ConstraintHolder::create(constraint));
-}
-
-const MediaConstraint* FlattenedConstraint::find(MediaConstraintType type) const
-{
-    for (auto& variant : m_variants) {
-        if (variant.constraintType() == type)
-            return &variant.constraint();
-    }
-
-    return nullptr;
-}
-
-void MediaTrackConstraintSetMap::forEach(Function<void(const MediaConstraint&)>&& callback) const
-{
-    filter([callback = WTFMove(callback)] (const MediaConstraint& constraint) mutable {
-        callback(constraint);
+    filter([callback = WTFMove(callback)] (auto type, auto& constraint) mutable {
+        callback(type, constraint);
         return false;
     });
 }
 
-void MediaTrackConstraintSetMap::filter(const Function<bool(const MediaConstraint&)>& callback) const
+void MediaTrackConstraintSetMap::filter(const Function<bool(MediaConstraintType, const MediaConstraint&)>& callback) const
 {
-    if (m_width && !m_width->isEmpty() && callback(*m_width))
+    if (m_width && !m_width->isEmpty() && callback(MediaConstraintType::Width, *m_width))
         return;
-    if (m_height && !m_height->isEmpty() && callback(*m_height))
+    if (m_height && !m_height->isEmpty() && callback(MediaConstraintType::Height, *m_height))
         return;
-    if (m_sampleRate && !m_sampleRate->isEmpty() && callback(*m_sampleRate))
+    if (m_sampleRate && !m_sampleRate->isEmpty() && callback(MediaConstraintType::SampleRate, *m_sampleRate))
         return;
-    if (m_sampleSize && !m_sampleSize->isEmpty() && callback(*m_sampleSize))
-        return;
-
-    if (m_aspectRatio && !m_aspectRatio->isEmpty() && callback(*m_aspectRatio))
-        return;
-    if (m_frameRate && !m_frameRate->isEmpty() && callback(*m_frameRate))
-        return;
-    if (m_volume && !m_volume->isEmpty() && callback(*m_volume))
+    if (m_sampleSize && !m_sampleSize->isEmpty() && callback(MediaConstraintType::SampleSize, *m_sampleSize))
         return;
 
-    if (m_echoCancellation && !m_echoCancellation->isEmpty() && callback(*m_echoCancellation))
+    if (m_aspectRatio && !m_aspectRatio->isEmpty() && callback(MediaConstraintType::AspectRatio, *m_aspectRatio))
+        return;
+    if (m_frameRate && !m_frameRate->isEmpty() && callback(MediaConstraintType::FrameRate, *m_frameRate))
+        return;
+    if (m_volume && !m_volume->isEmpty() && callback(MediaConstraintType::Volume, *m_volume))
         return;
 
-    if (m_facingMode && !m_facingMode->isEmpty() && callback(*m_facingMode))
-        return;
-    if (m_deviceId && !m_deviceId->isEmpty() && callback(*m_deviceId))
-        return;
-    if (m_groupId && !m_groupId->isEmpty() && callback(*m_groupId))
+    if (m_echoCancellation && !m_echoCancellation->isEmpty() && callback(MediaConstraintType::EchoCancellation, *m_echoCancellation))
         return;
 
-    if (m_whiteBalanceMode && !m_whiteBalanceMode->isEmpty() && callback(*m_whiteBalanceMode))
+    if (m_facingMode && !m_facingMode->isEmpty() && callback(MediaConstraintType::FacingMode, *m_facingMode))
         return;
-    if (m_zoom && !m_zoom->isEmpty() && callback(*m_zoom))
+    if (m_deviceId && !m_deviceId->isEmpty() && callback(MediaConstraintType::DeviceId, *m_deviceId))
         return;
-    if (m_torch && !m_torch->isEmpty() && callback(*m_torch))
+    if (m_groupId && !m_groupId->isEmpty() && callback(MediaConstraintType::GroupId, *m_groupId))
+        return;
+
+    if (m_whiteBalanceMode && !m_whiteBalanceMode->isEmpty() && callback(MediaConstraintType::WhiteBalanceMode, *m_whiteBalanceMode))
+        return;
+    if (m_zoom && !m_zoom->isEmpty() && callback(MediaConstraintType::Zoom, *m_zoom))
+        return;
+    if (m_torch && !m_torch->isEmpty() && callback(MediaConstraintType::Torch, *m_torch))
         return;
 }
 
@@ -254,6 +192,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -289,6 +228,7 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::WhiteBalanceMode:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
@@ -311,7 +251,9 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::Torch:
         m_torch = WTFMove(constraint);
         break;
-
+    case MediaConstraintType::BackgroundBlur:
+        m_backgroundBlur = WTFMove(constraint);
+        break;
     case MediaConstraintType::Width:
     case MediaConstraintType::Height:
     case MediaConstraintType::SampleRate:
@@ -362,16 +304,247 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, std::op
     case MediaConstraintType::FocusDistance:
     case MediaConstraintType::Zoom:
     case MediaConstraintType::Torch:
+    case MediaConstraintType::BackgroundBlur:
     case MediaConstraintType::Unknown:
         ASSERT_NOT_REACHED();
         break;
     }
 }
 
+void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, const MediaConstraint& constraint)
+{
+    switch (constraint.dataType()) {
+    case MediaConstraint::DataType::Integer:
+        set(constraintType, std::make_optional(downcast<const IntConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::Double:
+        set(constraintType, std::make_optional(downcast<const DoubleConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::Boolean:
+        set(constraintType, std::make_optional(downcast<const BooleanConstraint>(constraint)));
+        return;
+    case MediaConstraint::DataType::String:
+        set(constraintType, std::make_optional(downcast<const StringConstraint>(constraint)));
+        return;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const IntConstraint& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::Width:
+        if (!m_width)
+            m_width = constraint;
+        else
+            m_width->merge(constraint);
+        break;
+    case MediaConstraintType::Height:
+        if (!m_height)
+            m_height = constraint;
+        else
+            m_height->merge(constraint);
+        break;
+    case MediaConstraintType::SampleRate:
+        if (!m_sampleRate)
+            m_sampleRate = constraint;
+        else
+            m_sampleRate->merge(constraint);
+        break;
+    case MediaConstraintType::SampleSize:
+        if (!m_sampleSize)
+            m_sampleSize = constraint;
+        else
+            m_sampleSize->merge(constraint);
+        break;
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::Torch:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const DoubleConstraint& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::AspectRatio:
+        if (!m_aspectRatio)
+            m_aspectRatio = constraint;
+        else
+            m_aspectRatio->merge(constraint);
+        break;
+    case MediaConstraintType::FrameRate:
+        if (!m_frameRate)
+            m_frameRate = constraint;
+        else
+            m_frameRate->merge(constraint);
+        break;
+    case MediaConstraintType::Volume:
+        if (!m_volume)
+            m_volume = constraint;
+        else
+            m_volume->merge(constraint);
+        break;
+    case MediaConstraintType::Zoom:
+        if (!m_zoom)
+            m_zoom = constraint;
+        else
+            m_zoom->merge(constraint);
+        break;
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::Torch:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const StringConstraint& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::FacingMode:
+        if (!m_facingMode)
+            m_facingMode = constraint;
+        else
+            m_facingMode->merge(constraint);
+        break;
+    case MediaConstraintType::DeviceId:
+        if (!m_deviceId)
+            m_deviceId = constraint;
+        else
+            m_deviceId->merge(constraint);
+        break;
+    case MediaConstraintType::GroupId:
+        if (!m_groupId)
+            m_groupId = constraint;
+        else
+            m_groupId->merge(constraint);
+        break;
+    case MediaConstraintType::WhiteBalanceMode:
+        if (!m_whiteBalanceMode)
+            m_whiteBalanceMode = constraint;
+        else
+            m_whiteBalanceMode->merge(constraint);
+        break;
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::EchoCancellation:
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+    case MediaConstraintType::Torch:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::BackgroundBlur:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const BooleanConstraint& constraint)
+{
+    switch (constraintType) {
+    case MediaConstraintType::EchoCancellation:
+        if (!m_echoCancellation)
+            m_echoCancellation = constraint;
+        else
+            m_echoCancellation->merge(constraint);
+        break;
+    case MediaConstraintType::DisplaySurface:
+        if (!m_displaySurface)
+            m_displaySurface = constraint;
+        else
+            m_displaySurface->merge(constraint);
+        break;
+    case MediaConstraintType::LogicalSurface:
+        if (!m_logicalSurface)
+            m_logicalSurface = constraint;
+        else
+            m_logicalSurface->merge(constraint);
+        break;
+    case MediaConstraintType::Torch:
+        if (!m_torch)
+            m_torch = constraint;
+        else
+            m_torch->merge(constraint);
+        break;
+    case MediaConstraintType::BackgroundBlur:
+        if (!m_backgroundBlur)
+            m_backgroundBlur = constraint;
+        else
+            m_backgroundBlur->merge(constraint);
+        break;
+
+    case MediaConstraintType::FacingMode:
+    case MediaConstraintType::DeviceId:
+    case MediaConstraintType::GroupId:
+    case MediaConstraintType::WhiteBalanceMode:
+    case MediaConstraintType::Width:
+    case MediaConstraintType::Height:
+    case MediaConstraintType::SampleRate:
+    case MediaConstraintType::SampleSize:
+    case MediaConstraintType::AspectRatio:
+    case MediaConstraintType::FrameRate:
+    case MediaConstraintType::Volume:
+    case MediaConstraintType::Zoom:
+    case MediaConstraintType::FocusDistance:
+    case MediaConstraintType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void MediaTrackConstraintSetMap::merge(MediaConstraintType constraintType, const MediaConstraint& constraint)
+{
+    switch (constraint.dataType()) {
+    case MediaConstraint::DataType::Integer:
+        merge(constraintType, downcast<const IntConstraint>(constraint));
+        return;
+    case MediaConstraint::DataType::Double:
+        merge(constraintType, downcast<const DoubleConstraint>(constraint));
+        return;
+    case MediaConstraint::DataType::Boolean:
+        merge(constraintType, downcast<const BooleanConstraint>(constraint));
+        return;
+    case MediaConstraint::DataType::String:
+        merge(constraintType, downcast<const StringConstraint>(constraint));
+        return;
+    }
+}
+
 size_t MediaTrackConstraintSetMap::size() const
 {
     size_t count = 0;
-    forEach([&count] (const MediaConstraint&) mutable {
+    forEach([&count] (auto, const MediaConstraint&) mutable {
         ++count;
     });
 
@@ -386,17 +559,17 @@ bool MediaTrackConstraintSetMap::isEmpty() const
 static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addWidthConstraint, bool addHeightConstraint)
 {
     if (addFrameRateConstraint) {
-        DoubleConstraint frameRateConstraint({ }, MediaConstraintType::FrameRate);
+        DoubleConstraint frameRateConstraint;
         frameRateConstraint.setIdeal(30);
         videoConstraints.set(MediaConstraintType::FrameRate, WTFMove(frameRateConstraint));
     }
     if (addWidthConstraint) {
-        IntConstraint widthConstraint({ }, MediaConstraintType::Width);
+        IntConstraint widthConstraint;
         widthConstraint.setIdeal(640);
         videoConstraints.set(MediaConstraintType::Width, WTFMove(widthConstraint));
     }
     if (addHeightConstraint) {
-        IntConstraint heightConstraint({ }, MediaConstraintType::Height);
+        IntConstraint heightConstraint;
         heightConstraint.setIdeal(480);
         videoConstraints.set(MediaConstraintType::Height, WTFMove(heightConstraint));
     }
@@ -421,7 +594,7 @@ void MediaConstraints::setDefaultAudioConstraints()
     });
 
     if (needsEchoCancellationConstraint) {
-        BooleanConstraint echoCancellationConstraint({ }, MediaConstraintType::EchoCancellation);
+        BooleanConstraint echoCancellationConstraint;
         echoCancellationConstraint.setIdeal(true);
         mandatoryConstraints.set(MediaConstraintType::EchoCancellation, WTFMove(echoCancellationConstraint));
     }
@@ -445,47 +618,46 @@ void MediaConstraints::setDefaultVideoConstraints()
     addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraint, needsWidthConstraint, needsHeightConstraint);
 }
 
-void MediaConstraint::log() const
+void MediaConstraint::log(MediaConstraintType constraintType) const
 {
     switch (dataType()) {
     case DataType::Boolean:
-        downcast<const BooleanConstraint>(*this).logAsBoolean();
+        downcast<const BooleanConstraint>(*this).logAsBoolean(constraintType);
         break;
     case DataType::Double:
-        downcast<const DoubleConstraint>(*this).logAsDouble();
+        downcast<const DoubleConstraint>(*this).logAsDouble(constraintType);
         break;
     case DataType::Integer:
-        downcast<const IntConstraint>(*this).logAsInt();
+        downcast<const IntConstraint>(*this).logAsInt(constraintType);
         break;
-    case DataType::None:
     case DataType::String:
-        WTFLogAlways("MediaConstraint %d of type %d", static_cast<int>(constraintType()), static_cast<int>(dataType()));
+        WTFLogAlways("MediaConstraint %d of type %d", static_cast<int>(constraintType), static_cast<int>(dataType()));
     }
 }
 
-void BooleanConstraint::logAsBoolean() const
+void BooleanConstraint::logAsBoolean(MediaConstraintType constraintType) const
 {
-    WTFLogAlways("BooleanConstraint %d, exact %d, ideal %d", static_cast<int>(constraintType()), m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("BooleanConstraint %d, exact %d, ideal %d", static_cast<int>(constraintType), m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
-void DoubleConstraint::logAsDouble() const
+void DoubleConstraint::logAsDouble(MediaConstraintType constraintType) const
 {
-    WTFLogAlways("DoubleConstraint %d, min %f, max %f, exact %f, ideal %f", static_cast<int>(constraintType()), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("DoubleConstraint %d, min %f, max %f, exact %f, ideal %f", static_cast<int>(constraintType), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
-void IntConstraint::logAsInt() const
+void IntConstraint::logAsInt(MediaConstraintType constraintType) const
 {
-    WTFLogAlways("IntConstraint %d, min %d, max %d, exact %d, ideal %d", static_cast<int>(constraintType()), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
+    WTFLogAlways("IntConstraint %d, min %d, max %d, exact %d, ideal %d", static_cast<int>(constraintType), m_min ? *m_min : -1, m_max ? *m_max : -1, m_exact ? *m_exact : -1, m_ideal ? *m_ideal : -1);
 }
 
 StringConstraint StringConstraint::isolatedCopy() const
 {
-    return StringConstraint({ name().isolatedCopy(), constraintType(), dataType() }, crossThreadCopy(m_exact), crossThreadCopy(m_ideal));
+    return StringConstraint(MediaConstraint { DataType::String }, crossThreadCopy(m_exact), crossThreadCopy(m_ideal));
 }
 
 MediaTrackConstraintSetMap MediaTrackConstraintSetMap::isolatedCopy() const
 {
-    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch };
+    return { m_width, m_height, m_sampleRate, m_sampleSize, m_aspectRatio, m_frameRate, m_volume, m_echoCancellation, m_displaySurface, m_logicalSurface, crossThreadCopy(m_facingMode), crossThreadCopy(m_deviceId), crossThreadCopy(m_groupId), crossThreadCopy(m_whiteBalanceMode), m_zoom, m_torch, m_backgroundBlur };
 }
 
 MediaConstraints MediaConstraints::isolatedCopy() const

@@ -107,8 +107,8 @@ public:
     virtual void rubberBandingStateChanged(bool) { }
 #endif
 
-    virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
-    virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
+    virtual void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
+    virtual void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
 
     virtual FloatPoint scrollOffset() const = 0;
 
@@ -124,6 +124,7 @@ public:
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
     virtual bool scrollAnimationEnabled() const { return true; }
+    virtual ScrollingNodeID scrollingNodeIDForTesting() const = 0;
 };
 
 class ScrollingEffectsController : public ScrollAnimationClient {

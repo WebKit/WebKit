@@ -49,6 +49,7 @@ class BuilderState;
 void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
 
 enum class ForVisitedLink : bool { No, Yes };
+enum class ApplyValueType : uint8_t { Value, Initial, Inherit };
 
 struct BuilderContext {
     Ref<const Document> document;
@@ -73,7 +74,7 @@ public:
     inline void setFontDescription(FontCascadeDescription&&);
     void setFontSize(FontCascadeDescription&, float size);
     inline void setZoom(float);
-    inline void setEffectiveZoom(float);
+    inline void setUsedZoom(float);
     inline void setWritingMode(WritingMode);
     inline void setTextOrientation(TextOrientation);
 

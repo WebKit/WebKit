@@ -156,7 +156,7 @@ private:
     double timestamp();
 
     static bool mainResourceContent(LocalFrame*, bool withBase64Encode, String* result);
-    static bool dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
+    static bool dataContent(std::span<const uint8_t> data, const String& textEncodingName, bool withBase64Encode, String* result);
 
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);

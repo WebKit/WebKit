@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -421,6 +421,8 @@ StubInfoSummary StructureStubInfo::summary(VM& vm) const
             case AccessCase::IndexedMegamorphicLoad:
             case AccessCase::StoreMegamorphic:
             case AccessCase::IndexedMegamorphicStore:
+            case AccessCase::InMegamorphic:
+            case AccessCase::IndexedMegamorphicIn:
                 return StubInfoSummary::Megamorphic;
             default:
                 break;
@@ -785,49 +787,6 @@ void StructureStubInfo::checkConsistency()
     }
 }
 #endif // ASSERT_ENABLED
-
-RefPtr<PolymorphicAccessJITStubRoutine> SharedJITStubSet::getMegamorphic(AccessType type) const
-{
-    switch (type) {
-    case AccessType::GetByVal:
-        return m_getByValMegamorphic;
-    case AccessType::GetByValWithThis:
-        return m_getByValWithThisMegamorphic;
-    case AccessType::PutByValStrict:
-    case AccessType::PutByValSloppy:
-        return m_putByValMegamorphic;
-    default:
-        return nullptr;
-    }
-}
-
-void SharedJITStubSet::setMegamorphic(AccessType type, Ref<PolymorphicAccessJITStubRoutine> stub)
-{
-    switch (type) {
-    case AccessType::GetByVal:
-        m_getByValMegamorphic = WTFMove(stub);
-        break;
-    case AccessType::GetByValWithThis:
-        m_getByValWithThisMegamorphic = WTFMove(stub);
-        break;
-    case AccessType::PutByValStrict:
-    case AccessType::PutByValSloppy:
-        m_putByValMegamorphic = WTFMove(stub);
-        break;
-    default:
-        break;
-    }
-}
-
-RefPtr<InlineCacheHandler> SharedJITStubSet::getSlowPathHandler(AccessType type) const
-{
-    return m_slowPathHandlers[static_cast<unsigned>(type)];
-}
-
-void SharedJITStubSet::setSlowPathHandler(AccessType type, Ref<InlineCacheHandler> handler)
-{
-    m_slowPathHandlers[static_cast<unsigned>(type)] = WTFMove(handler);
-}
 
 #endif // ENABLE(JIT)
 

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="textinput" type="text" />
+<iframe id="iframe" onload="startTest()" src="data:text/html,<body><input id='iframe-input' type='text' /></body>">
+</iframe>
+
+<script>
+var output = "This tests that the prefers non-blinking cursor setting stops and starts caret blinking as expected.\n\n";
+const iframe = document.getElementById("iframe");
+window.jsTestIsAsync = true;
+
+function startTest() {
+    document.getElementById("textinput").focus();
+    output += expect("internals.isCaretBlinkingSuspended(document)", "false");
+
+    internals.setPrefersNonBlinkingCursor(true);
+    output += expect("internals.isCaretBlinkingSuspended(document)", "true");
+
+    internals.setPrefersNonBlinkingCursor(false);
+    output += expect("internals.isCaretBlinkingSuspended(document)", "false");
+
+    iframe.contentDocument.getElementById("iframe-input").focus();
+    output += expect("internals.isCaretBlinkingSuspended(iframe.contentDocument)", "false");
+
+    internals.setPrefersNonBlinkingCursor(true);
+    output += expect("internals.isCaretBlinkingSuspended(iframe.contentDocument)", "true");
+
+    internals.setPrefersNonBlinkingCursor(false);
+    output += expect("internals.isCaretBlinkingSuspended(iframe.contentDocument)", "false");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

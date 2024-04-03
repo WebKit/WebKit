@@ -50,14 +50,15 @@ RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 
 void RemoteCompositorIntegration::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
 {
     UNUSED_PARAM(imageBufferIdentifier);
-    m_backing->withDisplayBufferAsNativeImage(bufferIndex, [&](WebCore::NativeImage& image) {
-        m_gpu.paintNativeImageToImageBuffer(image, imageBufferIdentifier);
+    m_backing->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
+        if (image)
+            gpu->paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
         completionHandler();
     });
 }

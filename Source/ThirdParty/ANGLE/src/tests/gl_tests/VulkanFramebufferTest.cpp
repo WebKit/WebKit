@@ -78,10 +78,6 @@ TEST_P(VulkanFramebufferTest, TextureAttachmentMipIncomplete)
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 
-    // http://anglebug.com/4686: The Vulkan backend is allocating three mips of sizes 100x100,
-    // 50x50 and 25x25 instead of one mip of size 100x100.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     rx::TextureVk *textureVk = hackTexture(texture);
     EXPECT_EQ(textureVk->getImage().getLevelCount(), 1u);
 }
@@ -90,9 +86,9 @@ TEST_P(VulkanFramebufferTest, TextureAttachmentMipIncomplete)
 // R8G8B8A8.
 TEST_P(VulkanFramebufferTest, R4G4B4A4TextureSampleOnlyActuallyUses444Format)
 {
-    rx::ContextVk *contextVk = hackANGLE();
-    rx::RendererVk *renderer = contextVk->getRenderer();
-    angle::FormatID formatID = angle::FormatID::R4G4B4A4_UNORM;
+    rx::ContextVk *contextVk   = hackANGLE();
+    rx::vk::Renderer *renderer = contextVk->getRenderer();
+    angle::FormatID formatID   = angle::FormatID::R4G4B4A4_UNORM;
 
     // Check if R4G4B4A4_UNORM is supported format.
     bool isTexturable = renderer->hasImageFormatFeatureBits(

@@ -63,6 +63,8 @@ public:
     void canonicalizeUnit();
 
     const CSSPrimitiveValue& value() const { return m_value.get(); }
+    Ref<CSSPrimitiveValue> protectedValue() const { return m_value; }
+
     double doubleValue(CSSUnitType) const final;
 
 private:

@@ -137,15 +137,16 @@ bool Box::establishesInlineFormattingContext() const
     if (!isBlockContainer())
         return false;
 
-    if (!isElementBox())
+    auto* elementBox = dynamicDowncast<ElementBox>(*this);
+    if (!elementBox)
         return false;
 
     // FIXME ???
-    if (!downcast<ElementBox>(*this).firstInFlowChild())
+    if (!elementBox->firstInFlowChild())
         return false;
 
     // It's enough to check the first in-flow child since we can't have both block and inline level sibling boxes.
-    return downcast<ElementBox>(*this).firstInFlowChild()->isInlineLevelBox();
+    return elementBox->firstInFlowChild()->isInlineLevelBox();
 }
 
 bool Box::establishesTableFormattingContext() const
@@ -294,7 +295,7 @@ bool Box::isLayoutContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.effectiveContainment().contains(Containment::Layout) && supportsLayoutContainment();
+    return m_style.usedContain().contains(Containment::Layout) && supportsLayoutContainment();
 }
 
 bool Box::isRubyAnnotationBox() const
@@ -326,7 +327,7 @@ bool Box::isSizeContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.effectiveContainment().contains(Containment::Size) && supportsSizeContainment();
+    return m_style.usedContain().contains(Containment::Size) && supportsSizeContainment();
 }
 
 bool Box::isInternalTableBox() const
@@ -397,9 +398,12 @@ bool Box::isOverflowVisible() const
     }
     if (is<InitialContainingBlock>(*this)) {
         auto* documentBox = downcast<ElementBox>(*this).firstChild();
-        if (!documentBox || !documentBox->isDocumentBox() || !is<ElementBox>(documentBox))
+        if (!documentBox || !documentBox->isDocumentBox())
             return isOverflowVisible;
-        auto* bodyBox = downcast<ElementBox>(documentBox)->firstChild();
+        auto* elementBox = dynamicDowncast<ElementBox>(*documentBox);
+        if (!elementBox)
+            return isOverflowVisible;
+        auto* bodyBox = elementBox->firstChild();
         if (!bodyBox || !bodyBox->isBodyBox())
             return isOverflowVisible;
         auto& bodyBoxStyle = bodyBox->style();

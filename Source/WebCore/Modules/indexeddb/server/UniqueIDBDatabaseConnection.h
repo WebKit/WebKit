@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBDatabaseConnectionIdentifier.h"
 #include "UniqueIDBDatabase.h"
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
@@ -44,7 +45,7 @@ class ServerOpenDBRequest;
 class UniqueIDBDatabase;
 class UniqueIDBDatabaseTransaction;
 
-class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection>, public ThreadSafeIdentified<UniqueIDBDatabaseConnection>, public CanMakeWeakPtr<UniqueIDBDatabaseConnection> {
+class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection>, public Identified<IDBDatabaseConnectionIdentifier>, public CanMakeWeakPtr<UniqueIDBDatabaseConnection> {
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 

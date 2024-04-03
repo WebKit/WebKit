@@ -43,18 +43,10 @@ public:
         WTF::initializeMainThread();
 
         // create temp file
-        FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File"_s, handle);
-        FileSystem::closeFile(handle);
-        
-        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile"_s, handle);
-        FileSystem::closeFile(handle);
+        m_tempFilePath = FileSystem::createTemporaryFile("tempTestFile"_s);
+        m_spaceContainingFilePath = FileSystem::createTemporaryFile("temp Empty Test File"_s);
+        m_bangContainingFilePath = FileSystem::createTemporaryFile("temp!Empty!Test!File"_s);
+        m_quoteContainingFilePath = FileSystem::createTemporaryFile("temp\"Empty\"TestFile"_s);
     }
 
     void TearDown() override
@@ -255,32 +247,22 @@ TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)
     auto exampleOrigin = SecurityOrigin::create(URL { "http://www.example.com"_str });
     EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("example.com"_s));
     EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("www.example.com"_s));
-#if !ENABLE(PUBLIC_SUFFIX_LIST)
-    EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("com"_s));
-#endif
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix(emptyString()));
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix("."_s));
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix(".example.com"_s));
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix(".www.example.com"_s));
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix("example.com."_s));
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     EXPECT_FALSE(exampleOrigin->isMatchingRegistrableDomainSuffix("com"_s));
-#endif
 
     auto exampleDotOrigin = SecurityOrigin::create(URL { "http://www.example.com."_str });
     EXPECT_TRUE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("example.com."_s));
     EXPECT_TRUE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("www.example.com."_s));
-#if !ENABLE(PUBLIC_SUFFIX_LIST)
-    EXPECT_TRUE(exampleOrigin->isMatchingRegistrableDomainSuffix("com."_s));
-#endif
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix(emptyString()));
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("."_s));
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix(".example.com."_s));
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix(".www.example.com."_s));
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("example.com"_s));
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     EXPECT_FALSE(exampleDotOrigin->isMatchingRegistrableDomainSuffix("com"_s));
-#endif
 
     auto ipOrigin = SecurityOrigin::create(URL { "http://127.0.0.1"_str });
     EXPECT_TRUE(ipOrigin->isMatchingRegistrableDomainSuffix("127.0.0.1"_s, true));

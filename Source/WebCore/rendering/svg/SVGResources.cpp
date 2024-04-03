@@ -162,7 +162,7 @@ static inline String targetReferenceFromResource(SVGElement& element)
     else
         ASSERT_NOT_REACHED();
 
-    return SVGURIReference::fragmentIdentifierFromIRIString(target, element.document());
+    return SVGURIReference::fragmentIdentifierFromIRIString(target, element.protectedDocument());
 }
 
 static inline bool isChainableResource(const SVGElement& element, const SVGElement& linkedResource)
@@ -185,8 +185,8 @@ static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(Tre
     if (paintType != SVGPaintType::URI && paintType != SVGPaintType::URIRGBColor && paintType != SVGPaintType::URICurrentColor)
         return nullptr;
 
-    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.documentScope());
-    LegacyRenderSVGResourceContainer* container = getRenderSVGResourceContainerById(treeScope, id);
+    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.protectedDocumentScope());
+    CheckedPtr container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
         hasPendingResource = true;
         return nullptr;
@@ -196,7 +196,7 @@ static inline LegacyRenderSVGResourceContainer* paintingResourceFromSVGPaint(Tre
     if (resourceType != PatternResourceType && resourceType != LinearGradientResourceType && resourceType != RadialGradientResourceType)
         return nullptr;
 
-    return container;
+    return container.get();
 }
 
 std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
@@ -205,12 +205,12 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
     if (!renderer.element())
         return nullptr;
 
-    auto& element = downcast<SVGElement>(*renderer.element());
+    Ref element = downcast<SVGElement>(*renderer.element());
 
-    auto& treeScope = element.treeScopeForSVGReferences();
-    Document& document = treeScope.documentScope();
+    Ref treeScope = element->treeScopeForSVGReferences();
+    Ref document = treeScope->documentScope();
 
-    const AtomString& tagName = element.localName();
+    const AtomString& tagName = element->localName();
     if (tagName.isNull())
         return nullptr;
 
@@ -231,26 +231,25 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, id))
                 ensureResources(foundResources).setClipper(clipper);
             else
-                treeScope.addPendingSVGResource(id, element);
+                treeScope->addPendingSVGResource(id, element);
         }
 
         if (style.hasFilter()) {
             const FilterOperations& filterOperations = style.filter();
             if (filterOperations.size() == 1) {
-                const FilterOperation& filterOperation = *filterOperations.at(0);
-                if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation)) {
-                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), element.document());
+                if (RefPtr referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(*filterOperations.at(0))) {
+                    AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation->url(), element->protectedDocument());
                     if (auto* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(treeScope, id))
                         ensureResources(foundResources).setFilter(filter);
                     else
-                        treeScope.addPendingSVGResource(id, element);
+                        treeScope->addPendingSVGResource(id, element);
                 }
             }
         }
 
         if (style.hasPositionedMask()) {
             // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
-            auto* maskImage = style.maskImage();
+            RefPtr maskImage = style.maskImage();
             auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document) : URL();
 
             if (!reresolvedURL.isEmpty()) {
@@ -258,7 +257,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
                 if (auto* masker = getRenderSVGResourceById<LegacyRenderSVGResourceMasker>(treeScope, resourceID))
                     ensureResources(foundResources).setMasker(masker);
                 else
-                    treeScope.addPendingSVGResource(resourceID, element);
+                    treeScope->addPendingSVGResource(resourceID, element);
             }
         }
     }
@@ -269,7 +268,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             if (auto* marker = getRenderSVGResourceById<LegacyRenderSVGResourceMarker>(treeScope, markerId))
                 (ensureResources(foundResources).*setMarker)(marker);
             else
-                treeScope.addPendingSVGResource(markerId, element);
+                treeScope->addPendingSVGResource(markerId, element);
         };
         buildCachedMarkerResource(svgStyle.markerStartResource(), &SVGResources::setMarkerStart);
         buildCachedMarkerResource(svgStyle.markerMidResource(), &SVGResources::setMarkerMid);
@@ -283,7 +282,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             if (auto* fill = paintingResourceFromSVGPaint(treeScope, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource))
                 ensureResources(foundResources).setFill(fill);
             else if (hasPendingResource)
-                treeScope.addPendingSVGResource(id, element);
+                treeScope->addPendingSVGResource(id, element);
         }
 
         if (svgStyle.hasStroke()) {
@@ -292,7 +291,7 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
             if (auto* stroke = paintingResourceFromSVGPaint(treeScope, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource))
                 ensureResources(foundResources).setStroke(stroke);
             else if (hasPendingResource)
-                treeScope.addPendingSVGResource(id, element);
+                treeScope->addPendingSVGResource(id, element);
         }
     }
 
@@ -300,8 +299,8 @@ std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderEle
         AtomString id(targetReferenceFromResource(element));
         auto* linkedResource = getRenderSVGResourceContainerById(document, id);
         if (!linkedResource)
-            treeScope.addPendingSVGResource(id, element);
-        else if (isChainableResource(element, linkedResource->element()))
+            treeScope->addPendingSVGResource(id, element);
+        else if (isChainableResource(element, linkedResource->protectedElement()))
             ensureResources(foundResources).setLinkedResource(linkedResource);
     }
 

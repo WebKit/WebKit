@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 29: "Two"
           RenderText {#text} at (28,0) size 5x17
             text run at (28,0) width 5: " "
-          RenderInline {SPAN} at (0,0) size 38x17
+          RenderInline {SPAN} at (32,0) size 38x17
             RenderText {#text} at (32,0) size 38x17
               text run at (32,0) width 38: "Three"
         RenderBlock {DIV} at (0,36) size 784x18

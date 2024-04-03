@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" role="combobox" id="combobox" aria-label="Combobox" aria-activedescendant="item2">
+<div role="list">
+  <div role="listitem">item1</div>
+  <div role="listitem" id="item2" aria-label="item2">item2</div>
+</div>
+
+<script>
+var output = "On macOS, a combobox should map aria-activedescendant to AXSelectedChildren.\n";
+
+if (window.accessibilityController) {
+    var combobox = accessibilityController.accessibleElementById("combobox");
+    output += expect("combobox.selectedChildrenCount", "1");
+    activeDescendant = combobox.selectedChildAtIndex(0);
+    output += expect("activeDescendant.role", "'AXRole: AXGroup'");
+    output += expect("activeDescendant.title", "'AXTitle: item2'");
+    debug(output);
+}
+</script>
+</body>
+</html>

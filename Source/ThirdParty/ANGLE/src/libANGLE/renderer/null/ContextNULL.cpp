@@ -125,7 +125,7 @@ ContextNULL::ContextNULL(const gl::State &state,
 
 ContextNULL::~ContextNULL() {}
 
-angle::Result ContextNULL::initialize()
+angle::Result ContextNULL::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     return angle::Result::Continue;
 }

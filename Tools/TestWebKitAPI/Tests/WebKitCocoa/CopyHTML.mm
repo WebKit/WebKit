@@ -30,9 +30,13 @@
 
 #import "PasteboardUtilities.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/ColorCocoa.h>
+#import <WebKit/NSAttributedStringPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -166,6 +170,47 @@ TEST(CopyHTML, SanitizationPreservesCharacterSet)
         }];
         EXPECT_TRUE(foundColorAttribute);
     }
+}
+
+TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head><base href='https://webkit.org/' /></head>"
+        "<body><a href='/downloads'>Click</a> for downloads</body>"
+        "</html>"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr archiveData = [UIPasteboard.generalPasteboard dataForPasteboardType:UTTypeWebArchive.identifier];
+#else
+    RetainPtr archiveData = [NSPasteboard.generalPasteboard dataForType:UTTypeWebArchive.identifier];
+#endif
+
+    __block bool done = false;
+    __block RetainPtr<NSAttributedString> resultString;
+    __block RetainPtr<NSError> resultError;
+    [NSAttributedString _loadFromHTMLWithOptions:@{ } contentLoader:^(WKWebView *loadingWebView) {
+        return [loadingWebView loadData:archiveData.get() MIMEType:UTTypeWebArchive.preferredMIMEType characterEncodingName:@"" baseURL:[NSURL URLWithString:@"about:blank"]];
+    } completionHandler:^(NSAttributedString *string, NSDictionary *, NSError *error) {
+        resultString = string;
+        resultError = error;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto links = adoptNS([NSMutableArray<NSURL *> new]);
+    [resultString enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(NSURL *url, NSRange, BOOL*) {
+        [links addObject:url];
+    }];
+
+    EXPECT_NULL(resultError);
+    EXPECT_WK_STREQ("Click for downloads", [resultString string]);
+    EXPECT_EQ(1U, [links count]);
+    EXPECT_WK_STREQ("https://webkit.org/downloads", [links firstObject].absoluteString);
 }
 
 #if PLATFORM(MAC)

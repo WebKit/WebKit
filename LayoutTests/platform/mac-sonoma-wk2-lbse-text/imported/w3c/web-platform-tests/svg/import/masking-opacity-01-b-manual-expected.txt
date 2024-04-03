@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,4.91) size 442x286
+  RenderSVGTransformableContainer {g} at (10,4.91) size 441.27x285.09
+layer at (50,4.91) size 387x28
+  RenderSVGText {text} at (40,0) size 387x28 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 387x28
+      chunk 1 text run 1 at (50.00,27.00) startOffset 0 endOffset 37 width 386.87: "Test for opacity property on a group."
+layer at (10,30) size 100x261
+  RenderSVGRect {rect} at (0,25.09) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
+layer at (60,50) size 90x51
+  RenderSVGTransformableContainer {g} at (50,45.09) size 90x50
+layer at (60,50) size 80x40
+  RenderSVGRect {rect} at (0,0) size 80x40 [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=50.00] [width=80.00] [height=40.00]
+layer at (70,60) size 80x40
+  RenderSVGRect {rect} at (10,10) size 80x40 [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=60.00] [width=80.00] [height=40.00]
+layer at (200,43.59) size 147x23
+  RenderSVGText {text} at (190,38) size 147x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 147x23
+      chunk 1 text run 1 at (200.00,62.00) startOffset 0 endOffset 16 width 146.75: "Group opacity: 1"
+layer at (200,61.59) size 219x23
+  RenderSVGText {text} at (190,56) size 220x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 220x23
+      chunk 1 text run 1 at (200.00,80.00) startOffset 0 endOffset 25 width 219.02: "Blue rectangle opacity: 1"
+layer at (200,79.59) size 235x23
+  RenderSVGText {text} at (190,74) size 235x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 235x23
+      chunk 1 text run 1 at (200.00,98.00) startOffset 0 endOffset 26 width 234.58: "Green rectangle opacity: 1"
+layer at (60,110) size 90x51
+  RenderSVGTransformableContainer {g} at (50,105.09) size 90x50 [opacity=0.50]
+layer at (60,110) size 80x40
+  RenderSVGRect {rect} at (0,0) size 80x40 [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=110.00] [width=80.00] [height=40.00]
+layer at (70,120) size 80x40
+  RenderSVGRect {rect} at (10,10) size 80x40 [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=120.00] [width=80.00] [height=40.00]
+layer at (200,103.59) size 163x23
+  RenderSVGText {text} at (190,98) size 164x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 164x23
+      chunk 1 text run 1 at (200.00,122.00) startOffset 0 endOffset 18 width 163.43: "Group opacity: 0.5"
+layer at (200,121.59) size 219x23
+  RenderSVGText {text} at (190,116) size 220x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 220x23
+      chunk 1 text run 1 at (200.00,140.00) startOffset 0 endOffset 25 width 219.02: "Blue rectangle opacity: 1"
+layer at (200,139.59) size 235x23
+  RenderSVGText {text} at (190,134) size 235x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 235x23
+      chunk 1 text run 1 at (200.00,158.00) startOffset 0 endOffset 26 width 234.58: "Green rectangle opacity: 1"
+layer at (60,170) size 90x51
+  RenderSVGTransformableContainer {g} at (50,165.09) size 90x50
+layer at (60,170) size 80x40
+  RenderSVGRect {rect} at (0,0) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=170.00] [width=80.00] [height=40.00]
+layer at (70,180) size 80x40
+  RenderSVGRect {rect} at (10,10) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=180.00] [width=80.00] [height=40.00]
+layer at (200,163.59) size 147x23
+  RenderSVGText {text} at (190,158) size 147x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 147x23
+      chunk 1 text run 1 at (200.00,182.00) startOffset 0 endOffset 16 width 146.75: "Group opacity: 1"
+layer at (200,181.59) size 236x23
+  RenderSVGText {text} at (190,176) size 236x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 236x23
+      chunk 1 text run 1 at (200.00,200.00) startOffset 0 endOffset 27 width 235.70: "Blue rectangle opacity: 0.5"
+layer at (200,199.59) size 251x23
+  RenderSVGText {text} at (190,194) size 252x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 252x23
+      chunk 1 text run 1 at (200.00,218.00) startOffset 0 endOffset 28 width 251.26: "Green rectangle opacity: 0.5"
+layer at (60,230) size 90x51
+  RenderSVGTransformableContainer {g} at (50,225.09) size 90x50 [opacity=0.50]
+layer at (60,230) size 80x40
+  RenderSVGRect {rect} at (0,0) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=230.00] [width=80.00] [height=40.00]
+layer at (70,240) size 80x40
+  RenderSVGRect {rect} at (10,10) size 80x40 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=240.00] [width=80.00] [height=40.00]
+layer at (200,223.59) size 163x23
+  RenderSVGText {text} at (190,218) size 164x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 164x23
+      chunk 1 text run 1 at (200.00,242.00) startOffset 0 endOffset 18 width 163.43: "Group opacity: 0.5"
+layer at (200,241.59) size 236x23
+  RenderSVGText {text} at (190,236) size 236x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 236x23
+      chunk 1 text run 1 at (200.00,260.00) startOffset 0 endOffset 27 width 235.70: "Blue rectangle opacity: 0.5"
+layer at (200,259.59) size 251x23
+  RenderSVGText {text} at (190,254) size 252x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 252x23
+      chunk 1 text run 1 at (200.00,278.00) startOffset 0 endOffset 28 width 251.26: "Green rectangle opacity: 0.5"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

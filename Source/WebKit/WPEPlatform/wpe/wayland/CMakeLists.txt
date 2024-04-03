@@ -5,10 +5,10 @@ configure_file(wpe-platform-wayland-uninstalled.pc.in ${CMAKE_BINARY_DIR}/wpe-pl
 
 set(WPEPlatformWayland_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEDisplayWayland.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEMonitorWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEViewWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandCursor.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandCursorTheme.cpp
-    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandOutput.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandSHMPool.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandSeat.cpp
     ${WPEPlatform_DERIVED_SOURCES_DIR}/wpe/wayland/linux-dmabuf-unstable-v1-protocol.c

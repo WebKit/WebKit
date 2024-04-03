@@ -95,14 +95,29 @@ void RemoteFrame::changeLocation(FrameLoadRequest&& request)
     m_client->changeLocation(WTFMove(request));
 }
 
-void RemoteFrame::broadcastFrameRemovalToOtherProcesses()
+void RemoteFrame::updateRemoteFrameAccessibilityOffset(IntPoint offset)
 {
-    m_client->broadcastFrameRemovalToOtherProcesses();
+    m_client->updateRemoteFrameAccessibilityOffset(frameID(), offset);
+}
+
+void RemoteFrame::unbindRemoteAccessibilityFrames(int processIdentifier)
+{
+    m_client->unbindRemoteAccessibilityFrames(processIdentifier);
+}
+
+void RemoteFrame::bindRemoteAccessibilityFrames(int processIdentifier, std::span<const uint8_t> dataToken, CompletionHandler<void(std::span<const uint8_t>, int)>&& completionHandler)
+{
+    return m_client->bindRemoteAccessibilityFrames(processIdentifier, frameID(), dataToken, WTFMove(completionHandler));
 }
 
 FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();
+}
+
+FrameLoaderClient& RemoteFrame::loaderClient()
+{
+    return m_client.get();
 }
 
 void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
@@ -113,11 +128,22 @@ void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
 void RemoteFrame::frameDetached()
 {
     m_client->frameDetached();
+    m_window->frameDetached();
 }
 
 String RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
 {
     return m_client->renderTreeAsText(baseIndent, behavior);
+}
+
+String RemoteFrame::customUserAgent() const
+{
+    return m_customUserAgent;
+}
+
+String RemoteFrame::customUserAgentAsSiteSpecificQuirks() const
+{
+    return m_customUserAgentAsSiteSpecificQuirks;
 }
 
 } // namespace WebCore

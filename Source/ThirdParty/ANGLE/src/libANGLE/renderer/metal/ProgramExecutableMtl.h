@@ -248,18 +248,14 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     angle::Result updateXfbBuffers(ContextMtl *context,
                                    mtl::RenderCommandEncoder *cmdEncoder,
                                    const mtl::RenderPipelineDesc &pipelineDesc);
-    angle::Result legalizeUniformBufferOffsets(ContextMtl *context,
-                                               const std::vector<gl::InterfaceBlock> &blocks);
+    angle::Result legalizeUniformBufferOffsets(ContextMtl *context);
     angle::Result bindUniformBuffersToDiscreteSlots(ContextMtl *context,
                                                     mtl::RenderCommandEncoder *cmdEncoder,
-                                                    const std::vector<gl::InterfaceBlock> &blocks,
                                                     gl::ShaderType shaderType);
 
-    angle::Result encodeUniformBuffersInfoArgumentBuffer(
-        ContextMtl *context,
-        mtl::RenderCommandEncoder *cmdEncoder,
-        const std::vector<gl::InterfaceBlock> &blocks,
-        gl::ShaderType shaderType);
+    angle::Result encodeUniformBuffersInfoArgumentBuffer(ContextMtl *context,
+                                                         mtl::RenderCommandEncoder *cmdEncoder,
+                                                         gl::ShaderType shaderType);
 
     bool mProgramHasFlatAttributes;
 

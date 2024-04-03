@@ -42,7 +42,7 @@ public:
         if (!m_ivVector.isEmpty() || !iv.length())
             return m_ivVector;
 
-        m_ivVector.append(iv.data(), iv.length());
+        m_ivVector.append(iv.span());
         return m_ivVector;
     }
 

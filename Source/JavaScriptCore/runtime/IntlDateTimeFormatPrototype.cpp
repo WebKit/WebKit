@@ -121,7 +121,9 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     // 12.1.7 DateTime Format Functions (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-formatdatetime
 
-    IntlDateTimeFormat* format = jsCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    IntlDateTimeFormat* format = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    if (UNLIKELY(!format))
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
     double value = IntlDateTimeFormat::handleDateTimeValue(globalObject, date);
@@ -153,7 +155,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, { }, 1, jsEmptyString(vm));
         RETURN_IF_EXCEPTION(scope, { });
-        boundFormat->reifyLazyPropertyIfNeeded(vm, globalObject, vm.propertyNames->name);
+        boundFormat->reifyLazyPropertyIfNeeded<>(vm, globalObject, vm.propertyNames->name);
         RETURN_IF_EXCEPTION(scope, { });
         boundFormat->putDirect(vm, vm.propertyNames->name, jsEmptyString(vm), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         // d. Set dtf.[[boundFormat]] to bf.

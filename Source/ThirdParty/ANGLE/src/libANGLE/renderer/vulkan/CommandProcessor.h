@@ -23,7 +23,6 @@
 
 namespace rx
 {
-class RendererVk;
 class CommandProcessor;
 
 namespace vk
@@ -58,7 +57,7 @@ class SharedFence final
     SharedFence(const SharedFence &other);
     SharedFence(SharedFence &&other);
     ~SharedFence();
-    // Copy assignment will add reference count to the underline object
+    // Copy assignment will add reference count to the underlying object
     SharedFence &operator=(const SharedFence &other);
     // Move assignment will move reference count from other to this object
     SharedFence &operator=(SharedFence &&other);
@@ -69,7 +68,7 @@ class SharedFence final
     void destroy(VkDevice device);
     // Release the vkFence (to recycler)
     void release();
-    // Return true if underline VkFence is valid
+    // Return true if the underlying VkFence is valid
     operator bool() const;
     const Fence &get() const
     {
@@ -358,7 +357,7 @@ class CommandQueue : angle::NonCopyable
     angle::Result init(Context *context, const DeviceQueueMap &queueMap);
     void destroy(Context *context);
 
-    void handleDeviceLost(RendererVk *renderer);
+    void handleDeviceLost(Renderer *renderer);
 
     // These public APIs are inherently thread safe. Thread unsafe methods must be protected methods
     // that are only accessed via ThreadSafeCommandQueue API.
@@ -401,7 +400,7 @@ class CommandQueue : angle::NonCopyable
                                                             const ResourceUse &use,
                                                             uint64_t timeout,
                                                             VkResult *result);
-    bool isBusy(RendererVk *renderer) const;
+    bool isBusy(Renderer *renderer) const;
 
     angle::Result submitCommands(Context *context,
                                  ProtectionType protectionType,
@@ -529,7 +528,7 @@ class CommandQueue : angle::NonCopyable
     // Queue serial management.
     AtomicQueueSerialFixedArray mLastSubmittedSerials;
     // This queue serial can be read/write from different threads, so we need to use atomic
-    // operations to access the underline value. Since we only do load/store on this value, it
+    // operations to access the underlying value. Since we only do load/store on this value, it
     // should be just a normal uint64_t load/store on most platforms.
     AtomicQueueSerialFixedArray mLastCompletedSerials;
 
@@ -549,7 +548,7 @@ class CommandQueue : angle::NonCopyable
 class CommandProcessor : public Context
 {
   public:
-    CommandProcessor(RendererVk *renderer, CommandQueue *commandQueue);
+    CommandProcessor(Renderer *renderer, CommandQueue *commandQueue);
     ~CommandProcessor() override;
 
     // Context
@@ -562,7 +561,7 @@ class CommandProcessor : public Context
 
     void destroy(Context *context);
 
-    void handleDeviceLost(RendererVk *renderer);
+    void handleDeviceLost(Renderer *renderer);
 
     angle::Result enqueueSubmitCommands(Context *context,
                                         ProtectionType protectionType,
@@ -615,7 +614,7 @@ class CommandProcessor : public Context
     // Wait for enqueued present to be submitted.
     angle::Result waitForPresentToBeSubmitted(SwapchainStatus *swapchainStatus);
 
-    bool isBusy(RendererVk *renderer) const
+    bool isBusy(Renderer *renderer) const
     {
         std::lock_guard<std::mutex> enqueueLock(mTaskEnqueueMutex);
         return !mTaskQueue.empty() || mCommandQueue->isBusy(renderer);
@@ -640,7 +639,7 @@ class CommandProcessor : public Context
     angle::Result checkAndPopPendingError(Context *errorHandlingContext);
 
     // Entry point for command processor thread, calls processTasksImpl to do the
-    // work. called by RendererVk::initializeDevice on main thread
+    // work. called by Renderer::initializeDevice on main thread
     void processTasks();
 
     // Called asynchronously from main thread to queue work that is then processed by the worker

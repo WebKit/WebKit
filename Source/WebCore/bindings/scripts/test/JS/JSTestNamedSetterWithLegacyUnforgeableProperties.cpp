@@ -23,6 +23,7 @@
 
 #include "ActiveDOMObject.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "IDLTypes.h"
@@ -206,7 +207,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlot(JSObje
 
 bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -226,7 +227,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertySlotByIndex
 
 void JSTestNamedSetterWithLegacyUnforgeableProperties::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -275,7 +276,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::putByIndex(JSCell* cell, 
     auto* thisObject = jsCast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
@@ -361,7 +362,7 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::deletePropertyByIndex(JSC
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -373,12 +374,12 @@ bool JSTestNamedSetterWithLegacyUnforgeableProperties::deletePropertyByIndex(JSC
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithLegacyUnforgeablePropertiesConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterWithLegacyUnforgeablePropertiesPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestNamedSetterWithLegacyUnforgeableProperties_unforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithLegacyUnforgeableProperties& thisObject)
@@ -440,7 +441,7 @@ void JSTestNamedSetterWithLegacyUnforgeablePropertiesOwner::finalize(JSC::Handle
 {
     auto* jsTestNamedSetterWithLegacyUnforgeableProperties = static_cast<JSTestNamedSetterWithLegacyUnforgeableProperties*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedSetterWithLegacyUnforgeableProperties->wrapped(), jsTestNamedSetterWithLegacyUnforgeableProperties);
+    uncacheWrapper(world, jsTestNamedSetterWithLegacyUnforgeableProperties->protectedWrapped().ptr(), jsTestNamedSetterWithLegacyUnforgeableProperties);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

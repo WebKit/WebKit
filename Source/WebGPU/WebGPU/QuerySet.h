@@ -30,6 +30,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUQuerySetImpl {
 };
@@ -37,6 +38,7 @@ struct WGPUQuerySetImpl {
 namespace WebGPU {
 
 class Buffer;
+class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
@@ -61,7 +63,7 @@ public:
     void destroy();
     void setLabel(String&&);
 
-    bool isValid() const { return static_cast<bool>(m_visibilityBuffer) || static_cast<bool>(m_visibilityBuffer); }
+    bool isValid() const;
 
     void setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex);
     void encodeResolveCommands(id<MTLBlitCommandEncoder>, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const;
@@ -71,7 +73,8 @@ public:
     WGPUQueryType type() const { return m_type; }
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_timestampBuffer; }
-
+    void setCommandEncoder(CommandEncoder&) const;
+    bool isDestroyed() const;
 private:
     QuerySet(id<MTLBuffer>, uint32_t, WGPUQueryType, Device&);
     QuerySet(id<MTLCounterSampleBuffer>, uint32_t, WGPUQueryType, Device&);
@@ -82,7 +85,7 @@ private:
     id<MTLBuffer> m_visibilityBuffer { nil };
     id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
     uint32_t m_count { 0 };
-    WGPUQueryType m_type { WGPUQueryType_Force32 };
+    const WGPUQueryType m_type { WGPUQueryType_Force32 };
 
     // rdar://91371495 is about how we can't just naively transform PassDescriptor.timestampWrites into MTLComputePassDescriptor.sampleBufferAttachments.
     // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
@@ -95,6 +98,8 @@ private:
         uint32_t otherIndex;
     };
     Vector<std::optional<OverrideLocation>> m_overrideLocations;
+    mutable WeakPtr<CommandEncoder> m_cachedCommandEncoder;
+    bool m_destroyed { false };
 };
 
 } // namespace WebGPU

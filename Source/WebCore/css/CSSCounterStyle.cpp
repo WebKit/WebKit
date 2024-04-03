@@ -164,7 +164,7 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     };
 
     if (!number)
-        return { &table[Digit0 - 1] , 1 };
+        return span(table[Digit0 - 1]);
 
     ASSERT(number != std::numeric_limits<int>::min());
     bool needsNegativeSign = number < 0;
@@ -233,7 +233,7 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     if (last == Digit0)
         --length;
 
-    return { characters, length };
+    return std::span<const UChar> { characters, length };
 }
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
@@ -290,7 +290,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
 
     if (value == 1) {
         UChar ethiopicDigitOne = 0x1369;
-        return { &ethiopicDigitOne, 1 };
+        return span(ethiopicDigitOne);
     }
 
     // Split the number into groups of two digits, starting with the least significant decimal digit.
@@ -323,7 +323,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
             isMostSignificantGroup = false;
     }
 
-    return { buffer, length };
+    return std::span<const UChar> { buffer, length };
 }
 
 String CSSCounterStyle::initialRepresentation(int value) const

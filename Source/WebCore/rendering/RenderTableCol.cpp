@@ -176,13 +176,13 @@ RenderTable* RenderTableCol::table() const
 
 RenderTableCol* RenderTableCol::enclosingColumnGroup() const
 {
-    if (!is<RenderTableCol>(*parent()))
+    auto* parentColumnGroup = dynamicDowncast<RenderTableCol>(*parent());
+    if (!parentColumnGroup)
         return nullptr;
 
-    RenderTableCol& parentColumnGroup = downcast<RenderTableCol>(*parent());
-    ASSERT(parentColumnGroup.isTableColumnGroup());
+    ASSERT(parentColumnGroup->isTableColumnGroup());
     ASSERT(isTableColumn());
-    return &parentColumnGroup;
+    return parentColumnGroup;
 }
 
 RenderTableCol* RenderTableCol::nextColumn() const
@@ -198,9 +198,12 @@ RenderTableCol* RenderTableCol::nextColumn() const
     if (!next && is<RenderTableCol>(*parent()))
         next = parent()->nextSibling();
 
-    for (; next && !is<RenderTableCol>(*next); next = next->nextSibling()) { }
+    for (; next; next = next->nextSibling()) {
+        if (auto* column = dynamicDowncast<RenderTableCol>(*next))
+            return column;
+    }
 
-    return downcast<RenderTableCol>(next);
+    return nullptr;
 }
 
 const BorderValue& RenderTableCol::borderAdjoiningCellStartBorder() const

@@ -73,6 +73,8 @@ public:
 private:
     PerformanceObserver(ScriptExecutionContext&, Ref<PerformanceObserverCallback>&&);
 
+    RefPtr<Performance> protectedPerformance() const;
+
     RefPtr<Performance> m_performance;
     Vector<RefPtr<PerformanceEntry>> m_entriesToDeliver;
     Ref<PerformanceObserverCallback> m_callback;

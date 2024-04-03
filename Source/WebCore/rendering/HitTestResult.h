@@ -105,7 +105,7 @@ public:
     WEBCORE_EXPORT String titleDisplayString() const;
     WEBCORE_EXPORT Image* image() const;
     WEBCORE_EXPORT IntRect imageRect() const;
-    bool hasEntireImage() const;
+    WEBCORE_EXPORT bool hasEntireImage() const;
     WEBCORE_EXPORT URL absoluteImageURL() const;
     WEBCORE_EXPORT URL absolutePDFURL() const;
     WEBCORE_EXPORT URL absoluteMediaURL() const;
@@ -156,7 +156,9 @@ public:
     Vector<String> dictationAlternatives() const;
 
     Node* targetNode() const { return innerNode(); }
+    RefPtr<Node> protectedTargetNode() const;
     WEBCORE_EXPORT Element* targetElement() const;
+    RefPtr<Element> protectedTargetElement() const;
 
 private:
     NodeSet& mutableListBasedTestResult(); // See above.

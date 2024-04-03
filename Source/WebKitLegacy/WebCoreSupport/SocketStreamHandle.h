@@ -53,7 +53,7 @@ public:
     virtual ~SocketStreamHandle() = default;
     SocketStreamState state() const;
 
-    void sendData(const uint8_t* data, size_t length, Function<void(bool)>);
+    void sendData(std::span<const uint8_t> data, Function<void(bool)>);
     void sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&&, Function<void(bool, bool)>);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();
@@ -62,8 +62,8 @@ public:
 protected:
     WEBCORE_EXPORT SocketStreamHandle(const URL&, SocketStreamHandleClient&);
 
-    virtual void platformSend(const uint8_t* data, size_t length, Function<void(bool)>&&) = 0;
-    virtual void platformSendHandshake(const uint8_t* data, size_t length, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) = 0;
+    virtual void platformSend(std::span<const uint8_t> data, Function<void(bool)>&&) = 0;
+    virtual void platformSendHandshake(std::span<const uint8_t> data, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) = 0;
     virtual void platformClose() = 0;
 
     URL m_url;

@@ -293,7 +293,7 @@ static unsigned computeSubtypeHash(SupertypeCount supertypeCount, const TypeInde
     if (supertypeCount > 0)
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(superTypes[0]));
     accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(underlyingType));
-    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(isFinal));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<bool>::hash(isFinal));
     return accumulator;
 }
 
@@ -542,6 +542,15 @@ bool TypeDefinition::hasRecursiveReference() const
     }
 
     return TypeInformation::get(as<Subtype>()->underlyingType()).hasRecursiveReference();
+}
+
+bool TypeDefinition::isFinalType() const
+{
+    const auto& unrolled = unroll();
+    if (unrolled.is<Subtype>())
+        return unrolled.as<Subtype>()->isFinal();
+
+    return true;
 }
 
 RefPtr<RTT> RTT::tryCreateRTT(RTTKind kind, DisplayCount displaySize)
@@ -837,6 +846,9 @@ struct SubtypeParameterTypes {
         if (subtype->underlyingType() != params.underlyingType)
             return false;
 
+        if (subtype->isFinal() != params.isFinal)
+            return false;
+
         return true;
     }
 
@@ -1066,11 +1078,12 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
 
     if (typeIndexIsType(typeIndex)) {
         switch (static_cast<TypeKind>(typeIndex)) {
-        case TypeKind::Funcref:
         case TypeKind::Externref:
         case TypeKind::Anyref:
-            // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
+            // Casts to these types cannot fail as any value can be an externref/hostref.
             return true;
+        case TypeKind::Funcref:
+            return !!jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
         case TypeKind::Eqref:
             return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
         case TypeKind::Nullref:
@@ -1094,7 +1107,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             if (!funcRef)
                 return false;
             auto funcRTT = funcRef->rtt();
-            if (funcRTT.get() == signatureRTT.get())
+            if (funcRTT == signatureRTT.get())
                 return true;
             return funcRTT->isSubRTT(*signatureRTT);
         }

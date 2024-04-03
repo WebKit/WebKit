@@ -37,11 +37,20 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ScreenOrientationType.h>
 #include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+static WorkQueue& sharedQuickLookFileQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.QuickLookFileQueue"));
+    return queue.get();
+}
+#endif
 
 WebFullScreenManagerProxy::WebFullScreenManagerProxy(WebPageProxy& page, WebFullScreenManagerProxyClient& client)
     : m_page(page)
@@ -61,12 +70,12 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
     callCloseCompletionHandlers();
 }
 
-void WebFullScreenManagerProxy::willEnterFullScreen()
+void WebFullScreenManagerProxy::willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_fullscreenState = FullscreenState::EnteringFullscreen;
     m_page.fullscreenClient().willEnterFullscreen(&m_page);
-    m_page.send(Messages::WebFullScreenManager::WillEnterFullScreen());
+    m_page.send(Messages::WebFullScreenManager::WillEnterFullScreen(mode));
 }
 
 void WebFullScreenManagerProxy::didEnterFullScreen()
@@ -163,11 +172,6 @@ void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
     m_page.send(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration));
 }
 
-void WebFullScreenManagerProxy::setFullscreenControlsHidden(bool hidden)
-{
-    m_page.send(Messages::WebFullScreenManager::SetFullscreenControlsHidden(hidden));
-}
-
 void WebFullScreenManagerProxy::close()
 {
     m_client.closeFullScreenManager();
@@ -183,33 +187,60 @@ bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() c
     return m_blocksReturnToFullscreenFromPictureInPicture;
 }
 
-#if PLATFORM(VISION)
-bool WebFullScreenManagerProxy::isVideoElement() const
-{
-    return m_isVideoElement;
-}
-#endif
-
-void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement, FloatSize videoDimensions)
+void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails&& mediaDetails)
 {
     m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
-#if PLATFORM(VISION)
-    m_isVideoElement = isVideoElement;
-#else
-    UNUSED_PARAM(isVideoElement);
-#endif
 #if PLATFORM(IOS_FAMILY)
+
+#if PLATFORM(VISION)
+    m_isVideoElement = mediaDetails.type == FullScreenMediaDetails::Type::Video;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (mediaDetails.imageHandle) {
+        auto sharedMemoryBuffer = SharedMemory::map(WTFMove(*mediaDetails.imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
+        if (sharedMemoryBuffer)
+            m_imageBuffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
+    }
+    m_imageMIMEType = mediaDetails.mimeType;
+#endif // QUICKLOOK_FULLSCREEN
+#endif
+
+    auto videoDimensions = mediaDetails.videoDimensions;
     m_client.enterFullScreen(videoDimensions);
 #else
-    UNUSED_PARAM(videoDimensions);
+    UNUSED_PARAM(mediaDetails);
     m_client.enterFullScreen();
 #endif
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    m_imageBuffer = nullptr;
+#endif
     m_client.exitFullScreen();
 }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&& completionHandler) const
+{
+    if (!m_imageBuffer)
+        return completionHandler(URL());
+
+    sharedQuickLookFileQueue().dispatch([buffer = m_imageBuffer, mimeType = crossThreadCopy(m_imageMIMEType), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto suffix = makeString('.', WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType));
+        auto [filePath, fileHandle] = FileSystem::openTemporaryFile("QuickLook"_s, suffix);
+        ASSERT(FileSystem::isHandleValid(fileHandle));
+
+        size_t byteCount = FileSystem::writeToFile(fileHandle, buffer->data(), buffer->size());
+        ASSERT_UNUSED(byteCount, byteCount == buffer->size());
+        FileSystem::closeFile(fileHandle);
+
+        RunLoop::main().dispatch([filePath, completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(URL::fileURLWithFileSystemPath(filePath));
+        });
+    });
+}
+#endif
 
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {

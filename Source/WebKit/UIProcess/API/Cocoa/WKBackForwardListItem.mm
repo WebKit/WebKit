@@ -50,10 +50,7 @@
 
 - (NSString *)title
 {
-    if (!_item->title())
-        return nil;
-
-    return _item->title();
+    return nil;
 }
 
 - (NSURL *)initialURL

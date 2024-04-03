@@ -11,16 +11,14 @@
 #define LIBANGLE_RENDERER_VULKAN_SHAREGROUPVK_H_
 
 #include "libANGLE/renderer/ShareGroupImpl.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx
 {
 constexpr VkDeviceSize kMaxTotalEmptyBufferBytes = 16 * 1024 * 1024;
-
-class RendererVk;
 
 class TextureUpload
 {
@@ -34,37 +32,6 @@ class TextureUpload
   private:
     // Keep track of the previously stored texture. Used to flush mutable textures.
     TextureVk *mPrevUploadedMutableTexture;
-};
-
-class UpdateDescriptorSetsBuilder final : angle::NonCopyable
-{
-  public:
-    UpdateDescriptorSetsBuilder();
-    ~UpdateDescriptorSetsBuilder();
-
-    VkDescriptorBufferInfo *allocDescriptorBufferInfos(size_t count);
-    VkDescriptorImageInfo *allocDescriptorImageInfos(size_t count);
-    VkWriteDescriptorSet *allocWriteDescriptorSets(size_t count);
-    VkBufferView *allocBufferViews(size_t count);
-
-    VkDescriptorBufferInfo &allocDescriptorBufferInfo() { return *allocDescriptorBufferInfos(1); }
-    VkDescriptorImageInfo &allocDescriptorImageInfo() { return *allocDescriptorImageInfos(1); }
-    VkWriteDescriptorSet &allocWriteDescriptorSet() { return *allocWriteDescriptorSets(1); }
-    VkBufferView &allocBufferView() { return *allocBufferViews(1); }
-
-    // Returns the number of written descriptor sets.
-    uint32_t flushDescriptorSetUpdates(VkDevice device);
-
-  private:
-    template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-    T *allocDescriptorInfos(std::vector<T> *descriptorVector, size_t count);
-    template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-    void growDescriptorCapacity(std::vector<T> *descriptorVector, size_t newSize);
-
-    std::vector<VkDescriptorBufferInfo> mDescriptorBufferInfos;
-    std::vector<VkDescriptorImageInfo> mDescriptorImageInfos;
-    std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
-    std::vector<VkBufferView> mBufferViews;
 };
 
 class ShareGroupVk : public ShareGroupImpl
@@ -93,12 +60,12 @@ class ShareGroupVk : public ShareGroupImpl
     // Used to flush the mutable textures more often.
     angle::Result onMutableTextureUpload(ContextVk *contextVk, TextureVk *newTexture);
 
-    vk::BufferPool *getDefaultBufferPool(RendererVk *renderer,
+    vk::BufferPool *getDefaultBufferPool(vk::Renderer *renderer,
                                          VkDeviceSize size,
                                          uint32_t memoryTypeIndex,
                                          BufferUsageType usageType);
-    void pruneDefaultBufferPools(RendererVk *renderer);
-    bool isDueForBufferPoolPrune(RendererVk *renderer);
+    void pruneDefaultBufferPools(vk::Renderer *renderer);
+    bool isDueForBufferPoolPrune(vk::Renderer *renderer);
 
     void calculateTotalBufferCount(size_t *bufferCount, VkDeviceSize *totalSize) const;
     void logBufferPools() const;
@@ -144,24 +111,8 @@ class ShareGroupVk : public ShareGroupImpl
     // Storage for vkUpdateDescriptorSets
     UpdateDescriptorSetsBuilder mUpdateDescriptorSetsBuilder;
 
-// The per shared group buffer pools that all buffers should sub-allocate from.
-#if ANGLE_VMA_VERSION < 3000000
-    enum class SuballocationAlgorithm : uint8_t{
-        Buddy       = 0,
-        General     = 1,
-        InvalidEnum = 2,
-        EnumCount   = InvalidEnum,
-    };
-    angle::PackedEnumMap<BufferUsageType, size_t> mSizeLimitForBuddyAlgorithm;
-#else
-    enum class SuballocationAlgorithm : uint8_t
-    {
-        General     = 0,
-        InvalidEnum = 1,
-        EnumCount   = InvalidEnum,
-    };
-#endif
-    angle::PackedEnumMap<SuballocationAlgorithm, vk::BufferPoolPointerArray> mDefaultBufferPools;
+    // The per shared group buffer pools that all buffers should sub-allocate from.
+    vk::BufferPoolPointerArray mDefaultBufferPools;
 
     // The system time when last pruneEmptyBuffer gets called.
     double mLastPruneTime;

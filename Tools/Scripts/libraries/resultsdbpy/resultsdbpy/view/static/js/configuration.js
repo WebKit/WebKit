@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import {queryToParams, escapeHTML} from '/assets/js/common.js';
+import {DEFAULT_ARCHITECTURE} from '/assets/js/constants.js'
 
 // These are flipped delibrately, it makes the fromQuery function return configurations in an
 // intuitive order.
@@ -124,7 +125,7 @@ class Configuration {
                 return 'C'
             return 'D';
         }
-        if (['L', 'T'].includes(match[2])) {
+        if (['L', 'O', 'T'].includes(match[2])) {
             const count = parseInt(match[3]);
             if (count < 400)
                 return 'E'
@@ -132,8 +133,6 @@ class Configuration {
         }
         if (['M', 'U'].includes(match[2]))
             return 'G';
-        if (match[2] == 'O')
-            return 'E';
 
         return '';
     }
@@ -173,7 +172,7 @@ class Configuration {
             result += ' ' + this.platform
         if (this.version_name != null)
             result += ' ' + this.version_name;
-        else if (this.version != null)
+        if (this.version != null && (this.version_name == null || this.sdk != null))
             result += ' ' + Configuration.integerToVersion(this.version);
         if (this.sdk != null)
             result += ' (' + this.sdk + ')';
@@ -212,7 +211,7 @@ class Configuration {
             result += ' ' + this.style.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
         } if (this.model != null)
             result += ' on ' + this.model;
-        if (this.architecture != null)
+        if (this.architecture != null && (DEFAULT_ARCHITECTURE == null || this.architecture.search(DEFAULT_ARCHITECTURE) < 0))
             result += ' with ' + this.architecture;
 
         if (this.sdk != null)
@@ -289,7 +288,7 @@ class Configuration {
             version_name = this.version_name.substring(0, this.version_name.length - 2);
         return {
             platform: [this.platform],
-            version:[this.version && !this.version_name ? Configuration.integerToVersion(this.version) : null],
+            version:[this.version ? Configuration.integerToVersion(this.version) : null],
             version_name: [version_name],
             is_simulator: [this.is_simulator === null ? null : (this.is_simulator ? 'True' : 'False')],
             style: [this.style],

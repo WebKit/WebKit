@@ -118,6 +118,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:completionHandler:)];
+    m_delegateMethods.webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:forQuirkDomains:completionHandler:)];
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
@@ -203,6 +204,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 
 #if ENABLE(WEB_AUTHN)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
+    m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:)];
 #endif
     
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
@@ -302,13 +304,13 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy& page, const Web
 #if PLATFORM(MAC)
     auto modifierFlags = WebEventFactory::toNSEventModifierFlags(modifiers);
 #else
-    auto modifierFlags = WebIOSEventFactory::toUIKeyModifierFlags(modifiers);
+    auto modifierFlags = WebKit::WebIOSEventFactory::toUIKeyModifierFlags(modifiers);
 #endif
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:modifierFlags userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }
 #endif
 
-void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageConfiguration>&& configuration, WebCore::WindowFeatures&& windowFeatures, Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler(nullptr);
@@ -316,17 +318,13 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     auto delegate = m_uiDelegate->m_delegate.get();
     ASSERT(delegate);
 
-    auto configuration = adoptNS([m_uiDelegate->m_webView.get()->_configuration copy]);
-    // FIXME: after calling triggerBrowsingContextGroupSwitchForNavigation this configuration's BrowsingContextGroup is incorrect. <rdar://116203642>
-    // The fix should go into platform-independent code, though. Needs some refactoring. And also needs switching browsing context group.
-    [configuration _setRelatedWebView:m_uiDelegate->m_webView.get().get()];
-
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
+    RefPtr openerProcess = configuration->openerProcess();
 
     if (m_uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:completionHandler:));
 
-        [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get()] (WKWebView *webView) mutable {
+        [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker), relatedWebView = m_uiDelegate->m_webView.get(), openerProcess] (WKWebView *webView) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -339,6 +337,9 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
             if ([webView->_configuration _relatedWebView] != relatedWebView.get())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
+            if (openerProcess != webView->_configuration->_pageConfiguration->openerProcess())
+                [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
+
             completionHandler(webView->_page.get());
         }).get()];
         return;
@@ -346,11 +347,13 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, WebCore::WindowF
     if (!m_uiDelegate->m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return completionHandler(nullptr);
 
-    RetainPtr<WKWebView> webView = [delegate webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures)];
+    RetainPtr<WKWebView> webView = [delegate webView:m_uiDelegate->m_webView.get().get() createWebViewWithConfiguration:wrapper(configuration) forNavigationAction:wrapper(navigationAction) windowFeatures:wrapper(apiWindowFeatures)];
     if (!webView)
         return completionHandler(nullptr);
 
     if ([webView.get()->_configuration _relatedWebView] != m_uiDelegate->m_webView.get().get())
+        [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
+    if (openerProcess != webView.get()->_configuration->_pageConfiguration->openerProcess())
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
     completionHandler(webView->_page.get());
 }
@@ -447,15 +450,43 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
         return;
     }
 
+    // Some sites have quirks where multiple login domains require storage access.
+    auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain);
+
+    if (organizationStorageAccessPromptQuirk || additionalLoginDomain) {
+        if (m_uiDelegate->m_delegateMethods.webViewRequestStorageAccessPanelForDomainUnderCurrentDomainForQuirkDomainsCompletionHandler) {
+
+            NSMutableDictionary<NSString *, NSArray<NSString *> *> *quirkDomains = [NSMutableDictionary dictionaryWithCapacity:1];
+            if (organizationStorageAccessPromptQuirk) {
+                for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->quirkDomains) {
+                    NSMutableArray<NSString *> *mutableSubFrameDomains = [NSMutableArray arrayWithCapacity:subFrameDomains.size()];
+                    for (auto& subFrameDomain : subFrameDomains)
+                        [mutableSubFrameDomains addObject:subFrameDomain.string()];
+                    [quirkDomains setObject:mutableSubFrameDomains forKey:topFrameDomain.string()];
+                }
+            } else
+                [quirkDomains setObject:@[additionalLoginDomain->string()] forKey:currentDomain.string()];
+
+            auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestStorageAccessPanelForDomain:underCurrentDomain:forQuirkDomains:completionHandler:));
+            [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestStorageAccessPanelForDomain:requestingDomain.string() underCurrentDomain:currentDomain.string() forQuirkDomains:quirkDomains completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+                if (checker->completionHandlerHasBeenCalled())
+                    return;
+                completionHandler(result);
+                checker->didCallCompletionHandler();
+            }).get()];
+            return;
+        }
+    }
+
     if (organizationStorageAccessPromptQuirk) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->domainPairings, WTFMove(completionHandler));
+        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->quirkDomains, WTFMove(completionHandler));
 #endif
         return;
     }
 
     // Some sites have quirks where multiple login domains require storage access.
-    if (auto additionalLoginDomain = WebCore::NetworkStorageSession::findAdditionalLoginDomain(currentDomain, requestingDomain)) {
+    if (additionalLoginDomain) {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         presentStorageAccessAlertQuirk(m_uiDelegate->m_webView.get().get(), requestingDomain, *additionalLoginDomain, currentDomain, WTFMove(completionHandler));
 #endif
@@ -1392,33 +1423,6 @@ void UIDelegate::UIClient::mediaCaptureStateDidChange(WebCore::MediaProducerMedi
     [(id <WKUIDelegatePrivate>)delegate _webView:webView.get().get() mediaCaptureStateDidChange:toWKMediaCaptureStateDeprecated(state)];
 }
 
-void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin& securityOrigin, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void (unsigned long long)>&& completionHandler)
-{
-    if (!m_uiDelegate)
-        return completionHandler(currentQuota);
-
-    if (!m_uiDelegate->m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded) {
-        completionHandler(currentQuota);
-        return;
-    }
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate) {
-        completionHandler(currentQuota);
-        return;
-    }
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:));
-    auto apiOrigin = API::SecurityOrigin::create(securityOrigin);
-    
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(apiOrigin.get()) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-        checker->didCallCompletionHandler();
-        completionHandler(newQuota);
-    }).get()];
-}
-
 void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, const WebCore::FloatSize& pdfFirstPageSize, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_uiDelegate)
@@ -1751,6 +1755,27 @@ void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy& page, API::We
             return;
         checker->didCallCompletionHandler();
         completionHandler(webAuthenticationPanelResult(result));
+    }).get()];
+}
+
+void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(WTF::String&& username, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_uiDelegate)
+        return completionHandler(false);
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler)
+        return completionHandler(false);
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return completionHandler(false);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
+    [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(result);
     }).get()];
 }
 #endif // ENABLE(WEB_AUTHN)

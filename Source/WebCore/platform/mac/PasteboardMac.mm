@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "CommonAtomStrings.h"
 #import "DragData.h"
 #import "Image.h"
 #import "LegacyNSPasteboardTypes.h"
@@ -264,7 +265,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    CFDataRef imageData = pasteboardImage.image->tiffRepresentation();
+    CFDataRef imageData = pasteboardImage.image->adapter().tiffRepresentation();
     if (!imageData)
         return;
 
@@ -670,7 +671,7 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
 
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(legacyStringPasteboardType()) || cocoaType == String(NSPasteboardTypeString)) {
-        resultTypes.add("text/plain"_s);
+        resultTypes.add(textPlainContentTypeAtom());
         return;
     }
     if (cocoaType == String(legacyURLPasteboardType())) {

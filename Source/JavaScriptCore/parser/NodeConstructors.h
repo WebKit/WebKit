@@ -1075,7 +1075,7 @@ namespace JSC {
     {
     }
 
-    inline DefineFieldNode::DefineFieldNode(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* assign, Type type)
+    inline DefineFieldNode::DefineFieldNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* assign, Type type)
         : StatementNode(location)
         , m_ident(ident)
         , m_assign(assign)

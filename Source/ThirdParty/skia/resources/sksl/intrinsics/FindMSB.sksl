@@ -1,0 +1,6 @@
+uniform int a;
+uniform uint b;
+void main() {
+    sk_FragColor.x = half(findMSB(a));
+    sk_FragColor.y = half(findMSB(b));
+}

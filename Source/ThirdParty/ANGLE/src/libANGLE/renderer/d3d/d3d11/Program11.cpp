@@ -19,15 +19,4 @@ Program11::Program11(const gl::ProgramState &programState, Renderer11 *renderer)
 {}
 
 Program11::~Program11() = default;
-
-angle::Result Program11::syncState(const gl::Context *context)
-{
-    Renderer11 *renderer11       = GetImplAs<Context11>(context)->getRenderer();
-    StateManager11 *stateManager = renderer11->getStateManager();
-
-    // This single flag should be replace by individual dirtyness.
-    stateManager->invalidateProgramUniformBuffers();
-
-    return angle::Result::Continue;
-}
 }  // namespace rx

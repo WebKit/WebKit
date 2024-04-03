@@ -29,7 +29,7 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    RendererVk *renderer = contextVk->getRenderer();
+    vk::Renderer *renderer = contextVk->getRenderer();
     if (mSampler.valid())
     {
         if (!dirty)

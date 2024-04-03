@@ -43,11 +43,11 @@ static inline void writeUInt64(uint8_t* data, uint64_t value, uint8_t valueLengt
         *data++ = (value >> ((valueLength - 1 - i) * 8)) & 0xff;
 }
 
-static inline uint64_t readUInt64(const uint8_t* data, size_t size)
+static inline uint64_t readUInt64(std::span<const uint8_t> data)
 {
     uint64_t value = 0;
-    while (size--)
-        value = (value << 8) | *data++;
+    for (auto byte : data)
+        value = (value << 8) | byte;
     return value;
 }
 
@@ -106,14 +106,15 @@ struct SFrameHeaderInfo {
     uint64_t keyId;
     uint64_t counter;
 };
-static inline std::optional<SFrameHeaderInfo> parseSFrameHeader(const uint8_t* data, size_t size)
+static inline std::optional<SFrameHeaderInfo> parseSFrameHeader(std::span<const uint8_t> data)
 {
-    auto* start = data;
+    auto* start = data.data();
 
     uint64_t keyId = 0;
     uint64_t counter = 0;
 
-    auto firstByte = *data++;
+    auto firstByte = data.front();
+    data = data.subspan(1);
 
     // Signature bit.
     if (hasSignature(firstByte))
@@ -121,25 +122,25 @@ static inline std::optional<SFrameHeaderInfo> parseSFrameHeader(const uint8_t* d
 
     size_t counterLength = ((firstByte >> 4) & 0x07) + 1;
 
-    if (size < counterLength + 1)
+    if (data.size() < counterLength + 1)
         return { };
 
     if (hasLongKeyLength(firstByte)) {
         size_t keyLength = (firstByte & 0x07) + 1;
-        if (size < counterLength + keyLength + 1)
+        if (data.size() < counterLength + keyLength + 1)
             return { };
 
-        keyId = readUInt64(data, keyLength);
-        data += keyLength;
+        keyId = readUInt64(data.first(keyLength));
+        data = data.subspan(keyLength);
 
-        counter = readUInt64(data, counterLength);
-        data += counterLength;
+        counter = readUInt64(data.first(counterLength));
+        data = data.subspan(counterLength);
     } else {
         keyId = firstByte & 0x07;
-        counter = readUInt64(data, counterLength);
-        data += counterLength;
+        counter = readUInt64(data.first(counterLength));
+        data = data.subspan(counterLength);
     }
-    uint8_t headerSize = data - start;
+    uint8_t headerSize = data.data() - start;
     return SFrameHeaderInfo { headerSize, keyId, counter };
 }
 
@@ -153,9 +154,7 @@ RTCRtpSFrameTransformer::RTCRtpSFrameTransformer(CompatibilityMode mode)
 {
 }
 
-RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer()
-{
-}
+RTCRtpSFrameTransformer::~RTCRtpSFrameTransformer() = default;
 
 ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t> keyId)
 {
@@ -210,26 +209,20 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
 
 RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(std::span<const uint8_t> data)
 {
-    auto* frameData = data.data();
-    auto frameSize = data.size();
-
     Vector<uint8_t> buffer;
     switch (m_compatibilityMode) {
     case CompatibilityMode::H264: {
-        auto offset = computeH264PrefixOffset(frameData, frameSize);
-        frameData += offset;
-        frameSize -= offset;
-        if (needsRbspUnescaping(frameData, frameSize)) {
-            buffer = fromRbsp(frameData, frameSize);
-            frameData = buffer.data();
-            frameSize = buffer.size();
+        auto offset = computeH264PrefixOffset(data);
+        data = data.subspan(offset);
+        if (needsRbspUnescaping(data)) {
+            buffer = fromRbsp(data);
+            data = buffer.span();
         }
         break;
     }
     case CompatibilityMode::VP8: {
-        auto offset = computeVP8PrefixOffset(frameData, frameSize);
-        frameData += offset;
-        frameSize -= offset;
+        auto offset = computeVP8PrefixOffset(data);
+        data = data.subspan(offset);
         break;
     }
     case CompatibilityMode::None:
@@ -238,7 +231,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(s
 
     Locker locker { m_keyLock };
 
-    auto header = parseSFrameHeader(frameData, frameSize);
+    auto header = parseSFrameHeader(data);
 
     if (!header)
         return makeUnexpected(ErrorInformation {Error::Syntax, "Invalid header"_s, 0 });
@@ -256,14 +249,14 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(s
             return makeUnexpected(ErrorInformation {Error::Other, result.exception().message(), 0 });
     }
 
-    if (frameSize < (header->size + m_authenticationSize))
+    if (data.size() < (header->size + m_authenticationSize))
         return makeUnexpected(ErrorInformation { Error::Syntax, "Chunk is too small for authentication size"_s, 0 });
 
     auto iv = computeIV(m_counter, m_saltKey);
 
     // Compute signature
-    auto* transmittedSignature = frameData + frameSize - m_authenticationSize;
-    auto signature = computeEncryptedDataSignature(iv, frameData, header->size, frameData + header->size, frameSize  - m_authenticationSize - header->size, m_authenticationKey);
+    auto transmittedSignature = data.last(m_authenticationSize);
+    auto signature = computeEncryptedDataSignature(iv, data.first(header->size), data.subspan(header->size, data.size() - m_authenticationSize - header->size), m_authenticationKey);
     for (size_t cptr = 0; cptr < m_authenticationSize; ++cptr) {
         if (signature[cptr] != transmittedSignature[cptr]) {
             // FIXME: We should try ratcheting.
@@ -272,8 +265,8 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(s
     }
 
     // Decrypt data
-    auto dataSize = frameSize - header->size - m_authenticationSize;
-    auto result = decryptData(frameData + header->size, dataSize, iv, m_encryptionKey);
+    auto dataSize = data.size() - header->size - m_authenticationSize;
+    auto result = decryptData(data.subspan(header->size, dataSize), iv, m_encryptionKey);
 
     if (result.hasException())
         return makeUnexpected(ErrorInformation { Error::Other, result.exception().message(), 0 });
@@ -283,18 +276,15 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(s
 
 RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(std::span<const uint8_t> data)
 {
-    auto* frameData = data.data();
-    auto frameSize = data.size();
-
     static const unsigned MaxHeaderSize = 17;
 
     SFrameCompatibilityPrefixBuffer prefixBuffer;
     switch (m_compatibilityMode) {
     case CompatibilityMode::H264:
-        prefixBuffer = computeH264PrefixBuffer(frameData, frameSize);
+        prefixBuffer = computeH264PrefixBuffer(data);
         break;
     case CompatibilityMode::VP8:
-        prefixBuffer = computeVP8PrefixBuffer(frameData, frameSize);
+        prefixBuffer = computeVP8PrefixBuffer(data);
         break;
     case CompatibilityMode::None:
         break;
@@ -304,7 +294,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(s
 
     auto iv = computeIV(m_counter, m_saltKey);
 
-    Vector<uint8_t> transformedData(prefixBuffer.size + frameSize + MaxHeaderSize + m_authenticationSize);
+    Vector<uint8_t> transformedData(prefixBuffer.size + data.size() + MaxHeaderSize + m_authenticationSize);
 
     if (prefixBuffer.data)
         std::memcpy(transformedData.data(), prefixBuffer.data, prefixBuffer.size);
@@ -326,16 +316,16 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(s
     transformedData.shrink(transformedData.size() - (MaxHeaderSize - headerSize));
 
     // Fill encrypted data
-    auto encryptedData = encryptData(frameData, frameSize, iv, m_encryptionKey);
+    auto encryptedData = encryptData(data, iv, m_encryptionKey);
     ASSERT(!encryptedData.hasException());
     if (encryptedData.hasException())
         return makeUnexpected(ErrorInformation { Error::Other, encryptedData.exception().message(), 0 });
 
-    std::memcpy(newDataPointer + headerSize, encryptedData.returnValue().data(), frameSize);
+    std::memcpy(newDataPointer + headerSize, encryptedData.returnValue().data(), data.size());
 
     // Fill signature
-    auto signature = computeEncryptedDataSignature(iv, newDataPointer, headerSize, newDataPointer + headerSize, frameSize, m_authenticationKey);
-    std::memcpy(newDataPointer + frameSize + headerSize, signature.data(), m_authenticationSize);
+    auto signature = computeEncryptedDataSignature(iv, std::span { newDataPointer, headerSize }, std::span { newDataPointer + headerSize, data.size() }, m_authenticationKey);
+    std::memcpy(newDataPointer + data.size() + headerSize, signature.data(), m_authenticationSize);
 
     if (m_compatibilityMode == CompatibilityMode::H264)
         toRbsp(transformedData, prefixBuffer.size);
@@ -369,17 +359,17 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(const uint8_t*, size_t, const Vector<uint8_t>&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(std::span<const uint8_t>, const Vector<uint8_t>&, const Vector<uint8_t>&)
 {
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t*, size_t, const Vector<uint8_t>&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(std::span<const uint8_t>, const Vector<uint8_t>&, const Vector<uint8_t>&)
 {
     return Exception { ExceptionCode::NotSupportedError };
 }
 
-Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>&, const uint8_t*, size_t, const uint8_t*, size_t, const Vector<uint8_t>&)
+Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>&, std::span<const uint8_t>, std::span<const uint8_t>, const Vector<uint8_t>&)
 {
     return { };
 }

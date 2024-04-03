@@ -41,19 +41,19 @@ namespace WebKit {
 class WebPage;
 
 class WebExtensionAPIWindows : public WebExtensionAPIObject, public JSWebExtensionWrappable {
-    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindows, windows);
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWindows, windows, windows);
 
 public:
 #if PLATFORM(COCOA)
     using PopulateTabs = WebExtensionWindow::PopulateTabs;
     using WindowTypeFilter = WebExtensionWindow::TypeFilter;
 
-    bool isPropertyAllowed(ASCIILiteral propertyName, WebPage*);
+    bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage&);
 
     void createWindow(NSDictionary *data, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    void get(WebPage*, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
-    void getCurrent(WebPage*, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void get(WebPage&, double windowID, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void getCurrent(WebPage&, NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getLastFocused(NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void getAll(NSDictionary *info, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 

@@ -114,6 +114,11 @@ JSWorkletGlobalScope::JSWorkletGlobalScope(VM& vm, Structure* structure, Ref<Wor
 {
 }
 
+Ref<WorkletGlobalScope> JSWorkletGlobalScope::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, WorkletGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 #if ASSERT_ENABLED
@@ -143,12 +148,12 @@ JSValue JSWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globa
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSWorkletGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSWorkletGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSWorkletGlobalScope::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsWorkletGlobalScope_WorkletGlobalScopeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSWorkletGlobalScope& thisObject)

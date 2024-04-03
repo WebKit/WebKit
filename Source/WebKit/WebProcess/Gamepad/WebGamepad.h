@@ -31,8 +31,6 @@
 
 namespace WebKit {
 
-class SharedMemory;
-
 class GamepadData;
 
 class WebGamepad : public WebCore::PlatformGamepad {

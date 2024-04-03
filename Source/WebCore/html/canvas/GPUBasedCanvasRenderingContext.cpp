@@ -43,13 +43,10 @@ HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const
     return dynamicDowncast<HTMLCanvasElement>(canvasBase());
 }
 
-void GPUBasedCanvasRenderingContext::notifyCanvasContentChanged()
+void GPUBasedCanvasRenderingContext::markCanvasChanged()
 {
-    if (htmlCanvas()) {
-        RenderBox* renderBox = htmlCanvas()->renderBox();
-        if (renderBox && renderBox->hasAcceleratedCompositing())
-            renderBox->contentChanged(CanvasChanged);
-    }
+    auto& canvas = canvasBase();
+    canvas.didDraw(FloatRect { { }, canvas.size() }, ShouldApplyPostProcessingToDirtyRect::No);
 }
 
 } // namespace WebCore

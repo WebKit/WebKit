@@ -104,8 +104,12 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTagProtoFuncType, (JSGlobalObject* globalObj
 
     MarkedArgumentBuffer argList;
     argList.ensureCapacity(tag.parameterCount());
-    for (size_t i = 0; i < tag.parameterCount(); ++i)
-        argList.append(Wasm::typeToString(vm, tag.parameter(i).kind));
+    for (size_t i = 0; i < tag.parameterCount(); ++i) {
+        JSString* valueString = typeToJSAPIString(vm, tag.parameter(i));
+        if (!valueString)
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Tag.prototype.type unable to produce type descriptor for the given tag"_s);
+        argList.append(valueString);
+    }
 
     if (UNLIKELY(argList.hasOverflowed())) {
         throwOutOfMemoryError(globalObject, throwScope);

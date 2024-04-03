@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CompilationMessage.h"
+#include "CompilationScope.h"
 #include "ConstantValue.h"
 #include "WGSLEnums.h"
 #include <cinttypes>
@@ -46,6 +47,7 @@ namespace WGSL {
 //
 
 class ShaderModule;
+class CompilationScope;
 
 namespace AST {
 class Expression;
@@ -166,6 +168,7 @@ struct BindGroupLayoutEntry {
 
 struct BindGroupLayout {
     // Metal's [[id(n)]] indices are equal to the index into this vector.
+    uint32_t group;
     Vector<BindGroupLayoutEntry> entries;
 };
 
@@ -217,19 +220,20 @@ struct EntryPointInformation {
     HashMap<std::pair<size_t, size_t>, size_t> bufferLengthLocations; // Metal buffer identity -> offset within helper buffer where its size needs to lie
     HashMap<String, SpecializationConstant> specializationConstants;
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
+    size_t sizeForWorkgroupVariables { 0 };
 };
 
 } // namespace Reflection
 
 struct PrepareResult {
-    String msl;
     HashMap<String, Reflection::EntryPointInformation> entryPoints;
+    CompilationScope compilationScope;
 };
 
-// These are not allowed to fail.
-// All failures must have already been caught in check().
-PrepareResult prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
-PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
+std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+
+String generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
 
 ConstantValue evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 

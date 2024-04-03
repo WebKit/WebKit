@@ -63,9 +63,9 @@ void SVGCursorElement::attributeChanged(const QualifiedName& name, const AtomStr
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
+        Ref { m_x }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
     else if (name == SVGNames::yAttr)
-        m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
+        Ref { m_y }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
 
     reportAttributeParsingError(parseError, name, newValue);
 

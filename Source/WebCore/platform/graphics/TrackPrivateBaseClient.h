@@ -36,7 +36,12 @@ using TrackID = uint64_t;
 
 class TrackPrivateBaseClient : public CanMakeWeakPtr<TrackPrivateBaseClient> {
 public:
+    using Task = Function<void()>;
+    using Dispatcher = Function<void(Task&&)>;
+
     virtual ~TrackPrivateBaseClient() = default;
+    enum Type { Text, Audio, Video };
+    virtual constexpr Type type() const = 0;
     virtual void idChanged(TrackID) = 0;
     virtual void labelChanged(const AtomString&) = 0;
     virtual void languageChanged(const AtomString&) = 0;

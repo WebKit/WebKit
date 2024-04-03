@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (0.00,24.00) startOffset 0 endOffset 4 width 28.69: "PASS"
       RenderSVGInlineText {#text} at (28,0) size 3x14
         chunk 1 text run 1 at (28.69,24.00) startOffset 0 endOffset 1 width 3.00: " "
-      RenderSVGTSpan {tspan} at (0,0) size 29x14
+      RenderSVGTSpan {tspan} at (0,12) size 29x14
         RenderSVGInlineText {#text} at (0,12) size 29x14
           chunk 1 text run 1 at (0.00,36.00) startOffset 0 endOffset 4 width 28.69: "PASS"
       RenderSVGInlineText {#text} at (0,0) size 0x0

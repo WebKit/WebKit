@@ -96,13 +96,13 @@ void WebChromeClient::didLayout(LayoutType type)
 void WebChromeClient::didStartOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(std::nullopt));
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
     // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(0));
+    protectedPage()->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(std::nullopt));
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const
@@ -166,12 +166,12 @@ bool WebChromeClient::shouldUseMouseEventForSelection(const WebCore::PlatformMou
 
 bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, const Event& event)
 {
-    if (!event.isMouseEvent())
+    auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+    if (!mouseEvent)
         return false;
 
     // FIXME: Ideally, we would be able to generate InteractionInformationAtPosition without re-hit-testing the element.
-    auto& mouseEvent = downcast<MouseEvent>(event);
-    auto request = InteractionInformationRequest { roundedIntPoint(mouseEvent.locationInRootViewCoordinates()) };
+    auto request = InteractionInformationRequest { roundedIntPoint(mouseEvent->locationInRootViewCoordinates()) };
     request.includeLinkIndicator = true;
     auto page = protectedPage();
     auto positionInformation = page->positionInformation(request);

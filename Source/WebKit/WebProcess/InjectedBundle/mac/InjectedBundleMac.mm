@@ -81,14 +81,14 @@ static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const unsigned char* bytes,
     return unarchiver;
 }
 
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
-{
-    return createUnarchiver(data.bytes(), data.size());
-}
-
-static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const IPC::DataReference& data)
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(std::span<const uint8_t> data)
 {
     return createUnarchiver(data.data(), data.size());
+}
+
+static RetainPtr<NSKeyedUnarchiver> createUnarchiver(const API::Data& data)
+{
+    return createUnarchiver(data.span());
 }
 
 bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
@@ -257,7 +257,7 @@ NSSet* InjectedBundle::classesForCoder()
     return m_classesForCoder.get();
 }
 
-void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
+void InjectedBundle::setBundleParameter(const String& key, std::span<const uint8_t> value)
 {
     id parameter = nil;
     auto unarchiver = createUnarchiver(value);
@@ -274,7 +274,7 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
     [m_bundleParameters setParameter:parameter forKey:key];
 }
 
-void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
+void InjectedBundle::setBundleParameters(std::span<const uint8_t> value)
 {
     NSDictionary *parameters = nil;
     auto unarchiver = createUnarchiver(value);

@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 54x18
           text run at (0,0) width 54: "Test for "
         RenderInline {I} at (0,0) size 752x36
-          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+          RenderInline {A} at (53,0) size 305x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 305x18
               text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14134"
-          RenderText {#text} at (357,0) size 752x36
+          RenderText {#text} at (0,0) size 752x36
             text run at (357,0) width 5: " "
             text run at (361,0) width 391: "REGRESSION (r25353): Whitespace nodes ignored between"
             text run at (0,18) width 98: "inline list items"
@@ -41,23 +41,23 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,27) size 199x43
             RenderTableCell {TD} at (0,27) size 100x43 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 91x18
-                RenderInline {LI} at (0,0) size 24x18
+                RenderInline {LI} at (40,0) size 24x18
                   RenderText {#text} at (40,0) size 24x18
                     text run at (40,0) width 24: "wet"
                 RenderText {#text} at (63,0) size 5x18
                   text run at (63,0) width 5: " "
-                RenderInline {LI} at (0,0) size 24x18
+                RenderInline {LI} at (67,0) size 24x18
                   RenderText {#text} at (67,0) size 24x18
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (99,27) size 100x43 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 91x18
-                RenderInline {LI} at (0,0) size 24x18
+                RenderInline {LI} at (40,0) size 24x18
                   RenderText {#text} at (40,0) size 24x18
                     text run at (40,0) width 24: "wet"
                 RenderText {#text} at (63,0) size 5x18
                   text run at (63,0) width 5: " "
-                RenderInline {LI} at (0,0) size 24x18
+                RenderInline {LI} at (67,0) size 24x18
                   RenderText {#text} at (67,0) size 24x18
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
@@ -69,7 +69,7 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 24: "wet"
                 RenderText {#text} at (23,0) size 5x18
                   text run at (23,0) width 5: " "
-                RenderInline {DIV} at (0,0) size 24x18
+                RenderInline {DIV} at (27,0) size 24x18
                   RenderText {#text} at (27,0) size 24x18
                     text run at (27,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
@@ -80,7 +80,7 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 24: "wet"
                 RenderText {#text} at (23,0) size 5x18
                   text run at (23,0) width 5: " "
-                RenderInline {DIV} at (0,0) size 24x18
+                RenderInline {DIV} at (27,0) size 24x18
                   RenderText {#text} at (27,0) size 24x18
                     text run at (27,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0

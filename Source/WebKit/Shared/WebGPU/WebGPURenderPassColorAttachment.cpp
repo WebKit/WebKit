@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderPassColorAttachment.h>
+#include <WebCore/WebGPUTextureView.h>
 
 namespace WebKit::WebGPU {
 
@@ -54,7 +55,7 @@ std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacki
             return std::nullopt;
     }
 
-    return { { view, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
+    return { { view, renderPassColorAttachment.depthSlice, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
 std::optional<WebCore::WebGPU::RenderPassColorAttachment> ConvertFromBackingContext::convertFromBacking(const RenderPassColorAttachment& renderPassColorAttachment)
@@ -77,7 +78,7 @@ std::optional<WebCore::WebGPU::RenderPassColorAttachment> ConvertFromBackingCont
             return std::nullopt;
     }
 
-    return { { *view, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
+    return { { *view, renderPassColorAttachment.depthSlice, resolveTarget, WTFMove(clearValue), renderPassColorAttachment.loadOp, renderPassColorAttachment.storeOp } };
 }
 
 } // namespace WebKit

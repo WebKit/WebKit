@@ -36,7 +36,7 @@ class Page;
 class CaptionUserPreferences;
 #endif
 
-class PageGroup {
+class PageGroup : public CanMakeWeakPtr<PageGroup> {
     WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT explicit PageGroup(const String& name);

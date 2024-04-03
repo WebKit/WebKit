@@ -84,23 +84,9 @@ public:
         return static_cast<unsigned>(m_value.lengthType());
     }
 
-    ExceptionOr<float> valueForBindings()
-    {
-        return m_value.valueForBindings(SVGLengthContext { contextElement() });
-    }
+    ExceptionOr<float> valueForBindings();
 
-    ExceptionOr<void> setValueForBindings(float value)
-    {
-        if (isReadOnly())
-            return Exception { ExceptionCode::NoModificationAllowedError };
-
-        auto result = m_value.setValue(SVGLengthContext { contextElement() }, value);
-        if (result.hasException())
-            return result;
-        
-        commitChange();
-        return result;
-    }
+    ExceptionOr<void> setValueForBindings(float);
     
     float valueInSpecifiedUnits()
     {
@@ -143,21 +129,7 @@ public:
         return { };
     }
     
-    ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType)
-    {
-        if (isReadOnly())
-            return Exception { ExceptionCode::NoModificationAllowedError };
-
-        if (unitType == SVG_LENGTHTYPE_UNKNOWN || unitType > SVG_LENGTHTYPE_PC)
-            return Exception { ExceptionCode::NotSupportedError };
-
-        auto result = m_value.convertToSpecifiedUnits(SVGLengthContext { contextElement() }, static_cast<SVGLengthType>(unitType));
-        if (result.hasException())
-            return result;
-
-        commitChange();
-        return result;
-    }
+    ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType);
     
     String valueAsString() const override
     {

@@ -35,13 +35,15 @@ namespace WebCore {
 class ContentType;
 class ImageDecoderGStreamerSample;
 
+void teardownGStreamerImageDecoders();
+
 class ImageDecoderGStreamer final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImageDecoderGStreamer);
 public:
     static RefPtr<ImageDecoderGStreamer> create(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     ImageDecoderGStreamer(FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
-    virtual ~ImageDecoderGStreamer() = default;
+    ~ImageDecoderGStreamer();
 
     static bool supportsMediaType(MediaType type) { return type == MediaType::Video; }
     static bool supportsContainerType(const String&);
@@ -54,17 +56,14 @@ public:
     IntSize size() const final;
     size_t frameCount() const final { return m_sampleData.size(); }
     RepetitionCount repetitionCount() const final;
-    String uti() const final;
     String filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
     std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }
     bool frameIsCompleteAtIndex(size_t index) const final { return sampleAtIndex(index); }
-    ImageDecoder::FrameMetadata frameMetadataAtIndex(size_t) const final;
 
     Seconds frameDurationAtIndex(size_t) const final;
     bool frameHasAlphaAtIndex(size_t) const final;
-    bool frameAllowSubsamplingAtIndex(size_t index) const final { return index <= m_sampleData.size(); }
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
 
     PlatformImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingOptions(DecodingMode::Synchronous)) final;
@@ -73,6 +72,8 @@ public:
     void setData(const FragmentedSharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_eos; }
     void clearFrameBufferCache(size_t) final;
+
+    void tearDown();
 
 private:
     void pushEncodedData(const FragmentedSharedBuffer&);

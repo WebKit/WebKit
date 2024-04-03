@@ -20,13 +20,13 @@
 #pragma once
 
 #include "APIObject.h"
-#include "SharedMemory.h"
 #include "WebHitTestResultData.h"
 #include "WebPageProxy.h"
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -58,6 +58,7 @@ public:
     WTF::String linkTitle() const { return m_data.linkTitle; }
     WTF::String linkLocalDataMIMEType() const { return m_data.linkLocalDataMIMEType; }
     WTF::String linkSuggestedFilename() const { return m_data.linkSuggestedFilename; }
+    WTF::String imageSuggestedFilename() const { return m_data.imageSuggestedFilename; }
     WTF::String lookupText() const { return m_data.lookupText; }
     WTF::String sourceImageMIMEType() const { return m_data.sourceImageMIMEType; }
 
@@ -82,6 +83,8 @@ public:
     WebKit::WebPageProxy* page() { return m_page.get(); }
 
     const std::optional<WebKit::FrameInfoData>& frameInfo() const { return m_data.frameInfo; }
+
+    bool hasLocalDataForLinkURL() const { return m_data.hasLocalDataForLinkURL; }
 
 private:
     explicit HitTestResult(const WebKit::WebHitTestResultData& hitTestResultData, WebKit::WebPageProxy* page)

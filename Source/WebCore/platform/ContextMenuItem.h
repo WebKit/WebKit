@@ -76,8 +76,11 @@ enum ContextMenuAction {
     ContextMenuItemTagIgnoreSpelling,
     ContextMenuItemTagLearnSpelling,
     ContextMenuItemTagOther,
-    ContextMenuItemTagSearchInSpotlight,
-    ContextMenuItemTagSearchWeb,
+#if PLATFORM(GTK)
+    ContextMenuItemTagSearchWeb = 38,
+#else
+    ContextMenuItemTagSearchWeb = 21,
+#endif
     ContextMenuItemTagLookUpInDictionary,
     ContextMenuItemTagOpenWithDefaultApplication,
     ContextMenuItemPDFActualSize,
@@ -153,12 +156,14 @@ enum ContextMenuAction {
     ContextMenuItemTagAddHighlightToNewQuickNote,
     ContextMenuItemTagLookUpImage,
     ContextMenuItemTagTranslate,
+    ContextMenuItemTagSwapCharacters,
     ContextMenuItemTagCopySubject,
     ContextMenuItemPDFSinglePageContinuous,
     ContextMenuItemPDFTwoPages,
     ContextMenuItemPDFTwoPagesContinuous,
     ContextMenuItemTagShowMediaStats,
-    ContextMenuItemLastNonCustomTag = ContextMenuItemTagShowMediaStats,
+    ContextMenuItemTagCopyLinkToHighlight,
+    ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopyLinkToHighlight,
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,
     ContextMenuItemBaseApplicationTag = 10000

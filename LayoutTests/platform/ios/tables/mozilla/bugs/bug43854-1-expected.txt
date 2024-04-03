@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                   text run at (375,0) width 148: "look at cell borders..."
           RenderTableRow {TR} at (0,22) size 900x182
             RenderTableCell {TD} at (0,162) size 300x42 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderBlock {P} at (1,1) size 298x40
+              RenderBlock {P} at (1,141) size 298x40
                 RenderText {#text} at (125,0) size 48x20
                   text run at (125,0) width 48: "border"
                 RenderBR {BR} at (172,0) size 1x20

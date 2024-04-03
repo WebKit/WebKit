@@ -28,13 +28,11 @@
 #include "AppPrivacyReport.h"
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
-#include "DataReference.h"
 #include "DataTaskIdentifier.h"
 #include "IdentifierTypes.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "QuotaIncreaseRequestIdentifier.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebsiteDataStore.h"
@@ -77,7 +75,7 @@ class SecurityOrigin;
 class SecurityOriginData;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessWasGranted : uint8_t;
 enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
 struct NotificationData;
@@ -95,6 +93,7 @@ class StorageAccessPromptQuirkObserver;
 
 enum class BackgroundFetchChange : uint8_t;
 enum class LoadedWebArchive : bool;
+enum class DidFilterKnownLinkDecoration : bool;
 enum class ProcessTerminationReason : uint8_t;
 enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
@@ -134,7 +133,7 @@ public:
     void getNetworkProcessConnection(WebProcessProxy&, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
     Ref<DownloadProxy> createDownloadProxy(WebsiteDataStore&, Ref<API::DownloadClient>&&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
-    void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, CompletionHandler<void(API::DataTask&)>&&);
+    void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&&);
 
     void addAllowedFirstPartyForCookies(WebProcessProxy&, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive, CompletionHandler<void()>&&);
 
@@ -197,9 +196,9 @@ public:
     void isResourceLoadStatisticsEphemeral(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
-    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier, DidFilterKnownLinkDecoration);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebPageProxyIdentifier);
-    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
+    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, const NavigatedFromDomain&, const NavigatedToDomain&, bool wasFiltered, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void deleteCookiesForTesting(PAL::SessionID, const RegistrableDomain&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
     void deleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Vector<RegistrableDomain>&&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
@@ -218,7 +217,7 @@ public:
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, const String& firstPartyHost, const RegistrableDomain& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
-    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&&);
+    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
 
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
@@ -231,7 +230,6 @@ public:
 
     void requestTermination();
 
-    ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -241,8 +239,6 @@ public:
     enum class SendParametersToNetworkProcess : bool { No, Yes };
     void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
     void removeSession(WebsiteDataStore&, CompletionHandler<void(String&&)>&&);
-    
-    void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 
     // ProcessThrottlerClient
     void sendProcessDidResume(ResumeReason) final;
@@ -272,6 +268,8 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
+    void didAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID, bool wasAllowed, URL&&);
+
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(PAL::SessionID, CompletionHandler<void(bool)>&&);
     void clearAppBoundSession(PAL::SessionID, CompletionHandler<void()>&&);
@@ -279,8 +277,13 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    void getWindowSceneIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&);
+    void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&);
 #endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&);
+#endif
+
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void updateBundleIdentifier(const String&, CompletionHandler<void()>&&);
@@ -311,7 +314,7 @@ public:
     void dataTaskReceivedChallenge(DataTaskIdentifier, WebCore::AuthenticationChallenge&&, CompletionHandler<void(AuthenticationChallengeDisposition, WebCore::Credential&&)>&&);
     void dataTaskWillPerformHTTPRedirection(DataTaskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(bool)>&&);
     void dataTaskDidReceiveResponse(DataTaskIdentifier, WebCore::ResourceResponse&&, CompletionHandler<void(bool)>&&);
-    void dataTaskDidReceiveData(DataTaskIdentifier, const IPC::DataReference&);
+    void dataTaskDidReceiveData(DataTaskIdentifier, std::span<const uint8_t>);
     void dataTaskDidCompleteWithError(DataTaskIdentifier, WebCore::ResourceError&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
 
@@ -423,7 +426,6 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
 
-    ProcessThrottler m_throttler;
     ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)

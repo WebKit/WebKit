@@ -50,7 +50,7 @@ PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
     rp.name = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.name = "johnpsmith@example.com"_s;
     user.displayName = "John P. Smith"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
@@ -93,7 +93,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -109,7 +109,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = static_cast<PublicKeyCredentialType>(-1);
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -126,7 +126,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
     rp.name = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
+    user.id = WebCore::toBufferSource(TestData::kUserId);
     user.name = "johnpsmith@example.com"_s;
     user.displayName = "John P. Smith"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
@@ -168,13 +168,13 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionToU2fSignRequest)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
     EXPECT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
-    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)));
+    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle));
     ASSERT_TRUE(u2fSignCommand);
     EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fSignCommandApdu, sizeof(TestData::kU2fSignCommandApdu)));
 }
@@ -184,7 +184,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
@@ -195,7 +195,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
     extensions.appid = "https://www.example.com/appid"_s;
     getAssertionReq.extensions = WTFMove(extensions);
 
-    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), true);
+    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle), true);
     ASSERT_TRUE(u2fSignCommand);
     EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fAppIDSignCommandApdu, sizeof(TestData::kU2fAppIDSignCommandApdu)));
 }
@@ -211,7 +211,7 @@ TEST(U2fCommandConstructorTest, TestU2fSignUserVerificationRequirement)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
@@ -225,18 +225,18 @@ TEST(U2fCommandConstructorTest, TestCreateSignWithIncorrectKeyHandle)
     auto getAssertionReq = constructGetAssertionRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
     Vector<PublicKeyCredentialDescriptor> allowedList;
     allowedList.append(WTFMove(credentialDescriptor));
     getAssertionReq.allowCredentials = WTFMove(allowedList);
     ASSERT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
 
     Vector<uint8_t> keyHandle(kMaxKeyHandleLength, 0xff);
-    const auto validSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.data(), keyHandle.size()));
+    const auto validSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.span()));
     EXPECT_TRUE(validSignCommand);
 
     keyHandle.append(0xff);
-    const auto invalidSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.data(), keyHandle.size()));
+    const auto invalidSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(keyHandle.span()));
     EXPECT_FALSE(invalidSignCommand);
 }
 

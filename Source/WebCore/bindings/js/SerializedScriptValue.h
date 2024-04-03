@@ -37,6 +37,13 @@
 #include <wtf/Gigacage.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStreamTrackDataHolder.h"
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+#include "MediaSourceHandle.h"
+#endif
+
 #if ENABLE(WEB_CODECS)
 #include "WebCodecsAudioData.h"
 #include "WebCodecsAudioInternalData.h"
@@ -63,7 +70,7 @@ class OffscreenCanvas;
 #endif
 class IDBValue;
 class MessagePort;
-class ImageBitmapBacking;
+class DetachedImageBitmap;
 class FragmentedSharedBuffer;
 enum class SerializationReturnCode;
 
@@ -92,8 +99,6 @@ public:
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
     JSC::JSValue deserialize(JSC::JSGlobalObject&, JSC::JSGlobalObject*, const Vector<RefPtr<MessagePort>>&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths, SerializationErrorMode = SerializationErrorMode::Throwing, bool* didFail = nullptr);
-
-    static uint32_t wireFormatVersion();
 
     WEBCORE_EXPORT String toString() const;
 
@@ -125,15 +130,21 @@ private:
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
+#endif
 #if ENABLE(WEB_CODECS)
         , Vector<RefPtr<WebCodecsEncodedVideoChunkStorage>>&& = { }
         , Vector<WebCodecsVideoFrameData>&& = { }
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
+#endif
         );
 
-    SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
+    SerializedScriptValue(Vector<unsigned char>&&, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray>, std::unique_ptr<ArrayBufferContentsArray> sharedBuffers, Vector<std::optional<DetachedImageBitmap>>&&
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& = { }
         , Vector<RefPtr<OffscreenCanvas>>&& = { }
@@ -141,6 +152,9 @@ private:
         , Vector<RefPtr<MessagePort>>&& = { }
 #if ENABLE(WEB_RTC)
         , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
+#endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        , Vector<RefPtr<DetachedMediaSourceHandle>>&& = { }
 #endif
 #if ENABLE(WEBASSEMBLY)
         , std::unique_ptr<WasmModuleArray> = nullptr
@@ -151,6 +165,9 @@ private:
         , Vector<WebCodecsVideoFrameData>&& = { }
         , Vector<RefPtr<WebCodecsEncodedAudioChunkStorage>>&& = { }
         , Vector<WebCodecsAudioInternalData>&& = { }
+#endif
+#if ENABLE(MEDIA_STREAM)
+        , Vector<std::unique_ptr<MediaStreamTrackDataHolder>>&& = { }
 #endif
         );
 
@@ -168,8 +185,14 @@ private:
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };
 #endif
+#if ENABLE(MEDIA_SOURCE_IN_WORKERS)
+        Vector<RefPtr<DetachedMediaSourceHandle>> detachedMediaSourceHandles { };
+#endif
+#if ENABLE(MEDIA_STREAM)
+        Vector<std::unique_ptr<MediaStreamTrackDataHolder>> serializedMediaStreamTracks { };
+#endif
         std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { };
-        Vector<std::optional<ImageBitmapBacking>> backingStores { };
+        Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
         Vector<RefPtr<OffscreenCanvas>> inMemoryOffscreenCanvases { };

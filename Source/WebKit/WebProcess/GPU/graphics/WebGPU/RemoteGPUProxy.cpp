@@ -182,7 +182,7 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
     callback(WebGPU::RemoteAdapterProxy::create(WTFMove(response->name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), response->isFallbackAdapter, *this, m_convertToBackingContext, identifier));
 }
 
-Ref<WebCore::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor& descriptor)
+RefPtr<WebCore::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor& descriptor)
 {
     // FIXME: Should we be consulting m_lost?
 
@@ -191,27 +191,27 @@ Ref<WebCore::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationCont
     auto& compositorIntegration = const_cast<WebGPU::RemoteCompositorIntegrationProxy&>(m_convertToBackingContext->convertToRawBacking(descriptor.compositorIntegration));
 
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
+    if (!convertedDescriptor)
+        return nullptr;
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteGPU::CreatePresentationContext(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     auto result = WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, identifier);
     compositorIntegration.setPresentationContext(result);
     return result;
 }
 
-Ref<WebCore::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorIntegration()
+RefPtr<WebCore::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorIntegration()
 {
     // FIXME: Should we be consulting m_lost?
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteGPU::CreateCompositorIntegration(identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     return WebGPU::RemoteCompositorIntegrationProxy::create(*this, m_convertToBackingContext, identifier);
 }

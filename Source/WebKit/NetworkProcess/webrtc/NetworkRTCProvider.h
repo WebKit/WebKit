@@ -28,7 +28,6 @@
 #if USE(LIBWEBRTC)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include "NetworkRTCMonitor.h"
 #include "RTCNetwork.h"
@@ -98,7 +97,7 @@ public:
 
         virtual void close() = 0;
         virtual void setOption(int option, int value) = 0;
-        virtual void sendTo(const uint8_t*, size_t, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
+        virtual void sendTo(std::span<const uint8_t>, const rtc::SocketAddress&, const rtc::PacketOptions&) = 0;
     };
 
     std::unique_ptr<Socket> takeSocket(WebCore::LibWebRTCSocketIdentifier);
@@ -129,7 +128,7 @@ private:
     void createUDPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, uint16_t, uint16_t, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&&);
     void createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&, const RTCNetwork::SocketAddress&, String&& userAgent, int, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain&&);
     void wrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier);
-    void sendToSocket(WebCore::LibWebRTCSocketIdentifier, const IPC::DataReference&, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
+    void sendToSocket(WebCore::LibWebRTCSocketIdentifier, std::span<const uint8_t>, RTCNetwork::SocketAddress&&, RTCPacketOptions&&);
     void setSocketOption(WebCore::LibWebRTCSocketIdentifier, int option, int value);
     void setPlatformTCPSocketsEnabled(bool enabled) { m_platformTCPSocketsEnabled = enabled; }
     void setPlatformUDPSocketsEnabled(bool enabled) { m_platformUDPSocketsEnabled = enabled; }

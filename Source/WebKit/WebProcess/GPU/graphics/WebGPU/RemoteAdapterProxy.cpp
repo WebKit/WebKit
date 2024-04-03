@@ -53,13 +53,13 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
-        return;
+        return callback(nullptr);
 
     auto identifier = WebGPUIdentifier::generate();
     auto queueIdentifier = WebGPUIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier));
     if (!sendResult.succeeded())
-        return;
+        return callback(nullptr);
 
     auto [supportedFeatures, supportedLimits] = sendResult.takeReply();
     if (!supportedLimits.maxTextureDimension2D) {

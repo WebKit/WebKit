@@ -78,7 +78,6 @@ private:
     const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
 #endif
 
-    bool m_isActive { false };
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
     std::optional<uint64_t> m_maxQueueDepth;

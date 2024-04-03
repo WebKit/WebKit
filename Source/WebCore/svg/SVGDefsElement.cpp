@@ -49,10 +49,8 @@ bool SVGDefsElement::isValid() const
 
 RenderPtr<RenderElement> SVGDefsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGHiddenContainer>(RenderObject::Type::SVGHiddenContainer, *this, WTFMove(style));
-#endif
     return createRenderer<LegacyRenderSVGHiddenContainer>(RenderObject::Type::LegacySVGHiddenContainer, *this, WTFMove(style));
 }
 

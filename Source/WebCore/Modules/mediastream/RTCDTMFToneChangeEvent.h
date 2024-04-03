@@ -47,8 +47,6 @@ public:
 
     const String& tone() const;
 
-    virtual EventInterface eventInterface() const;
-
 private:
     explicit RTCDTMFToneChangeEvent(const String& tone);
     RTCDTMFToneChangeEvent(const AtomString& type, const Init&, IsTrusted);

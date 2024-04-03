@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-36,1) size 16x53: black square
           RenderText {#text} at (0,1) size 107x53
             text run at (0,1) width 107: "hello "
-          RenderInline {SPAN} at (0,0) size 112x53
+          RenderInline {SPAN} at (107,1) size 112x53
             RenderText {#text} at (107,1) size 112x53
               text run at (107,1) width 112: "world"
       RenderBlock {P} at (0,73) size 784x72

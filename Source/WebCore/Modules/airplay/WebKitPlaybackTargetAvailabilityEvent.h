@@ -51,8 +51,6 @@ public:
 
     String availability() const { return m_availability; }
 
-    EventInterface eventInterface() const override { return WebKitPlaybackTargetAvailabilityEventInterfaceType; }
-
 private:
     explicit WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, bool available);
     WebKitPlaybackTargetAvailabilityEvent(const AtomString& eventType, const Init&, IsTrusted);

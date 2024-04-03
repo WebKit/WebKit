@@ -101,6 +101,11 @@ bool BlendingKeyframes::hasImplicitKeyframes() const
     return size() && (m_keyframes[0].offset() || m_keyframes[size() - 1].offset() != 1);
 }
 
+bool BlendingKeyframes::hasImplicitKeyframeForProperty(AnimatableCSSProperty property) const
+{
+    return hasImplicitKeyframes() && (!m_explicitFromProperties.contains(property) || !m_explicitToProperties.contains(property));
+}
+
 void BlendingKeyframes::copyKeyframes(const BlendingKeyframes& other)
 {
     for (auto& keyframe : other) {
@@ -351,8 +356,17 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
             m_hasExplicitlyInheritedKeyframeProperty = style->hasExplicitlyInheritedProperties();
     };
 
+    auto analyzeKeyframeForExplicitProperties = [&] {
+        auto& properties = keyframe.properties();
+        if (!keyframe.offset())
+            m_explicitFromProperties.add(properties.begin(), properties.end());
+        if (keyframe.offset() == 1)
+            m_explicitToProperties.add(properties.begin(), properties.end());
+    };
+
     analyzeSizeDependentTransform();
     analyzeExplicitlyInheritedKeyframeProperty();
+    analyzeKeyframeForExplicitProperties();
 }
 
 void BlendingKeyframe::addProperty(const AnimatableCSSProperty& property)

@@ -69,6 +69,8 @@ bool RealtimeMediaSourceSupportedConstraints::supportsConstraint(MediaConstraint
         return supportsZoom();
     case MediaConstraintType::Torch:
         return supportsTorch();
+    case MediaConstraintType::BackgroundBlur:
+        return supportsBackgroundBlur();
     }
 
     ASSERT_NOT_REACHED();

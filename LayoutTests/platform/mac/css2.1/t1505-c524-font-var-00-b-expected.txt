@@ -9,7 +9,7 @@ layer at (0,0) size 800x84
       RenderBlock {P} at (0,34) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 264x18
           text run at (0,0) width 264: "This Sentence should be in Small Caps. "
-        RenderInline {SPAN} at (0,0) size 213x18
+        RenderInline {SPAN} at (263,0) size 213x18
           RenderText {#text} at (263,0) size 213x18
             text run at (263,0) width 213: "This Sentence should be Normal."
         RenderText {#text} at (0,0) size 0x0

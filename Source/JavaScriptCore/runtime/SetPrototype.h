@@ -40,7 +40,7 @@ public:
         return &vm.plainObjectSpace();
     }
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static SetPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {

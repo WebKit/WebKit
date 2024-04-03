@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -52,7 +51,7 @@ public:
         return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
     }
 
-    void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
+    void addDataCue(MediaTime&& start, MediaTime&& end, std::span<const uint8_t>);
 
 #if ENABLE(DATACUE_VALUE)
     using SerializedPlatformDataCueValue = WebCore::SerializedPlatformDataCueValue;
@@ -68,16 +67,16 @@ public:
 
     using ISOWebVTTCue = WebCore::ISOWebVTTCue;
     void parseWebVTTFileHeader(String&&);
-    void parseWebVTTCueData(const IPC::DataReference&);
+    void parseWebVTTCueData(std::span<const uint8_t>);
     void parseWebVTTCueDataStruct(ISOWebVTTCue&&);
 
     void updateConfiguration(TextTrackPrivateRemoteConfiguration&&);
 
     WebCore::TrackID id() const final { return m_id; }
-    AtomString label() const final { return m_label; }
-    AtomString language() const final { return m_language; }
+    AtomString label() const final { return AtomString { m_label }; }
+    AtomString language() const final { return AtomString { m_language }; }
     int trackIndex() const final { return m_trackIndex; }
-    AtomString inBandMetadataTrackDispatchType() const final { return m_inBandMetadataTrackDispatchType; }
+    AtomString inBandMetadataTrackDispatchType() const final { return AtomString { m_inBandMetadataTrackDispatchType }; }
 
     using TextTrackKind = WebCore::InbandTextTrackPrivate::Kind;
     TextTrackKind kind() const final { return m_kind; }
@@ -97,10 +96,10 @@ private:
     TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    AtomString m_label;
-    AtomString m_language;
+    String m_label;
+    String m_language;
     int m_trackIndex { -1 };
-    AtomString m_inBandMetadataTrackDispatchType;
+    String m_inBandMetadataTrackDispatchType;
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_playerIdentifier;

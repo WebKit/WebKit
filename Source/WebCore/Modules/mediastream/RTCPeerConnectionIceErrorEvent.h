@@ -55,8 +55,6 @@ public:
     uint16_t errorCode() const { return m_errorCode; }
     const String& errorText() const { return m_errorText; }
 
-    virtual EventInterface eventInterface() const;
-
 private:
     RTCPeerConnectionIceErrorEvent(const AtomString& type, CanBubble, IsCancelable, String&& address, std::optional<uint16_t> port, String&& url, uint16_t errorCode, String&& errorText);
 

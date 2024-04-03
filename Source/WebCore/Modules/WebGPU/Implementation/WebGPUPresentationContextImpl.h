@@ -69,7 +69,7 @@ private:
     PresentationContextImpl& operator=(const PresentationContextImpl&) = delete;
     PresentationContextImpl& operator=(PresentationContextImpl&&) = delete;
 
-    void configure(const CanvasConfiguration&) final;
+    bool configure(const CanvasConfiguration&) final;
     void unconfigure() final;
 
     RefPtr<Texture> getCurrentTexture() final;

@@ -347,7 +347,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     auto scrollSnapPort = computeScrollSnapPortOrAreaRect(viewportRectInBorderBoxCoordinates, scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
     LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
     for (auto& child : boxesWithScrollSnapPositions) {
-        if (child.enclosingScrollableContainerForSnapping() != &scrollingElementBox)
+        if (child.enclosingScrollableContainerForSnapping() != &scrollingElementBox || !child.element())
             continue;
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
@@ -361,7 +361,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
             scrollSnapArea.moveBy(scrollPosition);
 
         scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child.style().scrollMargin(), InsetOrOutset::Outset);
-        LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
+        LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea << " scroll snap id: " << child.element()->identifier() << " element: " << *child.element());
         auto alignment = child.style().scrollSnapAlign();
         auto stop = child.style().scrollSnapStop();
 
@@ -388,8 +388,9 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         snapAreas.append(scrollSnapAreaAsOffsets);
         
         auto isFocused = child.element() ? focusedElement == child.element() : false;
-        auto identifier = child.element() ? child.element()->identifier() : ObjectIdentifier<ElementIdentifierType>(0);
+        auto identifier = child.element()->identifier();
         snapAreasIDs.append(identifier);
+
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());

@@ -199,7 +199,11 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     if (!renderer.textNode())
         return { };
 
-    auto markers = renderer.document().markers().markersFor(*renderer.textNode());
+    CheckedPtr markerController = renderer.document().markersIfExists();
+    if (!markerController)
+        return { };
+
+    auto markers = markerController->markersFor(*renderer.textNode());
 
     auto markedTextTypeForMarkerType = [] (DocumentMarker::Type type) {
         switch (type) {
@@ -209,6 +213,10 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
             return MarkedText::Type::GrammarError;
         case DocumentMarker::Type::CorrectionIndicator:
             return MarkedText::Type::Correction;
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+            return MarkedText::Type::UnifiedTextReplacement;
+#endif
         case DocumentMarker::Type::TextMatch:
             return MarkedText::Type::TextMatch;
         case DocumentMarker::Type::DictationAlternatives:
@@ -236,6 +244,9 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
                 break;
             FALLTHROUGH;
         case DocumentMarker::Type::CorrectionIndicator:
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+#endif
         case DocumentMarker::Type::Replacement:
         case DocumentMarker::Type::DictationAlternatives:
 #if PLATFORM(IOS_FAMILY)
@@ -278,6 +289,13 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         switch (marker->type()) {
         case DocumentMarker::Type::Spelling:
         case DocumentMarker::Type::CorrectionIndicator:
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+        case DocumentMarker::Type::UnifiedTextReplacement:
+            if (marker->type() == DocumentMarker::Type::UnifiedTextReplacement && std::get<DocumentMarker::UnifiedTextReplacementData>(marker->data()).state != DocumentMarker::UnifiedTextReplacementData::State::Pending)
+                break;
+
+            BFALLTHROUGH;
+#endif
         case DocumentMarker::Type::DictationAlternatives:
         case DocumentMarker::Type::Grammar:
 #if PLATFORM(IOS_FAMILY)
@@ -286,7 +304,9 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 #endif
         case DocumentMarker::Type::TextMatch: {
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
-            markedTexts.append({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
+
+            auto markedTextType = markedTextTypeForMarkerType(marker->type());
+            markedTexts.append({ clampedStart, clampedEnd, markedTextType, marker.get() });
             break;
         }
         case DocumentMarker::Type::Replacement:

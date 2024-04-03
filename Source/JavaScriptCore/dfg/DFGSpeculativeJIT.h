@@ -698,7 +698,7 @@ public:
     void compileCheckDetached(Node*);
 
     void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, AccessType, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, AccessType, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 
 #if USE(JSVALUE64)
     void cachedGetById(Node*, CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
@@ -716,7 +716,9 @@ public:
     void compileGetByIdMegamorphic(Node*);
     void compileGetByIdWithThisMegamorphic(Node*);
     void compileInById(Node*);
+    void compileInByIdMegamorphic(Node*);
     void compileInByVal(Node*);
+    void compileInByValMegamorphic(Node*);
     void compileHasPrivate(Node*, AccessType);
     void compileHasPrivateName(Node*);
     void compileHasPrivateBrand(Node*);
@@ -1623,6 +1625,7 @@ public:
     void compileNewInternalFieldObject(Node*);
     void compileToPrimitive(Node*);
     void compileToPropertyKey(Node*);
+    void compileToPropertyKeyOrNumber(Node*);
     void compileToNumeric(Node*);
     void compileCallNumberConstructor(Node*);
     void compileLogShadowChickenPrologue(Node*);
@@ -1822,7 +1825,7 @@ public:
     template<bool strict>
     GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
     
-    void cageTypedArrayStorage(GPRReg, GPRReg, bool validateAuth = true);
+    void cageTypedArrayStorage(GPRReg, GPRReg);
     
     void recordSetLocal(
         Operand bytecodeReg, VirtualRegister machineReg, DataFormat format)

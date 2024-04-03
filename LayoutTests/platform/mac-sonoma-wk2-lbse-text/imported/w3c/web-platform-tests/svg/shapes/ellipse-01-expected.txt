@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGRoot {svg} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGViewportContainer at (0,0) size 100x100
+layer at (10,20) size 80x60
+  RenderSVGEllipse {ellipse} at (10,20) size 80x60 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [cx=50.00] [cy=50.00] [rx=0.00] [ry=0.00]

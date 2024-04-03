@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayer.h"
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
@@ -45,6 +46,20 @@ VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, const VideoPlayb
     , m_displayCompositedVideoFrames(metrics.displayCompositedVideoFrames)
     , m_totalFrameDelay(metrics.totalFrameDelay)
 {
+}
+
+Ref<JSON::Object> VideoPlaybackQuality::toJSONObject() const
+{
+    Ref json = JSON::Object::create();
+
+    json->setDouble("creationTime"_s, m_creationTime);
+    json->setInteger("totalVideoFrames"_s, m_totalVideoFrames);
+    json->setInteger("droppedVideoFrames"_s, m_droppedVideoFrames);
+    json->setInteger("corruptedVideoFrames"_s, m_corruptedVideoFrames);
+    json->setInteger("displayCompositedVideoFrames"_s, m_displayCompositedVideoFrames);
+    json->setDouble("totalFrameDelay"_s, m_totalFrameDelay);
+
+    return json;
 }
 
 }

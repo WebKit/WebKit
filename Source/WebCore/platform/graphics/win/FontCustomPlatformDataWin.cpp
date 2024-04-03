@@ -21,6 +21,8 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#if PLATFORM(WIN)
+
 #include "CSSFontFaceSrcValue.h"
 #include "FontCreationContext.h"
 #include "FontDescription.h"
@@ -28,14 +30,11 @@
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
-#include <cairo-win32.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
-
-cairo_font_face_t* createCairoDWriteFontFace(HFONT);
 
 FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
     : name(name)
@@ -45,38 +44,6 @@ FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformD
 }
 
 FontCustomPlatformData::~FontCustomPlatformData() = default;
-
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext&)
-{
-    auto size = fontDescription.computedSize();
-
-    LOGFONT logFont;
-    memset(&logFont, 0, sizeof(LOGFONT));
-    wcsncpy(logFont.lfFaceName, name.wideCharacters().data(), LF_FACESIZE - 1);
-
-    logFont.lfHeight = -size * cWindowsFontScaleFactor;
-    logFont.lfWidth = 0;
-    logFont.lfEscapement = 0;
-    logFont.lfOrientation = 0;
-    logFont.lfUnderline = false;
-    logFont.lfStrikeOut = false;
-    logFont.lfCharSet = DEFAULT_CHARSET;
-    logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    logFont.lfQuality = CLEARTYPE_QUALITY;
-    logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-    logFont.lfItalic = italic;
-    logFont.lfWeight = bold ? 700 : 400;
-
-    auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
-
-    cairo_font_face_t* fontFace = createCairoDWriteFontFace(hfont.get());
-
-    FontPlatformData fontPlatformData(WTFMove(hfont), fontFace, size, bold, italic, this);
-
-    cairo_font_face_destroy(fontFace);
-
-    return fontPlatformData;
-}
 
 static String createUniqueFontName()
 {
@@ -88,7 +55,7 @@ static String createUniqueFontName()
     return fontName;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::create(SharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
     auto fontResource = renameAndActivateFont(buffer, fontName);
@@ -98,6 +65,11 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
 
     FontPlatformData::CreationData creationData = { buffer, itemInCollection, fontResource.releaseNonNull() };
     return adoptRef(new FontCustomPlatformData(fontName, WTFMove(creationData)));
+}
+
+RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBuffer&, const String&)
+{
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
@@ -111,10 +83,20 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
-bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology& tech)
 {
-    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
-    return true;
+    switch (tech) {
+    case FontTechnology::ColorCbdt:
+    case FontTechnology::ColorColrv0:
+    case FontTechnology::ColorSbix:
+    case FontTechnology::ColorSvg:
+    case FontTechnology::FeaturesOpentype:
+        return true;
+    default:
+        return false;
+    }
 }
 
-}
+} // namespace WebCore
+
+#endif // PLATFORM(WIN)

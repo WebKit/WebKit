@@ -194,8 +194,7 @@ void GetPipelineCacheData(ContextVk *contextVk,
         }
 
         // Compress it.
-        if (!egl::CompressBlobCacheData(pipelineCacheData.size(), pipelineCacheData.data(),
-                                        cacheDataOut))
+        if (!angle::CompressBlob(pipelineCacheData.size(), pipelineCacheData.data(), cacheDataOut))
         {
             cacheDataOut->clear();
         }
@@ -514,8 +513,8 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     angle::MemoryBuffer uncompressedData;
     if (compressed)
     {
-        if (!egl::DecompressBlobCacheData(dataPointer, dataSize, kMaxLocalPipelineCacheSize,
-                                          &uncompressedData))
+        if (!angle::DecompressBlob(dataPointer, dataSize, kMaxLocalPipelineCacheSize,
+                                   &uncompressedData))
         {
             return angle::Result::Stop;
         }
@@ -528,17 +527,12 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     pipelineCacheCreateInfo.initialDataSize = dataSize;
     pipelineCacheCreateInfo.pInitialData    = dataPointer;
 
-    if (context->getFeatures().supportsPipelineCreationCacheControl.enabled)
-    {
-        pipelineCacheCreateInfo.flags |= VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT;
-    }
-
     ANGLE_VK_TRY(context, mPipelineCache.init(context->getDevice(), pipelineCacheCreateInfo));
 
-    // Merge the pipeline cache into RendererVk's.
+    // Merge the pipeline cache into Renderer's.
     if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(context, mPipelineCache));
     }
 
     return angle::Result::Continue;
@@ -551,12 +545,6 @@ angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *c
         VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
         pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-        if (context->getFeatures().supportsPipelineCreationCacheControl.enabled)
-        {
-            pipelineCacheCreateInfo.flags |=
-                VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT;
-        }
-
         ANGLE_VK_TRY(context, mPipelineCache.init(context->getDevice(), pipelineCacheCreateInfo));
     }
 
@@ -566,7 +554,7 @@ angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *c
 angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
                                         bool isSeparable,
                                         gl::BinaryInputStream *stream,
-                                        bool *successOut)
+                                        egl::CacheGetResult *resultOut)
 {
     mVariableInfoMap.load(stream);
     mOriginalShaderInfo.load(stream);
@@ -607,7 +595,7 @@ angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
     ANGLE_TRY(initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
                                         &contextVk->getMetaDescriptorPools()));
 
-    *successOut = true;
+    *resultOut = egl::CacheGetResult::Success;
     return angle::Result::Continue;
 }
 
@@ -655,48 +643,30 @@ void ProgramExecutableVk::clearVariableInfoMap()
     mVariableInfoMap.clear();
 }
 
-angle::Result ProgramExecutableVk::warmUpPipelineCache(
+angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
     vk::Context *context,
     vk::PipelineRobustness pipelineRobustness,
     vk::PipelineProtectedAccess pipelineProtectedAccess,
-    vk::RenderPass *temporaryCompatibleRenderPassOut)
+    bool *isComputeOut,
+    angle::FixedVector<bool, 2> *surfaceRotationVariationsOut,
+    vk::GraphicsPipelineDesc *graphicsPipelineDescOut,
+    vk::RenderPass *renderPassOut)
 {
-    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramExecutableVk::warmUpPipelineCache");
-
+    ASSERT(isComputeOut);
+    ASSERT(surfaceRotationVariationsOut);
+    ASSERT(graphicsPipelineDescOut);
+    ASSERT(renderPassOut);
     ASSERT(context->getFeatures().warmUpPipelineCacheAtLink.enabled);
 
     ANGLE_TRY(ensurePipelineCacheInitialized(context));
 
-    // No synchronization necessary when accessing the program executable's cache as there is no
-    // access to it from other threads at this point.
-    vk::PipelineCacheAccess pipelineCache;
-    pipelineCache.init(&mPipelineCache, nullptr);
-
-    // Create a set of pipelines.  Ideally, that would be the entire set of possible pipelines so
-    // there would be none created at draw time.  This is gated on the removal of some
-    // specialization constants and adoption of VK_EXT_graphics_pipeline_library.
+    *isComputeOut        = false;
     const bool isCompute = mExecutable->hasLinkedShaderStage(gl::ShaderType::Compute);
     if (isCompute)
     {
-        // There is no state associated with compute programs, so only one pipeline needs creation
-        // to warm up the cache.
-        vk::PipelineHelper *pipeline = nullptr;
-        ANGLE_TRY(getOrCreateComputePipeline(context, &pipelineCache, PipelineSource::WarmUp,
-                                             pipelineRobustness, pipelineProtectedAccess,
-                                             &pipeline));
-
-        // Merge the cache with RendererVk's
-        if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
-        {
-            ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
-        }
-
+        *isComputeOut = true;
         return angle::Result::Continue;
     }
-
-    const vk::GraphicsPipelineDesc *descPtr = nullptr;
-    vk::PipelineHelper *pipeline            = nullptr;
-    vk::GraphicsPipelineDesc graphicsPipelineDesc;
 
     // It is only at drawcall time that we will have complete information required to build the
     // graphics pipeline descriptor. Use the most "commonly seen" state values and create the
@@ -706,15 +676,15 @@ angle::Result ProgramExecutableVk::warmUpPipelineCache(
                                  ? gl::PrimitiveMode::Patches
                                  : gl::PrimitiveMode::TriangleStrip;
     SetupDefaultPipelineState(context, *mExecutable, mode, pipelineRobustness,
-                              pipelineProtectedAccess, &graphicsPipelineDesc);
+                              pipelineProtectedAccess, graphicsPipelineDescOut);
 
     // Create a temporary compatible RenderPass.  The render pass cache in ContextVk cannot be used
     // because this function may be called from a worker thread.
     vk::AttachmentOpsArray ops;
-    RenderPassCache::InitializeOpsForCompatibleRenderPass(graphicsPipelineDesc.getRenderPassDesc(),
-                                                          &ops);
-    ANGLE_TRY(RenderPassCache::MakeRenderPass(context, graphicsPipelineDesc.getRenderPassDesc(),
-                                              ops, temporaryCompatibleRenderPassOut, nullptr));
+    RenderPassCache::InitializeOpsForCompatibleRenderPass(
+        graphicsPipelineDescOut->getRenderPassDesc(), &ops);
+    ANGLE_TRY(RenderPassCache::MakeRenderPass(context, graphicsPipelineDescOut->getRenderPassDesc(),
+                                              ops, renderPassOut, nullptr));
 
     // Variations that definitely matter:
     //
@@ -725,36 +695,78 @@ angle::Result ProgramExecutableVk::warmUpPipelineCache(
     // shading), but pre-creating shaders for them is impractical.  Most such state is likely unused
     // by most applications, but variations can be added here for certain apps that are known to
     // benefit from it.
-    ProgramTransformOptions transformOptions = {};
-
-    angle::FixedVector<bool, 2> surfaceRotationVariations = {false};
+    *surfaceRotationVariationsOut = {false};
     if (context->getFeatures().enablePreRotateSurfaces.enabled &&
         !context->getFeatures().preferDriverUniformOverSpecConst.enabled)
     {
-        surfaceRotationVariations.push_back(true);
+        surfaceRotationVariationsOut->push_back(true);
     }
 
-    // Only build the shaders subset of the pipeline if VK_EXT_graphics_pipeline_library is
-    // supported, especially since the vertex input and fragment output state set up here is
-    // completely bogus.
-    vk::GraphicsPipelineSubset subset =
-        context->getFeatures().supportsGraphicsPipelineLibrary.enabled
-            ? vk::GraphicsPipelineSubset::Shaders
-            : vk::GraphicsPipelineSubset::Complete;
-
-    for (bool rotation : surfaceRotationVariations)
+    ProgramTransformOptions transformOptions = {};
+    for (bool rotation : *surfaceRotationVariationsOut)
     {
-        transformOptions.surfaceRotation = rotation;
-
-        ANGLE_TRY(createGraphicsPipelineImpl(
-            context, transformOptions, subset, &pipelineCache, PipelineSource::WarmUp,
-            graphicsPipelineDesc, *temporaryCompatibleRenderPassOut, &descPtr, &pipeline));
+        transformOptions.surfaceRotation       = rotation;
+        vk::ShaderProgramHelper *shaderProgram = nullptr;
+        ANGLE_TRY(initGraphicsShaderPrograms(context, transformOptions, &shaderProgram));
     }
 
-    // Merge the cache with RendererVk's
+    return angle::Result::Continue;
+}
+
+angle::Result ProgramExecutableVk::warmUpComputePipelineCache(
+    vk::Context *context,
+    vk::PipelineRobustness pipelineRobustness,
+    vk::PipelineProtectedAccess pipelineProtectedAccess)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramExecutableVk::warmUpComputePipelineCache");
+
+    // No synchronization necessary since mPipelineCache is internally synchronized.
+    vk::PipelineCacheAccess pipelineCache;
+    pipelineCache.init(&mPipelineCache, nullptr);
+
+    // There is no state associated with compute programs, so only one pipeline needs creation
+    // to warm up the cache.
+    vk::PipelineHelper *pipeline = nullptr;
+    ANGLE_TRY(getOrCreateComputePipeline(context, &pipelineCache, PipelineSource::WarmUp,
+                                         pipelineRobustness, pipelineProtectedAccess, &pipeline));
+
+    return angle::Result::Continue;
+}
+
+angle::Result ProgramExecutableVk::warmUpGraphicsPipelineCache(
+    vk::Context *context,
+    vk::PipelineRobustness pipelineRobustness,
+    vk::PipelineProtectedAccess pipelineProtectedAccess,
+    vk::GraphicsPipelineSubset subset,
+    const bool isSurfaceRotated,
+    const vk::GraphicsPipelineDesc &graphicsPipelineDesc,
+    const vk::RenderPass &renderPass)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramExecutableVk::warmUpGraphicsPipelineCache");
+
+    // No synchronization necessary since mPipelineCache is internally synchronized.
+    vk::PipelineCacheAccess pipelineCache;
+    pipelineCache.init(&mPipelineCache, nullptr);
+
+    const vk::GraphicsPipelineDesc *descPtr  = nullptr;
+    vk::PipelineHelper *pipeline             = nullptr;
+    ProgramTransformOptions transformOptions = {};
+    transformOptions.surfaceRotation         = isSurfaceRotated;
+
+    ANGLE_TRY(createGraphicsPipelineImpl(context, transformOptions, subset, &pipelineCache,
+                                         PipelineSource::WarmUp, graphicsPipelineDesc, renderPass,
+                                         &descPtr, &pipeline));
+
+    return angle::Result::Continue;
+}
+
+angle::Result ProgramExecutableVk::mergePipelineCacheToRenderer(vk::Context *context) const
+{
+    // Merge the cache with Renderer's
     if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramExecutableVk::mergePipelineCacheToRenderer");
+        ANGLE_TRY(context->getRenderer()->mergeIntoPipelineCache(context, mPipelineCache));
     }
 
     return angle::Result::Continue;
@@ -858,14 +870,13 @@ void ProgramExecutableVk::addInputAttachmentDescriptorSetDesc(vk::DescriptorSetL
         return;
     }
 
-    const std::vector<gl::LinkedUniform> &uniforms = mExecutable->getUniforms();
-    const uint32_t baseUniformIndex                = mExecutable->getFragmentInoutRange().low();
-    const gl::LinkedUniform &baseInputAttachment   = uniforms.at(baseUniformIndex);
+    const uint32_t firstInputAttachment =
+        static_cast<uint32_t>(mExecutable->getFragmentInoutIndices().first());
 
     const ShaderInterfaceVariableInfo &baseInfo = mVariableInfoMap.getVariableById(
-        gl::ShaderType::Fragment, baseInputAttachment.getId(gl::ShaderType::Fragment));
+        gl::ShaderType::Fragment, sh::vk::spirv::kIdInputAttachment0 + firstInputAttachment);
 
-    uint32_t baseBinding = baseInfo.binding - baseInputAttachment.getLocation();
+    uint32_t baseBinding = baseInfo.binding - firstInputAttachment;
 
     for (uint32_t colorIndex = 0; colorIndex < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS; ++colorIndex)
     {
@@ -885,9 +896,9 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
     const std::vector<GLuint> &samplerBoundTextureUnits =
         mExecutable->getSamplerBoundTextureUnits();
 
-    for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
+    for (uint32_t samplerIndex = 0; samplerIndex < samplerBindings.size(); ++samplerIndex)
     {
-        uint32_t uniformIndex = mExecutable->getUniformIndexFromSamplerIndex(textureIndex);
+        uint32_t uniformIndex = mExecutable->getUniformIndexFromSamplerIndex(samplerIndex);
         const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
 
         // 2D arrays are split into multiple 1D arrays when generating LinkedUniforms. Since they
@@ -904,7 +915,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             mExecutable->getUniformNameByIndex(uniformIndex)));
 
         // The front-end always binds array sampler units sequentially.
-        const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
+        const gl::SamplerBinding &samplerBinding = samplerBindings[samplerIndex];
         uint32_t arraySize = static_cast<uint32_t>(samplerBinding.textureUnitsCount);
         arraySize *= samplerUniform.getOuterArraySizeProduct();
 
@@ -937,7 +948,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             const vk::YcbcrConversionDesc ycbcrConversionDesc =
                 isSamplerExternalY2Y ? image.getY2YConversionDesc()
                                      : image.getYcbcrConversionDesc();
-            mImmutableSamplerIndexMap[ycbcrConversionDesc] = textureIndex;
+            mImmutableSamplerIndexMap[ycbcrConversionDesc] = samplerIndex;
             // The Vulkan spec has the following note -
             // All descriptors in a binding use the same maximum
             // combinedImageSamplerDescriptorCount descriptors to allow implementations to use a
@@ -945,7 +956,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             uint64_t externalFormat        = image.getExternalFormat();
             uint32_t formatDescriptorCount = 0;
 
-            RendererVk *renderer = context->getRenderer();
+            vk::Renderer *renderer = context->getRenderer();
 
             if (externalFormat != 0)
             {
@@ -1178,7 +1189,7 @@ angle::Result ProgramExecutableVk::createGraphicsPipeline(
     if (useProgramPipelineCache &&
         contextVk->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
     {
-        ANGLE_TRY(contextVk->getRenderer()->mergeIntoPipelineCache(mPipelineCache));
+        ANGLE_TRY(contextVk->getRenderer()->mergeIntoPipelineCache(contextVk, mPipelineCache));
     }
 
     return angle::Result::Continue;

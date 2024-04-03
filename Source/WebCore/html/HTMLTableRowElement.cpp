@@ -64,8 +64,7 @@ static inline RefPtr<HTMLTableElement> findTable(const HTMLTableRowElement& row)
     if (auto* table = dynamicDowncast<HTMLTableElement>(parent))
         return table;
     if (is<HTMLTableSectionElement>(parent)) {
-        auto* grandparent = parent->parentNode();
-        if (auto* table = dynamicDowncast<HTMLTableElement>(grandparent))
+        if (auto* table = dynamicDowncast<HTMLTableElement>(parent->parentNode()))
             return table;
     }
     return nullptr;

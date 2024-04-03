@@ -44,7 +44,7 @@ public:
     AXCoreObject* rowHeader() override;
     virtual AccessibilityTable* parentTable() const;
 
-    void setRowIndex(unsigned rowIndex) { m_rowIndex = rowIndex; }
+    void setRowIndex(unsigned);
     unsigned rowIndex() const override { return m_rowIndex; }
 
     // allows the table to add other children that may not originate

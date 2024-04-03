@@ -52,9 +52,9 @@ static inline bool isIDRNALU(uint8_t data)
     return (data & 0x1F) == 5;
 }
 
-static inline void findNalus(const uint8_t* frameData, size_t frameSize, size_t offset, const Function<bool(size_t)>& callback)
+static inline void findNalus(std::span<const uint8_t> frameData, size_t offset, const Function<bool(size_t)>& callback)
 {
-    for (size_t i = 4 + offset; i < frameSize; ++i) {
+    for (size_t i = 4 + offset; i < frameData.size(); ++i) {
         if (frameData[i - 4] == 0 && frameData[i - 3] == 0 && frameData[i - 2] == 0 && frameData[i - 1] == 1) {
             if (callback(i))
                 return;
@@ -62,10 +62,10 @@ static inline void findNalus(const uint8_t* frameData, size_t frameSize, size_t 
     }
 }
 
-size_t computeH264PrefixOffset(const uint8_t* frameData, size_t frameSize)
+size_t computeH264PrefixOffset(std::span<const uint8_t> frameData)
 {
     size_t offset = 0;
-    findNalus(frameData, frameSize, 0, [&offset, &frameData](auto position) {
+    findNalus(frameData, 0, [&offset, frameData](auto position) {
         if (isIDRNALU(frameData[position]) || isSliceNALU(frameData[position])) {
             // Skip 00 00 00 01, nalu type byte and the next byte.
             offset = position + 2;
@@ -76,22 +76,22 @@ size_t computeH264PrefixOffset(const uint8_t* frameData, size_t frameSize)
     return offset;
 }
 
-bool needsRbspUnescaping(const uint8_t* frameData, size_t frameSize)
+bool needsRbspUnescaping(std::span<const uint8_t> frameData)
 {
-    for (size_t i = 0; i < frameSize - 3; ++i) {
+    for (size_t i = 0; i < frameData.size() - 3; ++i) {
         if (frameData[i] == 0 && frameData[i + 1] == 0 && frameData[i + 2] == 3)
             return true;
     }
     return false;
 }
 
-Vector<uint8_t> fromRbsp(const uint8_t* frameData, size_t frameSize)
+Vector<uint8_t> fromRbsp(std::span<const uint8_t> frameData)
 {
     Vector<uint8_t> buffer;
-    buffer.reserveInitialCapacity(frameSize);
+    buffer.reserveInitialCapacity(frameData.size());
 
     size_t i;
-    for (i = 0; i < frameSize - 3; ++i) {
+    for (i = 0; i < frameData.size() - 3; ++i) {
         if (frameData[i] == 0 && frameData[i + 1] == 0 && frameData[i + 2] == 3) {
             buffer.append(frameData[i]);
             buffer.append(frameData[i + 1]);
@@ -100,18 +100,18 @@ Vector<uint8_t> fromRbsp(const uint8_t* frameData, size_t frameSize)
         } else
             buffer.append(frameData[i]);
     }
-    for (; i < frameSize; ++i)
+    for (; i < frameData.size(); ++i)
         buffer.append(frameData[i]);
 
     return buffer;
 }
 
-SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData, size_t frameSize)
+SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(std::span<const uint8_t> frameData)
 {
     // Delta and key prefixes assume SPS/PPS with IDs equal to 0 have been transmitted.
     static const uint8_t prefixDeltaFrame[6] = { 0x00, 0x00, 0x00, 0x01, 0x21, 0xe0 };
 
-    if (frameSize < 5)
+    if (frameData.size() < 5)
         return { };
 
     // We assume a key frame starts with SPS, then PPS. Otherwise we wrap it as a delta frame.
@@ -120,7 +120,7 @@ SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData
 
     // Search for PPS
     size_t spsPpsLength = 0;
-    findNalus(frameData, frameSize, 5, [frameData, &spsPpsLength](auto position) {
+    findNalus(frameData, 5, [frameData, &spsPpsLength](auto position) {
         if (isPPSNALU(frameData[position]))
             spsPpsLength = position;
         return true;
@@ -129,7 +129,7 @@ SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData
         return SFrameCompatibilityPrefixBuffer { prefixDeltaFrame, sizeof(prefixDeltaFrame), { } };
 
     // Search for next NALU to compute the real spsPpsLength, including the next 00 00 00 01.
-    findNalus(frameData, frameSize, spsPpsLength + 1, [&spsPpsLength](auto position) {
+    findNalus(frameData, spsPpsLength + 1, [&spsPpsLength](auto position) {
         spsPpsLength = position;
         return true;
     });
@@ -137,7 +137,7 @@ SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData
     Vector<uint8_t> buffer(spsPpsLength + 2);
 IGNORE_GCC_WARNINGS_BEGIN("restrict")
     // https://bugs.webkit.org/show_bug.cgi?id=246862
-    std::memcpy(buffer.data(), frameData, spsPpsLength);
+    std::memcpy(buffer.data(), frameData.data(), spsPpsLength);
 IGNORE_GCC_WARNINGS_END
     buffer[spsPpsLength] = 0x25;
     buffer[spsPpsLength + 1] = 0xb8;
@@ -174,7 +174,7 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
 
     Vector<uint8_t> newFrame;
     newFrame.reserveInitialCapacity(frame.size() + count);
-    newFrame.append(frame.data(), offset);
+    newFrame.append(frame.subspan(0, offset));
 
     findEscapeRbspPatterns(frame, offset, [data = frame.data(), &newFrame](size_t position, bool shouldBeEscaped) {
         if (shouldBeEscaped)
@@ -185,21 +185,20 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
     frame = WTFMove(newFrame);
 }
 
-static inline bool isVP8KeyFrame(const uint8_t* frame, size_t size)
+static inline bool isVP8KeyFrame(std::span<const uint8_t> frame)
 {
-    ASSERT_UNUSED(size, size);
-    return !(*frame & 0x01);
+    ASSERT(frame.size());
+    return !(frame.front() & 0x01);
 }
 
-size_t computeVP8PrefixOffset(const uint8_t* frame, size_t size)
+size_t computeVP8PrefixOffset(std::span<const uint8_t> frame)
 {
-    return isVP8KeyFrame(frame, size) ? 10 : 3;
+    return isVP8KeyFrame(frame) ? 10 : 3;
 }
 
-SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(const uint8_t* frame, size_t size)
+SFrameCompatibilityPrefixBuffer computeVP8PrefixBuffer(std::span<const uint8_t> frame)
 {
-    Vector<uint8_t> prefix;
-    prefix.append(frame, isVP8KeyFrame(frame, size) ? 10 : 3);
+    Vector<uint8_t> prefix(frame.first(isVP8KeyFrame(frame) ? 10 : 3));
     return { prefix.data(), prefix.size(), WTFMove(prefix) };
 }
 

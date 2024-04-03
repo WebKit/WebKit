@@ -44,9 +44,9 @@ CSSNumericFactory* CSSNumericFactory::from(DOMCSSNamespace& css)
     return supplement;
 }
 
-const char* CSSNumericFactory::supplementName()
+ASCIILiteral CSSNumericFactory::supplementName()
 {
-    return "CSSNumericFactory";
+    return "CSSNumericFactory"_s;
 }
 
 }

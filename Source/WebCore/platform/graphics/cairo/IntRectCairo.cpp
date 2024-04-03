@@ -21,7 +21,7 @@
 #include "config.h"
 #include "IntRect.h"
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 
 #include <cairo.h>
 
@@ -41,4 +41,4 @@ IntRect::operator cairo_rectangle_int_t() const
 
 } // namespace WebCore
 
-#endif // USE(CAIRO)
+#endif // USE(CAIRO) || PLATFORM(GTK)

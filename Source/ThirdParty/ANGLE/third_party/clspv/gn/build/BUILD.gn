@@ -58,12 +58,23 @@ config("llvm_code") {
   ]
   if (current_os != "win") {
     cflags = [ "-fPIC" ]
+    if (is_clang) {
+      cflags += [
+        "-Wno-deprecated-declarations",
+        "-Wno-deprecated-this-capture",
+        "-Wno-deprecated-enum-enum-conversion",
+        "-Wno-deprecated-anon-enum-enum-conversion",
+      ]
+    }
   }
 }
 
 config("clang_code") {
   if (current_os != "win") {
-    cflags = [ "-fno-strict-aliasing" ]
+    cflags = [
+      "-fno-strict-aliasing",
+      "-Wno-deprecated-declarations",
+    ]
   }
   include_dirs = [
     "//$clspv_llvm_dir/clang/include",

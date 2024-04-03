@@ -1,7 +1,0 @@
-
-PASS Test cookie ordering
-PASS Cookies with longer path attribute values are ordered before shorter ones
-PASS Cookies with longer path attribute values are ordered before shorter ones (2)
-PASS Cookies with longer paths are listed before cookies with shorter paths
-PASS For equal length paths, list the cookie with an earlier creation time first
-

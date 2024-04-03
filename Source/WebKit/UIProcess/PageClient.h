@@ -25,13 +25,11 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "IdentifierTypes.h"
 #include "LayerTreeContext.h"
 #include "PDFPluginIdentifier.h"
 #include "PasteboardAccessIntent.h"
 #include "SameDocumentNavigationType.h"
-#include "ShareableBitmap.h"
 #include "WebColorPicker.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
@@ -44,9 +42,11 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/ShareableBitmap.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ValidationBubble.h>
 #include <variant>
@@ -56,6 +56,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
+#include "WKBrowserEngineDefinitions.h"
 #include "WKFoundation.h"
 
 #if PLATFORM(IOS_FAMILY)
@@ -66,6 +67,10 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+#if USE(DICTATION_ALTERNATIVES)
+#include <WebCore/PlatformTextAlternatives.h>
+#endif
+
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
@@ -74,9 +79,11 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
-OBJC_CLASS UIScrollEvent;
 OBJC_CLASS UIScrollView;
+OBJC_CLASS UIView;
+OBJC_CLASS UIViewController;
 OBJC_CLASS WKBaseScrollView;
+OBJC_CLASS WKBEScrollViewScrollUpdate;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -144,6 +151,7 @@ namespace WebKit {
 
 enum class UndoOrRedo : bool;
 enum class TapHandlingResult : uint8_t;
+enum class WebTextReplacementDataState : uint8_t;
 
 class ContextMenuContextData;
 class DrawingAreaProxy;
@@ -209,6 +217,9 @@ class PageClient : public CanMakeWeakPtr<PageClient> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PageClient() { }
+
+    void ref() { refView(); }
+    void deref() { derefView(); }
 
     // Create a new drawing area proxy for the given page.
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) = 0;
@@ -291,9 +302,9 @@ public:
     
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
-    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
+    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebCore::ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
 #else
-    virtual void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&&) { }
+    virtual void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&&) { }
 #endif
     virtual void didPerformDragOperation(bool) { }
     virtual void didPerformDragControllerAction() { }
@@ -310,7 +321,7 @@ public:
     virtual void executeUndoRedo(UndoOrRedo) = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
 #if PLATFORM(COCOA)
-    virtual void accessibilityWebProcessTokenReceived(const IPC::DataReference&) = 0;
+    virtual void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) = 0;
     virtual bool executeSavedCommandBySelector(const String& selector) = 0;
     virtual void updateSecureInputState() = 0;
     virtual void resetSecureInputState() = 0;
@@ -344,6 +355,7 @@ public:
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) = 0;
+    virtual WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect& rect) const { return rect; }
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) = 0;
     virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
@@ -366,11 +378,22 @@ public:
 #if ENABLE(GPU_PROCESS)
     virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
 #endif
+#if ENABLE(MODEL_PROCESS)
+    virtual void didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID) { }
 #endif
+#if USE(EXTENSIONKIT)
+    virtual UIView *createVisibilityPropagationView() { return nullptr; }
+#endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
     virtual void gpuProcessDidFinishLaunching() { }
     virtual void gpuProcessDidExit() { }
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    virtual void modelProcessDidFinishLaunching() { }
+    virtual void modelProcessDidExit() { }
 #endif
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
@@ -434,12 +457,12 @@ public:
     virtual void performSwitchHapticFeedback() { }
 
 #if USE(DICTATION_ALTERNATIVES)
-    virtual WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) = 0;
-    virtual void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) = 0;
+    virtual WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) = 0;
+    virtual void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
     virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;
-    virtual NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
+    virtual PlatformTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) = 0;
 #endif
 
 #if PLATFORM(MAC)
@@ -521,7 +544,7 @@ public:
     virtual void handleAutocorrectionContext(const WebAutocorrectionContext&) = 0;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    virtual void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) = 0;
+    virtual void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKBEScrollViewScrollUpdate *, void (^completion)(BOOL handled)) = 0;
 #endif
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
@@ -529,13 +552,13 @@ public:
 
     virtual String sceneID() = 0;
 
-    virtual void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
+    virtual void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
     virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;
 #endif
     virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
 
 #if ENABLE(VIDEO)
-    virtual void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect) { }
+    virtual void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect) { }
     virtual void cancelTextRecognitionForVideoInElementFullscreen() { }
 #endif
 
@@ -545,7 +568,7 @@ public:
 #endif
 
     // Custom representations.
-    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) = 0;
+    virtual void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) = 0;
 
     virtual void navigationGestureDidBegin() = 0;
     virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) = 0;
@@ -587,8 +610,8 @@ public:
     virtual bool hasResizableWindows() const { return false; }
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
-    virtual void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+    virtual void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void computeHasVisualSearchResults(const URL&, WebCore::ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -658,6 +681,9 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     virtual void storeAppHighlight(const WebCore::AppHighlight&) = 0;
 #endif
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void removeTextIndicatorStyleForID(const WTF::UUID&) = 0;
+#endif
     virtual void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) { }
 
 #if PLATFORM(COCOA)
@@ -676,6 +702,17 @@ public:
     virtual void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) = 0;
 #endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT) && ENABLE(CONTEXT_MENUS)
+    virtual bool canHandleSwapCharacters() const = 0;
+    virtual void handleContextMenuSwapCharacters(WebCore::IntRect selectionBoundsInRootView) = 0;
+#endif
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    virtual void textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(const WTF::UUID& sessionUUID, const WTF::UUID& replacementUUID, WebCore::IntRect selectionBoundsInRootView) = 0;
+
+    virtual void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID) = 0;
+#endif
+
 #if ENABLE(DATA_DETECTION)
     virtual void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) { }
 #endif
@@ -691,6 +728,14 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual WebKitWebResourceLoadManager* webResourceLoadManager() = 0;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual UIViewController *presentingViewController() const = 0;
+#endif
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    virtual const String& spatialTrackingLabel() const = 0;
 #endif
 };
 

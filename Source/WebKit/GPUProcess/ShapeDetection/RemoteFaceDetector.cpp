@@ -49,7 +49,7 @@ RemoteFaceDetector::~RemoteFaceDetector() = default;
 
 void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
-    auto sourceImage = m_backend.imageBuffer(renderingResourceIdentifier);
+    auto sourceImage = m_backend->imageBuffer(renderingResourceIdentifier);
     if (!sourceImage) {
         completionHandler({ });
         return;

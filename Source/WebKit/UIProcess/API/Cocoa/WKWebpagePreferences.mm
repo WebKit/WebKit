@@ -128,40 +128,6 @@ static WebCore::ModalContainerObservationPolicy coreModalContainerObservationPol
     return WebCore::ModalContainerObservationPolicy::Disabled;
 }
 
-class WebPagePreferencesLockdownModeObserver final : public LockdownModeObserver {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WebPagePreferencesLockdownModeObserver(id object)
-        : m_object(object)
-    {
-        addLockdownModeObserver(*this);
-    }
-
-    ~WebPagePreferencesLockdownModeObserver()
-    {
-        removeLockdownModeObserver(*this);
-    }
-
-private:
-    void willChangeLockdownMode() final
-    {
-        if (auto object = m_object.get()) {
-            [object willChangeValueForKey:@"_captivePortalModeEnabled"];
-            [object willChangeValueForKey:@"lockdownModeEnabled"];
-        }
-    }
-
-    void didChangeLockdownMode() final
-    {
-        if (auto object = m_object.get()) {
-            [object didChangeValueForKey:@"_captivePortalModeEnabled"];
-            [object didChangeValueForKey:@"lockdownModeEnabled"];
-        }
-    }
-
-    WeakObjCPtr<id> m_object;
-};
-
 } // namespace WebKit
 
 @implementation WKWebpagePreferences
@@ -187,7 +153,6 @@ private:
         return nil;
 
     API::Object::constructInWrapper<API::WebsitePolicies>(self);
-    _lockdownModeObserver = makeUnique<WebKit::WebPagePreferencesLockdownModeObserver>(self);
 
     return self;
 }
@@ -687,6 +652,23 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
         webCorePolicy.add(WebCore::AdvancedPrivacyProtections::LinkDecorationFiltering);
 
     _websitePolicies->setAdvancedPrivacyProtections(webCorePolicy);
+}
+
+- (void)_setVisibilityAdjustmentSelectors:(NSSet<NSString *> *)nsSelectors
+{
+    HashSet<String> selectors;
+    selectors.reserveInitialCapacity(nsSelectors.count);
+    for (NSString *selector in nsSelectors)
+        selectors.add(selector);
+    _websitePolicies->setVisibilityAdjustmentSelectors(WTFMove(selectors));
+}
+
+- (NSSet<NSString *> *)_visibilityAdjustmentSelectors
+{
+    RetainPtr selectors = adoptNS([[NSMutableSet alloc] initWithCapacity:_websitePolicies->visibilityAdjustmentSelectors().size()]);
+    for (auto& selector : _websitePolicies->visibilityAdjustmentSelectors())
+        [selectors addObject:selector];
+    return selectors.autorelease();
 }
 
 @end

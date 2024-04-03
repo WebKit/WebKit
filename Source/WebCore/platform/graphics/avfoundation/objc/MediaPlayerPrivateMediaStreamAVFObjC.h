@@ -114,7 +114,7 @@ private:
     void prepareToPlay() override;
     PlatformLayer* platformLayer() const override;
     
-    bool supportsPictureInPicture() const override;
+    bool supportsPictureInPicture() const final { return true; }
     bool supportsFullscreen() const override { return true; }
 
     void play() override;
@@ -135,8 +135,8 @@ private:
     void setVisibleForCanvas(bool) final;
     void setVisibleInViewport(bool) final;
 
-    MediaTime durationMediaTime() const override;
-    MediaTime currentMediaTime() const override;
+    MediaTime duration() const override;
+    MediaTime currentTime() const override;
 
     void seekToTarget(const SeekTarget&) final { };
     bool seeking() const final { return false; }
@@ -305,6 +305,7 @@ private:
     bool m_waitingForFirstImage { false };
     bool m_isActiveVideoTrackEnabled { true };
     bool m_hasEnqueuedBlackFrame { false };
+    bool m_isMediaLayerRehosting { true };
 
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };

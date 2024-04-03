@@ -40,7 +40,7 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
 }
 
 // FIXME: We should move some of these arguments to an auxillary struct.
-SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, int pageNumber)
     : m_quad(quad)
     , m_behavior(behavior)
     , m_direction(direction)
@@ -55,7 +55,6 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
     , m_containsEnd(containsEnd)
     , m_isHorizontal(isHorizontal)
     , m_isInFixedPosition(isInFixedPosition)
-    , m_isRubyText(isRubyText)
     , m_pageNumber(pageNumber)
 {
 }
@@ -167,9 +166,6 @@ TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
 
     if (rect.isInFixedPosition())
         stream.dumpProperty("is in fixed position", true);
-
-    if (rect.isRubyText())
-        stream.dumpProperty("is ruby text", true);
 
     if (rect.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
         stream.dumpProperty("using individual quads", true);

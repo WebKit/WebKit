@@ -25,6 +25,16 @@
 
 PRODUCT_NAME = com.apple.WebKit.GPU;
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator*] = $(PRODUCT_NAME).Service;
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.0*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.1*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.2*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator17.3*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=iphonesimulator18.0*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=watchsimulator*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=appletvsimulator*] = $(PRODUCT_NAME);
+PRODUCT_BUNDLE_IDENTIFIER[sdk=xrsimulator*] = $(PRODUCT_NAME);
+
 INFOPLIST_FILE[sdk=embedded*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-OSX.plist;
 

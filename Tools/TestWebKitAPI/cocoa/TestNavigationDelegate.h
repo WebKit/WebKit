@@ -34,6 +34,7 @@
 @property (nonatomic, copy) void (^decidePolicyForNavigationActionWithPreferences)(WKNavigationAction *, WKWebpagePreferences *, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
 @property (nonatomic, copy) void (^decidePolicyForNavigationResponse)(WKNavigationResponse *, void (^)(WKNavigationResponsePolicy));
 @property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
+@property (nonatomic, copy) void (^didFailProvisionalLoadWithRequestInFrameWithError)(WKWebView *, NSURLRequest *, WKFrameInfo *, NSError *);
 @property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitLoadWithRequestInFrame)(WKWebView *, NSURLRequest *, WKFrameInfo *);
@@ -45,6 +46,8 @@
 @property (nonatomic, copy) void (^contentRuleListPerformedAction)(WKWebView *, NSString *, _WKContentRuleListAction *, NSURL *);
 @property (nonatomic, copy) void (^didChangeLookalikeCharactersFromURL)(WKWebView *, NSURL *, NSURL *);
 @property (nonatomic, copy) void (^didPromptForStorageAccess)(WKWebView *, NSString *, NSString *, BOOL);
+@property (nonatomic, copy) void (^navigationActionDidBecomeDownload)(WKNavigationAction *, WKDownload *);
+@property (nonatomic, copy) void (^navigationResponseDidBecomeDownload)(WKNavigationResponse *, WKDownload *);
 
 - (void)allowAnyTLSCertificate;
 - (void)waitForDidStartProvisionalNavigation;

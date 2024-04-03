@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "SessionState.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebsiteDataStore.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -68,11 +69,12 @@ public:
 
     const String& originalURL() const { return m_itemState.pageState.mainFrameState.originalURLString; }
     const String& url() const { return m_itemState.pageState.mainFrameState.urlString; }
-    const String& title() const { return m_itemState.pageState.title; }
     bool wasCreatedByJSWithoutUserInteraction() const { return m_itemState.pageState.wasCreatedByJSWithoutUserInteraction; }
 
     const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }
     void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTFMove(url); }
+    RefPtr<WebsiteDataStore> dataStoreForWebArchive() const { return m_dataStoreForWebArchive; }
+    void setDataStoreForWebArchive(WebsiteDataStore* dataStore) { m_dataStoreForWebArchive = dataStore; }
 
     bool itemIsInSameDocument(const WebBackForwardListItem&) const;
     bool itemIsClone(const WebBackForwardListItem&);
@@ -99,6 +101,8 @@ private:
     // WebBackForwardCache.
     friend class WebBackForwardCache;
     void setBackForwardCacheEntry(std::unique_ptr<WebBackForwardCacheEntry>&&);
+
+    RefPtr<WebsiteDataStore> m_dataStoreForWebArchive;
 
     BackForwardListItemState m_itemState;
     URL m_resourceDirectoryURL;

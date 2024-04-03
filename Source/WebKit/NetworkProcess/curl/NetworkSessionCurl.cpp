@@ -42,9 +42,11 @@ using namespace WebCore;
 NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : NetworkSession(networkProcess, parameters)
 {
-    if (!parameters.cookiePersistentStorageFile.isEmpty())
-        networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
-    networkStorageSession()->setProxySettings(parameters.proxySettings);
+    if (auto* storageSession = networkStorageSession()) {
+        if (!parameters.cookiePersistentStorageFile.isEmpty())
+            storageSession->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
+        storageSession->setProxySettings(parameters.proxySettings);
+    }
 
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsParameters.directory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
@@ -60,7 +62,8 @@ NetworkSessionCurl::~NetworkSessionCurl()
 
 void NetworkSessionCurl::clearAlternativeServices(WallTime)
 {
-    networkStorageSession()->clearAlternativeServices();
+    if (auto* storageSession = networkStorageSession())
+        storageSession->clearAlternativeServices();
 }
 
 std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, ShouldRelaxThirdPartyCookieBlocking, StoredCredentialsPolicy)

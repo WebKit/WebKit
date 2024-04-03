@@ -25,17 +25,36 @@
 
 #pragma once
 
+#import <PDFKit/PDFKit.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#if HAVE(PDFKIT)
+
+#if PLATFORM(IOS_FAMILY)
 #import <PDFKit/PDFHostViewController.h>
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
+
+#import <PDFKit/PDFDocumentPriv.h>
+#import <PDFKit/PDFPagePriv.h>
+#import <PDFKit/PDFSelectionPriv.h>
+
+#if __has_include(<PDFKit/PDFActionPriv.h>)
+#import <PDFKit/PDFActionPriv.h>
+#else
+@interface PDFAction(SPI)
+- (NSArray *) nextActions;
+@end
+#endif // __has_include(PDFKIT/PDFActionPriv.h)
+
+#endif // HAVE(PDFKIT)
 
 #else
 
-#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#if HAVE(PDFKIT)
+
+#if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 
 @interface _UIRemoteViewController : UIViewController
@@ -71,12 +90,90 @@
 - (void) snapshotViewRect: (CGRect) rect snapshotWidth: (NSNumber*) width afterScreenUpdates: (BOOL) afterScreenUpdates withResult: (void (^)(UIImage* image)) completion;
 
 @end
-#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
+
+@interface PDFSelection (SPI)
+- (void)drawForPage:(PDFPage *)page withBox:(CGPDFBox)box active:(BOOL)active inContext:(CGContextRef)context;
+- (PDFPoint)firstCharCenter;
+- (/*nullable*/ NSString *)html;
+- (/*nullable*/ NSData *)webArchive;
+- (NSAttributedString *)attributedStringScaled:(CGFloat)scale;
+- (BOOL)isEmpty;
+@end
+
+#endif // HAVE(PDFKIT)
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(INCREMENTAL_PDF_APIS)
+@interface PDFDocument ()
+-(instancetype)initWithProvider:(CGDataProviderRef)dataProvider;
+-(void)preloadDataOfPagesInRange:(NSRange)range onQueue:(dispatch_queue_t)queue completion:(void (^)(NSIndexSet* loadedPageIndexes))completionBlock;
+-(void)resetFormFields:(PDFActionResetForm *) action;
+@property (readwrite, nonatomic) BOOL hasHighLatencyDataProvider;
+@end
+#endif // HAVE(INCREMENTAL_PDF_APIS)
+
 #if ENABLE(UNIFIED_PDF)
+@interface PDFDocument (IPI)
+- (PDFDestination *)namedDestination:(NSString *)name;
+- (NSArray *)annotationsForFieldName:(NSString *)fieldname;
+@end
+
+#if HAVE(COREGRAPHICS_WITH_PDF_AREA_OF_INTEREST_SUPPORT)
 @interface PDFPage (IPI)
 - (CGPDFPageLayoutRef) pageLayout;
 @end
+#endif
+
+#if HAVE(PDFPAGE_AREA_OF_INTEREST_AT_POINT)
+#define PDFAreaOfInterest NSInteger
+
+#define kPDFTextArea        (1UL << 1)
+#define kPDFAnnotationArea  (1UL << 2)
+#define kPDFLinkArea        (1UL << 3)
+#define kPDFControlArea     (1UL << 4)
+#define kPDFTextFieldArea   (1UL << 5)
+#define kPDFIconArea        (1UL << 6)
+#define kPDFPopupArea       (1UL << 7)
+#define kPDFImageArea       (1UL << 8)
+
+@interface PDFPage (Staging_119217538)
+- (PDFAreaOfInterest)areaOfInterestAtPoint:(PDFPoint)point;
+@end
+#endif
+
+#if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
+typedef NS_ENUM(NSUInteger, PDFSelectionGranularity);
+
+#define PDFSelectionGranularityCharacter 0
+#define PDFSelectionGranularityWord 1
+#define PDFSelectionGranularityLine 2
+
+@interface PDFDocument (Staging_122179178)
+- (/*nullable*/ PDFSelection *)selectionFromPage:(PDFPage *)startPage atPoint:(PDFPoint)startPoint toPage:(PDFPage *)endPage atPoint:(PDFPoint)endPoint withGranularity:(PDFSelectionGranularity)granularity;
+@end
+#endif
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+
+#if HAVE(PDFDOCUMENT_ENABLE_DATA_DETECTORS)
+@interface PDFDocument (Staging_123761050)
+@property (nonatomic) BOOL enableDataDetectors;
+@end
+#endif
+
+#if HAVE(PDFPAGE_DATA_DETECTOR_RESULTS)
+@interface PDFPage (Staging_123761050)
+- (NSArray *)dataDetectorResults;
+@end
+#endif
+
+#endif
+
 #endif // ENABLE(UNIFIED_PDF)
+
+// FIXME: Move this declaration inside the !USE(APPLE_INTERNAL_SDK) block once rdar://problem/118903435 is in builds.
+@interface PDFDocument (AX)
+- (NSArray *)accessibilityChildren:(id)parent;
+@end

@@ -1,6 +1,8 @@
 <?php
 
 class TestPathResolver {
+    private $db;
+    private $id_to_test_map;
     function __construct($db) {
         $this->db = $db;
         $this->id_to_test_map = NULL;

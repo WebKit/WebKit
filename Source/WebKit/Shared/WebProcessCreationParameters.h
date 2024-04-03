@@ -42,7 +42,7 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 #include <WebCore/ScreenProperties.h>
 #endif
 
@@ -94,6 +94,10 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    Vector<String> urlSchemesRegisteredAsWebExtensions;
+#endif
 
     Vector<String> fontAllowList;
     Vector<String> overrideLanguages;
@@ -169,7 +173,7 @@ struct WebProcessCreationParameters {
     Vector<String> mediaMIMETypes;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     WebCore::ScreenProperties screenProperties;
 #endif
 
@@ -274,6 +278,9 @@ struct WebProcessCreationParameters {
 
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
+
+    Seconds memoryFootprintPollIntervalForTesting;
+    Vector<size_t> memoryFootprintNotificationThresholds;
 };
 
 } // namespace WebKit

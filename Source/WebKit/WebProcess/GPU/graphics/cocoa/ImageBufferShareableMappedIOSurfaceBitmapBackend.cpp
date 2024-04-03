@@ -49,7 +49,8 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBitmapBackend> ImageBufferSha
     auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
-
+    if (creationContext.resourceOwner)
+        surface->setOwnershipIdentity(creationContext.resourceOwner);
     auto lockAndContext = surface->createBitmapPlatformContext();
     if (!lockAndContext)
         return nullptr;
@@ -112,11 +113,6 @@ GraphicsContext& ImageBufferShareableMappedIOSurfaceBitmapBackend::context()
     m_context = makeUnique<GraphicsContextCG>(nullptr);
     applyBaseTransform(*m_context);
     return *m_context;
-}
-
-void ImageBufferShareableMappedIOSurfaceBitmapBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
-{
-    m_surface->setOwnershipIdentity(resourceOwner);
 }
 
 unsigned ImageBufferShareableMappedIOSurfaceBitmapBackend::bytesPerRow() const

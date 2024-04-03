@@ -44,6 +44,8 @@ public:
     WEBCORE_EXPORT static NavigatorWebXR& from(Navigator&);
 
 private:
+    static ASCIILiteral supplementName();
+
     RefPtr<WebXRSystem> m_xr;
 };
 

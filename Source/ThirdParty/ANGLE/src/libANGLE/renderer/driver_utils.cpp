@@ -142,22 +142,37 @@ const uint16_t IntelGen12[] = {
 
 IntelDriverVersion::IntelDriverVersion(uint32_t buildNumber) : mBuildNumber(buildNumber) {}
 
-bool IntelDriverVersion::operator==(const IntelDriverVersion &version)
+IntelDriverVersion::IntelDriverVersion(uint32_t majorVersion, uint32_t minorVersion)
+{
+    // The following format is only used in Windows/Intel drivers.
+    // < Major (18 bits) | Minor (14 bits) >
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    mBuildNumber = 0;
+#else
+    constexpr uint32_t kMajorVersionMask = angle::BitMask<uint32_t>(18);
+    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(14);
+    ASSERT(majorVersion <= kMajorVersionMask && minorVersion <= kMinorVersionMask);
+
+    mBuildNumber = (majorVersion << 14) | minorVersion;
+#endif
+}
+
+bool IntelDriverVersion::operator==(const IntelDriverVersion &version) const
 {
     return mBuildNumber == version.mBuildNumber;
 }
 
-bool IntelDriverVersion::operator!=(const IntelDriverVersion &version)
+bool IntelDriverVersion::operator!=(const IntelDriverVersion &version) const
 {
     return !(*this == version);
 }
 
-bool IntelDriverVersion::operator<(const IntelDriverVersion &version)
+bool IntelDriverVersion::operator<(const IntelDriverVersion &version) const
 {
     return mBuildNumber < version.mBuildNumber;
 }
 
-bool IntelDriverVersion::operator>=(const IntelDriverVersion &version)
+bool IntelDriverVersion::operator>=(const IntelDriverVersion &version) const
 {
     return !(*this < version);
 }
@@ -276,6 +291,18 @@ std::string GetVendorString(uint32_t vendorId)
     std::stringstream s;
     s << gl::FmtHex(vendorId);
     return s.str();
+}
+
+IntelDriverVersion ParseIntelWindowsDriverVersion(uint32_t driverVersion)
+{
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    return IntelDriverVersion(0);
+#else
+    // Windows Intel driver versions are built in the following format:
+    // < Major (18 bits) | Minor (14 bits) >
+    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(14);
+    return IntelDriverVersion(driverVersion >> 18, driverVersion & kMinorVersionMask);
+#endif
 }
 
 ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)

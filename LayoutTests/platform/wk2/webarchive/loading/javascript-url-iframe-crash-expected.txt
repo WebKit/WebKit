@@ -1,0 +1,13 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - willPerformClientRedirectToURL: resources/javascript-url-iframe-crash.webarchive
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Loading this webarchive with a "non-empty javascript URL iframe" should not crash.
+

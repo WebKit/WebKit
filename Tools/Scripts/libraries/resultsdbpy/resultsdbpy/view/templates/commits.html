@@ -31,6 +31,7 @@
 import {REF, DOM} from '/library/js/Ref.js';
 import {ErrorDisplay} from '/assets/js/common.js';
 import {Commit, CommitTable} from '/assets/js/commit.js';
+import {COMMITS_LIMITS} from '/assets/js/constants.js';
 import {Drawer, BranchSelector, LimitSlider, CommitRepresentation} from '/assets/js/drawer.js';
 
 var oneLine = true;
@@ -100,7 +101,7 @@ function OneLineSwitch() {
 
 var table = new Table();
 DOM.inject(document.getElementById('app'), `${Drawer([
-    LimitSlider(() => {table.reload()}, 10000, 1000),
+    LimitSlider(() => {table.reload()}, COMMITS_LIMITS.max, COMMITS_LIMITS.default),
     OneLineSwitch(),
     BranchSelector(() => {table.reload()}),
     CommitRepresentation(() => {table.reload()}),

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,74 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #pragma once
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && HAVE(AVKIT)
 
-#include "EventListener.h"
-#include "HTMLMediaElementEnums.h"
-#include "PlaybackSessionModel.h"
-#include "Timer.h"
-#include <functional>
-#include <objc/objc.h>
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
-
-OBJC_CLASS WebAVPlayerController;
+#include "PlaybackSessionInterfaceIOS.h"
 
 namespace WebCore {
-class IntRect;
-class PlaybackSessionModel;
-class WebPlaybackSessionChangeObserver;
 
-class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit
-    : public PlaybackSessionModelClient
-    , public RefCounted<PlaybackSessionInterfaceAVKit> {
-
+class WEBCORE_EXPORT PlaybackSessionInterfaceAVKit final : public PlaybackSessionInterfaceIOS {
 public:
-    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel& model)
-    {
-        return adoptRef(*new PlaybackSessionInterfaceAVKit(model));
-    }
-    virtual ~PlaybackSessionInterfaceAVKit();
-    PlaybackSessionModel* playbackSessionModel() const;
+    static Ref<PlaybackSessionInterfaceAVKit> create(PlaybackSessionModel&);
+    ~PlaybackSessionInterfaceAVKit();
+    void invalidate() final;
 
-    // PlaybackSessionModelClient
-    void durationChanged(double) override;
-    void currentTimeChanged(double currentTime, double anchorTime) override;
-    void bufferedTimeChanged(double) override;
-    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) override;
-    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
-    void canPlayFastReverseChanged(bool) override;
-    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
-    void wirelessVideoPlaybackDisabledChanged(bool) override;
-    void mutedChanged(bool) override;
-    void volumeChanged(double) override;
-    void modelDestroyed() override;
-
-    void invalidate();
-
-    WebAVPlayerController *playerController() const { return m_playerController.get(); }
-
+    WebAVPlayerController *playerController() const final;
+    WKSLinearMediaPlayer *linearMediaPlayer() const final;
+    void durationChanged(double) final;
+    void currentTimeChanged(double currentTime, double anchorTime) final;
+    void bufferedTimeChanged(double) final;
+    void rateChanged(OptionSet<PlaybackSessionModel::PlaybackState>, double playbackRate, double defaultPlaybackRate) final;
+    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) final;
+    void canPlayFastReverseChanged(bool) final;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) final;
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) final;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) final;
+    void wirelessVideoPlaybackDisabledChanged(bool) final;
+    void mutedChanged(bool) final;
+    void volumeChanged(double) final;
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
-    const Logger* loggerPtr() const;
-    const char* logClassName() const { return "PlaybackSessionInterfaceAVKit"; };
-    WTFLogChannel& logChannel() const;
+    const char* logClassName() const final;
 #endif
 
 private:
     PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
+
     RetainPtr<WebAVPlayerController> m_playerController;
-    PlaybackSessionModel* m_playbackSessionModel { nullptr };
+
 };
 
-}
+} // namespace WebCore
 
-#endif // PLATFORM(COCOA)
+#endif // PLATFORM(COCOA) && HAVE(AVKIT)

@@ -28,7 +28,6 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 
-#import "DataReference.h"
 #import "Logging.h"
 #import "WebCoreArgumentCoders.h"
 #import <string.h>
@@ -71,7 +70,7 @@ bool WARN_UNUSED_RETURN SandboxExtensionImpl::consume()
     return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
     if (m_handle == -1) {
-        LOG_ERROR("Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token, errno);
         return false;
     }
     return true;
@@ -173,7 +172,7 @@ String resolvePathForSandboxExtension(StringView path)
 {
     String resolvedPath = stringByResolvingSymlinksInPath(path);
     if (resolvedPath.isNull()) {
-        LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", resolvedPath.utf8().data(), resolvedPath.length());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a valid file system representation for the string '%s' of length %u", resolvedPath.utf8().data(), resolvedPath.length());
         return { };
     }
 
@@ -187,7 +186,7 @@ auto SandboxExtension::createHandleWithoutResolvingPath(StringView path, Type ty
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
-        LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", path.utf8().data());
         return std::nullopt;
     }
     return WTFMove(handle);
@@ -244,8 +243,7 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     ASSERT(path.last() == '/');
 
     // Append the file name.
-    auto prefixAsUTF8 = prefix.utf8();
-    path.append(prefixAsUTF8.data(), prefixAsUTF8.length());
+    path.append(prefix.utf8().span());
     path.append('\0');
 
     auto pathString = String::fromUTF8(path.data());
@@ -324,7 +322,7 @@ auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_to
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), Type::ReadByProcess, auditToken);
     if (!handle.m_sandboxExtension) {
-        LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", path.utf8().data());
         return std::nullopt;
     }
     
@@ -338,7 +336,7 @@ auto SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClas
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(ioKitClass.characters(), Type::IOKit, auditToken);
     if (!handle.m_sandboxExtension) {
-        LOG_ERROR("Could not create a sandbox extension for '%s'", ioKitClass.characters());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", ioKitClass.characters());
         return std::nullopt;
     }
 

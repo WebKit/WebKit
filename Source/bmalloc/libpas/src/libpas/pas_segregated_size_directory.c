@@ -351,7 +351,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
     
     alloc_bits_bytes = pas_segregated_page_config_num_alloc_bytes(page_config);
     full_alloc_bits = pas_immortal_heap_allocate_with_manual_alignment(
-        alloc_bits_bytes, sizeof(unsigned),
+        alloc_bits_bytes, PAS_MAX(PAS_INTERNAL_MIN_ALIGN, sizeof(unsigned)),
         "pas_segregated_size_directory_data/full_alloc_bits",
         pas_object_allocation);
     pas_compact_tagged_unsigned_ptr_store(&data->full_alloc_bits, full_alloc_bits);
@@ -392,7 +392,7 @@ void pas_segregated_size_directory_enable_exclusive_views(
 
         full_use_counts = pas_immortal_heap_allocate_with_manual_alignment(
             num_granules * sizeof(pas_page_granule_use_count),
-            sizeof(pas_page_granule_use_count),
+            PAS_MAX(PAS_INTERNAL_MIN_ALIGN, sizeof(pas_page_granule_use_count)),
             "pas_extended_segregated_size_directory_data/full_use_counts",
             pas_object_allocation);
 

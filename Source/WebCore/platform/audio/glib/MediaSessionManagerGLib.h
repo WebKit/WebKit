@@ -51,7 +51,9 @@ public:
     void dispatch(PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument);
 
     const GRefPtr<GDBusNodeInfo>& mprisInterface() const { return m_mprisInterface; }
-    PlatformMediaSession* nowPlayingEligibleSession();
+    void setPrimarySessionIfNeeded(PlatformMediaSession&);
+    void unregisterAllOtherSessions(PlatformMediaSession&);
+    WeakPtr<PlatformMediaSession> nowPlayingEligibleSession();
 
     void setDBusNotificationsEnabled(bool dbusNotificationsEnabled) { m_dbusNotificationsEnabled = dbusNotificationsEnabled; }
     bool areDBusNotificationsEnabled() const { return m_dbusNotificationsEnabled; }

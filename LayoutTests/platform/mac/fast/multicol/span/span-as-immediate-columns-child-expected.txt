@@ -173,8 +173,8 @@ layer at (13,1274) size 367x696
       text run at (278,180) width 86: "Lorem ipsum"
       text run at (0,198) width 357: "dolor sit amet, consectetuer adipiscing elit. Nulla varius"
       text run at (0,224) width 80: "enim ac mi. "
-    RenderInline {H2} at (0,0) size 358x84 [bgcolor=#EEEEEE]
-      RenderText {#text} at (79,216) size 358x84
+    RenderInline {H2} at (0,216) size 358x84 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,216) size 358x84
         text run at (79,216) width 271: "This is a spanning element"
         text run at (0,244) width 358: "with an original display of inline in"
         text run at (0,272) width 333: "the middle of the columns block."
@@ -227,7 +227,7 @@ layer at (13,1654) size 367x736
         text run at (0,0) width 322: "This element specifies a column"
         text run at (0,28) width 339: "span, but it is also floating, so the"
         text run at (0,56) width 327: "column-span should be ignored."
-    RenderText {#text} at (79,216) size 367x520
+    RenderText {#text} at (0,216) size 367x520
       text run at (79,216) width 266: "Lorem ipsum dolor sit amet, consectetuer"
       text run at (0,357) width 322: "adipiscing elit. Nulla varius enim ac mi. Curabitur"
       text run at (0,375) width 362: "sollicitudin felis quis lectus. Quisque adipiscing rhoncus"

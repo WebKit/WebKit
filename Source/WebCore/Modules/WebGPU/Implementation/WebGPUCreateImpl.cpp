@@ -43,8 +43,11 @@ WTF_WEAK_LINK_FORCE_IMPORT(wgpuCreateInstance);
 
 namespace WebCore::WebGPU {
 
-RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction)
+RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::ProcessIdentity* webProcessIdentity)
 {
+#if !HAVE(TASK_IDENTITY_TOKEN)
+    UNUSED_PARAM(webProcessIdentity);
+#endif
     auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
     {
         scheduleWorkFunction(CompletionHandler<void(void)>(makeBlockPtr(WTFMove(workItem)), CompletionHandlerCallThread::AnyThread));
@@ -55,6 +58,11 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction)
             static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor),
         },
         scheduleWorkBlock.get(),
+#if HAVE(TASK_IDENTITY_TOKEN)
+        webProcessIdentity ? &webProcessIdentity->taskId() : nullptr,
+#else
+        nullptr,
+#endif
     };
     WGPUInstanceDescriptor descriptor = { &cocoaDescriptor.chain };
 

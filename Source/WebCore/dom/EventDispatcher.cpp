@@ -51,8 +51,10 @@ namespace WebCore {
 void EventDispatcher::dispatchScopedEvent(Node& node, Event& event)
 {
     // Need to set the target here so the scoped event queue knows which node to dispatch to.
-    event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
-    ScopedEventQueue::singleton().enqueueEvent(event);
+    RefPtr target = EventPath::eventTargetRespectingTargetRules(node);
+    ASSERT(target);
+    event.setTarget(target.copyRef());
+    ScopedEventQueue::singleton().enqueueEvent({ event, *target });
 }
 
 static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPath& path)
@@ -147,11 +149,11 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
 
 static bool hasRelevantEventListener(Document& document, const Event& event)
 {
-    if (document.hasEventListnersOfType(event.type()))
+    if (document.hasEventListenersOfType(event.type()))
         return true;
 
     auto legacyType = EventTarget::legacyTypeForEvent(event);
-    if (!legacyType.isNull() && document.hasEventListnersOfType(legacyType))
+    if (!legacyType.isNull() && document.hasEventListenersOfType(legacyType))
         return true;
 
     return false;
@@ -184,7 +186,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
-    if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && event.isMouseEvent()
+    if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && is<MouseEvent>(event)
         && (typeInfo.type() == EventType::mousedown || typeInfo.type() == EventType::mouseup || typeInfo.type() == EventType::click || typeInfo.type() == EventType::dblclick)) {
         eventPath.adjustForDisabledFormControl();
     }

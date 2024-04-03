@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUPipelineDescriptorBase.h>
+#include <WebCore/WebGPUPipelineLayout.h>
 
 namespace WebKit::WebGPU {
 

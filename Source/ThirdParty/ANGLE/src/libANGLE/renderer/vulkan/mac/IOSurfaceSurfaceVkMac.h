@@ -29,7 +29,7 @@ class IOSurfaceSurfaceVkMac : public OffscreenSurfaceVk
     IOSurfaceSurfaceVkMac(const egl::SurfaceState &state,
                           EGLClientBuffer buffer,
                           const egl::AttributeMap &attribs,
-                          RendererVk *renderer);
+                          vk::Renderer *renderer);
     ~IOSurfaceSurfaceVkMac() override;
 
     egl::Error initialize(const egl::Display *display) override;

@@ -30,6 +30,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 
 OBJC_CLASS UIScrollView;
+OBJC_CLASS WKBaseScrollView;
 
 namespace WebCore {
 enum class TouchAction : uint8_t;
@@ -37,11 +38,13 @@ enum class TouchAction : uint8_t;
 
 namespace WebKit {
 
+class RemoteLayerTreeDrawingAreaProxyIOS;
 class RemoteLayerTreeNode;
 
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
+    ~RemoteScrollingCoordinatorProxyIOS() = default;
 
     UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;
 
@@ -57,16 +60,24 @@ public:
     CGPoint nearestActiveContentInsetAdjustedSnapOffset(CGFloat topInset, const CGPoint&) const;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void removeFixedScrollingNodeLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>&);
+    void removeDestroyedLayerIDs(const Vector<WebCore::PlatformLayerIdentifier>&);
+    void updateOverlayRegionLayerIDs(const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionLayerIDs) { m_overlayRegionLayerIDs = overlayRegionLayerIDs; }
+
     const HashSet<WebCore::PlatformLayerIdentifier>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
+    const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionLayerIDs() const { return m_overlayRegionLayerIDs; }
+    Vector<WKBaseScrollView*> overlayRegionScrollViewCandidates() const;
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
+    void animationsWereAddedToNode(RemoteLayerTreeNode&) override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+    void updateAnimations();
 #endif
 
+    void displayDidRefresh(WebCore::PlatformDisplayID) override;
+
 private:
+    RemoteLayerTreeDrawingAreaProxyIOS& drawingAreaIOS() const;
     bool propagatesMainFrameScrolls() const override { return false; }
 
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) override;
@@ -85,6 +96,8 @@ private:
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::PlatformLayerIdentifier> m_fixedScrollingNodeLayerIDs;
+    HashSet<WebCore::PlatformLayerIdentifier> m_overlayRegionLayerIDs;
+    HashMap<WebCore::PlatformLayerIdentifier, WebCore::ScrollingNodeID> m_scrollingNodesByLayerID;
 #endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

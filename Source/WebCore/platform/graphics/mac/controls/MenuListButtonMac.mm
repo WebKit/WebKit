@@ -40,56 +40,78 @@ MenuListButtonMac::MenuListButtonMac(MenuListButtonPart& owningPart, ControlFact
 {
 }
 
-static void topGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+static void interpolateGradient(const CGFloat* inData, CGFloat* outData, const float* dark, const float* light)
 {
-    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
-    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
+}
+
+static void topGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+{
+    static constexpr float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
+    static constexpr float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
+    interpolateGradient(inData, outData, dark, light);
 }
 
 static void bottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
-    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
+    static constexpr float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    static constexpr float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
+    interpolateGradient(inData, outData, dark, light);
 }
 
 static void mainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
-    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    float a = inData[0];
-    int i = 0;
-    for (i = 0; i < 4; i++)
-        outData[i] = (1.0f - a) * dark[i] + a * light[i];
+    static constexpr float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
+    static constexpr float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    interpolateGradient(inData, outData, dark, light);
 }
 
-static void drawMenuListBackground(GraphicsContext& context, const FloatRect& rect, const FloatRoundedRect& borderRect, const ControlStyle&)
+static void darkTopGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+{
+    static constexpr float dark[4] = { 0.0f, 0.0f, 0.0f, 0.4f };
+    static constexpr float light[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
+    interpolateGradient(inData, outData, dark, light);
+}
+
+static void darkBottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+{
+    static constexpr float dark[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    static constexpr float light[4] = { 0.0f, 0.0f, 0.0f, 0.3f };
+    interpolateGradient(inData, outData, dark, light);
+}
+
+static void darkMainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+{
+    static constexpr float dark[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
+    static constexpr float light[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    interpolateGradient(inData, outData, dark, light);
+}
+
+static void drawMenuListBackground(GraphicsContext& context, const FloatRect& rect, const FloatRoundedRect& borderRect, const ControlStyle& style)
 {
     CGContextRef cgContext = context.platformContext();
 
     const auto& radii = borderRect.radii();
     int radius = radii.topLeft().width();
 
+    bool useDarkAppearance = style.states.contains(ControlStyle::State::DarkAppearance);
+
     CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
     FloatRect topGradient(rect.x(), rect.y(), rect.width(), rect.height() / 2.0f);
-    struct CGFunctionCallbacks topCallbacks = { 0, topGradientInterpolate, NULL };
+    struct CGFunctionCallbacks topCallbacks = { 0, useDarkAppearance ? darkTopGradientInterpolate : topGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> topFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks));
     RetainPtr<CGShadingRef> topShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), CGPointMake(topGradient.x(), topGradient.maxY()), topFunction.get(), false, false));
 
     FloatRect bottomGradient(rect.x() + radius, rect.y() + rect.height() / 2.0f, rect.width() - 2.0f * radius, rect.height() / 2.0f);
-    struct CGFunctionCallbacks bottomCallbacks = { 0, bottomGradientInterpolate, NULL };
+    struct CGFunctionCallbacks bottomCallbacks = { 0, useDarkAppearance ? darkBottomGradientInterpolate : bottomGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> bottomFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks));
     RetainPtr<CGShadingRef> bottomShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), CGPointMake(bottomGradient.x(), bottomGradient.maxY()), bottomFunction.get(), false, false));
 
-    struct CGFunctionCallbacks mainCallbacks = { 0, mainGradientInterpolate, NULL };
+    struct CGFunctionCallbacks mainCallbacks = { 0, useDarkAppearance ? darkMainGradientInterpolate : mainGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.x(),  rect.y()), CGPointMake(rect.x(), rect.maxY()), mainFunction.get(), false, false));
 

@@ -54,9 +54,8 @@ AudioTrackPrivateMediaStream::~AudioTrackPrivateMediaStream()
 #if USE(LIBWEBRTC)
 static RefPtr<LibWebRTCAudioModule> audioModuleFromSource(RealtimeMediaSource& source)
 {
-    if (!is<RealtimeIncomingAudioSource>(source))
-        return nullptr;
-    return downcast<RealtimeIncomingAudioSource>(source).audioModule();
+    auto* audioSource = dynamicDowncast<RealtimeIncomingAudioSource>(source);
+    return audioSource ? audioSource->audioModule() : nullptr;
 }
 #endif
 

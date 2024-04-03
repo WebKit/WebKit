@@ -48,11 +48,11 @@ layer at (33.50,83.47) size 219x79
 layer at (-8.11,50.20) size 216x119 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 216x120 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 216x120
-      RenderSVGTSpan {tspan} at (0,0) size 56x58
+      RenderSVGTSpan {tspan} at (0,36) size 56x58
         RenderSVGInlineText {#text} at (0,36) size 56x57
           chunk 1 text run 1 at (37.56,135.44) startOffset 0 endOffset 1 width 22.27: "T"
           chunk 1 text run 2 at (46.81,117.90) startOffset 1 endOffset 2 width 17.40: "e"
-      RenderSVGTSpan {tspan} at (0,0) size 44x41
+      RenderSVGTSpan {tspan} at (34,25) size 44x41
         RenderSVGInlineText {#text} at (34,25) size 44x41
           chunk 1 text run 1 at (57.16,103.45) startOffset 0 endOffset 1 width 18.18: "x"
       RenderSVGInlineText {#text} at (50,0) size 165x120

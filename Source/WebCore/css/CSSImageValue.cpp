@@ -130,6 +130,11 @@ void CSSImageValue::customSetReplacementURLForSubresources(const HashMap<String,
         m_replacementURLString = replacementURLString;
 }
 
+bool CSSImageValue::customMayDependOnBaseURL() const
+{
+    return WebCore::mayDependOnBaseURL(m_location);
+}
+
 void CSSImageValue::customClearReplacementURLForSubresources()
 {
     m_replacementURLString = { };

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CSSReflectValue.h"
 
-#include "CSSPrimitiveValue.h"
-
 namespace WebCore {
 
 CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)

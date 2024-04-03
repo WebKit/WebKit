@@ -1,9 +1,17 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if !defined(__has_feature)
+#define __has_feature(x) 0
+#endif
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(_WIN32)
+#if !defined(OPENSSL_NO_ASM) && defined(__AARCH64EL__) && defined(_WIN32)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 #include <openssl/arm_arch.h>
 
 
@@ -30,7 +38,7 @@ Lone:
 ChaCha20_ctr32:
 	AARCH64_VALID_CALL_TARGET
 	cbz	x2,Labort
-#if defined(OPENSSL_HWASAN) && __clang_major__ >= 10
+#if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
 	adrp	x5,:pg_hi21_nc:OPENSSL_armcap_P
 #else
 	adrp	x5,OPENSSL_armcap_P
@@ -1987,4 +1995,8 @@ Ldone_512_neon:
 	AARCH64_VALIDATE_LINK_REGISTER
 	ret
 
-#endif  // !OPENSSL_NO_ASM && defined(OPENSSL_AARCH64) && defined(_WIN32)
+#endif  // !OPENSSL_NO_ASM && defined(__AARCH64EL__) && defined(_WIN32)
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
+#endif

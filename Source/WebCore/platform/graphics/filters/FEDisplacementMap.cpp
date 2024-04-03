@@ -105,19 +105,19 @@ std::unique_ptr<FilterEffectApplier> FEDisplacementMap::createSoftwareApplier() 
 static TextStream& operator<<(TextStream& ts, const ChannelSelectorType& type)
 {
     switch (type) {
-    case CHANNEL_UNKNOWN:
+    case ChannelSelectorType::CHANNEL_UNKNOWN:
         ts << "UNKNOWN";
         break;
-    case CHANNEL_R:
+    case ChannelSelectorType::CHANNEL_R:
         ts << "RED";
         break;
-    case CHANNEL_G:
+    case ChannelSelectorType::CHANNEL_G:
         ts << "GREEN";
         break;
-    case CHANNEL_B:
+    case ChannelSelectorType::CHANNEL_B:
         ts << "BLUE";
         break;
-    case CHANNEL_A:
+    case ChannelSelectorType::CHANNEL_A:
         ts << "ALPHA";
         break;
     }

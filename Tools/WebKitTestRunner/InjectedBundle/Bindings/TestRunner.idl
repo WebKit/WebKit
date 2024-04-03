@@ -122,6 +122,7 @@ interface TestRunner {
     undefined display();
     undefined displayAndTrackRepaints();
     undefined displayOnLoadFinish();
+    undefined dontForceRepaint();
 
     // Failed load condition testing
     undefined forceImmediateCompletion();
@@ -145,14 +146,6 @@ interface TestRunner {
 
     attribute double databaseDefaultQuota;
     attribute double databaseMaxQuota;
-
-    // Application Cache API
-    undefined clearAllApplicationCaches();
-    undefined setAppCacheMaximumSize(unsigned long long size);
-    long long applicationCacheDiskUsageForOrigin(DOMString origin);
-    undefined clearApplicationCacheForOrigin(DOMString name);
-    undefined disallowIncreaseForApplicationCacheQuota();
-    object originsWithApplicationCache();
 
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
@@ -344,7 +337,7 @@ interface TestRunner {
     undefined setStatisticsSubresourceUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsTopFrameUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     undefined setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
-    undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost);
+    undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost, boolean wasFiltered);
     undefined setStatisticsTimeToLiveUserInteraction(double seconds);
     boolean statisticsNotifyObserver();
     undefined statisticsProcessStatisticsAndDataRecords();
@@ -381,6 +374,7 @@ interface TestRunner {
 
     // Storage Access API
     undefined getAllStorageAccessEntries(object callback);
+    undefined setRequestStorageAccessThrowsExceptionUntilReload(boolean enabled);
 
     // Open panel
     undefined setOpenPanelFiles(object filesArray);
@@ -407,8 +401,8 @@ interface TestRunner {
 
     undefined installFakeHelvetica(DOMString configuration);
 
-    undefined addMockCameraDevice(DOMString persistentId, DOMString label, object properties);
-    undefined addMockMicrophoneDevice(DOMString persistentId, DOMString label, object properties);
+    undefined addMockCameraDevice(DOMString persistentId, DOMString label, optional object properties);
+    undefined addMockMicrophoneDevice(DOMString persistentId, DOMString label, optional object properties);
     undefined addMockScreenDevice(DOMString persistentId, DOMString label);
     undefined clearMockMediaDevices();
     undefined removeMockMediaDevice(DOMString persistentId);

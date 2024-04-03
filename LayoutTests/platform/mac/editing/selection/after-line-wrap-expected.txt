@@ -14,17 +14,17 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 306x18
           RenderText {#text} at (0,0) size 306x18
             text run at (0,0) width 306: "Make sure that your window is small enough"
-        RenderText {#text} at (305,0) size 777x36
+        RenderText {#text} at (0,0) size 777x36
           text run at (305,0) width 472: " so that 'don't select this line' and 'try to select just this line' appear on two"
           text run at (0,18) width 98: "different lines. "
           text run at (97,18) width 623: "The two phrases are actually in the same paragraph, there are just lots of spaces in between them."
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 108x18
           text run at (0,0) width 108: "This is a test for "
-        RenderInline {A} at (0,0) size 373x18 [color=#0000EE]
+        RenderInline {A} at (107,0) size 373x18 [color=#0000EE]
           RenderText {#text} at (107,0) size 373x18
             text run at (107,0) width 373: "REGRESSION: Selection includes spaces that it shouldn't"
-        RenderText {#text} at (479,0) size 768x36
+        RenderText {#text} at (0,0) size 768x36
           text run at (479,0) width 289: ". The test makes sure that a word that is right"
           text run at (0,18) width 291: "after a line wrap can be selected successfully."
       RenderBlock {P} at (0,104) size 784x0
@@ -379,7 +379,7 @@ layer at (0,0) size 800x600
           text run at (748,1) width 1: " "
           text run at (748,1) width 1: " "
           text run at (1,19) width 4: " "
-        RenderInline {I} at (0,0) size 156x18
+        RenderInline {I} at (5,19) size 156x18
           RenderText {#text} at (5,19) size 156x18
             text run at (5,19) width 156: "try to select just this text"
         RenderText {#text} at (0,0) size 0x0

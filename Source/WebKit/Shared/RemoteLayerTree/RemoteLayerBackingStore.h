@@ -28,6 +28,8 @@
 #include "BufferAndBackendInfo.h"
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
+#include "RemoteImageBufferSetIdentifier.h"
+#include "RemoteImageBufferSetProxy.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PlatformCALayer.h>
@@ -41,7 +43,6 @@ OBJC_CLASS CALayer;
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
 namespace WebCore {
 class NativeImage;
-class ThreadSafeImageBufferFlusher;
 typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
 struct PlatformCALayerDelegatedContents;
 struct PlatformCALayerDelegatedContentsFinishedEvent;
@@ -53,6 +54,7 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
 class RemoteLayerTreeNode;
 class RemoteLayerTreeHost;
+class ThreadSafeImageBufferSetFlusher;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 struct PlatformCALayerRemoteDelegatedContents;
 
@@ -64,12 +66,20 @@ enum class BackingStoreNeedsDisplayReason : uint8_t {
     HasDirtyRegion,
 };
 
+enum class LayerContentsType : uint8_t {
+    IOSurface,
+    CAMachPort,
+    CachedIOSurface,
+};
+
 class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
     virtual ~RemoteLayerBackingStore();
+
+    static std::unique_ptr<RemoteLayerBackingStore> createForLayer(PlatformCALayerRemote*);
 
     enum class Type : bool {
         IOSurface,
@@ -82,6 +92,10 @@ public:
 
     virtual bool isRemoteLayerWithRemoteRenderingBackingStore() const { return false; }
     virtual bool isRemoteLayerWithInProcessRenderingBackingStore() const { return false; }
+
+    enum class ProcessModel : uint8_t { InProcess, Remote };
+    virtual ProcessModel processModel() const = 0;
+    static ProcessModel processModelForLayer(PlatformCALayerRemote*);
 
     struct Parameters {
         Type type { Type::Bitmap };
@@ -112,9 +126,10 @@ public:
     bool performDelegatedLayerDisplay();
 
     void paintContents();
+    virtual void prepareToDisplay() = 0;
     virtual void createContextAndPaintContents() = 0;
 
-    virtual Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() = 0;
+    virtual std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher(ThreadSafeImageBufferSetFlusher::FlushType = ThreadSafeImageBufferSetFlusher::FlushType::BackendHandlesAndDrawing) = 0;
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
@@ -138,7 +153,7 @@ public:
 
     virtual void encodeBufferAndBackendInfos(IPC::Encoder&) const = 0;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> takePendingFlushers();
 
     enum class BufferType {
         Front,
@@ -157,8 +172,13 @@ public:
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     virtual std::optional<ImageBufferBackendHandle> displayListHandle() const  { return std::nullopt; }
 #endif
+    virtual std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() const { return std::nullopt; }
 
     virtual void dump(WTF::TextStream&) const = 0;
+
+    void purgeFrontBufferForTesting();
+    void purgeBackBufferForTesting();
+    void markFrontBufferVolatileForTesting();
 
 protected:
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
@@ -182,7 +202,7 @@ protected:
     std::optional<ImageBufferBackendHandle> m_contentsBufferHandle;
     std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_frontBufferFlushers;
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> m_frontBufferFlushers;
 
     WebCore::RepaintRectList m_paintingRects;
 
@@ -198,9 +218,6 @@ public:
     RemoteLayerBackingStoreProperties() = default;
     RemoteLayerBackingStoreProperties(RemoteLayerBackingStoreProperties&&) = default;
 
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
-
-    enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
     void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayDynamicContentScalingDisplayListsIntoBackingStore);
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
@@ -213,9 +230,15 @@ public:
 
     void dump(WTF::TextStream&) const;
 
+    std::optional<RemoteImageBufferSetIdentifier> bufferSetIdentifier() { return m_bufferSet; }
+    void setBackendHandle(BufferSetBackendHandle&);
+
 private:
+    friend struct IPC::ArgumentCoder<RemoteLayerBackingStoreProperties, void>;
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
     RetainPtr<id> m_contentsBuffer;
+
+    std::optional<RemoteImageBufferSetIdentifier> m_bufferSet;
 
     std::optional<BufferAndBackendInfo> m_frontBufferInfo;
     std::optional<BufferAndBackendInfo> m_backBufferInfo;

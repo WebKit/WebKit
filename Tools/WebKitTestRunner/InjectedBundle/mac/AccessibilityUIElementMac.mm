@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AccessibilityCommonCocoa.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import "InjectedBundle.h"
@@ -37,6 +35,7 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSObjectRef.h>
+#import <WebCore/DateComponents.h>
 #import <WebKit/WKBundleFrame.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -162,6 +161,53 @@ static id attributeValue(id element, NSString *attribute)
         return [element accessibilityValue];
     if ([attribute isEqual:NSAccessibilityFocusedUIElementAttribute] && [element respondsToSelector:@selector(accessibilityFocusedUIElement)])
         return [element accessibilityFocusedUIElement];
+
+    // These are internal APIs used by DRT/WKTR; tests are allowed to use them but we don't want to advertise them.
+    static NeverDestroyed<RetainPtr<NSArray>> internalAttributes = @[
+        @"AXARIAPressedIsPresent",
+        @"AXARIARole",
+        @"AXAutocompleteValue",
+        @"AXClickPoint",
+        @"AXControllerFor",
+        @"AXControllers",
+        @"AXDRTSpeechAttribute",
+        @"AXDateTimeComponentsType",
+        @"AXDescribedBy",
+        @"AXDescriptionFor",
+        @"AXDetailsFor",
+        @"AXErrorMessageFor",
+        @"AXFlowFrom",
+        @"AXIsInCell",
+        @"AXIsInDescriptionListDetail",
+        @"AXIsInDescriptionListTerm",
+        @"AXIsIndeterminate",
+        @"AXIsMultiSelectable",
+        @"AXIsOnScreen",
+        @"AXLabelFor",
+        @"AXLabelledBy",
+        @"AXLineRectsAndText",
+        @"AXOwners",
+        @"AXStringValue",
+        @"AXValueAutofillType",
+
+        // FIXME: these shouldn't be here, but removing one of these causes tests to fail.
+        @"AXARIACurrent",
+        @"AXARIALive",
+        @"AXDescription",
+        @"AXKeyShortcutsValue",
+        @"AXOrientation",
+        @"AXOwns",
+        @"AXPopupValue",
+        @"AXRelativeFrame",
+        @"AXRequired",
+        @"AXSortDirection",
+        @"AXValue",
+        @"AXVisibleCharacterRange",
+    ];
+
+    NSArray<NSString *> *supportedAttributes = [element accessibilityAttributeNames];
+    if (![supportedAttributes containsObject:attribute] && ![internalAttributes.get() containsObject:attribute] && ![attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return nil;
 
     return [element accessibilityAttributeValue:attribute];
 }
@@ -385,20 +431,22 @@ JSValueRef AccessibilityUIElement::children() const
     return nullptr;
 }
 
-void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildren() const
 {
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(NSAccessibilityChildrenAttribute).get());
+    return makeVector<RefPtr<AccessibilityUIElement>>(attributeValue(NSAccessibilityChildrenAttribute).get());
 }
 
-void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& elementVector, unsigned location, unsigned length)
+Vector<RefPtr<AccessibilityUIElement>> AccessibilityUIElement::getChildrenInRange(unsigned location, unsigned length) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     RetainPtr<NSArray> children;
     s_controller->executeOnAXThreadAndWait([&children, location, length, this] {
         children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
     });
-    elementVector = makeVector<RefPtr<AccessibilityUIElement>>(children.get());
+    return makeVector<RefPtr<AccessibilityUIElement>>(children.get());
     END_AX_OBJC_EXCEPTIONS
+
+    return { };
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
@@ -450,14 +498,6 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     END_AX_OBJC_EXCEPTIONS
 }
 
-int AccessibilityUIElement::childrenCount()
-{
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildren(children);
-    
-    return children.size();
-}
-
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
     RetainPtr<id> element;
@@ -479,16 +519,6 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
         index = [m_element accessibilityIndexOfChild:platformElement];
     });
     return index;
-}
-
-RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
-{
-    Vector<RefPtr<AccessibilityUIElement>> children;
-    getChildrenWithRange(children, index, 1);
-
-    if (children.size() == 1)
-        return children[0];
-    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::elementForAttribute(NSString* attribute) const
@@ -654,9 +684,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 {
-    Vector<RefPtr<AccessibilityUIElement> > children;
-    getChildren(children);
-    return descriptionOfElements(children);
+    return descriptionOfElements(getChildren());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
@@ -889,6 +917,26 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"AXBrailleLabel").get());
+    return concatenateAttributeAndValue(@"AXBrailleLabel", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto description = descriptionOfValue(attributeValue(@"AXBrailleRoleDescription").get());
+    return concatenateAttributeAndValue(@"AXBrailleRoleDescription", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
 {
     return stringAttributeValue(@"AXARIALive");
@@ -912,10 +960,35 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto value = attributeValue(NSAccessibilityValueAttribute);
-    auto description = descriptionOfValue(value.get());
-    if (description)
+    RetainPtr<id> value;
+    auto role = attributeValue(NSAccessibilityRoleAttribute);
+    if ([role isEqualToString:@"AXDateTimeArea"])
+        value = attributeValue(@"AXStringValue");
+    else
+        value = attributeValue(NSAccessibilityValueAttribute);
+
+    if (auto description = descriptionOfValue(value.get()))
         return concatenateAttributeAndValue(@"AXValue", description.get());
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(NSAccessibilityValueAttribute);
+    if (![value isKindOfClass:[NSDate class]])
+        return nullptr;
+
+    // Adjust the returned date per time zone and daylight savings in an equivalent way to what VoiceOver does.
+    NSInteger offset = [[NSTimeZone localTimeZone] secondsFromGMTForDate:[NSDate date]];
+    auto type = attributeValue(@"AXDateTimeComponentsType");
+    if ([type unsignedShortValue] != (uint8_t)WebCore::DateComponentsType::DateTimeLocal && [[NSTimeZone localTimeZone] isDaylightSavingTimeForDate:[NSDate date]])
+        offset -= 3600;
+    value = [NSDate dateWithTimeInterval:offset sinceDate:value.get()];
+    if (auto description = descriptionOfValue(value.get()))
+        return concatenateAttributeAndValue(@"AXDateValue", description.get());
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2095,7 +2168,7 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForU
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned location, unsigned length)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    return AccessibilityTextMarkerRange::create(attributeValueForParameter(@"AXTextMarkerRangeForNSRange",
+    return AccessibilityTextMarkerRange::create(attributeValueForParameter(@"_AXTextMarkerRangeForNSRange",
         [NSValue valueWithRange:NSMakeRange(location, length)]).get());
     END_AX_OBJC_EXCEPTIONS
 
@@ -2142,7 +2215,7 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForTextMa
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto textMarker = attributeValueForParameter(@"AXStartTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    auto textMarker = attributeValueForParameter(@"_AXStartTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
     return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
 
@@ -2155,7 +2228,7 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForTextMark
         return nullptr;
 
     BEGIN_AX_OBJC_EXCEPTIONS
-    auto textMarker = attributeValueForParameter(@"AXEndTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
+    auto textMarker = attributeValueForParameter(@"_AXEndTextMarkerForTextMarkerRange", range->platformTextMarkerRange());
     return AccessibilityTextMarker::create(textMarker.get());
     END_AX_OBJC_EXCEPTIONS
 
@@ -2633,5 +2706,3 @@ bool AccessibilityUIElement::isInNonNativeTextControl() const
 }
 
 } // namespace WTR
-
-#endif // ENABLE(ACCESSIBILITY)

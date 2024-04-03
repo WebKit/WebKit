@@ -132,6 +132,7 @@ public:
     bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
     void setReplacementURLForSubresources(const HashMap<String, String>&);
     void clearReplacementURLForSubresources();
+    bool mayDependOnBaseURL() const;
 
     static unsigned averageSizeInBytes();
 

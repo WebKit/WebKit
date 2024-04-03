@@ -42,6 +42,8 @@ class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, publi
 public:
     static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 
+    using HTMLElement::scriptExecutionContext;
+
     const AtomString& kind();
     void setKind(const AtomString&);
 
@@ -77,6 +79,7 @@ private:
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
+    void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     bool isURLAttribute(const Attribute&) const final;
 

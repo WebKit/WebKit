@@ -106,6 +106,8 @@ class Subprocess(ContextStack):
                     continue
                 elif re.match(self.args[count], args[count]):
                     continue
+                elif not count and self.args[count].split('/')[-1] == args[count]:
+                    continue
                 return False
 
             if self.cwd is not None and cwd != self.cwd:
@@ -143,7 +145,7 @@ class Subprocess(ContextStack):
         candidates = []
         while current:
             for completion in current.completions:
-                if completion.args[0] == program:
+                if completion.args[0] == program or completion.args[0].split('/')[-1] == program:
                     candidates.append(completion)
                 if current.ordered:
                     break

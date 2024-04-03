@@ -64,7 +64,8 @@ void SplitTextNodeCommand::doApply()
 
     m_text1 = Text::create(document(), WTFMove(prefixText));
     ASSERT(m_text1);
-    document().markers().copyMarkers(protectedText2(), { 0, m_offset }, *protectedText1());
+    if (CheckedPtr markers = document().markersIfExists())
+        markers->copyMarkers(protectedText2(), { 0, m_offset }, *protectedText1());
 
     insertText1AndTrimText2();
 }
@@ -82,7 +83,8 @@ void SplitTextNodeCommand::doUnapply()
     Ref text2 = m_text2;
     text2->insertData(0, prefixText);
 
-    document().markers().copyMarkers(*text1, { 0, prefixText.length() }, text2);
+    if (CheckedPtr markers = document().markersIfExists())
+        markers->copyMarkers(*text1, { 0, prefixText.length() }, text2);
     text1->remove();
 }
 

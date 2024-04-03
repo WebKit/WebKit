@@ -59,7 +59,7 @@ private:
     explicit DOMAudioSession(ScriptExecutionContext*);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return DOMAudioSessionEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::DOMAudioSession; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

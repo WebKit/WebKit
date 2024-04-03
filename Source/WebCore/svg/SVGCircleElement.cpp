@@ -86,11 +86,8 @@ void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderPtr<RenderElement> SVGCircleElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return createRenderer<RenderSVGEllipse>(*this, WTFMove(style));
-#endif
-
     return createRenderer<LegacyRenderSVGEllipse>(*this, WTFMove(style));
 }
 

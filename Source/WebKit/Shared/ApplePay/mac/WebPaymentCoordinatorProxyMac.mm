@@ -64,46 +64,60 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #endif
         return completionHandler(false);
 
-    auto paymentRequest = platformPaymentRequest(webPageProxyID, originatingURL, linkIconURLStrings, request);
+    RetainPtr<PKPaymentRequest> paymentRequest;
+#if HAVE(PASSKIT_DISBURSEMENTS)
+    std::optional<ApplePayDisbursementPaymentRequest> webDisbursementPaymentRequest = request.disbursementPaymentRequest();
+    if (webDisbursementPaymentRequest) {
+        auto disbursementRequest = platformDisbursementPaymentRequest(request, originatingURL);
+        paymentRequest = RetainPtr<PKPaymentRequest>((PKPaymentRequest *)disbursementRequest);
+    } else
+#endif
+        paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
-    auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
-    WeakPtr weakThis { *this };
-    [PAL::getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
-        auto paymentCoordinatorProxy = weakThis.get();
-        if (!paymentCoordinatorProxy)
+    m_client.getPaymentCoordinatorEmbeddingUserAgent(webPageProxyID, [weakThis = WeakPtr { *this }, paymentRequest, completionHandler = WTFMove(completionHandler)](const String& userAgent) mutable {
+        if (!weakThis)
             return completionHandler(false);
 
-        if (error) {
-            LOG_ERROR("+[PKPaymentAuthorizationViewController requestViewControllerWithPaymentRequest:completion:] error %@", error);
+        weakThis->platformSetPaymentRequestUserAgent(paymentRequest.get(), userAgent);
 
-            completionHandler(false);
-            return;
-        }
+        auto showPaymentUIRequestSeed = weakThis->m_showPaymentUIRequestSeed;
 
-        if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed) {
+        [PAL::getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
+            auto paymentCoordinatorProxy = weakThis.get();
+            if (!paymentCoordinatorProxy)
+                return completionHandler(false);
+
+            if (error) {
+                LOG_ERROR("+[PKPaymentAuthorizationViewController requestViewControllerWithPaymentRequest:completion:] error %@", error);
+
+                completionHandler(false);
+                return;
+            }
+
             // We've already been asked to hide the payment UI. Don't attempt to show it.
-            return completionHandler(false);
-        }
+            if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed)
+                return completionHandler(false);
 
-        NSWindow *presentingWindow = paymentCoordinatorProxy->m_client.paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
-        if (!presentingWindow)
-            return completionHandler(false);
+            NSWindow *presentingWindow = paymentCoordinatorProxy->m_client.paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
+            if (!presentingWindow)
+                return completionHandler(false);
 
-        ASSERT(viewController);
+            ASSERT(viewController);
 
-        paymentCoordinatorProxy->m_authorizationPresenter = makeUnique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
+            paymentCoordinatorProxy->m_authorizationPresenter = makeUnique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
 
-        ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
-        paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
+            ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
+            paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
 
-        paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow.get() queue:nil usingBlock:[paymentCoordinatorProxy](NSNotification *) {
-            paymentCoordinatorProxy->didReachFinalState();
-        }];
+            paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow.get() queue:nil usingBlock:[paymentCoordinatorProxy](NSNotification *) {
+                paymentCoordinatorProxy->didReachFinalState();
+            }];
 
-        [presentingWindow beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
+            [presentingWindow beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
 
-        completionHandler(true);
-    }).get()];
+            completionHandler(true);
+        }).get()];
+    });
 }
 
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()

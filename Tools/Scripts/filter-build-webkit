@@ -286,6 +286,7 @@ sub printLine($$$$)
         elsif ($style == STYLE_SUCCESS) { print OUTPUT_HANDLE "<p class=\"success\">$line</p>"; }
         elsif ($style == STYLE_ALERT)   { print OUTPUT_HANDLE "<p class=\"alert\">$line</p>"; }
         else                            { print OUTPUT_HANDLE "<p>$line</p>"; }
+        OUTPUT_HANDLE->flush();
         return;
     }
     my $erase = "";
@@ -315,9 +316,7 @@ sub printLine($$$$)
         elsif ($style == STYLE_ALERT)   { $color = "ALERT:"; }
     }
     print OUTPUT_HANDLE $erase, $context, $color, $line, $reset, $endl;
-    if ($outputFormat eq "oneline") {
-        OUTPUT_HANDLE->flush();
-    }
+    OUTPUT_HANDLE->flush();
 }
 
 sub setLogfileOption($$)
@@ -479,6 +478,9 @@ sub shouldIgnoreLine($$)
         return 1 if $line =~ /^offlineasm: Nothing changed/;
     }
     return 1 if $line =~ /^Showing first/;
+
+    # FIXME: rdar://106775772
+    return 1 if $line =~ /DVTAssertions/;
 
     return 0;
 }

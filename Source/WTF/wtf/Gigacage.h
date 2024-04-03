@@ -36,11 +36,9 @@ namespace Gigacage {
 constexpr bool hasCapacityToUseLargeGigacage = OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) > 36;
 
 const size_t primitiveGigacageMask = 0;
-const size_t jsValueGigacageMask = 0;
 
 enum Kind {
     Primitive,
-    JSValue,
     NumberOfKinds
 };
 
@@ -58,8 +56,6 @@ ALWAYS_INLINE const char* name(Kind kind)
     switch (kind) {
     case Primitive:
         return "Primitive";
-    case JSValue:
-        return "JSValue";
     case NumberOfKinds:
         break;
     }

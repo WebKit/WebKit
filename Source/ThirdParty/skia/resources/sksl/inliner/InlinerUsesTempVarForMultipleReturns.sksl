@@ -1,0 +1,15 @@
+/*#pragma settings Default*/
+
+uniform half4 colorWhite, colorGreen, colorRed;
+
+inline half4 MakeTempVar(half4 c) {
+    if (c.rg == c.ba) {
+        return colorGreen;
+    } else {
+        return colorRed;
+    }
+}
+
+half4 main(float2 coords) {
+    return MakeTempVar(colorWhite);
+}

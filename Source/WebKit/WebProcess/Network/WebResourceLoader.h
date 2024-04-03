@@ -26,14 +26,13 @@
 #pragma once
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "MessageSender.h"
-#include "ShareableResource.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebResourceInterceptController.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/ShareableResource.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -100,7 +99,7 @@ private:
     WebCore::MainFrameMainResource mainFrameMainResource() const;
     
 #if ENABLE(SHAREABLE_RESOURCE)
-    void didReceiveResource(ShareableResource::Handle&&);
+    void didReceiveResource(WebCore::ShareableResource::Handle&&);
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

@@ -50,13 +50,14 @@ InbandChapterTrackPrivateAVFObjC::InbandChapterTrackPrivateAVFObjC(RetainPtr<NSL
 
 void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimedMetadataGroup *>> chapters)
 {
-    if (!client())
+    if (!hasClients())
         return;
 
     auto identifier = LOGIDENTIFIER;
     auto createChapterCue = ([this, identifier] (AVMetadataItem *item, int chapterNumber) mutable {
-        if (!client())
+        if (!hasClients())
             return;
+        ASSERT(hasOneClient());
         ChapterData chapterData = { PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), [item stringValue] };
         if (m_processedChapters.contains(chapterData))
             return;
@@ -64,7 +65,9 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
 
         ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), AtomString::number(chapterNumber), [item stringValue]);
         INFO_LOG(identifier, "created cue ", cueData);
-        client()->parseWebVTTCueData(WTFMove(cueData));
+        notifyMainThreadClient([cueData = WTFMove(cueData)](TrackPrivateBaseClient& client) mutable {
+            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(WTFMove(cueData));
+        });
     });
 
     int chapterNumber = 0;

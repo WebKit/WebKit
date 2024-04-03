@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -35,7 +37,7 @@ class BackForwardClient;
 class HistoryItem;
 class Page;
 
-class BackForwardController {
+class BackForwardController : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
     BackForwardController(Page&, Ref<BackForwardClient>&&);
@@ -67,7 +69,10 @@ public:
     WEBCORE_EXPORT RefPtr<HistoryItem> forwardItem();
 
 private:
-    Page& m_page;
+    Ref<Page> protectedPage() const;
+    Ref<BackForwardClient> protectedClient() const;
+
+    SingleThreadWeakRef<Page> m_page;
     Ref<BackForwardClient> m_client;
 };
 

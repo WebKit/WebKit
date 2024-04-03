@@ -35,6 +35,7 @@
 namespace WebKit {
 
 struct DataDetectionResult {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RetainPtr<NSArray> results;
 };
 

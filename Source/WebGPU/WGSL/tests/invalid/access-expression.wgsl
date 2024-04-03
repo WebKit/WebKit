@@ -26,6 +26,10 @@ fn testSwizzleAccess()
 
   // CHECK-L: invalid vector swizzle character
   _ = vec2(0).v;
+
+  // CHECK-L: invalid vector swizzle character
+    var z: mat3x3<f32>;
+    _ = z[1].e;
 }
 
 fn testConcretizationIfIndexIsNotConstant()

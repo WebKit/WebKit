@@ -1,0 +1,12 @@
+An unpaired surrogate should show a glyph. "ਅ\uD800ਆ" should be longer than "ਅਆ"
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.clientWidth is > ref.clientWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ਅ�ਆ
+ਅਆ
+

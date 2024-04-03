@@ -107,6 +107,7 @@ private:
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     WallTime valueAsDate() const override;
     ExceptionOr<void> setValueAsDate(WallTime) const override;
+    WallTime accessibilityValueAsDate() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     Decimal defaultValueForStepUp() const override;

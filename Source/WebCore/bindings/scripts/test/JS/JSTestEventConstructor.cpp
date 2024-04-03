@@ -50,7 +50,7 @@ using namespace JSC;
 
 template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -169,7 +169,7 @@ using JSTestEventConstructorDOMConstructor = JSDOMConstructor<JSTestEventConstru
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSTestEventConstructorDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -240,6 +240,11 @@ JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobal
 {
 }
 
+Ref<TestEventConstructor> JSTestEventConstructor::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestEventConstructor>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -261,12 +266,12 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* glo
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestEventConstructorPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestEventConstructor::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestEventConstructor::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestEventConstructor_attr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject)

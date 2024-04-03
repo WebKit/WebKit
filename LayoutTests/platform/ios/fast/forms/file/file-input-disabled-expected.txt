@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,0) size 784x63
         RenderBlock (anonymous) at (0,0) size 784x63
           RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF03]
-          RenderInline {B} at (0,0) size 76x19
+          RenderInline {B} at (20,2) size 76x19
             RenderText {#text} at (20,2) size 76x19
               text run at (20,2) width 76: "Attach File"
           RenderBR {BR} at (95,2) size 1x19

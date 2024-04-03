@@ -32,7 +32,6 @@ import logging
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
 
-from webkitpy.common.checkout.scm.svn import SVN
 from webkitpy.common.checkout.scm.git import Git
 from webkitpy.common.checkout.scm.stub_repository import StubRepository
 
@@ -68,9 +67,6 @@ class SCMDetector(object):
 
         if patch_directories == []:
             patch_directories = None
-
-        if SVN.in_working_directory(real_path, executive=self._executive):
-            return SVN(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
 
         if Git.in_working_directory(real_path, executive=self._executive):
             return Git(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)

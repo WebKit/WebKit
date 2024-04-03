@@ -70,8 +70,8 @@ void SimplifyMarkupCommand::doApply()
             if (!currentNode)
                 break;
 
-            CheckedPtr renderer = currentNode->renderer();
-            if (!is<RenderInline>(renderer.get()) || downcast<RenderInline>(*renderer).mayAffectLayout())
+            CheckedPtr renderInline = dynamicDowncast<RenderInline>(currentNode->renderer());
+            if (!renderInline || renderInline->mayAffectLayout())
                 continue;
             
             if (currentNode->firstChild() != currentNode->lastChild()) {

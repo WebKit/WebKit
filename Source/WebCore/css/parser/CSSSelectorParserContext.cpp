@@ -36,9 +36,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     : mode(context.mode)
     , cssNestingEnabled(context.cssNestingEnabled)
     , customStateSetEnabled(context.customStateSetEnabled)
-    , focusVisibleEnabled(context.focusVisibleEnabled)
     , grammarAndSpellingPseudoElementsEnabled(context.grammarAndSpellingPseudoElementsEnabled)
-    , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
     , highlightAPIEnabled(context.highlightAPIEnabled)
 #if ENABLE(SERVICE_CONTROLS)
     , imageControlsEnabled(context.imageControlsEnabled)
@@ -53,9 +51,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
     , cssNestingEnabled(document.settings().cssNestingEnabled())
     , customStateSetEnabled(document.settings().customStateSetEnabled())
-    , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , grammarAndSpellingPseudoElementsEnabled(document.settings().grammarAndSpellingPseudoElementsEnabled())
-    , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
     , highlightAPIEnabled(document.settings().highlightAPIEnabled())
 #if ENABLE(SERVICE_CONTROLS)
     , imageControlsEnabled(document.settings().imageControlsEnabled())
@@ -72,9 +68,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.mode,
         context.cssNestingEnabled,
         context.customStateSetEnabled,
-        context.focusVisibleEnabled,
         context.grammarAndSpellingPseudoElementsEnabled,
-        context.hasPseudoClassEnabled,
         context.highlightAPIEnabled,
 #if ENABLE(SERVICE_CONTROLS)
         context.imageControlsEnabled,

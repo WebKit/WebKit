@@ -345,8 +345,7 @@ void RemoveUnreferencedVariablesTraverser::traverseLoop(TIntermLoop *node)
         ASSERT(node->getCondition() == nullptr ||
                node->getCondition()->getAsDeclarationNode() == nullptr);
 
-        if (node->getBody())
-            node->getBody()->traverse(this);
+        node->getBody()->traverse(this);
 
         if (node->getInit())
             node->getInit()->traverse(this);

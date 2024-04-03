@@ -66,10 +66,11 @@ bool ScrollingTreePluginScrollingNodeMac::commitStateBeforeChildren(const Scroll
     if (!ScrollingTreePluginScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStatePluginScrollingNode>(stateNode))
+    auto* state = dynamicDowncast<ScrollingStatePluginScrollingNode>(stateNode);
+    if (!state)
         return false;
 
-    m_delegate->updateFromStateNode(downcast<ScrollingStatePluginScrollingNode>(stateNode));
+    m_delegate->updateFromStateNode(*state);
     return true;
 }
 

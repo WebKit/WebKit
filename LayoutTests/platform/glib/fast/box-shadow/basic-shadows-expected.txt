@@ -4,7 +4,7 @@ layer at (0,0) size 785x671
   RenderBlock {HTML} at (0,0) size 785x671
     RenderBody {BODY} at (8,8) size 769x634
       RenderBlock (anonymous) at (0,0) size 769x150
-        RenderInline {SPAN} at (0,0) size 264x127 [border: (5px solid #000000)]
+        RenderInline {SPAN} at (0,11) size 264x127 [border: (5px solid #000000)]
           RenderText {#text} at (5,16) size 55x17
             text run at (5,16) width 55: "This text"
           RenderBR {BR} at (60,16) size 0x17

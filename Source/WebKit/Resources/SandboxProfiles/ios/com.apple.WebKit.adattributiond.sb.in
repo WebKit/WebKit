@@ -160,6 +160,7 @@
 (allow file-read*
     (literal "/dev/urandom")
     (literal "/private/etc/master.passwd")
+    (literal "/System/Library/DarwinDirectory/system/recordStore.data")
     (literal "/private/var/db/DarwinDirectory/local/recordStore.data")
     (subpath "/private/var/preferences/Logging")
     (subpath "/Library/Keychains")

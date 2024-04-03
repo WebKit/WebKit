@@ -57,7 +57,7 @@ static std::optional<bool>& cachedAllowsRequest()
 bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 {
     if (!cachedAllowsRequest())
-        cachedAllowsRequest() = [[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
+        cachedAllowsRequest() = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:@"allowDeprecatedWebKitSynchronousXHRLoads"] == MCRestrictedBoolExplicitYes;
     return *cachedAllowsRequest();
 }
 
@@ -79,7 +79,7 @@ bool defaultMediaSourceEnabled()
 static bool isAsyncTextInputFeatureFlagEnabled()
 {
     static bool enabled = false;
-#if PLATFORM(IOS) && HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     static std::once_flag flag;
     std::call_once(flag, [] {
         if (PAL::deviceClassIsSmallScreen())

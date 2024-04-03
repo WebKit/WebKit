@@ -164,12 +164,10 @@
 .media-controls.vision:not(.audio) .volume-container > .background-tint > .blur,
 .media-controls.vision:not(.audio) button > .background-tint > .blur {
     background-color: rgba(255, 255, 255, 0.15);
-    -webkit-backdrop-filter: saturate(20%) blur(50px);
 }
 
 .media-controls.vision:not(.audio) > .controls-bar > .background-tint > .blur {
     background-color: rgba(149, 149, 149, 0.25);
-    -webkit-backdrop-filter: saturate(64%) blur(50px);
 }
 
 .media-controls.vision:not(.audio) button:active > .background-tint > .tint {

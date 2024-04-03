@@ -27,6 +27,8 @@
 #ifndef WKImageCairo_h
 #define WKImageCairo_h
 
+#if USE(CAIRO)
+
 #include <WebKit/WKBase.h>
 #include <WebKit/WKImage.h>
 
@@ -43,5 +45,7 @@ WK_EXPORT WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKI
 #ifdef __cplusplus
 }
 #endif
+
+#endif // USE(CAIRO)
 
 #endif /* WKImageCairo_h */

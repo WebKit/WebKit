@@ -54,8 +54,6 @@ public:
 
     Gamepad* gamepad() const { return m_gamepad.get(); }
 
-    EventInterface eventInterface() const override { return GamepadEventInterfaceType; }
-
 private:
     explicit GamepadEvent(const AtomString& eventType, Gamepad&);
     GamepadEvent(const AtomString& eventType, const Init&, IsTrusted);

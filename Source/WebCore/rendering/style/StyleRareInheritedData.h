@@ -91,7 +91,7 @@ public:
     
     RefPtr<CursorList> cursorData;
     Length indent;
-    float effectiveZoom;
+    float usedZoom;
 
     TextUnderlineOffset textUnderlineOffset;
 
@@ -164,9 +164,11 @@ public:
 
     unsigned isInSubtreeWithBlendMode : 1;
 
-    unsigned effectiveSkippedContent : 2; // ContentVisibility
+    unsigned isInVisibilityAdjustmentSubtree : 1;
 
-    OptionSet<TouchAction> effectiveTouchActions;
+    unsigned usedContentVisibility : 2; // ContentVisibility
+
+    OptionSet<TouchAction> usedTouchActions;
     OptionSet<EventListenerRegionType> eventListenerRegionTypes;
 
     Length strokeWidth;

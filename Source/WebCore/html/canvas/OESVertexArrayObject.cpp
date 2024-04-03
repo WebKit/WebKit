@@ -39,7 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext& context)
     : WebGLExtension(context, WebGLExtensionName::OESVertexArrayObject)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
 }
 
 OESVertexArrayObject::~OESVertexArrayObject() = default;
@@ -79,7 +79,7 @@ void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* array
     if (!arrayObject->isDefaultObject() && arrayObject == context.m_boundVertexArrayObject)
         context.setBoundVertexArrayObject(locker, nullptr);
 
-    arrayObject->deleteObject(locker, context.graphicsContextGL());
+    arrayObject->deleteObject(locker, context.protectedGraphicsContextGL().get());
 }
 
 GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -89,7 +89,7 @@ GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* ar
     auto& context = this->context();
     if (!context.validateIsWebGLObject(arrayObject))
         return false;
-    return context.graphicsContextGL()->isVertexArray(arrayObject->object());
+    return context.protectedGraphicsContextGL()->isVertexArray(arrayObject->object());
 }
 
 void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -103,7 +103,7 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     if (!context.validateNullableWebGLObject("bindVertexArrayOES", arrayObject))
         return;
 
-    auto* contextGL = context.graphicsContextGL();
+    RefPtr contextGL = context.graphicsContextGL();
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         contextGL->bindVertexArray(arrayObject->object());
         context.setBoundVertexArrayObject(locker, arrayObject);

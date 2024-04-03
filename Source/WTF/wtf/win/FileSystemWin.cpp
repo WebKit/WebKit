@@ -185,12 +185,12 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
     return proposedPath;
 }
 
-String openTemporaryFile(StringView, PlatformFileHandle& handle, StringView suffix)
+std::pair<String, PlatformFileHandle> openTemporaryFile(StringView, StringView suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    handle = INVALID_HANDLE_VALUE;
+    PlatformFileHandle handle = INVALID_HANDLE_VALUE;
 
     String proposedPath = generateTemporaryPath([&handle](const String& proposedPath) {
         // use CREATE_NEW to avoid overwriting an existing file with the same name
@@ -200,9 +200,9 @@ String openTemporaryFile(StringView, PlatformFileHandle& handle, StringView suff
     });
 
     if (!isHandleValid(handle))
-        return String();
+        return { String(), handle };
 
-    return proposedPath;
+    return { proposedPath, handle };
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPermission, bool failIfFileExists)
@@ -275,7 +275,7 @@ bool flushFile(PlatformFileHandle)
     return false;
 }
 
-int writeToFile(PlatformFileHandle handle, const void* data, int length)
+int64_t writeToFile(PlatformFileHandle handle, const void* data, size_t length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -285,10 +285,10 @@ int writeToFile(PlatformFileHandle handle, const void* data, int length)
 
     if (!success)
         return -1;
-    return static_cast<int>(bytesWritten);
+    return static_cast<int64_t>(bytesWritten);
 }
 
-int readFromFile(PlatformFileHandle handle, void* data, int length)
+int64_t readFromFile(PlatformFileHandle handle, void* data, size_t length)
 {
     if (!isHandleValid(handle))
         return -1;
@@ -298,7 +298,7 @@ int readFromFile(PlatformFileHandle handle, void* data, int length)
 
     if (!success)
         return -1;
-    return static_cast<int>(bytesRead);
+    return static_cast<int64_t>(bytesRead);
 }
 
 String localUserSpecificStorageDirectory()

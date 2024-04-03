@@ -46,9 +46,7 @@ class PlatformColorSpace {
 public:
     enum class Name : uint8_t {
         SRGB
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
         , LinearSRGB
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
         , DisplayP3
 #endif

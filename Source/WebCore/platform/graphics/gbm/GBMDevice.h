@@ -30,6 +30,7 @@
 
 #include <optional>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 struct gbm_device;
@@ -49,13 +50,29 @@ public:
     GBMDevice() = default;
     ~GBMDevice();
 
-    bool isInitialized() const { return m_device.has_value(); }
+    bool isInitialized() const { return m_renderDevice.hasFilename(); }
     void initialize(const WTF::String&);
-    struct gbm_device* device() const { RELEASE_ASSERT(m_device.has_value()); return m_device.value(); }
+    enum class Type : bool { Render, Scanout };
+    struct gbm_device* device(Type) const;
 
 private:
-    WTF::UnixFileDescriptor m_fd;
-    std::optional<struct gbm_device*> m_device;
+    class Device {
+    public:
+        Device() = default;
+        ~Device();
+
+        void setFilename(const char* filename) { m_filename = filename; }
+        bool hasFilename() const { return m_filename.has_value(); }
+        struct gbm_device* device() const;
+
+    private:
+        std::optional<CString> m_filename;
+        mutable WTF::UnixFileDescriptor m_fd;
+        mutable std::optional<struct gbm_device*> m_gbmDevice;
+    };
+
+    Device m_renderDevice;
+    Device m_displayDevice;
 };
 
 } // namespace WebCore

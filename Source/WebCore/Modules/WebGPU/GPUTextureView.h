@@ -28,11 +28,12 @@
 #include "WebGPUTextureView.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class GPUTextureView : public RefCounted<GPUTextureView> {
+class GPUTextureView : public RefCounted<GPUTextureView>, public CanMakeWeakPtr<GPUTextureView> {
 public:
     static Ref<GPUTextureView> create(Ref<WebGPU::TextureView>&& backing)
     {

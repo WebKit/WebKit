@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
+std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(std::span<const uint8_t> data)
 {
-    return makeUnique<KeyedDecoderGlib>(data, size);
+    return makeUnique<KeyedDecoderGlib>(data);
 }
 
-KeyedDecoderGlib::KeyedDecoderGlib(const uint8_t* data, size_t size)
+KeyedDecoderGlib::KeyedDecoderGlib(std::span<const uint8_t> data)
 {
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data, size));
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
     GRefPtr<GVariant> variant = g_variant_new_from_bytes(G_VARIANT_TYPE("a{sv}"), bytes.get(), TRUE);
     m_dictionaryStack.append(dictionaryFromGVariant(variant.get()));
 }
@@ -63,14 +63,13 @@ HashMap<String, GRefPtr<GVariant>> KeyedDecoderGlib::dictionaryFromGVariant(GVar
     return dictionary;
 }
 
-bool KeyedDecoderGlib::decodeBytes(const String& key, const uint8_t*& bytes, size_t& size)
+bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& bytes)
 {
     GRefPtr<GVariant> value = m_dictionaryStack.last().get(key);
     if (!value)
         return false;
 
-    size = g_variant_get_size(value.get());
-    bytes = static_cast<const uint8_t*>(g_variant_get_data(value.get()));
+    bytes = { static_cast<const uint8_t*>(g_variant_get_data(value.get())), g_variant_get_size(value.get()) };
     return true;
 }
 

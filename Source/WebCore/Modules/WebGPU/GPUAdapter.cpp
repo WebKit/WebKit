@@ -31,6 +31,10 @@
 #include "JSGPUAdapterInfo.h"
 #include "JSGPUDevice.h"
 
+#include <wtf/HashSet.h>
+#include <wtf/HashTraits.h>
+#include <wtf/SortedArrayMap.h>
+
 namespace WebCore {
 
 String GPUAdapter::name() const
@@ -61,15 +65,58 @@ static WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDeviceDe
     return options->convertToBacking();
 }
 
-void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
+static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
 {
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise)](RefPtr<WebGPU::Device>&& device) mutable {
+    static constexpr std::pair<ComparableASCIILiteral, GPUFeatureName> mappings[] = {
+        { "bgra8unorm-storage", GPUFeatureName::Bgra8unormStorage },
+        { "depth-clip-control", GPUFeatureName::DepthClipControl },
+        { "depth32float-stencil8", GPUFeatureName::Depth32floatStencil8 },
+        { "float32-filterable", GPUFeatureName::Float32Filterable },
+        { "indirect-first-instance", GPUFeatureName::IndirectFirstInstance },
+        { "rg11b10ufloat-renderable", GPUFeatureName::Rg11b10ufloatRenderable },
+        { "shader-f16", GPUFeatureName::ShaderF16 },
+        { "texture-compression-astc", GPUFeatureName::TextureCompressionAstc },
+        { "texture-compression-bc", GPUFeatureName::TextureCompressionBc },
+        { "texture-compression-etc2", GPUFeatureName::TextureCompressionEtc2 },
+        { "timestamp-query", GPUFeatureName::TimestampQuery },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static bool isSubset(const Vector<GPUFeatureName>& expectedSubset, const Vector<String>& expectedSuperset)
+{
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> expectedSupersetHashSet;
+    for (auto& featureName : expectedSuperset)
+        expectedSupersetHashSet.add(static_cast<uint32_t>(convertFeatureNameToEnum(featureName)));
+
+    for (auto& featureName : expectedSubset) {
+        if (!expectedSupersetHashSet.contains(static_cast<uint32_t>(featureName)))
+            return false;
+    }
+
+    return true;
+}
+
+void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, const std::optional<GPUDeviceDescriptor>& deviceDescriptor, RequestDevicePromise&& promise)
+{
+    auto& existingFeatures = m_backing->features().features();
+    if (deviceDescriptor && !isSubset(deviceDescriptor->requiredFeatures, existingFeatures)) {
+        promise.reject(Exception(ExceptionCode::TypeError));
+        return;
+    }
+
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device.get())
             promise.reject(Exception(ExceptionCode::OperationError));
-        else if (deviceDescriptor && deviceDescriptor->requiredFeatures.size() > device->features().features().size())
-            promise.reject(Exception(ExceptionCode::TypeError));
-        else
-            promise.resolve(GPUDevice::create(nullptr, device.releaseNonNull()));
+        else {
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull());
+            gpuDevice->suspendIfNeeded();
+            promise.resolve(WTFMove(gpuDevice));
+        }
     });
 }
 

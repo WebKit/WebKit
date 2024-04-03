@@ -41,14 +41,14 @@ namespace WebCore {
 
 Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
 {
-    return { byteArray, length };
+    return { std::span { byteArray, length } };
 }
 
 Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto rpIdUTF8 = rpId.utf8();
-    crypto->addBytes(rpIdUTF8.data(), rpIdUTF8.length());
+    crypto->addBytes(rpIdUTF8.span());
     return crypto->computeHash();
 }
 
@@ -186,7 +186,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(clientDataJson.data(), clientDataJson.byteLength());
+    crypto->addBytes(clientDataJson.span());
     return crypto->computeHash();
 }
 
@@ -199,6 +199,35 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     rawKey.appendVector(y);
     return rawKey;
 }
+
+String toString(AuthenticatorTransport transport)
+{
+    switch (transport) {
+    case AuthenticatorTransport::Usb:
+        return authenticatorTransportUsb;
+        break;
+    case AuthenticatorTransport::Nfc:
+        return authenticatorTransportNfc;
+        break;
+    case AuthenticatorTransport::Ble:
+        return authenticatorTransportBle;
+        break;
+    case AuthenticatorTransport::Internal:
+        return authenticatorTransportInternal;
+        break;
+    case AuthenticatorTransport::Cable:
+        return authenticatorTransportCable;
+    case AuthenticatorTransport::Hybrid:
+        return authenticatorTransportHybrid;
+    case AuthenticatorTransport::SmartCard:
+        return authenticatorTransportSmartCard;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
 
 } // namespace WebCore
 

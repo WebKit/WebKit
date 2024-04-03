@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -194,6 +194,11 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITType jitType) const
 void CodeBlock::dump(PrintStream& out) const
 {
     dumpAssumingJITType(out, jitType());
+}
+
+void CodeBlock::dumpSimpleName(PrintStream& out) const
+{
+    out.print(inferredName(), "#", hashAsStringIfPossible());
 }
 
 void CodeBlock::dumpSource()
@@ -436,7 +441,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
-        metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
+        metadata.m_callLinkInfo.initialize(vm, this, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
     };
 
 #define LINK_FIELD(__field) \
@@ -587,7 +592,12 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     ConcurrentJSLocker locker(symbolTable->m_lock);
                     auto iter = symbolTable->find(locker, ident.impl());
                     ASSERT(iter != symbolTable->end(locker));
-                    iter->value.prepareToWatch();
+                    if (bytecode.m_getPutInfo.initializationMode() == InitializationMode::ScopedArgumentInitialization) {
+                        ASSERT(bytecode.m_value.isArgument());
+                        unsigned argumentIndex = bytecode.m_value.toArgument() - 1;
+                        symbolTable->prepareToWatchScopedArgument(iter->value, argumentIndex);
+                    } else
+                        iter->value.prepareToWatch();
                     metadata.m_watchpointSet = iter->value.watchpointSet();
                 } else
                     metadata.m_watchpointSet = nullptr;
@@ -761,11 +771,6 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         ConcurrentJSLocker locker(m_lock);
         ASSERT(!m_jitData);
         auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedStubInfos.size(), jitCode->m_constantPool.size(), this);
-        for (auto& unlinkedCallLinkInfo : jitCode->m_unlinkedCalls) {
-            CallLinkInfo* callLinkInfo = getCallLinkInfoForBytecodeIndex(locker, unlinkedCallLinkInfo.bytecodeIndex);
-            ASSERT(callLinkInfo);
-            static_cast<BaselineCallLinkInfo*>(callLinkInfo)->setCodeLocations(unlinkedCallLinkInfo.doneLocation);
-        }
 
         for (unsigned index = 0; index < jitCode->m_unlinkedStubInfos.size(); ++index) {
             BaselineUnlinkedStructureStubInfo& unlinkedStubInfo = jitCode->m_unlinkedStubInfos[index];
@@ -863,7 +868,7 @@ CodeBlock::~CodeBlock()
     // So, if we don't remove incoming calls, and get destroyed before the
     // CodeBlock(s) that have calls into us, then the CallLinkInfo vector's
     // destructor will try to remove nodes from our (no longer valid) linked list.
-    unlinkIncomingCalls();
+    unlinkOrUpgradeIncomingCalls(vm, nullptr);
     
     // Note that our outgoing calls will be removed from other CodeBlocks'
     // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
@@ -1574,6 +1579,8 @@ void CodeBlock::finalizeJITInlineCaches()
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_callLinkInfos)
             callLinkInfo->visitWeak(vm());
+        for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_directCallLinkInfos)
+            callLinkInfo->visitWeak(vm());
         if (auto* jitData = dfgJITData()) {
             for (auto& callLinkInfo : jitData->callLinkInfos())
                 callLinkInfo.visitWeak(vm());
@@ -2040,29 +2047,22 @@ void CodeBlock::removeExceptionHandlerForCallSite(DisposableCallSiteIndex callSi
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-unsigned CodeBlock::lineNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
+LineColumn CodeBlock::lineColumnForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
     RELEASE_ASSERT(bytecodeIndex.offset() < instructions().size());
-    return ownerExecutable()->firstLine() + m_unlinkedCode->lineNumberForBytecodeIndex(bytecodeIndex);
+    auto lineColumn = m_unlinkedCode->lineColumnForBytecodeIndex(bytecodeIndex);
+    lineColumn.column += lineColumn.line ? 1 : firstLineColumnOffset();
+    lineColumn.line += ownerExecutable()->firstLine();
+    return lineColumn;
 }
 
-unsigned CodeBlock::columnNumberForBytecodeIndex(BytecodeIndex bytecodeIndex)
+ExpressionInfo::Entry CodeBlock::expressionInfoForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
-    unsigned divot;
-    unsigned startOffset;
-    unsigned endOffset;
-    unsigned line;
-    unsigned column;
-    expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
-    return column;
-}
-
-void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const
-{
-    m_unlinkedCode->expressionRangeForBytecodeIndex(bytecodeIndex, divot, startOffset, endOffset, line, column);
-    divot += sourceOffset();
-    column += line ? 1 : firstLineColumnOffset();
-    line += ownerExecutable()->firstLine();
+    auto entry = m_unlinkedCode->expressionInfoForBytecodeIndex(bytecodeIndex);
+    entry.divot += sourceOffset();
+    entry.lineColumn.column += entry.lineColumn.line ? 1 : firstLineColumnOffset();
+    entry.lineColumn.line += ownerExecutable()->firstLine();
+    return entry;
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column)
@@ -2070,11 +2070,8 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned
     const auto& instructionStream = instructions();
     for (const auto& it : instructionStream) {
         if (it->is<OpDebug>()) {
-            unsigned unused;
-            unsigned opDebugLine;
-            unsigned opDebugColumn;
-            expressionRangeForBytecodeIndex(it.index(), unused, unused, unused, opDebugLine, opDebugColumn);
-            if (line == opDebugLine && (!column || column == opDebugColumn))
+            auto lineColumn = lineColumnForBytecodeIndex(it.index());
+            if (line == lineColumn.line && (!column || column == lineColumn.column))
                 return true;
         }
     }
@@ -2093,17 +2090,23 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #endif
 }
 
-void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming, bool skipFirstFrame)
+void CodeBlock::linkIncomingCall(JSCell* caller, CallLinkInfoBase* incoming)
 {
     if (caller)
-        noticeIncomingCall(caller, callerFrame, skipFirstFrame);
+        noticeIncomingCall(caller);
     m_incomingCalls.push(incoming);
 }
 
-void CodeBlock::unlinkIncomingCalls()
+void CodeBlock::unlinkOrUpgradeIncomingCalls(VM& vm, CodeBlock* newCodeBlock)
 {
-    while (!m_incomingCalls.isEmpty())
-        m_incomingCalls.begin()->unlink(vm());
+    SentinelLinkedList<CallLinkInfoBase, BasicRawSentinelNode<CallLinkInfoBase>> toBeRemoved;
+    toBeRemoved.takeFrom(m_incomingCalls);
+
+    // Note that upgrade may relink CallLinkInfo into newCodeBlock, and it is possible that |this| and newCodeBlock are the same.
+    // This happens when newCodeBlock is installed by upgrading LLInt to Baseline. In that case, |this|'s m_incomingCalls will
+    // be accumulated correctly.
+    while (!toBeRemoved.isEmpty())
+        toBeRemoved.begin()->unlinkOrUpgrade(vm, this, newCodeBlock);
 }
 
 CodeBlock* CodeBlock::newReplacement()
@@ -2271,7 +2274,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         return;
 
     // This accomplishes (2).
-    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
+    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind(), reason);
 
 #if ENABLE(DFG_JIT)
     if (DFG::shouldDumpDisassembly())
@@ -2333,11 +2336,9 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool skipFirstFrame)
+void CodeBlock::noticeIncomingCall(JSCell* caller)
 {
     RELEASE_ASSERT(!m_isJettisoned);
-    UNUSED_PARAM(callerFrame);
-    UNUSED_PARAM(skipFirstFrame);
 
     CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(caller);
     
@@ -2394,20 +2395,8 @@ void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool 
     }
 
     // Recursive calls won't be inlined.
-    if (callerFrame) {
-        VM& vm = this->vm();
-        RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-        StackVisitor::visit(vm.topCallFrame, vm, functor, skipFirstFrame);
-
-        if (functor.didRecurse()) {
-            dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
-            m_shouldAlwaysBeInlined = false;
-            return;
-        }
-    }
-    
     if (callerCodeBlock->capabilityLevelState() == DFG::CapabilityLevelNotSet) {
-        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame ? callerFrame->codeOrigin() : CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
+        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
         CRASH();
     }
     
@@ -3489,6 +3478,14 @@ bool CodeBlock::useDataIC() const
         return Options::useDataICInFTL();
 #endif
     return true;
+}
+
+CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(ArityCheckMode arityCheck) const
+{
+    ConcurrentJSLocker locker(m_lock);
+    if (!m_jitCode)
+        return nullptr;
+    return m_jitCode->addressForCall(arityCheck);
 }
 
 bool CodeBlock::hasInstalledVMTrapsBreakpoints() const

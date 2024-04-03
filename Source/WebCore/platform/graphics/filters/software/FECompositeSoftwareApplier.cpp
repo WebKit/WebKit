@@ -36,7 +36,7 @@ namespace WebCore {
 FECompositeSoftwareApplier::FECompositeSoftwareApplier(const FEComposite& effect)
     : Base(effect)
 {
-    ASSERT(m_effect.operation() != FECOMPOSITE_OPERATOR_ARITHMETIC);
+    ASSERT(m_effect.operation() != CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC);
 }
 
 bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
@@ -58,15 +58,15 @@ bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& i
     auto inputImageRect2 = input2.absoluteImageRectRelativeTo(result);
 
     switch (m_effect.operation()) {
-    case FECOMPOSITE_OPERATOR_UNKNOWN:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN:
         return false;
 
-    case FECOMPOSITE_OPERATOR_OVER:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_OVER:
         filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
         filterContext.drawImageBuffer(*inputImage, inputImageRect);
         break;
 
-    case FECOMPOSITE_OPERATOR_IN: {
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_IN: {
         // Applies only to the intersected region.
         IntRect destinationRect = input.absoluteImageRect();
         destinationRect.intersect(input2.absoluteImageRect());
@@ -81,27 +81,26 @@ bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& i
         break;
     }
 
-    case FECOMPOSITE_OPERATOR_OUT:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_OUT:
         filterContext.drawImageBuffer(*inputImage, inputImageRect);
         filterContext.drawImageBuffer(*inputImage2, inputImageRect2, { { }, inputImage2->logicalSize() }, { CompositeOperator::DestinationOut });
         break;
 
-    case FECOMPOSITE_OPERATOR_ATOP:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_ATOP:
         filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
         filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, { CompositeOperator::SourceAtop });
         break;
 
-    case FECOMPOSITE_OPERATOR_XOR:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_XOR:
         filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
         filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, { CompositeOperator::XOR });
         break;
 
-    case FECOMPOSITE_OPERATOR_ARITHMETIC:
-        // Should be handled by FECompositeSoftwareArithmeticApplier.
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC:
         ASSERT_NOT_REACHED();
         return false;
 
-    case FECOMPOSITE_OPERATOR_LIGHTER:
+    case CompositeOperationType::FECOMPOSITE_OPERATOR_LIGHTER:
         filterContext.drawImageBuffer(*inputImage2, inputImageRect2);
         filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, { CompositeOperator::PlusLighter });
         break;

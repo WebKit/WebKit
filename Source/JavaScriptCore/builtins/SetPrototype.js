@@ -45,6 +45,25 @@ function forEach(callback /*, thisArg */)
     } while (true);
 }
 
+// https://tc39.es/proposal-set-methods/#sec-getsetrecord (steps 1-7)
+@linkTimeConstant
+@alwaysInline
+function getSetSizeAsInt(other)
+{
+    if (!@isObject(other))
+        @throwTypeError("Set operation expects first argument to be an object");
+
+    var size = @toNumber(other.size);
+    if (size !== size) // is NaN?
+        @throwTypeError("Set operation expects first argument to have non-NaN 'size' property");
+
+    var sizeInt = @toIntegerOrInfinity(size);
+    if (sizeInt < 0)
+        @throwRangeError("Set operation expects first argument to have non-negative 'size' property");
+
+    return sizeInt;
+}
+
 function union(other)
 {
     "use strict";
@@ -53,12 +72,7 @@ function union(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.union expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.union expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other); // unused but @getSetSizeAsInt call is observable
 
     var has = other.has;
     if (!@isCallable(has))
@@ -88,12 +102,7 @@ function intersection(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.intersection expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.intersection expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other);
 
     var has = other.has;
     if (!@isCallable(has))
@@ -138,12 +147,7 @@ function difference(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.difference expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.difference expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other);
 
     var has = other.has;
     if (!@isCallable(has))
@@ -188,12 +192,7 @@ function symmetricDifference(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.symmetricDifference expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.symmetricDifference expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other); // unused but @getSetSizeAsInt call is observable
 
     var has = other.has;
     if (!@isCallable(has))
@@ -227,12 +226,7 @@ function isSubsetOf(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.isSubsetOf expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.isSubsetOf expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other);
 
     var has = other.has;
     if (!@isCallable(has))
@@ -267,12 +261,7 @@ function isSupersetOf(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.isSupersetOf expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.isSupersetOf expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other);
 
     var has = other.has;
     if (!@isCallable(has))
@@ -305,12 +294,7 @@ function isDisjointFrom(other)
         @throwTypeError("Set operation called on non-Set object");
 
     // Get Set Record
-    if (!@isObject(other))
-        @throwTypeError("Set.prototype.isDisjointFrom expects the first parameter to be an object");
-    var size = @toNumber(other.size);
-    // size is NaN
-    if (size !== size)
-        @throwTypeError("Set.prototype.isDisjointFrom expects other.size to be a non-NaN number");
+    var size = @getSetSizeAsInt(other);
 
     var has = other.has;
     if (!@isCallable(has))

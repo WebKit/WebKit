@@ -1,0 +1,107 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<head>
+<script>
+function fuzz() {
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+  }
+
+  if (window.IPC) {
+    var calledParseMessage = false;
+    IPC.addOutgoingMessageListener("GPU", (msg) => {
+      if (!calledParseMessage && msg.name == IPC.messages.RemoteMediaPlayerProxy_PlayerContentBoxRectChanged.name) {
+        calledParseMessage = true;
+        parseMessage(msg);
+      }
+    });
+  }
+  video=document.createElement('video');
+  video.src='test.gif';
+}
+function parseMessage(msg) {
+  o58=msg.destinationID;
+  o65=2219;
+  IPC.sendMessage('GPU',o58,IPC.messages.RemoteMediaPlayerManagerProxy_CreateMediaPlayer.name,[{type: 'uint64_t',value: o65},{type: 'uint8_t',value: 1},{type: 'String',value: 'undefined'},{type: 'String',value: "video/mpeg"},{type: 'String',value: "page-6"},{type: 'String',value: "/tmp/ipcfuzz"},{type: 'Vector',value: [[{type: 'String',value: 'undefined'}],[{type: 'String',value: "com.apple.fps"}],[{type: 'String',value: "org.w3.clearkey"}],[{type: 'String',value: "/tmp/ipcfuzz"}],[{type: 'String',value: "image/wepb"}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: "video/mp4"}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: "com.apple.pasteboard.clipboard"}],[{type: 'String',value: "InsertTab"}],[{type: 'String',value: "image/wepb"}]]},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: "Apple CFPasteboard general"}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: "page-6"}],[{type: 'String',value: 'undefined'}],[{type: 'String',value: "com.apple.fps."}],[{type: 'String',value: "page-9"}]]},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'String',value: 'undefined'}],[{type: 'String',value: "de-DE"}],[{type: 'String',value: 'undefined'}]]},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'uint32_t',value: 946}],[{type: 'uint32_t',value: 845}],[{type: 'uint32_t',value: 854}],[{type: 'uint32_t',value: 633}],[{type: 'uint32_t',value: 199}],[{type: 'uint32_t',value: 429}],[{type: 'uint32_t',value: 939}],[{type: 'uint32_t',value: 3473215}],[{type: 'uint32_t',value: 323}],[{type: 'uint32_t',value: 865}],[{type: 'uint32_t',value: 308}],[{type: 'uint32_t',value: 780}],[{type: 'uint32_t',value: 950}]]},{type: 'bool',value: 1},{type: 'Vector',value: [[{type: 'uint32_t',value: 441}],[{type: 'uint32_t',value: 493}],[{type: 'uint32_t',value: 474}],[{type: 'uint32_t',value: 47}],[{type: 'uint32_t',value: 287}]]},{type: 'bool',value: 0},{type: 'uint32_t',value: 113},{type: 'uint32_t',value: 215},{type: 'uint32_t',value: 733},{type: 'uint32_t',value: 864},{type: 'Vector',value: [[{type: 'String',value: 'undefined'}],[{type: 'String',value: "video/webm"}]]},{type: 'Vector',value: [[{type: 'String',value: "Apple CFPasteboard general"},{type: 'String',value: "file:///tmp/ipcfuzz"},{type: 'String',value: "video/mp4"},{type: 'uint8_t',value: 1},{type: 'uint8_t',value: 4},{type: 'uint8_t',value: 2},{type: 'uint32_t',value: 962},{type: 'bool',value: 1}],[{type: 'String',value: 'undefined'},{type: 'String',value: "image/wepb"},{type: 'String',value: "InsertTab"},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 1},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 277},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: "video/webm"},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 5},{type: 'uint8_t',value: 2},{type: 'uint32_t',value: 418},{type: 'bool',value: 1}],[{type: 'String',value: "video/mpeg"},{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 3},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 722},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: "cancelOperation"},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 0},{type: 'uint32_t',value: 335},{type: 'bool',value: 1}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 1},{type: 'uint8_t',value: 3},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 785},{type: 'bool',value: 1}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 3},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 2932851},{type: 'bool',value: 1}],[{type: 'String',value: "cancelOperation"},{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 5},{type: 'uint8_t',value: 2},{type: 'uint32_t',value: 762},{type: 'bool',value: 1}],[{type: 'String',value: 'undefined'},{type: 'String',value: "en-US"},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 4},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 1019},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: "de-DE"},{type: 'String',value: "a"},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 0},{type: 'uint32_t',value: 284},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 3},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 822},{type: 'bool',value: 0}],[{type: 'String',value: "text/html"},{type: 'String',value: 'undefined'},{type: 'String',value: "cancelOperation"},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 2},{type: 'uint32_t',value: 773},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: 'undefined'},{type: 'String',value: "Apple CFPasteboard general"},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 1},{type: 'uint32_t',value: 209},{type: 'bool',value: 0}],[{type: 'String',value: 'undefined'},{type: 'String',value: "video/webm"},{type: 'String',value: "video/mp4"},{type: 'uint8_t',value: 0},{type: 'uint8_t',value: 1},{type: 'uint8_t',value: 0},{type: 'uint32_t',value: 775},{type: 'bool',value: 0}],[{type: 'String',value: "org.w3.clearkey"},{type: 'String',value: "image/jpeg"},{type: 'String',value: "com.apple.fps"},{type: 'uint8_t',value: 2},{type: 'uint8_t',value: 4},{type: 'uint8_t',value: 0},{type: 'uint32_t',value: 685},{type: 'bool',value: 1}]]},[{type: 'String', value: 'http'}, {type: 'String', value: 'localhost'}, {type: 'bool', value: 0}],{type: 'uint32_t',value: 777},{type: 'uint32_t',value: 490},{type: 'float',value: 774},{type: 'float',value: 865},{type: 'uint64_t',value: 39},{type: 'bool',value: 1},{type: 'bool',value: 1},{type: 'bool',value: 1},{type: 'bool',value: 1},{type: 'bool',value: 1}]);
+  o131=3032;
+  IPC.sendMessage("GPU", o65, IPC.messages.RemoteMediaPlayerProxy_LoadMediaSource.name, [{type:"String", value: "insertText:"},{type:"String", value: "image/jpeg"},{type: "bool", value: 0},{type: "uint64_t", value: 3032}]);
+  reply=IPC.sendSyncMessage('GPU',o131,IPC.messages.RemoteMediaSourceProxy_AddSourceBuffer.name,0.1,[{type: 'String',value: "video/mp4"}]);
+  parseResults=parseMessageFromReply(IPC.messages.RemoteMediaSourceProxy_AddSourceBuffer.replyArguments, reply.buffer);
+  o188=parseResults['WebKit::RemoteSourceBufferIdentifier'];
+  IPC.sendMessage('GPU',o188,IPC.messages.RemoteSourceBufferProxy_AddTrackBuffer.name,[{type: 'uint64_t', value: 0x414141414141}]);
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.notifyDone();
+  }
+}
+
+let knownSizes = {
+    "unsigned": 4,
+    "int": 4,
+    "uint8_t": 1,
+    "int8_t": 1,
+    "uint64_t": 8,
+    "int64_t": 8,
+    "uint32_t": 4,
+    "int32_t": 4,
+    "uint16_t": 2,
+    "int16_t": 2,
+    "double": 8,
+    "float": 4,
+    "bool": 1,
+    "size_t": 8,
+    "unsigned short": 2,
+    "long long": 8,
+    "UUID": 16
+};
+function parseMessageFromReply(args, buffer) {
+  buffer = new Uint8Array(buffer);
+  let results = {};
+  try {
+    parse(buffer, args, 0x10/*skip message header*/, results);
+  } catch (e) {
+    console.log("Exception: " + e);
+  }
+  return results;
+}
+function align(pos, granularity) {
+  if (pos%granularity) {
+    pos = pos + granularity-(pos%granularity);
+  }
+  return pos;
+}
+function parse(buf, args, pos, results) {
+  if (args == null) return -1;
+  if (args.length == 0) return pos;
+  let arg = args.shift();
+  let t = arg['type'];
+  if (arg['optional']) {
+    let haz = !!buf[pos];
+    pos += 1
+    if (!haz) {
+      return parse(buf, args, pos, results);
+    }
+  }
+  if (t == "WebKit::RemoteSourceBufferIdentifier") {
+    pos = align(pos, 8);
+    if (pos + 8 > buf.length) {
+      return -1;
+    }
+    let view = new DataView(buf.buffer, pos);
+    let id = view.getBigUint64(0, true);
+    results[t] = id;
+    return parse(buf, args, pos + 8, results);
+  } else if (knownSizes[t]) {
+    pos = align(pos, knownSizes[t]);
+    pos += knownSizes[t];
+    return parse(buf, args, pos, results);
+  } else {
+    console.log("could not parse '"+t+"'");
+  }
+  return -1;
+}
+</script>
+</head>
+<body onload='fuzz()'>
+<div>This test should not crash</div>
+</body>
+</html>

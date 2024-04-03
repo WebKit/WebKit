@@ -119,4 +119,9 @@
     return _frameInfo->errorOccurred();
 }
 
+- (NSString *)_title
+{
+    return _frameInfo->title();
+}
+
 @end

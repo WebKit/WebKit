@@ -23,6 +23,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CaptureDeviceWithCapabilities.h>
+#include <WebCore/MediaConstraintType.h>
 #include <WebCore/UserMediaRequest.h>
 
 namespace WebKit {
@@ -30,7 +31,7 @@ using namespace WebCore;
 
 void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestConstraints(RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, WebCore::MediaDeviceHashSalts&& deviceIDHashSalts)
 {
-    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), WTFMove(deviceIDHashSalts)), [validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler)](std::optional<String> invalidConstraint, Vector<WebCore::CaptureDevice> audioDevices, Vector<WebCore::CaptureDevice> videoDevices) mutable {
+    m_page->process().protectedConnection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), WTFMove(deviceIDHashSalts)), [validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler)](std::optional<WebCore::MediaConstraintType> invalidConstraint, Vector<WebCore::CaptureDevice> audioDevices, Vector<WebCore::CaptureDevice> videoDevices) mutable {
         if (invalidConstraint)
             invalidHandler(*invalidConstraint);
         else
@@ -40,7 +41,7 @@ void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestCon
 
 void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
-    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(revealIdsAndLabels), WTFMove(completionHandler));
+    m_page->process().protectedConnection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::GetMediaStreamDevices(revealIdsAndLabels), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

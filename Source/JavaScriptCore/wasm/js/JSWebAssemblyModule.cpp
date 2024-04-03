@@ -93,6 +93,8 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     for (auto& exp : moduleInformation.exports) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         String field = String::fromUTF8(exp.field);
+        if (field.isNull())
+            field = emptyString();
         exportSymbolTable->set(NoLockingNecessary, AtomString(field).impl(), SymbolTableEntry(VarOffset(offset)));
     }
 
@@ -141,7 +143,7 @@ void JSWebAssemblyModule::clearJSCallICs(VM& vm)
 {
 #if ENABLE(JIT)
     for (auto& callLinkInfo : m_callLinkInfos)
-        callLinkInfo.unlink(vm);
+        callLinkInfo.unlinkOrUpgrade(vm, nullptr, nullptr);
 #else
     UNUSED_PARAM(vm);
 #endif

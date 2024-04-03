@@ -47,9 +47,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
         WebsiteDataStore* dataStore = isPrewarmed() ? WebsiteDataStore::defaultDataStore().ptr() : websiteDataStore();
 
         ASSERT(dataStore);
-        dataStore->resolveDirectoriesIfNecessary();
-        launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedMediaKeysDirectory());
-        launchOptions.extraInitializationData.set("applicationCacheDirectory"_s, dataStore->resolvedApplicationCacheDirectory());
+        launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedDirectories().mediaKeysStorageDirectory);
 
         launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
     }

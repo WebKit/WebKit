@@ -34,7 +34,7 @@ class TextStream;
 
 namespace WebCore {
 
-enum LightType {
+enum class LightType : uint8_t {
     LS_DISTANT,
     LS_POINT,
     LS_SPOT
@@ -96,9 +96,8 @@ protected:
     template<typename LightSourceType>
     static bool areEqual(const LightSourceType& a, const LightSource& b)
     {
-        if (!is<LightSourceType>(b))
-            return false;
-        return a.operator==(downcast<LightSourceType>(b));
+        auto* bType = dynamicDowncast<LightSourceType>(b);
+        return bType && a.operator==(*bType);
     }
 
 private:
@@ -106,20 +105,6 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::LightType> {
-    using values = EnumValues<
-        WebCore::LightType,
-
-        WebCore::LS_DISTANT,
-        WebCore::LS_POINT,
-        WebCore::LS_SPOT
-    >;
-};
-
-} // namespace WTF
 
 #define SPECIALIZE_TYPE_TRAITS_LIGHTSOURCE(ClassName, Type) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \

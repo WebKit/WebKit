@@ -154,12 +154,12 @@ void JSTestException::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestExceptionConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestException::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestException::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestException_nameGetter(JSGlobalObject& lexicalGlobalObject, JSTestException& thisObject)
@@ -206,7 +206,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     auto* jsTestException = static_cast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestException->wrapped(), jsTestException);
+    uncacheWrapper(world, jsTestException->protectedWrapped().ptr(), jsTestException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

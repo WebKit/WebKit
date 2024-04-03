@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,199 +26,83 @@
 #pragma once
 
 #include "ImageFrame.h"
-
-#include <wtf/Forward.h>
-#include <wtf/RunLoop.h>
-#include <wtf/SynchronizedFixedQueue.h>
+#include "ImageOrientation.h"
+#include "ImageTypes.h"
 #include <wtf/ThreadSafeWeakPtr.h>
-#include <wtf/WorkQueue.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-class BitmapImage;
-class GraphicsContext;
-class ImageDecoder;
 class FragmentedSharedBuffer;
 
-class ImageSource final
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
-    friend class BitmapImage;
+class ImageSource : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
 public:
-    ~ImageSource();
+    virtual ~ImageSource() = default;
 
-    static Ref<ImageSource> create(BitmapImage* image, AlphaOption alphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption gammaAndColorProfileOption = GammaAndColorProfileOption::Applied)
-    {
-        return adoptRef(*new ImageSource(image, alphaOption, gammaAndColorProfileOption));
-    }
+    // Encoded and decoded data
+    virtual EncodedDataStatus dataChanged(FragmentedSharedBuffer*, bool) { RELEASE_ASSERT_NOT_REACHED(); return EncodedDataStatus::Unknown; }
+    virtual void destroyDecodedData(bool) { RELEASE_ASSERT_NOT_REACHED(); }
 
-    static Ref<ImageSource> create(Ref<NativeImage>&& nativeImage)
-    {
-        return adoptRef(*new ImageSource(WTFMove(nativeImage)));
-    }
+    // Animation
+    virtual void startAnimation() { }
+    virtual void stopAnimation() { }
+    virtual void resetAnimation() { }
+    virtual bool isAnimated() const { return false; }
+    virtual bool isAnimating() const { return false; }
+    virtual bool hasEverAnimated() const { return false; }
 
-    void setData(FragmentedSharedBuffer* data, bool allDataReceived);
-    void resetData(FragmentedSharedBuffer* data);
-    EncodedDataStatus dataChanged(FragmentedSharedBuffer* data, bool allDataReceived);
-    bool isAllDataReceived();
+    // Decoding
+    virtual bool isLargeForDecoding() const { return false; }
+    virtual void stopDecodingWorkQueue() { RELEASE_ASSERT_NOT_REACHED(); }
+    virtual void decode(Function<void(DecodingStatus)>&&)  { RELEASE_ASSERT_NOT_REACHED(); }
 
-    unsigned decodedSize() const { return m_decodedSize; }
-    void destroyDecodedData(size_t begin, size_t end);
-    void destroyIncompleteDecodedData();
-    void clearFrameBufferCache(size_t beforeFrame);
+    // ImageFrame
+    virtual unsigned currentFrameIndex() const { return primaryFrameIndex(); }
 
-    void growFrames();
-    void clearMetadata();
-    void clearImage() { m_image = nullptr; }
-    URL sourceURL() const;
-    String mimeType() const;
-    long long expectedContentLength() const;
+    virtual const ImageFrame& primaryImageFrame() = 0;
+    virtual const ImageFrame& currentImageFrame() { return primaryImageFrame(); }
 
-    // Asynchronous image decoding
-    bool canUseAsyncDecoding();
-    void startAsyncDecodingQueue();
-    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>& = { });
-    void stopAsyncDecodingQueue();
-    bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
-    bool isAsyncDecodingQueueIdle() const;
-    void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
-    Seconds frameDecodingDurationForTesting() const { return m_frameDecodingDurationForTesting; }
+    // NativeImage
+    virtual RefPtr<NativeImage> primaryNativeImage() = 0;
+    virtual RefPtr<NativeImage> currentNativeImage() { return primaryNativeImage(); }
+    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation) { return currentNativeImage(); }
 
-    // Image metadata which is calculated either by the ImageDecoder or directly
-    // from the NativeImage if this class was created for a memory image.
-    EncodedDataStatus encodedDataStatus();
-    bool isSizeAvailable() { return encodedDataStatus() >= EncodedDataStatus::SizeAvailable; }
-    WEBCORE_EXPORT size_t frameCount();
-    size_t primaryFrameIndex();
-    RepetitionCount repetitionCount();
-    String uti();
-    String filenameExtension();
-    String accessibilityDescription();
-    std::optional<IntPoint> hotSpot();
-    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    bool hasDensityCorrectedSize() { return densityCorrectedSize().has_value(); }
+    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return primaryNativeImage(); }
 
-    ImageOrientation orientation();
+    virtual Expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+    virtual Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
 
-    // Image metadata which is calculated from the first ImageFrame.
-    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
-    IntSize sizeRespectingOrientation();
-    Color singlePixelSolidColor();
-    SubsamplingLevel maximumSubsamplingLevel();
+    // Image Metadata
+    virtual IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
+    virtual IntSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }
+    virtual bool hasDensityCorrectedSize() const { return false; }
+    virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::None; }
+    virtual unsigned primaryFrameIndex() const { return 0; }
+    virtual unsigned frameCount() const { return 1; }
+    virtual DestinationColorSpace colorSpace() const = 0;
+    virtual std::optional<Color> singlePixelSolidColor() const = 0;
 
-    // ImageFrame metadata which does not require caching the ImageFrame.
-    bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t, const DecodingOptions&);
-    DecodingStatus frameDecodingStatusAtIndex(size_t);
-    bool frameHasAlphaAtIndex(size_t);
-    bool frameHasImageAtIndex(size_t);
-    bool frameHasFullSizeNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&);
-    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t, const std::optional<SubsamplingLevel>&, const DecodingOptions&);
-    SubsamplingLevel frameSubsamplingLevelAtIndex(size_t);
+    bool hasSolidColor() const;
 
-    // ImageFrame metadata which forces caching or re-caching the ImageFrame.
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
-    WEBCORE_EXPORT Seconds frameDurationAtIndex(size_t);
-    ImageOrientation frameOrientationAtIndex(size_t);
+    virtual String uti() const { return String(); }
+    virtual String filenameExtension() const { return String(); }
+    virtual String accessibilityDescription() const { return String(); }
+    virtual std::optional<IntPoint> hotSpot() const { return { }; }
 
-    RefPtr<NativeImage> createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
-    RefPtr<NativeImage> frameImageAtIndex(size_t);
-    RefPtr<NativeImage> frameImageAtIndexCacheIfNeeded(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = { });
+    virtual SubsamplingLevel subsamplingLevelForScaleFactor(GraphicsContext&, const FloatSize&, AllowImageSubsampling) { return SubsamplingLevel::Default; }
 
-private:
-    ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
-    ImageSource(Ref<NativeImage>&&);
+    // ImageFrame Metadata
+    virtual Seconds frameDurationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return 0_s; }
+    virtual ImageOrientation frameOrientationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return ImageOrientation::Orientation::None; }
+    virtual DecodingStatus frameDecodingStatusAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return DecodingStatus::Invalid; }
 
-    enum class MetadataType {
-        AccessibilityDescription    = 1 << 0,
-        DensityCorrectedSize        = 1 << 1,
-        EncodedDataStatus           = 1 << 2,
-        FileNameExtension           = 1 << 3,
-        FrameCount                  = 1 << 4,
-        PrimaryFrameIndex           = 1 << 5,
-        HotSpot                     = 1 << 6,
-        MaximumSubsamplingLevel     = 1 << 7,
-        Orientation                 = 1 << 8,
-        RepetitionCount             = 1 << 9,
-        SinglePixelSolidColor       = 1 << 10,
-        Size                        = 1 << 11,
-        UTI                         = 1 << 12
-    };
+    // Testing support
+    virtual unsigned decodeCountForTesting() const { return 0; }
+    virtual void setMinimumDecodingDurationForTesting(Seconds) { RELEASE_ASSERT_NOT_REACHED(); }
+    virtual void setClearDecoderAfterAsyncFrameRequestForTesting(bool) { RELEASE_ASSERT_NOT_REACHED(); }
+    virtual void setAsyncDecodingEnabledForTesting(bool) { RELEASE_ASSERT_NOT_REACHED(); }
+    virtual bool isAsyncDecodingEnabledForTesting() const { return false; }
 
-    template<typename T>
-    T metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, MetadataType, T (ImageDecoder::*functor)() const);
-
-    template<typename T>
-    T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
-
-    bool ensureDecoderAvailable(FragmentedSharedBuffer* data);
-    bool isDecoderAvailable() const { return m_decoder; }
-    void decodedSizeChanged(long long decodedSize);
-    void didDecodeProperties(unsigned decodedPropertiesSize);
-    void decodedSizeIncreased(unsigned decodedSize);
-    void decodedSizeDecreased(unsigned decodedSize);
-    void decodedSizeReset(unsigned decodedSize);
-    void encodedDataStatusChanged(EncodedDataStatus);
-
-    void setNativeImage(Ref<NativeImage>&&);
-    void cacheMetadataAtIndex(size_t, SubsamplingLevel);
-    void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
-    void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
-
-    struct ImageFrameRequest;
-    static const int BufferSize = 8;
-    WorkQueue& decodingQueue();
-    SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
-
-    const ImageFrame& frameAtIndex(size_t index) { return index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame(); }
-    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { }, const DecodingOptions& = { });
-
-    void dump(TextStream&);
-
-    BitmapImage* m_image { nullptr };
-    RefPtr<ImageDecoder> m_decoder;
-    AlphaOption m_alphaOption { AlphaOption::Premultiplied };
-    GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
-
-    unsigned m_decodedSize { 0 };
-    unsigned m_decodedPropertiesSize { 0 };
-    Vector<ImageFrame, 1> m_frames;
-
-    // Asynchronous image decoding.
-    struct ImageFrameRequest {
-        size_t index;
-        SubsamplingLevel subsamplingLevel;
-        DecodingOptions decodingOptions;
-        friend bool operator==(const ImageFrameRequest&, const ImageFrameRequest&) = default;
-    };
-    using FrameRequestQueue = SynchronizedFixedQueue<ImageFrameRequest, BufferSize>;
-    using FrameCommitQueue = Deque<ImageFrameRequest, BufferSize>;
-    RefPtr<FrameRequestQueue> m_frameRequestQueue;
-    FrameCommitQueue m_frameCommitQueue;
-    RefPtr<WorkQueue> m_decodingQueue;
-    Seconds m_frameDecodingDurationForTesting;
-
-    // Image metadata.
-    EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
-    size_t m_frameCount { 0 };
-    size_t m_primaryFrameIndex { 0 };
-    RepetitionCount m_repetitionCount { RepetitionCountNone };
-    String m_uti;
-    String m_filenameExtension;
-    String m_accessibilityDescription;
-    std::optional<IntPoint> m_hotSpot;
-
-    // Image metadata which is calculated from the first ImageFrame.
-    IntSize m_size;
-    std::optional<IntSize> m_densityCorrectedSize;
-    ImageOrientation m_orientation;
-    Color m_singlePixelSolidColor;
-    SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
-
-    OptionSet<MetadataType> m_cachedMetadata;
-
-    RunLoop& m_runLoop;
+    virtual void dump(WTF::TextStream&) const { }
 };
 
 } // namespace WebCore

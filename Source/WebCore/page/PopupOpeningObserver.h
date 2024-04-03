@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
-class PopupOpeningObserver {
+class PopupOpeningObserver : public CanMakeWeakPtr<PopupOpeningObserver> {
 public:
     virtual void willOpenPopup() = 0;
 

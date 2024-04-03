@@ -64,8 +64,6 @@ private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomString& eventType);
     IDBVersionChangeEvent(const AtomString&, const Init&, IsTrusted);
 
-    EventInterface eventInterface() const;
-
     IDBResourceIdentifier m_requestIdentifier;
     uint64_t m_oldVersion;
     std::optional<uint64_t> m_newVersion;

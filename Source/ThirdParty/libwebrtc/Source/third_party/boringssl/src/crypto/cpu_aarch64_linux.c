@@ -22,6 +22,8 @@
 #include <openssl/arm_arch.h>
 
 
+extern uint32_t OPENSSL_armcap_P;
+
 void OPENSSL_cpuid_setup(void) {
   unsigned long hwcap = getauxval(AT_HWCAP);
 

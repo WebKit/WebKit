@@ -26,6 +26,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URLHash.h>
 #import <wtf/UUID.h>
 #import <wtf/WallTime.h>
 #import <wtf/text/StringHash.h>
@@ -108,6 +109,7 @@ NSString *encodeJSONString(id, JSONOptionSet = { }, NSError ** = nullptr);
 NSData *encodeJSONData(id, JSONOptionSet = { }, NSError ** = nullptr);
 
 NSDictionary *dictionaryWithLowercaseKeys(NSDictionary *);
+NSDictionary *dictionaryWithKeys(NSDictionary *, NSArray *keys);
 NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
 
@@ -117,12 +119,15 @@ NSURL *ensureDirectoryExists(NSURL *directory);
 
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 
+void callAfterRandomDelay(Function<void()>&&);
+
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);
 
-NSSet *toAPI(HashSet<String>&);
-NSArray *toAPIArray(HashSet<String>&);
-Vector<String> toImpl(NSArray *);
-HashSet<String> toImplSet(NSArray *);
+NSSet *toAPI(const HashSet<URL>&);
+
+NSSet *toAPI(const HashSet<String>&);
+NSArray *toAPIArray(const HashSet<String>&);
+HashSet<String> toImpl(NSSet *);
 
 } // namespace WebKit

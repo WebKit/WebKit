@@ -30,6 +30,7 @@
 #include "SharedWorkerKey.h"
 #include "SharedWorkerObjectIdentifier.h"
 #include "URLKeepingBlobAlive.h"
+#include <wtf/Identified.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
@@ -39,14 +40,13 @@ class ResourceError;
 
 struct WorkerOptions;
 
-class SharedWorker final : public AbstractWorker, public ActiveDOMObject {
+class SharedWorker final : public AbstractWorker, public ActiveDOMObject, public Identified<SharedWorkerObjectIdentifier> {
     WTF_MAKE_ISO_ALLOCATED(SharedWorker);
 public:
     static ExceptionOr<Ref<SharedWorker>> create(Document&, String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&&);
     ~SharedWorker();
 
     static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
-    SharedWorkerObjectIdentifier identifier() const { return m_identifier; }
     MessagePort& port() const { return m_port.get(); }
 
     const String& identifierForInspector() const { return m_identifierForInspector; }
@@ -60,7 +60,7 @@ private:
     SharedWorker(Document&, const SharedWorkerKey&, Ref<MessagePort>&&);
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
@@ -71,7 +71,6 @@ private:
 
 
     SharedWorkerKey m_key;
-    SharedWorkerObjectIdentifier m_identifier;
     Ref<MessagePort> m_port;
     String m_identifierForInspector;
     URLKeepingBlobAlive m_blobURLExtension;

@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -37,7 +38,7 @@ class SVGSVGElement;
 class SVGUseElement;
 class WeakPtrImplWithEventTargetData;
 
-class SVGDocumentExtensions {
+class SVGDocumentExtensions : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SVGDocumentExtensions(Document&);
@@ -69,7 +70,9 @@ public:
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
 private:
-    Document& m_document;
+    Ref<Document> protectedDocument() const;
+
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
     WeakHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElements;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;

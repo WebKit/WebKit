@@ -128,7 +128,7 @@ public:
 
 private:
     static CSSNumericFactory* from(DOMCSSNamespace&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 };
 
 } // namespace WebCore

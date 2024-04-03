@@ -48,7 +48,7 @@ std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::u
 
 void printInternal(PrintStream& out, HexNumberBuffer buffer)
 {
-    out.print(StringView(buffer.characters(), buffer.length));
+    out.print(StringView(buffer.span()));
 }
 
 } // namespace WTF

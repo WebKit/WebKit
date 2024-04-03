@@ -99,16 +99,12 @@
 
 /* Do not use PLATFORM() tests in this section ! */
 
-#if !defined(ENABLE_3D_TRANSFORMS)
-#define ENABLE_3D_TRANSFORMS 0
-#endif
-
-#if !defined(ENABLE_ACCESSIBILITY)
-#define ENABLE_ACCESSIBILITY 1
-#endif
-
 #if !defined(ENABLE_ACCESSIBILITY_ANIMATION_CONTROL)
 #define ENABLE_ACCESSIBILITY_ANIMATION_CONTROL 0
+#endif
+
+#if !defined(ENABLE_ACCESSIBILITY_NON_BLINKING_CURSOR)
+#define ENABLE_ACCESSIBILITY_NON_BLINKING_CURSOR 0
 #endif
 
 #if !defined(ENABLE_ADVANCED_PRIVACY_PROTECTIONS)
@@ -147,10 +143,6 @@
 #define ENABLE_AUTOCAPITALIZE 0
 #endif
 
-#if !defined(ENABLE_BADGING)
-#define ENABLE_BADGING 1
-#endif
-
 #if !defined(ENABLE_CONTENT_CHANGE_OBSERVER)
 #define ENABLE_CONTENT_CHANGE_OBSERVER 0
 #endif
@@ -165,6 +157,10 @@
 
 #if !defined(ENABLE_CONTEXT_MENU_EVENT)
 #define ENABLE_CONTEXT_MENU_EVENT 1
+#endif
+
+#if !defined(ENABLE_CSS_PAINTING_API)
+#define ENABLE_CSS_PAINTING_API 1
 #endif
 
 #if !defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
@@ -209,10 +205,6 @@
 
 #if !defined(ENABLE_DESTINATION_COLOR_SPACE_DISPLAY_P3)
 #define ENABLE_DESTINATION_COLOR_SPACE_DISPLAY_P3 0
-#endif
-
-#if !defined(ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-#define ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB 0
 #endif
 
 #if !defined(ENABLE_DRAG_SUPPORT)
@@ -326,10 +318,6 @@
 #define ENABLE_KINETIC_SCROLLING 0
 #endif
 
-#if !defined(ENABLE_LAYER_BASED_SVG_ENGINE)
-#define ENABLE_LAYER_BASED_SVG_ENGINE 0
-#endif
-
 #if !defined(ENABLE_LLVM_PROFILE_GENERATION)
 #define ENABLE_LLVM_PROFILE_GENERATION 0
 #endif
@@ -352,6 +340,10 @@
 
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 0
+#endif
+
+#if !defined(ENABLE_MEDIA_SOURCE_IN_WORKERS)
+#define ENABLE_MEDIA_SOURCE_IN_WORKERS 0
 #endif
 
 #if !defined(ENABLE_MEDIA_STATISTICS)
@@ -380,10 +372,6 @@
 
 #if !defined(ENABLE_MOUSE_CURSOR_SCALE)
 #define ENABLE_MOUSE_CURSOR_SCALE 0
-#endif
-
-#if !defined(ENABLE_MOUSE_FORCE_EVENTS)
-#define ENABLE_MOUSE_FORCE_EVENTS 1
 #endif
 
 #if !defined(ENABLE_NOTIFICATION_EVENT)
@@ -609,6 +597,11 @@
 // #endif
 // #endif
 
+/* wyhash-based StringHasher */
+#if !defined(ENABLE_WYHASH_STRING_HASHER) && PLATFORM(MAC)
+#define ENABLE_WYHASH_STRING_HASHER 1
+#endif
+
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
 #if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))
 #define ENABLE_JIT 1
@@ -701,11 +694,7 @@
 #define ENABLE_DFG_DOES_GC_VALIDATION 0
 #endif
 
-/* Concurrent JS only works on 64-bit platforms because it requires that
-   values get stored to atomically. This is trivially true on 64-bit platforms,
-   but not true at all on 32-bit platforms where values are composed of two
-   separate sub-values. */
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 #define ENABLE_CONCURRENT_JS 1
 #endif
 
@@ -736,11 +725,11 @@
 
 #if ENABLE(WEBASSEMBLY) && ENABLE(JIT) && CPU(ARM)
 #undef ENABLE_B3_JIT
-#define ENABLE_B3_JIT 0
+#define ENABLE_B3_JIT 1
 #undef ENABLE_WEBASSEMBLY_OMGJIT
 #define ENABLE_WEBASSEMBLY_OMGJIT 0
 #undef ENABLE_WEBASSEMBLY_BBQJIT
-#define ENABLE_WEBASSEMBLY_BBQJIT 0
+#define ENABLE_WEBASSEMBLY_BBQJIT 1
 #endif
 
 #if !defined(ENABLE_WEBASSEMBLY) && (ENABLE(B3_JIT) && PLATFORM(COCOA) && CPU(ADDRESS64))
@@ -784,6 +773,15 @@
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000) \
+    || (PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 180000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 110000)
+// Linkers from older SDKs causes wrong linking. ref: rdar://96556827
+#define ENABLE_OFFLINE_ASM_ALT_ENTRY 1
+#endif
+
 /* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
 #if !defined(ENABLE_REGEXP_TRACING)
 #define ENABLE_REGEXP_TRACING 0
@@ -805,9 +803,14 @@
 #define ENABLE_YARR_JIT_REGEXP_TEST_INLINE 1
 #endif
 
-/* Enable JIT'ing Regular Expressions that have nested back references. */
+/* Enable JIT'ing Regular Expressions that have back references. */
 #if ENABLE(YARR_JIT) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)) || CPU(RISCV64))
 #define ENABLE_YARR_JIT_BACKREFERENCES 1
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+#define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 1
+#else
+#define ENABLE_YARR_JIT_BACKREFERENCES_FOR_16BIT_EXPRS 0
+#endif
 #endif
 
 #if ENABLE(YARR_JIT) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64))
@@ -862,7 +865,7 @@
 #endif
 
 /* CSS Selector JIT Compiler */
-#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64) || (CPU(ARM_THUMB2) && OS(DARWIN))) && ENABLE(JIT) && (OS(DARWIN) || OS(WINDOWS) || PLATFORM(GTK) || PLATFORM(WPE)))
+#if !defined(ENABLE_CSS_SELECTOR_JIT) && ((CPU(X86_64) || CPU(ARM64)) && ENABLE(JIT) && (OS(DARWIN) || OS(WINDOWS) || PLATFORM(GTK) || PLATFORM(WPE)))
 #define ENABLE_CSS_SELECTOR_JIT 1
 #endif
 
@@ -948,10 +951,6 @@
 #error "ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3) requires HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE) on platforms using CoreGraphics"
 #endif
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB) && !HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE)
-#error "ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB) requires HAVE(CORE_GRAPHICS_LINEAR_SRGB_COLOR_SPACE) on platforms using CoreGraphics"
-#endif
-
 #endif
 
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3) && !ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
@@ -976,4 +975,14 @@
 #if !defined(ENABLE_EXTENSION_CAPABILITIES) \
     && USE(EXTENSIONKIT)
 #define ENABLE_EXTENSION_CAPABILITIES 1
+#endif
+
+#if !defined(ENABLE_LINEAR_MEDIA_PLAYER) \
+    && USE(LINEARMEDIAKIT)
+#define ENABLE_LINEAR_MEDIA_PLAYER 1
+#endif
+
+#if !defined(ENABLE_WRITING_SUGGESTIONS) \
+    && (PLATFORM(COCOA) && HAVE(INLINE_PREDICTIONS))
+#define ENABLE_WRITING_SUGGESTIONS 1
 #endif

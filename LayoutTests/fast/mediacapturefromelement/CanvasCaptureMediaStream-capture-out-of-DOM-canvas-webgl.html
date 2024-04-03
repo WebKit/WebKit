@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture canvas to video track framerate</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../webrtc/routines.js"></script>
+</head>
+<body>
+    <video id="video" muted autoplay playsInline controls width="200px"></video>
+    <script>
+function drawCanvasTestPatternWebGL(canvas, patternNumber)
+{
+    patternNumber = patternNumber || 0;
+    const gl = canvas.getContext("webgl", { depth: false, stencil: false, antialias: false });
+    gl.enable(gl.SCISSOR_TEST);
+    const boxSize = [ canvas.width, canvas.height ];
+    const boxes = [
+        [0.0, 0.5, 0.5, 1.0],
+        [0.5, 0.5, 1.0, 1.0],
+        [0.5, 0.0, 1.0, 0.5],
+        [0.0, 0.0, 0.5, 0.5],
+    ];
+    const boxColors = Object.values(testColors);
+    for (let n = 0; n < 4; ++n) {
+        const i = (n + patternNumber) % boxes.length;
+        const color = boxColors[i];
+        const box = boxes[n];
+        gl.scissor(box[0] * boxSize[0], box[1] * boxSize[1], box[2] * boxSize[0], box[3] * boxSize[1]);
+        gl.clearColor(color[0] / 255., color[1] / 255, color[2] / 255., color[3] / 255.);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+}
+
+promise_test(async (t) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+
+    let frames = 0;
+    const loop = () => {
+        frames += 1;
+        drawCanvasTestPatternWebGL(canvas, frames);
+        setTimeout(loop, 1000/30);
+    }
+
+    loop();
+
+    const stream = canvas.captureStream();
+    video.srcObject = stream;
+    video.play();
+
+    const frameRate = await computeFrameRate(stream, video);
+
+    // If the test was unable to generate any frames then nothing meaningful can be determined. Our test only makes sense if we have sufficient fps.
+    if (frames <= 10)
+        return;
+
+    // Check that the difference in expected and observed frame rates is < 25%
+    const percentDiff = Math.abs(frameRate - frames) / frames * 100;
+    assert_less_than(percentDiff, 25, `frame rate difference between ${frames} & ${frameRate} is below 25%`);
+}, "check frame of capture canvas is sufficient");
+    </script>
+</body>
+</html>

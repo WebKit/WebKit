@@ -55,9 +55,8 @@ public:
         CSSFilter,
         SVGFilter,
 
-        FEFirst,
-
-        FEBlend = FEFirst,
+        // These are filter effects
+        FEBlend,
         FEColorMatrix,
         FEComponentTransfer,
         FEComposite,
@@ -75,9 +74,7 @@ public:
         FETile,
         FETurbulence,
         SourceAlpha,
-        SourceGraphic,
-
-        FELast = SourceGraphic
+        SourceGraphic
     };
 
     FilterFunction(Type, std::optional<RenderingResourceIdentifier> = std::nullopt);
@@ -88,7 +85,7 @@ public:
     bool isCSSFilter() const { return m_filterType == Type::CSSFilter; }
     bool isSVGFilter() const { return m_filterType == Type::SVGFilter; }
     bool isFilter() const override { return m_filterType == Type::CSSFilter || m_filterType == Type::SVGFilter; }
-    bool isFilterEffect() const { return m_filterType >= Type::FEFirst && m_filterType <= Type::FELast; }
+    bool isFilterEffect() const { return m_filterType >= Type::FEBlend && m_filterType <= Type::SourceGraphic; }
 
     static AtomString filterName(Type);
     static AtomString sourceAlphaName() { return filterName(Type::SourceAlpha); }
@@ -108,39 +105,6 @@ private:
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterFunction&);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FilterFunction::Type> {
-    using values = EnumValues<
-        WebCore::FilterFunction::Type,
-
-        WebCore::FilterFunction::Type::CSSFilter,
-        WebCore::FilterFunction::Type::SVGFilter,
-
-        WebCore::FilterFunction::Type::FEBlend,
-        WebCore::FilterFunction::Type::FEColorMatrix,
-        WebCore::FilterFunction::Type::FEComponentTransfer,
-        WebCore::FilterFunction::Type::FEComposite,
-        WebCore::FilterFunction::Type::FEConvolveMatrix,
-        WebCore::FilterFunction::Type::FEDiffuseLighting,
-        WebCore::FilterFunction::Type::FEDisplacementMap,
-        WebCore::FilterFunction::Type::FEDropShadow,
-        WebCore::FilterFunction::Type::FEFlood,
-        WebCore::FilterFunction::Type::FEGaussianBlur,
-        WebCore::FilterFunction::Type::FEImage,
-        WebCore::FilterFunction::Type::FEMerge,
-        WebCore::FilterFunction::Type::FEMorphology,
-        WebCore::FilterFunction::Type::FEOffset,
-        WebCore::FilterFunction::Type::FESpecularLighting,
-        WebCore::FilterFunction::Type::FETile,
-        WebCore::FilterFunction::Type::FETurbulence,
-        WebCore::FilterFunction::Type::SourceAlpha,
-        WebCore::FilterFunction::Type::SourceGraphic
-    >;
-};
-
-} // namespace WTF
 
 #define SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(ClassName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \

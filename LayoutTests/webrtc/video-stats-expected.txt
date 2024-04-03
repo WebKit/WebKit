@@ -4,5 +4,9 @@ PASS Sender stats
 PASS Receiver stats
 PASS Transport stats
 PASS Check ssrc is not changing in inbound rtp stats
+PASS Local candidate stats
+PASS Remote candidate stats
+PASS Outbound rtp stats - rtx
+PASS Inbound rtp stats - rtx
 PASS Stats after pc close
 

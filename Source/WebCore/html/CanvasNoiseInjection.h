@@ -33,11 +33,12 @@ class CanvasBase;
 class ImageBuffer;
 class PixelBuffer;
 
+enum class CanvasNoiseInjectionPostProcessArea : bool { DirtyRect, FullBuffer };
 using NoiseInjectionHashSalt = uint64_t;
 
 class CanvasNoiseInjection {
 public:
-    void postProcessDirtyCanvasBuffer(ImageBuffer*, NoiseInjectionHashSalt);
+    void postProcessDirtyCanvasBuffer(ImageBuffer*, NoiseInjectionHashSalt, CanvasNoiseInjectionPostProcessArea = CanvasNoiseInjectionPostProcessArea::DirtyRect);
     bool postProcessPixelBufferResults(PixelBuffer&, NoiseInjectionHashSalt) const;
     void updateDirtyRect(const IntRect&);
     void clearDirtyRect();

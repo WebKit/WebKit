@@ -7,10 +7,10 @@ layer at (0,0) size 800x486
         RenderText {#text} at (0,0) size 100x17
           text run at (0,0) width 100: "Repaint test for "
         RenderInline {I} at (0,0) size 776x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+          RenderInline {A} at (100,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (100,0) size 348x17
               text run at (100,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9334"
-          RenderText {#text} at (447,0) size 776x35
+          RenderText {#text} at (0,0) size 776x35
             text run at (447,0) width 5: " "
             text run at (451,0) width 325: "Incomplete repaint when changing block from non-"
             text run at (0,18) width 150: "positioned to positioned"

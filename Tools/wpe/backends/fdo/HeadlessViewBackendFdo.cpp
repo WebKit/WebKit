@@ -35,6 +35,13 @@
 #include <wpe/unstable/fdo-shm.h>
 #endif
 
+#if defined(USE_SKIA) && USE_SKIA
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-align"
+#include <skia/core/SkPixmap.h>
+#pragma GCC diagnostic pop
+#endif
+
 namespace WPEToolingBackends {
 
 struct HeadlessInstance {
@@ -53,7 +60,9 @@ struct HeadlessInstance {
     }
 };
 
+#if defined(USE_CAIRO) && USE_CAIRO
 static cairo_user_data_key_t s_bufferKey;
+#endif
 
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
@@ -84,6 +93,7 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
 
     addActivityState(wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
 
+#if defined(USE_CAIRO) && USE_CAIRO
     {
         uint32_t stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
         uint8_t* buffer = new uint8_t[stride * m_height];
@@ -99,6 +109,20 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
             });
         cairo_surface_mark_dirty(m_snapshot);
     }
+#elif defined(USE_SKIA) && USE_SKIA
+    {
+        auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+        size_t stride = info.minRowBytes();
+        uint8_t* buffer = new uint8_t[stride * m_height];
+        memset(buffer, 0, stride * m_height);
+
+        SkPixmap pixmap(info, buffer, stride);
+        m_snapshot = SkImages::RasterFromPixmap(pixmap, [](const void*, void* data) {
+            auto* buffer = static_cast<uint8_t*>(data);
+            delete[] buffer;
+        }, buffer);
+    }
+#endif
 
 #if WPE_CHECK_VERSION(1, 11, 1)
     wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullScreenRequest, this);
@@ -120,8 +144,10 @@ HeadlessViewBackend::~HeadlessViewBackend()
         g_source_unref(m_update.source);
     }
 
+#if defined(USE_CAIRO) && USE_CAIRO
     if (m_snapshot)
         cairo_surface_destroy(m_snapshot);
+#endif
 
     if (m_exportable)
         wpe_view_backend_exportable_fdo_destroy(m_exportable);
@@ -136,7 +162,11 @@ struct wpe_view_backend* HeadlessViewBackend::backend() const
 
 PlatformImage HeadlessViewBackend::snapshot()
 {
+#if defined(USE_CAIRO) && USE_CAIRO
     return cairo_surface_reference(m_snapshot);
+#elif defined(USE_SKIA) && USE_SKIA
+    return SkRef(m_snapshot.get());
+#endif
 }
 
 void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
@@ -149,7 +179,12 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
             return;
     }
 
+#if defined(USE_CAIRO) && USE_CAIRO
     uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
+#elif defined(USE_SKIA) && USE_SKIA
+    auto info = SkImageInfo::MakeN32Premul(m_width, m_height);
+    uint32_t bufferStride = info.minRowBytes();
+#endif
     uint8_t* buffer = new uint8_t[bufferStride * m_height];
     memset(buffer, 0, bufferStride * m_height);
 
@@ -173,6 +208,7 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
         wl_shm_buffer_end_access(shmBuffer);
     }
 
+#if defined(USE_CAIRO) && USE_CAIRO
     if (m_snapshot)
         cairo_surface_destroy(m_snapshot);
 
@@ -186,6 +222,14 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
             delete[] buffer;
         });
     cairo_surface_mark_dirty(m_snapshot);
+#elif defined(USE_SKIA) && USE_SKIA
+    SkPixmap pixmap(info, buffer, bufferStride);
+    m_snapshot = SkImages::RasterFromPixmap(pixmap, [](const void*, void* data) {
+        auto* buffer = static_cast<uint8_t*>(data);
+        delete[] buffer;
+    }, buffer);
+#endif
+
 #else
     (void)exportedBuffer;
 #endif

@@ -31,6 +31,7 @@
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include <WebCore/RemoteCommandListener.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,7 +67,7 @@ private:
     // Messages
     void updateSupportedCommands(Vector<WebCore::PlatformMediaSession::RemoteControlCommandType>&& commands, bool supportsSeeking);
 
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnection;
     RemoteRemoteCommandListenerIdentifier m_identifier;
     WebCore::RemoteCommandListener::RemoteCommandsSet m_supportedCommands;
     bool m_supportsSeeking { false };

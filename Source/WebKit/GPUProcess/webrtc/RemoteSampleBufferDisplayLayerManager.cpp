@@ -47,16 +47,22 @@ RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPU
 
 void RemoteSampleBufferDisplayLayerManager::startListeningForIPC()
 {
-    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
-    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    connection->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
+    connection->connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
 }
 
 RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
 
 void RemoteSampleBufferDisplayLayerManager::close()
 {
-    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
-    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    connection->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
+    connection->connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         Locker lock(m_layersLock);
         callOnMainRunLoop([layers = WTFMove(m_layers)] { });
@@ -78,7 +84,10 @@ bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& con
 void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayerIdentifier identifier, bool hideRootLayer, WebCore::IntSize size, bool shouldMaintainAspectRatio, LayerCreationCallback&& callback)
 {
     callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, hideRootLayer, size, shouldMaintainAspectRatio, callback = WTFMove(callback)]() mutable {
-        auto layer = RemoteSampleBufferDisplayLayer::create(m_connectionToWebProcess, identifier, m_connection.copyRef());
+        auto connection = m_connectionToWebProcess.get();
+        if (!connection)
+            return callback({ });
+        auto layer = RemoteSampleBufferDisplayLayer::create(*connection, identifier, m_connection.copyRef());
         if (!layer) {
             callback({ });
             return;

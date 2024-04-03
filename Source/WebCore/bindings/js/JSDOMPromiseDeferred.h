@@ -160,9 +160,9 @@ public:
 
     void reject(RejectAsHandled = RejectAsHandled::No);
     void reject(std::nullptr_t, RejectAsHandled = RejectAsHandled::No);
+    void reject(Exception, RejectAsHandled, JSC::JSValue&);
     WEBCORE_EXPORT void reject(Exception, RejectAsHandled = RejectAsHandled::No);
     WEBCORE_EXPORT void reject(ExceptionCode, const String& = { }, RejectAsHandled = RejectAsHandled::No);
-    void reject(const JSC::PrivateName&, RejectAsHandled = RejectAsHandled::No);
 
     template<typename Callback>
     void resolveWithCallback(Callback callback)
@@ -336,7 +336,7 @@ public:
 
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
-void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
+void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
@@ -380,6 +380,31 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     // https://bugs.webkit.org/show_bug.cgi?id=203402
     RETURN_IF_EXCEPTION(catchScope, JSC::jsUndefined());
     return promise;
+}
+
+using PromisePairFunction = JSC::EncodedJSValue(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+
+template<typename PromisePairFunctor>
+inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
+{
+    JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise);
+    auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise2);
+
+    auto result = functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise), DeferredPromise::create(globalObject, *promise2));
+
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);
+    // FIXME: We could have error since any JS call can throw stack-overflow errors.
+    // https://bugs.webkit.org/show_bug.cgi?id=203402
+    RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+
+    return result;
 }
 
 using BindingPromiseFunction = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, Ref<DeferredPromise>&&);

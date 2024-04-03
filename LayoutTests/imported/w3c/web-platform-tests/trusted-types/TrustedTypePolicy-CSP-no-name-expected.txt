@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to create a TrustedTypePolicy named 'SomeName' because it violates the following Content Security Policy directive: "trusted-types "
+
+PASS No name list given - policy creation fails.
+

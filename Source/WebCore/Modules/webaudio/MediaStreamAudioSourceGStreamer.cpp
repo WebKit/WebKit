@@ -20,7 +20,7 @@
 #include "config.h"
 #include "MediaStreamAudioSource.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && ENABLE(WEB_AUDIO)
 
 #include "AudioBus.h"
 #include "GStreamerAudioData.h"
@@ -77,4 +77,4 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && ENABLE(WEB_AUDIO)

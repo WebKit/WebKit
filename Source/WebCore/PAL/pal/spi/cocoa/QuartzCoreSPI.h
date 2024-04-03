@@ -129,6 +129,7 @@ typedef struct _CARenderContext CARenderContext;
 @interface CAPresentationModifierGroup : NSObject
 + (instancetype)groupWithCapacity:(NSUInteger)capacity;
 - (void)flush;
+- (void)flushWithTransaction;
 @end
 
 @interface CAPresentationModifier : NSObject
@@ -218,6 +219,21 @@ typedef enum {
 @property BOOL matchesPosition;
 @property BOOL matchesTransform;
 @end
+
+#if HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
+typedef uint32_t CAHighFrameRateReason;
+
+#define CAHighFrameRateReasonMake(component, code) \
+    (((uint32_t)((component) & 0xffff) << 16) | ((code) & 0xffff))
+
+@interface CAAnimation ()
+@property CAHighFrameRateReason highFrameRateReason;
+@end
+
+@interface CADisplayLink ()
+@property CAHighFrameRateReason highFrameRateReason;
+@end
+#endif // HAVE(CORE_ANIMATION_FRAME_RATE_RANGE)
 
 #endif // __OBJC__
 

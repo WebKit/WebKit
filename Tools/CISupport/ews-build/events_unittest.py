@@ -21,9 +21,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
 import unittest
 
-from .events import CommitClassifier
+from .events import CommitClassifier, GitHubEventHandlerNoEdits
 
 
 class TestCommitClassifier(unittest.TestCase):
@@ -92,3 +93,18 @@ class TestCommitClassifier(unittest.TestCase):
 
         self.assertFalse(c.matches('', [], []))
         self.assertFalse(c.matches('', [], ['metadata/contributors.json', 'Makefile']))
+
+    def test_duplicate(self):
+        key_a = 'pull_request-3babd344c6c08255c3ce2db7459b57d99209ae43'
+        key_b = 'merge_queue-3babd344c6c08255c3ce2db7459b57d99209ae43'
+
+        self.assertFalse(GitHubEventHandlerNoEdits.is_duped(key_a, bucket=1))
+        self.assertTrue(GitHubEventHandlerNoEdits.is_duped(key_a, bucket=1))
+        self.assertFalse(GitHubEventHandlerNoEdits.is_duped(key_b, bucket=1))
+
+        time.sleep(.5)
+        self.assertTrue(GitHubEventHandlerNoEdits.is_duped(key_a, bucket=1))
+
+        time.sleep(2)
+        self.assertFalse(GitHubEventHandlerNoEdits.is_duped(key_a, bucket=1))
+        self.assertTrue(len(GitHubEventHandlerNoEdits.DUPE_DETECTOR.keys()), 2)

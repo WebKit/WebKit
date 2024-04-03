@@ -1,0 +1,54 @@
+:has(foo) is not scope breaking
+:has(foo bar) is not scope breaking
+:has(foo ~ bar) is not scope breaking
+:has(~ foo) is not scope breaking
+:has(~ foo bar) is not scope breaking
+:has(+ foo) is not scope breaking
+:has(+ foo bar) is not scope breaking
+:has(:is(foo)) is not scope breaking
+:has(:is(foo bar)) IS scope breaking
+:has(:is(foo ~ bar)) is not scope breaking
+:is(:has(foo)) is not scope breaking
+:is(:has(foo bar)) is not scope breaking
+:is(:has(:is(foo))) is not scope breaking
+:is(:has(:is(foo bar))) IS scope breaking
+:has(~ foo) is not scope breaking
+:has(~ foo bar) is not scope breaking
+:has(~ :is(foo)) is not scope breaking
+:has(~ :is(foo bar)) IS scope breaking
+:is(~ :has(foo)) is not scope breaking
+:is(:has(~ foo bar)) is not scope breaking
+:is(:has(~ :is(foo))) is not scope breaking
+:is(:has(~ :is(foo bar))) IS scope breaking
+:has(+ foo) is not scope breaking
+:has(+ foo bar) is not scope breaking
+:has(+ :is(foo)) is not scope breaking
+:has(+ :is(foo bar)) IS scope breaking
+:is(+ :has(foo)) is not scope breaking
+:is(:has(+ foo bar)) is not scope breaking
+:is(:has(+ :is(foo))) is not scope breaking
+:is(:has(+ :is(foo bar))) IS scope breaking
+:has(:not(foo)) is not scope breaking
+:has(:not(foo bar)) IS scope breaking
+:has(:not(foo ~ bar)) is not scope breaking
+:not(:has(foo)) is not scope breaking
+:not(:has(foo bar)) is not scope breaking
+:not(:has(:not(foo))) is not scope breaking
+:not(:has(:not(foo bar))) IS scope breaking
+:has(~ foo) is not scope breaking
+:has(~ foo bar) is not scope breaking
+:has(~ :not(foo)) is not scope breaking
+:has(~ :not(foo bar)) IS scope breaking
+:not(~ :has(foo)) is not scope breaking
+:has(+ foo) is not scope breaking
+:has(+ foo bar) is not scope breaking
+:has(+ :not(foo)) is not scope breaking
+:has(+ :not(foo bar)) IS scope breaking
+:not(+ :has(foo)) is not scope breaking
+:not(:has(~ foo bar)) is not scope breaking
+:not(:has(~ :not(foo))) is not scope breaking
+:not(:has(~ :not(foo bar))) IS scope breaking
+:not(:has(+ foo bar)) is not scope breaking
+:not(:has(+ :not(foo))) is not scope breaking
+:not(:has(+ :not(foo bar))) IS scope breaking
+

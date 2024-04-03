@@ -112,7 +112,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 
 bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
-    if (request.shippingContact().pkContact())
+    if (request.shippingContact().pkContact().get())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
     m_supportedCountries = request.supportedCountries();
     m_shippingMethods = request.shippingMethods();
@@ -140,6 +140,9 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     m_deferredPaymentRequest = request.deferredPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementPaymentRequest = request.disbursementPaymentRequest();
 #endif
 #if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
     m_applePayLaterAvailability = request.applePayLaterAvailability();
@@ -182,6 +185,9 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     m_deferredPaymentRequest = WTFMove(shippingMethodUpdate->newDeferredPaymentRequest);
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementPaymentRequest = WTFMove(shippingMethodUpdate->newDisbursementPaymentRequest);
+#endif
 }
 
 static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
@@ -215,6 +221,10 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Appl
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     m_deferredPaymentRequest = WTFMove(shippingContactUpdate->newDeferredPaymentRequest);
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementPaymentRequest = WTFMove(shippingContactUpdate->newDisbursementPaymentRequest);
+#endif
+
 }
 
 void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
@@ -239,6 +249,9 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
 #endif
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     m_deferredPaymentRequest = WTFMove(paymentMethodUpdate->newDeferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+    m_disbursementPaymentRequest = WTFMove(paymentMethodUpdate->newDisbursementPaymentRequest);
 #endif
 }
 

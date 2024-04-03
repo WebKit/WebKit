@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "IDLTypes.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
@@ -42,7 +43,7 @@ class AbortSignal;
 class AuthenticatorCoordinatorClient;
 class BasicCredential;
 class Document;
-class PublicKeyCredentialClientCapabilities;
+typedef IDLRecord<IDLDOMString, IDLBoolean> PublicKeyCredentialClientCapabilities;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
@@ -68,12 +69,14 @@ public:
     void isUserVerifyingPlatformAuthenticatorAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void isConditionalMediationAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
 
-    void getClientCapabilities(const Document&, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&&) const;
+    void getClientCapabilities(const Document&, DOMPromiseDeferred<PublicKeyCredentialClientCapabilities>&&) const;
 
 private:
     AuthenticatorCoordinator() = default;
 
     std::unique_ptr<AuthenticatorCoordinatorClient> m_client;
+    bool m_isCancelling = false;
+    CompletionHandler<void()> m_queuedRequest;
 };
 
 } // namespace WebCore

@@ -187,7 +187,8 @@ static int runIOTests(const char * dataDir)
         size_t filenameLen = strlen(filename);
         if ((ioDirLen + filenameLen) > FILENAME_MAX_LENGTH) {
             printf("Path too long: %s\n", filename);
-            return 1;
+            retCode = 1;
+            break;
         }
         strcpy(fullFilename, ioDir);
         strcat(fullFilename, filename);
@@ -195,20 +196,32 @@ static int runIOTests(const char * dataDir)
         FILE * f = fopen(fullFilename, "rb");
         if (!f) {
             printf("Can't open for read: %s\n", filename);
-            return 1;
+            retCode = 1;
+            break;
         }
         fseek(f, 0, SEEK_END);
         size_t fileSize = ftell(f);
         fseek(f, 0, SEEK_SET);
-        avifRWDataRealloc(&fileBuffer, fileSize);
+        if (avifRWDataRealloc(&fileBuffer, fileSize) != AVIF_RESULT_OK) {
+            printf("Out of memory when allocating buffer to read file: %s\n", filename);
+            fclose(f);
+            retCode = 1;
+            break;
+        }
         if (fread(fileBuffer.data, 1, fileSize, f) != fileSize) {
             printf("Can't read entire file: %s\n", filename);
             fclose(f);
-            return 1;
+            retCode = 1;
+            break;
         }
         fclose(f);
 
         avifDecoder * decoder = avifDecoderCreate();
+        if (decoder == NULL) {
+            printf("Memory allocation failure\n");
+            retCode = 1;
+            break;
+        }
         avifIOTestReader * io = avifIOCreateTestReader(fileBuffer.data, fileBuffer.size);
         avifDecoderSetIO(decoder, (avifIO *)io);
 

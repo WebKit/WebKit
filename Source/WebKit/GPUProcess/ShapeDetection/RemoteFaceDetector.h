@@ -35,6 +35,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore::ShapeDetection {
 struct DetectedFace;
@@ -74,8 +75,8 @@ private:
     void detect(WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&&);
 
     Ref<WebCore::ShapeDetection::FaceDetector> m_backing;
-    ShapeDetection::ObjectHeap& m_objectHeap;
-    RemoteRenderingBackend& m_backend;
+    WeakRef<ShapeDetection::ObjectHeap> m_objectHeap;
+    WeakRef<RemoteRenderingBackend> m_backend;
     const ShapeDetectionIdentifier m_identifier;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };

@@ -14,7 +14,7 @@ layer at (0,0) size 800x173
           text run at (0,0) width 43: "abcd "
           text run at (42,0) width 35 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
           text run at (76,0) width 6: " "
-        RenderInline {B} at (0,0) size 82x18
+        RenderInline {B} at (81,0) size 82x18
           RenderText {#text} at (81,0) size 82x18
             text run at (81,0) width 45: "abcd "
             text run at (125,0) width 38 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
@@ -24,7 +24,7 @@ layer at (0,0) size 800x173
           text run at (0,0) width 49: "abcd "
           text run at (48,0) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
           text run at (86,0) width 11: " "
-        RenderInline {B} at (0,0) size 87x18
+        RenderInline {B} at (96,0) size 87x18
           RenderText {#text} at (96,0) size 87x18
             text run at (96,0) width 49: "abcd "
             text run at (144,0) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x173
           text run at (0,1) width 35: "abcd "
           text run at (34,1) width 35 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
           text run at (68,1) width 5: " "
-        RenderInline {B} at (0,0) size 74x18
+        RenderInline {B} at (72,1) size 74x18
           RenderText {#text} at (72,1) size 74x18
             text run at (72,1) width 38: "abcd "
             text run at (109,1) width 37 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"

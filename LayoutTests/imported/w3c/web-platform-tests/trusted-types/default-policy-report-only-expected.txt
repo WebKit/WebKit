@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: The Content Security Policy 'require-trusted-types-for 'script';' was delivered in report-only mode, but does not specify a 'report-to'; the policy will have no effect. Please either add a 'report-to' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Count SecurityPolicyViolation events.
+PASS script.src no default policy
+PASS div.innerHTML no default policy
+PASS script.text no default policy
+PASS script.src default
+PASS script.src null
+PASS script.src throw
+PASS script.src undefined
+PASS script.src typeerror
+PASS div.innerHTML default
+PASS div.innerHTML null
+PASS div.innerHTML throw
+PASS div.innerHTML undefined
+PASS div.innerHTML typeerror
+PASS script.text default
+PASS script.text null
+PASS script.text throw
+PASS script.text undefined
+PASS script.text typeerror
+

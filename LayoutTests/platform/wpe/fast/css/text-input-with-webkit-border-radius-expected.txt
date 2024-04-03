@@ -6,7 +6,7 @@ layer at (0,0) size 800x137
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 301x17
           text run at (0,0) width 301: "This test checks that text input fields handle the "
-        RenderInline {CODE} at (0,0) size 168x15
+        RenderInline {CODE} at (301,3) size 168x15
           RenderText {#text} at (301,3) size 168x15
             text run at (301,3) width 168: "-webkit-border-radius"
         RenderText {#text} at (469,0) size 293x17

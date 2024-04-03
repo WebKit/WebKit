@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,11 +32,11 @@
 #pragma once
 
 #include "BaseCheckableInputType.h"
+#include "SwitchTrigger.h"
 
 namespace WebCore {
 
 enum class WasSetByJavaScript : bool;
-
 enum class SwitchAnimationType : bool { VisuallyOn, Pressed };
 
 class CheckboxInputType final : public BaseCheckableInputType {
@@ -79,6 +80,7 @@ private:
     void setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
     bool isSwitchAnimating(SwitchAnimationType) const;
     void performSwitchAnimation(SwitchAnimationType);
+    void performSwitchVisuallyOnAnimation(SwitchTrigger);
     void stopSwitchAnimation(SwitchAnimationType);
     float switchAnimationProgress(SwitchAnimationType) const;
     void updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint);

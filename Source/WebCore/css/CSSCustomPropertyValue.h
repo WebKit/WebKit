@@ -97,6 +97,7 @@ public:
     bool isInherit() const { return std::holds_alternative<CSSValueID>(m_value) && std::get<CSSValueID>(m_value) == CSSValueInherit; }
     bool isCurrentColor() const;
     bool containsCSSWideKeyword() const;
+    bool isAnimatable() const;
 
     const VariantValue& value() const { return m_value; }
 
@@ -105,6 +106,18 @@ public:
     bool equals(const CSSCustomPropertyValue&) const;
 
     Ref<const CSSVariableData> asVariableData() const;
+
+    // Say true conservatively.
+    bool customMayDependOnBaseURL() const { return true; }
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (auto* value = std::get_if<Ref<CSSVariableReferenceValue>>(&m_value)) {
+            if (func(*value) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
 
 private:
     CSSCustomPropertyValue(const AtomString& name, VariantValue&& value)

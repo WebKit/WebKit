@@ -7,6 +7,7 @@ class ReportProcessor {
     private $name_to_aggregator_id;
     private $report_id;
     private $runs;
+    private $tests;
 
     function __construct($db) {
         $this->db = $db;
@@ -246,7 +247,7 @@ class ReportProcessor {
                             $this->exit_with_error('AggregatorNotFound', array('name' => $aggregator_name));
 
                         $metrics = $test_row ? array_get($test_row['metrics'], $metric_name) : NULL;
-                        $metric_id = $metrics ? $metrics[$aggregator_id] : NULL;
+                        $metric_id = $metrics && array_key_exists($aggregator_id, $metrics)? $metrics[$aggregator_id] : NULL;
                         if (!$metric_id) {
                             $metric_id = $this->db->select_or_insert_row('test_metrics', 'metric', array('name' => $metric_name,
                                 'test' => $test_id, 'aggregator' => $this->name_to_aggregator_id[$aggregator_name]));

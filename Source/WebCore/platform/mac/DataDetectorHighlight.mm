@@ -35,7 +35,6 @@
 #import "GraphicsLayer.h"
 #import "GraphicsLayerFactory.h"
 #import "ImageBuffer.h"
-#import "Page.h"
 #import <wtf/Seconds.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
@@ -44,30 +43,37 @@ namespace WebCore {
 constexpr Seconds highlightFadeAnimationDuration = 300_ms;
 constexpr double highlightFadeAnimationFrameRate = 30;
 
-Ref<DataDetectorHighlight> DataDetectorHighlight::createForSelection(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForSelection(DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
-    return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::Selection, WTFMove(ddHighlight), WTFMove(range)));
+    return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::Selection, WTFMove(ddHighlight), { WTFMove(range) }));
 }
 
-Ref<DataDetectorHighlight> DataDetectorHighlight::createForTelephoneNumber(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForTelephoneNumber(DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
-    return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::TelephoneNumber, WTFMove(ddHighlight), WTFMove(range)));
+    return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::TelephoneNumber, WTFMove(ddHighlight), { WTFMove(range) }));
 }
 
-Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(Page& page, DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForImageOverlay(DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
 {
-    return adoptRef(*new DataDetectorHighlight(page, client, DataDetectorHighlight::Type::ImageOverlay, WTFMove(ddHighlight), WTFMove(range)));
+    return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::ImageOverlay, WTFMove(ddHighlight), { WTFMove(range) }));
 }
 
-DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, SimpleRange&& range)
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+Ref<DataDetectorHighlight> DataDetectorHighlight::createForPDFSelection(DataDetectorHighlightClient& client, RetainPtr<DDHighlightRef>&& ddHighlight)
+{
+    return adoptRef(*new DataDetectorHighlight(client, DataDetectorHighlight::Type::PDFSelection, WTFMove(ddHighlight), { }));
+}
+#endif
+
+DataDetectorHighlight::DataDetectorHighlight(DataDetectorHighlightClient& client, Type type, RetainPtr<DDHighlightRef>&& ddHighlight, std::optional<SimpleRange>&& range)
     : m_client(client)
-    , m_page(page)
     , m_range(WTFMove(range))
-    , m_graphicsLayer(GraphicsLayer::create(page.chrome().client().graphicsLayerFactory(), *this))
+    , m_graphicsLayer(client.createGraphicsLayer(*this).releaseNonNull())
     , m_type(type)
     , m_fadeAnimationTimer(*this, &DataDetectorHighlight::fadeAnimationTimerFired)
 {
     ASSERT(ddHighlight);
+    ASSERT(isRangeSupportingType() == m_range.has_value());
 
     m_graphicsLayer->setDrawsContent(true);
 
@@ -106,15 +112,14 @@ void DataDetectorHighlight::invalidate()
     m_fadeAnimationTimer.stop();
     layer().removeFromParent();
     m_client = nullptr;
-    m_page = nullptr;
 }
 
 void DataDetectorHighlight::notifyFlushRequired(const GraphicsLayer*)
 {
-    if (!m_page)
+    if (!m_client)
         return;
 
-    m_page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+    m_client->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
 void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
@@ -145,10 +150,31 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 float DataDetectorHighlight::deviceScaleFactor() const
 {
-    if (!m_page)
+    if (!m_client)
         return 1;
 
-    return m_page->deviceScaleFactor();
+    return m_client->deviceScaleFactor();
+}
+
+bool DataDetectorHighlight::isRangeSupportingType() const
+{
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+    static constexpr OptionSet rangeSupportingHighlightTypes {
+        DataDetectorHighlight::Type::TelephoneNumber,
+        DataDetectorHighlight::Type::Selection,
+        DataDetectorHighlight::Type::ImageOverlay,
+    };
+
+    return rangeSupportingHighlightTypes.contains(m_type);
+#endif
+    return true;
+}
+
+const SimpleRange& DataDetectorHighlight::range() const
+{
+    ASSERT(isRangeSupportingType());
+
+    return *m_range;
 }
 
 void DataDetectorHighlight::fadeAnimationTimerFired()
@@ -213,7 +239,10 @@ bool areEquivalent(const DataDetectorHighlight* a, const DataDetectorHighlight* 
     if (!a || !b)
         return false;
 
-    return a->type() == b->type() && a->range() == b->range();
+    if (a->type() != b->type())
+        return false;
+
+    return !a->isRangeSupportingType() || a->range() == b->range();
 }
 
 } // namespace WebCore

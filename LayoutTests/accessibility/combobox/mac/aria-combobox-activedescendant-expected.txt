@@ -1,0 +1,11 @@
+On macOS, a combobox should map aria-activedescendant to AXSelectedChildren.
+PASS: combobox.selectedChildrenCount === 1
+PASS: activeDescendant.role === 'AXRole: AXGroup'
+PASS: activeDescendant.title === 'AXTitle: item2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+item1
+item2

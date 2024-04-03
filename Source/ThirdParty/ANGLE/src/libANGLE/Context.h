@@ -905,6 +905,8 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
                                             GLsizei height,
                                             MultisamplingMode mode);
 
+    void onUniformBlockBindingUpdated(GLuint uniformBlockIndex);
+
     State mState;
     bool mShared;
     bool mDisplayTextureShareGroup;

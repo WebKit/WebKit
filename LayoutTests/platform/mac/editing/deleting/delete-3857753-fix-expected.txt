@@ -21,14 +21,14 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 26x28
           RenderText {#text} at (0,0) size 26x28
             text run at (0,0) width 26: "on"
-        RenderInline {I} at (0,0) size 13x28
+        RenderInline {I} at (25,0) size 13x28
           RenderText {#text} at (25,0) size 13x28
             text run at (25,0) width 13: "o"
       RenderBlock {DIV} at (14,42) size 756x28
         RenderInline {B} at (0,0) size 53x28
           RenderText {#text} at (0,0) size 53x28
             text run at (0,0) width 53: "three"
-        RenderInline {I} at (0,0) size 41x28
+        RenderInline {I} at (52,0) size 41x28
           RenderText {#text} at (52,0) size 41x28
             text run at (52,0) width 41: "four"
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of body

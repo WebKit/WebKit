@@ -167,12 +167,12 @@ void JSTestIterable::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestIterableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestIterablePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestIterable::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestIterable::getConstructor(vm, prototype->globalObject()));
 }
 
 struct TestIterableIteratorTraits {
@@ -298,7 +298,7 @@ void JSTestIterableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     auto* jsTestIterable = static_cast<JSTestIterable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestIterable->wrapped(), jsTestIterable);
+    uncacheWrapper(world, jsTestIterable->protectedWrapped().ptr(), jsTestIterable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

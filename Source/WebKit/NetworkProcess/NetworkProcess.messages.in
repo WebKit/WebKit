@@ -49,13 +49,13 @@ messages -> NetworkProcess LegacyReceiver {
     WebsiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, OptionSet<WebKit::WebsiteDataType> websiteDataType) -> (String directory)
 
     DownloadRequest(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedFilename)
-    ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle, enum:bool WebKit::CallDownloadDidStart callDownloadDidStart)
-    CancelDownload(WebKit::DownloadID downloadID) -> (IPC::DataReference resumeData)
+    ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, std::span<const uint8_t> resumeData, String path, WebKit::SandboxExtensionHandle sandboxExtensionHandle, enum:bool WebKit::CallDownloadDidStart callDownloadDidStart)
+    CancelDownload(WebKit::DownloadID downloadID) -> (std::span<const uint8_t> resumeData)
 #if PLATFORM(COCOA)
-    PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtensionHandle sandboxExtensionHandle)
 #endif
     DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier)
-    CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID)
+    CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID) -> ()
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 
@@ -131,8 +131,8 @@ messages -> NetworkProcess LegacyReceiver {
     SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedToDomain) -> ()
     SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedFromDomain) -> ()
     ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID) -> ()
-    DidCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID)
-    SetCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain) -> ()
+    DidCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, enum:bool WebKit::DidFilterKnownLinkDecoration didFilterKnownLinkDecoration)
+    SetCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, enum:bool WebKit::DidFilterKnownLinkDecoration didFilterKnownLinkDecoration) -> ()
     ResetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID) -> ()
     GrantStorageAccessForTesting(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> ()
     DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> ()
@@ -155,6 +155,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 
     SetBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID sessionID, bool enabled)
+    SetShouldSendPrivateTokenIPCForTesting(PAL::SessionID sessionID, bool enabled)
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
 

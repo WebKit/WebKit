@@ -10,6 +10,7 @@
 
 #include "libANGLE/CLDevice.h"
 #include "libANGLE/CLKernel.h"
+#include "libANGLE/cl_utils.h"
 #include "libANGLE/renderer/CLProgramImpl.h"
 
 #include "common/Spinlock.h"
@@ -61,6 +62,7 @@ class Program final : public _cl_program, public Object
     Context &getContext();
     const Context &getContext() const;
     const DevicePtrs &getDevices() const;
+    const std::string &getSource() const;
     bool hasDevice(const _cl_device_id *device) const;
 
     bool isBuilding() const;
@@ -123,6 +125,11 @@ inline const DevicePtrs &Program::getDevices() const
     return mDevices;
 }
 
+inline const std::string &Program::getSource() const
+{
+    return mSource;
+}
+
 inline bool Program::hasDevice(const _cl_device_id *device) const
 {
     return std::find(mDevices.cbegin(), mDevices.cend(), device) != mDevices.cend();
@@ -130,7 +137,17 @@ inline bool Program::hasDevice(const _cl_device_id *device) const
 
 inline bool Program::isBuilding() const
 {
-    return mCallback->first != nullptr;
+    for (const DevicePtr &device : getDevices())
+    {
+        cl_build_status buildStatus;
+        ANGLE_CL_IMPL_TRY(getBuildInfo(device->getNative(), ProgramBuildInfo::Status,
+                                       sizeof(cl_build_status), &buildStatus, nullptr));
+        if ((mCallback->first != nullptr) || (buildStatus == CL_BUILD_IN_PROGRESS))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 inline bool Program::hasAttachedKernels() const

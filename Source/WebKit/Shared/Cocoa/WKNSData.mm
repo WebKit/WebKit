@@ -51,7 +51,7 @@
 
 - (const void*)bytes
 {
-    return _data->bytes();
+    return _data->span().data();
 }
 
 #pragma mark NSCopying protocol implementation

@@ -10,7 +10,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/adwaita/ScrollbarThemeAdwaita.h
     platform/adwaita/ThemeAdwaita.h
 
-    rendering/RenderThemeAdwaita.h
+    rendering/adwaita/RenderThemeAdwaita.h
 )
 
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
@@ -31,7 +31,7 @@ else ()
     )
 endif ()
 
-set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/RenderThemeAdwaita.cpp)
+set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/adwaita/RenderThemeAdwaita.cpp)
 
 set(ModernMediaControlsImageFiles
     ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/EnterFullscreen.svg

@@ -1,0 +1,20 @@
+{
+    "name": "todomvc-javascript-es5-complex",
+    "version": "1.0.0",
+    "description": "TodoMVC app written with JavaScript es5 features.",
+    "engines": {
+        "node": ">=18.13.0",
+        "npm": ">=8.19.3"
+    },
+    "private": true,
+    "scripts": {
+        "dev": "http-server ./ -p 7001 -c-1 --cors",
+        "build": "node scripts/build.js",
+        "serve": "http-server ./dist -p 7002 -c-1 --cors"
+    },
+    "devDependencies": {
+        "big-dom-generator": "file:../../big-dom-generator",
+        "http-server": "^14.1.1",
+        "todomvc-javascript-es5": "file:../javascript-es5"
+    }
+}

@@ -149,6 +149,8 @@ public:
     void displayAndTrackRepaints();
     void displayOnLoadFinish() { m_displayOnLoadFinish = true; }
     bool shouldDisplayOnLoadFinish() { return m_displayOnLoadFinish; }
+    void dontForceRepaint() { m_forceRepaint = false; }
+    bool shouldForceRepaint() { return m_forceRepaint; }
 
     // UserContent testing.
     void addUserScript(JSStringRef source, bool runAtStart, bool allFrames);
@@ -164,15 +166,6 @@ public:
     void setDatabaseQuota(uint64_t);
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
     void syncLocalStorage();
-
-    // Application Cache
-    void clearAllApplicationCaches();
-    void clearApplicationCacheForOrigin(JSStringRef origin);
-    void setAppCacheMaximumSize(uint64_t);
-    long long applicationCacheDiskUsageForOrigin(JSStringRef origin);
-    void disallowIncreaseForApplicationCacheQuota();
-    bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
-    JSValueRef originsWithApplicationCache();
 
     void clearDOMCache(JSStringRef origin);
     void clearDOMCaches();
@@ -458,7 +451,7 @@ public:
     void setStatisticsSubresourceUniqueRedirectFrom(JSStringRef hostName, JSStringRef hostNameRedirectedFrom);
     void setStatisticsTopFrameUniqueRedirectTo(JSStringRef hostName, JSStringRef hostNameRedirectedTo);
     void setStatisticsTopFrameUniqueRedirectFrom(JSStringRef hostName, JSStringRef hostNameRedirectedFrom);
-    void setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost);
+    void setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost, bool wasFiltered);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsTimeAdvanceForTesting(double);
@@ -505,6 +498,7 @@ public:
     // Storage Access API
     void getAllStorageAccessEntries(JSValueRef callback);
     void callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& domains);
+    void setRequestStorageAccessThrowsExceptionUntilReload(bool enabled);
 
     // Open panel
     void setOpenPanelFiles(JSValueRef);
@@ -636,10 +630,10 @@ private:
     bool m_dumpApplicationCacheDelegateCallbacks { false };
     bool m_dumpDatabaseCallbacks { false };
 
-    bool m_disallowIncreaseForApplicationCacheQuota { false };
     bool m_testRepaint { false };
     bool m_testRepaintSweepHorizontally { false };
     bool m_displayOnLoadFinish { false };
+    bool m_forceRepaint { true };
     bool m_isPrinting { false };
     bool m_willSendRequestReturnsNull { false };
     bool m_willSendRequestReturnsNullOnRedirect { false };

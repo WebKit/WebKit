@@ -62,8 +62,8 @@ static bool dispatchToContextThreadIfNecessary(const ServiceWorkerOrClientIdenti
 
 Ref<SWClientConnection> SWClientConnection::fromScriptExecutionContext(ScriptExecutionContext& context)
 {
-    if (is<WorkerGlobalScope>(context))
-        return static_cast<SWClientConnection&>(downcast<WorkerGlobalScope>(context).swClientConnection());
+    if (auto* worker = dynamicDowncast<WorkerGlobalScope>(context))
+        return static_cast<SWClientConnection&>(worker->swClientConnection());
 
     return ServiceWorkerProvider::singleton().serviceWorkerConnection();
 }

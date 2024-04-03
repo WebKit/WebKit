@@ -2,7 +2,8 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +33,6 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
-#include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <wtf/IsoMallocInlines.h>
@@ -41,11 +41,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MouseEvent);
 
-using namespace JSC;
-
 Ref<MouseEvent> MouseEvent::create(const AtomString& type, const MouseEventInit& initializer)
 {
-    return adoptRef(*new MouseEvent(type, initializer));
+    return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, initializer));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowProxy>&& view, const PlatformMouseEvent& event, int detail, Node* relatedTarget)
@@ -65,7 +63,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& type, CanBubble canBubble, 
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
 {
-    return adoptRef(*new MouseEvent(type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
+    return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, type, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail,
         screenLocation, windowLocation, movementX, movementY, modifiers, button, buttons, relatedTarget, force, syntheticClickType, isSimulated, isTrusted));
 }
 
@@ -73,16 +71,25 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBub
     int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
 {
-    return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, 0, 0, modifiers, button, buttons, syntheticClickType, relatedTarget));
+    return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent, eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, 0, 0, modifiers, button, buttons, syntheticClickType, relatedTarget));
 }
 
-MouseEvent::MouseEvent() = default;
 
-MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+Ref<MouseEvent> MouseEvent::createForBindings()
+{
+    return adoptRef(*new MouseEvent(EventInterfaceType::MouseEvent));
+}
+
+MouseEvent::MouseEvent(enum EventInterfaceType eventInterface)
+    : MouseRelatedEvent(eventInterface)
+{
+}
+
+MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     MonotonicTime timestamp, RefPtr<WindowProxy>&& view, int detail,
     const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons,
     EventTarget* relatedTarget, double force, SyntheticClickType syntheticClickType, IsSimulated isSimulated, IsTrusted isTrusted)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
+    : MouseRelatedEvent(eventInterface, eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, screenLocation, windowLocation, movementX, movementY, modifiers, isSimulated, isTrusted)
     , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
@@ -92,10 +99,10 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
 {
 }
 
-MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
+MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
     RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, double movementX, double movementY,
     OptionSet<Modifier> modifiers, MouseButton button, unsigned short buttons, SyntheticClickType syntheticClickType, EventTarget* relatedTarget)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementX, movementY, modifiers, IsSimulated::No)
+    : MouseRelatedEvent(eventInterface, eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementX, movementY, modifiers, IsSimulated::No)
     , m_button(enumToUnderlyingType(button == MouseButton::None ? MouseButton::Left : button))
     , m_buttons(buttons)
     , m_syntheticClickType(button == MouseButton::None ? SyntheticClickType::NoTap : syntheticClickType)
@@ -105,8 +112,8 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
     initCoordinates(clientLocation);
 }
 
-MouseEvent::MouseEvent(const AtomString& eventType, const MouseEventInit& initializer)
-    : MouseRelatedEvent(eventType, initializer)
+MouseEvent::MouseEvent(enum EventInterfaceType eventInterface, const AtomString& eventType, const MouseEventInit& initializer)
+    : MouseRelatedEvent(eventInterface, eventType, initializer)
     , m_button(initializer.button == enumToUnderlyingType(MouseButton::None) ? enumToUnderlyingType(MouseButton::Left) : initializer.button)
     , m_buttons(initializer.buttons)
     , m_buttonDown(initializer.button != enumToUnderlyingType(MouseButton::None))
@@ -137,41 +144,6 @@ void MouseEvent::initMouseEvent(const AtomString& type, bool canBubble, bool can
     setIsSimulated(false);
 }
 
-// FIXME: We need this quirk because iAd Producer is calling this function with a relatedTarget that is not an EventTarget (rdar://problem/30640101).
-// We should remove this quirk when possible.
-void MouseEvent::initMouseEventQuirk(JSGlobalObject& state, ScriptExecutionContext& scriptExecutionContext, const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, int16_t button, JSValue relatedTargetValue)
-{
-    RefPtr<EventTarget> relatedTarget;
-#if PLATFORM(MAC)
-    // Impacts iBooks too because of widgets generated by iAd Producer (rdar://problem/30797958).
-    if (MacApplication::isIAdProducer() || CocoaApplication::isIBooks()) {
-        // jsEventTargetCast() does not throw and will silently convert bad input to nullptr.
-        Ref vm = state.vm();
-        auto jsRelatedTarget = jsEventTargetCast(vm, relatedTargetValue);
-        if (jsRelatedTarget.isNull() && !relatedTargetValue.isUndefinedOrNull())
-            scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Calling initMouseEvent() with a relatedTarget that is not an EventTarget is deprecated."_s);
-        relatedTarget = jsRelatedTarget.isNull() ? nullptr : &jsRelatedTarget.wrapped();
-    } else {
-#else
-    UNUSED_PARAM(scriptExecutionContext);
-#endif
-        // This is what the bindings generator would have produced.
-        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
-        relatedTarget = convert<IDLNullable<IDLInterface<EventTarget>>>(state, relatedTargetValue, [](JSGlobalObject& state, ThrowScope& scope) {
-            throwArgumentTypeError(state, scope, 14, "relatedTarget", "MouseEvent", "initMouseEvent", "EventTarget");
-        });
-        RETURN_IF_EXCEPTION(throwScope, void());
-#if PLATFORM(MAC)
-    }
-#endif
-    initMouseEvent(type, canBubble, cancelable, WTFMove(view), detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget.get());
-}
-
-EventInterface MouseEvent::eventInterface() const
-{
-    return MouseEventInterfaceType;
-}
-
 bool MouseEvent::isMouseEvent() const
 {
     return true;
@@ -194,14 +166,14 @@ MouseButton MouseEvent::button() const
     return isKnownButton ? static_cast<MouseButton>(m_button) : MouseButton::Other;
 }
 
-int MouseEvent::which() const
+unsigned MouseEvent::which() const
 {
     // For the DOM, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively.
     // So we must add 1.
     if (!m_buttonDown)
         return 0;
-    return m_button + 1;
+    return static_cast<unsigned>(m_button + 1);
 }
 
 RefPtr<Node> MouseEvent::toElement() const

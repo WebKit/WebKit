@@ -49,9 +49,9 @@ static bool canCoalesceChallenge(const WebCore::AuthenticationChallenge& challen
     return challenge.protectionSpace().authenticationScheme() != ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested;
 }
 
-const char* AuthenticationManager::supplementName()
+ASCIILiteral AuthenticationManager::supplementName()
 {
-    return "AuthenticationManager";
+    return "AuthenticationManager"_s;
 }
 
 AuthenticationManager::AuthenticationManager(NetworkProcess& process)

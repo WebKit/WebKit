@@ -1,0 +1,586 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+onload = async () => {
+  try {
+let adapter0 = await navigator.gpu.requestAdapter(
+{
+}
+);
+let adapter1 = await navigator.gpu.requestAdapter(
+{
+powerPreference: 'low-power',
+}
+);
+let device0 = await adapter0.requestDevice(
+{
+label: 'a',
+requiredFeatures: [
+'depth-clip-control',
+'texture-compression-etc2',
+'texture-compression-astc',
+'indirect-first-instance',
+'shader-f16',
+'rg11b10ufloat-renderable',
+'bgra8unorm-storage'
+],
+requiredLimits: {
+maxTextureDimension3D: 2048,
+minStorageBufferOffsetAlignment: Math.max(adapter0.limits.minStorageBufferOffsetAlignment, 64),
+minUniformBufferOffsetAlignment: Math.max(adapter0.limits.minUniformBufferOffsetAlignment, 128),
+maxComputeWorkgroupStorageSize: 16384 + Math.floor((adapter0.limits.maxComputeWorkgroupStorageSize - 16384) * 0.35),
+maxTextureArrayLayers: 256 + Math.floor((adapter0.limits.maxTextureArrayLayers - 256) * 0.30),
+maxStorageBuffersPerShaderStage: 8 + Math.floor((adapter0.limits.maxStorageBuffersPerShaderStage - 8) * 0.53),
+maxInterStageShaderComponents: 60 + Math.floor((adapter0.limits.maxInterStageShaderComponents - 60) * 0.16),
+maxSamplersPerShaderStage: 16 + Math.floor((adapter0.limits.maxSamplersPerShaderStage - 16) * 0.91),
+maxBufferSize: 268435456 + Math.floor((adapter0.limits.maxBufferSize - 268435456) * 0.48),
+maxBindGroups: 4 + Math.floor((adapter0.limits.maxBindGroups - 4) * 0.58),
+maxUniformBufferBindingSize: 65536 + Math.floor((adapter0.limits.maxUniformBufferBindingSize - 65536) * 0.90),
+maxInterStageShaderVariables: 16 + Math.floor((adapter0.limits.maxInterStageShaderVariables - 16) * 0.47)
+},
+}
+);
+let promise0 = (await navigator.gpu.requestAdapter(
+{
+}
+)).requestDevice(
+{
+label: 'a',
+requiredLimits: {
+minUniformBufferOffsetAlignment: Math.max(adapter0.limits.minUniformBufferOffsetAlignment, 32),
+maxStorageTexturesPerShaderStage: 4 + Math.floor((adapter0.limits.maxStorageTexturesPerShaderStage - 4) * 0.76),
+maxComputeWorkgroupStorageSize: 16384 + Math.floor((adapter0.limits.maxComputeWorkgroupStorageSize - 16384) * 0.88),
+maxTextureDimension1D: 8192 + Math.floor((adapter0.limits.maxTextureDimension1D - 8192) * 0.74),
+maxStorageBuffersPerShaderStage: 8 + Math.floor((adapter0.limits.maxStorageBuffersPerShaderStage - 8) * 0.13),
+maxInterStageShaderComponents: 60 + Math.floor((adapter0.limits.maxInterStageShaderComponents - 60) * 0.24),
+maxComputeInvocationsPerWorkgroup: 256 + Math.floor((adapter0.limits.maxComputeInvocationsPerWorkgroup - 256) * 0.72),
+maxVertexAttributes: 16 + Math.floor((adapter0.limits.maxVertexAttributes - 16) * 0.97),
+maxInterStageShaderVariables: 16 + Math.floor((adapter0.limits.maxInterStageShaderVariables - 16) * 0.91)
+},
+}
+);
+let canvas0 = document.createElement('canvas');
+let buffer0 = device0.createBuffer(
+{
+label: 'a',
+size: 6547104,
+usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM,
+mappedAtCreation: true,
+}
+);
+
+try {
+await adapter0.requestAdapterInfo(
+[
+`a`
+]
+);
+} catch {}
+
+let pipelineLayout0 = device0.createPipelineLayout(
+{
+label: 'a',
+bindGroupLayouts: [
+],
+}
+);
+try {
+await device0.popErrorScope();
+} catch {}
+try {
+buffer0.destroy();
+} catch {}
+let shaderModule0 = device0.createShaderModule(
+{
+label: 'a',
+code: `@group(1) @binding(3501)
+var<storage, read_write> function0: array<u32>;
+@group(0) @binding(3692)
+var<storage, read_write> global0: array<u32>;
+@group(1) @binding(3724)
+var<storage, read_write> global1: array<u32>;
+@group(1) @binding(3501)
+var<storage, read_write> local0: array<u32>;
+@group(0) @binding(4640)
+var<storage, read_write> local1: array<u32>;
+@group(0) @binding(3501)
+var<storage, read_write> __ArgumentBufferT_0: array<u32>;
+@group(1) @binding(3501)
+var<storage, read_write> function1: array<u32>;
+@group(0) @binding(3724)
+var<storage, read_write> local2: array<u32>;
+@group(0) @binding(1229)
+var<storage, read_write> global2: array<u32>;
+@group(1) @binding(4640)
+var<storage, read_write> function2: array<u32>;
+@compute @workgroup_size(7, 2, 2)
+fn main(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+  var x: u32 = 0;
+  loop {
+    local1[x] = global_id.x;
+    x += 1;
+    global0[global_id.y-global_id.x] = function2[x];
+    if (x > 2 * arrayLength(&local1)) {
+      break;
+    }
+  }
+}
+@compute @workgroup_size(7, 1, 2)
+fn main2(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_invocation_id) local_id : vec3<u32>) {
+  global1[global_id.x*local_id.x] = u32(function1[global_id.x*local_id.x]);
+}`,
+sourceMap: {},
+hints: {},
+}
+);
+let querySet0 = device0.createQuerySet(
+{
+label: 'a',
+type: 'occlusion',
+count: 2042616,
+}
+);
+let texture0 = device0.createTexture(
+{
+label: 'a',
+size: [
+1154,
+1414,
+8732
+],
+sampleCount: 4,
+dimension: '1d',
+format: 'rg16sint',
+usage: 0,
+viewFormats: [
+'rgb9e5ufloat',
+'rgb9e5ufloat',
+'r32uint',
+'astc-10x8-unorm-srgb'
+],
+}
+);
+try {
+buffer0.destroy();
+} catch {}
+let promise2 = device0.queue.onSubmittedWorkDone();
+try {
+await promise2;
+} catch {}
+let bindGroupLayout1 = device0.createBindGroupLayout(
+{
+label: 'a',
+entries: [
+
+],
+}
+);
+let commandBuffer0 = device0.createCommandEncoder().finish(
+{
+label: 'a',
+}
+);
+try {
+await device0.queue.onSubmittedWorkDone();
+} catch {}
+let promise3 = adapter1.requestAdapterInfo(
+[
+`a`,
+`a`
+]
+);
+try {
+buffer0.unmap();
+} catch {}
+try {
+await buffer0.mapAsync(
+GPUMapMode.READ,
+4983728,
+7344136
+);
+} catch {}
+try {
+await device0.queue.onSubmittedWorkDone();
+} catch {}
+let canvas1 = document.createElement('canvas');
+try {
+await adapter1.requestAdapterInfo(
+[
+`a`
+]
+);
+} catch {}
+try {
+buffer0.unmap();
+} catch {}
+let sampler0 = device0.createSampler(
+{
+addressModeU: 'clamp-to-edge',
+addressModeV: 'clamp-to-edge',
+addressModeW: 'mirror-repeat',
+magFilter: 'linear',
+minFilter: 'linear',
+mipmapFilter: 'linear',
+}
+);
+let videoFrame2 = new VideoFrame(await createImageBitmap(canvas0), {timestamp: 0});
+let externalTexture1 = device0.importExternalTexture(
+{
+label: 'a',
+source: videoFrame2,
+colorSpace: 'srgb',
+}
+);
+
+
+try {
+await promise3;
+} catch {}
+let buffer1 = device0.createBuffer(
+{
+label: 'a',
+size: 1513848,
+usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.UNIFORM | GPUBufferUsage.INDIRECT | GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE | GPUBufferUsage.QUERY_RESOLVE,
+mappedAtCreation: true,
+}
+);
+let texture1 = device0.createTexture(
+{
+label: 'a',
+size: [
+6196,
+674
+],
+mipLevelCount: 1,
+format: 'r8uint',
+usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING,
+viewFormats: [
+'rgba32uint',
+'r8snorm'
+],
+}
+);
+let textureView0 = texture1.createView(
+{
+label: 'a',
+format: 'r16sint',
+dimension: '3d',
+aspect: 'all',
+mipLevelCount: 14,
+baseArrayLayer: 2713,
+arrayLayerCount: 7028,
+}
+);
+try {
+device0.queue.writeBuffer(
+buffer1,
+2370504,
+new ArrayBuffer(3444368),
+4797680,
+1966912
+);
+} catch {}
+let device2 = await (await navigator.gpu.requestAdapter(
+{
+}
+)).requestDevice(
+{
+label: 'a',
+requiredFeatures: [
+'depth32float-stencil8',
+'texture-compression-astc',
+'shader-f16',
+'rg11b10ufloat-renderable',
+'bgra8unorm-storage'
+],
+requiredLimits: {
+minStorageBufferOffsetAlignment: Math.max(adapter0.limits.minStorageBufferOffsetAlignment, 128),
+maxDynamicStorageBuffersPerPipelineLayout: 4 + Math.floor((adapter0.limits.maxDynamicStorageBuffersPerPipelineLayout - 4) * 0.32),
+maxStorageTexturesPerShaderStage: 4 + Math.floor((adapter0.limits.maxStorageTexturesPerShaderStage - 4) * 0.60),
+maxBindingsPerBindGroup: 1000 + Math.floor((adapter0.limits.maxBindingsPerBindGroup - 1000) * 0.59),
+maxTextureDimension1D: 8192 + Math.floor((adapter0.limits.maxTextureDimension1D - 8192) * 0.64),
+maxSamplersPerShaderStage: 16 + Math.floor((adapter0.limits.maxSamplersPerShaderStage - 16) * 0.78),
+maxComputeInvocationsPerWorkgroup: 256 + Math.floor((adapter0.limits.maxComputeInvocationsPerWorkgroup - 256) * 0.59),
+maxSampledTexturesPerShaderStage: 16 + Math.floor((adapter0.limits.maxSampledTexturesPerShaderStage - 16) * 0.20),
+maxUniformBufferBindingSize: 65536 + Math.floor((adapter0.limits.maxUniformBufferBindingSize - 65536) * 0.75),
+maxVertexBufferArrayStride: 2048 + Math.floor((adapter0.limits.maxVertexBufferArrayStride - 2048) * 0.59),
+maxColorAttachmentBytesPerSample: 32 + Math.floor((adapter0.limits.maxColorAttachmentBytesPerSample - 32) * 0.61)
+},
+}
+);
+
+let imageData0 = new ImageData(56, 248);
+try {
+await adapter0.requestAdapterInfo();
+} catch {}
+let gpuCanvasContext0 = canvas1.getContext('webgpu');
+let adapter2 = await navigator.gpu.requestAdapter();
+let querySet1 = device2.createQuerySet(
+{
+label: 'a',
+type: 'occlusion',
+count: 7241832,
+}
+);
+let promise4 = navigator.gpu.requestAdapter(
+{
+powerPreference: 'high-performance',
+}
+);
+try {
+await device2.popErrorScope();
+} catch {}
+try {
+device2.queue.writeBuffer(
+device2.createBuffer(
+{
+label: 'a',
+size: 2962296,
+usage: GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.UNIFORM | GPUBufferUsage.STORAGE,
+mappedAtCreation: true,
+}
+),
+5406120,
+new ArrayBuffer(1887464),
+2768104,
+5570864
+);
+} catch {}
+let buffer2 = device2.createBuffer(
+{
+size: 807896,
+usage: 0,
+mappedAtCreation: true,
+}
+);
+let commandEncoder0 = device0.createCommandEncoder();
+let commandBuffer1 = commandEncoder0.finish(
+{
+label: 'a',
+}
+);
+try {
+commandEncoder0.copyTextureToBuffer(
+{
+texture: device0.createTexture(
+{
+label: 'a',
+size: {
+width: 9165,
+height: 1008,
+depthOrArrayLayers: 1,
+},
+sampleCount: 4,
+dimension: '1d',
+format: 'depth32float',
+usage: 0,
+viewFormats: [
+'rg11b10ufloat',
+'depth16unorm',
+'rg16float',
+'etc2-rgb8unorm'
+],
+}
+),
+mipLevel: 4610,
+origin: {
+z: 1114,
+},
+aspect: 'stencil-only',
+},
+{
+offset: 6716024,
+bytesPerRow: 372112,
+rowsPerImage: 7915688,
+buffer: buffer0,
+},
+{
+width: 4383,
+height: 6088,
+depthOrArrayLayers: 1,
+}
+);
+} catch {}
+
+try {
+device2.queue.submit(
+[
+device2.createCommandEncoder().finish(
+{
+label: 'a',
+}
+),
+device2.createCommandEncoder().finish(
+{
+label: 'a',
+}
+)
+]
+);
+} catch {}
+try {
+device2.queue.copyExternalImageToTexture(
+{
+source: await createImageBitmap(canvas1),
+origin: [
+3564,
+2967
+],
+},
+{
+texture: device2.createTexture(
+{
+label: 'a',
+size: [
+918,
+1596,
+8526
+],
+sampleCount: 1,
+dimension: '3d',
+format: 'rgba32uint',
+usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+viewFormats: [
+'bgra8unorm-srgb'
+],
+}
+),
+mipLevel: 7892,
+aspect: 'all',
+colorSpace: 'srgb',
+premultipliedAlpha: true,
+},
+{
+width: 2097,
+height: 4854,
+depthOrArrayLayers: 7849,
+}
+);
+} catch {}
+let videoFrame0 = new VideoFrame(await createImageBitmap(canvas1), {timestamp: 0});
+let commandEncoder1 = device2.createCommandEncoder(
+{
+}
+);
+
+try {
+buffer2.unmap();
+} catch {}
+try {
+await buffer2.mapAsync(
+GPUMapMode.WRITE,
+2028160,
+728304
+);
+} catch {}
+try {
+commandEncoder1.copyTextureToTexture(
+{
+texture: device2.createTexture(
+{
+label: 'a',
+size: {
+width: 2966,
+height: 280,
+depthOrArrayLayers: 5918,
+},
+mipLevelCount: 3,
+dimension: '3d',
+format: 'depth16unorm',
+usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+viewFormats: [
+'depth24plus',
+'rgba8unorm-srgb',
+'rgba8uint',
+'rgba8uint',
+'astc-6x5-unorm-srgb'
+],
+}
+),
+mipLevel: 7590,
+origin: [
+3119,
+4919,
+427,
+7767
+],
+aspect: 'all',
+},
+{
+texture: device2.createTexture(
+{
+label: 'a',
+size: [
+9996,
+1526
+],
+mipLevelCount: 3,
+sampleCount: 4,
+dimension: '3d',
+format: 'rgba8unorm',
+usage: 0,
+viewFormats: [
+'r8sint',
+'astc-10x5-unorm',
+'astc-4x4-unorm-srgb'
+],
+}
+),
+mipLevel: 1489,
+origin: [
+9631,
+8238,
+4082
+],
+aspect: 'all',
+},
+[
+1988,
+9838,
+1297
+]
+);
+} catch {}
+try {
+commandEncoder1.insertDebugMarker(
+'a'
+);
+} catch {}
+
+try {
+await device2.popErrorScope();
+} catch {}
+try {
+await adapter2.requestAdapterInfo(
+[
+`a`
+]
+);
+} catch {}
+let adapter5 = await promise4;
+
+try {
+commandEncoder0.copyBufferToBuffer(
+buffer1,
+7618736,
+buffer0,
+5542400,
+4142936
+);
+} catch {}
+try {
+device0.queue.writeBuffer(
+buffer0,
+1903640,
+new ArrayBuffer(3659080)
+);
+} catch {}
+try { videoFrame0.close(); } catch {}
+try { videoFrame2.close(); } catch {}
+  } catch { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

@@ -37,7 +37,9 @@
 #include "CommonAtomStrings.h"
 #include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
+#include "Document.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -79,6 +81,7 @@
 #include "NodeTraversal.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
@@ -420,7 +423,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
         }
         return;
     case AttributeNames::popoverAttr:
-        if (document().settings().popoverAttributeEnabled() && !document().quirks().shouldDisablePopoverAttributeQuirk())
+        if (document().settings().popoverAttributeEnabled())
             popoverAttributeChanged(newValue);
         return;
     case AttributeNames::spellcheckAttr: {
@@ -728,6 +731,16 @@ void HTMLElement::setSpellcheck(bool enable)
     setAttributeWithoutSynchronization(spellcheckAttr, enable ? trueAtom() : falseAtom());
 }
 
+bool HTMLElement::writingsuggestions() const
+{
+    return isWritingSuggestionsEnabled();
+}
+
+void HTMLElement::setWritingsuggestions(bool enable)
+{
+    setAttributeWithoutSynchronization(writingsuggestionsAttr, enable ? trueAtom() : falseAtom());
+}
+
 void HTMLElement::effectiveSpellcheckAttributeChanged(bool newValue)
 {
     for (auto it = descendantsOfType<HTMLElement>(*this).begin(); it;) {
@@ -806,16 +819,6 @@ bool HTMLElement::translate() const
 void HTMLElement::setTranslate(bool enable)
 {
     setAttributeWithoutSynchronization(translateAttr, enable ? "yes"_s : "no"_s);
-}
-
-bool HTMLElement::rendererIsEverNeeded()
-{
-    if (hasTagName(noembedTag)) {
-        RefPtr frame { document().frame() };
-        if (frame && frame->arePluginsEnabled())
-            return false;
-    }
-    return StyledElement::rendererIsEverNeeded();
 }
 
 FormAssociatedElement* HTMLElement::asFormAssociatedElement()
@@ -1450,10 +1453,8 @@ ExceptionOr<void> HTMLElement::showPopover(const HTMLFormControlElement* invoker
 
     queuePopoverToggleEventTask(PopoverVisibilityState::Hidden, PopoverVisibilityState::Showing);
 
-#if ENABLE(ACCESSIBILITY)
     if (CheckedPtr cache = document->existingAXObjectCache())
         cache->onPopoverToggle(*this);
-#endif
 
     return { };
 }
@@ -1473,8 +1474,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         fireEvents = FireEvents::No;
 
     if (popoverState() == PopoverState::Auto) {
-        // Unable to protect the document as it may have started destruction.
-        document().hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
+        RefAllowingPartiallyDestroyed<Document> { document() }->hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
 
         check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
         if (check.hasException())
@@ -1513,10 +1513,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         popoverData()->setPreviouslyFocusedElement(nullptr);
     }
 
-#if ENABLE(ACCESSIBILITY)
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->onPopoverToggle(*this);
-#endif
 
     return { };
 }
@@ -1573,6 +1571,36 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
         clearPopoverData();
     else
         ensurePopoverData().setPopoverState(newPopoverState);
+}
+
+constexpr ASCIILiteral togglePopoverLiteral = "togglepopover"_s;
+constexpr ASCIILiteral showPopoverLiteral = "showpopover"_s;
+constexpr ASCIILiteral hidePopoverLiteral = "hidepopover"_s;
+
+bool HTMLElement::handleInvokeInternal(const HTMLFormControlElement& invoker, const AtomString& action)
+{
+    if (popoverState() == PopoverState::None)
+        return false;
+
+    if (isPopoverShowing()) {
+        bool shouldHide = action.isEmpty()
+            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
+            || equalLettersIgnoringASCIICase(action, hidePopoverLiteral);
+        if (shouldHide) {
+            hidePopover();
+            return true;
+        }
+    } else {
+        bool shouldShow = action.isEmpty()
+            || equalLettersIgnoringASCIICase(action, togglePopoverLiteral)
+            || equalLettersIgnoringASCIICase(action, showPopoverLiteral);
+        if (shouldShow) {
+            showPopover(&invoker);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 const AtomString& HTMLElement::popover() const

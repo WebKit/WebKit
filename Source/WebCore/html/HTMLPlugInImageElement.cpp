@@ -64,7 +64,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLPlugInImageElement);
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document)
-    : HTMLPlugInElement(tagName, document)
+    : HTMLPlugInElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
 }
 
@@ -176,7 +176,7 @@ void HTMLPlugInImageElement::didAttachRenderers()
         if (auto* renderImage = dynamicDowncast<RenderImage>(renderer())) {
             auto& renderImageResource = renderImage->imageResource();
             if (!renderImageResource.cachedImage())
-                renderImageResource.setCachedImage(m_imageLoader->image());
+                renderImageResource.setCachedImage(m_imageLoader->protectedImage());
         }
     }
 
@@ -272,13 +272,6 @@ void HTMLPlugInImageElement::resumeFromDocumentSuspension()
 bool HTMLPlugInImageElement::shouldBypassCSPForPDFPlugin(const String& contentType) const
 {
 #if ENABLE(PDF_PLUGIN)
-    // We only consider bypassing this CSP check if plugins are disabled. In that case we know that
-    // any plugin used is a browser implementation detail. It is not safe to skip this check
-    // if plugins are enabled in case an external plugin is used to load PDF content.
-    // FIXME: Check for alternative PDF plugins here so we can bypass this CSP check for PDFPlugin even when plugins are enabled.
-    if (document().frame()->arePluginsEnabled())
-        return false;
-
     return document().frame()->loader().client().shouldUsePDFPlugin(contentType, document().url().path());
 #else
     UNUSED_PARAM(contentType);
@@ -329,8 +322,13 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
     if (ScriptDisallowedScope::InMainThread::isScriptAllowed())
         return document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, getNameAttribute(), mimeType, paramNames, paramValues);
 
-    document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, document, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues]() mutable {
-        document->frame()->loader().subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
+    document->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, relativeURL, nameAttribute = getNameAttribute(), mimeType, paramNames, paramValues]() mutable {
+        if (!isConnected())
+            return;
+        RefPtr frame = this->document().frame();
+        if (!frame)
+            return;
+        frame->checkedLoader()->subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
     });
     return true;
 }

@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AttestationConveyancePreference.h"
+#include "AuthenticatorTransport.h"
 #include "BufferSource.h"
 #include "CBORValue.h"
 #include "SecurityOrigin.h"
@@ -64,6 +65,9 @@ WEBCORE_EXPORT cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t
 
 // encodeRawPublicKey takes X & Y and returns them as a 0x04 || X || Y byte array.
 WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, const Vector<uint8_t>& Y);
+
+WEBCORE_EXPORT String toString(AuthenticatorTransport);
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

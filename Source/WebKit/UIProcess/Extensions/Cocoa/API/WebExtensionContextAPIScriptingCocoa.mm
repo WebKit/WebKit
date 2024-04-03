@@ -55,88 +55,97 @@ namespace WebKit {
 
 using namespace WebExtensionDynamicScripts;
 
-void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(std::optional<InjectionResults>, WebExtensionDynamicScripts::Error)>&& completionHandler)
+bool WebExtensionContext::isScriptingMessageAllowed()
+{
+    return isLoaded() && hasPermission(_WKWebExtensionPermissionScripting);
+}
+
+void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<InjectionResults, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.executeScript()";
 
-    auto tab = getTab(parameters.tabIdentifier.value());
+    RefPtr tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
-        completionHandler(std::nullopt, toErrorString(apiName, nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
-    auto *webView = tab->mainWebView();
-    if (!webView) {
-        completionHandler(std::nullopt, toErrorString(apiName, nil, @"could not execute script on this tab"));
-        return;
-    }
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!tab->extensionHasPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+            return;
+        }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(std::nullopt, toErrorString(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+        auto *webView = tab->mainWebView();
+        if (!webView) {
+            completionHandler(toWebExtensionError(apiName, nil, @"could not execute script on this tab"));
+            return;
+        }
 
-    auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
-    executeScript(scriptPairs, webView, *m_contentScriptWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResultHolder& injectionResults) mutable {
-        completionHandler(injectionResults.results, std::nullopt);
+        auto scriptPairs = getSourcePairsForParameters(parameters, m_extension);
+        Ref executionWorld = toContentWorld(parameters.world);
+
+        executeScript(scriptPairs, webView, executionWorld, tab.get(), parameters, *this, [completionHandler = WTFMove(completionHandler)](InjectionResults&& injectionResults) mutable {
+            completionHandler(WTFMove(injectionResults));
+        });
     });
 }
 
-void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.insertCSS()";
 
-    auto tab = getTab(parameters.tabIdentifier.value());
+    RefPtr tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
-        completionHandler(toErrorString(apiName, nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
-    auto *webView = tab->mainWebView();
-    if (!webView) {
-        completionHandler(toErrorString(apiName, nil, @"could not inject stylesheet on this tab"));
-        return;
-    }
+    requestPermissionToAccessURLs({ tab->url() }, tab, [this, protectedThis = Ref { *this }, tab, parameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        if (!tab->extensionHasPermission()) {
+            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+            return;
+        }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(toErrorString(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+        auto *webView = tab->mainWebView();
+        if (!webView) {
+            completionHandler(toWebExtensionError(apiName, nil, @"could not inject stylesheet on this tab"));
+            return;
+        }
 
-    // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
-    auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
+        // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
+        auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
-    auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
-    injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
+        auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
+        injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, injectedFrames, *this);
 
-    completionHandler(std::nullopt);
+        completionHandler({ });
+    });
 }
 
-void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     if (m_dynamicallyInjectedUserStyleSheets.isEmpty()) {
-        completionHandler(std::nullopt);
+        completionHandler({ });
         return;
     }
 
     static NSString * const apiName= @"scripting.removeCSS()";
 
-    auto tab = getTab(parameters.tabIdentifier.value());
+    RefPtr tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
-        completionHandler(toErrorString(apiName, nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
     auto *webView = tab->mainWebView();
     if (!webView) {
-        completionHandler(toErrorString(apiName, nil, @"could not remove stylesheet from this tab"));
+        completionHandler(toWebExtensionError(apiName, nil, @"could not remove stylesheet from this tab"));
         return;
     }
 
-    if (!hasPermission(webView.URL, tab.get())) {
-        completionHandler(toErrorString(apiName, nil, @"this extension does not have access to this tab"));
-        return;
-    }
+    // Allow removing CSS without permission, since it is not sensitive and the extension might have had permission before
+    // and permission has been revoked since it inserted CSS. This allows for the extension to clean up.
 
     // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's. If 'frameIds' is passed, default to the main frame.
     auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
@@ -144,36 +153,40 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     auto styleSheetPairs = getSourcePairsForParameters(parameters, m_extension);
     removeStyleSheets(styleSheetPairs, webView, injectedFrames, *this);
 
-    completionHandler(std::nullopt);
+    completionHandler({ });
 }
 
-void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.registerContentScripts()";
 
-    InjectedContentVector injectedContents;
+    DynamicInjectedContentsMap injectedContentsMap;
     NSString *errorMessage;
-    if (!createInjectedContentForScripts(scripts, WebExtensionRegisteredScript::FirstTimeRegistration::Yes, injectedContents, apiName, &errorMessage)) {
-        completionHandler(errorMessage);
+    if (!createInjectedContentForScripts(scripts, FirstTimeRegistration::Yes, injectedContentsMap, apiName, &errorMessage)) {
+        completionHandler(toWebExtensionError(apiName, nil, errorMessage));
         return;
     }
 
-    [registeredContentScriptsStore() addScripts:toWebAPI(scripts) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, injectedContents, scripts, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+    [registeredContentScriptsStore() addScripts:toWebAPI(scripts) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, scripts, injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
         if (errorMessage) {
-            completionHandler(toErrorString(apiName, nil, errorMessage));
+            completionHandler(toWebExtensionError(apiName, nil, errorMessage));
             return;
         }
 
-        for (auto& parameters : scripts)
-            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+        InjectedContentVector injectedContents;
+        for (auto& parameters : scripts) {
+            auto injectedContent = injectedContentsMap.get(parameters.identifier);
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
+            injectedContents.append(WTFMove(injectedContent));
+        }
 
         addInjectedContent(injectedContents);
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName= @"scripting.updateContentScripts()";
 
@@ -183,7 +196,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
         auto scriptID = parameters.identifier;
         RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
         if (!registeredScript) {
-            completionHandler(toErrorString(apiName, nil, @"no existing script with ID '%@'", (NSString *)scriptID));
+            completionHandler(toWebExtensionError(apiName, nil, @"no existing script with ID '%@'", (NSString *)scriptID));
             return;
         }
 
@@ -192,19 +205,21 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
     }
 
     NSString *errorMessage;
-    InjectedContentVector injectedContents;
-    if (!createInjectedContentForScripts(updatedParameters, WebExtensionRegisteredScript::FirstTimeRegistration::No, injectedContents, apiName, &errorMessage)) {
-        completionHandler(errorMessage);
+    DynamicInjectedContentsMap injectedContentsMap;
+    if (!createInjectedContentForScripts(updatedParameters, FirstTimeRegistration::No, injectedContentsMap, apiName, &errorMessage)) {
+        completionHandler(toWebExtensionError(apiName, nil, errorMessage));
         return;
     }
 
-    [registeredContentScriptsStore() updateScripts:toWebAPI(updatedParameters) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, updatedParameters, injectedContents, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+    auto *scriptsArray = toWebAPI(updatedParameters);
+    [registeredContentScriptsStore() updateScripts:scriptsArray completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, scripts = WTFMove(updatedParameters), injectedContentsMap = WTFMove(injectedContentsMap), completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
         if (errorMessage) {
-            completionHandler(toErrorString(apiName, nil, errorMessage));
+            completionHandler(toWebExtensionError(apiName, nil, errorMessage));
             return;
         }
 
-        for (auto& parameters : updatedParameters) {
+        InjectedContentVector injectedContents;
+        for (auto& parameters : scripts) {
             auto scriptID = parameters.identifier;
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
             ASSERT(registeredScript);
@@ -214,15 +229,19 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
 
             registeredScript->updateParameters(parameters);
             registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+
+            auto injectedContent = injectedContentsMap.get(scriptID);
+            registeredScript->updateInjectedContent(injectedContent);
+            injectedContents.append(WTFMove(injectedContent));
         }
 
         addInjectedContent(injectedContents);
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
-void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Vector<WebExtensionRegisteredScriptParameters> scripts)>&& completionHandler)
+void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&&)>&& completionHandler)
 {
     Vector<WebExtensionRegisteredScriptParameters> scripts;
 
@@ -240,10 +259,10 @@ void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& sc
         }
     }
 
-    completionHandler(scripts);
+    completionHandler(WTFMove(scripts));
 }
 
-void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"scripting.unregisterContentScripts()";
 
@@ -252,14 +271,14 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
 
     for (auto& scriptID : ids) {
         if (!m_registeredScriptsMap.contains(scriptID)) {
-            completionHandler(toErrorString(apiName, nil, @"no script with ID '%@'", (NSString *)scriptID));
+            completionHandler(toWebExtensionError(apiName, nil, @"no script with ID '%@'", (NSString *)scriptID));
             return;
         }
     }
 
     [registeredContentScriptsStore() deleteScriptsWithIDs:createNSArray(ids).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, ids, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
         if (errorMessage) {
-            completionHandler(toErrorString(apiName, nil, errorMessage));
+            completionHandler(toWebExtensionError(apiName, nil, errorMessage));
             return;
         }
 
@@ -271,7 +290,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
         for (auto& scriptID : ids)
             removeUserScriptsAndStyleSheets(scriptID);
 
-        completionHandler(std::nullopt);
+        completionHandler({ });
     }).get()];
 }
 
@@ -289,29 +308,32 @@ void WebExtensionContext::loadRegisteredContentScripts()
         Vector<WebExtensionRegisteredScriptParameters> parametersVector;
         WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
 
-        WebExtension::InjectedContentVector injectedContents;
-        createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContents, nil, &errorMessage);
-
+        DynamicInjectedContentsMap injectedContentsMap;
+        createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContentsMap, nil, &errorMessage);
         if (errorMessage) {
             RELEASE_LOG_ERROR(Extensions, "Failed to create injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
             return;
         }
 
-        for (auto& parameters : parametersVector)
-            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+        InjectedContentVector injectedContents;
+        for (auto& parameters : parametersVector) {
+            auto injectedContent = injectedContentsMap.get(parameters.identifier);
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
+            injectedContents.append(WTFMove(injectedContent));
+        }
 
         addInjectedContent(injectedContents);
     }).get()];
 }
 
-bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, WebExtensionRegisteredScript::FirstTimeRegistration firstTimeRegistration, InjectedContentVector& injectedConents, NSString *callingAPIName, NSString **errorMessage)
+bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, FirstTimeRegistration firstTimeRegistration, DynamicInjectedContentsMap& injectedContentsMap, NSString *callingAPIName, NSString **errorMessage)
 {
     Vector<String> idsToAdd;
 
     for (auto& parameters : scripts) {
         auto scriptID = parameters.identifier;
 
-        if (firstTimeRegistration == WebExtensionRegisteredScript::FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
+        if (firstTimeRegistration == FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
             *errorMessage = toErrorString(callingAPIName, nil, @"duplicate ID '%@'", (NSString *)scriptID);
             return false;
         }
@@ -383,13 +405,13 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.identifier = parameters.identifier;
         injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
         injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
-        injectedContentData.injectionTime = parameters.injectionTime.value();
-        injectedContentData.injectsIntoAllFrames = parameters.allFrames.value();
-        injectedContentData.forMainWorld = parameters.world.value() == WebExtensionContentWorldType::Main ? true : false;
+        injectedContentData.injectionTime = parameters.injectionTime.value_or(WebExtension::InjectionTime::DocumentIdle);
+        injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
+        injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.scriptPaths = scriptPaths;
         injectedContentData.styleSheetPaths = styleSheetPaths;
 
-        injectedConents.append(WTFMove(injectedContentData));
+        injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }
 
     return true;

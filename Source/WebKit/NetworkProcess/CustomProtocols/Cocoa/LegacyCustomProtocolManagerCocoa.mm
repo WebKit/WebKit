@@ -182,7 +182,7 @@ void LegacyCustomProtocolManager::didFailWithError(LegacyCustomProtocolID custom
     removeCustomProtocol(customProtocolID);
 }
 
-void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProtocolID, const IPC::DataReference& data)
+void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProtocolID, std::span<const uint8_t> data)
 {
     RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
     if (!protocol)

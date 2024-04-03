@@ -27,8 +27,8 @@
 
 #include "InlineIteratorBoxLegacyPath.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LegacyEllipsisBox.h"
 #include "LegacyRootInlineBox.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -53,20 +53,20 @@ public:
     float logicalWidth() const { return m_rootInlineBox->lineBoxWidth().toFloat(); }
     float inkOverflowLogicalTop() const { return m_rootInlineBox->logicalTopVisualOverflow(); }
     float inkOverflowLogicalBottom() const { return m_rootInlineBox->logicalBottomVisualOverflow(); }
-    float scrollableOverflowTop() const { return m_rootInlineBox->logicalTopLayoutOverflow(); }
-    float scrollableOverflowBottom() const { return m_rootInlineBox->logicalBottomLayoutOverflow(); }
+    float scrollableOverflowTop() const { return logicalTop(); }
+    float scrollableOverflowBottom() const { return logicalBottom(); }
 
-    bool hasEllipsis() const { return !!m_rootInlineBox->ellipsisBox(); }
+    bool hasEllipsis() const { return false; }
     FloatRect ellipsisVisualRectIgnoringBlockDirection() const
     {
-        ASSERT(hasEllipsis());
-        return m_rootInlineBox->ellipsisBox()->frameRect();
+        ASSERT_NOT_REACHED();
+        return { };
     }
 
     TextRun ellipsisText() const
     {
-        ASSERT(hasEllipsis());
-        return m_rootInlineBox->ellipsisBox()->createTextRun();
+        ASSERT_NOT_REACHED();
+        return TextRun { emptyString() };
     }
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
@@ -76,8 +76,8 @@ public:
 
     const RenderBlockFlow& formattingContextRoot() const { return m_rootInlineBox->blockFlow(); }
 
-    RenderFragmentContainer* containingFragment() const { return m_rootInlineBox->containingFragment(); }
-    bool isFirstAfterPageBreak() const { return m_rootInlineBox->isFirstAfterPageBreak(); }
+    RenderFragmentContainer* containingFragment() const { return nullptr; }
+    bool isFirstAfterPageBreak() const { return false; }
 
     size_t lineIndex() const
     {

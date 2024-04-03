@@ -33,21 +33,28 @@ try {
     // Not an object
     set1.symmetricDifference(1);
 } catch (e) {
-    if (e != "TypeError: Set.prototype.symmetricDifference expects the first parameter to be an object")
+    if (e != "TypeError: Set operation expects first argument to be an object")
         throw e;
 }
 
 try {
     set1.symmetricDifference({ });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.symmetricDifference expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
         throw e;
 }
 
 try {
     set1.symmetricDifference({ size:NaN });
 } catch (e) {
-    if (e != "TypeError: Set.prototype.symmetricDifference expects other.size to be a non-NaN number")
+    if (e != "TypeError: Set operation expects first argument to have non-NaN 'size' property")
+        throw e;
+}
+
+try {
+    set1.symmetricDifference({ size: -1 });
+} catch (e) {
+    if (e != "RangeError: Set operation expects first argument to have non-negative 'size' property")
         throw e;
 }
 

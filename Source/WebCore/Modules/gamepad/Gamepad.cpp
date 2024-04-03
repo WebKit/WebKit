@@ -31,6 +31,7 @@
 #include "GamepadButton.h"
 #include "GamepadHapticActuator.h"
 #include "PlatformGamepad.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -36,14 +36,14 @@ namespace WebCore {
 class InbandWebVTTTextTrack final : public InbandTextTrack, private WebVTTParserClient {
     WTF_MAKE_ISO_ALLOCATED(InbandWebVTTTextTrack);
 public:
-    static Ref<InbandTextTrack> create(Document&, InbandTextTrackPrivate&);
+    static Ref<InbandTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandWebVTTTextTrack();
 
 private:
-    InbandWebVTTTextTrack(Document&, InbandTextTrackPrivate&);
+    InbandWebVTTTextTrack(ScriptExecutionContext&, InbandTextTrackPrivate&);
 
     WebVTTParser& parser();
-    void parseWebVTTCueData(const uint8_t* data, unsigned length) final;
+    void parseWebVTTCueData(std::span<const uint8_t>) final;
     void parseWebVTTCueData(ISOWebVTTCue&&) final;
 
     void newCuesParsed() final;

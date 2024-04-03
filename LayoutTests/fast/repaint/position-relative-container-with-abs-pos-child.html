@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<head>
+<title>This tests that we don't leave bits behind, when an absolute positioned child is hidden and at the same time is positioned against a different container.</title>
+<style>
+#container {
+    height: 100px;
+    width: 100px;
+}
+
+#content {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    left: 0px;
+    top: 0px;
+    background: green;
+}
+</style>
+</head>
+<body>
+<div id=container>
+    <div id=content></div>
+</div>
+<script>
+setTimeout(
+    function() {
+        if (window.internals)
+            internals.startTrackingRepaints();
+        document.getElementById("container").style.position = "relative";
+        document.getElementById("content").style.visibility = "hidden";
+        document.body.offsetWidth;
+
+        if (window.internals) {
+            shouldNotBe("window.internals.repaintRectsAsText().indexOf('0 0 50 50')", "-1");
+            internals.stopTrackingRepaints();
+        }
+        finishJSTest();
+    }, 0);
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

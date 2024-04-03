@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include "PlatformMediaSession.h"
+#include "VideoReceiverEndpoint.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -71,12 +72,21 @@ public:
     virtual void setPlaybackRate(double) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
+    virtual void toggleFullscreen() = 0;
     virtual void togglePictureInPicture() = 0;
+    virtual void toggleInWindowFullscreen() = 0;
+    virtual void enterFullscreen() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;
     virtual void setPlayingOnSecondScreen(bool) = 0;
     virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
+    virtual void setVideoReceiverEndpoint(const VideoReceiverEndpoint&) = 0;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    virtual const String& spatialTrackingLabel() const { return emptyString(); }
+    virtual void setSpatialTrackingLabel(const String&) { }
+#endif
 
     using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
 
@@ -108,6 +118,7 @@ public:
     virtual double volume() const = 0;
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
+    virtual bool isInWindowFullscreenActive() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
     virtual const void* logIdentifier() const { return nullptr; }
@@ -135,6 +146,7 @@ public:
     virtual void volumeChanged(double) { }
     virtual void isPictureInPictureSupportedChanged(bool) { }
     virtual void pictureInPictureActiveChanged(bool) { }
+    virtual void isInWindowFullscreenActiveChanged(bool) { }
     virtual void ensureControlsManager() { }
     virtual void modelDestroyed() { }
 };

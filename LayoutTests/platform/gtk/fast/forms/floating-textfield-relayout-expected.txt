@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
         RenderInline {I} at (0,0) size 750x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+          RenderInline {A} at (104,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
-          RenderText {#text} at (451,0) size 750x35
+          RenderText {#text} at (0,0) size 750x35
             text run at (451,0) width 5: " "
             text run at (455,0) width 295: "REGRESSION: text field width shrinks on first"
             text run at (0,18) width 59: "keystroke"

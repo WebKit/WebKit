@@ -109,15 +109,12 @@ void StyleCanvasImage::didRemoveClient(RenderElement& renderer)
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*element);
 }
 
-void StyleCanvasImage::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect)
+void StyleCanvasImage::canvasChanged(CanvasBase& canvasBase, const FloatRect& changedRect)
 {
     ASSERT_UNUSED(canvasBase, is<HTMLCanvasElement>(canvasBase));
     ASSERT_UNUSED(canvasBase, m_element == &downcast<HTMLCanvasElement>(canvasBase));
 
-    if (!changedRect)
-        return;
-
-    auto imageChangeRect = enclosingIntRect(changedRect.value());
+    auto imageChangeRect = enclosingIntRect(changedRect);
     for (auto entry : clients()) {
         auto& client = entry.key;
         client.imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);

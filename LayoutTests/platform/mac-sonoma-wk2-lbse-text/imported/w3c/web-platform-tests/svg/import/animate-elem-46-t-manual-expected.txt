@@ -1,0 +1,498 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-65.05,-9.59) size 329x169 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-65.05,-9.59) size 327.13x167.83
+layer at (-65.05,-9.59) size 328x168 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 327.13x167.83
+layer at (-65.05,2.41) size 71x156 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,12) size 70.05x155.83
+layer at (-65.05,2.41) size 70x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 71x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 71x16
+      chunk 1 (end anchor) text run 1 at (-65.03,15.00) startOffset 0 endOffset 11 width 70.03: "text-anchor"
+layer at (-47.92,37.41) size 53x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (17,35) size 54x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 53x16
+      chunk 1 (end anchor) text run 1 at (-47.91,50.00) startOffset 0 endOffset 9 width 52.91: "font-size"
+layer at (-59.58,72.41) size 65x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (5,70) size 66x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x16
+      chunk 1 (end anchor) text run 1 at (-59.57,85.00) startOffset 0 endOffset 11 width 64.57: "font-family"
+layer at (-51.81,107.41) size 57x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (13,105) size 58x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 57x16
+      chunk 1 (end anchor) text run 1 at (-51.80,120.00) startOffset 0 endOffset 10 width 56.80: "font-style"
+layer at (-63.48,142.41) size 68x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (1,140) size 70x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x16
+      chunk 1 (end anchor) text run 1 at (-63.48,155.00) startOffset 0 endOffset 11 width 68.48: "font-weight"
+layer at (0.53,-9.59) size 263x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (65.58,0) size 261.55x15.83
+layer at (0.53,-9.59) size 39x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 39x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 39x16
+      chunk 1 (middle anchor) text run 1 at (0.54,3.00) startOffset 0 endOffset 6 width 38.92: "<text>"
+layer at (122.92,-9.59) size 25x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (122,0) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (122.93,3.00) startOffset 0 endOffset 3 width 24.14: "<g>"
+layer at (237.92,-9.59) size 25x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (237,0) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (237.93,3.00) startOffset 0 endOffset 3 width 24.14: "<a>"
+layer at (-21.67,-7.91) size 104x37 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (43.38,1.69) size 103.34x35.41
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-10.84,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (10,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (middle anchor) text run 1 at (-10.83,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (0,-7.91) size 21x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (21,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-10.84,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (10,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (middle anchor) text run 1 at (-10.83,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (0,-7.91) size 21x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (21,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-10.84,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (10,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (middle anchor) text run 1 at (-10.83,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (0,-7.91) size 21x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (21,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 44x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 43.34x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-10.84,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (10,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (middle anchor) text run 1 at (-10.83,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (0,-7.91) size 21x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (21,0) size 23x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-2,18) size 5x5 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (19.67,25.91) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {a} at (0,0) size 21.67x34.81
+layer at (-21.67,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 (end anchor) text run 1 at (-21.67,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 23x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (21.67,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,8.95) size 9x14
+  RenderSVGText {text} at (0,16) size 9x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 9x14
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 8.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,8.95) size 9x14
+  RenderSVGText {text} at (0,16) size 9x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 9x14
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 8.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,8.95) size 9x14
+  RenderSVGText {text} at (0,16) size 9x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 9x14
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 8.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,8.95) size 9x14
+  RenderSVGText {text} at (0,16) size 9x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 9x14
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 8.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {a} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 83x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (21.67,0) size 81.67x35.41
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.31) size 22x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.31) size 22x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.31) size 22x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 82x36 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x35.41
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.31) size 22x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x36 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {a} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 83x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (21.67,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {a} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 83x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (21.67,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 20x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 20.01: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 20x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 20.01: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 20x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 20.01: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 82x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 81.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (30,-7.91) size 20x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (30,0) size 21x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x35
+      chunk 1 text run 1 at (30.00,20.00) startOffset 0 endOffset 1 width 20.01: "A"
+layer at (60,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (60,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {a} at (0,0) size 21.67x34.81
+layer at (0,-7.91) size 22x35 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 22x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 22x35
+      chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -35,6 +35,7 @@
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
 #include "LocalFrame.h"
+#include "TreeScopeInlines.h"
 
 namespace WebCore {
 
@@ -187,7 +188,7 @@ void FormListedElement::parseFormAttribute(const AtomString& value)
         setForm(HTMLFormElement::findClosestFormAncestor(element));
         auto* newForm = form();
         if (newForm && newForm != originalForm && newForm->isConnected())
-            element.document().didAssociateFormControl(element);
+            element.protectedDocument()->didAssociateFormControl(element);
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();

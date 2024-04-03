@@ -69,7 +69,6 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
     void layout() final;
 
-    void addOverflowFromChildren() final;
     void computePreferredLogicalWidths() final;
 
     void updateValueNow() const;

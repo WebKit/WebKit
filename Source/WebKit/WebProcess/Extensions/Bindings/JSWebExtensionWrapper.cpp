@@ -30,8 +30,47 @@
 
 #include "JSWebExtensionWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
 
 namespace WebKit {
+
+static HashMap<JSGlobalContextRef, JSWeakObjectMapRef>& wrapperCache()
+{
+    static NeverDestroyed<HashMap<JSGlobalContextRef, JSWeakObjectMapRef>> wrappers;
+    return wrappers;
+}
+
+static void cacheMapDestroyed(JSWeakObjectMapRef map, void* context)
+{
+    wrapperCache().remove(static_cast<JSGlobalContextRef>(context));
+}
+
+static inline JSWeakObjectMapRef wrapperCacheMap(JSContextRef context)
+{
+    auto globalContext = JSContextGetGlobalContext(context);
+    return wrapperCache().ensure(globalContext, [&] {
+        return JSWeakObjectMapCreate(globalContext, globalContext, cacheMapDestroyed);
+    }).iterator->value;
+}
+
+static inline JSValueRef getCachedWrapper(JSContextRef context, JSWeakObjectMapRef wrappers, JSWebExtensionWrappable* object)
+{
+    ASSERT(context);
+    ASSERT(wrappers);
+    ASSERT(object);
+
+    if (auto wrapper = JSWeakObjectMapGet(context, wrappers, object)) {
+        // Check if the wrapper is still valid. Objects invalidated through finalize
+        // will not get removed from the map automatically.
+        if (JSObjectGetPrivate(wrapper))
+            return wrapper;
+
+        // Remove from the map, since the object is invalid.
+        JSWeakObjectMapRemove(context, wrappers, object);
+    }
+
+    return nullptr;
+}
 
 JSValueRef JSWebExtensionWrapper::wrap(JSContextRef context, JSWebExtensionWrappable* object)
 {
@@ -40,11 +79,17 @@ JSValueRef JSWebExtensionWrapper::wrap(JSContextRef context, JSWebExtensionWrapp
     if (!object)
         return JSValueMakeNull(context);
 
+    auto wrappers = wrapperCacheMap(context);
+    if (auto result = getCachedWrapper(context, wrappers, object))
+        return result;
+
     auto objectClass = object->wrapperClass();
     ASSERT(objectClass);
 
     auto wrapper = JSObjectMake(context, objectClass, object);
     ASSERT(wrapper);
+
+    JSWeakObjectMapSet(context, wrappers, object, wrapper);
 
     return wrapper;
 }
@@ -77,8 +122,10 @@ void JSWebExtensionWrapper::initialize(JSContextRef, JSObjectRef object)
 
 void JSWebExtensionWrapper::finalize(JSObjectRef object)
 {
-    if (auto* wrappable = unwrapObject(object))
+    if (auto* wrappable = unwrapObject(object)) {
+        JSObjectSetPrivate(object, nullptr);
         wrappable->deref();
+    }
 }
 
 } // namespace WebKit

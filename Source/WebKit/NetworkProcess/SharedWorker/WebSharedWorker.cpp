@@ -44,12 +44,11 @@ static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWo
 
 WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
     : m_server(server)
-    , m_identifier(WebCore::SharedWorkerIdentifier::generate())
     , m_key(key)
     , m_workerOptions(workerOptions)
 {
-    ASSERT(!allWorkers().contains(m_identifier));
-    allWorkers().add(m_identifier, *this);
+    ASSERT(!allWorkers().contains(identifier()));
+    allWorkers().add(identifier(), *this);
 }
 
 WebSharedWorker::~WebSharedWorker()
@@ -59,8 +58,8 @@ WebSharedWorker::~WebSharedWorker()
             connection->removeSharedWorkerObject(sharedWorkerObject.identifier);
     }
 
-    ASSERT(allWorkers().get(m_identifier) == this);
-    allWorkers().remove(m_identifier);
+    ASSERT(allWorkers().get(identifier()) == this);
+    allWorkers().remove(identifier());
 }
 
 WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier identifier)
@@ -68,9 +67,9 @@ WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier
     return allWorkers().get(identifier);
 }
 
-WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
+WebCore::RegistrableDomain WebSharedWorker::topRegistrableDomain() const
 {
-    return WebCore::RegistrableDomain { url() };
+    return WebCore::RegistrableDomain { m_key.origin.topOrigin };
 }
 
 void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)
@@ -173,7 +172,7 @@ std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObje
 
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
-    return m_server.contextConnectionForRegistrableDomain(registrableDomain());
+    return m_server.contextConnectionForRegistrableDomain(topRegistrableDomain());
 }
 
 } // namespace WebKit

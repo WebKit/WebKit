@@ -52,9 +52,6 @@ public:
 private:
     XRSessionEvent(const AtomString&, const Init&, IsTrusted);
 
-    // Event.
-    EventInterface eventInterface() const final;
-
     RefPtr<WebXRSession> m_session;
 };
 

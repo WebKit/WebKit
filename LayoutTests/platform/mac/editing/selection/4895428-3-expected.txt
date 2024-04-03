@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 568: "But we shouldn't delay focus unless the mouse down occurs in an already focused node. "
           text run at (567,18) width 195: "The text field below should be"
           text run at (0,36) width 58: "focused. "
-        RenderInline {B} at (0,0) size 661x18
+        RenderInline {B} at (57,36) size 661x18
           RenderText {#text} at (57,36) size 661x18
             text run at (57,36) width 661: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
       RenderBlock {DIV} at (0,70) size 784x55

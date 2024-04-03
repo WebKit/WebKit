@@ -166,17 +166,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 660x84
-          RenderInline {I} at (0,0) size 116x28
+        RenderInline {SPAN} at (14,14) size 660x84
+          RenderInline {I} at (14,14) size 116x28
             RenderText {#text} at (14,14) size 116x28
               text run at (14,14) width 21: "F "
               text run at (34,14) width 96: "and seven"
           RenderText {#text} at (129,14) size 64x28
             text run at (129,14) width 64: " years "
-          RenderInline {B} at (0,0) size 28x28
+          RenderInline {B} at (192,14) size 28x28
             RenderText {#text} at (192,14) size 28x28
               text run at (192,14) width 28: "as "
-          RenderText {#text} at (219,14) size 660x56
+          RenderText {#text} at (14,14) size 660x56
             text run at (219,14) width 111: "our fathers "
             text run at (329,14) width 345: "f upon this continent, a new nation, "
             text run at (14,42) width 104: "conceived "

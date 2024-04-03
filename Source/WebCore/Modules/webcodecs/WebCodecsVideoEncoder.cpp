@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -63,9 +64,7 @@ WebCodecsVideoEncoder::WebCodecsVideoEncoder(ScriptExecutionContext& context, In
 {
 }
 
-WebCodecsVideoEncoder::~WebCodecsVideoEncoder()
-{
-}
+WebCodecsVideoEncoder::~WebCodecsVideoEncoder() = default;
 
 static bool isSupportedEncoderCodec(const String& codec, const Settings::Values& settings)
 {

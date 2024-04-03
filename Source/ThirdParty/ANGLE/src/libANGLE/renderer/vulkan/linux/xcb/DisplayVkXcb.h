@@ -36,7 +36,10 @@ class DisplayVkXcb : public DisplayVkLinux
     const char *getWSIExtension() const override;
     angle::Result waitNativeImpl() override;
 
-    bool isX11() const override { return true; }
+    angle::NativeWindowSystem getWindowSystem() const override
+    {
+        return angle::NativeWindowSystem::X11;
+    }
 
   private:
     xcb_connection_t *mXcbConnection;

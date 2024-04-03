@@ -60,6 +60,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    UserInterfaceLayoutDirection scrollbarLayoutDirection,
     RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::Overflow,
@@ -89,6 +90,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     WTFMove(mouseLocationState),
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
+    scrollbarLayoutDirection,
     WTFMove(scrollData)
 ) { }
 

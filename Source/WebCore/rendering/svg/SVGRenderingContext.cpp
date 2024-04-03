@@ -124,19 +124,14 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         }
     }
 
-    PathOperation* clipPathOperation = style.clipPath();
-    bool hasCSSClipping = is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation);
+    bool hasCSSClipping = is<ShapePathOperation>(style.clipPath()) || is<BoxPathOperation>(style.clipPath());
     if (hasCSSClipping)
         SVGRenderSupport::clipContextToCSSClippingArea(m_paintInfo->context(), renderer);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     // FIXME: Text painting under LBSE reaches this code path, since all text painting code is shared between legacy / LBSE.
     SVGResources* resources = nullptr;
     if (!renderer.document().settings().layerBasedSVGEngineEnabled())
         resources = SVGResourcesCache::cachedResourcesForRenderer(*m_renderer);
-#else
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*m_renderer);
-#endif
 
     if (!resources) {
         if (style.hasReferenceFilterOnly())
@@ -185,7 +180,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             // changes, we need to paint the whole filter region. Otherwise, elements not visible
             // at the time of the initial paint (due to scrolling, window size, etc.) will never
             // be drawn.
-            m_paintInfo->rect = IntRect(m_filter->drawingRegion(m_renderer));
+            m_paintInfo->rect = IntRect(m_filter->drawingRegion(*m_renderer));
         }
     }
 

@@ -29,6 +29,7 @@
 #include "ASTDeclaration.h"
 #include "ASTDirective.h"
 #include "ASTIdentityExpression.h"
+#include "CallGraph.h"
 #include "TypeStore.h"
 #include "WGSL.h"
 #include "WGSLEnums.h"
@@ -60,6 +61,12 @@ public:
     TypeStore& types() { return m_types; }
     AST::Builder& astBuilder() { return m_astBuilder; }
 
+    const CallGraph& callGraph() const { return *m_callGraph; }
+    void setCallGraph(CallGraph&& callGraph)
+    {
+        m_callGraph = WTFMove(callGraph);
+    }
+
     bool usesExternalTextures() const { return m_usesExternalTextures; }
     void setUsesExternalTextures() { m_usesExternalTextures = true; }
     void clearUsesExternalTextures() { m_usesExternalTextures = false; }
@@ -67,10 +74,6 @@ public:
     bool usesPackArray() const { return m_usesPackArray; }
     void setUsesPackArray() { m_usesPackArray = true; }
     void clearUsesPackArray() { m_usesPackArray = false; }
-
-    bool usesPackedStructs() const { return m_usesPackedStructs; }
-    void setUsesPackedStructs() { m_usesPackedStructs = true; }
-    void clearUsesPackedStructs() { m_usesPackedStructs = false; }
 
     bool usesUnpackArray() const { return m_usesUnpackArray; }
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
@@ -122,6 +125,9 @@ public:
 
     bool usesDot4U8Packed() const { return m_usesDot4U8Packed; }
     void setUsesDot4U8Packed() { m_usesDot4U8Packed = true; }
+
+    bool usesExtractBits() const { return m_usesExtractBits; }
+    void setUsesExtractBits() { m_usesExtractBits = true; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -235,25 +241,6 @@ public:
         m_replacements.clear();
     }
 
-    class Compilation {
-    public:
-        Compilation(ShaderModule& shaderModule)
-            : m_shaderModule(shaderModule)
-            , m_builderState(shaderModule.astBuilder().saveCurrentState())
-        {
-        }
-
-        ~Compilation()
-        {
-            m_shaderModule.revertReplacements();
-            m_shaderModule.astBuilder().restore(WTFMove(m_builderState));
-        }
-
-    private:
-        ShaderModule& m_shaderModule;
-        AST::Builder::State m_builderState;
-    };
-
     OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
     OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
     bool containsOverride(uint32_t idValue) const
@@ -270,7 +257,6 @@ private:
     String m_source;
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
-    bool m_usesPackedStructs { false };
     bool m_usesUnpackArray { false };
     bool m_usesWorkgroupUniformLoad { false };
     bool m_usesDivision { false };
@@ -288,6 +274,7 @@ private:
     bool m_usesSampleIndex { false };
     bool m_usesDot4I8Packed { false };
     bool m_usesDot4U8Packed { false };
+    bool m_usesExtractBits { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
@@ -295,6 +282,7 @@ private:
     AST::Directive::List m_directives;
     TypeStore m_types;
     AST::Builder m_astBuilder;
+    std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
 };

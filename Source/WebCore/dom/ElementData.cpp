@@ -144,7 +144,7 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)
     : ElementData(other, true)
-    , m_attributeVector(other.m_attributeArray, other.length())
+    , m_attributeVector(std::span { other.m_attributeArray, other.length() })
 {
     // An ShareableElementData should never have a mutable inline StyleProperties attached.
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());

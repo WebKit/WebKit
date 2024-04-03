@@ -6,32 +6,32 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (10,-4.50) size 29x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (10,-5) size 30x19 contains 1 chunk(s)
-    RenderSVGTSpan {tspan} at (0,0) size 5x12
+    RenderSVGTSpan {tspan} at (0,5) size 5x12
       RenderSVGInlineText {#text} at (0,5) size 5x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 5.00: "1"
     RenderSVGInlineText {#text} at (5,0) size 4x19
       chunk 1 text run 1 at (15.00,10.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 3x7
+    RenderSVGTSpan {tspan} at (9,9) size 3x7
       RenderSVGInlineText {#text} at (9,9) size 3x7
         chunk 1 text run 1 at (19.00,10.00) startOffset 0 endOffset 1 width 3.00: "2"
     RenderSVGInlineText {#text} at (12,0) size 4x19
       chunk 1 text run 1 at (22.00,10.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 1x2
+    RenderSVGTSpan {tspan} at (16,13) size 1x2
       RenderSVGInlineText {#text} at (16,13) size 1x1
         chunk 1 text run 1 at (26.00,10.00) startOffset 0 endOffset 1 width 0.50: "3"
     RenderSVGInlineText {#text} at (16,0) size 4x19
       chunk 1 text run 1 at (26.50,10.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 1x1
+    RenderSVGTSpan {tspan} at (20,14) size 1x1
       RenderSVGInlineText {#text} at (20,14) size 1x1
         chunk 1 text run 1 at (30.50,10.00) startOffset 0 endOffset 1 width 0.25: "4"
     RenderSVGInlineText {#text} at (20,0) size 4x19
       chunk 1 text run 1 at (30.75,10.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 1x1
+    RenderSVGTSpan {tspan} at (24,14) size 1x1
       RenderSVGInlineText {#text} at (24,14) size 1x1
         chunk 1 text run 1 at (34.75,10.00) startOffset 0 endOffset 1 width 0.25: "5"
     RenderSVGInlineText {#text} at (24,0) size 4x19
       chunk 1 text run 1 at (34.99,10.00) startOffset 0 endOffset 1 width 4.00: " "
-    RenderSVGTSpan {tspan} at (0,0) size 2x1
+    RenderSVGTSpan {tspan} at (28,14) size 2x1
       RenderSVGInlineText {#text} at (28,14) size 1x1
         chunk 1 text run 1 at (38.99,10.00) startOffset 0 endOffset 1 width 0.05: "6"
     RenderSVGInlineText {#text} at (0,0) size 0x0

@@ -28,12 +28,13 @@
 #include "CSSValueKeywords.h"
 #include <optional>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 enum class CSSUnitType : uint8_t;
 
-class CSSCalcSymbolTable {
+class CSSCalcSymbolTable : public CanMakeSingleThreadWeakPtr<CSSCalcSymbolTable> {
 public:
     struct Value {
         CSSUnitType type;

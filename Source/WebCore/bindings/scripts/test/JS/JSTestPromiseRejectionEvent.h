@@ -33,8 +33,9 @@ public:
     using DOMWrapped = TestPromiseRejectionEvent;
     static JSTestPromiseRejectionEvent* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestPromiseRejectionEvent>&& impl)
     {
-        JSTestPromiseRejectionEvent* ptr = new (NotNull, JSC::allocateCell<JSTestPromiseRejectionEvent>(globalObject->vm())) JSTestPromiseRejectionEvent(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestPromiseRejectionEvent* ptr = new (NotNull, JSC::allocateCell<JSTestPromiseRejectionEvent>(vm)) JSTestPromiseRejectionEvent(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -61,6 +62,9 @@ public:
     {
         return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());
     }
+
+    Ref<TestPromiseRejectionEvent> protectedWrapped() const;
+
 protected:
     JSTestPromiseRejectionEvent(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPromiseRejectionEvent>&&);
 

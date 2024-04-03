@@ -28,9 +28,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CompilationResult.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmJS.h"
 #include "WasmModuleInformation.h"
+#include "WasmOMGIRGenerator.h"
 #include <wtf/Bag.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/SharedTask.h>

@@ -25,6 +25,7 @@
 
 #include "Blob.h"
 #include "CachedResourceRequestInitiatorTypes.h"
+#include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
@@ -338,8 +339,8 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url)
 ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, bool async)
 {
     auto* context = scriptExecutionContext();
-    bool contextIsDocument = is<Document>(*context);
-    if (contextIsDocument && !downcast<Document>(*context).isFullyActive())
+    RefPtr contextDocument = dynamicDowncast<Document>(*context);
+    if (contextDocument && !contextDocument->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s };
 
     if (!isValidHTTPToken(method))
@@ -351,7 +352,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     if (!url.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!async && contextIsDocument) {
+    if (!async && contextDocument) {
         // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
         // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
         // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
@@ -415,8 +416,8 @@ std::optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 
     auto& context = *scriptExecutionContext();
 
-    if (is<Document>(context) && downcast<Document>(context).shouldIgnoreSyncXHRs()) {
-        logConsoleError(scriptExecutionContext(), makeString("Ignoring XMLHttpRequest.send() call for '", m_url.url().string(), "' because the maximum number of synchronous failures was reached."));
+    if (RefPtr contextDocument = dynamicDowncast<Document>(context); contextDocument && contextDocument->shouldIgnoreSyncXHRs()) {
+        logConsoleError(&context, makeString("Ignoring XMLHttpRequest.send() call for '", m_url.url().string(), "' because the maximum number of synchronous failures was reached."));
         return ExceptionOr<void> { };
     }
 
@@ -557,7 +558,7 @@ ExceptionOr<void> XMLHttpRequest::send(DOMFormData& body)
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
         m_requestEntityBody = FormData::createMultiPart(body);
         if (!m_requestHeaders.contains(HTTPHeaderName::ContentType))
-            m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary().data()));
+            m_requestHeaders.set(HTTPHeaderName::ContentType, makeString("multipart/form-data; boundary=", m_requestEntityBody->boundary()));
     }
 
     return createRequest();
@@ -567,21 +568,21 @@ ExceptionOr<void> XMLHttpRequest::send(ArrayBuffer& body)
 {
     ASCIILiteral consoleMessage { "ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead."_s };
     scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
-    return sendBytesData(body.data(), body.byteLength());
+    return sendBytesData(body.span());
 }
 
 ExceptionOr<void> XMLHttpRequest::send(ArrayBufferView& body)
 {
-    return sendBytesData(body.baseAddress(), body.byteLength());
+    return sendBytesData(body.span());
 }
 
-ExceptionOr<void> XMLHttpRequest::sendBytesData(const void* data, size_t length)
+ExceptionOr<void> XMLHttpRequest::sendBytesData(std::span<const uint8_t> data)
 {
     if (auto result = prepareToSend())
         return WTFMove(result.value());
 
     if (m_method != "GET"_s && m_method != "HEAD"_s) {
-        m_requestEntityBody = FormData::create(data, length);
+        m_requestEntityBody = FormData::create(data);
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }
@@ -660,7 +661,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         // Either loader is null or some error was synchronously sent to us.
         ASSERT(m_loadingActivity || !m_sendFlag);
     } else {
-        if (scriptExecutionContext()->isDocument() && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::SyncXHR, *document()))
+        if (scriptExecutionContext()->isDocument() && !isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::SyncXHR, *document()))
             return Exception { ExceptionCode::NetworkError };
 
         request.setDomainForCachePartition(scriptExecutionContext()->domainForCachePartition());
@@ -1073,7 +1074,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         return;
 
     if (useDecoder)
-        m_responseBuilder.append(m_decoder->decode(buffer.data(), buffer.size()));
+        m_responseBuilder.append(m_decoder->decode(buffer.span()));
     else {
         // Buffer binary data.
         m_binaryResponseBuilder.append(buffer);

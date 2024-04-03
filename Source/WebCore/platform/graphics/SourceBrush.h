@@ -34,22 +34,15 @@ namespace WebCore {
 
 class SourceBrush {
 public:
-    struct Brush {
-        using LogicalGradient = SourceBrushLogicalGradient;
-
-        friend bool operator==(const Brush&, const Brush&);
-
-        using Variant = std::variant<LogicalGradient, Ref<Pattern>>;
-        Variant brush;
-    };
+    using OptionalPatternGradient = std::variant<std::monostate, SourceBrushLogicalGradient, Ref<Pattern>>;
 
     SourceBrush() = default;
-    WEBCORE_EXPORT SourceBrush(const Color&, std::optional<Brush>&& = std::nullopt);
+    WEBCORE_EXPORT SourceBrush(const Color&, OptionalPatternGradient&& = std::monostate { });
 
     const Color& color() const { return m_color; }
     void setColor(const Color color) { m_color = color; }
 
-    const std::optional<Brush>& brush() const { return m_brush; }
+    const OptionalPatternGradient& patternGradient() const { return m_patternGradient; }
 
     WEBCORE_EXPORT Gradient* gradient() const;
     WEBCORE_EXPORT Pattern* pattern() const;
@@ -59,30 +52,30 @@ public:
     WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
     void setPattern(Ref<Pattern>&&);
 
-    bool isInlineColor() const { return !m_brush && m_color.tryGetAsSRGBABytes(); }
-    bool isVisible() const { return m_brush || m_color.isVisible(); }
+    bool isInlineColor() const { return !hasPatternOrGradient() && m_color.tryGetAsSRGBABytes(); }
+    bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }
 
-    friend bool operator==(const SourceBrush&, const SourceBrush&) = default;
+    bool hasPatternOrGradient() const { return !std::holds_alternative<std::monostate>(m_patternGradient); }
+    friend bool operator==(const SourceBrush&, const SourceBrush&);
 
 private:
     Color m_color { Color::black };
-    std::optional<Brush> m_brush;
+    OptionalPatternGradient m_patternGradient;
 };
 
-inline bool operator==(const SourceBrush::Brush& a, const SourceBrush::Brush& b)
+inline bool operator==(const SourceBrush& a, const SourceBrush& b)
 {
-    return WTF::switchOn(a.brush,
-        [&] (const SourceBrush::Brush::LogicalGradient& aGradient) {
-            if (auto* bGradient = std::get_if<SourceBrush::Brush::LogicalGradient>(&b.brush))
-                return aGradient == *bGradient;
+    // Workaround for Ref<> lack of operator==.
+    auto patternGradientEqual = [](const SourceBrush::OptionalPatternGradient& a, const SourceBrush::OptionalPatternGradient& b) -> bool {
+        if (a.index() != b.index())
             return false;
-        },
-        [&] (const Ref<Pattern>& aPattern) {
-            if (auto* bPattern = std::get_if<Ref<Pattern>>(&b.brush))
-                return aPattern.ptr() == bPattern->ptr();
-            return false;
-        }
-    );
+        if (auto* aGradient = std::get_if<SourceBrushLogicalGradient>(&a))
+            return *aGradient == std::get<SourceBrushLogicalGradient>(b);
+        if (auto* aPattern = std::get_if<Ref<Pattern>>(&a))
+            return aPattern->ptr() == std::get<Ref<Pattern>>(b).ptr();
+        return true;
+    };
+    return a.m_color == b.m_color && patternGradientEqual(a.m_patternGradient, b.m_patternGradient);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SourceBrush&);

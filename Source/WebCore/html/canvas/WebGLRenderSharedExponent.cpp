@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderSharedExponent);
 WebGLRenderSharedExponent::WebGLRenderSharedExponent(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::WebGLRenderSharedExponent)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_QCOM_render_shared_exponent"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_QCOM_render_shared_exponent"_s);
 }
 
 WebGLRenderSharedExponent::~WebGLRenderSharedExponent() = default;

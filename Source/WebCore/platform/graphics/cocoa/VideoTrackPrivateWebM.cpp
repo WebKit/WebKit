@@ -103,7 +103,7 @@ String VideoTrackPrivateWebM::codec() const
     if (!m_track.codec_id.is_present())
         return emptyString();
 
-    StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
+    StringView codecID { std::span { m_track.codec_id.value() } };
 
     if (codecID == "V_VP9"_s)
         return "vp09"_s;

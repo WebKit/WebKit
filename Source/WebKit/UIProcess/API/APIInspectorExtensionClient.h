@@ -40,6 +40,7 @@ public:
     virtual void didHideExtensionTab(const Inspector::ExtensionTabID&) { }
     virtual void didNavigateExtensionTab(const Inspector::ExtensionTabID&, const WTF::URL&) { }
     virtual void inspectedPageDidNavigate(const WTF::URL&) { }
+    virtual void effectiveAppearanceDidChange(Inspector::ExtensionAppearance) { }
 };
 
 } // namespace API

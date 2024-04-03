@@ -36,18 +36,8 @@
 
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstanceProtoGetterExports);
-}
 
-#include "WebAssemblyInstancePrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_s, &Base::s_info, &prototypeTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
-
-/* Source for WebAssemblyInstancePrototype.lut.h
- @begin prototypeTableWebAssemblyInstance
- @end
- */
+const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
 
 static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {

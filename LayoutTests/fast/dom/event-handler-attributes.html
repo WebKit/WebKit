@@ -80,7 +80,11 @@ const eventsInGlobalEventHandlers = [
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
-    "webkittransitionend"
+    "webkittransitionend",
+    "webkitmouseforcechanged",
+    "webkitmouseforcedown",
+    "webkitmouseforcewillbegin",
+    "webkitmouseforceup",
 ];
 
 const eventsInWindowEventHandlers = [
@@ -140,6 +144,10 @@ const bodyElementWindowForwardedEvents = [
     "resize",
     "storage",
     "unload",
+    "webkitmouseforcechanged",
+    "webkitmouseforcedown",
+    "webkitmouseforcewillbegin",
+    "webkitmouseforceup",
 ];
 
 const nonEventNames = [
@@ -433,15 +441,6 @@ html/track/VideoTrackList.idl:    attribute EventListener onchange;
 html/track/VideoTrackList.idl:    attribute EventListener onaddtrack;
 html/track/VideoTrackList.idl:    attribute EventListener onremovetrack;
 
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onchecking;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onerror;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onnoupdate;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener ondownloading;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onprogress;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onupdateready;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener oncached;
-loader/appcache/DOMApplicationCache.idl:    attribute EventListener onobsolete;
-
 page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
@@ -453,23 +452,11 @@ page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute
 page/DOMWindow.idl:    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=ORIENTATION_EVENTS] attribute EventHandler onorientationchange;
 page/DOMWindow.idl:    [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-page/DOMWindow.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
  
 dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchcancel;
 dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
 dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
 dom/Document.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-dom/Document.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
 dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenchange;
 dom/Document.idl:    [NotEnumerable, Conditional=FULLSCREEN_API] attribute EventHandler onwebkitfullscreenerror;
 dom/Document.idl:    [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
@@ -479,12 +466,6 @@ dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHan
 dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchend;
 dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchmove;
 dom/Element.idl:    [NotEnumerable, Conditional=TOUCH_EVENTS] attribute EventHandler ontouchstart;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcecancelled;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceclick;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
-dom/Element.idl:    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
 dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyadded;
 dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeyerror;
 dom/Element.idl:    [NotEnumerable, Conditional=ENCRYPTED_MEDIA] attribute EventHandler onwebkitkeymessage;

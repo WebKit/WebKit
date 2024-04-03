@@ -63,6 +63,7 @@ public:
     static bool checkEnclosure(RenderElement*, const FloatRect&);
 
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
+    Ref<SVGElement> protectedElement() const;
 
 protected:
     LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });

@@ -37,6 +37,7 @@
 #include <WebCore/CDMFactory.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NowPlayingManager.h>
+#include <WebCore/SharedAudioDestination.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/MediaSessionManagerCocoa.h>
@@ -54,9 +55,12 @@ WebMediaStrategy::~WebMediaStrategy() = default;
 Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(WebCore::AudioIOCallback& callback, const String& inputDeviceId,
     unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
+    ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess)
-        return RemoteAudioDestinationProxy::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+        return WebCore::SharedAudioDestination::create(callback, numberOfOutputChannels, sampleRate, [inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate] (WebCore::AudioIOCallback& callback) {
+            return RemoteAudioDestinationProxy::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+        });
 #endif
     return WebCore::AudioDestination::create(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
 }
@@ -64,6 +68,7 @@ Ref<WebCore::AudioDestination> WebMediaStrategy::createAudioDestination(WebCore:
 
 std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingManager() const
 {
+    ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess) {
         class NowPlayingInfoForGPUManager : public WebCore::NowPlayingManager {
@@ -85,9 +90,19 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
     return WebCore::MediaStrategy::createNowPlayingManager();
 }
 
+bool WebMediaStrategy::hasThreadSafeMediaSourceSupport() const
+{
+#if ENABLE(GPU_PROCESS)
+    return m_useGPUProcess;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(MEDIA_SOURCE)
 void WebMediaStrategy::enableMockMediaSource()
 {
+    ASSERT(isMainRunLoop());
 #if USE(AVFOUNDATION)
     WebCore::DeprecatedGlobalSettings::setAVFoundationEnabled(false);
 #endif

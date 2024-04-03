@@ -67,7 +67,7 @@ bool WebSocketExtensionParser::consumeToken()
     while (m_current < m_end && isASCIIPrintable(*m_current) && !isSeparator(*m_current))
         ++m_current;
     if (start < m_current) {
-        m_currentToken = String(start, m_current - start);
+        m_currentToken = String({ start, m_current });
         return true;
     }
     return false;
@@ -89,7 +89,7 @@ bool WebSocketExtensionParser::consumeQuotedString()
     }
     if (m_current >= m_end || *m_current != '"')
         return false;
-    m_currentToken = String::fromUTF8(buffer.data(), buffer.size());
+    m_currentToken = String::fromUTF8(buffer.span());
     if (m_currentToken.isNull())
         return false;
     ++m_current;

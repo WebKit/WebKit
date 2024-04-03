@@ -6,12 +6,12 @@
 
 // WindowSurfaceGLX.cpp: GLX implementation of egl::Surface for windows
 
-#include "libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
-
 #include "common/debug.h"
 
 #include "libANGLE/renderer/gl/glx/DisplayGLX.h"
+
 #include "libANGLE/renderer/gl/glx/FunctionsGLX.h"
+#include "libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
 
 namespace rx
 {

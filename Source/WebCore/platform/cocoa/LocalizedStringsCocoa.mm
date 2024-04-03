@@ -35,6 +35,21 @@
 
 namespace WebCore {
 
+static NSString *localizedPercentage(double percent)
+{
+    RetainPtr numberFormatter = adoptNS([[NSNumberFormatter alloc] init]);
+    [numberFormatter setLocale:[NSLocale currentLocale]];
+    [numberFormatter setNumberStyle:NSNumberFormatterPercentStyle];
+    [numberFormatter setMinimumFractionDigits:0];
+    [numberFormatter setMaximumFractionDigits:0];
+    return [numberFormatter stringFromNumber:@(percent)];
+}
+
+String AXProcessingPage(double percent)
+{
+    return WEB_UI_FORMAT_STRING("Processing page %@", "Title for the webarea while the accessibility tree is being built.", localizedPercentage(percent));
+}
+
 String copyImageUnknownFileLabel()
 {
     return WEB_UI_STRING("unknown", "Unknown filename");
@@ -53,11 +68,6 @@ String contextMenuItemTagAddHighlightToNewQuickNote()
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-String contextMenuItemTagSearchInSpotlight()
-{
-    return WEB_UI_STRING("Search in Spotlight", "Search in Spotlight context menu item");
-}
-
 String contextMenuItemTagSearchWeb()
 {
     auto searchProviderName = PAL::defaultSearchProviderDisplayName();

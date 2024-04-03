@@ -167,9 +167,10 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
     for (auto& message : messages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             DC_DEBUG("Notifying queued raw data (size: %zu)", data->size());
-            const auto* rawData = data->makeContiguous()->data();
-            DC_MEMDUMP("Notifying raw data", rawData, data->size());
-            client.didReceiveRawData(rawData, data->size());
+            Ref contiguousData = data->makeContiguous();
+            auto span = contiguousData->span();
+            DC_MEMDUMP("Notifying raw data", span.data(), span.size());
+            client.didReceiveRawData(span);
         }, [&](String& text) {
             DC_DEBUG("Notifying queued string of size %d", text.sizeInBytes());
             DC_TRACE("Notifying queued string %s", text.ascii().data());
@@ -196,11 +197,11 @@ bool GStreamerDataChannelHandler::sendStringData(const CString& text)
     return true;
 }
 
-bool GStreamerDataChannelHandler::sendRawData(const uint8_t* data, size_t length)
+bool GStreamerDataChannelHandler::sendRawData(std::span<const uint8_t> data)
 {
-    DC_DEBUG("Sending raw data of length: %zu", length);
-    DC_MEMDUMP("Sending raw data", data, length);
-    auto bytes = adoptGRef(g_bytes_new(data, length));
+    DC_DEBUG("Sending raw data of length: %zu", data.size());
+    DC_MEMDUMP("Sending raw data", data.data(), data.size());
+    auto bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
     g_signal_emit_by_name(m_channel.get(), "send-data", bytes.get());
     return true;
 }
@@ -344,7 +345,7 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
         gsize size = 0;
         const auto* data = reinterpret_cast<const uint8_t*>(g_bytes_get_data(bytes.get(), &size));
         DC_MEMDUMP("Incoming raw data", data, size);
-        client.value()->didReceiveRawData(data, size);
+        client.value()->didReceiveRawData(std::span { data, size });
     });
 }
 

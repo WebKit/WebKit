@@ -30,12 +30,15 @@
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
+#include <mach/exception_types.h>
 #include <mach/thread_act.h>
 #include <signal.h>
 #elif OS(WINDOWS)
 #include <windows.h>
 #elif OS(OPENBSD)
 typedef ucontext_t mcontext_t;
+#elif OS(QNX)
+#include <ucontext.h>
 #else
 #include <sys/ucontext.h>
 #endif
@@ -128,8 +131,13 @@ using WTF::threadStatePCInternal;
 #define WTF_READ_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs) \
     threadStatePCInternal(const_cast<PlatformRegisters&>(regs))
 
+#if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
+#define WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, newPointer) \
+    arm_thread_state64_set_pc_presigned_fptr(regs, newPointer)
+#else
 #define WTF_WRITE_PLATFORM_REGISTERS_PC_WITH_PROFILE(regs, newPointer) \
     arm_thread_state64_set_pc_fptr(regs, newPointer)
+#endif // CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
 
 #define WTF_READ_MACHINE_CONTEXT_SP_WITH_PROFILE(machineContext) \
     WTF_READ_PLATFORM_REGISTERS_SP_WITH_PROFILE(machineContext->__ss)

@@ -348,6 +348,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView.usesSafariLikeRotation = NO;
         webView.overrideSafeAreaInsets = UIEdgeInsetsZero;
         [webView _clearOverrideLayoutParameters];
+        [webView _resetObscuredInsetsForTesting];
         [webView _clearInterfaceOrientationOverride];
         [webView setAllowedMenuActions:nil];
         webView._dragInteractionPolicy = dragInteractionPolicy(options);

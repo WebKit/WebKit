@@ -130,6 +130,13 @@ void Structure::dumpStatistics()
 #if ASSERT_ENABLED
 void Structure::validateFlags()
 {
+    bool hasStaticPropertyTable = false;
+    for (const ClassInfo* ci = classInfoForCells(); ci; ci = ci->parentClass) {
+        if (ci->staticPropHashTable)
+            hasStaticPropertyTable = true;
+    }
+    RELEASE_ASSERT(hasStaticPropertyTable == typeInfo().hasStaticPropertyTable());
+
     const MethodTable& methodTable = m_classInfo->methodTable;
 
     bool overridesGetCallData = methodTable.getCallData != JSCell::getCallData;
@@ -1413,9 +1420,11 @@ void Structure::dump(PrintStream& out) const
             out.print(comma, entry.key(), ":", static_cast<int>(entry.offset()));
             return true;
         });
-    
+
     out.print("}, ", IndexingTypeDump(indexingMode()));
-    
+
+    out.print(", ", TransitionKindDump(transitionKind()));
+
     if (hasPolyProto())
         out.print(", PolyProto offset:", knownPolyProtoOffset);
     else if (m_prototype.get().isCell())
@@ -1603,6 +1612,66 @@ void DeferredStructureTransitionWatchpointFire::fireAllSlow()
 void Structure::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
 {
     m_transitionTable.finalizeUnconditionally(vm, collectionScope);
+}
+
+void dumpTransitionKind(PrintStream& out, TransitionKind kind)
+{
+    const char* kindName;
+    switch (kind) {
+    case TransitionKind::Unknown:
+        kindName = "Unknown";
+        break;
+    case TransitionKind::PropertyAddition:
+        kindName = "PropertyAddition";
+        break;
+    case TransitionKind::PropertyDeletion:
+        kindName = "PropertyDeletion";
+        break;
+    case TransitionKind::PropertyAttributeChange:
+        kindName = "PropertyAttributeChange";
+        break;
+    case TransitionKind::AllocateUndecided:
+        kindName = "AllocateUndecided";
+        break;
+    case TransitionKind::AllocateInt32:
+        kindName = "AllocateInt32";
+        break;
+    case TransitionKind::AllocateDouble:
+        kindName = "AllocateDouble";
+        break;
+    case TransitionKind::AllocateContiguous:
+        kindName = "AllocateContiguous";
+        break;
+    case TransitionKind::AllocateArrayStorage:
+        kindName = "AllocateArrayStorage";
+        break;
+    case TransitionKind::AllocateSlowPutArrayStorage:
+        kindName = "AllocateSlowPutArrayStorage";
+        break;
+    case TransitionKind::SwitchToSlowPutArrayStorage:
+        kindName = "SwitchToSlowPutArrayStorage";
+        break;
+    case TransitionKind::AddIndexedAccessors:
+        kindName = "AddIndexedAccessors";
+        break;
+    case TransitionKind::PreventExtensions:
+        kindName = "PreventExtensions";
+        break;
+    case TransitionKind::Seal:
+        kindName = "Seal";
+        break;
+    case TransitionKind::Freeze:
+        kindName = "Freeze";
+        break;
+    case TransitionKind::BecomePrototype:
+        kindName = "BecomePrototype";
+        break;
+    case TransitionKind::SetBrand:
+        kindName = "SetBrand";
+        break;
+    }
+
+    out.print(kindName);
 }
 
 } // namespace JSC

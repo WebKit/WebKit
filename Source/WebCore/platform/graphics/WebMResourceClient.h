@@ -28,22 +28,22 @@
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
 
 #include "PlatformMediaResourceLoader.h"
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class WebMResourceClientParent : public CanMakeWeakPtr<WebMResourceClientParent> {
+class WebMResourceClientParent : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebMResourceClientParent, WTF::DestructionThread::Main> {
 public:
     virtual ~WebMResourceClientParent() = default;
-    
+
     virtual void dataReceived(const SharedBuffer&) = 0;
     virtual void loadFailed(const ResourceError&) = 0;
-    virtual void loadFinished(const FragmentedSharedBuffer&) = 0;
+    virtual void loadFinished() = 0;
 };
 
 class WebMResourceClient final
-    : public PlatformMediaResourceClient
-    , public CanMakeWeakPtr<WebMResourceClient> {
+    : public PlatformMediaResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<WebMResourceClient> create(WebMResourceClientParent&, PlatformMediaResourceLoader&, ResourceRequest&&);
@@ -58,9 +58,8 @@ private:
     void loadFailed(PlatformMediaResource&, const ResourceError&) final;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final;
 
-    WeakPtr<WebMResourceClientParent> m_parent;
+    ThreadSafeWeakPtr<WebMResourceClientParent> m_parent;
     RefPtr<PlatformMediaResource> m_resource;
-    SharedBufferBuilder m_buffer;
 };
 
 } // namespace WebCore

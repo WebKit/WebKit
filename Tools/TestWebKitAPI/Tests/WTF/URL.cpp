@@ -659,12 +659,12 @@ TEST_F(WTF_URL, MoveInvalidatesURL)
     EXPECT_TRUE(url1.isValid());
     URL url2 { WTFMove(url1) };
     EXPECT_TRUE(url2.isValid());
-    EXPECT_FALSE(url1.isValid());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url1.isValid());
 
     URL url3 { "http://www.webkit.org"_str };
     url3 = WTFMove(url2);
     EXPECT_TRUE(url3.isValid());
-    EXPECT_FALSE(url2.isValid());
+    SUPPRESS_USE_AFTER_MOVE EXPECT_FALSE(url2.isValid());
 
     url3 = { };
     EXPECT_FALSE(url3.isValid());

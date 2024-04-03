@@ -41,14 +41,16 @@ class IntRect;
 
 namespace WebKit {
 
+enum class ShouldUpdateAutoSizeScale : bool { No, Yes };
+
 class PDFDocumentLayout {
 public:
     using PageIndex = size_t; // This is a zero-based index.
 
     enum class DisplayMode : uint8_t {
-        SinglePage,
-        Continuous,
-        TwoUp,
+        SinglePageDiscrete,
+        SinglePageContinuous,
+        TwoUpDiscrete,
         TwoUpContinuous,
     };
 
@@ -56,42 +58,70 @@ public:
     ~PDFDocumentLayout();
 
     void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
+    bool hasPDFDocument() const { return !!m_pdfDocument; }
+    bool hasLaidOutPDFDocument() const { return !m_pageGeometry.isEmpty(); }
 
     size_t pageCount() const;
 
     static constexpr WebCore::FloatSize documentMargin { 6, 8 };
     static constexpr WebCore::FloatSize pageMargin { 4, 6 };
 
+    bool isLeftPageIndex(PageIndex) const;
+    bool isRightPageIndex(PageIndex) const;
+    bool isLastPageIndex(PageIndex) const;
+
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
-    WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
+    std::optional<unsigned> indexForPage(RetainPtr<PDFPage>) const;
+    PDFDocumentLayout::PageIndex nearestPageIndexForDocumentPoint(WebCore::FloatPoint) const;
+    // For the given Y offset, return a page index and page point for the page at this offset. Returns the leftmost
+    // page if two-up and both pages intersect that offset, otherwise the right page if only it intersects the offset.
+    // The point is centered horizontally in the given page.
+    std::pair<PDFDocumentLayout::PageIndex, WebCore::FloatPoint> pageIndexAndPagePointForDocumentYOffset(float) const;
+
+    // This is not scaled by scale().
+    WebCore::FloatRect layoutBoundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
     WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
+
+    WebCore::FloatPoint documentToPDFPage(WebCore::FloatPoint documentPoint, PageIndex) const;
+    WebCore::FloatRect documentToPDFPage(WebCore::FloatRect documentRect, PageIndex) const;
+
+    WebCore::FloatPoint pdfPageToDocument(WebCore::FloatPoint pagePoint, PageIndex) const;
+    WebCore::FloatRect pdfPageToDocument(WebCore::FloatRect pageRect, PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
 
-    void updateLayout(WebCore::IntSize pluginSize);
+    void updateLayout(WebCore::IntSize pluginSize, ShouldUpdateAutoSizeScale);
     WebCore::FloatSize scaledContentsSize() const;
 
     void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
     DisplayMode displayMode() const { return m_displayMode; }
+    bool isSinglePageDisplayMode() const { return m_displayMode == DisplayMode::SinglePageDiscrete || m_displayMode == DisplayMode::SinglePageContinuous; }
+    bool isTwoUpDisplayMode() const { return m_displayMode == DisplayMode::TwoUpDiscrete || m_displayMode == DisplayMode::TwoUpContinuous; }
 
-private:
-    void layoutPages(float availableWidth, float maxRowWidth);
-
-    void layoutSingleColumn(float availableWidth, float maxRowWidth);
-    void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
+    unsigned pagesPerRow() const { return isSinglePageDisplayMode() ? 1 : 2; }
 
     struct PageGeometry {
-        WebCore::FloatRect normalizedBounds;
+        WebCore::FloatRect cropBox;
+        WebCore::FloatRect layoutBounds;
         WebCore::IntDegrees rotation { 0 };
     };
+
+    std::optional<PageGeometry> geometryForPage(RetainPtr<PDFPage>) const;
+    WebCore::AffineTransform toPageTransform(const PageGeometry&) const;
+
+private:
+    void layoutPages(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
+
+    void layoutSingleColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
+    void layoutTwoUpColumn(float availableWidth, float maxRowWidth, ShouldUpdateAutoSizeScale);
 
     RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };
-    DisplayMode m_displayMode { DisplayMode::Continuous };
+    DisplayMode m_displayMode { DisplayMode::SinglePageContinuous };
 };
 
 } // namespace WebKit

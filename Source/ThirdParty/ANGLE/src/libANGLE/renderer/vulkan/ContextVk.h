@@ -14,14 +14,15 @@
 
 #include "common/PackedEnums.h"
 #include "common/vulkan/vk_headers.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
 #include "libANGLE/renderer/vulkan/PersistentCommandPool.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace angle
 {
@@ -36,7 +37,6 @@ class SyncHelper;
 }  // namespace vk
 
 class ProgramExecutableVk;
-class RendererVk;
 class WindowSurfaceVk;
 class OffscreenSurfaceVk;
 class ShareGroupVk;
@@ -69,10 +69,10 @@ enum class UpdateDepthFeedbackLoopReason
 class ContextVk : public ContextImpl, public vk::Context, public MultisampleTextureInitializer
 {
   public:
-    ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk *renderer);
+    ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Renderer *renderer);
     ~ContextVk() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
 
     void onDestroy(const gl::Context *context) override;
 
@@ -455,11 +455,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                        gl::SamplerFormat format,
                                        gl::Texture **textureOut);
     void updateColorMasks();
-    void updateMissingOutputsMask();
     void updateBlendFuncsAndEquations();
-    void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
-    void updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples);
-    void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
 
     void handleError(VkResult errorCode,
                      const char *file,
@@ -559,6 +555,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         ASSERT(mRenderPassCommands->started());
         mRenderPassCommands->depthStencilImagesDraw(level, layerStart, layerCount, image,
                                                     resolveImage, imageSiblingSerial);
+    }
+
+    void onFragmentShadingRateRead(vk::ImageHelper *image)
+    {
+        ASSERT(mRenderPassCommands->started());
+        mRenderPassCommands->fragmentShadingRateImageRead(image);
     }
 
     void finalizeImageLayout(const vk::ImageHelper *image, UniqueSerial imageSiblingSerial)
@@ -667,7 +669,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // Either issue a submission or defer it when a sync object is initialized.  If deferred, a
     // submission will have to be incurred during client wait.
-    angle::Result onSyncObjectInit(vk::SyncHelper *syncHelper, bool isEGLSyncObject);
+    angle::Result onSyncObjectInit(vk::SyncHelper *syncHelper, SyncFenceScope scope);
     // Called when a sync object is waited on while its submission was deffered in onSyncObjectInit.
     // It's a no-op if this context doesn't have a pending submission.  Note that due to
     // mHasDeferredFlush being set, flushing the render pass leads to a submission automatically.
@@ -753,6 +755,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     angle::Result switchToFramebufferFetchMode(bool hasFramebufferFetch);
     bool isInFramebufferFetchMode() const { return mIsInFramebufferFetchMode; }
 
+    void updateFoveatedRendering();
+
     const angle::PerfMonitorCounterGroups &getPerfMonitorCounters() override;
 
     void resetPerFramePerfCounters();
@@ -785,7 +789,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     vk::ComputePipelineFlags getComputePipelineFlags() const;
 
-    angle::ImageLoadContext getImageLoadContext() const;
+    const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
     bool hasUnsubmittedUse(const vk::ResourceUse &use) const;
     bool hasUnsubmittedUse(const vk::Resource &resource) const
@@ -805,6 +809,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     {
         return getFeatures().mutableMipmapTextureUpload.enabled && !hasDisplayTextureShareGroup() &&
                mShareGroupVk->getContexts().size() == 1;
+    }
+
+    bool isPipelineCacheGraphDumpEnabled() const { return mDumpPipelineCacheGraph; }
+    const char *getPipelineCacheGraphDumpPath() const
+    {
+        return mPipelineCacheGraphDumpPath.c_str();
     }
 
     vk::RenderPassUsageFlags getDepthStencilAttachmentFlags() const
@@ -1115,6 +1125,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                         float farPlane);
     void updateFrontFace();
     void updateDepthRange(float nearPlane, float farPlane);
+    void updateMissingOutputsMask();
+    void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
     void updateFlipViewportDrawFramebuffer(const gl::State &glState);
     void updateFlipViewportReadFramebuffer(const gl::State &glState);
     void updateSurfaceRotationDrawFramebuffer(const gl::State &glState,
@@ -1393,6 +1407,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     angle::Result ensureInterfacePipelineCache();
 
+    angle::ImageLoadContext mImageLoadContext;
+
     std::array<GraphicsDirtyBitHandler, DIRTY_BIT_MAX> mGraphicsDirtyBitHandlers;
     std::array<ComputeDirtyBitHandler, DIRTY_BIT_MAX> mComputeDirtyBitHandlers;
 
@@ -1446,7 +1462,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     vk::PipelineCache mInterfacePipelinesCache;
 
     // These pools are externally synchronized, so cannot be accessed from different
-    // threads simultaneously. Hence, we keep them in the ContextVk instead of the RendererVk.
+    // threads simultaneously. Hence, we keep them in the ContextVk instead of the vk::Renderer.
     // Note that this implementation would need to change in shared resource scenarios. Likely
     // we'd instead share a single set of pools between the share groups.
     gl::QueryTypeMap<vk::DynamicQueryPool> mQueryPools;
@@ -1679,6 +1695,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     // A graph built from pipeline descs and their transitions.
     std::ostringstream mPipelineCacheGraph;
+    bool mDumpPipelineCacheGraph;
+    std::string mPipelineCacheGraphDumpPath;
 
     RangedSerialFactory mOutsideRenderPassSerialFactory;
 };
@@ -1719,13 +1737,16 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
 {
     const GLuint staticStride = mRenderer->useVertexInputBindingStrideDynamicState() ? 0 : stride;
 
-    invalidateCurrentGraphicsPipeline();
+    if (!getFeatures().supportsVertexInputDynamicState.enabled)
+    {
+        invalidateCurrentGraphicsPipeline();
 
-    // Set divisor to 1 for attribs with emulated divisor
-    mGraphicsPipelineDesc->updateVertexInput(
-        this, &mGraphicsPipelineTransition, static_cast<uint32_t>(attribIndex), staticStride,
-        divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, compressed,
-        relativeOffset);
+        // Set divisor to 1 for attribs with emulated divisor
+        mGraphicsPipelineDesc->updateVertexInput(
+            this, &mGraphicsPipelineTransition, static_cast<uint32_t>(attribIndex), staticStride,
+            divisor > mRenderer->getMaxVertexAttribDivisor() ? 1 : divisor, format, compressed,
+            relativeOffset);
+    }
     return onVertexBufferChange(vertexBuffer);
 }
 

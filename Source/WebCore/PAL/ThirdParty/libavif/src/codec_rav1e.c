@@ -55,7 +55,9 @@ static avifResult rav1eCodecEncodeImage(avifCodec * codec,
                                         avifBool alpha,
                                         int tileRowsLog2,
                                         int tileColsLog2,
+                                        int quantizer,
                                         avifEncoderChanges encoderChanges,
+                                        avifBool disableLaggedOutput,
                                         uint32_t addImageFlags,
                                         avifCodecEncodeOutput * output)
 {
@@ -71,6 +73,14 @@ static avifResult rav1eCodecEncodeImage(avifCodec * codec,
     } else if ((codec->internal->encodeWidth != image->width) || (codec->internal->encodeHeight != image->height)) {
         return AVIF_RESULT_NOT_IMPLEMENTED;
     }
+
+    // rav1e does not support encoding layered image.
+    if (encoder->extraLayerCount > 0) {
+        return AVIF_RESULT_NOT_IMPLEMENTED;
+    }
+
+    // rav1e does not support disabling lagged output. See https://github.com/xiph/rav1e/issues/2267. Ignore this setting.
+    (void)disableLaggedOutput;
 
     avifResult result = AVIF_RESULT_UNKNOWN_ERROR;
 
@@ -139,17 +149,15 @@ static avifResult rav1eCodecEncodeImage(avifCodec * codec,
         }
 
         int minQuantizer = AVIF_CLAMP(encoder->minQuantizer, 0, 63);
-        int maxQuantizer = AVIF_CLAMP(encoder->maxQuantizer, 0, 63);
         if (alpha) {
             minQuantizer = AVIF_CLAMP(encoder->minQuantizerAlpha, 0, 63);
-            maxQuantizer = AVIF_CLAMP(encoder->maxQuantizerAlpha, 0, 63);
         }
         minQuantizer = (minQuantizer * 255) / 63; // Rescale quantizer values as rav1e's QP range is [0,255]
-        maxQuantizer = (maxQuantizer * 255) / 63;
+        quantizer = (quantizer * 255) / 63;
         if (rav1e_config_parse_int(rav1eConfig, "min_quantizer", minQuantizer) == -1) {
             goto cleanup;
         }
-        if (rav1e_config_parse_int(rav1eConfig, "quantizer", maxQuantizer) == -1) {
+        if (rav1e_config_parse_int(rav1eConfig, "quantizer", quantizer) == -1) {
             goto cleanup;
         }
         if (tileRowsLog2 != 0) {
@@ -165,6 +173,12 @@ static avifResult rav1eCodecEncodeImage(avifCodec * codec,
         if (encoder->speed != AVIF_SPEED_DEFAULT) {
             int speed = AVIF_CLAMP(encoder->speed, 0, 10);
             if (rav1e_config_parse_int(rav1eConfig, "speed", speed) == -1) {
+                goto cleanup;
+            }
+        }
+        if (encoder->keyframeInterval > 0) {
+            // "key_frame_interval" is the maximum interval between two keyframes.
+            if (rav1e_config_parse_int(rav1eConfig, "key_frame_interval", encoder->keyframeInterval) == -1) {
                 goto cleanup;
             }
         }
@@ -215,7 +229,10 @@ static avifResult rav1eCodecEncodeImage(avifCodec * codec,
             goto cleanup;
         } else if (pkt) {
             if (pkt->data && (pkt->len > 0)) {
-                avifCodecEncodeOutputAddSample(output, pkt->data, pkt->len, (pkt->frame_type == RA_FRAME_TYPE_KEY));
+                result = avifCodecEncodeOutputAddSample(output, pkt->data, pkt->len, (pkt->frame_type == RA_FRAME_TYPE_KEY));
+                if (result != AVIF_RESULT_OK) {
+                    goto cleanup;
+                }
             }
             rav1e_packet_unref(pkt);
             pkt = NULL;
@@ -257,7 +274,10 @@ static avifBool rav1eCodecEncodeFinish(avifCodec * codec, avifCodecEncodeOutput 
             if (pkt) {
                 gotPacket = AVIF_TRUE;
                 if (pkt->data && (pkt->len > 0)) {
-                    avifCodecEncodeOutputAddSample(output, pkt->data, pkt->len, (pkt->frame_type == RA_FRAME_TYPE_KEY));
+                    if (avifCodecEncodeOutputAddSample(output, pkt->data, pkt->len, (pkt->frame_type == RA_FRAME_TYPE_KEY)) !=
+                        AVIF_RESULT_OK) {
+                        return AVIF_FALSE;
+                    }
                 }
                 rav1e_packet_unref(pkt);
                 pkt = NULL;
@@ -281,12 +301,19 @@ const char * avifCodecVersionRav1e(void)
 avifCodec * avifCodecCreateRav1e(void)
 {
     avifCodec * codec = (avifCodec *)avifAlloc(sizeof(avifCodec));
+    if (codec == NULL) {
+        return NULL;
+    }
     memset(codec, 0, sizeof(struct avifCodec));
     codec->encodeImage = rav1eCodecEncodeImage;
     codec->encodeFinish = rav1eCodecEncodeFinish;
     codec->destroyInternal = rav1eCodecDestroyInternal;
 
     codec->internal = (struct avifCodecInternal *)avifAlloc(sizeof(struct avifCodecInternal));
+    if (codec->internal == NULL) {
+        avifFree(codec);
+        return NULL;
+    }
     memset(codec->internal, 0, sizeof(struct avifCodecInternal));
     return codec;
 }

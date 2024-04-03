@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextCodec.h"
 #include <unicode/uchar.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #include <array>

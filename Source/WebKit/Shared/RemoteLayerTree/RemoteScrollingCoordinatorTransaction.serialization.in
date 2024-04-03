@@ -25,6 +25,7 @@ headers: <WebCore/ScrollingStateTree.h> <WebCore/ScrollingStateFrameScrollingNod
 class WebKit::RemoteScrollingCoordinatorTransaction {
     std::unique_ptr<WebCore::ScrollingStateTree> scrollingStateTree()
     bool clearScrollLatching()
+    WebCore::FrameIdentifier rootFrameIdentifier()
 }
 
 [CreateUsing=createAfterReconstruction] class WebCore::ScrollingStateTree {
@@ -59,6 +60,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     Vector<Ref<WebCore::ScrollingStateNode>> children()
     [OptionalTupleBits] OptionSet<WebCore::ScrollingStateNodeProperty> changedProperties()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::Layer] std::optional<WebCore::PlatformLayerIdentifier> layer().layerIDForEncoding()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::LayerHostingContextIdentifier] std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier();
 }
 
 [RefCounted] class WebCore::ScrollingStateFrameScrollingNode {
@@ -90,6 +92,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::KeyboardScrollData] WebCore::RequestedKeyboardScrollData keyboardScrollData()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FrameScaleFactor] float frameScaleFactor()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::EventTrackingRegion] WebCore::EventTrackingRegions eventTrackingRegions()
@@ -141,6 +144,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::KeyboardScrollData] WebCore::RequestedKeyboardScrollData keyboardScrollData()
 };
 
@@ -179,6 +183,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MouseActivityState] WebCore::MouseLocationState mouseLocationState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarHoverState] WebCore::ScrollbarHoverState scrollbarHoverState();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarEnabledState] WebCore::ScrollbarEnabledState scrollbarEnabledState();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ScrollbarLayoutDirection] WebCore::UserInterfaceLayoutDirection scrollbarLayoutDirection();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::KeyboardScrollData] WebCore::RequestedKeyboardScrollData keyboardScrollData()
 }
 

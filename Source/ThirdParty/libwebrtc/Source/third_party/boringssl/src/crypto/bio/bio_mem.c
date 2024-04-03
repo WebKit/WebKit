@@ -206,6 +206,7 @@ static int mem_gets(BIO *bio, char *buf, int size) {
 
 static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
   long ret = 1;
+  char **pptr;
 
   BUF_MEM *b = (BUF_MEM *)bio->ptr;
 
@@ -231,8 +232,8 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
     case BIO_CTRL_INFO:
       ret = (long)b->length;
       if (ptr != NULL) {
-        char **pptr = ptr;
-        *pptr = b->data;
+        pptr = (char **)ptr;
+        *pptr = (char *)&b->data[0];
       }
       break;
     case BIO_C_SET_BUF_MEM:
@@ -242,8 +243,8 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       break;
     case BIO_C_GET_BUF_MEM_PTR:
       if (ptr != NULL) {
-        BUF_MEM **pptr = ptr;
-        *pptr = b;
+        pptr = (char **)ptr;
+        *pptr = (char *)b;
       }
       break;
     case BIO_CTRL_GET_CLOSE:
@@ -293,15 +294,15 @@ int BIO_mem_contents(const BIO *bio, const uint8_t **out_contents,
 }
 
 long BIO_get_mem_data(BIO *bio, char **contents) {
-  return BIO_ctrl(bio, BIO_CTRL_INFO, 0, contents);
+  return BIO_ctrl(bio, BIO_CTRL_INFO, 0, (char *) contents);
 }
 
 int BIO_get_mem_ptr(BIO *bio, BUF_MEM **out) {
-  return (int)BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, out);
+  return (int)BIO_ctrl(bio, BIO_C_GET_BUF_MEM_PTR, 0, (char *) out);
 }
 
 int BIO_set_mem_buf(BIO *bio, BUF_MEM *b, int take_ownership) {
-  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM, take_ownership, b);
+  return (int)BIO_ctrl(bio, BIO_C_SET_BUF_MEM, take_ownership, (char *) b);
 }
 
 int BIO_set_mem_eof_return(BIO *bio, int eof_value) {

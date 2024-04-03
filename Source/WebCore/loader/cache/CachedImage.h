@@ -31,6 +31,7 @@
 #include "SVGImageCache.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -59,10 +60,9 @@ public:
     WEBCORE_EXPORT RefPtr<Image> protectedImage() const;
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
-    bool hasSVGImage() const;
     bool currentFrameKnownToBeOpaque(const RenderElement*);
 
-    std::pair<Image*, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
+    std::pair<WeakPtr<Image>, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
     bool willPaintBrokenImage() const;
 
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
@@ -153,13 +153,14 @@ private:
         // ImageObserver API
         URL sourceUrl() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).url() : URL(); }
         String mimeType() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).mimeType() : emptyString(); }
+        unsigned numberOfClients() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).numberOfClients() : 0; }
         long long expectedContentLength() const override { return !m_cachedImages.isEmptyIgnoringNullReferences() ? (*m_cachedImages.begin()).expectedContentLength() : 0; }
 
         void encodedDataStatusChanged(const Image&, EncodedDataStatus) final;
         void decodedSizeChanged(const Image&, long long delta) final;
         void didDraw(const Image&) final;
 
-        bool canDestroyDecodedData(const Image&) final;
+        bool canDestroyDecodedData(const Image&) const final;
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
         void scheduleRenderingUpdate(const Image&) final;
@@ -173,7 +174,7 @@ private:
     void encodedDataStatusChanged(const Image&, EncodedDataStatus);
     void decodedSizeChanged(const Image&, long long delta);
     void didDraw(const Image&);
-    bool canDestroyDecodedData(const Image&);
+    bool canDestroyDecodedData(const Image&) const;
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid);
     void changedInRect(const Image&, const IntRect*);
     void scheduleRenderingUpdate(const Image&);
@@ -188,7 +189,7 @@ private:
         URL imageURL;
     };
 
-    using ContainerContextRequests = HashMap<const CachedImageClient*, ContainerContext>;
+    using ContainerContextRequests = HashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
     SingleThreadWeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;

@@ -26,17 +26,19 @@
 #pragma once
 
 #import "PresentationContext.h"
+#import <wtf/MachSendRight.h>
 #import <wtf/Vector.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebGPU {
 
 class Device;
+class Instance;
 
 class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&);
+    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&, const Instance&);
 
     virtual ~PresentationContextIOSurface();
 
@@ -50,7 +52,7 @@ public:
     bool isPresentationContextIOSurface() const override { return true; }
 
 private:
-    PresentationContextIOSurface(const WGPUSurfaceDescriptor&);
+    PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
     void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
@@ -58,11 +60,17 @@ private:
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
         Ref<Texture> texture;
-        Ref<TextureView> textureView;
+        RefPtr<Texture> luminanceClampTexture;
     };
     Vector<RenderBuffer> m_renderBuffers;
     RefPtr<Device> m_device;
+    RefPtr<Texture> m_invalidTexture;
     size_t m_currentIndex { 0 };
+    id<MTLFunction> m_luminanceClampFunction;
+    id<MTLComputePipelineState> m_computePipelineState;
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
+    std::optional<const MachSendRight> m_webProcessID;
+#endif
 };
 
 } // namespace WebGPU

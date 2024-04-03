@@ -66,7 +66,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_usesWebProcessCache = this->m_usesWebProcessCache;
     copy->m_usesBackForwardCache = this->m_usesBackForwardCache;
     copy->m_usesSingleWebProcess = m_usesSingleWebProcess;
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     copy->m_useSystemAppearanceForScrollbars = m_useSystemAppearanceForScrollbars;
 #endif
 #if PLATFORM(PLAYSTATION)
@@ -82,6 +82,8 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_presentingApplicationProcessToken = this->m_presentingApplicationProcessToken;
 #endif
     copy->m_timeZoneOverride = this->m_timeZoneOverride;
+    copy->m_memoryFootprintPollIntervalForTesting = this->m_memoryFootprintPollIntervalForTesting;
+    copy->m_memoryFootprintNotificationThresholds = this->m_memoryFootprintNotificationThresholds;
     return copy;
 }
 

@@ -63,7 +63,6 @@ public:
     int pageX() const final;
     int pageY() const final;
     WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;
-    virtual const LayoutPoint& pageLocation() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
@@ -75,12 +74,13 @@ public:
     static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, LocalFrameView*);
 
 protected:
-    MouseRelatedEvent() = default;
-    MouseRelatedEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
+    MouseRelatedEvent(enum EventInterfaceType);
+    MouseRelatedEvent();
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier> modifiers,
         IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
-    MouseRelatedEvent(const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
-    MouseRelatedEvent(const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, IsCancelable, MonotonicTime, RefPtr<WindowProxy>&&, const IntPoint& globalLocation, OptionSet<Modifier>);
+    MouseRelatedEvent(enum EventInterfaceType, const AtomString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);

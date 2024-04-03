@@ -55,13 +55,12 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 
 bool ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    if (!is<ScrollingStateStickyNode>(stateNode))
+    auto* stickyStateNode = dynamicDowncast<ScrollingStateStickyNode>(stateNode);
+    if (!stickyStateNode)
         return false;
 
-    const auto& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
-
-    if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
-        m_constraints = stickyStateNode.viewportConstraints();
+    if (stickyStateNode->hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
+        m_constraints = stickyStateNode->viewportConstraints();
 
     return true;
 }
@@ -80,10 +79,9 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
     FloatSize offsetFromStickyAncestors;
     auto computeLayerPositionForScrollingNode = [&](ScrollingTreeNode& scrollingNode) {
         FloatRect constrainingRect;
-        if (is<ScrollingTreeFrameScrollingNode>(scrollingNode)) {
-            auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(scrollingNode);
-            constrainingRect = frameScrollingNode.layoutViewport();
-        } else {
+        if (auto* frameScrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(scrollingNode))
+            constrainingRect = frameScrollingNode->layoutViewport();
+        else {
             auto& overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(scrollingNode);
             constrainingRect = m_constraints.constrainingRectAtLastLayout();
             constrainingRect.move(overflowScrollingNode.scrollDeltaSinceLastCommit());
@@ -93,9 +91,8 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
     };
 
     for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (is<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
-            auto& overflowProxyNode = downcast<ScrollingTreeOverflowScrollProxyNode>(*ancestor);
-            auto overflowNode = scrollingTree().nodeForID(overflowProxyNode.overflowScrollingNodeID());
+        if (auto* overflowProxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(*ancestor)) {
+            auto overflowNode = scrollingTree().nodeForID(overflowProxyNode->overflowScrollingNodeID());
             if (!overflowNode)
                 break;
 
@@ -105,8 +102,8 @@ FloatPoint ScrollingTreeStickyNode::computeLayerPosition() const
         if (is<ScrollingTreeScrollingNode>(*ancestor))
             return computeLayerPositionForScrollingNode(*ancestor);
 
-        if (is<ScrollingTreeStickyNode>(*ancestor))
-            offsetFromStickyAncestors += downcast<ScrollingTreeStickyNode>(*ancestor).scrollDeltaSinceLastCommit();
+        if (auto* stickyNode = dynamicDowncast<ScrollingTreeStickyNode>(*ancestor))
+            offsetFromStickyAncestors += stickyNode->scrollDeltaSinceLastCommit();
 
         if (is<ScrollingTreeFixedNode>(*ancestor)) {
             // FIXME: Do we need scrolling tree nodes at all for nested cases?

@@ -66,7 +66,7 @@ private:
     bool didInflateFinish(int) const;
     bool didInflateContainExtraBytes(int) const;
 
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(std::span<const uint8_t>);
     ExceptionOr<bool> initialize();
 
     explicit DecompressionStreamDecoder(unsigned char format)
@@ -89,11 +89,11 @@ private:
 
     bool m_usingAppleCompressionFramework { false };
 
-    inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompress(const uint8_t* input, const size_t inputLength);
+    inline ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
 
 #if PLATFORM(COCOA)
     compression_stream m_stream;
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressAppleCompressionFramework(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
     ExceptionOr<bool> initializeAppleCompressionFramework();
 #endif
 

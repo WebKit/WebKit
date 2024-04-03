@@ -253,31 +253,31 @@ Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::tryReallocate(Ref<Str
     return reallocateInternal(WTFMove(originalString), length, data);
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createInternal(std::span<const CharacterType> characters)
 {
-    if (!characters || !length)
+    if (characters.empty())
         return *empty();
     CharacterType* data;
-    auto string = createUninitializedInternalNonEmpty(length, data);
-    copyCharacters(data, characters, length);
+    auto string = createUninitializedInternalNonEmpty(characters.size(), data);
+    copyCharacters(data, characters.data(), characters.size());
     return string;
 }
 
-Ref<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::create(std::span<const UChar> characters)
 {
-    return createInternal(characters, length);
+    return createInternal(characters);
 }
 
-Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::create(std::span<const LChar> characters)
 {
-    return createInternal(characters, length);
+    return createInternal(characters);
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsigned length)
 {
     if (!length)
         return *empty();
-    Ref<StringImpl> result = createInternal(characters, length);
+    Ref<StringImpl> result = createInternal(std::span { characters, length });
     result->hash();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
@@ -303,7 +303,7 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsign
 
     for (size_t i = 0; i < length; ++i) {
         if (!isLatin1(characters[i]))
-            return create(characters, length);
+            return create(std::span { characters, length });
         data[i] = static_cast<LChar>(characters[i]);
     }
 
@@ -321,9 +321,9 @@ Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
         length = maxLength;
     }
     if (is8Bit())
-        return create(m_data8 + start, length);
+        return create(std::span { m_data8 + start, length });
 
-    return create(m_data16 + start, length);
+    return create(std::span { m_data16 + start, length });
 }
 
 char32_t StringImpl::characterStartingAt(unsigned i)
@@ -517,47 +517,62 @@ upconvert:
     return newImpl;
 }
 
-static inline bool needsTurkishCasingRules(const AtomString& localeIdentifier)
+static inline bool needsTurkishCasingRules(const AtomString& locale)
 {
-    // Either "tr" or "az" locale, with case sensitive comparison and allowing for an ignored subtag.
-    UChar first = localeIdentifier[0];
-    UChar second = localeIdentifier[1];
+    // Either "tr" or "az" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
+    UChar first = locale[0];
+    UChar second = locale[1];
     return ((isASCIIAlphaCaselessEqual(first, 't') && isASCIIAlphaCaselessEqual(second, 'r'))
         || (isASCIIAlphaCaselessEqual(first, 'a') && isASCIIAlphaCaselessEqual(second, 'z')))
-        && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
+        && (locale.length() == 2 || locale[2] == '-');
+}
+
+static inline bool needsGreekUppercasingRules(const AtomString& locale)
+{
+    // The "el" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
+    return isASCIIAlphaCaselessEqual(locale[0], 'e') && isASCIIAlphaCaselessEqual(locale[1], 'l')
+        && (locale.length() == 2 || locale[2] == '-');
+}
+
+static inline bool needsLithuanianCasingRules(const AtomString& locale)
+{
+    // The "lt" locale, with ASCII case insensitive comparison and allowing for an ignored subtag.
+    return isASCIIAlphaCaselessEqual(locale[0], 'l') && isASCIIAlphaCaselessEqual(locale[1], 't')
+        && (locale.length() == 2 || locale[2] == '-');
 }
 
 Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
-    // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
-    // FIXME: Could possibly optimize further by looking for the specific sequences
-    // that have locale-specific lowercasing. There are only three of them.
-    if (!needsTurkishCasingRules(localeIdentifier))
+    const char* locale;
+    if (needsTurkishCasingRules(localeIdentifier)) {
+        // Passing in the hardcoded locale "tr" is more efficient than
+        // allocating memory just to turn localeIdentifier into a C string, and we assume
+        // there is no difference between the lowercasing for "tr" and "az" locales.
+        // FIXME: Could optimize further by looking for the three sequences that have locale-specific lowercasing.
+        locale = "tr";
+    } else if (needsLithuanianCasingRules(localeIdentifier))
+        locale = "lt";
+    else
         return convertToLowercaseWithoutLocale();
 
-    // FIXME: Could share more code with the main StringImpl::lower by factoring out
-    // this last part into a shared function that takes a locale string, since this is
-    // just like the end of that function.
+    // FIXME: Could share more code with convertToLowercaseWithoutLocale.
 
     if (m_length > MaxLength)
         CRASH();
     int length = m_length;
 
-    // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
-    // allocating memory just to turn localeIdentifier into a C string, and we assume
-    // there is no difference between the uppercasing for "tr" and "az" locales.
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     const UChar* source16 = upconvertedCharacters;
     UChar* data16;
     auto newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
-    int realLength = u_strToLower(data16, length, source16, length, "tr", &status);
+    int realLength = u_strToLower(data16, length, source16, length, locale, &status);
     if (U_SUCCESS(status) && realLength == length)
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16, realLength, source16, length, "tr", &status);
+    u_strToLower(data16, realLength, source16, length, locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -566,29 +581,34 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithLocale(const AtomString& local
 Ref<StringImpl> StringImpl::convertToUppercaseWithLocale(const AtomString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
-    // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
-    // and that the only affected character is lowercase "i".
-    if (!needsTurkishCasingRules(localeIdentifier) || find('i') == notFound)
+    const char* locale;
+    if (needsTurkishCasingRules(localeIdentifier) && find('i') != notFound) {
+        // Passing in the hardcoded locale "tr" is more efficient than
+        // allocating memory just to turn localeIdentifier into a C string, and we assume
+        // there is no difference between the uppercasing for "tr" and "az" locales.
+        locale = "tr";
+    } else if (needsGreekUppercasingRules(localeIdentifier))
+        locale = "el";
+    else if (needsLithuanianCasingRules(localeIdentifier))
+        locale = "lt";
+    else
         return convertToUppercaseWithoutLocale();
 
     if (m_length > MaxLength)
         CRASH();
     int length = m_length;
 
-    // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
-    // allocating memory just to turn localeIdentifier into a C string, and we assume
-    // there is no difference between the uppercasing for "tr" and "az" locales.
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     const UChar* source16 = upconvertedCharacters;
     UChar* data16;
     auto newString = createUninitialized(length, data16);
     UErrorCode status = U_ZERO_ERROR;
-    int realLength = u_strToUpper(data16, length, source16, length, "tr", &status);
+    int realLength = u_strToUpper(data16, length, source16, length, locale, &status);
     if (U_SUCCESS(status) && realLength == length)
         return newString;
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToUpper(data16, realLength, source16, length, "tr", &status);
+    u_strToUpper(data16, realLength, source16, length, locale, &status);
     if (U_FAILURE(status))
         return *this;
     return newString;
@@ -736,8 +756,8 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatc
     if (!start && end == m_length - 1)
         return *this;
     if (is8Bit())
-        return create(m_data8 + start, end + 1 - start);
-    return create(m_data16 + start, end + 1 - start);
+        return create(std::span { m_data8 + start, end + 1 - start });
+    return create(std::span { m_data16 + start, end + 1 - start });
 }
 
 Ref<StringImpl> StringImpl::trim(CodeUnitMatchFunction predicate)
@@ -791,15 +811,15 @@ Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpac
 double StringImpl::toDouble(bool* ok)
 {
     if (is8Bit())
-        return charactersToDouble(characters8(), m_length, ok);
-    return charactersToDouble(characters16(), m_length, ok);
+        return charactersToDouble(span8(), ok);
+    return charactersToDouble(span16(), ok);
 }
 
 float StringImpl::toFloat(bool* ok)
 {
     if (is8Bit())
-        return charactersToFloat(characters8(), m_length, ok);
-    return charactersToFloat(characters16(), m_length, ok);
+        return charactersToFloat(span8(), ok);
+    return charactersToFloat(span16(), ok);
 }
 
 size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned start)
@@ -1620,9 +1640,9 @@ CString StringImpl::utf8(ConversionMode mode) const
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
     if (is8Bit())
-        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(span8()));
     else
-        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(span16()));
     return existingHash();
 }
 
@@ -1630,9 +1650,9 @@ unsigned StringImpl::concurrentHash() const
 {
     unsigned hash;
     if (is8Bit())
-        hash = StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length);
+        hash = StringHasher::computeHashAndMaskTop8Bits(span8());
     else
-        hash = StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length);
+        hash = StringHasher::computeHashAndMaskTop8Bits(span16());
     ASSERT(((hash << s_flagCount) >> s_flagCount) == hash);
     return hash;
 }

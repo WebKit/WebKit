@@ -48,17 +48,6 @@ loader/soup/ResourceLoaderSoup.cpp
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
-page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
-page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeFrameScrollingNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeOverflowScrollProxyNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeOverflowScrollingNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
-page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
-
 platform/gamepad/libwpe/GamepadLibWPE.cpp
 platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
 
@@ -72,6 +61,8 @@ platform/graphics/wpe/SystemFontDatabaseWPE.cpp
 
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
+platform/graphics/egl/GLContextWrapper.cpp @no-unify
+platform/graphics/egl/GLFence.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
@@ -92,6 +83,7 @@ platform/text/Hyphenation.cpp
 platform/text/LocaleICU.cpp
 
 platform/unix/LoggingUnix.cpp
+platform/unix/SharedMemoryUnix.cpp
 
 platform/wpe/PlatformScreenWPE.cpp
 

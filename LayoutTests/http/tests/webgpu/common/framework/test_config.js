@@ -1,6 +1,32 @@
 /**
- * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/
+* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+**/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const globalTestConfig = {
   maxSubcasesInFlight: 500,
@@ -8,4 +34,5 @@ export const globalTestConfig = {
   noRaceWithRejectOnTimeout: false,
   unrollConstEvalLoops: false,
   compatibility: false,
+  forceFallbackAdapter: false
 };

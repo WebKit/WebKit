@@ -37,10 +37,15 @@ messages -> WebProcessProxy LegacyReceiver {
     CreateGPUProcessConnection(IPC::Connection::Handle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) AllowedWhenWaitingForSyncReply
 #endif
 
+#if ENABLE(MODEL_PROCESS)
+    CreateModelProcessConnection(IPC::Connection::Handle connectionIdentifier, struct WebKit::ModelProcessConnectionParameters parameters) AllowedWhenWaitingForSyncReply
+#endif
+
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
+    DidExceedMemoryFootprintThreshold(size_t footprint)
     DidExceedCPULimit()
 
     StopResponsivenessTimer()
@@ -75,7 +80,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
     SystemBeep()
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     IsAXAuthenticated(struct WebKit::CoreIPCAuditToken auditToken) -> (bool authenticated) Synchronous
 #endif
 
@@ -87,4 +92,7 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
     SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    
+    WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
+    UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
 }

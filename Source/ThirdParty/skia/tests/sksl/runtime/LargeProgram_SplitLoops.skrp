@@ -1,0 +1,52 @@
+38 instructions
+
+store_src_rg                   xy = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_constant                  i = 0
+copy_slot_unmasked             i₁ = i
+copy_constant                  x = 0
+label                          label 0x00000002
+copy_slot_unmasked             i₂ = i₁
+copy_constant                  x₁ = 0
+label                          label 0x00000005
+copy_slot_unmasked             i₃ = i₂
+copy_constant                  x₂ = 0
+label                          label 0x00000008
+copy_slot_unmasked             i₄ = i₃
+copy_constant                  x₃ = 0
+label                          label 0x0000000B
+add_imm_int                    i₄ += 0x00000001
+add_imm_int                    x₃ += 0x00000001
+copy_slot_unmasked             $0 = x₃
+cmplt_imm_int                  $0 = lessThan($0, 0x0000000A)
+stack_rewind
+branch_if_no_active_lanes_eq   branch -6 (label 11 at #15) if no lanes of $0 == 0
+label                          label 0x0000000A
+copy_slot_unmasked             i₃ = i₄
+label                          label 0x00000009
+add_imm_int                    x₂ += 0x00000001
+copy_slot_unmasked             $0 = x₂
+cmplt_imm_int                  $0 = lessThan($0, 0x0000000A)
+stack_rewind
+branch_if_no_active_lanes_eq   branch -17 (label 8 at #12) if no lanes of $0 == 0
+label                          label 0x00000007
+copy_slot_unmasked             i₂ = i₃
+label                          label 0x00000006
+add_imm_int                    x₁ += 0x00000001
+copy_slot_unmasked             $0 = x₁
+cmplt_imm_int                  $0 = lessThan($0, 0x0000000A)
+stack_rewind
+branch_if_no_active_lanes_eq   branch -28 (label 5 at #9) if no lanes of $0 == 0
+label                          label 0x00000004
+copy_slot_unmasked             i₁ = i₂
+label                          label 0x00000003
+add_imm_int                    x += 0x00000001
+copy_slot_unmasked             $0 = x
+cmplt_imm_int                  $0 = lessThan($0, 0x0000000A)
+stack_rewind
+branch_if_no_active_lanes_eq   branch -39 (label 2 at #6) if no lanes of $0 == 0
+label                          label 0x00000001
+copy_slot_unmasked             i = i₁
+label                          label 0
+splat_4_constants              $0..3 = 0
+load_src                       src.rgba = $0..3

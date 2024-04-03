@@ -143,7 +143,7 @@ char* newTypedArrayWithSize(JSGlobalObject* globalObject, VM& vm, Structure* str
     size_t unsignedSize = static_cast<size_t>(size);
 
     if (vector)
-        return bitwise_cast<char*>(ViewClass::createWithFastVector(globalObject, structure, unsignedSize, untagArrayPtr(vector, unsignedSize)));
+        return bitwise_cast<char*>(ViewClass::createWithFastVector(globalObject, structure, unsignedSize, vector));
 
     RELEASE_AND_RETURN(scope, bitwise_cast<char*>(ViewClass::create(globalObject, structure, unsignedSize)));
 }
@@ -774,6 +774,13 @@ JSC_DEFINE_JIT_OPERATION(operationArithMaxMultipleDouble, double, (const double*
 ALWAYS_INLINE EncodedJSValue getByValCellInt(JSGlobalObject* globalObject, VM& vm, JSCell* base, int32_t index)
 {
     if (index < 0) {
+        // When index is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(index == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(base); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return JSValue::encode(jsUndefined());
+            return JSValue::encode(JSValue(base).get(globalObject, vm.propertyNames->negativeOneIdentifier));
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return JSValue::encode(JSValue(base).get(globalObject, Identifier::from(vm, index)));
     }
@@ -1711,6 +1718,16 @@ JSC_DEFINE_JIT_OPERATION(operationToPropertyKey, EncodedJSValue, (JSGlobalObject
     return JSValue::encode(JSValue::decode(value).toPropertyKeyValue(globalObject));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationToPropertyKeyOrNumber, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue value))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    JSValue jsValue = JSValue::decode(value);
+    return JSValue::encode(jsValue.isNumber() ? jsValue : jsValue.toPropertyKeyValue(globalObject));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationToNumber, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue value))
 {
     VM& vm = globalObject->vm();
@@ -2106,7 +2123,11 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObjec
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return ClonedArguments::createByCopyingFrom(globalObject, structure, argumentStart, length, callee, butterfly);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSCell* result = ClonedArguments::createByCopyingFrom(globalObject, structure, argumentStart, length, callee, butterfly);
+    EXCEPTION_ASSERT_UNUSED(scope, scope.exception() || result);
+    return result;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateDirectArgumentsDuringExit, JSCell*, (VM* vmPointer, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount))
@@ -2341,6 +2362,13 @@ JSC_DEFINE_JIT_OPERATION(operationHasIndexedProperty, size_t, (JSGlobalObject* g
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
+        // When subscript is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(subscript == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(object); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return false;
+            return object->hasProperty(globalObject, vm.propertyNames->negativeOneIdentifier);
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return object->hasProperty(globalObject, Identifier::from(vm, subscript));
     }
@@ -2354,6 +2382,13 @@ JSC_DEFINE_JIT_OPERATION(operationHasEnumerableIndexedProperty, size_t, (JSGloba
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     JSObject* object = baseCell->toObject(globalObject);
     if (UNLIKELY(subscript < 0)) {
+        // When subscript is negative, -1 is the most common case. Let's handle it separately.
+        if (LIKELY(subscript == -1)) {
+            if (auto* array = jsDynamicCast<JSArray*>(baseCell); LIKELY(array && array->definitelyNegativeOneMiss()))
+                return false;
+            return object->hasProperty(globalObject, vm.propertyNames->negativeOneIdentifier);
+        }
+
         // Go the slowest way possible because negative indices don't use indexed storage.
         return object->hasEnumerableProperty(globalObject, Identifier::from(vm, subscript));
     }
@@ -2604,7 +2639,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringReplaceStringEmptyString, JSString*, (JS
     String search = searchCell->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    size_t matchStart = string.find(search);
+    size_t matchStart = StringView(string).find(vm.adaptiveStringSearcherTables(), StringView(search));
     if (matchStart == notFound)
         return stringCell;
 
@@ -2804,7 +2839,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObjec
     auto otherViewWithString = argument->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    size_t result = thisViewWithString.view.find(otherViewWithString.view);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view);
     if (result == notFound)
         return toUCPUStrictInt32(-1);
     return toUCPUStrictInt32(result);
@@ -2849,7 +2884,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGl
     if (static_cast<unsigned>(length) < otherViewWithString.view.length() + pos)
         return toUCPUStrictInt32(-1);
 
-    size_t result = thisViewWithString.view.find(otherViewWithString.view, pos);
+    size_t result = thisViewWithString.view.find(vm.adaptiveStringSearcherTables(), otherViewWithString.view, pos);
     if (result == notFound)
         return toUCPUStrictInt32(-1);
     return toUCPUStrictInt32(result);
@@ -4264,7 +4299,7 @@ JSC_DEFINE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject* globa
     scope.throwException(globalObject, createError(globalObject, static_cast<ErrorTypeWithExtension>(errorType), errorMessage));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo* callLinkInfo, JSFunction* callee))
+JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo* callLinkInfo, JSFunction* callee))
 {
     JSGlobalObject* globalObject = callee->globalObject();
     VM& vm = globalObject->vm();
@@ -4273,25 +4308,9 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
-    
-    RELEASE_ASSERT(callLinkInfo->isDirect());
-    
-    // This would happen if the executable died during GC but the CodeBlock did not die. That should
-    // not happen because the CodeBlock should have a weak reference to any executable it uses for
-    // this purpose.
-    RELEASE_ASSERT(callLinkInfo->executable());
-    
-    // Having a CodeBlock indicates that this is linked. We shouldn't be taking this path if it's
-    // linked.
-    RELEASE_ASSERT(!callLinkInfo->codeBlock());
-    
-    // We just don't support this yet.
-    RELEASE_ASSERT(!callLinkInfo->isVarargs());
-    
-    ExecutableBase* executable = callLinkInfo->executable();
-    RELEASE_ASSERT(callee->executable() == callLinkInfo->executable());
 
     JSScope* scope = callee->scopeUnchecked();
+    ExecutableBase* executable = callee->executable();
 
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
@@ -4308,14 +4327,14 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
         RETURN_IF_EXCEPTION(throwScope, void());
 
-        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThisForDirectCall();
+        unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
             codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);
         else
             codePtr = functionExecutable->entrypointFor(kind, ArityCheckNotRequired);
     }
-    
-    linkDirectCall(callFrame, *callLinkInfo, codeBlock, codePtr);
+
+    linkDirectCall(*callLinkInfo, codeBlock, codePtr);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* codeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase* exit))

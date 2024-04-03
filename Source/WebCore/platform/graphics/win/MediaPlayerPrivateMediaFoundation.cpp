@@ -30,7 +30,6 @@
 #if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
 
 #include "CachedResourceLoader.h"
-#include "CairoOperations.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
@@ -51,7 +50,7 @@
 static const GUID MFSamplePresenterSampleCounter =
 { 0x869f1f7c, 0x3496, 0x48a9, { 0x88, 0xe3, 0x69, 0x85, 0x79, 0xd0, 0x8c, 0xb6 } };
 
-static const double tenMegahertz = 10000000;
+static constexpr uint32_t tenMegahertz = 10000000;
 
 namespace WebCore {
 
@@ -295,46 +294,46 @@ void MediaPlayerPrivateMediaFoundation::setRate(float rate)
     rateControl->SetRate(reduceSamplesInStream, rate);
 }
 
-float MediaPlayerPrivateMediaFoundation::duration() const
+MediaTime MediaPlayerPrivateMediaFoundation::duration() const
 {
     if (!m_mediaSource)
-        return 0;
+        return MediaTime::zeroTime();
 
     IMFPresentationDescriptor* descriptor;
     if (!SUCCEEDED(m_mediaSource->CreatePresentationDescriptor(&descriptor)))
-        return 0;
+        return MediaTime::zeroTime();
     
     UINT64 duration;
     if (!SUCCEEDED(descriptor->GetUINT64(MF_PD_DURATION, &duration)))
         duration = 0;
     descriptor->Release();
     
-    return static_cast<float>(duration) / tenMegahertz;
+    return MediaTime(duration, tenMegahertz);
 }
 
-float MediaPlayerPrivateMediaFoundation::currentTime() const
+MediaTime MediaPlayerPrivateMediaFoundation::currentTime() const
 {
     if (m_sessionEnded)
         return duration();
     if (!m_mediaSession)
-        return 0;
+        return MediaTime::invalidTime();
     COMPtr<IMFClock> clock;
     HRESULT hr = m_mediaSession->GetClock(&clock);
     if (FAILED(hr))
-        return 0;
+        return MediaTime::invalidTime();
 
     LONGLONG clockTime;
     MFTIME systemTime;
     hr = clock->GetCorrelatedTime(0, &clockTime, &systemTime);
     if (FAILED(hr))
-        return 0;
+        return MediaTime::invalidTime();
 
     // clockTime is in 100 nanoseconds, we need to convert to seconds.
-    float currentTime = clockTime / tenMegahertz;
+    auto currentTime = MediaTime(clockTime, tenMegahertz);
 
-    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime().toFloat()) {
+    if (m_buffered.length() && currentTime > m_buffered.maximumBufferedTime()) {
         PlatformTimeRanges ranges;
-        ranges.add(MediaTime::zeroTime(), MediaTime::createWithFloat(currentTime));
+        ranges.add(MediaTime::zeroTime(), currentTime);
         m_buffered = WTFMove(ranges);
     }
     return currentTime;
@@ -380,9 +379,9 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaFoundation::readyState() const
     return m_readyState;
 }
 
-float MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
+MediaTime MediaPlayerPrivateMediaFoundation::maxTimeSeekable() const
 {
-    return durationDouble();
+    return duration();
 }
 
 const PlatformTimeRanges& MediaPlayerPrivateMediaFoundation::buffered() const
@@ -2794,53 +2793,6 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
         }
     }
     return hr;
-}
-
-void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(WebCore::GraphicsContext& context, const WebCore::FloatRect& destRect)
-{
-    UINT width = m_destRect.right - m_destRect.left;
-    UINT height = m_destRect.bottom - m_destRect.top;
-
-    if (!width || !height)
-        return;
-
-    Locker locker { m_lock };
-
-    if (!m_memSurface)
-        return;
-
-    D3DLOCKED_RECT lockedRect;
-    if (SUCCEEDED(m_memSurface->LockRect(&lockedRect, nullptr, D3DLOCK_READONLY))) {
-        void* data = lockedRect.pBits;
-        int pitch = lockedRect.Pitch;
-        D3DFORMAT format = D3DFMT_UNKNOWN;
-        D3DSURFACE_DESC desc;
-        if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
-            format = desc.Format;
-
-        cairo_format_t cairoFormat = CAIRO_FORMAT_INVALID;
-
-        switch (format) {
-        case D3DFMT_A8R8G8B8:
-            cairoFormat = CAIRO_FORMAT_ARGB32;
-            break;
-        case D3DFMT_X8R8G8B8:
-            cairoFormat = CAIRO_FORMAT_RGB24;
-            break;
-        default:
-            break;
-        }
-
-        ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
-
-        if (cairoFormat != CAIRO_FORMAT_INVALID) {
-            auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
-            auto image = NativeImage::create(WTFMove(surface));
-            FloatRect srcRect(0, 0, width, height);
-            context.drawNativeImage(*image, destRect, srcRect);
-        }
-        m_memSurface->UnlockRect();
-    }
 }
 
 HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::initializeD3D()

@@ -18,15 +18,15 @@ layer at (0,0) size 785x895
             RenderTableCell {TD} at (2,2) size 573x20 [r=0 c=0 rs=1 cs=3]
           RenderTableRow {TR} at (0,24) size 577x20
             RenderTableCell {TD} at (2,24) size 143x20 [r=1 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 86x17 [color=#0000EE]
+              RenderInline {A} at (1,1) size 86x17 [color=#0000EE]
                 RenderText {#text} at (1,1) size 86x17
                   text run at (1,1) width 86: "test pr\x{E9}c\x{E9}dent"
             RenderTableCell {TD} at (146,24) size 285x20 [r=1 c=1 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 132x17
+              RenderInline {B} at (76,1) size 132x17
                 RenderText {#text} at (76,1) size 132x17
                   text run at (76,1) width 132: "Cadres de tableaux"
             RenderTableCell {TD} at (432,24) size 143x20 [r=1 c=2 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
+              RenderInline {A} at (71,1) size 71x17 [color=#0000EE]
                 RenderText {#text} at (71,1) size 71x17
                   text run at (71,1) width 71: "test suivant"
       RenderBlock {P} at (0,142) size 769x19
@@ -144,11 +144,11 @@ layer at (0,0) size 785x895
               RenderText {#text} at (1,1) size 86x17
                 text run at (1,1) width 86: "test pr\x{E9}c\x{E9}dent"
             RenderTableCell {TD} at (146,24) size 285x20 [r=1 c=1 rs=1 cs=1]
-              RenderInline {B} at (0,0) size 132x17
+              RenderInline {B} at (76,1) size 132x17
                 RenderText {#text} at (76,1) size 132x17
                   text run at (76,1) width 132: "Cadres de tableaux"
             RenderTableCell {TD} at (432,24) size 143x20 [r=1 c=2 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 71x17 [color=#0000EE]
+              RenderInline {A} at (71,1) size 71x17 [color=#0000EE]
                 RenderText {#text} at (71,1) size 71x17
                   text run at (71,1) width 71: "test suivant"
       RenderBlock {P} at (0,751) size 769x19

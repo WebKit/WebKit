@@ -575,6 +575,12 @@ VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation
 {
 }
 
+VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+    : VideoFrame(presentationTime, isMirrored, rotation, WTFMove(colorSpace))
+    , m_pixelBuffer(WTFMove(pixelBuffer))
+{
+}
+
 VideoFrameCV::~VideoFrameCV() = default;
 
 WebCore::FloatSize VideoFrameCV::presentationSize() const
@@ -608,6 +614,11 @@ ImageOrientation VideoFrameCV::orientation() const
     case VideoFrame::Rotation::Left:
         return isMirrored() ? ImageOrientation::Orientation::OriginLeftTop : ImageOrientation::Orientation::OriginLeftBottom;
     }
+}
+
+Ref<VideoFrame> VideoFrameCV::clone()
+{
+    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }));
 }
 
 }

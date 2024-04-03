@@ -249,8 +249,8 @@ void MediaCapabilities::decodingInfo(ScriptExecutionContext& context, MediaDecod
         });
     };
 
-    if (is<Document>(context)) {
-        gatherDecodingInfo(downcast<Document>(context), WTFMove(configuration), WTFMove(callback));
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        gatherDecodingInfo(*document, WTFMove(configuration), WTFMove(callback));
         return;
     }
 
@@ -306,8 +306,8 @@ void MediaCapabilities::encodingInfo(ScriptExecutionContext& context, MediaEncod
         });
     };
 
-    if (is<Document>(context)) {
-        gatherEncodingInfo(downcast<Document>(context), WTFMove(configuration), WTFMove(callback));
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        gatherEncodingInfo(*document, WTFMove(configuration), WTFMove(callback));
         return;
     }
 

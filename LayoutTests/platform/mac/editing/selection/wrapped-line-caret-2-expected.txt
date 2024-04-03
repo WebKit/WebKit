@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (1,1) size 8x36
           text run at (1,1) width 8: "a"
           text run at (1,19) width 4: " "
-        RenderInline {SPAN} at (0,0) size 344x18 [color=#0000FF]
+        RenderInline {SPAN} at (5,19) size 344x18 [color=#0000FF]
           RenderText {#text} at (5,19) size 344x18
             text run at (5,19) width 344: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 caret: position 2 of child 0 {#text} of child 2 {DIV} of body

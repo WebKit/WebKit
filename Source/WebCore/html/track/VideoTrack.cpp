@@ -60,14 +60,14 @@ VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& track
     , m_configuration(VideoTrackConfiguration::create())
     , m_selected(trackPrivate.selected())
 {
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
     updateKindFromPrivate();
     updateConfigurationFromPrivate();
 }
 
 VideoTrack::~VideoTrack()
 {
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
 }
 
 void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
@@ -75,9 +75,9 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
     m_private = trackPrivate;
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif
@@ -90,12 +90,12 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
 
 bool VideoTrack::isValidKind(const AtomString& value) const
 {
-    return value == alternativeAtom()
-        || value == commentaryAtom()
-        || value == captionsAtom()
-        || value == mainAtom()
-        || value == signKeyword()
-        || value == subtitlesAtom();
+    return value == "alternative"_s
+        || value == "commentary"_s
+        || value == "captions"_s
+        || value == "main"_s
+        || value == "sign"_s
+        || value == "subtitles"_s;
 }
 
 void VideoTrack::setSelected(const bool selected)
@@ -213,22 +213,22 @@ void VideoTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case VideoTrackPrivate::Kind::Alternative:
-        setKind(alternativeAtom());
+        setKind("alternative"_s);
         return;
     case VideoTrackPrivate::Kind::Captions:
-        setKind(captionsAtom());
+        setKind("captions"_s);
         return;
     case VideoTrackPrivate::Kind::Main:
-        setKind(mainAtom());
+        setKind("main"_s);
         return;
     case VideoTrackPrivate::Kind::Sign:
-        setKind(VideoTrack::signKeyword());
+        setKind("sign"_s);
         return;
     case VideoTrackPrivate::Kind::Subtitles:
-        setKind(subtitlesAtom());
+        setKind("subtitles"_s);
         return;
     case VideoTrackPrivate::Kind::Commentary:
-        setKind(commentaryAtom());
+        setKind("commentary"_s);
         return;
     case VideoTrackPrivate::Kind::None:
         setKind(emptyAtom());

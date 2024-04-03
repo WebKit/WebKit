@@ -18,7 +18,7 @@ layer at (0,0) size 800x258
       RenderBlock {P} at (0,208) size 784x18
         RenderText {#text} at (0,0) size 54x17
           text run at (0,0) width 54: "(W3C: \x{201C}"
-        RenderInline {A} at (0,0) size 196x17 [color=#0000EE]
+        RenderInline {A} at (54,0) size 196x17 [color=#0000EE]
           RenderText {#text} at (54,0) size 196x17
             text run at (54,0) width 196: "By default, the rule is centered."
         RenderText {#text} at (250,0) size 12x17

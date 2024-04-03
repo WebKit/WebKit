@@ -14,6 +14,6 @@ layer at (0,0) size 800x140 layerType: foreground only
 layer at (8,52) size 784x80
   RenderBlock (relative positioned) {DIV} at (0,36) size 784x80
     RenderBlock {DIV} at (0,0) size 784x80 [bgcolor=#00FF00]
-      RenderInline {SPAN} at (0,0) size 0x19
+      RenderInline {SPAN} at (0,30) size 0x19
       RenderText {#text} at (0,30) size 12x19
         text run at (0,30) width 12: "X"

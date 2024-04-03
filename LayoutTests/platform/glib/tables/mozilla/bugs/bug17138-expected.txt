@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H4} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 153x17
           text run at (0,0) width 153: "Testcase distilled from "
-        RenderInline {A} at (0,0) size 166x17 [color=#0000EE]
+        RenderInline {A} at (152,0) size 166x17 [color=#0000EE]
           RenderText {#text} at (152,0) size 166x17
             text run at (152,0) width 166: "http://www.weather.com"
       RenderTable {TABLE} at (0,39) size 450x197
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 167x105
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (167,97) size 4x19 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,-1) size 4x19
+              RenderText {#text} at (0,80) size 4x18
                 text run at (0,0) width 4: " "
             RenderTableCell {TD} at (171,17) size 154x75 [r=1 c=2 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 145x75

@@ -29,7 +29,7 @@ messages -> WebSWContextManagerConnection {
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
-    FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data, std::optional<WebCore::NotificationPayload> proposedPayload) -> (bool handled, std::optional<WebCore::NotificationPayload> resultPayload)
+    FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<std::span<const uint8_t>> data, std::optional<WebCore::NotificationPayload> proposedPayload) -> (bool handled, std::optional<WebCore::NotificationPayload> resultPayload)
     FireNotificationEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::NotificationData data, enum:bool WebCore::NotificationEventType type) -> (bool result)
     FireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::BackgroundFetchInformation info) -> (bool result)
     FireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::BackgroundFetchInformation info) -> (bool result)

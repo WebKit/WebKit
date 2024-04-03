@@ -49,7 +49,7 @@ public:
     DOMCacheStorage* caches() const;
 
 private:
-    static const char* supplementName() { return "DOMWindowCaches"; }
+    static ASCIILiteral supplementName() { return "DOMWindowCaches"_s; }
 
     mutable RefPtr<DOMCacheStorage> m_caches;
 };
@@ -64,7 +64,7 @@ public:
     DOMCacheStorage* caches() const;
 
 private:
-    static const char* supplementName() { return "WorkerGlobalScopeCaches"; }
+    static ASCIILiteral supplementName() { return "WorkerGlobalScopeCaches"_s; }
 
     WorkerGlobalScope& m_scope;
     mutable RefPtr<DOMCacheStorage> m_caches;

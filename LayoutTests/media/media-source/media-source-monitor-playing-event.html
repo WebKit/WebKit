@@ -83,7 +83,7 @@
         sample = makeASample(1, 1, 12, 1, 1, SAMPLE_FLAG.SYNC, 1);
         // This append changes the ready state to HAVE_ENOUGH_DATA and fires the playing event.
         run('sourceBuffer.appendBuffer(sample)');
-        await Promise.all([waitFor(mediaElement, 'playing'), waitFor(sourceBuffer, 'updateend')]);
+        await Promise.all([waitFor(mediaElement, 'playing'), waitFor(mediaElement, 'canplaythrough', true), waitFor(sourceBuffer, 'updateend')]);
 
         consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
         endTest();

@@ -1,5 +1,5 @@
 //@ skip if $memoryLimited
-//@ requireOptions("-e", "let arraysize=0x100000") if ["arm", "mips"].include?($architecture)
+//@ requireOptions("-e", "let arraysize=0x100000") if ["arm"].include?($architecture)
 //@ runDefault("--useConcurrentJIT=0", "--thresholdForJITAfterWarmUp=10", "--slowPathAllocsBetweenGCs=10", "--useConcurrentGC=0")
 
 arraysize = typeof(arraysize) === 'undefined' ? 0x1000000 : arraysize;

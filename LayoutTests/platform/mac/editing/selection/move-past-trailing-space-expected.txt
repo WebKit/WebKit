@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 228x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 136x56
+        RenderInline {SPAN} at (78,14) size 136x56
           RenderText {#text} at (78,14) size 136x56
             text run at (78,14) width 61 RTL: " \x{5D0}\x{5D7}\x{5E8}\x{5D9}"
             text run at (138,14) width 76: "before"

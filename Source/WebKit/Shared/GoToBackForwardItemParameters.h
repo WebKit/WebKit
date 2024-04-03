@@ -43,7 +43,7 @@ struct GoToBackForwardItemParameters {
     std::optional<WebsitePoliciesData> websitePolicies;
     bool lastNavigationWasAppInitiated;
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
-    std::optional<String> topPrivatelyControlledDomain;
+    String publicSuffix;
     SandboxExtension::Handle sandboxExtensionHandle;
 };
 

@@ -38,9 +38,9 @@ using namespace WebCore;
 TEST(STUNMessageParsing, MessageLength)
 {
     auto buffer = Vector<uint8_t>::from(0, 1, 3, 0, 2, 4);
-    buffer = WebRTC::extractMessages(WTFMove(buffer), WebRTC::MessageType::Data, [](const uint8_t* data, size_t size) {
-        EXPECT_EQ(size, 1u);
-        EXPECT_EQ(*data, 3u);
+    buffer = WebRTC::extractMessages(WTFMove(buffer), WebRTC::MessageType::Data, [](std::span<const uint8_t> data) {
+        EXPECT_EQ(data.size(), 1u);
+        EXPECT_EQ(data[0], 3u);
     });
     EXPECT_EQ(buffer.size(), 3u);
     EXPECT_EQ(buffer[0], 0u);

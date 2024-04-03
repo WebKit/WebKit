@@ -23,5 +23,5 @@ layer at (0,0) size 800x600
                                 text run at (2,2) width 30: "70%"
                   RenderTableRow {TR} at (0,64) size 48x122
                     RenderTableCell {TD} at (2,113) size 44x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 30x19
+                      RenderText {#text} at (2,51) size 30x19
                         text run at (2,2) width 30: "70%"

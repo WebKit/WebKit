@@ -43,7 +43,6 @@ public:
 
     // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }
-    RetainPtr<_SECapability> platformCapability() const final;
 
 private:
     String m_environmentIdentifier;

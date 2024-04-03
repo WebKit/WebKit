@@ -85,14 +85,14 @@ TEST_P(ClientArraysTest, ForbidsClientSideElementBuffer)
 
     ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
 
-    GLint posLocation = glGetAttribLocation(program.get(), "a_pos");
+    GLint posLocation = glGetAttribLocation(program, "a_pos");
     ASSERT_NE(-1, posLocation);
-    glUseProgram(program.get());
+    glUseProgram(program);
 
     const auto &vertices = GetQuadVertices();
 
     GLBuffer vertexBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                  GL_STATIC_DRAW);
 

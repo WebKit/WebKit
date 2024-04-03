@@ -53,8 +53,17 @@ BaselineJITCode::BaselineJITCode(CodeRef<JSEntryPtrTag> code, CodePtr<JSEntryPtr
     , MathICHolder()
 { }
 
-BaselineJITCode::~BaselineJITCode()
+BaselineJITCode::~BaselineJITCode() = default;
+
+CodeLocationLabel<JSInternalPtrTag> BaselineJITCode::getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex bytecodeIndex) const
 {
+    auto* result = binarySearch<const BaselineUnlinkedCallLinkInfo, BytecodeIndex>(m_unlinkedCalls.data(), m_unlinkedCalls.size(), bytecodeIndex,
+        [](const auto& value) {
+            return value->bytecodeIndex;
+        });
+    if (!result)
+        return { };
+    return result->doneLocation;
 }
 
 BaselineJITData::BaselineJITData(unsigned stubInfoSize, unsigned poolSize, CodeBlock* codeBlock)
@@ -63,8 +72,6 @@ BaselineJITData::BaselineJITData(unsigned stubInfoSize, unsigned poolSize, CodeB
     , m_stackOffset(codeBlock->stackPointerOffset() * sizeof(Register))
 {
 }
-
-
 
 } // namespace JSC
 

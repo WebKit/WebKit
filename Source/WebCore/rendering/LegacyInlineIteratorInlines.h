@@ -26,9 +26,10 @@ namespace WebCore {
 
 inline bool LegacyInlineIterator::atTextParagraphSeparator() const
 {
-    return is<RenderText>(m_renderer)
+    auto* textRenderer = dynamicDowncast<RenderText>(m_renderer);
+    return textRenderer
         && m_renderer->preservesNewline()
-        && downcast<RenderText>(*m_renderer).characterAt(m_pos) == '\n';
+        && textRenderer->characterAt(m_pos) == '\n';
 }
 
 inline bool LegacyInlineIterator::atParagraphSeparator() const

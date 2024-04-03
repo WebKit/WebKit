@@ -119,6 +119,7 @@ private:
     void orientationChanged(IntDegrees orientation) final;
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
+    bool areSettingsMatching(AVFrameRateRange*) const;
 
     IntSize sizeForPreset(NSString*);
 
@@ -143,6 +144,8 @@ private:
 
     void updateWhiteBalanceMode();
     void updateTorch();
+
+    void reconfigureIfNeeded();
 
     void rejectPendingPhotoRequest(const String&);
     void resolvePendingPhotoRequest(Vector<uint8_t>&&, const String&);
@@ -171,7 +174,6 @@ private:
     std::optional<VideoPreset> m_currentPreset;
     std::optional<VideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
-    double m_appliedZoom { 1 };
 
     double m_currentFrameRate;
     double m_currentZoom { 1 };
@@ -180,6 +182,9 @@ private:
     bool m_interrupted { false };
     bool m_isRunning { false };
     bool m_hasBegunConfigurationForConstraints { false };
+    bool m_needsResolutionReconfiguration { false };
+    bool m_needsTorchReconfiguration { false };
+    bool m_needsWhiteBalanceReconfiguration { false };
 
     static constexpr Seconds verifyCaptureInterval = 30_s;
     static const uint64_t framesToDropWhenStarting = 4;

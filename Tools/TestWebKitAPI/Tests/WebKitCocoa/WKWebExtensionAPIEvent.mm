@@ -36,9 +36,9 @@ static auto *eventManifest = @{ @"manifest_version": @3, @"background": @{ @"scr
 TEST(WKWebExtensionAPIEvent, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertThrows(() => browser.test.testEvent.addListener('bad'), /'listener' value is invalid, because a function is expected/i)",
-        @"browser.test.assertThrows(() => browser.test.testEvent.removeListener('bad'), /'listener' value is invalid, because a function is expected/i)",
-        @"browser.test.assertThrows(() => browser.test.testEvent.hasListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+        @"browser.test.assertThrows(() => browser.runtime.onStartup.addListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+        @"browser.test.assertThrows(() => browser.runtime.onStartup.removeListener('bad'), /'listener' value is invalid, because a function is expected/i)",
+        @"browser.test.assertThrows(() => browser.runtime.onStartup.hasListener('bad'), /'listener' value is invalid, because a function is expected/i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -50,18 +50,18 @@ TEST(WKWebExtensionAPIEvent, TestEventListener)
 {
     auto *backgroundScript = Util::constructScript(@[
         // Setup
-        @"function listener() { browser.test.notifyPass('This listener should have been called.') }",
-        @"browser.test.assertFalse(browser.test.testEvent.hasListener(listener), 'Should not have listener')",
-        @"browser.test.testEvent.addListener(listener)",
+        @"function listener() { }",
+        @"browser.test.assertFalse(browser.runtime.onStartup.hasListener(listener), 'Should not have listener')",
+        @"browser.runtime.onStartup.addListener(listener)",
 
         // Test
-        @"browser.test.assertTrue(browser.test.testEvent.hasListener(listener), 'Should have listener')",
-        @"browser.test.testEvent.removeListener(listener)",
-        @"browser.test.assertFalse(browser.test.testEvent.hasListener(listener), 'Should not have listener')",
-        @"browser.test.testEvent.addListener(listener)",
+        @"browser.test.assertTrue(browser.runtime.onStartup.hasListener(listener), 'Should have listener')",
+        @"browser.runtime.onStartup.removeListener(listener)",
+        @"browser.test.assertFalse(browser.runtime.onStartup.hasListener(listener), 'Should not have listener')",
+        @"browser.runtime.onStartup.addListener(listener)",
 
-        // Finish. The listener firing will indicate that the test passed.
-        @"browser.test.fireTestEvent()"
+        // Finish.
+        @"browser.test.notifyPass()"
     ]);
 
     Util::loadAndRunExtension(eventManifest, @{ @"background.js": backgroundScript });

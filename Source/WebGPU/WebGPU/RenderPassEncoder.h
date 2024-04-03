@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "BindableResource.h"
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
@@ -33,6 +34,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 @class TextureAndClearColor;
 
@@ -48,18 +50,21 @@ class Device;
 class QuerySet;
 class RenderBundle;
 class RenderPipeline;
+class TextureView;
+
+struct BindableResources;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderpassencoder
-class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
+class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin, public CanMakeWeakPtr<RenderPassEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, MTLRenderPassDescriptor* renderPassDescriptor, Device& device)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, parentEncoder, visibilityResultBuffer, renderPassDescriptor, device));
+        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, parentEncoder, visibilityResultBuffer, maxDrawCount, device));
     }
-    static Ref<RenderPassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device)
+    static Ref<RenderPassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
     {
-        return adoptRef(*new RenderPassEncoder(parentEncoder, device));
+        return adoptRef(*new RenderPassEncoder(parentEncoder, device, errorString));
     }
 
     ~RenderPassEncoder();
@@ -81,22 +86,40 @@ public:
     void setPipeline(const RenderPipeline&);
     void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     void setStencilReference(uint32_t);
-    void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
+    void setVertexBuffer(uint32_t slot, const Buffer*, uint64_t offset, uint64_t size);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
     void setLabel(String&&);
 
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_renderCommandEncoder; }
+    bool colorDepthStencilTargetsMatch(const RenderPipeline&) const;
+    id<MTLRenderCommandEncoder> renderCommandEncoder() const;
+    void makeInvalid(NSString* = nil);
+    CommandEncoder& parentEncoder();
+    void setCommandEncoder(const BindGroupEntryUsageData::Resource&);
+    void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, id<MTLResource>, OptionSet<BindGroupEntryUsage>);
+    static double quantizedDepthValue(double, WGPUTextureFormat);
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, MTLRenderPassDescriptor*, Device&);
-    RenderPassEncoder(CommandEncoder&, Device&);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&);
+    RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
     bool validatePopDebugGroup() const;
+    bool executePreDrawCommands(const Buffer* = nullptr);
+    bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
+    void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
+    void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>);
+    void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>, WGPUTextureAspect);
+    void addResourceToActiveResources(const void*, id<MTLResource>, OptionSet<BindGroupEntryUsage>, uint32_t baseMipLevel = 0, uint32_t baseArrayLayer = 0, WGPUTextureAspect = WGPUTextureAspect_DepthOnly);
 
-    void makeInvalid();
-    void executePreDrawCommands();
+    NSString* errorValidatingAndBindingBuffers();
+    NSString* errorValidatingDrawIndexed() const;
+    uint32_t maxVertexBufferIndex() const;
+    uint32_t maxBindGroupIndex() const;
+    bool issuedDrawCall() const;
+    void incrementDrawCount(uint32_t = 1);
+    bool occlusionQueryIsDestroyed() const;
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -108,34 +131,58 @@ private:
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
 
     const Ref<Device> m_device;
-    MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
-    id<MTLBuffer> m_indexBuffer { nil };
+    WeakPtr<Buffer> m_indexBuffer;
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
+    NSUInteger m_indexBufferSize { 0 };
+    WeakPtr<RenderPipeline> m_pipeline;
+    uint32_t m_maxVertexBufferSlot { 0 };
+    uint32_t m_maxBindGroupSlot { 0 };
+    MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     NSUInteger m_visibilityResultBufferOffset { 0 };
     NSUInteger m_visibilityResultBufferSize { 0 };
     bool m_depthReadOnly { false };
     bool m_stencilReadOnly { false };
     Vector<uint32_t> m_vertexDynamicOffsets;
     Vector<uint32_t> m_fragmentDynamicOffsets;
-    const RenderPipeline* m_pipeline { nullptr };
     Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    using EntryUsage = OptionSet<BindGroupEntryUsage>;
+    using EntryMap = HashMap<uint64_t, EntryUsage, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+    HashMap<const void*, EntryMap> m_usagesForResource;
     float m_minDepth { 0.f };
     float m_maxDepth { 1.f };
-    HashSet<uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_queryBufferIndicesToClear;
+    HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_queryBufferIndicesToClear;
     id<MTLBuffer> m_visibilityResultBuffer { nil };
     uint32_t m_renderTargetWidth { 0 };
     uint32_t m_renderTargetHeight { 0 };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
     NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_allColorAttachments { nil };
     id<MTLTexture> m_depthStencilAttachmentToClear { nil };
-    MTLRenderPassDescriptor* m_renderPassDescriptor { nil };
+    WGPURenderPassDescriptor m_descriptor;
+    Vector<WGPURenderPassColorAttachment> m_descriptorColorAttachments;
+    WGPURenderPassDepthStencilAttachment m_descriptorDepthStencilAttachment;
+    WGPURenderPassTimestampWrites m_descriptorTimestampWrites;
+    struct BufferAndOffset {
+        id<MTLBuffer> buffer { nil };
+        uint64_t offset { 0 };
+        uint64_t size { 0 };
+    };
+    HashMap<uint32_t, BufferAndOffset, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_vertexBuffers;
+    HashMap<uint32_t, WeakPtr<BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
+    NSString* m_lastErrorString { nil };
     float m_depthClearValue { 0 };
+    uint64_t m_drawCount { 0 };
+    const uint64_t m_maxDrawCount { 0 };
     uint32_t m_stencilClearValue { 0 };
+    float m_viewportX { 0 };
+    float m_viewportY { 0 };
+    float m_viewportWidth { 0 };
+    float m_viewportHeight { 0 };
     bool m_clearDepthAttachment { false };
     bool m_clearStencilAttachment { false };
-    bool m_issuedDrawCall { false };
+    bool m_occlusionQueryActive { false };
+    bool m_passEnded { false };
 };
 
 } // namespace WebGPU

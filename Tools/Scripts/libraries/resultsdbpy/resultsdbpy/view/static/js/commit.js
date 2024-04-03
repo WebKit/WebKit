@@ -170,13 +170,24 @@ class Commit {
 };
 
 const COOKIE_NAME = 'commitRepresentation';
+let _banks = {};
 
 class _CommitBank {
+    forBranch(branch) {
+        let key = branch ? branch : 'main';
+        if (!_banks[key]) {
+            _banks[key] = new _CommitBank();
+            _banks[key]._branches = new Set([branch]);
+            _banks[key]._branchOverride = true;
+        }
+        return _banks[key];
+    }
     constructor() {
         this.commits = [];
 
         const params = queryToParams(document.URL.split('?')[1]);
 
+        this._branchOverride = false;
         this._branches = new Set(params.branch);
         this._repositories = new Set(params.repository_id);
         this._beginUuid = null;
@@ -223,7 +234,8 @@ class _CommitBank {
         document.cookie = `${COOKIE_NAME}=${JSON.stringify(this._representationCache)}`;
     }
     latest(params) {
-        this._branches = new Set(params.branch);
+        if (!this._branchOverride)
+            this._branches = new Set(params.branch);
         this._repositories = new Set(params.repository_id);
         this._beginUuid = null;
         this._endUuid = null;

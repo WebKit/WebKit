@@ -306,7 +306,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         ASSERT(trigger.urlFilter.length());
 
         // High bits are used for flags. This should match how they are used in DFABytecodeCompiler::compileNode.
-        ASSERT(!trigger.flags || ActionFlagMask & (static_cast<uint64_t>(trigger.flags) << 32));
         ASSERT(!(~ActionFlagMask & (static_cast<uint64_t>(trigger.flags) << 32)));
         uint64_t actionLocationAndFlags = (static_cast<uint64_t>(trigger.flags) << 32) | static_cast<uint64_t>(actionLocations[ruleIndex]);
         URLFilterParser::ParseStatus status = URLFilterParser::Ok;

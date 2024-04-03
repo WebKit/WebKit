@@ -78,7 +78,10 @@ public:
         if (!node)
             return false;
 
-        RefPtr startingElement = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
+        RefPtr startingElement = dynamicDowncast<Element>(*node);
+        if (!startingElement)
+            startingElement = node->parentElement();
+
         if (!startingElement)
             return false;
 
@@ -294,7 +297,10 @@ static std::optional<TextManipulationTokenInfo> tokenInfo(Node* node)
 
     TextManipulationTokenInfo result;
     result.documentURL = node->document().url();
-    if (RefPtr element = is<Element>(node) ? downcast<Element>(node) : node->parentElement()) {
+    RefPtr element = dynamicDowncast<Element>(*node);
+    if (!element)
+        element = node->parentElement();
+    if (element) {
         result.tagName = element->tagName();
         if (element->hasAttributeWithoutSynchronization(HTMLNames::roleAttr))
             result.roleAttribute = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
@@ -491,27 +497,25 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
             continue;
         }
 
-        if (is<Element>(*contentNode)) {
-            Ref currentElement = downcast<Element>(*contentNode);
-            if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(currentElement))
-                addItem(ManipulationItemData { Position(), Position(), currentElement, nullQName(), { TextManipulationToken { m_tokenIdentifier.generate(), currentElement->textContent(), tokenInfo(currentElement.ptr()) } } });
+        if (RefPtr currentElement = dynamicDowncast<Element>(*contentNode)) {
+            if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(*currentElement))
+                addItem(ManipulationItemData { Position(), Position(), *currentElement, nullQName(), { TextManipulationToken { m_tokenIdentifier.generate(), currentElement->textContent(), tokenInfo(currentElement.get()) } } });
 
             if (currentElement->hasAttributes()) {
                 for (auto& attribute : currentElement->attributesIterator()) {
                     if (isAttributeForTextManipulation(attribute.name()))
-                        addItem(ManipulationItemData { Position(), Position(), currentElement, attribute.name(), { TextManipulationToken { m_tokenIdentifier.generate(), attribute.value(), tokenInfo(currentElement.ptr()) } } });
+                        addItem(ManipulationItemData { Position(), Position(), *currentElement, attribute.name(), { TextManipulationToken { m_tokenIdentifier.generate(), attribute.value(), tokenInfo(currentElement.get()) } } });
                 }
             }
 
-            if (is<HTMLInputElement>(currentElement)) {
-                Ref input = downcast<HTMLInputElement>(currentElement);
-                if (shouldExtractValueForTextManipulation(input))
-                    addItem(ManipulationItemData { { }, { }, currentElement, HTMLNames::valueAttr, { TextManipulationToken { m_tokenIdentifier.generate(), input->value(), tokenInfo(currentElement.ptr()) } } });
+            if (RefPtr input = dynamicDowncast<HTMLInputElement>(*currentElement)) {
+                if (shouldExtractValueForTextManipulation(*input))
+                    addItem(ManipulationItemData { { }, { }, *currentElement, HTMLNames::valueAttr, { TextManipulationToken { m_tokenIdentifier.generate(), input->value(), tokenInfo(currentElement.get()) } } });
             }
 
-            if (isEnclosingItemBoundaryElement(currentElement)) {
+            if (isEnclosingItemBoundaryElement(*currentElement)) {
                 addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
-                enclosingItemBoundaryElements.append(WTFMove(currentElement));
+                enclosingItemBoundaryElements.append(*WTFMove(currentElement));
             }
         }
 
@@ -558,8 +562,8 @@ void TextManipulationController::didAddOrCreateRendererForNode(Node& node)
 
     scheduleObservationUpdate();
 
-    if (is<PseudoElement>(node)) {
-        if (RefPtr host = downcast<PseudoElement>(node).hostElement())
+    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(node)) {
+        if (RefPtr host = pseudoElement->hostElement())
             m_addedOrNewlyRenderedNodes.add(*host);
     } else
         m_addedOrNewlyRenderedNodes.add(node);
@@ -603,7 +607,7 @@ void TextManipulationController::scheduleObservationUpdate()
             if (!node->isConnected())
                 continue;
 
-            if (RefPtr host = node->shadowHost(); is<HTMLInputElement>(host) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
+            if (RefPtr host = dynamicDowncast<HTMLInputElement>(node->shadowHost()); host && host->lastChangeWasUserEdit())
                 continue;
 
             if (!commonAncestor)
@@ -613,7 +617,7 @@ void TextManipulationController::scheduleObservationUpdate()
         }
 
         Position start;
-        if (RefPtr element = downcast<Element>(commonAncestor.get())) {
+        if (RefPtr element = dynamicDowncast<Element>(commonAncestor.get())) {
             // Ensure to include the element in the range.
             if (canPerformTextManipulationByReplacingEntireTextContent(*element))
                 start = positionBeforeNode(commonAncestor.get());
@@ -700,10 +704,10 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
             document->updateLayoutIgnorePendingStylesheets();
 
         for (auto& container : containersWithoutVisualOverflowBeforeReplacement) {
-            if (!is<StyledElement>(container))
+            RefPtr element = dynamicDowncast<StyledElement>(container);
+            if (!element)
                 continue;
 
-            Ref element = downcast<StyledElement>(container.get());
             CheckedPtr box = element->renderBox();
             if (!box || !box->hasVisualOverflow())
                 continue;
@@ -734,7 +738,9 @@ struct ReplacementData {
 Vector<Ref<Node>> TextManipulationController::getPath(Node* ancestor, Node* node)
 {
     Vector<Ref<Node>> path;
-    RefPtr containerNode = is<ContainerNode>(*node) ? downcast<ContainerNode>(node) : node->parentNode();
+    RefPtr containerNode = dynamicDowncast<ContainerNode>(*node);
+    if (!containerNode)
+        containerNode = node->parentNode();
     for (; containerNode && containerNode != ancestor; containerNode = containerNode->parentNode())
         path.append(*containerNode);
     path.reverse();
@@ -791,8 +797,8 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
         if (item.attributeName == nullQName())
             element->setTextContent(newValue.toString());
-        else if (item.attributeName == HTMLNames::valueAttr && is<HTMLInputElement>(*element))
-            downcast<HTMLInputElement>(*element).setValue(newValue.toString());
+        else if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && item.attributeName == HTMLNames::valueAttr)
+            input->setValue(newValue.toString());
         else
             element->setAttribute(item.attributeName, newValue.toAtomString());
 
@@ -876,7 +882,6 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     auto startTopDownPath = getPath(commonAncestor.get(), firstContentNode.get());
     while (!startTopDownPath.isEmpty()) {
         auto lastNode = startTopDownPath.last();
-        ASSERT(is<ContainerNode>(lastNode));
         if (!downcast<ContainerNode>(lastNode.get()).hasOneChild())
             break;
         nodesToRemove.add(startTopDownPath.takeLast());

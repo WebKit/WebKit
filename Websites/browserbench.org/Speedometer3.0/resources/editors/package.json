@@ -1,0 +1,18 @@
+{
+    "name": "editors",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@codemirror/lang-javascript": "^6.1.4",
+        "@tiptap/core": "^2.0.0-beta.217",
+        "@tiptap/starter-kit": "^2.0.0-beta.217",
+        "codemirror": "^6.0.1",
+        "vite": "^4.1.0"
+    }
+}

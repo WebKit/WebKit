@@ -73,7 +73,7 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::Disconne
     disable();
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::enable()
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::enable()
 {
     if (m_instrumentingAgents.enabledDOMStorageAgent() == this)
         return makeUnexpected("DOMStorage domain already enabled"_s);
@@ -83,7 +83,7 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::enable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::disable()
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::disable()
 {
     if (m_instrumentingAgents.enabledDOMStorageAgent() != this)
         return makeUnexpected("DOMStorage domain already disabled"_s);
@@ -93,9 +93,9 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOMStorage::Item>>> InspectorDOMStorageAgent::getDOMStorageItems(Ref<JSON::Object>&& storageId)
+Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOMStorage::Item>>> InspectorDOMStorageAgent::getDOMStorageItems(Ref<JSON::Object>&& storageId)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     LocalFrame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, WTFMove(storageId), frame);
@@ -115,9 +115,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::DOMStorage::Item>>> Inspecto
     return storageItems;
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     LocalFrame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, WTFMove(storageId), frame);
@@ -132,9 +132,9 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JS
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     LocalFrame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, WTFMove(storageId), frame);
@@ -146,9 +146,9 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::removeDOMStorageItem(Ref
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::clearDOMStorageItems(Ref<JSON::Object>&& storageId)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::clearDOMStorageItems(Ref<JSON::Object>&& storageId)
 {
-    Protocol::ErrorString errorString;
+    Inspector::Protocol::ErrorString errorString;
 
     LocalFrame* frame;
     auto storageArea = findStorageArea(errorString, WTFMove(storageId), frame);
@@ -171,9 +171,9 @@ String InspectorDOMStorageAgent::storageId(Storage& storage)
     return InspectorDOMStorageAgent::storageId(securityOrigin, isLocalStorage)->toJSONString();
 }
 
-Ref<Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(const SecurityOrigin& securityOrigin, bool isLocalStorage)
+Ref<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(const SecurityOrigin& securityOrigin, bool isLocalStorage)
 {
-    return Protocol::DOMStorage::StorageId::create()
+    return Inspector::Protocol::DOMStorage::StorageId::create()
         .setSecurityOrigin(securityOrigin.toRawString())
         .setIsLocalStorage(isLocalStorage)
         .release();
@@ -193,15 +193,15 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
         m_frontendDispatcher->domStorageItemUpdated(WTFMove(id), key, oldValue, newValue);
 }
 
-RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Protocol::ErrorString& errorString, Ref<JSON::Object>&& storageId, LocalFrame*& targetFrame)
+RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Inspector::Protocol::ErrorString& errorString, Ref<JSON::Object>&& storageId, LocalFrame*& targetFrame)
 {
-    auto securityOrigin = storageId->getString(Protocol::DOMStorage::StorageId::securityOriginKey);
+    auto securityOrigin = storageId->getString(Inspector::Protocol::DOMStorage::StorageId::securityOriginKey);
     if (!securityOrigin) {
         errorString = "Missing securityOrigin in given storageId"_s;
         return nullptr;
     }
 
-    auto isLocalStorage = storageId->getBoolean(Protocol::DOMStorage::StorageId::isLocalStorageKey);
+    auto isLocalStorage = storageId->getBoolean(Inspector::Protocol::DOMStorage::StorageId::isLocalStorageKey);
     if (!isLocalStorage) {
         errorString = "Missing isLocalStorage in given storageId"_s;
         return nullptr;

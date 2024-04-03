@@ -240,7 +240,7 @@ using JSC::Yarr::RegularExpression;
     NSData *data = [_private->dataSource data];
     if (!data)
         return nil;
-    return decoder->encoding().decode(reinterpret_cast<const char*>([data bytes]), [data length]);
+    return decoder->encoding().decode(span(data));
 }
 
 - (NSString *)title
@@ -440,7 +440,7 @@ static NSString* searchForLabelsBeforeElement(LocalFrame* frame, NSArray* labels
                 return result;
             }
             searchedCellAbove = true;
-        } else if (n->isTextNode() && n->renderer() && n->renderer()->style().visibility() == Visibility::Visible) {
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style().usedVisibility() == Visibility::Visible) {
             // For each text chunk, run the regexp
             String nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes

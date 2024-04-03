@@ -39,8 +39,8 @@ const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFuncti
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunctionIncludingV128);
 
-WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, JSObject* function, Wasm::WasmToWasmImportableFunction importableFunction, RefPtr<const Wasm::RTT> rtt)
-    : Base(vm, executable, globalObject, structure, instance, importableFunction, rtt)
+WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, JSObject* function, Wasm::WasmToWasmImportableFunction importableFunction)
+    : Base(vm, executable, globalObject, structure, instance, importableFunction)
     , m_function(function, WriteBarrierEarlyInit)
 { }
 
@@ -57,7 +57,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
         executable = vm.getHostFunction(callWebAssemblyWrapperFunction, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
 
     RELEASE_ASSERT(JSValue(function).isCallable());
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, instance, function, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub }, rtt);
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, instance, function, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub, &Wasm::NullWasmCallee, rtt.get() });
     result->finishCreation(vm, executable, signature.argumentCount(), name);
     return result;
 }

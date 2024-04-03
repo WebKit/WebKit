@@ -483,24 +483,8 @@ add_custom_command(
 # the .cpp files below is similar to the one in the previous comment. However, since these .cpp
 # files are used to build JavaScriptCore itself, we can just add LLIntAssembly.h to JSC_HEADERS
 # since it is used in the add_library() call at the end of this file.
-if(MSVC AND NOT ENABLE_C_LOOP)
-    enable_language(ASM_MASM)
-
-    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-        # Win32 needs /safeseh with assembly, but Win64 does not.
-        set(MASM_EXECUTABLE ml)
-        set(LLINT_MASM_FLAGS /safeseh /c /Fo)
-    else()
-        set(MASM_EXECUTABLE ml64)
-        set(LLINT_MASM_FLAGS /c /Fo)
-    endif()
-
-    add_custom_command(
-        OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj
-        DEPENDS ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
-        COMMAND ${MASM_EXECUTABLE} ${LLINT_MASM_FLAGS} ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
-        VERBATIM)
-    list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj)
+if (MSVC AND WTF_CPU_X86_64 AND NOT ENABLE_C_LOOP)
+    list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm)
     add_library(LowLevelInterpreterLib OBJECT llint/LowLevelInterpreter.cpp)
 else()
     # As there's poor toolchain support for using `.file` directives in
@@ -527,7 +511,7 @@ macro(GENERATE_PYTHON _generator _additional_deps _input _output)
 endmacro()
 
 GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h)
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmB3IRGeneratorInlines.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOMGIRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOMGIRGeneratorInlines.h)
 
 # LUT generator
 set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
@@ -674,7 +658,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/ExitKind.h
     bytecode/ExitingInlineKind.h
     bytecode/ExitingJITType.h
-    bytecode/ExpressionRangeInfo.h
+    bytecode/ExpressionInfo.h
+    bytecode/ExpressionInfoInlines.h
     bytecode/HandlerInfo.h
     bytecode/ICStatusMap.h
     bytecode/InlineCallFrame.h
@@ -686,6 +671,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
     bytecode/LazyOperandValueProfile.h
     bytecode/LazyValueProfile.h
+    bytecode/LineColumn.h
     bytecode/LinkTimeConstant.h
     bytecode/MetadataTable.h
     bytecode/ObjectAllocationProfile.h
@@ -1315,6 +1301,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmCalleeGroup.h
     wasm/WasmCallsiteCollection.h
     wasm/WasmCapabilities.h
+    wasm/WasmCompilationContext.h
     wasm/WasmCompilationMode.h
     wasm/WasmContext.h
     wasm/WasmCreationMode.h

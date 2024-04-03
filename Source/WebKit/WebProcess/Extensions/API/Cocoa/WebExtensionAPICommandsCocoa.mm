@@ -76,7 +76,7 @@ void WebExtensionAPICommands::getAll(Ref<WebExtensionCallbackHandler>&& callback
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CommandsGetAll(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<WebExtensionCommandParameters> commands) {
         callback->call(toAPI(commands));
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()
@@ -84,7 +84,7 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onCommand()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
 
     if (!m_onCommand)
-        m_onCommand = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::CommandsOnCommand);
+        m_onCommand = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnCommand);
 
     return *m_onCommand;
 }
@@ -94,17 +94,20 @@ WebExtensionAPIEvent& WebExtensionAPICommands::onChanged()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onChanged
 
     if (!m_onChanged)
-        m_onChanged = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::CommandsOnChanged);
+        m_onChanged = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::CommandsOnChanged);
 
     return *m_onChanged;
 }
 
 void WebExtensionContextProxy::dispatchCommandsCommandEvent(const String& identifier, const std::optional<WebExtensionTabParameters>& tabParameters)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
+
     auto *tab = tabParameters ? toWebAPI(tabParameters.value()) : nil;
 
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
-        // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands/onCommand
+    enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
+        RefPtr coreFrame = frame.protectedCoreLocalFrame();
+        WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
         namespaceObject.commands().onCommand().invokeListenersWithArgument((NSString *)identifier, tab);
     });
 }

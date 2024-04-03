@@ -52,21 +52,22 @@ public:
 
     bool isEmpty() const { return !size(); }
 
-    void append(const T* data, size_t size)
+    void append(std::span<const T> data)
     {
-        if (!size)
+        if (!data.size())
             return;
 
-        m_size += size;
-        while (size) {
+        m_size += data.size();
+        while (data.size()) {
             if (!m_buffer.size() || m_buffer.last()->size() == BlockSize)
                 m_buffer.append(makeUnique<Block>());
-            size_t appendSize = std::min(BlockSize - m_buffer.last()->size(), size);
-            m_buffer.last()->append(data, appendSize);
-            data += appendSize;
-            size -= appendSize;
+            size_t appendSize = std::min(BlockSize - m_buffer.last()->size(), data.size());
+            m_buffer.last()->append(data.first(appendSize));
+            data = data.subspan(appendSize);
         }
     }
+
+    void append(const T* data, size_t size) { append(std::span { data, size }); }
 
     // This function consume data in the fist block.
     // Specified size must be less than over equal to firstBlockSize().
@@ -103,6 +104,8 @@ public:
         ASSERT(m_buffer.size() > 0);
         return m_buffer.first()->size() - m_readOffset;
     }
+
+    std::span<const T> firstBlockSpan() const { return std::span { firstBlockData(), firstBlockSize() }; }
 
 private:
     size_t m_size;

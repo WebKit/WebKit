@@ -73,6 +73,7 @@ private:
     // DisplayCaptureSourceCocoa::Capturer
     bool start() final;
     void stop() final;
+    void end() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     CaptureDevice::DeviceType deviceType() const final;
     DisplaySurfaceType surfaceType() const final;
@@ -96,8 +97,12 @@ private:
     SCStream* contentStream() const { return m_sessionSource ? m_sessionSource->stream() : nullptr; }
     SCContentFilter* contentFilter() const { return m_sessionSource ? m_sessionSource->contentFilter() : nullptr; }
 
+    void clearSharingSession();
+
     std::optional<Content> m_content;
     RetainPtr<WebCoreScreenCaptureKitHelper> m_captureHelper;
+    RetainPtr<SCContentSharingSession> m_sharingSession;
+    RetainPtr<SCContentFilter> m_contentFilter;
     RetainPtr<CMSampleBufferRef> m_currentFrame;
     RefPtr<ScreenCaptureSessionSource> m_sessionSource;
     RetainPtr<SCStreamConfiguration> m_streamConfiguration;
@@ -106,6 +111,7 @@ private:
     uint32_t m_deviceID { 0 };
     mutable std::optional<IntSize> m_intrinsicSize;
 
+    FloatSize m_contentSize;
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
     float m_frameRate { 0 };

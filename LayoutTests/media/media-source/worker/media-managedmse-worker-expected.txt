@@ -1,0 +1,7 @@
+
+EXPECTED (ManagedMediaSource.canConstructInDedicatedWorker == 'true') OK
+RUN(video.disableRemotePlayback = true)
+received handle message: [object MediaSourceHandle] OK
+info message from worker: sourceopen event received OK
+END OF TEST
+

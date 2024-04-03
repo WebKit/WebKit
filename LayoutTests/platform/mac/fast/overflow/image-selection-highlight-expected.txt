@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "This tests for a regression against "
         RenderInline {I} at (0,0) size 745x36
-          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+          RenderInline {A} at (217,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (217,0) size 354x18
               text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6673"
-          RenderText {#text} at (570,0) size 745x36
+          RenderText {#text} at (0,0) size 745x36
             text run at (570,0) width 5: " "
             text run at (574,0) width 171: "Selection highlight doesn't"
             text run at (0,18) width 414: "scroll along with an image contained in an overflow:scroll block"
@@ -33,7 +33,7 @@ layer at (8,122) size 100x200 clip at (8,122) size 85x200 scrollY 40 scrollHeigh
       text run at (0,72) width 66: "adipiscing"
       text run at (0,90) width 29: "elit. "
     RenderImage {IMG} at (28,94) size 11x10
-    RenderText {#text} at (38,90) size 85x198
+    RenderText {#text} at (0,90) size 85x198
       text run at (38,90) width 5: " "
       text run at (42,90) width 39: "Etiam"
       text run at (0,108) width 59: "et ipsum."

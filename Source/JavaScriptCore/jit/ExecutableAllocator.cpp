@@ -31,6 +31,7 @@
 #include "ExecutableAllocationFuzz.h"
 #include "JITOperationValidation.h"
 #include "LinkBuffer.h"
+#include <wtf/ByteOrder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
@@ -42,6 +43,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UUID.h>
 #include <wtf/WorkQueue.h>
 
 #if ENABLE(LIBPAS_JIT_HEAP)
@@ -86,7 +88,7 @@ extern "C" {
 
 #if USE(INLINE_JIT_PERMISSIONS_API)
 #include <wtf/darwin/WeakLinking.h>
-WTF_WEAK_LINK_FORCE_IMPORT(se_memory_inline_jit_restrict_with_witness_supported);
+WTF_WEAK_LINK_FORCE_IMPORT(be_memory_inline_jit_restrict_with_witness_supported);
 #endif
 
 namespace JSC {
@@ -154,6 +156,9 @@ static constexpr size_t minimumExecutablePoolReservationSize = 256 * KB;
 static_assert(fixedExecutableMemoryPoolSize * executablePoolReservationFraction >= minimumExecutablePoolReservationSize);
 static_assert(fixedExecutableMemoryPoolSize < 4 * GB, "ExecutableMemoryHandle assumes it is less than 4GB");
 #endif
+
+// 325696c8-e7cc-11ee-9f4e-325096b39f47
+static constexpr WTF::UUID jscJITNamespace { static_cast<UInt128>(0x325696c8e7cc11eeULL) << 64 | (0x9f4e325096b39f47ULL) };
 
 static bool isJITEnabled()
 {
@@ -284,7 +289,7 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
     // to appear in the console or anywhere in memory, via the PrintStream buffer.
     // The second is we can't guarantee that the code is readable when using the
     // asyncDisassembly option as our caller will set our pages execute only.
-    return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>();
+    return linkBuffer.finalizeCodeWithoutDisassembly<JITThunkPtrTag>(nullptr);
 }
 #else // not USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
@@ -416,19 +421,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     if (reservation.pageReservation) {
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
-
-        bool fastJITPermissionsIsSupported = false;
-#if OS(DARWIN) && CPU(ARM64)
-#if USE(INLINE_JIT_PERMISSIONS_API)
-        //FIXME: Check for the existence of `se_memory_inline_jit_restrict_with_witness_supported` once the fix for rdar://119669257 is in the SDK.
-        fastJITPermissionsIsSupported = !!se_memory_inline_jit_restrict_with_witness_supported();
-#elif CPU(ARM64)
-        fastJITPermissionsIsSupported = !!pthread_jit_write_protect_supported_np();
-#elif USE(APPLE_INTERNAL_SDK)
-        fastJITPermissionsIsSupported = !!os_thread_self_restrict_rwx_is_supported();
-#endif
-#endif
-        g_jscConfig.useFastJITPermissions = fastJITPermissionsIsSupported;
+        g_jscConfig.useFastJITPermissions = threadSelfRestrictSupported();
 
         if (g_jscConfig.useFastJITPermissions)
             threadSelfRestrictRWXToRX();
@@ -448,8 +441,17 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         g_jscConfig.endExecutableMemory = reservationEnd;
 
 #if !USE(SYSTEM_MALLOC) && ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+        static_assert(WebConfig::reservedSlotsForExecutableAllocator >= 2);
         WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
         WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
+#endif
+
+#if HAVE(KDEBUG_H)
+        {
+            uint64_t pid = getCurrentProcessID();
+            auto uuid = WTF::UUID::createVersion5(jscJITNamespace, std::span { bitwise_cast<const uint8_t*>(&pid), sizeof(pid) });
+            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::byteSwap64(uuid.high()), WTF::byteSwap64(uuid.low()), bitwise_cast<uintptr_t>(reservation.base), 0);
+        }
 #endif
     }
 
@@ -700,7 +702,7 @@ public:
 #endif // ENABLE(LIBPAS_JIT_HEAP)
 
 #if ENABLE(JUMP_ISLANDS)
-    void handleWillBeReleased(const LockHolder& locker, ExecutableMemoryHandle& handle)
+    void handleWillBeReleased(const Locker<Lock>& locker, ExecutableMemoryHandle& handle)
     {
         if (m_islandsForJumpSourceLocation.isEmpty())
             return;
@@ -752,7 +754,7 @@ private:
         return result;
     }
 
-    void freeJumpIslands(const LockHolder&, Islands* islands)
+    void freeJumpIslands(const Locker<Lock>&, Islands* islands)
     {
         for (CodeLocationLabel<ExecutableMemoryPtrTag> jumpIsland : islands->jumpIslands) {
             uintptr_t untaggedJumpIsland = bitwise_cast<uintptr_t>(jumpIsland.dataLocation());
@@ -763,14 +765,14 @@ private:
         islands->jumpIslands.clear();
     }
 
-    void freeIslands(const LockHolder& locker, Islands* islands)
+    void freeIslands(const Locker<Lock>& locker, Islands* islands)
     {
         freeJumpIslands(locker, islands);
         m_islandsForJumpSourceLocation.remove(islands);
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
+    void* islandForJumpLocation(const Locker<Lock>& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
     {
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {
@@ -932,7 +934,7 @@ private:
         }
 
 #if !ENABLE(LIBPAS_JIT_HEAP)
-        void release(const LockHolder& locker, MetaAllocatorHandle& handle) final
+        void release(const Locker<Lock>& locker, MetaAllocatorHandle& handle) final
         {
             AssemblyCommentRegistry::singleton().unregisterCodeRange(handle.start().untaggedPtr(), handle.end().untaggedPtr());
             m_fixedAllocator.handleWillBeReleased(locker, handle);

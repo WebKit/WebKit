@@ -32,7 +32,7 @@
     EnabledBySetting=WebGPUEnabled
 ]
 interface GPUPipelineError : DOMException {
-    constructor(DOMString message, GPUPipelineErrorInit options);
+    constructor(optional DOMString message = "", GPUPipelineErrorInit options);
     readonly attribute GPUPipelineErrorReason reason;
     readonly attribute DOMString stack;
 };

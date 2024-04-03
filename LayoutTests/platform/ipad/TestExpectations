@@ -9,7 +9,6 @@ fast/forms/ios/ipad [ Pass ]
 
 # iPads don't zoom when form elements are focused
 fast/forms/ios/accessory-bar-navigation.html [ Skip ]
-fast/forms/ios/choose-select-option.html [ Skip ]
 fast/forms/ios/focus-input-in-fixed.html [ Skip ]
 fast/forms/ios/focus-input-via-button-no-scaling.html [ Skip ]
 fast/forms/ios/focus-input-via-button.html [ Skip ]
@@ -23,18 +22,12 @@ media/video-background-playback.html [ Pass Crash ]
 fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
 fast/forms/ios/time-picker-value-change.html [ Failure ]
 [ Debug ] fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html [ Timeout ]
-fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Timeout ]
-fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Timeout ]
 fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Timeout ]
 fast/events/ios/keyboard-scrolling-distance.html [ Failure ]
 
 # iPads don't zoom when form elements are focused
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
-
-# The select picker input view is not displayed on iPad.
-fast/forms/ios/no-stale-checked-items-in-select-picker.html
-fast/forms/ios/disabled-options-in-multi-select-picker.html
 
 # These tests are designed for iPhone and crash on iPad
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
@@ -124,3 +117,14 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 
 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Pass ]
 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Pass ]
+
+# webkit.org/b/269393 ([ iOS wk2 ] 3 iOS orientation(layout-tests) are constant text failures)
+fast/screen-orientation/natural-orientation.html [ Pass ]
+
+# webkit.org/b/269417 ([ iOS ] 5x imported/w3c/web-platform-tests are constant text failures)
+imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
+imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html  [ Failure ]
+imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
+imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.html  [ Failure ]
+
+webkit.org/b/271712 fast/forms/datalist/datalist-textinput-dynamically-add-options-on-keydown.html [ Timeout ]

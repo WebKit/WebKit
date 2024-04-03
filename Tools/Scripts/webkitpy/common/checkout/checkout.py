@@ -171,21 +171,15 @@ for l in lines[1:]:
 
         encoded_patch = string_utils.encode(patch.contents())
         num_commits = len(self.COMMIT_SUBJECT_RE.findall(encoded_patch))
-        if isinstance(self._scm, Git) and num_commits:
-            self._executive.run_command(
-                ['git', 'am', '--keep-non-patch'],
-                input=self.filter_patch_content(encoded_patch, reviewer=patch.reviewer().full_name if patch.reviewer() else None),
-                cwd=self._scm.checkout_root,
-            )
-            self._executive.run_command(
-                ['git', 'filter-branch', '-f', '--msg-filter', '{} -c "{}"'.format(sys.executable, self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~{}'.format(num_commits)],
-                cwd=self._scm.checkout_root,
-            )
-        else:
-            args = [self.script_path('svn-apply'), "--force"]
-            if patch.reviewer():
-                args += ['--reviewer', patch.reviewer().full_name]
-            self._executive.run_command(args, input=patch.contents(), cwd=self._scm.checkout_root)
+        self._executive.run_command(
+            ['git', 'am', '--keep-non-patch'],
+            input=self.filter_patch_content(encoded_patch, reviewer=patch.reviewer().full_name if patch.reviewer() else None),
+            cwd=self._scm.checkout_root,
+        )
+        self._executive.run_command(
+            ['git', 'filter-branch', '-f', '--msg-filter', '{} -c "{}"'.format(sys.executable, self.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~{}'.format(num_commits)],
+            cwd=self._scm.checkout_root,
+        )
 
     def apply_reverse_diff(self, revision):
         self._scm.apply_reverse_diff(revision)

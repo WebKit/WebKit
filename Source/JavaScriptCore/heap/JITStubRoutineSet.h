@@ -36,6 +36,7 @@ using WTF::Range;
 namespace JSC {
 
 class GCAwareJITStubRoutine;
+class VM;
 
 #if ENABLE(JIT)
 

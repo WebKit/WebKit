@@ -7,8 +7,8 @@ function foo(a, b) {
 }
 
 var result = 0;
-for (var i = 0; i < 1000000; ++i)
+for (var i = 0; i < 1e7; ++i)
     result += foo(42, i);
 
-if (result != 499957500000)
+if (result != 49999575000000)
     throw "Bad result: " + result;

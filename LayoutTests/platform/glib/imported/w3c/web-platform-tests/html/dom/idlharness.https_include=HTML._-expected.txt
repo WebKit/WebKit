@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/html/dom/idlharness.https.html?include=HTML.* was not allowed to display insecure content from http://invalid/.
+CONSOLE MESSAGE: [blocked] The page at https://web-platform.test:9443/html/dom/idlharness.https.html?include=HTML.* requested insecure content from http://invalid/. This content was blocked and must be served over HTTPS.
 
 CONSOLE MESSAGE: Not allowed to request resource
 CONSOLE MESSAGE: EventSource cannot load http://invalid/ due to access control checks.
@@ -420,6 +420,8 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "focus(optional FocusOptions)" with the proper type
 PASS HTMLElement interface: calling focus(optional FocusOptions) on document.createElement("noscript") with too few arguments must throw TypeError
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "blur()" with the proper type
+PASS HTMLElement must be primary interface of Object.assign(document.createElement("noscript"),{popover:"auto"})
+PASS Stringification of Object.assign(document.createElement("noscript"),{popover:"auto"})
 PASS HTMLUnknownElement interface: existence and properties of interface object
 PASS HTMLUnknownElement interface object length
 PASS HTMLUnknownElement interface object name

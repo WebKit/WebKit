@@ -1,0 +1,13 @@
+uniform half4 colorGreen, colorRed;
+
+inline bool ifTest(half4 color) {
+    bool result = bool(color.g);
+    return result;
+}
+
+half4 main(float2 coords) {
+    if (ifTest(colorGreen))
+        return colorGreen;
+    else
+        return colorRed;
+}

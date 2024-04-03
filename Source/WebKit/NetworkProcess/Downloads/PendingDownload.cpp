@@ -26,7 +26,6 @@
 #include "config.h"
 #include "PendingDownload.h"
 
-#include "DataReference.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "MessageSenderInlines.h"
@@ -68,7 +67,7 @@ void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebC
     sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)), WTFMove(completionHandler));
 };
 
-void PendingDownload::cancel(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
+void PendingDownload::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
 {
     ASSERT(m_networkLoad);
     m_networkLoad->cancel();

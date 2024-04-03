@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_true: Transition must be finished by the window resize expected true got false
 
-PASS View transitions: Resizing viewport skips the transition
+Harness Error (FAIL), message = Unhandled rejection: assert_true: Transition must be finished by the window resize expected true got false
+
+TIMEOUT View transitions: Resizing viewport skips the transition Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_true: Transition must be finished by the window resize expected true got false
+
+TIMEOUT View transitions: Resizing viewport skips the transition Test timed out
 

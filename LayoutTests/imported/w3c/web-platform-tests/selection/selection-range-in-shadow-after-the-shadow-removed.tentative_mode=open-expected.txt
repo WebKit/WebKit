@@ -1,0 +1,3 @@
+
+FAIL Selection range in shadow should not be as a selection range after the host is removed assert_equals: startContainer should not be changed expected Text node "ABC" but got Element node <div id="container"></div>
+

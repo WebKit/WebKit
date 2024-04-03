@@ -47,9 +47,6 @@ public:
 private:
     ExtendableCookieChangeEvent(const AtomString& type, ExtendableCookieChangeEventInit&&, IsTrusted);
 
-    // ExtendableEvent
-    EventInterface eventInterface() const final;
-
     Vector<CookieListItem> m_changed;
     Vector<CookieListItem> m_deleted;
 };

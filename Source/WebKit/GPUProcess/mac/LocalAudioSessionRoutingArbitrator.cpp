@@ -59,17 +59,23 @@ void LocalAudioSessionRoutingArbitrator::processDidTerminate()
 void LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
     ALWAYS_LOG(LOGIDENTIFIER, category);
-    m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    connection->connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
 }
 
 void LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration()
 {
-    m_connectionToWebProcess.connection().send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return;
+    connection->connection().send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
 }
 
 Logger& LocalAudioSessionRoutingArbitrator::logger()
 {
-    return m_connectionToWebProcess.logger();
+    return m_connectionToWebProcess.get()->logger();
 };
 
 WTFLogChannel& LocalAudioSessionRoutingArbitrator::logChannel() const
@@ -79,7 +85,10 @@ WTFLogChannel& LocalAudioSessionRoutingArbitrator::logChannel() const
 
 bool LocalAudioSessionRoutingArbitrator::canLog() const
 {
-    return m_connectionToWebProcess.sessionID().isAlwaysOnLoggingAllowed();
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
+        return false;
+    return connection->sessionID().isAlwaysOnLoggingAllowed();
 }
 
 }

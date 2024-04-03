@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
+#include "ImageAdapter.h"
 #include "ImageOrientation.h"
 #include "ImagePaintingOptions.h"
 #include "ImageTypes.h"
@@ -42,28 +43,6 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(APPKIT)
-OBJC_CLASS NSImage;
-#endif
-
-#if USE(CG)
-struct CGContext;
-#endif
-
-#if PLATFORM(WIN)
-typedef struct tagSIZE SIZE;
-typedef SIZE* LPSIZE;
-typedef struct HBITMAP__ *HBITMAP;
-#endif
-
-#if PLATFORM(GTK)
-#include <wtf/glib/GRefPtr.h>
-typedef struct _GdkPixbuf GdkPixbuf;
-#if USE(GTK4)
-typedef struct _GdkTexture GdkTexture;
-#endif
-#endif
-
 namespace WebCore {
 
 class AffineTransform;
@@ -71,6 +50,7 @@ class FloatPoint;
 class FloatSize;
 class GraphicsContext;
 class FragmentedSharedBuffer;
+class ShareableBitmap;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -82,8 +62,8 @@ class Image : public RefCounted<Image>, public CanMakeWeakPtr<Image> {
 public:
     virtual ~Image();
     
-    WEBCORE_EXPORT static Ref<Image> loadPlatformResource(const char* name);
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
+    WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&);
     WEBCORE_EXPORT static bool supportsType(const String&);
     static bool isPDFResource(const String& mimeType, const URL&);
     static bool isPostScriptResource(const String& mimeType, const URL&);
@@ -100,6 +80,8 @@ public:
     virtual bool isCustomPaintImage() const { return false; }
 
     bool drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
+
+    virtual unsigned frameCount() const { return 1; }
 
     virtual bool currentFrameKnownToBeOpaque() const = 0;
     virtual bool isAnimated() const { return false; }
@@ -151,10 +133,16 @@ public:
     bool animationPending() const { return m_animationStartTimer && m_animationStartTimer->isActive(); }
     std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
     void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
+    static bool systemAllowsAnimationControls() { return gSystemAllowsAnimationControls; }
+    WEBCORE_EXPORT static void setSystemAllowsAnimationControls(bool allowsControls);
 
     // Typically the CachedImage that owns us.
     RefPtr<ImageObserver> imageObserver() const;
     void setImageObserver(RefPtr<ImageObserver>&&);
+
+    WEBCORE_EXPORT ImageAdapter& adapter();
+    void invalidateAdapter();
+
     URL sourceURL() const;
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
@@ -162,49 +150,25 @@ public:
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
     virtual RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) { return nullptr; }
-    virtual RefPtr<NativeImage> nativeImageForCurrentFrame() { return nativeImage(); }
-    virtual RefPtr<NativeImage> preTransformedNativeImageForCurrentFrame(bool = true) { return nativeImageForCurrentFrame(); }
-    virtual RefPtr<NativeImage> nativeImageOfSize(const IntSize&) { return nullptr; }
-
-    // Accessors for native image formats.
-
-#if USE(APPKIT)
-    virtual NSImage *nsImage() { return nullptr; }
-    virtual RetainPtr<NSImage> snapshotNSImage() { return nullptr; }
-#endif
-
-#if PLATFORM(COCOA)
-    virtual CFDataRef tiffRepresentation() { return nullptr; }
-#endif
-
-#if PLATFORM(WIN)
-    virtual bool getHBITMAP(HBITMAP) { return false; }
-    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) { return false; }
-#endif
-
-#if PLATFORM(GTK)
-    virtual GRefPtr<GdkPixbuf> gdkPixbuf() { return nullptr; }
-#if USE(GTK4)
-    virtual GRefPtr<GdkTexture> gdkTexture() { return nullptr; }
-#endif
-#endif
+    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned) { return nativeImage(); }
+    virtual RefPtr<NativeImage> currentNativeImage() { return nativeImage(); }
+    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation = ImageOrientation::Orientation::FromImage) { return currentNativeImage(); }
 
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
 #if ASSERT_ENABLED
-    virtual bool notSolidColor() { return true; }
+    virtual bool hasSolidColor() { return false; }
 #endif
 
     virtual void dump(WTF::TextStream&) const;
+
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
 protected:
     WEBCORE_EXPORT Image(ImageObserver* = nullptr);
 
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
-#if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext&, const FloatRect&, const IntSize&, CompositeOperator) { }
-#endif
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
@@ -212,15 +176,17 @@ protected:
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions = { });
 
     // Supporting tiled drawing
-    virtual Color singlePixelSolidColor() const { return Color(); }
+    virtual std::optional<Color> singlePixelSolidColor() const { return std::nullopt; }
 
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     WeakPtr<ImageObserver> m_imageObserver;
+    std::unique_ptr<ImageAdapter> m_adapter;
 
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
     std::unique_ptr<Timer> m_animationStartTimer;
+    static bool gSystemAllowsAnimationControls;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

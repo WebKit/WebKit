@@ -27,7 +27,6 @@
 [
     InterfaceName=CSSStyleValue,
     CustomToJSObject,
-    EnabledBySetting=CSSTypedOMEnabled,
     Exposed=(Window,Worker,PaintWorklet),
     SkipVTableValidation
 ] interface CSSStyleValue {

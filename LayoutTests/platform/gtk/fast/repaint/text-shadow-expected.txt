@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 595x17
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+        RenderInline {I} at (172,0) size 595x17
+          RenderInline {A} at (172,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7301"
           RenderText {#text} at (519,0) size 248x17
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (30,168) size 724x21
         RenderText {#text} at (0,2) size 88x17
           text run at (0,2) width 88: "Lorem ipsum "
-        RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#C0C0C0]
+        RenderInline {SPAN} at (88,0) size 100x20 [bgcolor=#C0C0C0]
           RenderText {#text} at (88,0) size 100x20
             text run at (88,0) width 100: "dolor sit amet"
         RenderText {#text} at (0,0) size 0x0

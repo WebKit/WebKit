@@ -39,6 +39,7 @@ class TranslatorHLSL;
 class TranslatorMSL;
 #endif  // ANGLE_ENABLE_METAL
 
+using MetadataFlagBits   = angle::PackedEnumBitSet<sh::MetadataFlags, uint32_t>;
 using SpecConstUsageBits = angle::PackedEnumBitSet<vk::SpecConstUsage, uint32_t>;
 
 //
@@ -113,8 +114,7 @@ class TCompiler : public TShHandleBase
 
     bool specifyEarlyFragmentTests() { return mEarlyFragmentTestsSpecified = true; }
     bool isEarlyFragmentTestsSpecified() const { return mEarlyFragmentTestsSpecified; }
-    bool hasDiscard() const { return mHasDiscard; }
-    bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
+    MetadataFlagBits getMetadataFlags() const { return mMetadataFlags; }
     SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
     bool isComputeShaderLocalSizeDeclared() const { return mComputeShaderLocalSizeDeclared; }
@@ -216,18 +216,14 @@ class TCompiler : public TShHandleBase
     // it's expected to no longer transform.
     void enableValidateNoMoreTransformations();
 
-    bool areClipDistanceOrCullDistanceRedeclared() const
+    bool areClipDistanceOrCullDistanceUsed() const
     {
-        return mClipDistanceRedeclared || mCullDistanceRedeclared;
+        return mClipDistanceSize > 0 || mCullDistanceSize > 0;
     }
 
     uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
 
     uint8_t getCullDistanceArraySize() const { return mCullDistanceSize; }
-
-    bool isClipDistanceRedeclared() const { return mClipDistanceRedeclared; }
-
-    bool hasClipDistance() const { return mClipDistanceUsed; }
 
     bool usesDerivatives() const { return mUsesDerivatives; }
 
@@ -267,6 +263,8 @@ class TCompiler : public TShHandleBase
 
     // Track what should be validated given passes currently applied.
     ValidateASTOptions mValidateASTOptions;
+
+    MetadataFlagBits mMetadataFlags;
 
     // Specialization constant usage bits
     SpecConstUsageBits mSpecConstUsageBits;
@@ -323,8 +321,6 @@ class TCompiler : public TShHandleBase
                              const TParseContext &parseContext,
                              const ShCompileOptions &compileOptions);
 
-    bool resizeClipAndCullDistanceBuiltins(TIntermBlock *root);
-
     bool postParseChecks(const TParseContext &parseContext);
 
     sh::GLenum mShaderType;
@@ -354,13 +350,6 @@ class TCompiler : public TShHandleBase
     // Fragment shader early fragment tests
     bool mEarlyFragmentTestsSpecified;
 
-    // Fragment shader has the discard instruction
-    bool mHasDiscard;
-
-    // Whether per-sample shading is enabled by the shader.  In OpenGL, this keyword should
-    // implicitly trigger per-sample shading without the API enabling it.
-    bool mEnablesPerSampleShading;
-
     // compute shader local group size
     bool mComputeShaderLocalSizeDeclared;
     sh::WorkGroupSize mComputeShaderLocalSize;
@@ -371,9 +360,6 @@ class TCompiler : public TShHandleBase
     // Track gl_ClipDistance / gl_CullDistance usage.
     uint8_t mClipDistanceSize;
     uint8_t mCullDistanceSize;
-    bool mClipDistanceRedeclared;
-    bool mCullDistanceRedeclared;
-    bool mClipDistanceUsed;
 
     // geometry shader parameters.
     int mGeometryShaderMaxVertices;

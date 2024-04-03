@@ -57,9 +57,6 @@ public:
 private:
     MediaEncryptedEvent(const AtomString&, const MediaEncryptedEventInit&, IsTrusted);
 
-    // Event
-    EventInterface eventInterface() const override;
-
     String m_initDataType;
     RefPtr<JSC::ArrayBuffer> m_initData;
 };

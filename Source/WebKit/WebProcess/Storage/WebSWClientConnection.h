@@ -29,9 +29,9 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RetrieveRecordResponseBodyCallbackIdentifier.h"
-#include "SharedMemory.h"
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/SWClientConnection.h>
+#include <WebCore/SharedMemory.h>
 #include <wtf/UniqueRef.h>
 
 namespace IPC {
@@ -124,7 +124,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
 
-    void setSWOriginTableSharedMemory(SharedMemory::Handle&&);
+    void setSWOriginTableSharedMemory(WebCore::SharedMemory::Handle&&);
     void setSWOriginTableIsImported();
 
     void clear();

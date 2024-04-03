@@ -72,7 +72,6 @@
 #include "WebSearchPopupMenu.h"
 #include "WebWorkerClient.h"
 #include <WebCore/AppHighlight.h>
-#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/ContentRuleListResults.h>
@@ -313,6 +312,8 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 
     auto& mouseEventData = navigationAction.mouseEventData();
 
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+
     NavigationActionData navigationActionData {
         navigationAction.type(),
         modifiersForNavigationAction(navigationAction),
@@ -344,11 +345,15 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
+        webFrame->info(), /* originatingFrameInfoData */
+        webFrame->page()->webPageProxyIdentifier(),
+        webFrame->info(), /* frameInfo */
+        0, /* navigationID */
+        navigationAction.originalRequest(), /* originalRequest */
+        navigationAction.originalRequest() /* request */
     };
 
-    auto webFrame = WebFrame::fromCoreFrame(frame);
-
-    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.originalRequest(), windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
+    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     if (!sendResult.succeeded())
         return nullptr;
 
@@ -833,31 +838,6 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
     page->sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize));
 }
 
-void WebChromeClient::reachedMaxAppCacheSize(int64_t)
-{
-    notImplemented();
-}
-
-void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin, int64_t totalBytesNeeded)
-{
-    auto page = protectedPage();
-    auto securityOrigin = API::SecurityOrigin::createFromString(origin.toString());
-    if (page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(page.ptr(), securityOrigin.ptr(), totalBytesNeeded))
-        return;
-
-    Ref cacheStorage = page->corePage()->applicationCacheStorage();
-    int64_t currentQuota = 0;
-    if (!cacheStorage->calculateQuotaForOrigin(origin, currentQuota))
-        return;
-
-    auto relay = AXRelayProcessSuspendedNotification(page);
-
-    auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin.data().databaseIdentifier(), currentQuota, totalBytesNeeded));
-    auto [newQuota] = sendResult.takeReplyOr(0);
-
-    cacheStorage->storeUpdatedQuotaForOrigin(&origin, newQuota);
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
@@ -1038,7 +1018,7 @@ RefPtr<WebCore::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 #else
     return WebCore::WebGPU::create([](WebCore::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
-    });
+    }, nullptr);
 #endif
 }
 #endif
@@ -1301,9 +1281,9 @@ bool WebChromeClient::supportsFullScreenForElement(const Element&, bool withKeyb
     return protectedPage()->fullScreenManager()->supportsFullScreen(withKeyboard);
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element)
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    protectedPage()->fullScreenManager()->enterFullScreenForElement(&element);
+    protectedPage()->fullScreenManager()->enterFullScreenForElement(&element, mode);
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)
@@ -1468,28 +1448,6 @@ void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<Autopla
     protectedPage()->send(Messages::WebPageProxy::HandleAutoplayEvent(event, flags));
 }
 
-bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
-{
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::WrapCryptoKey(key), page().identifier());
-    if (!sendResult.succeeded())
-        return false;
-
-    bool succeeded;
-    std::tie(succeeded, wrappedKey) = sendResult.takeReply();
-    return succeeded;
-}
-
-bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
-{
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(wrappedKey), page().identifier());
-    if (!sendResult.succeeded())
-        return false;
-
-    bool succeeded;
-    std::tie(succeeded, key) = sendResult.takeReply();
-    return succeeded;
-}
-
 #if ENABLE(APP_HIGHLIGHTS)
 void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
 {
@@ -1634,7 +1592,7 @@ void WebChromeClient::imageOrMediaDocumentSizeChanged(const IntSize& newSize)
 
 void WebChromeClient::didInvalidateDocumentMarkerRects()
 {
-    protectedPage()->findController().didInvalidateDocumentMarkerRects();
+    protectedPage()->findController().didInvalidateFindRects();
 }
 
 void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)

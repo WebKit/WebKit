@@ -23,6 +23,6 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x18
             RenderText {#text} at (0,0) size 99x18
               text run at (0,0) width 99: "Bold and Italic"
-        RenderInline {I} at (0,0) size 39x18
+        RenderInline {I} at (98,0) size 39x18
           RenderText {#text} at (98,0) size 39x18
             text run at (98,0) width 39: " Italic"

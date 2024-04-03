@@ -1084,6 +1084,9 @@ typedef struct WGPUSwapChainDescriptor {
     uint32_t width;
     uint32_t height;
     WGPUPresentMode presentMode;
+#ifdef __cplusplus
+    Vector<WGPUTextureFormat> viewFormats;
+#endif
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUTextureBindingLayout {
@@ -1197,6 +1200,9 @@ typedef struct WGPUProgrammableStageDescriptor {
 typedef struct WGPURenderPassColorAttachment {
     WGPUChainedStruct const * nextInChain;
     WGPU_NULLABLE WGPUTextureView view;
+#ifdef __cplusplus
+    std::optional<uint32_t> depthSlice;
+#endif
     WGPU_NULLABLE WGPUTextureView resolveTarget;
     WGPULoadOp loadOp;
     WGPUStoreOp storeOp;

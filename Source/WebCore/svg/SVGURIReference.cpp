@@ -91,8 +91,8 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
     if (id.isEmpty())
         return { };
 
-    auto& document = treeScope.documentScope();
-    auto url = document.completeURL(iri);
+    Ref document = treeScope.documentScope();
+    auto url = document->completeURL(iri);
     if (externalDocument) {
         // Enforce that the referenced url matches the url of the document that we've loaded for it!
         ASSERT(equalIgnoringFragmentIdentifier(url, externalDocument->url()));
@@ -112,7 +112,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
 bool SVGURIReference::haveLoadedRequiredResources() const
 {
-    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().document()))
+    if (href().isEmpty() || !isExternalURIReference(href(), contextElement().protectedDocument()))
         return true;
     return errorOccurred() || haveFiredLoadEvent();
 }

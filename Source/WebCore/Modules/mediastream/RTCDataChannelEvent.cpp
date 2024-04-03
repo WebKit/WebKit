@@ -46,13 +46,13 @@ Ref<RTCDataChannelEvent> RTCDataChannelEvent::create(const AtomString& type, Ini
 }
 
 RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, CanBubble canBubble, IsCancelable cancelable, Ref<RTCDataChannel>&& channel)
-    : Event(type, canBubble, cancelable)
+    : Event(EventInterfaceType::RTCDataChannelEvent, type, canBubble, cancelable)
     , m_channel(WTFMove(channel))
 {
 }
 
 RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::RTCDataChannelEvent, type, initializer, isTrusted)
     , m_channel(initializer.channel.releaseNonNull())
 {
 }
@@ -60,11 +60,6 @@ RTCDataChannelEvent::RTCDataChannelEvent(const AtomString& type, Init&& initiali
 RTCDataChannel& RTCDataChannelEvent::channel()
 {
     return m_channel.get();
-}
-
-EventInterface RTCDataChannelEvent::eventInterface() const
-{
-    return RTCDataChannelEventInterfaceType;
 }
 
 } // namespace WebCore

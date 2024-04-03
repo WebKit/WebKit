@@ -29,12 +29,12 @@
 #if PLATFORM(MAC)
 
 #import "ImageOptions.h"
-#import "ShareableBitmap.h"
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
+#import <WebCore/ShareableBitmap.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NakedPtr.h>
@@ -151,10 +151,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _lastSnapshotScale = _scale;
     _lastSnapshotMaximumSize = _maximumSnapshotSize;
-    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](std::optional<WebKit::ShareableBitmap::Handle>&& imageHandle) {
+    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) {
         if (!imageHandle)
             return;
-        auto bitmap = WebKit::ShareableBitmap::create(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
+        auto bitmap = WebCore::ShareableBitmap::create(WTFMove(*imageHandle), WebCore::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         tracePoint(TakeSnapshotEnd, !!cgImage);
         [thumbnailView _didTakeSnapshot:cgImage.get()];

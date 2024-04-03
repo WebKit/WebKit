@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 351x55
+  RenderSVGTransformableContainer {g} at (0,0) size 350.38x55
+layer at (0,0) size 351x55
+  RenderSVGTransformableContainer {g} at (0,0) size 350.38x55
+layer at (0,0) size 155x55
+  RenderSVGTransformableContainer {g} at (0,0) size 155x55
+layer at (0,0) size 150x5
+  RenderSVGRect {rect} at (0,0) size 150x5 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+layer at (0,0) size 5x50
+  RenderSVGRect {rect} at (0,0) size 5x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+layer at (150,0) size 5x50
+  RenderSVGRect {rect} at (150,0) size 5x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=5.00] [height=50.00]
+layer at (0,50) size 150x5
+  RenderSVGRect {rect} at (0,50) size 150x5 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=150.00] [height=5.00]
+layer at (35,10) size 80x30
+  RenderSVGEllipse {ellipse} at (35,10) size 80x30 [fill={[type=SOLID] [color=#800080]}] [cx=75.00] [cy=25.00] [rx=40.00] [ry=15.00]
+layer at (30,4.95) size 120x14
+  RenderSVGText {text} at (30,4) size 121x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 121x14
+      chunk 1 text run 1 at (30.00,16.00) startOffset 0 endOffset 19 width 120.38: "skewX(45)+skewY(45)"
+layer at (0,0) size 155x55
+  RenderSVGTransformableContainer {g} at (0,0) size 155x55
+layer at (0,0) size 150x5
+  RenderSVGRect {rect} at (0,0) size 150x5 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+layer at (0,0) size 5x50
+  RenderSVGRect {rect} at (0,0) size 5x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+layer at (150,0) size 5x50
+  RenderSVGRect {rect} at (150,0) size 5x50 [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=0.00] [width=5.00] [height=50.00]
+layer at (0,50) size 150x5
+  RenderSVGRect {rect} at (0,50) size 150x5 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=50.00] [width=150.00] [height=5.00]
+layer at (35,10) size 80x30
+  RenderSVGEllipse {ellipse} at (35,10) size 80x30 [fill={[type=SOLID] [color=#800080]}] [cx=75.00] [cy=25.00] [rx=40.00] [ry=15.00]
+layer at (230,4.95) size 120x14
+  RenderSVGText {text} at (230,4) size 121x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 121x14
+      chunk 1 text run 1 at (230.00,16.00) startOffset 0 endOffset 19 width 120.38: "skewY(45)+skewX(45)"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

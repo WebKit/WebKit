@@ -69,9 +69,14 @@ void RemoteRenderBundleEncoderProxy::setIndexBuffer(const WebCore::WebGPU::Buffe
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderBundleEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer& buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+void RemoteRenderBundleEncoderProxy::setVertexBuffer(WebCore::WebGPU::Index32 slot, const WebCore::WebGPU::Buffer* buffer, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
 {
-    auto convertedBuffer = m_convertToBackingContext->convertToBacking(buffer);
+    if (!buffer) {
+        auto sendResult = send(Messages::RemoteRenderBundleEncoder::UnsetVertexBuffer(slot, offset, size));
+        UNUSED_VARIABLE(sendResult);
+        return;
+    }
+    auto convertedBuffer = m_convertToBackingContext->convertToBacking(*buffer);
     ASSERT(convertedBuffer);
     if (!convertedBuffer)
         return;
@@ -142,7 +147,7 @@ void RemoteRenderBundleEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index
     if (!convertedBindGroup)
         return;
 
-    auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength)));
+    auto sendResult = send(Messages::RemoteRenderBundleEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(std::span { dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength })));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -164,18 +169,16 @@ void RemoteRenderBundleEncoderProxy::insertDebugMarker(String&& markerLabel)
     UNUSED_VARIABLE(sendResult);
 }
 
-Ref<WebCore::WebGPU::RenderBundle> RemoteRenderBundleEncoderProxy::finish(const WebCore::WebGPU::RenderBundleDescriptor& descriptor)
+RefPtr<WebCore::WebGPU::RenderBundle> RemoteRenderBundleEncoderProxy::finish(const WebCore::WebGPU::RenderBundleDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return RemoteRenderBundleProxy::create(m_parent, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
+    if (!convertedDescriptor)
+        return nullptr;
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = send(Messages::RemoteRenderBundleEncoder::Finish(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
+    if (sendResult != IPC::Error::NoError)
+        return nullptr;
 
     return RemoteRenderBundleProxy::create(m_parent, m_convertToBackingContext, identifier);
 }

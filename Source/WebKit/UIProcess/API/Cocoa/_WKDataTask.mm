@@ -89,7 +89,7 @@ private:
         }).get()];
     }
 
-    void didReceiveData(API::DataTask& task, const IPC::DataReference& data) const final
+    void didReceiveData(API::DataTask& task, std::span<const uint8_t> data) const final
     {
         if (!m_delegate || !m_respondsToDidReceiveData)
             return;

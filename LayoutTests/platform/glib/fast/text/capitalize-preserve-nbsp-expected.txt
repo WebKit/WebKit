@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 52x17
           text run at (0,0) width 52: "Test for "
         RenderInline {I} at (0,0) size 768x35
-          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+          RenderInline {A} at (51,0) size 301x17 [color=#0000EE]
             RenderText {#text} at (51,0) size 301x17
               text run at (51,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11671"
-          RenderText {#text} at (351,0) size 768x35
+          RenderText {#text} at (0,0) size 768x35
             text run at (351,0) width 5: " "
             text run at (355,0) width 413: "REGRESSION (r13702): text-transform: capitalize changes non-"
             text run at (0,18) width 164: "breaking spaces to spaces"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,120) size 784x18
         RenderText {#text} at (0,0) size 62x17
           text run at (0,0) width 62: "Lorem     "
-        RenderInline {SPAN} at (0,0) size 39x17
+        RenderInline {SPAN} at (62,0) size 39x17
           RenderText {#text} at (62,0) size 39x17
             text run at (62,0) width 39: "Ipsum"
       RenderBlock {P} at (0,154) size 784x18

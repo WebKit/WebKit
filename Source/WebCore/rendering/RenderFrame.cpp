@@ -52,8 +52,8 @@ FrameEdgeInfo RenderFrame::edgeInfo() const
 
 void RenderFrame::updateFromElement()
 {
-    if (is<RenderFrameSet>(parent()))
-        downcast<RenderFrameSet>(*parent()).notifyFrameEdgeInfoChanged();
+    if (CheckedPtr frameSet = dynamicDowncast<RenderFrameSet>(parent()))
+        frameSet->notifyFrameEdgeInfoChanged();
 }
 
 } // namespace WebCore

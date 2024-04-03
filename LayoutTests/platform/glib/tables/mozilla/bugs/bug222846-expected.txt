@@ -1,26 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x202
-  RenderBlock {HTML} at (0,0) size 800x202
-    RenderBody {BODY} at (8,8) size 784x186
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 206x17
-          text run at (0,0) width 206: "Both tables should look identical"
-      RenderTable {TABLE} at (0,18) size 200x84 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 200x37
-          RenderText {#text} at (53,0) size 94x36
-            text run at (53,0) width 94: "caption"
-        RenderTableSection {TBODY} at (1,38) size 198x45
-          RenderTableRow {TR} at (0,2) size 198x41
-            RenderTableCell {TD} at (2,2) size 194x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x36
-                text run at (2,2) width 62: "cell1"
-      RenderTable {TABLE} at (0,102) size 200x84 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 200x37
-          RenderText {#text} at (53,0) size 94x36
-            text run at (53,0) width 94: "caption"
-        RenderTableSection {TBODY} at (1,38) size 198x45
-          RenderTableRow {TR} at (0,2) size 198x41
-            RenderTableCell {TD} at (2,2) size 194x41 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 62x36
-                text run at (2,2) width 62: "cell1"
+layer at (0,0) size 800x205
+  RenderBlock {html} at (0,0) size 800x205
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 581x14
+          text run at (0,0) width 581: "error on line 17 at column 8: Opening and ending tag mismatch: meta line 5 and head"
+          text run at (580,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
+    RenderBlock (anonymous) at (0,168) size 800x37
+      RenderInline {head} at (0,0) size 641x35
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {meta} at (0,0) size 641x35
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {title} at (0,0) size 87x17
+            RenderText {#text} at (0,0) size 87x17
+              text run at (0,0) width 87: "table dom test"
+          RenderText {#text} at (87,0) size 4x17
+            text run at (87,0) width 4: " "
+          RenderInline {style} at (0,0) size 403x17
+            RenderText {#text} at (91,0) size 403x17
+              text run at (91,0) width 403: "table {width:200px} table[summary=\"summ\"] {font-size:24pt} "
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {script} at (0,0) size 641x35
+            RenderText {#text} at (494,0) size 641x35
+              text run at (494,0) width 147: "function dom(){ var t ="
+              text run at (0,18) width 348: "document.getElementById('t2'); t.summary=\"summ\"; }"

@@ -47,6 +47,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <WebCore/WebGPUCreateImpl.h>
+#include <WebCore/ProcessIdentity.h>
 #endif
 
 namespace WebKit {
@@ -59,6 +60,7 @@ RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpu
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
 {
+    weakPtrFactory().prepareForUseOnlyOnNonMainThread();
 }
 
 RemoteGPU::~RemoteGPU() = default;
@@ -92,9 +94,10 @@ void RemoteGPU::workQueueInitialize()
     // The retain cycle is required because callbacks need to execute even if this is disowned
     // (because the callbacks handle resource cleanup, etc.).
     // The retain cycle is broken in workQueueUninitialize().
+    auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     auto backing = WebCore::WebGPU::create([protectedThis = Ref { *this }](WebCore::WebGPU::WorkItem&& workItem) {
         protectedThis->workQueue().dispatch(WTFMove(workItem));
-    });
+    }, gpuProcessConnection ? &gpuProcessConnection->webProcessIdentity() : nullptr);
 #else
     RefPtr<WebCore::WebGPU::GPU> backing;
 #endif
@@ -127,13 +130,13 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
         return;
     }
 
-    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), streamConnection = Ref { *m_streamConnection }, identifier, &gpuConnectionToWebProcess = m_gpuConnectionToWebProcess] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
+    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), streamConnection = Ref { *m_streamConnection }, identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get()] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             callback(std::nullopt);
             return;
         }
 
-        auto remoteAdapter = RemoteAdapter::create(gpuConnectionToWebProcess, *adapter, objectHeap, WTFMove(streamConnection), identifier);
+        auto remoteAdapter = RemoteAdapter::create(*gpuConnectionToWebProcess, *adapter, objectHeap, WTFMove(streamConnection), identifier);
         objectHeap->addObject(identifier, remoteAdapter);
 
         auto name = adapter->name();
@@ -182,12 +185,11 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     ASSERT(m_backing);
 
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
+    RELEASE_ASSERT(convertedDescriptor);
 
     auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
-    auto remotePresentationContext = RemotePresentationContext::create(presentationContext, m_objectHeap, *m_streamConnection, identifier);
+    RELEASE_ASSERT(presentationContext);
+    auto remotePresentationContext = RemotePresentationContext::create(*presentationContext, m_objectHeap, *m_streamConnection, identifier);
     m_objectHeap->addObject(identifier, remotePresentationContext);
 }
 
@@ -197,7 +199,8 @@ void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
     ASSERT(m_backing);
 
     auto compositorIntegration = m_backing->createCompositorIntegration();
-    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
+    RELEASE_ASSERT(compositorIntegration);
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(*compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
     m_objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 

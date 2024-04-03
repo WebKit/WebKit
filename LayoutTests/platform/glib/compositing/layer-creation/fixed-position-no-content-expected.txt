@@ -1,0 +1,13 @@
+There should be no layers.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 1024.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 1024.00)
+      (contentsOpaque 1)
+    )
+  )
+)
+

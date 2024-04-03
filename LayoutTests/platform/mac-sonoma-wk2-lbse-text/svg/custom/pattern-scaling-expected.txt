@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,10) size 40x40
+  RenderSVGHiddenContainer {defs} at (10,10) size 40x40
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (-10,-10) size 20x20
+layer at (0,0) size 10x10
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (10,10) size 10x10
+  RenderSVGRect {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (10,10) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (10,10) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (10,10) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (10,10) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (10,10) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {use} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGTransformableContainer {g} at (0,0) size 40x40
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+layer at (10,10) size 40x40
+  RenderSVGRect {rect} at (0,0) size 40x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]

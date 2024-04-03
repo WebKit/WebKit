@@ -89,7 +89,7 @@ private:
     void addDependentSignal(AbortSignal&);
 
     // EventTarget.
-    EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::AbortSignal; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

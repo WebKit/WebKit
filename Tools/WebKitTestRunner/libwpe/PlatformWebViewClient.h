@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlatformWebView.h"
 #include <wtf/FastMalloc.h>
 
 namespace WTR {
@@ -37,7 +38,7 @@ public:
     virtual void addToWindow() = 0;
     virtual void removeFromWindow() = 0;
 
-    virtual cairo_surface_t* snapshot() = 0;
+    virtual PlatformImage snapshot() = 0;
 
     WKViewRef view() const { return m_view; }
 

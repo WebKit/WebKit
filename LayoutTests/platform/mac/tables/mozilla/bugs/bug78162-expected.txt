@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 632x170
           RenderTableRow {TR} at (0,2) size 632x166
             RenderTableCell {TD} at (2,80) size 124x10 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 120x6
+              RenderTable {TABLE} at (2,80) size 120x6
                 RenderTableSection {TBODY} at (0,0) size 120x6
                   RenderTableRow {TR} at (0,2) size 120x2
                     RenderTableCell {TD} at (2,2) size 116x2 [r=0 c=0 rs=1 cs=1]
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (0,0) size 488x80
                           RenderTableRow {TR} at (0,10) size 488x60
                             RenderTableCell {TD} at (10,10) size 468x60 [r=0 c=0 rs=1 cs=1]
-                              RenderInline {A} at (0,0) size 468x18 [color=#0000EE]
+                              RenderInline {A} at (0,46) size 468x18 [color=#0000EE]
                                 RenderImage {IMG} at (0,0) size 468x60
                       RenderBlock (anonymous) at (2,82) size 488x72
                         RenderText {#text} at (0,0) size 469x72

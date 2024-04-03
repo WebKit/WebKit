@@ -38,13 +38,9 @@ Ref<AutomaticThreadCondition> AutomaticThreadCondition::create()
     return adoptRef(*new AutomaticThreadCondition);
 }
 
-AutomaticThreadCondition::AutomaticThreadCondition()
-{
-}
+AutomaticThreadCondition::AutomaticThreadCondition() = default;
 
-AutomaticThreadCondition::~AutomaticThreadCondition()
-{
-}
+AutomaticThreadCondition::~AutomaticThreadCondition() = default;
 
 void AutomaticThreadCondition::notifyOne(const AbstractLocker& locker)
 {

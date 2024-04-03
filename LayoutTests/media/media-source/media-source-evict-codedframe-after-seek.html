@@ -58,7 +58,7 @@
         await waitFor(sourceBuffer, 'updateend');
         waitFor(sourceBuffer, 'error');
 
-        internals.settings.setMaximumSourceBufferSize(3200);
+        await internals.setMaximumSourceBufferSize(sourceBuffer, 3200);
 
         exception = await appendPtsRange(0, 11);
         testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');

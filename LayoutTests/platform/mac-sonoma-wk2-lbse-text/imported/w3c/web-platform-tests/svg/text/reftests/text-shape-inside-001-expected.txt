@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (90,100) size 300x40
+  RenderSVGHiddenContainer {defs} at (90,100) size 300x40
+layer at (90,100) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=100.00] [width=300.00] [height=40.00]
+layer at (0,-14.73) size 394x155 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-14.73) size 393.06x154.73
+layer at (0,-14.73) size 394x155 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 393.06x154.73
+layer at (90,100) size 300x41
+  RenderSVGTransformableContainer {use} at (90,114.73) size 300x40
+layer at (90,100) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=100.00] [width=300.00] [height=40.00]
+layer at (0,-14.73) size 393x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+layer at (0,-14.73) size 394x155 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 393.06x154.73
+layer at (90,100) size 300x41
+  RenderSVGTransformableContainer {use} at (90,114.73) size 300x40
+layer at (90,100) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=100.00] [width=300.00] [height=40.00]
+layer at (0,-14.73) size 393x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+layer at (0,-14.73) size 394x155 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 393.06x154.73
+layer at (90,100) size 300x41
+  RenderSVGTransformableContainer {use} at (90,114.73) size 300x40
+layer at (90,100) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=100.00] [width=300.00] [height=40.00]
+layer at (0,-14.73) size 393x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"
+layer at (0,-14.73) size 394x155 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 393.06x154.73
+layer at (90,100) size 300x41
+  RenderSVGTransformableContainer {use} at (90,114.73) size 300x40
+layer at (90,100) size 300x40
+  RenderSVGRect {rect} at (0,0) size 300x40 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=100.00] [width=300.00] [height=40.00]
+layer at (0,-14.73) size 393x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 394x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 394x19
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 57 width 393.06: "Lorem ipsum dolor sit amet, consectetur adipisicing elit,"

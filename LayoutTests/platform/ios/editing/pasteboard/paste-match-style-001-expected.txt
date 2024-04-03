@@ -34,13 +34,13 @@ layer at (0,0) size 800x600
             text run at (0,31) width 738: "The pasted letter should match the style of the preexisting bold letter. Should"
             text run at (0,61) width 358: "see this content in the red box below:"
           RenderBR {BR} at (357,61) size 1x28
-          RenderInline {B} at (0,0) size 26x28
+          RenderInline {B} at (0,91) size 26x28
             RenderText {#text} at (0,91) size 26x28
               text run at (0,91) width 26: "ab"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,248) size 784x34
         RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 32x28
+          RenderInline {B} at (2,3) size 32x28
             RenderText {#text} at (2,3) size 32x28
               text run at (2,3) width 12: "a"
               text run at (14,3) width 6: " "

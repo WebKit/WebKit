@@ -1,0 +1,14 @@
+/*#pragma settings NoInline DebugTrace*/
+
+const float gInitialized = -1.0;
+float gInitializedFromOther = -gInitialized;
+float gUninitialized;
+
+void init_globals() {
+    gUninitialized = gInitialized + 2;
+}
+
+float4 main(float2 xy) {
+    init_globals();
+    return float4(0, gInitializedFromOther, 0, gUninitialized);
+}

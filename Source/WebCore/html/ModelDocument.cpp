@@ -67,7 +67,7 @@ private:
 
     void createDocumentStructure();
 
-    void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
+    void appendBytes(DocumentWriter&, std::span<const uint8_t>) final;
     void finish() final;
 
     WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> m_modelElement;
@@ -126,7 +126,7 @@ void ModelDocumentParser::createDocumentStructure()
     frame->loader().setOutgoingReferrer(document.completeURL(m_outgoingReferrer));
 }
 
-void ModelDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
+void ModelDocumentParser::appendBytes(DocumentWriter&, std::span<const uint8_t>)
 {
     if (!m_modelElement)
         createDocumentStructure();

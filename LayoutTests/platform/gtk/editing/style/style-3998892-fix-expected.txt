@@ -20,10 +20,10 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+          RenderInline {A} at (112,27) size 261x26 [color=#0000EE]
             RenderText {#text} at (112,27) size 261x26
               text run at (112,27) width 261: "<rdar://problem/3998892>"
-          RenderText {#text} at (372,27) size 698x53
+          RenderText {#text} at (0,27) size 698x53
             text run at (372,27) width 326: " REGRESSION (Mail): bolding a"
             text run at (0,54) width 93: "selection "
             text run at (92,54) width 552: "from end of line changes unselected text on starting line."

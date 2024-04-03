@@ -65,7 +65,7 @@ static StringView collectFraction(const LChar* input, unsigned length, unsigned&
     unsigned start = position++;
     while (position < length && isASCIIDigit(input[position]))
         ++position;
-    return StringView { input + start, position - start };
+    return std::span(input + start, position - start);
 }
 
 MediaFragmentURIParser::MediaFragmentURIParser(const URL& url)

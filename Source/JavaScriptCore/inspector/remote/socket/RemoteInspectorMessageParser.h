@@ -39,7 +39,7 @@ public:
 
     MessageParser() { }
     MessageParser(Function<void(Vector<uint8_t>&&)>&&);
-    void pushReceivedData(const uint8_t*, size_t);
+    void pushReceivedData(std::span<const uint8_t>);
     void clearReceivedData();
 
 private:

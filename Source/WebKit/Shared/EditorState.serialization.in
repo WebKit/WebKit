@@ -70,6 +70,7 @@ struct WebKit::EditorState {
     WebKit::ListType enclosingListType;
     WebCore::WritingDirection baseWritingDirection;
     bool editableRootIsTransparentOrFullyClipped;
+    bool canEnableWritingSuggestions;
 #endif
 #if PLATFORM(IOS_FAMILY)
     String markedText;

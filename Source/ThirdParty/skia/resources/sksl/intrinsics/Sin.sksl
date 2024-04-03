@@ -1,0 +1,14 @@
+uniform half4 inputVal, expected;
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    const half4 constVal = half4(0);
+    return (sin(inputVal.x)    == expected.x     &&
+            sin(inputVal.xy)   == expected.xy    &&
+            sin(inputVal.xyz)  == expected.xyz   &&
+            sin(inputVal.xyzw) == expected.xyzw  &&
+            sin(constVal.x)    == expected.x     &&
+            sin(constVal.xy)   == expected.xy    &&
+            sin(constVal.xyz)  == expected.xyz   &&
+            sin(constVal.xyzw) == expected.xyzw) ? colorGreen : colorRed;
+}

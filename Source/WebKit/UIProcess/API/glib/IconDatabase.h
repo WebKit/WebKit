@@ -46,7 +46,7 @@ public:
     void checkIconURLAndSetPageURLIfNeeded(const String& iconURL, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool, bool)>&&);
     void loadIconForPageURL(const String&, AllowDatabaseWrite, CompletionHandler<void(WebCore::PlatformImagePtr&&)>&&);
     String iconURLForPageURL(const String&);
-    void setIconForPageURL(const String& iconURL, const uint8_t*, size_t, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
+    void setIconForPageURL(const String& iconURL, std::span<const uint8_t>, const String& pageURL, AllowDatabaseWrite, CompletionHandler<void(bool)>&&);
     void clear(CompletionHandler<void()>&&);
 
 private:

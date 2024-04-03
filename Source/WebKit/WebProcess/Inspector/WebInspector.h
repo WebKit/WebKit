@@ -25,21 +25,22 @@
 
 #pragma once
 
-#include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorClient.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class WebPage;
 
-class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, private IPC::Connection::Client {
+class WebInspector : public ThreadSafeRefCounted<WebInspector>, private IPC::Connection::Client {
 public:
-    static Ref<WebInspector> create(WebPage*);
+    static Ref<WebInspector> create(WebPage&);
+    ~WebInspector();
 
     WebPage* page() const;
 
@@ -86,8 +87,7 @@ public:
 private:
     friend class WebInspectorClient;
 
-    explicit WebInspector(WebPage*);
-    virtual ~WebInspector();
+    explicit WebInspector(WebPage&);
 
     bool canAttachWindow();
 

@@ -60,6 +60,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if USE(RUNNINGBOARD)
 #include "WebSQLiteDatabaseTracker.h"
@@ -69,10 +70,6 @@
 #include <notify.h>
 #include <wtf/OSObjectPtr.h>
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
-#endif
-
-#if USE(EXTENSIONKIT)
-OBJC_CLASS WKGrant;
 #endif
 
 namespace IPC {
@@ -95,7 +92,7 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeHttpOnlyCookies : bool;
 enum class StoredCredentialsPolicy : uint8_t;
 enum class StorageAccessPromptWasShown : bool;
-enum class StorageAccessWasGranted : bool;
+enum class StorageAccessWasGranted : uint8_t;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
 class SecurityOriginData;
@@ -116,6 +113,7 @@ class RTCDataChannelRemoteManagerProxy;
 class SandboxExtensionHandle;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
+enum class DidFilterKnownLinkDecoration : bool;
 enum class LoadedWebArchive : bool;
 enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
@@ -267,8 +265,8 @@ public:
     void setTopFrameUniqueRedirectTo(PAL::SessionID, TopFrameDomain&&, RedirectedToDomain&&, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(PAL::SessionID, TopFrameDomain&&, RedirectedFromDomain&&, CompletionHandler<void()>&&);
     void registrableDomainsWithWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
-    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, CompletionHandler<void()>&&);
+    void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier, DidFilterKnownLinkDecoration);
+    void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, DidFilterKnownLinkDecoration, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
     void grantStorageAccessForTesting(PAL::SessionID, Vector<WebCore::RegistrableDomain>&& subFrameDomains, WebCore::RegistrableDomain&& topFrameDomain, CompletionHandler<void(void)>&&);
     void hasIsolatedSession(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
@@ -294,6 +292,7 @@ public:
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
     void setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID, bool) const;
+    void setShouldSendPrivateTokenIPCForTesting(PAL::SessionID, bool) const;
 
     void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
 
@@ -467,13 +466,13 @@ private:
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);
 
     void downloadRequest(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedFilename);
-    void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
-    void cancelDownload(DownloadID, CompletionHandler<void(const IPC::DataReference&)>&&);
+    void resumeDownload(PAL::SessionID, DownloadID, std::span<const uint8_t> resumeData, const String& path, SandboxExtensionHandle&&, CallDownloadDidStart);
+    void cancelDownload(DownloadID, CompletionHandler<void(std::span<const uint8_t>)>&&);
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
     void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
-    void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
+    void cancelDataTask(DataTaskIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 
@@ -520,11 +519,6 @@ private:
 
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
-#if USE(EXTENSIONKIT)
-    bool aqcuireLockedFileGrant();
-    void invalidateGrant();
-    bool hasAcquiredGrant() const;
-#endif
 #endif
     void stopRunLoopIfNecessary();
 
@@ -537,7 +531,7 @@ private:
     mutable String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
-    typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
+    using NetworkProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<NetworkProcessSupplement>, ASCIILiteralPtrHash>;
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
@@ -561,9 +555,6 @@ private:
 
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-#if USE(EXTENSIONKIT)
-    RetainPtr<WKGrant> m_holdingLockedFileGrant;
-#endif
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
     

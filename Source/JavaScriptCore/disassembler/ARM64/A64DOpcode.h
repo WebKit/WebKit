@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>

@@ -32,6 +32,7 @@
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
+#include <wtf/Identified.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -42,12 +43,10 @@ namespace WebKit {
 
 class SampleBufferDisplayLayerManager;
 
-class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client {
+class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client, public Identified<SampleBufferDisplayLayerIdentifier> {
 public:
     static Ref<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
     ~SampleBufferDisplayLayer();
-
-    SampleBufferDisplayLayerIdentifier identifier() const { return m_identifier; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -86,7 +85,6 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
     Ref<IPC::Connection> m_connection;
-    SampleBufferDisplayLayerIdentifier m_identifier;
 
     PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };

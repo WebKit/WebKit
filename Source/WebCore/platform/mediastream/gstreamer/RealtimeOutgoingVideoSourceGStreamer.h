@@ -49,7 +49,6 @@ protected:
     bool m_shouldApplyRotation { false };
 
 private:
-    void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
     RTCRtpCapabilities rtpCapabilities() const final;
 
     void startUpdatingStats();

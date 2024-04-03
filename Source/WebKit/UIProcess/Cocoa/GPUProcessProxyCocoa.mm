@@ -89,6 +89,19 @@ Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtension
     return SandboxExtension::createHandlesForMachLookup({ "com.apple.gputools.service"_s, }, std::nullopt);
 }
 
+#if USE(EXTENSIONKIT)
+void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
+{
+    NSError *error = nil;
+    NSURL *directoryURL = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:&error];
+    auto url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL]);
+    error = nil;
+    NSData* bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
+    std::span<const uint8_t> bookmarkData(reinterpret_cast<const uint8_t*>([bookmark bytes]), [bookmark length]);
+    send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(WTFMove(bookmarkData)), 0);
+}
+#endif
+
 }
 
 #endif

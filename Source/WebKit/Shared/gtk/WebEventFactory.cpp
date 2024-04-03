@@ -42,11 +42,6 @@ namespace WebKit {
 
 using namespace WebCore;
 
-#if GTK_CHECK_VERSION(4, 7, 0)
-// Keep in sync with https://gitlab.gnome.org/GNOME/gtk/-/blob/493660a296af3b8a140714988ddece4199818a04/gtk/gtkscrolledwindow.c#L204
-static const double gtkScrollDeltaMultiplier = 2.5;
-#endif
-
 static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
 {
     return keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9;

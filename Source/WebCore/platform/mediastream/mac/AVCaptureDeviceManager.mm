@@ -304,8 +304,10 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
 #if HAVE(AVCAPTUREDEVICE)
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasConnectedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
+    IGNORE_WARNINGS_BEGIN("objc-method-access")
     [PAL::getAVCaptureDeviceClass() addObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
     [PAL::getAVCaptureDeviceDiscoverySessionClass() addObserver:m_objcObserver.get() forKeyPath:@"devices" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
+    IGNORE_WARNINGS_END
 #endif
 }
 

@@ -60,6 +60,9 @@ public:
 
     void onNetworksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
 
+    const RTCNetwork::IPAddress& ipv4() const;
+    const RTCNetwork::IPAddress& ipv6()  const;
+
 private:
     void startUpdatingIfNeeded();
 

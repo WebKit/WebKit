@@ -77,7 +77,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -85,7 +85,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2(WTFMove(p1));
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -101,7 +101,7 @@ TEST(WTF_RefPtr, Basic)
     {
         RefPtr<DerivedRefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -203,7 +203,7 @@ TEST(WTF_RefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -249,7 +249,7 @@ TEST(WTF_RefPtr, Assignment)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -344,7 +344,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -352,7 +352,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<RefLogger> p1 = &a;
         RefPtr<RefLogger> p2(WTFMove(p1));
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -360,7 +360,7 @@ TEST(WTF_RefPtr, Release)
     {
         RefPtr<DerivedRefLogger> p1 = &a;
         RefPtr<RefLogger> p2 = WTFMove(p1);
-        EXPECT_EQ(nullptr, p1.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -373,7 +373,7 @@ TEST(WTF_RefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
@@ -386,7 +386,7 @@ TEST(WTF_RefPtr, Release)
         log() << "| ";
         p1 = WTFMove(p2);
         EXPECT_EQ(&c, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
@@ -530,7 +530,7 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
         a.slotToCheck = nullptr;
         b.slotToCheck = nullptr;
         EXPECT_EQ(&b, p1.get());
-        EXPECT_EQ(nullptr, p2.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nullptr, p2.get());
         log() << "| ";
     }
     EXPECT_STREQ("ref(a) ref(b) | slot=b deref(a) | deref(b) ", takeLogStr().c_str());
@@ -548,6 +548,64 @@ TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
     }
 
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
+}
+
+class PartiallyDestroyedRefPtrTest : public RefCounted<PartiallyDestroyedRefPtrTest> {
+public:
+    static Ref<PartiallyDestroyedRefPtrTest> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefPtrTest);
+    }
+
+    ~PartiallyDestroyedRefPtrTest()
+    {
+        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTest> protectedThis { this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefPtrTest()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyed)
+{
+    RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTest::create();
+    partiallyDestroyedRefPtrTest = nullptr;
+}
+
+class PartiallyDestroyedRefPtrTestThreadSafe : public ThreadSafeRefCounted<PartiallyDestroyedRefPtrTestThreadSafe> {
+public:
+    static Ref<PartiallyDestroyedRefPtrTestThreadSafe> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefPtrTestThreadSafe);
+    }
+
+    ~PartiallyDestroyedRefPtrTestThreadSafe()
+    {
+        RefPtrAllowingPartiallyDestroyed<PartiallyDestroyedRefPtrTestThreadSafe> protectedThis { this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefPtrTestThreadSafe()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_RefPtr, RefPtrAllowingPartiallyDestroyedThreadSafe)
+{
+    RefPtr partiallyDestroyedRefPtrTest = PartiallyDestroyedRefPtrTestThreadSafe::create();
+    partiallyDestroyedRefPtrTest = nullptr;
 }
 
 // FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run

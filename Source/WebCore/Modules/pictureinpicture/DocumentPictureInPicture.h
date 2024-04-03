@@ -48,7 +48,7 @@ public:
     static DocumentPictureInPicture* from(Document&);
 
 private:
-    static const char* supplementName() { return "DocumentPictureInPicture"; };
+    static ASCIILiteral supplementName() { return "DocumentPictureInPicture"_s; };
 };
 
 } // namespace WebCore

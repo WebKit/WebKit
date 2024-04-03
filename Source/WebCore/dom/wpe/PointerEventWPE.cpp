@@ -66,7 +66,7 @@ Ref<PointerEvent> PointerEvent::create(const AtomString& type, const PlatformTou
 }
 
 PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view, const IntPoint& touchDelta)
-    : MouseEvent(type, typeCanBubble(type), isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes)
+    : MouseEvent(EventInterfaceType::PointerEvent, type, typeCanBubble(type), isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), touchDelta.x(), touchDelta.y(), event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, SyntheticClickType::NoTap, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchPoints().at(index).id())
     , m_width(2 * event.touchPoints().at(index).radiusX())
     , m_height(2 * event.touchPoints().at(index).radiusY())

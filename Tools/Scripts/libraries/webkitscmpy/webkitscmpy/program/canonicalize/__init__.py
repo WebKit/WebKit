@@ -109,9 +109,13 @@ class Canonicalize(Command):
                 ),
             ] if args.identifier else []
 
+            resign_commands = []
+            if repository.commit_signing_enabled():
+                resign_commands = ['--commit-filter', 'git commit-tree -S "$@"']
+
             with open(os.devnull, 'w') as devnull:
                 subprocess.check_call([
-                    repository.executable(), 'filter-branch', '-f',
+                    repository.executable(), 'filter-branch', '-f'] + resign_commands + [
                     '--env-filter', '''{overwrite_message}
 committerOutput=$({python} {committer_py} {contributor_json})
 KEY=''

@@ -15,7 +15,7 @@ layer at (0,0) size 800x218
           text run at (60,85) width 10: " "
           text run at (70,85) width 50: "xxxx "
         RenderImage {IMG} at (120,85) size 40x40
-        RenderText {#text} at (160,85) size 190x55
+        RenderText {#text} at (20,85) size 190x55
           text run at (160,85) width 10: " "
           text run at (170,85) width 40: "xxxx"
           text run at (20,130) width 190: "xxxx xxxx xxxx xxxx"

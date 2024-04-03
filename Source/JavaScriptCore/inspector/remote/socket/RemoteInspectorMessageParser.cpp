@@ -59,12 +59,12 @@ Vector<uint8_t> MessageParser::createMessage(const uint8_t* data, size_t size)
     return messageBuffer;
 }
 
-void MessageParser::pushReceivedData(const uint8_t* data, size_t size)
+void MessageParser::pushReceivedData(std::span<const uint8_t> data)
 {
-    if (!data || !size || !m_listener)
+    if (data.empty() || !m_listener)
         return;
 
-    m_buffer.append(data, size);
+    m_buffer.append(data);
 
     if (!parse())
         clearReceivedData();

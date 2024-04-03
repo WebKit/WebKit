@@ -32,11 +32,15 @@
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class ProcessIdentity;
+}
+
 namespace WebCore::WebGPU {
 
 using WorkItem = CompletionHandler<void(void)>;
 using ScheduleWorkFunction = Function<void(WorkItem&&)>;
-WEBCORE_EXPORT RefPtr<GPU> create(ScheduleWorkFunction&&);
+WEBCORE_EXPORT RefPtr<GPU> create(ScheduleWorkFunction&&, const WebCore::ProcessIdentity*);
 
 } // namespace WebCore::WebGPU
 

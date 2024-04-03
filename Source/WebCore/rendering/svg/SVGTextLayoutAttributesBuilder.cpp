@@ -112,11 +112,11 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxMod
         if (!inlineChild)
             continue;
 
-        auto* element = SVGTextPositioningElement::elementFromRenderer(*inlineChild);
+        RefPtr element = SVGTextPositioningElement::elementFromRenderer(*inlineChild);
 
         unsigned atPosition = m_textPositions.size();
         if (element)
-            m_textPositions.append(TextPosition(element, m_textLength));
+            m_textPositions.append(TextPosition(element.get(), m_textLength));
 
         collectTextPositioningElements(*inlineChild, lastCharacterWasSpace);
 
@@ -132,11 +132,11 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxMod
 
 void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRoot)
 {
-    SVGTextPositioningElement* outermostTextElement = SVGTextPositioningElement::elementFromRenderer(textRoot);
+    RefPtr outermostTextElement = SVGTextPositioningElement::elementFromRenderer(textRoot);
     ASSERT(outermostTextElement);
 
     // Grab outermost <text> element value lists and insert them in the character data map.
-    TextPosition wholeTextPosition(outermostTextElement, 0, m_textLength);
+    TextPosition wholeTextPosition(outermostTextElement.get(), 0, m_textLength);
     fillCharacterDataMap(wholeTextPosition);
 
     // Handle x/y default attributes.
@@ -193,7 +193,8 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
         return;
 
     float lastRotation = SVGTextLayoutAttributes::emptyValue();
-    SVGLengthContext lengthContext(position.element);
+    RefPtr positionElement = position.element;
+    SVGLengthContext lengthContext(positionElement.get());
     for (unsigned i = 0; i < position.length; ++i) {
         const SVGLengthList* xListPtr = i < xListSize ? &xList : nullptr;
         const SVGLengthList* yListPtr = i < yListSize ? &yList : nullptr;

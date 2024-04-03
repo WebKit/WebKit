@@ -26,8 +26,6 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AXObjectCache.h"
 
 namespace WebCore {
@@ -55,5 +53,3 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY)

@@ -16,7 +16,7 @@ promise_test(async (test) => {
         testRunner.setUserMediaPermission(true);
 
     const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    setInterval(() => {
+    const interval = setInterval(() => {
         usesLowSampleRate = !usesLowSampleRate;
         const rate = usesLowSampleRate ? 44100 : 48000;
         localStream.getAudioTracks()[0].applyConstraints({sampleRate: rate});
@@ -34,6 +34,7 @@ promise_test(async (test) => {
 
     await new Promise(resolve => setTimeout(resolve, 1000));
     localStream.getAudioTracks()[0].stop();
+    clearInterval(interval);
 }, "Audio connection with track changing sample rate");
     </script>
 </body>

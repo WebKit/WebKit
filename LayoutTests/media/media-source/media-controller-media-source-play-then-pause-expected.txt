@@ -1,0 +1,29 @@
+
+RUN(controller = video.controller)
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append all media segments
+RUN(video2.src = URL.createObjectURL(source2))
+EVENT(sourceopen)
+RUN(sourceBuffer2 = source2.addSourceBuffer(loader.type()))
+RUN(sourceBuffer2.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append all media segments
+RUN(controller.play())
+EVENT(playing)
+EXPECTED (!internals.isPlayerPaused(video)) OK
+EXPECTED (!internals.isPlayerPaused(video2)) OK
+RUN(controller.pause())
+EVENT(pause)
+EXPECTED (internals.isPlayerPaused(video)) OK
+EXPECTED (internals.isPlayerPaused(video2)) OK
+RUN(controller.play())
+EVENT(play)
+EXPECTED (controller.playbackState == 'playing') OK
+EXPECTED (!internals.isPlayerPaused(video)) OK
+EXPECTED (!internals.isPlayerPaused(video2)) OK
+END OF TEST
+

@@ -361,8 +361,10 @@ static inline ContentVisibility blendFunc(ContentVisibility from, ContentVisibil
 
 static inline Visibility blendFunc(Visibility from, Visibility to, const CSSPropertyBlendingContext& context)
 {
-    if (from != Visibility::Visible && to != Visibility::Visible)
-        return context.progress < 0.5 ? from : to;
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? to : from;
+    }
 
     // Any non-zero result means we consider the object to be visible. Only at 0 do we consider the object to be
     // invisible. The invisible value we use (Visibility::Hidden vs. Visibility::Collapse) depends on the specified from/to values.
@@ -373,6 +375,22 @@ static inline Visibility blendFunc(Visibility from, Visibility to, const CSSProp
     // The composite operation here is irrelevant.
     double result = blendFunc(fromVal, toVal, { context.progress, false, CompositeOperation::Replace, context.client, context.property });
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
+}
+
+static inline DisplayType blendFunc(DisplayType from, DisplayType to, const CSSPropertyBlendingContext& context)
+{
+    // https://drafts.csswg.org/css-display-4/#display-animation
+    // In general, the display property's animation type is discrete. However, similar to interpolation of
+    // visibility, during interpolation between none and any other display value, p values between 0 and 1
+    // map to the non-none value. Additionally, the element is inert as long as its display value would
+    // compute to none when ignoring the Transitions and Animations cascade origins.
+    if (from != DisplayType::None && to != DisplayType::None)
+        return context.progress < 0.5 ? from : to;
+    if (context.progress <= 0)
+        return from;
+    if (context.progress >= 1)
+        return to;
+    return from == DisplayType::None ? to : from;
 }
 
 static inline TextUnderlineOffset blendFunc(const TextUnderlineOffset& from, const TextUnderlineOffset& to, const CSSPropertyBlendingContext& context)
@@ -682,8 +700,9 @@ public:
     virtual bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
     virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
     virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
+    virtual bool normalizesProgressForDiscreteInterpolation() const { return true; }
     virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
-    
+
 #if !LOG_DISABLED
     virtual void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;
 #endif
@@ -1468,51 +1487,14 @@ private:
     {
         return property() == CSSPropertyFilter
             || property() == CSSPropertyBackdropFilter
-            || property() == CSSPropertyWebkitBackdropFilter
-            ;
+            || property() == CSSPropertyWebkitBackdropFilter;
     }
 
     bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return true; }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
-        auto& fromFilterOperations = value(from);
-        auto& toFilterOperations = value(to);
-
-        // https://drafts.fxtf.org/filter-effects/#interpolation-of-filters
-
-        if (fromFilterOperations.hasReferenceFilter() || toFilterOperations.hasReferenceFilter())
-            return false;
-
-        // If one filter is none and the other is a <filter-value-list> without <url>
-        auto oneListIsEmpty = [&]() {
-            return fromFilterOperations.isEmpty() != toFilterOperations.isEmpty();
-        };
-
-        // If both filters have a <filter-value-list> of same length without <url> and for each <filter-function>
-        // for which there is a corresponding item in each list
-        // If both filters have a <filter-value-list> of different length without <url> and for each
-        // <filter-function> for which there is a corresponding item in each list
-        auto listsMatch = [&]() {
-            auto numItems = [&]() {
-                if (fromFilterOperations.size() == toFilterOperations.size())
-                    return fromFilterOperations.size();
-                return std::min(fromFilterOperations.size(), toFilterOperations.size());
-            }();
-
-            for (size_t i = 0; i < numItems; ++i) {
-                auto* fromOperation = fromFilterOperations.at(i);
-                auto* toOperation = toFilterOperations.at(i);
-                if (!!fromOperation != !!toOperation)
-                    return false;
-                if (fromOperation && toOperation && fromOperation->type() != toOperation->type())
-                    return false;
-            }
-
-            return true;
-        };
-
-        return compositeOperation != CompositeOperation::Replace || oneListIsEmpty() || listsMatch();
+        return value(from).canInterpolate(value(to), compositeOperation);
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -3505,6 +3487,25 @@ private:
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QuotesWrapper);
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VisibilityWrapper);
+class VisibilityWrapper final : public PropertyWrapper<Visibility> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VisibilityWrapper);
+public:
+    VisibilityWrapper()
+        : PropertyWrapper(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        // https://drafts.csswg.org/web-animations-1/#animating-visibility
+        // If neither value is visible, then discrete animation is used.
+        return value(from) == Visibility::Visible || value(to) == Visibility::Visible;
+    }
+};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VisibilityWrapper);
+
 template <typename T>
 class DiscreteSVGPropertyWrapper final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
@@ -3596,6 +3597,22 @@ private:
     friend class WTF::NeverDestroyed<CSSPropertyAnimationWrapperMap>;
 };
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSPropertyAnimationWrapperMap);
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
+template <typename T>
+class NonNormalizedDiscretePropertyWrapper final : public PropertyWrapper<T> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
+public:
+    NonNormalizedDiscretePropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+        : PropertyWrapper<T>(property, getter, setter)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
+    bool normalizesProgressForDiscreteInterpolation() const final { return false; }
+};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NonNormalizedDiscretePropertyWrapper);
 
 CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 {
@@ -3699,7 +3716,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius),
-        new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
+        new VisibilityWrapper,
+        new NonNormalizedDiscretePropertyWrapper<DisplayType>(CSSPropertyDisplay, &RenderStyle::display, &RenderStyle::setDisplay),
 
         new ClipWrapper,
 
@@ -3814,7 +3832,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<PrintColorAdjust>(CSSPropertyPrintColorAdjust, &RenderStyle::printColorAdjust, &RenderStyle::setPrintColorAdjust),
         new DiscretePropertyWrapper<ColumnFill>(CSSPropertyColumnFill, &RenderStyle::columnFill, &RenderStyle::setColumnFill),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyColumnRuleStyle, &RenderStyle::columnRuleStyle, &RenderStyle::setColumnRuleStyle),
-        new PropertyWrapper<ContentVisibility>(CSSPropertyContentVisibility, &RenderStyle::contentVisibility, &RenderStyle::setContentVisibility),
+        new NonNormalizedDiscretePropertyWrapper<ContentVisibility>(CSSPropertyContentVisibility, &RenderStyle::contentVisibility, &RenderStyle::setContentVisibility),
         new DiscretePropertyWrapper<CursorType>(CSSPropertyCursor, &RenderStyle::cursor, &RenderStyle::setCursor),
         new DiscretePropertyWrapper<EmptyCell>(CSSPropertyEmptyCells, &RenderStyle::emptyCells, &RenderStyle::setEmptyCells),
         new DiscretePropertyWrapper<FlexDirection>(CSSPropertyFlexDirection, &RenderStyle::flexDirection, &RenderStyle::setFlexDirection),
@@ -3928,7 +3946,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerStart, &SVGRenderStyle::markerStartResource, &SVGRenderStyle::setMarkerStartResource),
         new DiscretePropertyWrapper<const ScrollbarGutter>(CSSPropertyScrollbarGutter, &RenderStyle::scrollbarGutter, &RenderStyle::setScrollbarGutter),
         new DiscretePropertyWrapper<ScrollbarWidth>(CSSPropertyScrollbarWidth, &RenderStyle::scrollbarWidth, &RenderStyle::setScrollbarWidth),
-        new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName)
+        new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
+        new DiscretePropertyWrapper<FieldSizing>(CSSPropertyFieldSizing, &RenderStyle::fieldSizing, &RenderStyle::setFieldSizing)
     };
     const unsigned animatableLonghandPropertiesCount = std::size(animatableLonghandPropertyWrappers);
 
@@ -4014,7 +4033,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         // or provide a wrapper for it above. If you are adding to this list but the
         // property should be animatable, make sure to file a bug.
         case CSSPropertyDirection:
-        case CSSPropertyDisplay:
 #if ENABLE(VARIATION_FONTS)
         case CSSPropertyFontOpticalSizing:
 #endif
@@ -4233,16 +4251,11 @@ static void blendStandardProperty(const CSSPropertyBlendingClient& client, CSSPr
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper) {
-        // https://drafts.csswg.org/web-animations-1/#discrete
-        // The property's values cannot be meaningfully combined, thus it is not additive and
-        // interpolation swaps from Va to Vb at 50% (p=0.5).
         auto isDiscrete = !wrapper->canInterpolate(from, to, compositeOperation);
-        if (isDiscrete) {
-            // If we want additive, we should specify progress at 0 actually and return from.
-            progress = progress < 0.5 ? 0 : 1;
-            compositeOperation = CompositeOperation::Replace;
-        }
-        wrapper->blend(destination, from, to, { progress, isDiscrete, compositeOperation, client, property, iterationCompositeOperation, currentIteration });
+        CSSPropertyBlendingContext context { progress, isDiscrete, compositeOperation, client, property, iterationCompositeOperation, currentIteration };
+        if (wrapper->normalizesProgressForDiscreteInterpolation())
+            context.normalizeProgress();
+        wrapper->blend(destination, from, to, context);
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif

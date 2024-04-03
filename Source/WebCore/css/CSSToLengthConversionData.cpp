@@ -81,7 +81,7 @@ int CSSToLengthConversionData::computedLineHeightForFontUnits() const
 
 float CSSToLengthConversionData::zoom() const
 {
-    return m_zoom.value_or(m_style ? m_style->effectiveZoom() : 1.f);
+    return m_zoom.value_or(m_style ? m_style->usedZoom() : 1.f);
 }
 
 FloatSize CSSToLengthConversionData::defaultViewportFactor() const

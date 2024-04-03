@@ -32,16 +32,18 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUBufferImpl {
 };
 
 namespace WebGPU {
 
+class CommandEncoder;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpubuffer
-class Buffer : public WGPUBufferImpl, public RefCounted<Buffer> {
+class Buffer : public WGPUBufferImpl, public RefCounted<Buffer>, public CanMakeWeakPtr<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class State : uint8_t;
@@ -50,9 +52,9 @@ public:
         size_t endOffset; // Exclusive
     };
 
-    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     {
-        return adoptRef(*new Buffer(buffer, size, usage, initialState, initialMappingRange, device));
+        return adoptRef(*new Buffer(buffer, initialSize, usage, initialState, initialMappingRange, device));
     }
     static Ref<Buffer> createInvalid(Device& device)
     {
@@ -68,7 +70,7 @@ public:
     void unmap();
     void setLabel(String&&);
 
-    bool isValid() const { return m_buffer; }
+    bool isValid() const;
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     enum class State : uint8_t {
@@ -80,16 +82,20 @@ public:
     };
 
     id<MTLBuffer> buffer() const { return m_buffer; }
-    uint64_t size() const;
+    uint64_t initialSize() const;
+    uint64_t currentSize() const;
     WGPUBufferUsageFlags usage() const { return m_usage; }
     State state() const { return m_state; }
 
     Device& device() const { return m_device; }
     bool isDestroyed() const;
+    void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
+    uint32_t maxIndex(MTLIndexType) const;
 
 private:
-    Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
+    Buffer(id<MTLBuffer>, uint64_t initialSize, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
     Buffer(Device&);
+    void recomputeMaxIndexValues() const;
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
     NSString* errorValidatingMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
@@ -99,7 +105,7 @@ private:
 
     // https://gpuweb.github.io/gpuweb/#buffer-interface
 
-    const uint64_t m_size { 0 };
+    const uint64_t m_initialSize { 0 };
     const WGPUBufferUsageFlags m_usage { 0 };
     State m_state { State::Unmapped };
     // [[mapping]] is unnecessary; we can just use m_device.contents.
@@ -107,9 +113,11 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
-    Vector<uint8_t> m_emptyBuffer;
 
     const Ref<Device> m_device;
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
+    mutable uint16_t m_max16BitIndex { 0 };
+    mutable uint32_t m_max32BitIndex { 0 };
 };
 
 } // namespace WebGPU

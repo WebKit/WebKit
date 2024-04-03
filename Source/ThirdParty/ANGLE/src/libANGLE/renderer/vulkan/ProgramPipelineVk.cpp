@@ -105,12 +105,45 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     if (contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
     {
-        vk::RenderPass temporaryCompatibleRenderPass;
-        result = executableVk->warmUpPipelineCache(contextVk, contextVk->pipelineRobustness(),
-                                                   contextVk->pipelineProtectedAccess(),
-                                                   &temporaryCompatibleRenderPass);
+        const vk::PipelineRobustness robustness           = contextVk->pipelineRobustness();
+        const vk::PipelineProtectedAccess protectedAccess = contextVk->pipelineProtectedAccess();
+        bool isCompute                                    = false;
+        angle::FixedVector<bool, 2> surfaceRotationVariations = {false};
+        vk::GraphicsPipelineDesc graphicsPipelineDesc;
+        vk::RenderPass compatibleRenderPass;
 
-        temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+        ANGLE_TRY(executableVk->prepareForWarmUpPipelineCache(
+            contextVk, robustness, protectedAccess, &isCompute, &surfaceRotationVariations,
+            &graphicsPipelineDesc, &compatibleRenderPass));
+
+        if (isCompute)
+        {
+            ASSERT(!compatibleRenderPass.valid());
+            result =
+                executableVk->warmUpComputePipelineCache(contextVk, robustness, protectedAccess);
+        }
+        else
+        {
+            for (bool surfaceRotation : surfaceRotationVariations)
+            {
+                result = executableVk->warmUpGraphicsPipelineCache(
+                    contextVk, robustness, protectedAccess, vk::GraphicsPipelineSubset::Complete,
+                    surfaceRotation, graphicsPipelineDesc, compatibleRenderPass);
+
+                if (result != angle::Result::Continue)
+                {
+                    // If there is an error skip remaining surface rotations.
+                    break;
+                }
+            }
+        }
+
+        if (result == angle::Result::Continue)
+        {
+            ANGLE_TRY(executableVk->mergePipelineCacheToRenderer(contextVk));
+        }
+
+        compatibleRenderPass.destroy(contextVk->getDevice());
     }
 
     return result;

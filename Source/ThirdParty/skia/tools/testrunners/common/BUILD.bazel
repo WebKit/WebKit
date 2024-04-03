@@ -1,0 +1,23 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy", "skia_cc_library")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+skia_cc_library(
+    name = "testrunner",
+    testonly = True,
+    srcs = [
+        "TestRunner.cpp",
+    ],
+    hdrs = ["TestRunner.h"],
+    visibility = [
+        "//bench:__subpackages__",
+        "//gm:__subpackages__",
+        "//tools/testrunners:__subpackages__",
+    ],
+    deps = [
+        "//:core",
+        "//tools/flags:cmd_flags",
+    ],
+)

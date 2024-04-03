@@ -15,23 +15,23 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,1) size 8x2 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 3x1
             chunk 1 text run 1 at (0.90,2.00) startOffset 0 endOffset 16 width 2.04: "Text can change "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (2,0) size 2x1
             RenderSVGInlineText {#text} at (2,0) size 2x1
               chunk 1 text run 1 at (2.94,2.00) startOffset 0 endOffset 5 width 1.08: "size,"
           RenderSVGInlineText {#text} at (3,0) size 1x1
             chunk 1 text run 1 at (4.02,2.00) startOffset 0 endOffset 1 width 0.08: " "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (3,0) size 2x1
             RenderSVGInlineText {#text} at (3,0) size 2x1
               chunk 1 text run 1 at (4.10,2.00) startOffset 0 endOffset 9 width 1.45: "typeface,"
           RenderSVGInlineText {#text} at (4,0) size 1x1
             chunk 1 text run 1 at (5.55,2.00) startOffset 0 endOffset 1 width 0.08: " "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (4,0) size 2x1
             RenderSVGInlineText {#text} at (4,0) size 1x1
               chunk 1 text run 1 at (5.63,2.00) startOffset 0 endOffset 6 width 0.69: "color,"
           RenderSVGInlineText {#text} at (5,0) size 1x1
             chunk 1 text run 1 at (6.32,2.00) startOffset 0 endOffset 1 width 0.08: " "
             chunk 1 text run 1 at (6.39,2.00) startOffset 0 endOffset 3 width 0.32: "or "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (5,0) size 2x1
             RenderSVGInlineText {#text} at (5,0) size 1x1
               chunk 1 text run 1 at (6.72,2.00) startOffset 0 endOffset 5 width 0.55: "style"
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -41,17 +41,17 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,2) size 8x2 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 3x1
             chunk 1 text run 1 at (0.90,3.20) startOffset 0 endOffset 25 width 2.92: "Styling features include "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (2,0) size 2x1
             RenderSVGInlineText {#text} at (2,0) size 1x1
               chunk 1 text run 1 at (3.82,3.20) startOffset 0 endOffset 7 width 0.92: "weight,"
           RenderSVGInlineText {#text} at (3,0) size 1x1
             chunk 1 text run 1 at (4.75,3.20) startOffset 0 endOffset 1 width 0.08: " "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (3,0) size 2x1
             RenderSVGInlineText {#text} at (3,0) size 1x1
               chunk 1 text run 1 at (4.82,3.20) startOffset 0 endOffset 8 width 0.98: "posture,"
           RenderSVGInlineText {#text} at (4,0) size 1x1
             chunk 1 text run 1 at (5.80,3.20) startOffset 0 endOffset 5 width 0.58: " and "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (5,0) size 2x1
             RenderSVGInlineText {#text} at (5,0) size 2x1
               chunk 1 text run 1 at (6.38,3.20) startOffset 0 endOffset 9 width 1.09: "typeface."
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -59,7 +59,7 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,3) size 7x2 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 4x1
             chunk 1 text run 1 at (0.90,4.00) startOffset 0 endOffset 28 width 3.30: "Graphics attributes such as "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (3,0) size 2x1
             RenderSVGInlineText {#text} at (3,0) size 1x1
               chunk 1 text run 1 at (4.20,4.00) startOffset 0 endOffset 7 width 0.88: "opacity"
           RenderSVGInlineText {#text} at (4,0) size 2x1
@@ -67,12 +67,12 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,4) size 8x2 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 4x1
             chunk 1 text run 1 at (0.90,5.00) startOffset 0 endOffset 30 width 3.56: "\"text decoration\" can include "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (3,0) size 2x1
             RenderSVGInlineText {#text} at (3,0) size 2x1
               chunk 1 text run 1 at (4.46,5.00) startOffset 0 endOffset 10 width 1.21: "underline,"
           RenderSVGInlineText {#text} at (4,0) size 1x1
             chunk 1 text run 1 at (5.67,5.00) startOffset 0 endOffset 1 width 0.08: " "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (4,0) size 2x1
             RenderSVGInlineText {#text} at (4,0) size 2x1
               chunk 1 text run 1 at (5.74,5.00) startOffset 0 endOffset 9 width 1.06: "overline,"
           RenderSVGInlineText {#text} at (5,0) size 1x1
@@ -82,12 +82,12 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (0,0) size 2x1
               chunk 1 text run 1 at (0.90,5.40) startOffset 0 endOffset 15 width 1.75: "strikethrough. "
           RenderSVGInlineText {#text} at (0,0) size 0x0
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (1,0) size 2x1
             RenderSVGInlineText {#text} at (1,0) size 1x1
               chunk 1 text run 1 at (2.75,5.30) startOffset 0 endOffset 5 width 0.47: "Super"
           RenderSVGInlineText {#text} at (2,0) size 1x1
             chunk 1 text run 1 at (3.22,5.40) startOffset 0 endOffset 5 width 0.58: " and "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (2,0) size 2x1
             RenderSVGInlineText {#text} at (2,0) size 1x1
               chunk 1 text run 1 at (3.80,5.50) startOffset 0 endOffset 3 width 0.28: "sub"
           RenderSVGInlineText {#text} at (3,0) size 3x1
@@ -95,17 +95,17 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,5) size 8x2 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 2x1
             chunk 1 text run 1 at (0.90,6.20) startOffset 0 endOffset 8 width 1.02: "Various "
-          RenderSVGTSpan {tspan} at (0,0) size 1x1
+          RenderSVGTSpan {tspan} at (1,0) size 1x1
             RenderSVGInlineText {#text} at (1,0) size 1x1
               chunk 1 text run 1 at (1.92,6.20) startOffset 0 endOffset 8 width 0.91: "outline "
           RenderSVGInlineText {#text} at (1,0) size 1x1
             chunk 1 text run 1 at (2.83,6.20) startOffset 0 endOffset 8 width 0.83: "styles, "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (2,0) size 2x1
             RenderSVGInlineText {#text} at (2,0) size 2x1
               chunk 1 text run 1 at (3.67,6.20) startOffset 0 endOffset 12 width 1.23: "fill colors "
           RenderSVGInlineText {#text} at (3,0) size 1x1
             chunk 1 text run 1 at (4.90,6.20) startOffset 0 endOffset 4 width 0.51: "and "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (4,0) size 2x1
             RenderSVGInlineText {#text} at (4,0) size 2x1
               chunk 1 text run 1 at (5.41,6.20) startOffset 0 endOffset 12 width 1.44: "thicknesses "
           RenderSVGInlineText {#text} at (5,0) size 1x1
@@ -113,13 +113,13 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (0,6) size 8x1 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 5x1
             chunk 1 text run 1 at (0.90,6.60) startOffset 0 endOffset 36 width 4.22: "used, and the outline stroke can be "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (4,0) size 2x1
             RenderSVGInlineText {#text} at (4,0) size 1x1
               chunk 1 text run 1 at (5.12,6.60) startOffset 0 endOffset 7 width 0.98: "rounded"
           RenderSVGInlineText {#text} at (5,0) size 1x1
             chunk 1 text run 1 at (6.10,6.60) startOffset 0 endOffset 1 width 0.08: " "
             chunk 1 text run 1 at (6.17,6.60) startOffset 0 endOffset 3 width 0.32: "or "
-          RenderSVGTSpan {tspan} at (0,0) size 2x1
+          RenderSVGTSpan {tspan} at (5,0) size 2x1
             RenderSVGInlineText {#text} at (5,0) size 1x1
               chunk 1 text run 1 at (6.50,6.60) startOffset 0 endOffset 8 width 0.99: "mitered."
           RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -155,11 +155,11 @@ layer at (0,0) size 450x500
                 chunk 1 text run 9 at (1.19,0.29) startOffset 8 endOffset 9 width 0.15: "x"
                 chunk 1 text run 10 at (1.27,0.37) startOffset 9 endOffset 10 width 0.08: "t"
                 chunk 1 text run 11 at (1.33,0.43) startOffset 10 endOffset 11 width 0.08: " "
-              RenderSVGTSpan {tspan} at (0,0) size 1x1
+              RenderSVGTSpan {tspan} at (1,0) size 1x1
                 RenderSVGInlineText {#text} at (1,0) size 1x1
                   chunk 1 text run 1 at (1.41,0.50) startOffset 0 endOffset 1 width 0.15: "o"
                   chunk 1 text run 2 at (1.53,0.60) startOffset 1 endOffset 2 width 0.15: "n"
-              RenderSVGTSpan {tspan} at (0,0) size 2x1
+              RenderSVGTSpan {tspan} at (1,0) size 2x1
                 RenderSVGInlineText {#text} at (1,0) size 1x1
                   chunk 1 text run 1 at (1.62,0.66) startOffset 0 endOffset 1 width 0.08: " "
                   chunk 1 text run 2 at (1.72,0.70) startOffset 1 endOffset 2 width 0.13: "a"

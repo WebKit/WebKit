@@ -143,12 +143,12 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
 CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    if (auto* observer = m_weakObserver.get()) {
+    if (RetainPtr observer = m_observer) {
         auto center = CFNotificationCenterGetLocalCenter();
         if (kMAXCaptionAppearanceSettingsChangedNotification)
-            CFNotificationCenterRemoveObserver(center, observer, kMAXCaptionAppearanceSettingsChangedNotification, 0);
+            CFNotificationCenterRemoveObserver(center, observer.get(), kMAXCaptionAppearanceSettingsChangedNotification, 0);
         if (kMAAudibleMediaSettingsChangedNotification)
-            CFNotificationCenterRemoveObserver(center, observer, kMAAudibleMediaSettingsChangedNotification, 0);
+            CFNotificationCenterRemoveObserver(center, observer.get(), kMAAudibleMediaSettingsChangedNotification, 0);
     }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 }
@@ -235,7 +235,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersCaptions() const
     if (captionSetting || testingMode() || !MediaAccessibilityLibrary())
         return captionSetting;
 
-    RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
+    RetainPtr captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get());
 }
 
@@ -245,7 +245,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
     if (subtitlesSetting || testingMode() || !MediaAccessibilityLibrary())
         return subtitlesSetting;
     
-    RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
+    RetainPtr captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
 }
 
@@ -255,7 +255,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersTextDescriptions() const
     if (prefersTextDescriptions || testingMode() || !MediaAccessibilityLibrary())
         return prefersTextDescriptions;
 
-    auto preferDescriptiveVideo = adoptCF(MAAudibleMediaPrefCopyPreferDescriptiveVideo());
+    RetainPtr preferDescriptiveVideo = adoptCF(MAAudibleMediaPrefCopyPreferDescriptiveVideo());
     return preferDescriptiveVideo && CFBooleanGetValue(preferDescriptiveVideo.get());
 }
 
@@ -278,16 +278,16 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     m_listeningForPreferenceChanges = true;
     m_registeringForNotification = true;
 
-    if (!m_weakObserver)
-        m_weakObserver = createWeakObserver(this);
-    auto* observer = m_weakObserver.get();
+    if (!m_observer)
+        m_observer = createWeakObserver(this);
+    RetainPtr observer = m_observer;
     auto suspensionBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
     auto center = CFNotificationCenterGetLocalCenter();
     if (kMAXCaptionAppearanceSettingsChangedNotification)
-        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);
+        CFNotificationCenterAddObserver(center, observer.get(), userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, suspensionBehavior);
 
     if (canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
-        CFNotificationCenterAddObserver(center, observer, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, suspensionBehavior);
+        CFNotificationCenterAddObserver(center, observer.get(), userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, suspensionBehavior);
     m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -314,7 +314,7 @@ void CaptionUserPreferencesMediaAF::setCaptionPreferencesDelegate(std::unique_pt
 String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
 {
     MACaptionAppearanceBehavior behavior;
-    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
+    RetainPtr color = adoptCF(MACaptionAppearanceCopyWindowColor(kMACaptionAppearanceDomainUser, &behavior));
 
     Color windowColor(roundAndClampToSRGBALossy(color.get()));
     if (!windowColor.isValid())
@@ -340,7 +340,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 
     MACaptionAppearanceBehavior behavior;
 
-    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
+    RetainPtr color = adoptCF(MACaptionAppearanceCopyBackgroundColor(kMACaptionAppearanceDomainUser, &behavior));
     Color backgroundColor(roundAndClampToSRGBALossy(color.get()));
     if (!backgroundColor.isValid())
         backgroundColor = defaultBackgroundColor;
@@ -355,7 +355,7 @@ String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
 {
     MACaptionAppearanceBehavior behavior;
-    RetainPtr<CGColorRef> color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
+    RetainPtr color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
     Color textColor(roundAndClampToSRGBALossy(color.get()));
     if (!textColor.isValid()) {
         // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
@@ -411,7 +411,7 @@ bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, co
     auto trackLanguage = language.createCFString();
     CGFloat strokeWidthPt;
     
-    auto fontDescriptor = adoptCF(MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault, trackLanguage.get(), fontSize, &strokeWidthPt));
+    RetainPtr fontDescriptor = adoptCF(MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault, trackLanguage.get(), fontSize, &strokeWidthPt));
 
     if (!fontDescriptor)
         return false;
@@ -453,22 +453,22 @@ String CaptionUserPreferencesMediaAF::captionsDefaultFontCSS() const
 {
     MACaptionAppearanceBehavior behavior;
     
-    auto font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
+    RetainPtr font = adoptCF(MACaptionAppearanceCopyFontDescriptorForStyle(kMACaptionAppearanceDomainUser, &behavior, kMACaptionAppearanceFontStyleDefault));
     if (!font)
         return emptyString();
 
-    auto name = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute)));
+    RetainPtr name = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontNameAttribute)));
     if (!name)
         return emptyString();
 
     StringBuilder builder;
     builder.append("font-family: \"", name.get(), '"');
-    if (auto cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)))) {
+    if (RetainPtr cascadeList = adoptCF(static_cast<CFArrayRef>(CTFontDescriptorCopyAttribute(font.get(), kCTFontCascadeListAttribute)))) {
         for (CFIndex i = 0; i < CFArrayGetCount(cascadeList.get()); i++) {
             auto fontCascade = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i));
             if (!fontCascade)
                 continue;
-            auto fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute)));
+            RetainPtr fontCascadeName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontCascade, kCTFontNameAttribute)));
             if (!fontCascadeName)
                 continue;
             builder.append(", \"", fontCascadeName.get(), '"');
@@ -543,7 +543,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
 
 Vector<String> CaptionUserPreferencesMediaAF::platformPreferredLanguages()
 {
-    auto captionLanguages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
+    RetainPtr captionLanguages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
     return captionLanguages ? makeVector<String>(captionLanguages.get()) : Vector<String> { };
 }
 
@@ -564,7 +564,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
     CFIndex characteristicCount = 0;
-    RetainPtr<CFArrayRef> characteristics = adoptCF(MAAudibleMediaCopyPreferredCharacteristics());
+    RetainPtr characteristics = adoptCF(MAAudibleMediaCopyPreferredCharacteristics());
     if (characteristics)
         characteristicCount = CFArrayGetCount(characteristics.get());
 
@@ -721,8 +721,8 @@ static String trackDisplayName(const TrackBase& track)
 
     auto preferredLanguages = userPreferredLanguages(ShouldMinimizeLanguages::No);
     auto defaultLanguage = !preferredLanguages.isEmpty() ? preferredLanguages[0] : emptyString(); // This matches `defaultLanguage`.
-    auto currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
-    auto localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
+    RetainPtr currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage.createCFString().get()));
+    RetainPtr localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
     String languageDisplayName = adoptCF(CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get())).get();
 
     bool exactMatch;

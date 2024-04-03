@@ -79,6 +79,7 @@ private:
     FontSelector* fontSelector() const override;
     HostWindow* hostWindow() const override;
     Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth) override;
+    RefPtr<SearchPopupMenu> protectedSearchPopup() const { return m_searchPopup; };
 
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;

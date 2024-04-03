@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -13,7 +13,9 @@
 			buildPhases = (
 			);
 			dependencies = (
+				4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */,
 				44D88ACE2AF0495A005C956E /* PBXTargetDependency */,
+				44D8D11C2B6AFBCF00B3CF91 /* PBXTargetDependency */,
 				44D88AE32AF04AE4005C956E /* PBXTargetDependency */,
 				449467D32AE05DD200A9FED0 /* PBXTargetDependency */,
 				449467BF2AE05CA800A9FED0 /* PBXTargetDependency */,
@@ -26,6 +28,7 @@
 				4460B8CD2B155B9200392062 /* PBXTargetDependency */,
 				4460B8CF2B155B9200392062 /* PBXTargetDependency */,
 				444A6F0C2AEAE064005FE121 /* PBXTargetDependency */,
+				44945C6F2B9BA22A00447FFD /* PBXTargetDependency */,
 			);
 			name = "Fuzzers (libwebrtc)";
 			productName = Fuzzers;
@@ -484,6 +487,7 @@
 		411927612A375B2A007C09F6 /* digestsign.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927602A375B2A007C09F6 /* digestsign.c */; };
 		411927642A375B50007C09F6 /* hkdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927632A375B50007C09F6 /* hkdf.c */; };
 		411927682A375B8B007C09F6 /* kyber.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927662A375B8A007C09F6 /* kyber.c */; };
+		411927692A375B8B007C09F6 /* keccak.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927672A375B8B007C09F6 /* keccak.c */; };
 		4119276B2A375BB0007C09F6 /* rsa_crypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 4119276A2A375BB0007C09F6 /* rsa_crypt.c */; };
 		4119276D2A375C48007C09F6 /* extensions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4119276C2A375C47007C09F6 /* extensions.cc */; };
 		411927712A375C93007C09F6 /* evp_do_all.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927702A375C93007C09F6 /* evp_do_all.c */; };
@@ -2276,6 +2280,10 @@
 		419241EE21275AFA00634FCF /* simulcast_rate_allocator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419241EA21275AFA00634FCF /* simulcast_rate_allocator.cc */; };
 		419241EF21275AFA00634FCF /* simulcast_utility.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419241EB21275AFA00634FCF /* simulcast_utility.cc */; };
 		419241F021275AFA00634FCF /* simulcast_rate_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 419241EC21275AFA00634FCF /* simulcast_rate_allocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4197E3BE2B6AA1E10005C4B8 /* h265_bitstream_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4197E3BA2B6AA1E00005C4B8 /* h265_bitstream_parser.h */; };
+		4197E3BF2B6AA1E10005C4B8 /* h265_inline.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4197E3BB2B6AA1E00005C4B8 /* h265_inline.cc */; };
+		4197E3C02B6AA1E10005C4B8 /* h265_bitstream_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4197E3BC2B6AA1E00005C4B8 /* h265_bitstream_parser.cc */; };
+		4197E3C12B6AA1E10005C4B8 /* h265_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = 4197E3BD2B6AA1E00005C4B8 /* h265_inline.h */; };
 		419BA9AD2B15EEF600E0D825 /* vpx_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A62B15EEF400E0D825 /* vpx_config.h */; };
 		419BA9AF2B15EEF600E0D825 /* vp8_rtcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A82B15EEF500E0D825 /* vp8_rtcd.h */; };
 		419BA9B02B15EEF600E0D825 /* vpx_dsp_rtcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A92B15EEF500E0D825 /* vpx_dsp_rtcd.h */; };
@@ -2919,11 +2927,6 @@
 		41CBAF9B212E039300DE1E1D /* threading.c in Sources */ = {isa = PBXBuildFile; fileRef = 4105EBB3212E035C008C0C20 /* threading.c */; };
 		41CBAF9C212E039300DE1E1D /* treereader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4105EBB6212E035D008C0C20 /* treereader.h */; };
 		41CDC66D28F6FC2C00603E59 /* RTCWrappedNativeVideoDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */; };
-		41D011822B1DDE8F00B05388 /* keccak.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D011812B1DDE8F00B05388 /* keccak.c */; };
-		41D011842B1DDECA00B05388 /* ios.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D011832B1DDECA00B05388 /* ios.c */; };
-		41D011862B1DDF0300B05388 /* getentropy.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D011852B1DDF0300B05388 /* getentropy.c */; };
-		41D011882B1DDF3400B05388 /* refcount.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D011872B1DDF3300B05388 /* refcount.c */; };
-		41D0118A2B1DDF5500B05388 /* errno.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D011892B1DDF5400B05388 /* errno.c */; };
 		41D0118D2B1DE49100B05388 /* aarch64_cpudetect.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D0118B2B1DE48700B05388 /* aarch64_cpudetect.c */; };
 		41D011992B1DE4D600B05388 /* reconinter_enc_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D0118F2B1DE4CA00B05388 /* reconinter_enc_neon.c */; };
 		41D0119A2B1DE4D600B05388 /* temporal_filter_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 411927882A37714D007C09F6 /* temporal_filter_neon.c */; };
@@ -3268,8 +3271,14 @@
 		446359D42AEA12FF00551EEE /* fake_decoder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D32AEA12FE00551EEE /* fake_decoder.cc */; };
 		446359D72AEA132C00551EEE /* rtp_file_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D52AEA132B00551EEE /* rtp_file_reader.cc */; };
 		446359DA2AEA135200551EEE /* run_loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359D82AEA135100551EEE /* run_loop.cc */; };
+		4469C1052B5F24C500E32E5A /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4469C1072B5F24C500E32E5A /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */; };
 		446CFE442AC694AB00F870D9 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */; };
+		44945C6D2B9BA20C00447FFD /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
+		44945C712B9BA37800447FFD /* webm_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44945C702B9BA37800447FFD /* webm_fuzzer.cc */; };
+		44945C742B9BA3D200447FFD /* webm.dict in Copy Fuzzer Dictionary */ = {isa = PBXBuildFile; fileRef = 44945C722B9BA39200447FFD /* webm.dict */; };
 		449467B52AE05C9600A9FED0 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		449467B82AE05C9600A9FED0 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		449467C72AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */; };
@@ -3287,6 +3296,9 @@
 		44D88AD82AF04AA1005C956E /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
 		44D88ADA2AF04AA1005C956E /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		44D88AE12AF04AC4005C956E /* h265_depacketizer_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44D88AE02AF04AC3005C956E /* h265_depacketizer_fuzzer.cc */; };
+		44D8D1122B6AFBA900B3CF91 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		44D8D1142B6AFBA900B3CF91 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		44D8D11A2B6AFBC100B3CF91 /* h265_bitstream_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44D8D10B2B6AFB9A00B3CF91 /* h265_bitstream_parser_fuzzer.cc */; };
 		44E751672AC738D200828AC4 /* fake_audio_capture_module.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E7515E2AC738D100828AC4 /* fake_audio_capture_module.cc */; };
 		44E751722AC7396300828AC4 /* fake_audio_capture_module.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751662AC738D200828AC4 /* fake_audio_capture_module.h */; };
 		44E7517D2AC73B2000828AC4 /* integration_test_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751742AC73B2000828AC4 /* integration_test_helpers.h */; };
@@ -3393,6 +3405,8 @@
 		5C4B463D1E42AA2C002651C8 /* ex_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B451F1E42A71B002651C8 /* ex_data.c */; };
 		5C4B463E1E42AA2C002651C8 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B45201E42A71B002651C8 /* internal.h */; };
 		5C4B463F1E42AA2C002651C8 /* mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45211E42A71B002651C8 /* mem.c */; };
+		5C4B46401E42AA2C002651C8 /* refcount_c11.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45221E42A71B002651C8 /* refcount_c11.c */; };
+		5C4B46411E42AA2C002651C8 /* refcount_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45231E42A71B002651C8 /* refcount_lock.c */; };
 		5C4B46431E42AA2C002651C8 /* thread_none.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45251E42A71B002651C8 /* thread_none.c */; };
 		5C4B46441E42AA2C002651C8 /* thread_pthread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45261E42A71B002651C8 /* thread_pthread.c */; };
 		5C4B46461E42AA2C002651C8 /* thread_win.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B45281E42A71B002651C8 /* thread_win.c */; };
@@ -5410,12 +5424,40 @@
 			remoteGlobalIDString = 446359B62AEA108C00551EEE;
 			remoteInfo = vp8_replay_fuzzer;
 		};
+		4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4469C10D2B5F24DA00E32E5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4469C0FF2B5F24C500E32E5A;
+			remoteInfo = h264_bitstream_parser_fuzzer;
+		};
 		448D483C2AB0BDB80065014C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4105EB69212E01D2008C0C20;
 			remoteInfo = vpx;
+		};
+		44945C6B2B9BA20300447FFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CDEBB11824C0187400ADBD44;
+			remoteInfo = webm;
+		};
+		44945C6E2B9BA22A00447FFD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44945C512B9BA1C300447FFD;
+			remoteInfo = webm_fuzzer;
 		};
 		449467A42AE05C9600A9FED0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5500,6 +5542,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 44D88AD12AF04AA1005C956E;
 			remoteInfo = h265_depacketizer_fuzzer;
+		};
+		44D8D10E2B6AFBA900B3CF91 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		44D8D11B2B6AFBCF00B3CF91 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44D8D10C2B6AFBA900B3CF91;
+			remoteInfo = h265_bitstream_parser_fuzzer;
 		};
 		44E7509B2AC726A600828AC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5597,6 +5653,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		44945C732B9BA3C400447FFD /* Copy Fuzzer Dictionary */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				44945C742B9BA3D200447FFD /* webm.dict in Copy Fuzzer Dictionary */,
+			);
+			name = "Copy Fuzzer Dictionary";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5C0884CB1E4A97E300403995 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -6346,6 +6413,7 @@
 		411927602A375B2A007C09F6 /* digestsign.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = digestsign.c; sourceTree = "<group>"; };
 		411927632A375B50007C09F6 /* hkdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hkdf.c; sourceTree = "<group>"; };
 		411927662A375B8A007C09F6 /* kyber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kyber.c; sourceTree = "<group>"; };
+		411927672A375B8B007C09F6 /* keccak.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keccak.c; sourceTree = "<group>"; };
 		4119276A2A375BB0007C09F6 /* rsa_crypt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rsa_crypt.c; sourceTree = "<group>"; };
 		4119276C2A375C47007C09F6 /* extensions.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = extensions.cc; sourceTree = "<group>"; };
 		411927702A375C93007C09F6 /* evp_do_all.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = evp_do_all.c; sourceTree = "<group>"; };
@@ -8268,6 +8336,10 @@
 		41953C072152ED6400136625 /* idct8x8_1_add_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = idct8x8_1_add_neon.c; sourceTree = "<group>"; };
 		41953C082152ED6400136625 /* highbd_vpx_convolve_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = highbd_vpx_convolve_neon.c; sourceTree = "<group>"; };
 		41953C092152ED6400136625 /* quantize_neon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = quantize_neon.c; sourceTree = "<group>"; };
+		4197E3BA2B6AA1E00005C4B8 /* h265_bitstream_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h265_bitstream_parser.h; sourceTree = "<group>"; };
+		4197E3BB2B6AA1E00005C4B8 /* h265_inline.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h265_inline.cc; sourceTree = "<group>"; };
+		4197E3BC2B6AA1E00005C4B8 /* h265_bitstream_parser.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h265_bitstream_parser.cc; sourceTree = "<group>"; };
+		4197E3BD2B6AA1E00005C4B8 /* h265_inline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h265_inline.h; sourceTree = "<group>"; };
 		419BA9A52B15EEF400E0D825 /* vpx_config.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = vpx_config.asm; sourceTree = "<group>"; };
 		419BA9A62B15EEF400E0D825 /* vpx_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vpx_config.h; sourceTree = "<group>"; };
 		419BA9A72B15EEF500E0D825 /* vpx_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpx_config.c; sourceTree = "<group>"; };
@@ -8507,6 +8579,7 @@
 		41A392071EFC4A7100C4516A /* p_ed25519_asn1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p_ed25519_asn1.c; sourceTree = "<group>"; };
 		41A3920B1EFC4AFE00C4516A /* deterministic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deterministic.c; sourceTree = "<group>"; };
 		41A3920C1EFC4AFE00C4516A /* forkunsafe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = forkunsafe.c; sourceTree = "<group>"; };
+		41A3920D1EFC4AFE00C4516A /* fuchsia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fuchsia.c; sourceTree = "<group>"; };
 		41A3920E1EFC4AFE00C4516A /* rand_extra.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rand_extra.c; sourceTree = "<group>"; };
 		41A3920F1EFC4AFE00C4516A /* windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = windows.c; sourceTree = "<group>"; };
 		41A392181EFC5AB800C4516A /* x25519-asm-arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "x25519-asm-arm.S"; sourceTree = "<group>"; };
@@ -8961,11 +9034,6 @@
 		41CBAFA8212E03AD00DE1E1D /* vp8_quantize.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vp8_quantize.c; sourceTree = "<group>"; };
 		41CBAFA9212E03AD00DE1E1D /* firstpass.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = firstpass.c; sourceTree = "<group>"; };
 		41CBAFAA212E03AD00DE1E1D /* pickinter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pickinter.c; sourceTree = "<group>"; };
-		41D011812B1DDE8F00B05388 /* keccak.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keccak.c; sourceTree = "<group>"; };
-		41D011832B1DDECA00B05388 /* ios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ios.c; sourceTree = "<group>"; };
-		41D011852B1DDF0300B05388 /* getentropy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getentropy.c; sourceTree = "<group>"; };
-		41D011872B1DDF3300B05388 /* refcount.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = refcount.c; sourceTree = "<group>"; };
-		41D011892B1DDF5400B05388 /* errno.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = errno.c; sourceTree = "<group>"; };
 		41D0118B2B1DE48700B05388 /* aarch64_cpudetect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aarch64_cpudetect.c; sourceTree = "<group>"; };
 		41D0118E2B1DE4CA00B05388 /* highbd_temporal_filter_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = highbd_temporal_filter_neon.c; sourceTree = "<group>"; };
 		41D0118F2B1DE4CA00B05388 /* reconinter_enc_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reconinter_enc_neon.c; sourceTree = "<group>"; };
@@ -9395,6 +9463,9 @@
 		446359D62AEA132B00551EEE /* rtp_file_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtp_file_reader.h; sourceTree = "<group>"; };
 		446359D82AEA135100551EEE /* run_loop.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = run_loop.cc; sourceTree = "<group>"; };
 		446359D92AEA135200551EEE /* run_loop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = run_loop.h; sourceTree = "<group>"; };
+		4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h264_bitstream_parser_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_bitstream_parser_fuzzer.cc; sourceTree = "<group>"; };
+		4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h264_bitstream_parser_fuzzer.xcconfig; sourceTree = "<group>"; };
 		44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base-libwebrtc.xcconfig"; sourceTree = "<group>"; };
 		448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h264_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
 		448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h265_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
@@ -9404,6 +9475,11 @@
 		449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187262AB38132007266F2 /* mem_ops_aligned.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mem_ops_aligned.h; sourceTree = "<group>"; };
+		44945C692B9BA1C300447FFD /* webm_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = webm_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44945C702B9BA37800447FFD /* webm_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = webm_fuzzer.cc; sourceTree = "<group>"; };
+		44945C722B9BA39200447FFD /* webm.dict */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = webm.dict; sourceTree = "<group>"; };
+		44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = webm_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44945C762B9BA55E00447FFD /* BaseTarget-libwebm.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "BaseTarget-libwebm.xcconfig"; sourceTree = "<group>"; };
 		449467BD2AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_av1_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_depacketizer_av1_assemble_frame_fuzzer.cc; sourceTree = "<group>"; };
 		449467CF2AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_depacketizer_av1_assemble_frame_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9418,6 +9494,9 @@
 		44D88ACF2AF049A1005C956E /* h264_depacketizer_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_depacketizer_fuzzer.cc; sourceTree = "<group>"; };
 		44D88ADF2AF04AA1005C956E /* h265_depacketizer_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h265_depacketizer_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		44D88AE02AF04AC3005C956E /* h265_depacketizer_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h265_depacketizer_fuzzer.cc; sourceTree = "<group>"; };
+		44D8D10B2B6AFB9A00B3CF91 /* h265_bitstream_parser_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h265_bitstream_parser_fuzzer.cc; sourceTree = "<group>"; };
+		44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = h265_bitstream_parser_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h265_bitstream_parser_fuzzer.xcconfig; sourceTree = "<group>"; };
 		44E7515E2AC738D100828AC4 /* fake_audio_capture_module.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fake_audio_capture_module.cc; sourceTree = "<group>"; };
 		44E751662AC738D200828AC4 /* fake_audio_capture_module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fake_audio_capture_module.h; sourceTree = "<group>"; };
 		44E751742AC73B2000828AC4 /* integration_test_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = integration_test_helpers.h; sourceTree = "<group>"; };
@@ -9607,6 +9686,8 @@
 		5C4B451F1E42A71B002651C8 /* ex_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ex_data.c; sourceTree = "<group>"; };
 		5C4B45201E42A71B002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		5C4B45211E42A71B002651C8 /* mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mem.c; sourceTree = "<group>"; };
+		5C4B45221E42A71B002651C8 /* refcount_c11.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = refcount_c11.c; sourceTree = "<group>"; };
+		5C4B45231E42A71B002651C8 /* refcount_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = refcount_lock.c; sourceTree = "<group>"; };
 		5C4B45251E42A71B002651C8 /* thread_none.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thread_none.c; sourceTree = "<group>"; };
 		5C4B45261E42A71B002651C8 /* thread_pthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thread_pthread.c; sourceTree = "<group>"; };
 		5C4B45281E42A71B002651C8 /* thread_win.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thread_win.c; sourceTree = "<group>"; };
@@ -11154,11 +11235,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4469C1062B5F24C500E32E5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4469C1072B5F24C500E32E5A /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		448D48312AB0BDB00065014C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				44A402A92AB0BFB000463B4B /* libvpx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44945C612B9BA1C300447FFD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44945C6D2B9BA20C00447FFD /* libwebm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11207,6 +11304,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				44D88ADA2AF04AA1005C956E /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44D8D1132B6AFBA900B3CF91 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44D8D1142B6AFBA900B3CF91 /* libwebrtc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11278,8 +11383,12 @@
 		410091EF242E360800C5EDA2 /* h265 */ = {
 			isa = PBXGroup;
 			children = (
+				4197E3BC2B6AA1E00005C4B8 /* h265_bitstream_parser.cc */,
+				4197E3BA2B6AA1E00005C4B8 /* h265_bitstream_parser.h */,
 				410091F7242E362200C5EDA2 /* h265_common.cc */,
 				410091F5242E362100C5EDA2 /* h265_common.h */,
+				4197E3BB2B6AA1E00005C4B8 /* h265_inline.cc */,
+				4197E3BD2B6AA1E00005C4B8 /* h265_inline.h */,
 				410091F3242E362100C5EDA2 /* h265_pps_parser.cc */,
 				410091F2242E362100C5EDA2 /* h265_pps_parser.h */,
 				410091F0242E362000C5EDA2 /* h265_sps_parser.cc */,
@@ -12353,6 +12462,7 @@
 		411927652A375B74007C09F6 /* kyber */ = {
 			isa = PBXGroup;
 			children = (
+				411927672A375B8B007C09F6 /* keccak.c */,
 				411927662A375B8A007C09F6 /* kyber.c */,
 			);
 			path = kyber;
@@ -14966,8 +15076,7 @@
 			children = (
 				41A3920B1EFC4AFE00C4516A /* deterministic.c */,
 				41A3920C1EFC4AFE00C4516A /* forkunsafe.c */,
-				41D011852B1DDF0300B05388 /* getentropy.c */,
-				41D011832B1DDECA00B05388 /* ios.c */,
+				41A3920D1EFC4AFE00C4516A /* fuchsia.c */,
 				41A3920E1EFC4AFE00C4516A /* rand_extra.c */,
 				41A3920F1EFC4AFE00C4516A /* windows.c */,
 			);
@@ -15610,14 +15719,6 @@
 				410B3830292B80370003E515 /* ratectrl_rtc.h */,
 			);
 			path = av1;
-			sourceTree = "<group>";
-		};
-		41D011802B1DDE7700B05388 /* keccak */ = {
-			isa = PBXGroup;
-			children = (
-				41D011812B1DDE8F00B05388 /* keccak.c */,
-			);
-			path = keccak;
 			sourceTree = "<group>";
 		};
 		41D0121F2B1DE70800B05388 /* linux */ = {
@@ -16530,6 +16631,15 @@
 			path = examples;
 			sourceTree = "<group>";
 		};
+		44945C6A2B9BA1F500447FFD /* fuzzing */ = {
+			isa = PBXGroup;
+			children = (
+				44945C722B9BA39200447FFD /* webm.dict */,
+				44945C702B9BA37800447FFD /* webm_fuzzer.cc */,
+			);
+			path = fuzzing;
+			sourceTree = "<group>";
+		};
 		44ABBE852AC63CA3006B44DD /* test */ = {
 			isa = PBXGroup;
 			children = (
@@ -16564,7 +16674,9 @@
 				446359C82AEA114B00551EEE /* utils */,
 				441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */,
 				441380CC2AE06BC200C928CB /* fuzz_data_helper.h */,
+				4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */,
 				44D88ACF2AF049A1005C956E /* h264_depacketizer_fuzzer.cc */,
+				44D8D10B2B6AFB9A00B3CF91 /* h265_bitstream_parser_fuzzer.cc */,
 				44D88AE02AF04AC3005C956E /* h265_depacketizer_fuzzer.cc */,
 				449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */,
 				449467D02AE05DBF00A9FED0 /* rtp_packetizer_av1_fuzzer.cc */,
@@ -16843,7 +16955,6 @@
 				5C4B43FB1E42A4F1002651C8 /* bio.c */,
 				5C4B43FA1E42A4F1002651C8 /* bio_mem.c */,
 				5C4B43FD1E42A4F1002651C8 /* connect.c */,
-				41D011892B1DDF5400B05388 /* errno.c */,
 				5C4B43FE1E42A4F1002651C8 /* fd.c */,
 				5C4B43FF1E42A4F1002651C8 /* file.c */,
 				5C4B44001E42A4F1002651C8 /* hexdump.c */,
@@ -17882,7 +17993,6 @@
 				41EA53A21EFC2BAF002FF04C /* fipsmodule */,
 				41D728FD2665074200651A0B /* hpke */,
 				4131BE73234B85380028A615 /* hrss */,
-				41D011802B1DDE7700B05388 /* keccak */,
 				411927652A375B74007C09F6 /* kyber */,
 				5C4B44521E42A61A002651C8 /* lhash */,
 				5C4B44571E42A645002651C8 /* obj */,
@@ -17902,7 +18012,8 @@
 				5C4B451F1E42A71B002651C8 /* ex_data.c */,
 				5C4B45201E42A71B002651C8 /* internal.h */,
 				5C4B45211E42A71B002651C8 /* mem.c */,
-				41D011872B1DDF3300B05388 /* refcount.c */,
+				5C4B45221E42A71B002651C8 /* refcount_c11.c */,
+				5C4B45231E42A71B002651C8 /* refcount_lock.c */,
 				5C4B45291E42A71B002651C8 /* thread.c */,
 				5C4B45251E42A71B002651C8 /* thread_none.c */,
 				5C4B45261E42A71B002651C8 /* thread_pthread.c */,
@@ -19828,9 +19939,12 @@
 				44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
 				44F99B2E2B2E9DCA00BE6517 /* BaseTarget-libaom.xcconfig */,
+				44945C762B9BA55E00447FFD /* BaseTarget-libwebm.xcconfig */,
 				5C4B43B01E42877A002651C8 /* boringssl.xcconfig */,
 				5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */,
+				4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */,
 				448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */,
+				44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */,
 				448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */,
 				DDF30D0B27C5C01A006A526F /* libabsl.xcconfig */,
 				DDEBB11E24C0189600ADBD44 /* libaom.xcconfig */,
@@ -19854,6 +19968,7 @@
 				4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */,
 				4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */,
 				444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */,
+				44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
 			path = Configurations;
@@ -19884,6 +19999,7 @@
 		CDEBB19224C0191800ADBD44 /* webm_parser */ = {
 			isa = PBXGroup;
 			children = (
+				44945C6A2B9BA1F500447FFD /* fuzzing */,
 				CDEBB40324C0191A00ADBD44 /* include */,
 				CDEBB44E24C0191A00ADBD44 /* src */,
 			);
@@ -20335,6 +20451,7 @@
 				CDEBB11924C0187400ADBD44 /* libwebm.a */,
 				FB39D0D11200F0E300088E69 /* libwebrtc.dylib */,
 				5C0884DE1E4A980100403995 /* libyuv.a */,
+				4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ACC2AF04946005C956E /* h264_depacketizer_fuzzer */,
 				44D88ADF2AF04AA1005C956E /* h265_depacketizer_fuzzer */,
 				449467CF2AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */,
@@ -20348,6 +20465,8 @@
 				4460B8A82B155B2E00392062 /* vp9_depacketizer_fuzzer */,
 				4460B8B72B155B4E00392062 /* vp8_qp_parser_fuzzer */,
 				4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */,
+				44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
+				44945C692B9BA1C300447FFD /* webm_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -20540,6 +20659,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4469C1022B5F24C500E32E5A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		449467A52AE05C9600A9FED0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -20557,6 +20683,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		44D88AC02AF04946005C956E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44D8D10F2B6AFBA900B3CF91 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -21755,8 +21888,10 @@
 				41D7291C26651D6B00651A0B /* h264_profile_level_id.h in Headers */,
 				5CD285EB1E6A639F0094FDC8 /* h264_sprop_parameter_sets.h in Headers */,
 				5CDD83DA1E439A6F00621E92 /* h264_sps_pps_tracker.h in Headers */,
+				4197E3BE2B6AA1E10005C4B8 /* h265_bitstream_parser.h in Headers */,
 				410091FD242E362200C5EDA2 /* h265_common.h in Headers */,
 				DD77E1D727F7E55500DC90C0 /* h265_globals.h in Headers */,
+				4197E3C12B6AA1E10005C4B8 /* h265_inline.h in Headers */,
 				DDF30BFF27C5A611006A526F /* h265_pps_parser.h in Headers */,
 				410091F9242E362200C5EDA2 /* h265_sps_parser.h in Headers */,
 				410091FE242E362200C5EDA2 /* h265_vps_parser.h in Headers */,
@@ -23223,6 +23358,24 @@
 			productReference = 446359C12AEA108C00551EEE /* vp8_replay_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
+		4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4469C1082B5F24C500E32E5A /* Build configuration list for PBXNativeTarget "h264_bitstream_parser_fuzzer" */;
+			buildPhases = (
+				4469C1022B5F24C500E32E5A /* Headers */,
+				4469C1032B5F24C500E32E5A /* Sources */,
+				4469C1062B5F24C500E32E5A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4469C1002B5F24C500E32E5A /* PBXTargetDependency */,
+			);
+			name = h264_bitstream_parser_fuzzer;
+			productName = h264_bitstream_parser_fuzzer;
+			productReference = 4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		448D48332AB0BDB00065014C /* vp8_dec_fuzzer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */;
@@ -23238,6 +23391,24 @@
 			name = vp8_dec_fuzzer;
 			productName = vp8_dec_fuzzer;
 			productReference = 448D48342AB0BDB00065014C /* vp8_dec_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44945C512B9BA1C300447FFD /* webm_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44945C652B9BA1C300447FFD /* Build configuration list for PBXNativeTarget "webm_fuzzer" */;
+			buildPhases = (
+				44945C542B9BA1C300447FFD /* Sources */,
+				44945C612B9BA1C300447FFD /* Frameworks */,
+				44945C732B9BA3C400447FFD /* Copy Fuzzer Dictionary */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44945C6C2B9BA20300447FFD /* PBXTargetDependency */,
+			);
+			name = webm_fuzzer;
+			productName = webm_fuzzer;
+			productReference = 44945C692B9BA1C300447FFD /* webm_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
 		449467A22AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */ = {
@@ -23344,6 +23515,24 @@
 			name = h265_depacketizer_fuzzer;
 			productName = h265_depacketizer_fuzzer;
 			productReference = 44D88ADF2AF04AA1005C956E /* h265_depacketizer_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44D8D10C2B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44D8D1152B6AFBA900B3CF91 /* Build configuration list for PBXNativeTarget "h265_bitstream_parser_fuzzer" */;
+			buildPhases = (
+				44D8D10F2B6AFBA900B3CF91 /* Headers */,
+				44D8D1102B6AFBA900B3CF91 /* Sources */,
+				44D8D1132B6AFBA900B3CF91 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44D8D10D2B6AFBA900B3CF91 /* PBXTargetDependency */,
+			);
+			name = h265_bitstream_parser_fuzzer;
+			productName = h265_bitstream_parser_fuzzer;
+			productReference = 44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
 		5C08848B1E4A97E300403995 /* srtp */ = {
@@ -23570,7 +23759,9 @@
 				DDEBB11824C0187400ADBD44 /* aom */,
 				DDF30D0527C5C003006A526F /* absl */,
 				449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */,
+				4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ABD2AF04946005C956E /* h264_depacketizer_fuzzer */,
+				44D8D10C2B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
 				44D88AD12AF04AA1005C956E /* h265_depacketizer_fuzzer */,
 				449467C22AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */,
 				449467A22AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */,
@@ -23583,6 +23774,7 @@
 				4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */,
 				4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */,
+				44945C512B9BA1C300447FFD /* webm_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -24181,11 +24373,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4469C1032B5F24C500E32E5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */,
+				4469C1052B5F24C500E32E5A /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		448D48302AB0BDB00065014C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44945C542B9BA1C300447FFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44945C712B9BA37800447FFD /* webm_fuzzer.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24248,6 +24457,15 @@
 			files = (
 				44D88AE12AF04AC4005C956E /* h265_depacketizer_fuzzer.cc in Sources */,
 				44D88AD82AF04AA1005C956E /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44D8D1102B6AFBA900B3CF91 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44D8D11A2B6AFBC100B3CF91 /* h265_bitstream_parser_fuzzer.cc in Sources */,
+				44D8D1122B6AFBA900B3CF91 /* webrtc_fuzzer_main.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24615,6 +24833,7 @@
 				5C4B46761E42AA3C002651C8 /* i2d_pr.c in Sources */,
 				41EA54081EFC2D1B002FF04C /* jacobi.c in Sources */,
 				415449AB21CAC3CF001C0A55 /* kdf.c in Sources */,
+				411927692A375B8B007C09F6 /* keccak.c in Sources */,
 				41A392001EFC493000C4516A /* key_wrap.c in Sources */,
 				411927682A375B8B007C09F6 /* kyber.c in Sources */,
 				5C4B46DF1E42AA89002651C8 /* lhash.c in Sources */,
@@ -24672,6 +24891,8 @@
 				413111BB2552A0B2001B9D95 /* rand_extra.c in Sources */,
 				41EA540D1EFC2D1B002FF04C /* random.c in Sources */,
 				5C4B46B01E42AA51002651C8 /* rc4.c in Sources */,
+				5C4B46401E42AA2C002651C8 /* refcount_c11.c in Sources */,
+				5C4B46411E42AA2C002651C8 /* refcount_lock.c in Sources */,
 				41A391871EFC447C00C4516A /* rsa.c in Sources */,
 				41A391D31EFC484D00C4516A /* rsa_asn1.c in Sources */,
 				4119276B2A375BB0007C09F6 /* rsa_crypt.c in Sources */,
@@ -25384,7 +25605,6 @@
 				5CDD86511E43B8B500621E92 /* energy.c in Sources */,
 				5CD285C21E6A63430094FDC8 /* erl_estimator.cc in Sources */,
 				5CD285C41E6A63430094FDC8 /* erle_estimator.cc in Sources */,
-				41D0118A2B1DDF5500B05388 /* errno.c in Sources */,
 				41B8D8D628CB85A700E5FA37 /* error_cause.cc in Sources */,
 				41B8D8B328CB859800E5FA37 /* error_chunk.cc in Sources */,
 				4131C04A234B898D0028A615 /* event.cc in Sources */,
@@ -25483,7 +25703,6 @@
 				4131C42D234C7D8A0028A615 /* generic_frame_info.cc in Sources */,
 				5CDD86571E43B8B500621E92 /* get_hanning_window.c in Sources */,
 				5CDD86581E43B8B500621E92 /* get_scaling_square.c in Sources */,
-				41D011862B1DDF0300B05388 /* getentropy.c in Sources */,
 				5CDD87291E43BABE00621E92 /* gmm.cc in Sources */,
 				41FCBB6021B1FEC400A5DF27 /* goog_cc_factory.cc in Sources */,
 				41E02CB62127352D00C27CD6 /* goog_cc_network_control.cc in Sources */,
@@ -25493,7 +25712,9 @@
 				41D7291D26651D6B00651A0B /* h264_profile_level_id.cc in Sources */,
 				5CD285EA1E6A639F0094FDC8 /* h264_sprop_parameter_sets.cc in Sources */,
 				5CDD83D91E439A6F00621E92 /* h264_sps_pps_tracker.cc in Sources */,
+				4197E3C02B6AA1E10005C4B8 /* h265_bitstream_parser.cc in Sources */,
 				410091FF242E362200C5EDA2 /* h265_common.cc in Sources */,
+				4197E3BF2B6AA1E10005C4B8 /* h265_inline.cc in Sources */,
 				41E84BCE24373BDE00D34E41 /* h265_pps_parser.cc in Sources */,
 				41E84BCF24373BE200D34E41 /* h265_sps_parser.cc in Sources */,
 				41E84BD024373BE600D34E41 /* h265_vps_parser.cc in Sources */,
@@ -25547,7 +25768,6 @@
 				419C829A1FE20CA10040C30F /* interval_budget.cc in Sources */,
 				41B8D8F028CB85CB00E5FA37 /* invalid_mandatory_parameter_cause.cc in Sources */,
 				41B8D8F228CB85CB00E5FA37 /* invalid_stream_identifier_cause.cc in Sources */,
-				41D011842B1DDECA00B05388 /* ios.c in Sources */,
 				4131C048234B898D0028A615 /* ip_address.cc in Sources */,
 				41299B912127367B00B3414B /* isac_vad.c in Sources */,
 				5CDD837B1E439A3500621E92 /* ivf_file_writer.cc in Sources */,
@@ -25561,7 +25781,6 @@
 				4131BF44234B88200028A615 /* jsep_transport.cc in Sources */,
 				415F8879273960010047AD64 /* jsep_transport_collection.cc in Sources */,
 				4131BEFC234B88200028A615 /* jsep_transport_controller.cc in Sources */,
-				41D011822B1DDE8F00B05388 /* keccak.c in Sources */,
 				4131C227234B8BB20028A615 /* keyframe_interval_settings.cc in Sources */,
 				416B09E42A3C7E250017367B /* leb128.cc in Sources */,
 				5CDD841F1E439B2900621E92 /* legacy_encoded_audio_frame.cc in Sources */,
@@ -25759,7 +25978,6 @@
 				41B8D92028CB85EC00E5FA37 /* reconfiguration_response_parameter.cc in Sources */,
 				412FF9DF254B3FC8001DF036 /* recursive_critical_section.cc in Sources */,
 				5CDD8A4D1E43BFB300621E92 /* red_payload_splitter.cc in Sources */,
-				41D011882B1DDF3400B05388 /* refcount.c in Sources */,
 				412FFA33254B423E001DF036 /* refined_filter_update_gain.cc in Sources */,
 				5CDD86621E43B8B500621E92 /* refl_coef_to_lpc.c in Sources */,
 				4131C1AF234B8A4A0028A615 /* regathering_controller.cc in Sources */,
@@ -26301,6 +26519,9 @@
 		};
 		444A6F0C2AEAE064005FE121 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
 			target = 444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */;
 			targetProxy = 444A6F0B2AEAE064005FE121 /* PBXContainerItemProxy */;
 		};
@@ -26351,13 +26572,36 @@
 		};
 		446359E02AEA14F000551EEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
 			target = 446359B62AEA108C00551EEE /* vp8_replay_fuzzer */;
 			targetProxy = 446359DF2AEA14F000551EEE /* PBXContainerItemProxy */;
+		};
+		4469C1002B5F24C500E32E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */;
+		};
+		4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
+			targetProxy = 4469C10D2B5F24DA00E32E5A /* PBXContainerItemProxy */;
 		};
 		448D483D2AB0BDB80065014C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4105EB69212E01D2008C0C20 /* vpx */;
 			targetProxy = 448D483C2AB0BDB80065014C /* PBXContainerItemProxy */;
+		};
+		44945C6C2B9BA20300447FFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CDEBB11824C0187400ADBD44 /* webm */;
+			targetProxy = 44945C6B2B9BA20300447FFD /* PBXContainerItemProxy */;
+		};
+		44945C6F2B9BA22A00447FFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44945C512B9BA1C300447FFD /* webm_fuzzer */;
+			targetProxy = 44945C6E2B9BA22A00447FFD /* PBXContainerItemProxy */;
 		};
 		449467A32AE05C9600A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -26418,6 +26662,16 @@
 			isa = PBXTargetDependency;
 			target = 44D88AD12AF04AA1005C956E /* h265_depacketizer_fuzzer */;
 			targetProxy = 44D88AE22AF04AE4005C956E /* PBXContainerItemProxy */;
+		};
+		44D8D10D2B6AFBA900B3CF91 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 44D8D10E2B6AFBA900B3CF91 /* PBXContainerItemProxy */;
+		};
+		44D8D11C2B6AFBCF00B3CF91 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44D8D10C2B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */;
+			targetProxy = 44D8D11B2B6AFBCF00B3CF91 /* PBXContainerItemProxy */;
 		};
 		44E7509C2AC726A600828AC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -26507,7 +26761,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26515,7 +26768,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26523,7 +26775,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26531,7 +26782,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26539,7 +26789,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26547,7 +26796,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26555,7 +26803,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26563,7 +26810,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26571,7 +26817,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26579,7 +26824,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26587,7 +26831,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26595,7 +26838,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26603,7 +26845,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26611,7 +26852,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26619,7 +26859,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26627,7 +26866,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26635,7 +26873,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26643,7 +26880,27 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4469C1092B5F24C500E32E5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		4469C10A2B5F24C500E32E5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		4469C10B2B5F24C500E32E5A /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4469C1272B5F2AE900E32E5A /* h264_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
 			};
 			name = Production;
 		};
@@ -26668,11 +26925,31 @@
 			};
 			name = Production;
 		};
+		44945C662B9BA1C300447FFD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		44945C672B9BA1C300447FFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		44945C682B9BA1C300447FFD /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		449467BA2AE05C9600A9FED0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26680,7 +26957,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26688,7 +26964,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26696,7 +26971,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26704,7 +26978,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26712,7 +26985,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26744,7 +27016,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26752,7 +27023,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26760,7 +27030,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26789,7 +27058,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26797,7 +27065,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26805,7 +27072,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -26813,7 +27079,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -26821,7 +27086,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -26829,7 +27093,27 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44D8D1162B6AFBA900B3CF91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		44D8D1172B6AFBA900B3CF91 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		44D8D1182B6AFBA900B3CF91 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44D8D11D2B6AFBFD00B3CF91 /* h265_bitstream_parser_fuzzer.xcconfig */;
+			buildSettings = {
 			};
 			name = Production;
 		};
@@ -27121,12 +27405,32 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
+		4469C1082B5F24C500E32E5A /* Build configuration list for PBXNativeTarget "h264_bitstream_parser_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4469C1092B5F24C500E32E5A /* Debug */,
+				4469C10A2B5F24C500E32E5A /* Release */,
+				4469C10B2B5F24C500E32E5A /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				448D48382AB0BDB10065014C /* Debug */,
 				448D48392AB0BDB10065014C /* Release */,
 				448D483A2AB0BDB10065014C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44945C652B9BA1C300447FFD /* Build configuration list for PBXNativeTarget "webm_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44945C662B9BA1C300447FFD /* Debug */,
+				44945C672B9BA1C300447FFD /* Release */,
+				44945C682B9BA1C300447FFD /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
@@ -27197,6 +27501,16 @@
 				44D88ADC2AF04AA1005C956E /* Debug */,
 				44D88ADD2AF04AA1005C956E /* Release */,
 				44D88ADE2AF04AA1005C956E /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44D8D1152B6AFBA900B3CF91 /* Build configuration list for PBXNativeTarget "h265_bitstream_parser_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44D8D1162B6AFBA900B3CF91 /* Debug */,
+				44D8D1172B6AFBA900B3CF91 /* Release */,
+				44D8D1182B6AFBA900B3CF91 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

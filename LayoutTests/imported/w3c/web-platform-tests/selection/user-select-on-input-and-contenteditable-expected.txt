@@ -1,0 +1,9 @@
+
+I should be selectable
+
+PASS selection for auto
+PASS selection for text
+PASS selection for none
+PASS selection for contain
+PASS selection for all
+

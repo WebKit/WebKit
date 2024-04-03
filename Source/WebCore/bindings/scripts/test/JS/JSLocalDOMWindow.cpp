@@ -193,6 +193,11 @@ JSLocalDOMWindow::JSLocalDOMWindow(VM& vm, Structure* structure, Ref<LocalDOMWin
 {
 }
 
+Ref<LocalDOMWindow> JSLocalDOMWindow::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, LocalDOMWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 void JSLocalDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
@@ -210,12 +215,12 @@ JSValue JSLocalDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObj
 
 JSC_DEFINE_CUSTOM_GETTER(jsLocalDOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSLocalDOMWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSLocalDOMWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSLocalDOMWindow::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsLocalDOMWindow_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSLocalDOMWindow& thisObject)

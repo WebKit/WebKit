@@ -52,6 +52,9 @@ def platform_options(use_globs=False):
         optparse.make_option('--ipad-simulator', action='store_const', dest='platform',
             const=('ipad-simulator'),
             help=('Alias for --platform=ipad-simulator')),
+        optparse.make_option('--visionos-simulator', action='store_const', dest='platform',
+            const=('visionos-simulator'),
+            help=('Alias for --platform=visionos-simulator')),
         optparse.make_option('--simulator', action='store_const', dest='platform',
             const=('ios-simulator'),
             help=('DEPRECATED alias for --platform=ios-simulator')),
@@ -91,12 +94,6 @@ def configuration_options():
     ]
 
 
-def _builder_options(builder_name):
-    configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
-    is_webkit2 = builder_name.find("WK2") != -1
-    return optparse.Values({'builder_name': builder_name, 'configuration': configuration, 'webkit_test_runner': is_webkit2})
-
-
 class PortFactory(object):
     # Order matters.  For port classes that have a port_name with a
     # common prefix, the more specific port class should be listed
@@ -109,6 +106,7 @@ class PortFactory(object):
         'ios_device.IOSDevicePort',
         'watch_simulator.WatchSimulatorPort',
         'watch_device.WatchDevicePort',
+        'visionos_simulator.VisionOSSimulatorPort',
         'jsc_only.JscOnlyPort',
         'mac.MacCatalystPort',
         'mac.MacPort',

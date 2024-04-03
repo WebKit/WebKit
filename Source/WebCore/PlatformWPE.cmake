@@ -1,6 +1,12 @@
 include(platform/Adwaita.cmake)
-include(platform/Cairo.cmake)
-include(platform/FreeType.cmake)
+
+if (USE_CAIRO)
+    include(platform/Cairo.cmake)
+    include(platform/FreeType.cmake)
+elseif (USE_SKIA)
+    include(platform/Skia.cmake)
+endif ()
+
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
@@ -75,9 +81,7 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 if (USE_WPEBACKEND_FDO_AUDIO_EXTENSION)
-    list(APPEND WebCore_LIBRARIES ${WPEBACKEND_FDO_LIBRARIES})
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${WPE_INCLUDE_DIRS})
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES ${WPEBACKEND_FDO_INCLUDE_DIRS})
+    list(APPEND WebCore_PRIVATE_LIBRARIES WPE::FDO)
 endif ()
 
 if (USE_OPENXR)
@@ -124,13 +128,9 @@ if (USE_ATSPI)
 endif ()
 
 if (USE_GBM)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${LIBDRM_INCLUDE_DIR}
-    )
-    list(APPEND WebCore_LIBRARIES
-        GBM::GBM
-        ${LIBDRM_LIBRARIES}
-    )
+    list(APPEND WebCore_LIBRARIES GBM::GBM)
+elseif (USE_LIBDRM)
+    list(APPEND WebCore_LIBRARIES LibDRM::LibDRM)
 endif ()
 
 if (ENABLE_GAMEPAD)

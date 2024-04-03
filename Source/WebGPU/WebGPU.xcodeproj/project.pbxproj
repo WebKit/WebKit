@@ -10,6 +10,7 @@
 		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
 		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
 		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
+		0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D509DCC29CAB6EC00546D84 /* MetalSPI.h */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
@@ -135,6 +136,10 @@
 		9776BE732992A236002D6D93 /* Overload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9776BE712992A236002D6D93 /* Overload.cpp */; };
 		9776BE742992A236002D6D93 /* Overload.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE722992A236002D6D93 /* Overload.h */; };
 		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
+		977F5AC02B73057700D05129 /* CompilationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 977F5ABE2B73057700D05129 /* CompilationScope.h */; };
+		977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977F5ABF2B73057700D05129 /* CompilationScope.cpp */; };
+		977F5AC42B7A9EC000D05129 /* BoundsCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 977F5AC22B7A9EC000D05129 /* BoundsCheck.h */; };
+		977F5AC52B7A9EC000D05129 /* BoundsCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */; };
 		97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 97835C9229F7C9C600939EBA /* ASTBuilder.h */; };
 		97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97835C9429F7D85A00939EBA /* ASTBuilder.cpp */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
@@ -155,6 +160,8 @@
 		979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240BC29753B2A0050EA2C /* PhaseTimer.h */; };
 		979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C629769AC00050EA2C /* EntryPointRewriter.h */; };
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
+		9797BA442B6D5BA70020F22E /* ASTConstAssertStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9797BA422B6D5BA60020F22E /* ASTConstAssertStatement.h */; };
+		9797BA452B6D5BA70020F22E /* ASTConstAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 9797BA432B6D5BA60020F22E /* ASTConstAssert.h */; };
 		979EDBB12A826B2800B4B7D0 /* GlobalSorting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979EDBAF2A826B2800B4B7D0 /* GlobalSorting.cpp */; };
 		979EDBB22A826B2800B4B7D0 /* GlobalSorting.h in Headers */ = {isa = PBXBuildFile; fileRef = 979EDBB02A826B2800B4B7D0 /* GlobalSorting.h */; };
 		97A448A12AE3544800A4E147 /* AttributeValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97A4489F2AE3544800A4E147 /* AttributeValidator.h */; };
@@ -173,6 +180,8 @@
 		97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C942A2512F7009CEB0E /* ConstantValue.cpp */; };
 		97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C952A2512F7009CEB0E /* ConstantValue.h */; };
 		97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C962A2512F7009CEB0E /* ConstantFunctions.h */; };
+		97E709522B6ACCB50080E489 /* ASTScopedVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */; };
+		97E709552B6AD0030080E489 /* ASTScopedVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
@@ -252,6 +261,7 @@
 		0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalTexture.h; sourceTree = "<group>"; };
 		0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
+		0D509DCC29CAB6EC00546D84 /* MetalSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalSPI.h; sourceTree = "<group>"; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
@@ -422,6 +432,10 @@
 		9776BE712992A236002D6D93 /* Overload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Overload.cpp; sourceTree = "<group>"; };
 		9776BE722992A236002D6D93 /* Overload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overload.h; sourceTree = "<group>"; };
 		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
+		977F5ABE2B73057700D05129 /* CompilationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompilationScope.h; sourceTree = "<group>"; };
+		977F5ABF2B73057700D05129 /* CompilationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationScope.cpp; sourceTree = "<group>"; };
+		977F5AC22B7A9EC000D05129 /* BoundsCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundsCheck.h; sourceTree = "<group>"; };
+		977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundsCheck.cpp; sourceTree = "<group>"; };
 		97835C9229F7C9C600939EBA /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
 		97835C9429F7D85A00939EBA /* ASTBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBuilder.cpp; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
@@ -443,6 +457,8 @@
 		979240BC29753B2A0050EA2C /* PhaseTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhaseTimer.h; sourceTree = "<group>"; };
 		979240C629769AC00050EA2C /* EntryPointRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryPointRewriter.h; sourceTree = "<group>"; };
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
+		9797BA422B6D5BA60020F22E /* ASTConstAssertStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTConstAssertStatement.h; sourceTree = "<group>"; };
+		9797BA432B6D5BA60020F22E /* ASTConstAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTConstAssert.h; sourceTree = "<group>"; };
 		979EDBAF2A826B2800B4B7D0 /* GlobalSorting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalSorting.cpp; sourceTree = "<group>"; };
 		979EDBB02A826B2800B4B7D0 /* GlobalSorting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalSorting.h; sourceTree = "<group>"; };
 		97A4489F2AE3544800A4E147 /* AttributeValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeValidator.h; sourceTree = "<group>"; };
@@ -460,6 +476,8 @@
 		97E21C942A2512F7009CEB0E /* ConstantValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantValue.cpp; sourceTree = "<group>"; };
 		97E21C952A2512F7009CEB0E /* ConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantValue.h; sourceTree = "<group>"; };
 		97E21C962A2512F7009CEB0E /* ConstantFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantFunctions.h; sourceTree = "<group>"; };
+		97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTScopedVisitor.h; sourceTree = "<group>"; };
+		97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTScopedVisitorInlines.h; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
 		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
 		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -565,6 +583,7 @@
 				1C5ACAA0273A426D0095F8D5 /* Instance.h */,
 				1C5ACA92273A41C20095F8D5 /* Instance.mm */,
 				1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */,
+				0D509DCC29CAB6EC00546D84 /* MetalSPI.h */,
 				973F784529C8A78200166C66 /* Pipeline.h */,
 				973F784629C8A78200166C66 /* Pipeline.mm */,
 				1C5ACADA273A4E710095F8D5 /* PipelineLayout.h */,
@@ -612,10 +631,14 @@
 				3AD0D2362988D3F90080D728 /* API.h */,
 				97A448A02AE3544800A4E147 /* AttributeValidator.cpp */,
 				97A4489F2AE3544800A4E147 /* AttributeValidator.h */,
+				977F5AC32B7A9EC000D05129 /* BoundsCheck.cpp */,
+				977F5AC22B7A9EC000D05129 /* BoundsCheck.h */,
 				9789C318297EA105009E9006 /* CallGraph.cpp */,
 				9789C319297EA105009E9006 /* CallGraph.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
+				977F5ABF2B73057700D05129 /* CompilationScope.cpp */,
+				977F5ABE2B73057700D05129 /* CompilationScope.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
 				97E21C962A2512F7009CEB0E /* ConstantFunctions.h */,
 				97E21C942A2512F7009CEB0E /* ConstantValue.cpp */,
@@ -715,6 +738,8 @@
 				97A448A52AE3546700A4E147 /* ASTCallStatement.h */,
 				3A12AEA328FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h */,
 				33EA187A27BC230E00A1DD52 /* ASTCompoundStatement.h */,
+				9797BA432B6D5BA60020F22E /* ASTConstAssert.h */,
+				9797BA422B6D5BA60020F22E /* ASTConstAssertStatement.h */,
 				3A12AE9E28FCE94B00C1B975 /* ASTConstAttribute.h */,
 				3A12AEA228FCE94C00C1B975 /* ASTContinueStatement.h */,
 				3AD0D2302988D3C10080D728 /* ASTDeclaration.h */,
@@ -751,6 +776,8 @@
 				3A9D029F298390A000888A75 /* ASTPointerDereference.h */,
 				97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
+				97E709502B6ACCB50080E489 /* ASTScopedVisitor.h */,
+				97E709542B6AD0030080E489 /* ASTScopedVisitorInlines.h */,
 				3A12AECE28FCFC5500C1B975 /* ASTSigned32Literal.h */,
 				3A12AEA128FCE94B00C1B975 /* ASTSizeAttribute.h */,
 				3A12AE9928FCE94B00C1B975 /* ASTStageAttribute.h */,
@@ -804,6 +831,7 @@
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
+				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
@@ -832,6 +860,8 @@
 				97A448A82AE3546700A4E147 /* ASTCallStatement.h in Headers */,
 				3A12AEBD28FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h in Headers */,
 				33EA187B27BC230E00A1DD52 /* ASTCompoundStatement.h in Headers */,
+				9797BA452B6D5BA70020F22E /* ASTConstAssert.h in Headers */,
+				9797BA442B6D5BA70020F22E /* ASTConstAssertStatement.h in Headers */,
 				3A12AEB828FCE94C00C1B975 /* ASTConstAttribute.h in Headers */,
 				3A12AEBC28FCE94C00C1B975 /* ASTContinueStatement.h in Headers */,
 				3AD0D2332988D3C10080D728 /* ASTDeclaration.h in Headers */,
@@ -867,6 +897,8 @@
 				3A9D02A0298390A000888A75 /* ASTPointerDereference.h in Headers */,
 				97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
+				97E709522B6ACCB50080E489 /* ASTScopedVisitor.h in Headers */,
+				97E709552B6AD0030080E489 /* ASTScopedVisitorInlines.h in Headers */,
 				3A12AED428FCFC5600C1B975 /* ASTSigned32Literal.h in Headers */,
 				3A12AEBB28FCE94C00C1B975 /* ASTSizeAttribute.h in Headers */,
 				3A12AEB328FCE94C00C1B975 /* ASTStageAttribute.h in Headers */,
@@ -886,7 +918,9 @@
 				3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */,
 				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				97A448A12AE3544800A4E147 /* AttributeValidator.h in Headers */,
+				977F5AC42B7A9EC000D05129 /* BoundsCheck.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
+				977F5AC02B73057700D05129 /* CompilationScope.h in Headers */,
 				97E21C992A2512F7009CEB0E /* ConstantFunctions.h in Headers */,
 				97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */,
 				97C36CFE29F1730100CFB379 /* Constraints.h in Headers */,
@@ -1122,8 +1156,10 @@
 				3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,
 				97A448A22AE3544800A4E147 /* AttributeValidator.cpp in Sources */,
+				977F5AC52B7A9EC000D05129 /* BoundsCheck.cpp in Sources */,
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
+				977F5AC12B73057700D05129 /* CompilationScope.cpp in Sources */,
 				97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */,
 				97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,

@@ -26,10 +26,14 @@
 #import "config.h"
 #import "AttributedString.h"
 
+#import "BitmapImage.h"
 #import "ColorCocoa.h"
 #import "Font.h"
+#import "LoaderNSURLExtras.h"
 #import "Logging.h"
+#import "WebCoreTextAttachment.h"
 #import <Foundation/Foundation.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
@@ -37,6 +41,10 @@
 #else
 #import <pal/ios/UIKitSoftLink.h>
 #import "UIFoundationSoftLink.h"
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AttributedStringAdditionsBefore.mm>
 #endif
 
 namespace WebCore {
@@ -155,6 +163,10 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const AttributedStrin
     return mutableStyle;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/AttributedStringAdditions.mm>
+#endif
+
 static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, IdentifierToTableMap& tables, IdentifierToTableBlockMap& tableBlocks, IdentifierToListMap& lists)
 {
     return WTF::switchOn(value.value, [] (double value) -> RetainPtr<id> {
@@ -175,8 +187,26 @@ static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value, I
         return createNSArray(value, [] (double number) {
             return adoptNS([[NSNumber alloc] initWithDouble:number]);
         });
-    }, [] (const RetainPtr<NSTextAttachment>& value) -> RetainPtr<id> {
-        return value;
+    }, [] (const TextAttachmentMissingImage& value) -> RetainPtr<id> {
+        UNUSED_PARAM(value);
+        RetainPtr<NSTextAttachment> attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithData:nil ofType:nil]);
+        attachment.get().image = webCoreTextAttachmentMissingPlatformImage();
+        return attachment;
+    }, [] (const TextAttachmentFileWrapper& value) -> RetainPtr<id> {
+        RetainPtr<NSData> data = value.data ? bridge_cast((value.data).get()) : nil;
+        RetainPtr<NSFileWrapper> fileWrapper = nil;
+        if (!value.preferredFilename.isNull()) {
+            fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+            [fileWrapper setPreferredFilename:filenameByFixingIllegalCharacters((NSString *)value.preferredFilename)];
+        }
+        auto textAttachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper.get()]);
+        if (!value.accessibilityLabel.isNull())
+            ((NSTextAttachment*)textAttachment.get()).accessibilityLabel = (NSString *)value.accessibilityLabel;
+        return textAttachment;
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    }, [] (const MultiRepresentationHEICAttachmentData& value) -> RetainPtr<id> {
+        return toWebMultiRepresentationHEICAttachment(value);
+#endif
     }, [] (const RetainPtr<NSShadow>& value) -> RetainPtr<id> {
         return value;
     }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<id> {
@@ -317,8 +347,29 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value, Ta
     }
     if ([value isKindOfClass:PlatformNSPresentationIntent])
         return { { { RetainPtr { (NSPresentationIntent *)value } } } };
-    if ([value isKindOfClass:PlatformNSTextAttachment])
-        return { { { RetainPtr { (NSTextAttachment *)value } } } };
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if ([value isKindOfClass:PlatformWebMultiRepresentationHEICAttachment]) {
+        auto attachment = static_cast<WebMultiRepresentationHEICAttachment *>(value);
+        return { { toMultiRepresentationHEICAttachmentData(attachment) } };
+    }
+#endif
+    if ([value isKindOfClass:PlatformNSTextAttachment]) {
+        if ([value image] == webCoreTextAttachmentMissingPlatformImage())
+            return { { TextAttachmentMissingImage() } };
+        TextAttachmentFileWrapper textAttachment;
+        if (auto accessibilityLabel = [value accessibilityLabel])
+            textAttachment.accessibilityLabel = accessibilityLabel;
+#if !PLATFORM(IOS_FAMILY)
+        textAttachment.ignoresOrientation = [value ignoresOrientation];
+#endif
+        if (auto fileWrapper = [value fileWrapper]) {
+            if (auto data = bridge_cast([fileWrapper regularFileContents]))
+                textAttachment.data = data;
+            if (auto preferredFilename = [fileWrapper preferredFilename])
+                textAttachment.preferredFilename = preferredFilename;
+        }
+        return { { textAttachment } };
+    }
     if ([value isKindOfClass:PlatformFontClass])
         return { { { Font::create(FontPlatformData((__bridge CTFontRef)value, [(PlatformFont *)value pointSize])) } } };
     if ([value isKindOfClass:PlatformColorClass])

@@ -1,0 +1,4 @@
+
+PASS Check cues from resources/cue-size-align.vtt
+PASS Check cues from resources/cue-size-align-bad.vtt
+

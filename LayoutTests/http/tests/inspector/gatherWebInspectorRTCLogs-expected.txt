@@ -1,0 +1,13 @@
+
+== Running test suite: WebRTC logs
+-- Running test case: Stats
+Stats type: 'stats'
+Stats level: 'true'
+Stats connection: 'true'
+Stats message: 'true'
+-- Running test case: Logs
+Logs type: 'logs'
+Logs level: 'true'
+Logs connection: 'true'
+Logs message: 'true'
+

@@ -49,6 +49,9 @@ int main(int argc, char** argv)
 
     loadLibraryOrExit(ICU_LOAD_AT);
     loadLibraryOrExit(PNG_LOAD_AT);
+#if defined(LCMS2_LOAD_AT)
+    loadLibraryOrExit(LCMS2_LOAD_AT);
+#endif
 #if defined(JPEG_LOAD_AT)
     loadLibraryOrExit(JPEG_LOAD_AT);
 #endif 
@@ -58,10 +61,15 @@ int main(int argc, char** argv)
 #if defined(Brotli_LOAD_AT)
     loadLibraryOrExit(Brotli_LOAD_AT);
 #endif
+#if defined(JPEGXL_LOAD_AT)
+    loadLibraryOrExit(JPEGXL_LOAD_AT);
+#endif
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
+#if USE(CAIRO) && defined(Cairo_LOAD_AT)
     loadLibraryOrExit(Cairo_LOAD_AT);
+#endif
 #if defined(LibPSL_LOAD_AT)
     loadLibraryOrExit(LibPSL_LOAD_AT);
 #endif

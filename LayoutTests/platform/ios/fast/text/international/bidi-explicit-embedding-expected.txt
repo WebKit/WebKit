@@ -4,15 +4,15 @@ layer at (0,0) size 800x551
   RenderBlock {HTML} at (0,0) size 800x551
     RenderBody {BODY} at (8,16) size 784x519
       RenderBlock {P} at (0,0) size 784x63
-        RenderText {#text} at (0,0) size 774x63
-          text run at (0,0) width 757: "In each line, reading from left to right, the bracket should appear before the parenthesis. The"
-          text run at (0,21) width 774: "bracket should be a left bracket and the parenthesis should be a right parenthesis. In each line,"
+        RenderText {#text} at (0,0) size 773x63
+          text run at (0,0) width 756: "In each line, reading from left to right, the bracket should appear before the parenthesis. The"
+          text run at (0,21) width 773: "bracket should be a left bracket and the parenthesis should be a right parenthesis. In each line,"
           text run at (0,42) width 615: "Roman characters and digits should be in increasing order from left to right."
       RenderBlock {P} at (0,79) size 784x23
         RenderText {#text} at (0,0) size 61x21
           text run at (0,0) width 25 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (24,0) width 37: " def "
-        RenderInline {SPAN} at (0,0) size 41x21
+        RenderInline {SPAN} at (60,0) size 41x21
           RenderText {#text} at (60,0) size 41x21
             text run at (60,0) width 41 RTL: "(\x{5D6}\x{5D7}\x{5D8}]"
         RenderText {#text} at (100,0) size 26x21
@@ -21,7 +21,7 @@ layer at (0,0) size 800x551
         RenderText {#text} at (0,0) size 61x21
           text run at (0,0) width 25 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (24,0) width 37: " def "
-        RenderInline {SPAN} at (0,0) size 40x21
+        RenderInline {SPAN} at (60,0) size 40x21
           RenderText {#text} at (60,0) size 40x21
             text run at (60,0) width 8 RTL: "]"
             text run at (67,0) width 26: "ghi"
@@ -31,7 +31,7 @@ layer at (0,0) size 800x551
       RenderBlock {P} at (0,157) size 784x21
         RenderText {#text} at (0,0) size 34x21
           text run at (0,0) width 34: "abc "
-        RenderInline {SPAN} at (0,0) size 62x21
+        RenderInline {SPAN} at (33,0) size 62x21
           RenderText {#text} at (33,0) size 62x21
             text run at (33,0) width 8 RTL: "]"
             text run at (40,0) width 22: "23"
@@ -59,7 +59,7 @@ layer at (0,0) size 800x551
       RenderBlock {P} at (0,268) size 784x21
         RenderText {#text} at (0,0) size 11x21
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 59x21
+        RenderInline {SPAN} at (10,0) size 59x21
           RenderText {#text} at (10,0) size 59x21
             text run at (10,0) width 8 RTL: "]"
             text run at (17,0) width 44: "ab cd"
@@ -68,7 +68,7 @@ layer at (0,0) size 800x551
       RenderBlock {P} at (0,305) size 784x23
         RenderText {#text} at (0,0) size 11x21
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 55x21
+        RenderInline {SPAN} at (10,0) size 55x21
           RenderText {#text} at (10,0) size 55x21
             text run at (10,0) width 28 RTL: " \x{5D2}\x{5D3}]"
             text run at (37,0) width 21: "ab"
@@ -77,7 +77,7 @@ layer at (0,0) size 800x551
       RenderBlock {P} at (0,344) size 784x21
         RenderText {#text} at (0,0) size 11x21
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 25x21
+        RenderInline {SPAN} at (10,0) size 25x21
           RenderText {#text} at (10,0) size 25x21
             text run at (10,0) width 8 RTL: "]"
             text run at (17,0) width 11: "2"
@@ -87,7 +87,7 @@ layer at (0,0) size 800x551
       RenderBlock {P} at (0,381) size 784x21
         RenderText {#text} at (0,0) size 11x21
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 25x21
+        RenderInline {SPAN} at (10,0) size 25x21
           RenderText {#text} at (10,0) size 25x21
             text run at (10,0) width 8 RTL: "]"
             text run at (17,0) width 11: "a"

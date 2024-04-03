@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-140,0) size 533x149 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-140,0) size 532.69x148.28
+layer at (3,8.19) size 327x46
+  RenderSVGText {text} at (143,8) size 328x47 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 328x46
+      chunk 1 text run 1 at (3.00,45.00) startOffset 0 endOffset 17 width 327.46: "calcMode=\"spline\""
+layer at (3,63.19) size 390x46
+  RenderSVGText {text} at (143,63) size 390x47 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 390x46
+      chunk 1 text run 1 at (3.00,100.00) startOffset 0 endOffset 21 width 389.69: "keyTimes=\"0;.25;.5;1\""
+layer at (-140,0) size 451x149 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 450.03x148.28
+layer at (-140,0) size 451x149 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 450.03x148.28
+layer at (-140,106.88) size 142x41 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,106) size 142x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 142x42
+      chunk 1 text run 1 at (-140.00,140.00) startOffset 0 endOffset 9 width 141.98: "Time (s):"
+layer at (290,106.88) size 20x41
+  RenderSVGText {text} at (430,106) size 21x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x42
+      chunk 1 text run 1 at (290.00,140.00) startOffset 0 endOffset 1 width 20.02: "0"
+layer at (300,0) size 0x100
+  RenderSVGPath {line} at (440,0) size 0x100 [stroke={[type=SOLID] [color=#880000] [stroke width=3.00]}] [x1=300.00] [y1=0.00] [x2=300.00] [y2=100.00]
+layer at (245,106.88) size 20x41
+  RenderSVGText {text} at (385,106) size 21x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x42
+      chunk 1 text run 1 at (245.00,140.00) startOffset 0 endOffset 1 width 20.02: "2"
+layer at (255,0) size 0x100
+  RenderSVGPath {line} at (395,0) size 0x100 [stroke={[type=SOLID] [color=#880000] [stroke width=3.00]}] [x1=255.00] [y1=0.00] [x2=255.00] [y2=100.00]
+layer at (170,106.88) size 20x41
+  RenderSVGText {text} at (310,106) size 21x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x42
+      chunk 1 text run 1 at (170.00,140.00) startOffset 0 endOffset 1 width 20.02: "4"
+layer at (180,0) size 0x100
+  RenderSVGPath {line} at (320,0) size 0x100 [stroke={[type=SOLID] [color=#880000] [stroke width=3.00]}] [x1=180.00] [y1=0.00] [x2=180.00] [y2=100.00]
+layer at (20,106.88) size 20x41
+  RenderSVGText {text} at (160,106) size 21x43 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 21x42
+      chunk 1 text run 1 at (20.00,140.00) startOffset 0 endOffset 1 width 20.02: "8"
+layer at (30,0) size 0x100
+  RenderSVGPath {line} at (170,0) size 0x100 [stroke={[type=SOLID] [color=#880000] [stroke width=3.00]}] [x1=30.00] [y1=0.00] [x2=30.00] [y2=100.00]
+layer at (0,0) size 300x80
+  RenderSVGRect {rect} at (140,0) size 300x80 [stroke={[type=SOLID] [color=#880088] [stroke width=4.00]}] [fill={[type=SOLID] [color=#44AAFF]}] [x=0.00] [y=0.00] [width=300.00] [height=80.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

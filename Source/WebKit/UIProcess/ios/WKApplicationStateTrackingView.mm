@@ -46,6 +46,7 @@
         return nil;
 
     _webViewToTrack = webView;
+    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
     return self;
 }
 
@@ -56,18 +57,18 @@
 
     auto page = [_webViewToTrack _page];
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was removed from a window, _lastObservedStateWasBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, page ? page->lastObservedStateWasBackground() : false);
-    _applicationStateTracker = nullptr;
+    _applicationStateTracker->setWindow(nil);
 }
 
 - (void)didMoveToWindow
 {
-    if (!self._contentView.window || _applicationStateTracker)
+    if (!self._contentView.window)
         return;
 
     auto page = [_webViewToTrack _page];
     bool lastObservedStateWasBackground = page ? page->lastObservedStateWasBackground() : false;
 
-    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
+    _applicationStateTracker->setWindow(self._contentView.window);
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was added to a window, _lastObservedStateWasBackground=%d, isNowBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, lastObservedStateWasBackground, [self isBackground]);
 
     if (lastObservedStateWasBackground && ![self isBackground])
@@ -112,6 +113,9 @@
     if (!page)
         return;
 
+    if (!self._contentView.window)
+        return;
+
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] will begin snapshot sequence", self, page.get(), page ? page->identifier().toUInt64() : 0);
     page->setIsTakingSnapshotsForApplicationSuspension(true);
 }
@@ -120,6 +124,9 @@
 {
     auto page = [_webViewToTrack _page];
     if (!page)
+        return;
+
+    if (!self._contentView.window)
         return;
 
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] did complete snapshot sequence", self, page.get(), page ? page->identifier().toUInt64() : 0);

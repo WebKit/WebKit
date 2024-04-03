@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 33x19
             text run at (0,0) width 33: "Line "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {I} at (0,0) size 38x19
+        RenderInline {I} at (32,0) size 38x19
           RenderText {#text} at (32,0) size 38x19
             text run at (32,0) width 38: "Three"
       RenderBlock (anonymous) at (0,108) size 784x20

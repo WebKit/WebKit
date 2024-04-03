@@ -9,18 +9,18 @@
             transform-origin: 50% 50%;
             transform-box: border-box;
             transform: translateZ(0);
-	}
+        }
 
         .animating2 {
             transform-origin: 50% 50%;
             transform-box: border-box;
             transform: rotate(25deg) translateZ(0);
-	}
+        }
 
         .animating3 {
             transform-origin: 50% 50%;
             transform-box: border-box;
-	    transform: rotate(45deg) translateZ(0);
+            transform: rotate(45deg) translateZ(0);
             fill: green;
         }
     </style>
@@ -28,21 +28,16 @@
         if (window.testRunner)
             testRunner.waitUntilDone();
 
-        if (window.internals) {
-            internals.settings.setShowRepaintCounter(true);
-            internals.settings.setShowDebugBorders(true);
-        }
-
         window.addEventListener('load', () => {
             requestAnimationFrame(() => {
                 document.getElementById('rect').setAttribute("class", "animating2");
-		requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
                     document.getElementById('rect').setAttribute("class", "animating3");
                     if (window.testRunner)
-			testRunner.notifyDone();
-		    });
-		});
-	    }, false);
+                        testRunner.notifyDone();
+                });
+            });
+        }, false);
     </script>
 </head>
 <body>

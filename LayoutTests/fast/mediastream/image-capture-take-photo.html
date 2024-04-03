@@ -18,9 +18,19 @@
             assert_equals(track.readyState, 'ended');
 
             const imageCapture = new ImageCapture(track);
-            return promise_rejects_dom(test, 'InvalidStateError', imageCapture.takePhoto())
+            const promise = imageCapture.takePhoto();
 
-        }, `'takePhoto()' on an 'ended' track should throw "InvalidStateError"`);
+            let result;
+            promise.then(
+                (value) => { result = value; },
+                (error) => { result = error; }
+            );
+
+            await Promise.resolve();
+            assert_equals(result['name'], 'InvalidStateError');
+            return promise_rejects_dom(test, 'InvalidStateError', promise);
+
+        }, `'takePhoto()' on an 'ended' track should synchronously throw "InvalidStateError"`);
 
         promise_test(async (test) => {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });

@@ -340,6 +340,12 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platf
     return PlatformCALayerCocoa::create(platformLayer, owner);
 }
 
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(LayerHostingContextIdentifier, PlatformCALayerClient* owner)
+{
+    ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayer should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, owner);
+}
+
 #if ENABLE(MODEL_ELEMENT)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>, PlatformCALayerClient* owner)
 {
@@ -1036,15 +1042,15 @@ bool GraphicsLayerCA::animationIsRunning(const String& animationName) const
 
 static bool timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(const TimingFunction* timingFunction)
 {
-    if (!is<CubicBezierTimingFunction>(timingFunction))
+    auto* cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(timingFunction);
+    if (!cubicBezierTimingFunction)
         return false;
 
     auto yValueIsOutOfRange = [](double y) -> bool {
         return y < 0 || y > 1;
     };
 
-    auto& cubicBezierTimingFunction = downcast<CubicBezierTimingFunction>(*timingFunction);
-    return yValueIsOutOfRange(cubicBezierTimingFunction.y1()) || yValueIsOutOfRange(cubicBezierTimingFunction.y2());
+    return yValueIsOutOfRange(cubicBezierTimingFunction->y1()) || yValueIsOutOfRange(cubicBezierTimingFunction->y2());
 }
 
 static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(const KeyframeValueList& valueList)
@@ -1056,12 +1062,13 @@ static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFuncti
     if (!timingFunction)
         return true;
 
-    if (is<LinearTimingFunction>(timingFunction)) {
+    if (is<LinearTimingFunction>(*timingFunction)) {
         ASSERT(LinearTimingFunction::identity() == *timingFunction);
         return true;
     }
 
-    return is<CubicBezierTimingFunction>(timingFunction) && downcast<CubicBezierTimingFunction>(*timingFunction).isLinear();
+    auto* cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(*timingFunction);
+    return cubicBezierTimingFunction && cubicBezierTimingFunction->isLinear();
 }
 
 static bool animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim)
@@ -1214,7 +1221,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
-        auto newImage = image->nativeImageForCurrentFrame();
+        auto newImage = image->currentNativeImage();
         if (!newImage)
             return;
 
@@ -1312,8 +1319,23 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
 
 void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifier identifier)
 {
+    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == identifier)
+        return;
+
     m_contentsLayer = createPlatformCALayerHost(identifier, this);
     m_contentsLayerPurpose = GraphicsLayer::ContentsLayerPurpose::Host;
+    m_contentsDisplayDelegate = nullptr;
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
+}
+
+void GraphicsLayerCA::setContentsToRemotePlatformContext(LayerHostingContextIdentifier identifier, ContentsLayerPurpose purpose)
+{
+    if (m_contentsLayer && m_contentsLayer->hostingContextIdentifier() == identifier)
+        return;
+
+    m_contentsLayer = createPlatformCALayer(identifier, this);
+    m_contentsLayerPurpose = purpose;
     m_contentsDisplayDelegate = nullptr;
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
@@ -1433,7 +1455,7 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
 
 void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 {
-    TransformState state(client().useCSS3DTransformInteroperability(), TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
     state.setSecondaryQuad(FloatQuad { visibleRect });
 
     CommitState commitState;
@@ -1517,7 +1539,7 @@ bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const CommitState&
 
 bool GraphicsLayerCA::visibleRectChangeRequiresFlush(const FloatRect& clipRect) const
 {
-    TransformState state(client().useCSS3DTransformInteroperability(), TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
     CommitState commitState;
     return recursiveVisibleRectChangeRequiresFlush(commitState, state);
 }
@@ -1952,9 +1974,9 @@ bool GraphicsLayerCA::platformCALayerUseGiantTiles() const
     return client().useGiantTiles();
 }
 
-bool GraphicsLayerCA::platformCALayerUseCSS3DTransformInteroperability() const
+bool GraphicsLayerCA::platformCALayerCSSUnprefixedBackdropFilterEnabled() const
 {
-    return client().useCSS3DTransformInteroperability();
+    return client().cssUnprefixedBackdropFilterEnabled();
 }
 
 void GraphicsLayerCA::platformCALayerLogFilledVisibleFreshTile(unsigned blankPixelCount)
@@ -1972,6 +1994,11 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
     ASSERT(m_contentsDisplayDelegate);
     ASSERT(layer == m_contentsLayer);
     m_contentsDisplayDelegate->display(*layer);
+}
+
+bool GraphicsLayerCA::platformCALayerNeedsPlatformContext(const PlatformCALayer*) const
+{
+    return client().layerNeedsPlatformContext(this);
 }
 
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
@@ -4090,6 +4117,9 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         tiledBacking()->setZoomedOutContentsScale(zoomedOutScale);
     }
 
+    if (auto customScale = client().customContentsScale(this))
+        contentsScale = *customScale;
+
     if (contentsScale == m_layer->contentsScale())
         return;
 
@@ -4223,6 +4253,8 @@ const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) co
             return "contents layer (plugin)";
         case ContentsLayerPurpose::Model:
             return "contents layer (model)";
+        case ContentsLayerPurpose::HostedModel:
+            return "contents layer (hosted model)";
         case ContentsLayerPurpose::Host:
             return "contents layer (host)";
         }
@@ -5033,7 +5065,13 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncCo
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& effects, AcceleratedEffectValues&& baseValues)
 {
+    auto hadEffectStack = !!acceleratedEffectStack();
+
     GraphicsLayer::setAcceleratedEffectsAndBaseValues(WTFMove(effects), WTFMove(baseValues));
+
+    // Nothing to do if we didn't have an accelerated stack and we still don't.
+    if (!hadEffectStack && !acceleratedEffectStack())
+        return;
 
     auto* layer = primaryLayer();
     ASSERT(layer);
@@ -5065,6 +5103,24 @@ void GraphicsLayerCA::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& ef
     noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 }
 #endif
+
+void GraphicsLayerCA::purgeFrontBufferForTesting()
+{
+    if (RefPtr layer = primaryLayer())
+        layer->purgeFrontBufferForTesting();
+}
+
+void GraphicsLayerCA::purgeBackBufferForTesting()
+{
+    if (RefPtr layer = primaryLayer())
+        layer->purgeBackBufferForTesting();
+}
+
+void GraphicsLayerCA::markFrontBufferVolatileForTesting()
+{
+    if (RefPtr layer = primaryLayer())
+        layer->markFrontBufferVolatileForTesting();
+}
 
 } // namespace WebCore
 

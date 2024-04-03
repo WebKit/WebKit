@@ -121,10 +121,16 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     JSString* elementString = nullptr;
     switch (element) {
     case Wasm::TableElementType::Funcref:
-        elementString = jsNontrivialString(vm, "funcref"_s);
+        if (m_table->wasmType().isNullable())
+            elementString = jsNontrivialString(vm, "funcref"_s);
+        else
+            return nullptr;
         break;
     case Wasm::TableElementType::Externref:
-        elementString = jsNontrivialString(vm, "externref"_s);
+        if (isExternref(m_table->wasmType()) && m_table->wasmType().isNullable())
+            elementString = jsNontrivialString(vm, "externref"_s);
+        else
+            return nullptr;
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

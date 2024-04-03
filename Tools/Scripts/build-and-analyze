@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+# Copyright (C) 2023-2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import os
+import subprocess
+import sys
+
+
+def args_for_additional_checkers(checker_names):
+    if not len(checker_names):
+        return []
+
+    return ['-analyzer-checker', ','.join(checker_names)]
+
+
+def make_analyzer_flags(output_dir, args):
+    additional_checkers = []
+    analyzer_flags = []
+
+    if args.disable_default_checkers:
+        # FIXME: Disable clang-tidy bugprone-* checkers with -analyzer-tidy-checker=-*
+        #   when that works.
+        # See: <https://clang.llvm.org/docs/analyzer/checkers.html>
+        all_checker_categories = [
+            'alpha',
+            'apiModeling',
+            # 'bugprone-infinite-loop',
+            # 'bugprone-move-forwarding-reference',
+            'core',
+            'cplusplus',
+            'deadcode',
+            'debug',
+            'fuchsia',
+            'nullability',
+            'optin',
+            'osx',
+            'security',
+            'unix',
+            'webkit',
+        ]
+        analyzer_flags.extend([
+            '-analyzer-disable-checker',
+            ','.join(all_checker_categories),
+        ])
+    else:
+        additional_checkers.extend([
+            'optin.cplusplus.UninitializedObject',
+            'optin.cplusplus.VirtualCall',
+        ])
+
+    if args.enable_webkit_checkers:
+        additional_checkers.extend([
+            'webkit.NoUncountedMemberChecker',
+            'webkit.RefCntblBaseVirtualDtor',
+            'webkit.UncountedLambdaCapturesChecker',
+            'alpha.webkit.UncountedCallArgsChecker',
+            'alpha.webkit.UncountedLocalVarsChecker',
+        ])
+
+    if args.only_smart_pointers:
+        additional_checkers.extend([
+            'alpha.webkit.UncountedCallArgsChecker',
+            'alpha.webkit.UncountedLocalVarsChecker',
+        ])
+
+    if additional_checkers:
+        analyzer_flags.extend(args_for_additional_checkers(additional_checkers))
+
+    if args.analyzer_budget_max_nodes is not None:
+        analyzer_flags.extend([
+            '-analyzer-config',
+            'max-nodes={}'.format(args.analyzer_budget_max_nodes),
+        ])
+
+    return ' '.join(analyzer_flags)
+
+
+def scan_build_path(sdkroot):
+    """
+    Try to find scan-build in the SDK, else assume scan-build is in the
+    user's PATH.  It may be downloaded from the clang/llvm repository.
+    """
+    try:
+        with open(os.devnull, 'w') as dev_null:
+            return str(subprocess.check_output(
+                ['xcrun', '-find', '-sdk', sdkroot, 'scan-build'],
+                stderr=dev_null).rstrip().decode('utf-8'))
+    except subprocess.CalledProcessError:
+        # FIXME: Replace scan-build with our own script, or add a copy to WebKit.
+        return 'scan-build'
+
+
+def main(args):
+    path_to_scan_build = scan_build_path(args.sdkroot)
+    if args.scan_build_path_arg:
+        path_to_scan_build = args.scan_build_path_arg
+    if not path_to_scan_build:
+        print('ERROR: Could not find path to scan-build.')
+        return 1
+
+    output_dir = os.path.realpath(args.output_dir)
+    analyzer_flags = make_analyzer_flags(output_dir, args)
+    analyzer_path = os.path.realpath(args.analyzer_path) if args.analyzer_path else None
+
+    os.environ['ANALYZER_FLAGS'] = analyzer_flags
+    os.environ['ANALYZER_OUTPUT'] = output_dir
+    if args.analyzer_path:
+        os.environ['ANALYZER_EXEC'] = analyzer_path
+
+    os.environ['PATH_TO_SCAN_BUILD'] = path_to_scan_build
+    print('PATH_TO_SCAN_BUILD="{}"'.format(os.environ['PATH_TO_SCAN_BUILD']))
+
+    generate_static_analysis_archive_path = os.path.realpath(
+        os.path.join(os.path.dirname(__file__), 'generate-static-analysis-archive'))
+
+    make_command = ['make', 'analyze', 'SDKROOT={}'.format(args.sdkroot)]
+    if args.analyzer_path:
+        make_command.extend(['CC={}'.format(analyzer_path), 'CPLUSPLUS={}'.format(analyzer_path)])
+
+    commands = [
+        make_command,
+        [generate_static_analysis_archive_path, '--count', '--output-root', output_dir, '--id-string', 'WebKit Build'],
+    ]
+
+    # FIXME: Handle Ctrl-C interrupts gracefully so subprocess jobs actually stop.
+    for command in commands:
+        print('\n+ ' + ' '.join(command))
+        subprocess.run(command)
+
+    return 0
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Run clang static analyzer via `make analyze` and generate an HTML report.')
+    parser.add_argument('--analyzer-budget-max-nodes', dest='analyzer_budget_max_nodes',
+                        type=str, default=None,
+                        help='Increase max-nodes budget for clang static analyzer.')
+    parser.add_argument('--analyzer-path', dest='analyzer_path',
+                        type=str, default=None,
+                        help='Override path to clang static analyzer in scan-build and set CC/CPLUSPLUS for Xcode.')
+    parser.add_argument('--disable-default-checkers', dest='disable_default_checkers',
+                        action='store_true', default=False,
+                        help='Disable all checkers by default to run only specific checkers.')
+    parser.add_argument('--enable-webkit-checkers', dest='enable_webkit_checkers',
+                        action='store_true', default=False,
+                        help='Enable all WebKit-specific checkers.')
+    parser.add_argument('--only-smart-pointers', dest='only_smart_pointers',
+                        action='store_true', default=False,
+                        help='Enable only WebKit-specific checkers for Smart Pointers. '
+                             'Implies --analyzer-budget-max-nodes=10000000 and --disable-default-checkers.')
+    parser.add_argument('--output-dir', dest='output_dir', required=True,
+                        help='Output directory for HTML results.')
+    parser.add_argument('--sdkroot', dest='sdkroot', default='macosx',
+                        help='SDKROOT to use (default: macosx).')
+    parser.add_argument('--scan-build-path', dest='scan_build_path_arg', default=None,
+                        help='Path to scan-build for OpenSource.')
+
+    args = parser.parse_args()
+
+    if args.analyzer_path and not os.path.isfile(os.path.realpath(args.analyzer_path)):
+        parser.error('Analyzer path does not exist: \'{}\''.format(args.analyzer_path))
+
+    if args.enable_webkit_checkers and args.only_smart_pointers:
+        parser.error('Can\'t use --enable-webkit-checkers and --only-smart-pointers together.')
+
+    if args.only_smart_pointers:
+        args.analyzer_budget_max_nodes = '10000000'
+        args.disable_default_checkers = True
+
+    return args
+
+
+if __name__ == '__main__':
+    sys.exit(main(parse_args()))

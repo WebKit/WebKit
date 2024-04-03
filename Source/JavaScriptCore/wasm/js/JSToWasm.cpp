@@ -214,14 +214,14 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
     }
 }
 
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Callee& callee, const TypeDefinition& typeDefinition, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Callee& entryCallee, Callee* wasmCallee, const TypeDefinition& typeDefinition, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
 {
     JIT_COMMENT(jit, "jsToWasm wrapper for wasm-function[", functionIndex, "] : ", typeDefinition);
     auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
 
     // |codeBlock| and |this| slots are already initialized by the caller of this function because it is JS->Wasm transition.
-    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&callee)), GPRInfo::nonPreservedNonReturnGPR);
+    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(&entryCallee)), GPRInfo::nonPreservedNonReturnGPR);
     CCallHelpers::Address calleeSlot { GPRInfo::callFrameRegister, CallFrameSlot::callee * sizeof(Register) };
     jit.storePtr(GPRInfo::nonPreservedNonReturnGPR, calleeSlot.withOffset(PayloadOffset));
 #if USE(JSVALUE32_64)
@@ -251,7 +251,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
     totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
 
     totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
-    JIT_COMMENT(jit, "Saved result registers: ", savedResultRegisters);
+    JIT_COMMENT(jit, "Saved result registers: ", savedResultRegisters, "; Total frame size: ", totalFrameSize);
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
 
     // We save all these registers regardless of having a memory or not.
@@ -283,6 +283,8 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
         };
 
         jit.loadPtr(CCallHelpers::addressFor(CallFrameSlot::codeBlock), GPRInfo::wasmContextInstancePointer);
+        uintptr_t boxed = reinterpret_cast<uintptr_t>(CalleeBits::boxNativeCalleeIfExists(wasmCallee));
+        jit.storeWasmCalleeCallee(&boxed);
 
         const auto& signature = *typeDefinition.as<FunctionSignature>();
         for (unsigned i = 0; i < signature.argumentCount(); i++) {
@@ -335,7 +337,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
             else
                 jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
         }
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, size, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, size, scratch);
     }
 #endif
 
@@ -343,7 +345,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
     unsigned functionIndexSpace = functionIndex + info.importFunctionCount();
     ASSERT(functionIndexSpace < info.functionIndexSpaceSize());
     jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace] (LinkBuffer& linkBuffer) {
-        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
+        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace, { } });
     });
 
     // Restore stack pointer after call

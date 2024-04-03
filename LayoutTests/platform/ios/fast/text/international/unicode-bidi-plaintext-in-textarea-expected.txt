@@ -16,7 +16,7 @@ layer at (0,0) size 800x324
 layer at (8,48) size 378x62 clip at (9,49) size 376x60
   RenderTextControl {TEXTAREA} at (0,0) size 378x62 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
     RenderBlock {DIV} at (6,3) size 366x42
-      RenderText {#text} at (336,0) size 365x28
+      RenderText {#text} at (0,0) size 365x28
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
         text run at (0,14) width 29: "hello!"
@@ -25,7 +25,7 @@ layer at (8,48) size 378x62 clip at (9,49) size 376x60
 layer at (8,115) size 378x62 clip at (9,116) size 376x60
   RenderTextControl {TEXTAREA} at (0,67) size 378x62 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
     RenderBlock {DIV} at (6,3) size 366x42
-      RenderText {#text} at (336,0) size 365x28
+      RenderText {#text} at (0,0) size 365x28
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
         text run at (0,14) width 29: "hello!"
@@ -34,7 +34,7 @@ layer at (8,115) size 378x62 clip at (9,116) size 376x60
 layer at (8,182) size 378x62 clip at (9,183) size 376x60
   RenderTextControl {TEXTAREA} at (0,134) size 378x62 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
     RenderBlock {DIV} at (6,3) size 366x42
-      RenderText {#text} at (336,0) size 365x28
+      RenderText {#text} at (0,0) size 365x28
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
         text run at (0,14) width 29: "hello!"
@@ -43,7 +43,7 @@ layer at (8,182) size 378x62 clip at (9,183) size 376x60
 layer at (8,249) size 378x62 clip at (9,250) size 376x60
   RenderTextControl {TEXTAREA} at (0,201) size 378x62 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
     RenderBlock {DIV} at (6,3) size 366x42
-      RenderText {#text} at (336,0) size 365x28
+      RenderText {#text} at (0,0) size 365x28
         text run at (336,0) width 29 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (365,0) width 0: " "
         text run at (0,14) width 29: "hello!"

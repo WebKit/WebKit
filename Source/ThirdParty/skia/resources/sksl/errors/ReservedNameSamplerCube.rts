@@ -1,0 +1,5 @@
+int samplerCube;
+
+/*%%*
+name 'samplerCube' is reserved
+*%%*/

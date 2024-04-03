@@ -2,5 +2,5 @@
 
 FAIL updateCurrentEntry() with unserializable state on the initial about:blank must throw an "InvalidStateError", not a "DataCloneError" assert_throws_dom: function "() => {
     iframe.contentWindow.navigation.updateCurrentEntry({ state: document.body });
-  }" did not throw
+  }" threw object "DataCloneError: The object can not be cloned." that is not a DOMException InvalidStateError: property "code" is equal to 25, expected 11
 

@@ -43,6 +43,8 @@ static auto *commandsManifest = @{
     @"description": @"Test Commands",
     @"version": @"1.0",
 
+    @"permissions": @[ @"webNavigation" ],
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
@@ -315,6 +317,46 @@ TEST(WKWebExtensionAPICommands, ChangedEvent)
 #else
     command.modifierFlags = UIKeyModifierCommand;
 #endif
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPICommands, PerformCommandAndPermissionsRequest)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.commands.onCommand.addListener(async (tab) => {",
+        @"  try {",
+        @"    const result = await browser.permissions.request({ 'permissions': [ 'webNavigation' ] })",
+        @"    if (result)",
+        @"      browser.test.notifyPass()",
+        @"    else",
+        @"      browser.test.notifyFail('Permissions request was rejected')",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('Permissions request failed')",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Perform Command')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.promptForPermissions = ^(id<_WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
+        EXPECT_EQ(requestedPermissions.count, 1lu);
+        EXPECT_TRUE([requestedPermissions isEqualToSet:[NSSet setWithObject:@"webNavigation"]]);
+        callback(requestedPermissions, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform Command");
+
+    auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
+    auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
+    EXPECT_EQ(filteredCommands.count, 1lu);
+
+    [manager.get().context performCommand:filteredCommands.firstObject];
 
     [manager run];
 }

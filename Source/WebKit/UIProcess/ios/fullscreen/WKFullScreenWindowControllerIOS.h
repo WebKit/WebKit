@@ -27,10 +27,12 @@
 
 #import <UIKit/UIViewControllerTransitioning.h>
 
+@class WKFullScreenViewController;
 @class WKWebView;
 
 @interface WKFullScreenWindowController : NSObject <UIViewControllerTransitioningDelegate>
 @property (readonly, retain, nonatomic) UIView *webViewPlaceholder;
+@property (readonly, retain, nonatomic) WKFullScreenViewController *fullScreenViewController;
 @property (readonly, assign, nonatomic) BOOL isFullScreen;
 #if PLATFORM(VISION)
 @property (readonly, assign, nonatomic) BOOL prefersSceneDimming;

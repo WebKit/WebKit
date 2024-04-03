@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS range.createContextualFragment assigned via policy (successful HTML transformation).
+PASS `range.createContextualFragment(string)` throws.
+PASS `range.createContextualFragment(null)` throws.
+PASS `range.createContextualFragment(string)` assigned via default policy (successful HTML transformation).
+PASS `range.createContextualFragment(null)` assigned via default policy does not throw.
+

@@ -188,12 +188,17 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
             return exception(createTypeError(globalObject, "can't make WebAssembly.Instance because there is no imports Object and the WebAssembly.Module requires imports"_s));
     }
 
+    auto stringFromUTF8 = [](auto& span) {
+        auto string = String::fromUTF8(span);
+        return string.isNull() ? emptyString() : string;
+    };
+
     // For each import i in module.imports:
     {
         IdentifierSet specifiers;
         for (auto& import : moduleInformation.imports) {
-            Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
-            Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
+            Identifier moduleName = Identifier::fromString(vm, stringFromUTF8(import.module));
+            Identifier fieldName = Identifier::fromString(vm, stringFromUTF8(import.field));
             auto result = specifiers.add(moduleName.impl());
             if (result.isNewEntry)
                 moduleRecord->appendRequestedModule(moduleName, nullptr);

@@ -50,15 +50,7 @@ JITFinalizer::~JITFinalizer()
 
 size_t JITFinalizer::codeSize()
 {
-    size_t result = 0;
-
-    if (b3CodeLinkBuffer)
-        result += b3CodeLinkBuffer->size();
-    
-    if (entrypointLinkBuffer)
-        result += entrypointLinkBuffer->size();
-    
-    return result;
+    return m_codeSize;
 }
 
 bool JITFinalizer::finalize()
@@ -66,7 +58,7 @@ bool JITFinalizer::finalize()
     VM& vm = *m_plan.vm();
     WTF::crossModifyingCodeFence();
 
-    b3CodeLinkBuffer->runMainThreadFinalizationTasks();
+    m_plan.runMainThreadFinalizationTasks();
 
     CodeBlock* codeBlock = m_plan.codeBlock();
 

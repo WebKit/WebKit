@@ -86,7 +86,7 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     if (!m_playerId || !m_factory)
         return nullptr;
 
-    auto* gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return nullptr;
 

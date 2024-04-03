@@ -91,7 +91,7 @@ class DXTSRGBCompressedTextureTest : public ANGLETest<>
         const TestCase &test = kTests.at(format);
 
         GLTexture texture;
-        glBindTexture(GL_TEXTURE_2D, texture.get());
+        glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

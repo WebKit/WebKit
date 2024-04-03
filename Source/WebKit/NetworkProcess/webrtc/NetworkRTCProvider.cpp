@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "LibWebRTCSocketClient.h"
 #include "Logging.h"
@@ -227,13 +226,13 @@ void NetworkRTCProvider::wrapNewTCPConnection(LibWebRTCSocketIdentifier identifi
         addSocket(identifier, makeUnique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), Socket::Type::ServerConnectionTCP, m_ipcConnection.copyRef()));
 }
 
-void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, const IPC::DataReference& data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
+void NetworkRTCProvider::sendToSocket(LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, RTCNetwork::SocketAddress&& address, RTCPacketOptions&& options)
 {
     ASSERT(m_rtcNetworkThread.IsCurrent());
     auto iterator = m_sockets.find(identifier);
     if (iterator == m_sockets.end())
         return;
-    iterator->second->sendTo(data.data(), data.size(), address.rtcAddress(), options.options);
+    iterator->second->sendTo(data, address.rtcAddress(), options.options);
 }
 
 void NetworkRTCProvider::closeSocket(LibWebRTCSocketIdentifier identifier)
@@ -306,6 +305,18 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
         });
         return;
     }
+
+    RefPtr connection = m_connection.get();
+    if (connection && connection->mdnsRegister().hasRegisteredName(address)) {
+        Vector<WebKit::RTC::Network::IPAddress> ipAddresses;
+        if (!m_rtcMonitor.ipv4().isUnspecified())
+            ipAddresses.append(m_rtcMonitor.ipv4());
+        if (!m_rtcMonitor.ipv6().isUnspecified())
+            ipAddresses.append(m_rtcMonitor.ipv6());
+        connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        return;
+    }
+
     WebCore::DNSCompletionHandler completionHandler = [connection = m_connection, identifier](auto&& result) {
         ASSERT(isMainRunLoop());
         if (!connection)

@@ -28,7 +28,6 @@
 
 #include "BlobRegistryProxy.h"
 #include "BlockingResponseMap.h"
-#include "DataReference.h"
 #include "HangDetectionDisabler.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"

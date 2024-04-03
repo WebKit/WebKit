@@ -44,7 +44,7 @@ private:
     void addToWindow() override;
     void removeFromWindow() override;
 
-    cairo_surface_t* snapshot() override;
+    PlatformImage snapshot() override;
 
     std::unique_ptr<WPEToolingBackends::HeadlessViewBackend> m_backend;
 };

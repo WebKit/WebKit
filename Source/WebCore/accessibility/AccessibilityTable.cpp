@@ -186,7 +186,7 @@ bool AccessibilityTable::isDataTable() const
         didTopSectionCheck = true;
 
         // If the top section has any non-group role, then don't make this a data table. The author probably wants to use the role on the section.
-        if (auto* axTableSection = cache->getOrCreate(tableSectionElement)) {
+        if (auto* axTableSection = cache->getOrCreate(*tableSectionElement)) {
             auto role = axTableSection->roleValue();
             if (!axTableSection->isGroup() && role != AccessibilityRole::Unknown && role != AccessibilityRole::Ignored)
                 return true;
@@ -404,7 +404,7 @@ void AccessibilityTable::recomputeIsExposable()
     if (previouslyExposable != m_isExposable) {
         // A table's role value is dependent on whether it's exposed, so notify the cache this has changed.
         if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(this);
+            cache->handleRoleChanged(*this);
 
         // Before resetting our existing children, possibly losing references to them, ensure we update their role (since a table cell's role is dependent on whether its parent table is exposable).
         updateChildrenRoles();
@@ -644,10 +644,10 @@ void AccessibilityTable::addChildren()
         // in tree order, run the algorithm for processing rows.
         if (RefPtr tableSection = dynamicDowncast<HTMLTableSectionElement>(sectionElement)) {
             for (auto& row : childrenOfType<HTMLTableRowElement>(*tableSection)) {
-                RefPtr tableRow = dynamicDowncast<AccessibilityTableRow>(cache->getOrCreate(&row));
+                RefPtr tableRow = dynamicDowncast<AccessibilityTableRow>(cache->getOrCreate(row));
                 processRow(tableRow.get());
             }
-        } else if (RefPtr sectionAxObject = cache->getOrCreate(&sectionElement)) {
+        } else if (RefPtr sectionAxObject = cache->getOrCreate(sectionElement)) {
             ASSERT_WITH_MESSAGE(nodeHasRole(&sectionElement, "rowgroup"_s), "processRowGroup should only be called with native table section elements, or role=rowgroup elements");
             for (const auto& child : sectionAxObject->children())
                 processRowDescendingIfNeeded(child.get());
@@ -845,7 +845,7 @@ unsigned AccessibilityTable::columnCount()
 {
     updateChildrenIfNecessary();
     
-    return m_columns.size();    
+    return m_columns.size();
 }
     
 unsigned AccessibilityTable::rowCount()
@@ -864,6 +864,13 @@ AccessibilityObject* AccessibilityTable::cellForColumnAndRow(unsigned column, un
     if (AXID cellID = m_cellSlots[row][column])
         return axObjectCache()->objectForID(cellID);
     return nullptr;
+}
+
+bool AccessibilityTable::hasGridAriaRole() const
+{
+    auto ariaRole = ariaRoleAttribute();
+    // Notably, this excludes role="table".
+    return ariaRole == AccessibilityRole::Grid || ariaRole == AccessibilityRole::TreeGrid;
 }
 
 AccessibilityRole AccessibilityTable::roleValue() const
@@ -892,7 +899,7 @@ bool AccessibilityTable::computeAccessibilityIsIgnored() const
     return false;
 }
 
-void AccessibilityTable::titleElementText(Vector<AccessibilityText>& textOrder) const
+void AccessibilityTable::labelText(Vector<AccessibilityText>& textOrder) const
 {
     String title = this->title();
     if (!title.isEmpty())

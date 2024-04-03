@@ -27,7 +27,7 @@ struct WebKit::WebAutocorrectionContext {
     String markedText;
     String selectedText;
     String contextAfter;
-    WebKit::EditingRange markedTextRange;
+    WebKit::EditingRange selectedRangeInMarkedText;
 };
 
 #endif

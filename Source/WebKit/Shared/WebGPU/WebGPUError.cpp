@@ -46,6 +46,11 @@ std::optional<Error> ConvertToBackingContext::convertToBacking(const WebCore::We
         if (!result)
             return std::nullopt;
         return { { *result } };
+    }, [this] (const Ref<WebCore::WebGPU::InternalError>& internalError) -> std::optional<Error> {
+        auto result = convertToBacking(internalError.get());
+        if (!result)
+            return std::nullopt;
+        return { { *result } };
     });
 }
 
@@ -58,6 +63,11 @@ std::optional<WebCore::WebGPU::Error> ConvertFromBackingContext::convertFromBack
         return { result.releaseNonNull() };
     }, [this] (const ValidationError& validationError) -> std::optional<WebCore::WebGPU::Error> {
         auto result = convertFromBacking(validationError);
+        if (!result)
+            return std::nullopt;
+        return { result.releaseNonNull() };
+    }, [this] (const InternalError& internalError) -> std::optional<WebCore::WebGPU::Error> {
+        auto result = convertFromBacking(internalError);
         if (!result)
             return std::nullopt;
         return { result.releaseNonNull() };

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !USE(GTK4)
+#if !USE(GTK4) && USE(CAIRO)
 
 #include "RenderThemeGadget.h"
 #include <gtk/gtk.h>
@@ -68,4 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // !USE(GTK4)
+#endif // !USE(GTK4) && USE(CAIRO)

@@ -14,6 +14,7 @@
 #import <mach/mach_types.h>
 
 #include "common/Optional.h"
+#include "image_util/loadimage.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
@@ -46,7 +47,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                DisplayMtl *display);
     ~ContextMtl() override;
 
-    angle::Result initialize() override;
+    angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
 
     void onDestroy(const gl::Context *context) override;
 
@@ -271,6 +272,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
 
+    angle::Result bindMetalRasterizationRateMap(gl::Context *context,
+                                                RenderbufferImpl *renderbuffer,
+                                                GLMTLRasterizationRateMapANGLE map) override;
+
     // override mtl::ErrorHandler
     void handleError(GLenum error,
                      const char *message,
@@ -397,18 +402,11 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
 
-    angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
-    const mtl::TextureRef &getWorkTexture() const { return mWorkTexture; }
-    angle::Result copyTextureSliceLevelToWorkBuffer(const gl::Context *context,
-                                                    const mtl::TextureRef &srcTexture,
-                                                    const mtl::MipmapNativeLevel &mipNativeLevel,
-                                                    uint32_t layerIndex);
-    const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
     mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
     mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
 
-    angle::ImageLoadContext getImageLoadContext() const;
+    const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
   private:
     void ensureCommandBufferReady();
@@ -554,6 +552,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
         DIRTY_BIT_RENDER_PIPELINE,
         DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
         DIRTY_BIT_RASTERIZER_DISCARD,
+        DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,
 
         DIRTY_BIT_INVALID,
         DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
@@ -585,6 +584,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
         uint8_t values[sizeof(float) * 4];
     };
 
+    angle::ImageLoadContext mImageLoadContext;
+
     mtl::OcclusionQueryPool mOcclusionQueryPool;
 
     mtl::CommandBuffer mCmdBuffer;
@@ -600,8 +601,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     VertexArrayMtl *mVertexArray      = nullptr;
     ProgramExecutableMtl *mExecutable = nullptr;
     QueryMtl *mOcclusionQuery         = nullptr;
-    mtl::TextureRef mWorkTexture;
-    mtl::BufferRef mWorkBuffer;
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 
@@ -643,6 +642,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     IncompleteTextureSet mIncompleteTextures;
     ProvokingVertexHelper mProvokingVertexHelper;
+
+    mtl::RasterizationRateMapRef mRasterizationRateMap;
+    id<MTLTexture> mRasterizationRateMapTexture;
 
     mtl::ContextDevice mContextDevice;
 };

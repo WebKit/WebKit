@@ -45,6 +45,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
+#import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MonotonicTime.h>
@@ -56,9 +57,7 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
 @interface UIPhysicalKeyboardEvent (UIPhysicalKeyboardEventHack)
-@property (nonatomic, assign) NSInteger _modifierFlags;
-// FIXME: <rdar://107768498> Replace this declaration with a "setter=" above, once the setter is available everywhere we need.
-- (void)_setModifierFlags:(NSInteger)modifierFlags;
+@property (nonatomic, assign, setter=_setModifierFlags:) NSInteger _modifierFlags;
 @end
 
 namespace WTR {
@@ -214,6 +213,16 @@ void UIScriptControllerIOS::doAfterVisibleContentRectUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     [webView() _doAfterNextVisibleContentRectUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }).get()];
+}
+
+void UIScriptControllerIOS::doAfterNextVisibleContentRectAndStablePresentationUpdate(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView() _doAfterNextVisibleContentRectAndStablePresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -601,21 +610,12 @@ void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef chara
     }).get()];
 }
 
-static void setModifierFlagsForUIPhysicalKeyboardEvent(UIPhysicalKeyboardEvent *keyboardEvent, UIKeyModifierFlags modifierFlags)
-{
-    // FIXME: <rdar://107768498> Remove the respondsToSelector check once the method is available everywhere we need.
-    if ([keyboardEvent respondsToSelector:@selector(_setModifierFlags:)])
-        [keyboardEvent _setModifierFlags:modifierFlags];
-    else
-        keyboardEvent._modifierFlags = modifierFlags;
-}
-
 enum class IsKeyDown : bool { No, Yes };
 
 static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, IsKeyDown isKeyDown)
 {
     auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:inputFlags];
-    setModifierFlagsForUIPhysicalKeyboardEvent(keyboardEvent, modifierFlags);
+    [keyboardEvent _setModifierFlags:modifierFlags];
     auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown == IsKeyDown::Yes);
     [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
     return keyboardEvent;
@@ -835,17 +835,18 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     if (auto asyncInput = asyncTextInput()) {
-        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSArray<UITextSelectionRect *> *) {
+        auto completionWrapper = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSArray<UITextSelectionRect *> *) {
             dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
                 if (m_context)
                     m_context->asyncTaskComplete(callbackID);
             }).get());
-        }).get()];
+        });
+        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 completionHandler:completionWrapper.get()];
         return;
     }
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif // USE(BROWSERENGINEKIT)
 
     auto contentView = static_cast<id<UIWKInteractionViewProtocol>>(platformContentView());
     [contentView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) shouldUnderline:NO withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](UIWKAutocorrectionRects *) {
@@ -900,7 +901,7 @@ void UIScriptControllerIOS::clipSelectionViewRectToContentView(CGRect& rect) con
     auto contentView = platformContentView();
     rect = CGRectIntersection(contentView.bounds, rect);
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
     if (auto asyncInput = asyncTextInput()) {
         auto selectionClipRect = asyncInput.selectionClipRect;
         if (!CGRectIsNull(selectionClipRect))
@@ -1108,9 +1109,9 @@ void UIScriptControllerIOS::simulateRotation(DeviceOrientation orientation, JSVa
 {
     auto callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     webView().rotationDidEndCallback = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+        webView().rotationDidEndCallback = nil;
     }).get();
 
 #if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
@@ -1322,6 +1323,21 @@ void UIScriptControllerIOS::setSafeAreaInsets(double top, double right, double b
 {
     UIEdgeInsets insets = UIEdgeInsetsMake(top, left, bottom, right);
     webView().overrideSafeAreaInsets = insets;
+}
+
+void UIScriptControllerIOS::beginInteractiveObscuredInsetsChange()
+{
+    [webView() _beginInteractiveObscuredInsetsChange];
+}
+
+void UIScriptControllerIOS::setObscuredInsets(double top, double right, double bottom, double left)
+{
+    webView()._obscuredInsets = UIEdgeInsetsMake(top, left, bottom, right);
+}
+
+void UIScriptControllerIOS::endInteractiveObscuredInsetsChange()
+{
+    [webView() _endInteractiveObscuredInsetsChange];
 }
 
 void UIScriptControllerIOS::beginBackSwipe(JSValueRef callback)
@@ -1568,18 +1584,18 @@ void UIScriptControllerIOS::resignFirstResponder()
     [webView() resignFirstResponder];
 }
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
 
-id<WKSETextInput> UIScriptControllerIOS::asyncTextInput() const
+id<BETextInput> UIScriptControllerIOS::asyncTextInput() const
 {
-    static BOOL conformsToAsyncTextInput = class_conformsToProtocol(NSClassFromString(@"WKContentView"), @protocol(WKSETextInput));
+    static BOOL conformsToAsyncTextInput = class_conformsToProtocol(NSClassFromString(@"WKContentView"), @protocol(BETextInput));
     if (!conformsToAsyncTextInput)
         return nil;
 
-    return (id<WKSETextInput>)platformContentView();
+    return (id<BETextInput>)platformContentView();
 }
 
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif // USE(BROWSERENGINEKIT)
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 

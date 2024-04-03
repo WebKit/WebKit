@@ -804,9 +804,18 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
 
 #if HAVE_VTB_REQUIREDLOWLATENCY
-  if (_isH264LowLatencyEncoderEnabled && _useVCP)
-    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+  if (_isH264LowLatencyEncoderEnabled && _useVCP) {
+#if defined(WEBRTC_ARCH_X86_FAMILY) && !ENABLE_LOW_LATENCY_INTEL_ENCODER_FOR_LOW_RESOLUTION
+    if (_width < 192 || _height < 108) {
+      int usageValue = 1;
+      auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
+      CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
+      CFRelease(usage);
+    } else
 #endif
+      CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+  }
+#endif // HAVE_VTB_REQUIREDLOWLATENCY
 
   OSStatus status =
       VTCompressionSessionCreate(nullptr,  // use default allocator

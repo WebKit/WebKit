@@ -60,9 +60,8 @@ protected:
     template<typename FilterEffectType>
     static bool areEqual(const FilterEffectType& a, const FilterEffect& b)
     {
-        if (!is<FilterEffectType>(b))
-            return false;
-        return a.operator==(downcast<FilterEffectType>(b));
+        auto* bType = dynamicDowncast<FilterEffectType>(b);
+        return bType && a.operator==(*bType);
     }
 
     virtual unsigned numberOfEffectInputs() const { return 1; }

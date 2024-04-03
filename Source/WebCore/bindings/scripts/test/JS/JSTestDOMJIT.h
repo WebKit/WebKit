@@ -33,8 +33,9 @@ public:
     using DOMWrapped = TestDOMJIT;
     static JSTestDOMJIT* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDOMJIT>&& impl)
     {
-        JSTestDOMJIT* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJIT>(globalObject->vm())) JSTestDOMJIT(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestDOMJIT* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJIT>(vm)) JSTestDOMJIT(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -61,6 +62,9 @@ public:
     {
         return static_cast<TestDOMJIT&>(Base::wrapped());
     }
+
+    Ref<TestDOMJIT> protectedWrapped() const;
+
 protected:
     JSTestDOMJIT(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDOMJIT>&&);
 

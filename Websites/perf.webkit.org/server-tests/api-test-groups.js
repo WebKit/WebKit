@@ -3,6 +3,7 @@
 const assert = require('assert');
 const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
+const assertThrows = require('./resources/common-operations.js').assertThrows;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe('/api/test-groups', function () {
@@ -243,6 +244,69 @@ describe('/api/test-groups', function () {
             assert.deepStrictEqual(anotherTestGroup.buildRequests, ['710','711', '712', '713']);
             assert.deepStrictEqual(anotherTestGroup.commitSets, ['401', '402', '401', '402']);
             assert.deepStrictEqual(anotherTestGroup.testParameterSets, [null, null, null, null]);
+        });
+    });
+
+    describe('/api/test-groups?(task=<task_id>|buildRequest=<id>)', () => {
+        it('should reject with "TaskOrBuildRequestIdNotSpecified" if no argument is specified', async () => {
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups');
+            assert.strictEqual(content['status'], 'TaskOrBuildRequestIdNotSpecified');
+        });
+
+        it('should reject with "CannotSpecifyBothTaskAndBuildRequestIds" if both build request and task id are specified', async () => {
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups?task=500&buildRequest=700');
+            assert.strictEqual(content['status'], 'CannotSpecifyBothTaskAndBuildRequestIds');
+        });
+
+        it('should return an empty list when task id is invalid', async () => {
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups?task=1000000');
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.testParameterSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
+        });
+
+        it('should return an empty list when build request id is invalid', async () => {
+            await MockData.addMockData(TestServer.database());
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups?buildRequest=1000000');
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups, []);
+            assert.deepStrictEqual(content.buildRequests, []);
+            assert.deepStrictEqual(content.commitSets, []);
+            assert.deepStrictEqual(content.testParameterSets, []);
+            assert.deepStrictEqual(content.commits, []);
+            assert.deepStrictEqual(content.uploadedFiles, []);
+        });
+
+        it('should return test group information for a task id', async () => {
+            await MockData.addMockData(TestServer.database());
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups?task=500');
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups.length, 1);
+            assert.deepStrictEqual(content.testGroups[0].id, '600');
+            assert.deepStrictEqual(content.buildRequests.length, 4);
+            assert.deepStrictEqual(content.buildRequests[0].id, '700');
+            assert.deepStrictEqual(content.commitSets.length, 2);
+            assert.deepStrictEqual(content.testParameterSets, []);
+            assert.deepStrictEqual(content.commits.length, 3);
+            assert.deepStrictEqual(content.uploadedFiles, []);
+        });
+
+        it('should return test group information for a given build request', async () => {
+            await MockData.addMockData(TestServer.database());
+            const content = await TestServer.remoteAPI().getJSON('/api/test-groups?buildRequest=700');
+            assert.strictEqual(content.status, 'OK');
+            assert.deepStrictEqual(content.testGroups.length, 1);
+            assert.deepStrictEqual(content.testGroups[0].id, '600');
+            assert.deepStrictEqual(content.buildRequests.length, 4);
+            assert.deepStrictEqual(content.buildRequests[0].id, '700');
+            assert.deepStrictEqual(content.commitSets.length, 2);
+            assert.deepStrictEqual(content.testParameterSets, []);
+            assert.deepStrictEqual(content.commits.length, 3);
+            assert.deepStrictEqual(content.uploadedFiles, []);
         });
     });
 });

@@ -12,8 +12,12 @@ function plistbuddy()
 function mac_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    plistbuddy Add :com.apple.security.fatal-exceptions array
+    plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
+        plistbuddy Add :com.apple.private.pac.exception bool YES
+
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
@@ -30,8 +34,11 @@ function mac_process_jsc_entitlements()
 
 function mac_process_testapi_entitlements()
 {
+    plistbuddy Add :com.apple.security.fatal-exceptions array
+    plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
+        plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.security.cs.allow-jit bool YES
         plistbuddy Add :com.apple.rootless.storage.JavaScriptCore bool YES
 
@@ -56,9 +63,12 @@ function mac_process_testapi_entitlements()
 function maccatalyst_process_jsc_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    plistbuddy Add :com.apple.security.fatal-exceptions array
+    plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
+        plistbuddy Add :com.apple.private.pac.exception bool YES
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
@@ -77,6 +87,13 @@ function maccatalyst_process_testapi_entitlements()
 {
     plistbuddy Add :com.apple.rootless.storage.JavaScriptCore bool YES
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
+    plistbuddy Add :com.apple.security.fatal-exceptions array
+    plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
+
+    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
+    then
+        plistbuddy Add :com.apple.private.pac.exception bool YES
+    fi
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
@@ -97,9 +114,12 @@ function maccatalyst_process_testapi_entitlements()
 
 function ios_family_process_jsc_entitlements()
 {
+    plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.verified-jit bool YES
     plistbuddy Add :dynamic-codesigning bool YES
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
+    plistbuddy Add :com.apple.security.fatal-exceptions array
+    plistbuddy Add :com.apple.security.fatal-exceptions:0 string jit
 }
 
 function ios_family_process_testapi_entitlements()

@@ -70,8 +70,8 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimateElementBase)
     static bool isType(const WebCore::SVGElement& element)
     {
-        return element.hasTagName(WebCore::SVGNames::animateTag) || element.hasTagName(WebCore::SVGNames::animateColorTag)
-            || element.hasTagName(WebCore::SVGNames::animateTransformTag) || element.hasTagName(WebCore::SVGNames::setTag);
+        return element.hasTagName(WebCore::SVGNames::animateTag) || element.hasTagName(WebCore::SVGNames::animateTransformTag)
+            || element.hasTagName(WebCore::SVGNames::setTag);
     }
     static bool isType(const WebCore::Node& node)
     {

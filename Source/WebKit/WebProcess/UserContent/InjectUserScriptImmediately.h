@@ -25,22 +25,8 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
     
 enum class InjectUserScriptImmediately : bool { No, Yes };
     
-}
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::InjectUserScriptImmediately> {
-    using values = EnumValues<
-    WebKit::InjectUserScriptImmediately,
-    WebKit::InjectUserScriptImmediately::No,
-    WebKit::InjectUserScriptImmediately::Yes
-    >;
-};
-
 }

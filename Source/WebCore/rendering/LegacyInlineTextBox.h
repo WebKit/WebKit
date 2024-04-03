@@ -22,14 +22,13 @@
 
 #pragma once
 
+#include "GlyphDisplayListCacheRemoval.h"
 #include "LegacyInlineBox.h"
 #include "RenderText.h"
 #include "TextBoxSelectableRange.h"
 #include "TextRun.h"
 
 namespace WebCore {
-
-class RenderCombineText;
 
 namespace InlineIterator {
 class BoxLegacyPath;
@@ -41,7 +40,6 @@ public:
     explicit LegacyInlineTextBox(RenderText& renderer)
         : LegacyInlineBox(renderer)
     {
-        setBehavesLikeText(true);
     }
 
     virtual ~LegacyInlineTextBox();
@@ -56,12 +54,6 @@ public:
 
     bool hasTextContent() const;
 
-    // These functions do not account for combined text. For combined text this box will always have len() == 1
-    // regardless of whether the resulting composition is the empty string. Use hasTextContent() if you want to
-    // know whether this box has text content.
-    //
-    // FIXME: These accessors should ASSERT(!isDirty()). See https://bugs.webkit.org/show_bug.cgi?id=97264
-    // Note len() == 1 for combined text regardless of whether the composition is empty. Use hasTextContent() to
     unsigned start() const { return m_start; }
     unsigned end() const { return m_start + m_len; }
     unsigned len() const { return m_len; }
@@ -71,22 +63,11 @@ public:
 
     void offsetRun(int d) { ASSERT(!isDirty()); ASSERT(d > 0 || m_start >= static_cast<unsigned>(-d)); m_start += d; }
 
-    auto truncation() const { return m_truncation; }
-
     TextBoxSelectableRange selectableRange() const;
 
     void markDirty(bool dirty = true) final;
 
-    using LegacyInlineBox::hasHyphen;
-    using LegacyInlineBox::setHasHyphen;
-    using LegacyInlineBox::canHaveLeftExpansion;
-    using LegacyInlineBox::setCanHaveLeftExpansion;
-    using LegacyInlineBox::canHaveRightExpansion;
-    using LegacyInlineBox::setCanHaveRightExpansion;
-    using LegacyInlineBox::forceRightExpansion;
-    using LegacyInlineBox::setForceRightExpansion;
-    using LegacyInlineBox::forceLeftExpansion;
-    using LegacyInlineBox::setForceLeftExpansion;
+    using LegacyInlineBox::setIsInGlyphDisplayListCache;
 
     LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
@@ -99,6 +80,8 @@ public:
     LayoutUnit logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
 
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
+
+    void removeFromGlyphDisplayListCache();
 
 #if ENABLE(TREE_DEBUGGING)
     void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
@@ -126,10 +109,6 @@ private:
 public:
     RenderObject::HighlightState selectionState() const final;
 
-private:
-    void clearTruncation() final { m_truncation = { }; }
-    float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
-
 public:
     bool isLineBreak() const final;
 
@@ -149,25 +128,25 @@ public:
 private:
     friend class InlineIterator::BoxLegacyPath;
 
-    const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
 
-    String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
-    TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;
-
-    ExpansionBehavior expansionBehavior() const;
-
-    void behavesLikeText() const = delete;
+    String text() const; // The effective text for the run.
+    TextRun createTextRun() const;
 
     LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
     LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
 
-    // Where to truncate when text overflow is applied.
-    std::optional<unsigned short> m_truncation;
-
     unsigned m_start { 0 };
     unsigned m_len { 0 };
 };
+
+inline void LegacyInlineTextBox::removeFromGlyphDisplayListCache()
+{
+    if (isInGlyphDisplayListCache()) {
+        removeBoxFromGlyphDisplayListCache(*this);
+        setIsInGlyphDisplayListCache(false);
+    }
+}
 
 LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal);
 

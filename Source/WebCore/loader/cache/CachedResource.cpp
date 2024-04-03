@@ -163,14 +163,14 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         failBeforeStarting();
         return;
     }
-    LocalFrame& frame = *cachedResourceLoader.frame();
+    Ref frame = *cachedResourceLoader.frame();
 
     // Prevent new loads if we are in the BackForwardCache or being added to the BackForwardCache.
     // We query the top document because new frames may be created in pagehide event handlers
     // and their backForwardCacheState will not reflect the fact that they are about to enter page
     // cache.
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame())) {
-        if (auto* topDocument = localFrame->document()) {
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
+        if (RefPtr topDocument = localFrame->document()) {
             switch (topDocument->backForwardCacheState()) {
             case Document::NotInBackForwardCache:
                 break;
@@ -178,26 +178,26 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
                 // Beacons are allowed to go through in 'pagehide' event handlers.
                 if (m_options.keepAlive || shouldUsePingLoad(type()))
                     break;
-                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame);
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame.get());
                 failBeforeStarting();
                 return;
             case Document::InBackForwardCache:
-                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Already in back/forward cache", frame);
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Already in back/forward cache", frame.get());
                 failBeforeStarting();
                 return;
             }
         }
     }
 
-    FrameLoader& frameLoader = frame.loader();
+    CheckedRef frameLoader = frame->loader();
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
-            if (frameLoader.state() == FrameState::Provisional)
-                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- state is provisional", frame);
-            else if (!frameLoader.activeDocumentLoader())
-                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- not active document", frame);
-            else if (frameLoader.activeDocumentLoader()->isStopping())
-                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- active loader is stopping", frame);
+            if (frameLoader->state() == FrameState::Provisional)
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- state is provisional", frame.get());
+            else if (!frameLoader->activeDocumentLoader())
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- not active document", frame.get());
+            else if (frameLoader->activeDocumentLoader()->isStopping())
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- active loader is stopping", frame.get());
             else
                 break;
             failBeforeStarting();
@@ -208,7 +208,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     m_loading = true;
 
     if (isCacheValidator()) {
-        CachedResource* resourceToRevalidate = m_resourceToRevalidate;
+        CachedResourceHandle resourceToRevalidate = m_resourceToRevalidate.get();
         ASSERT(resourceToRevalidate->canUseCacheValidator());
         ASSERT(resourceToRevalidate->isLoaded());
         const String& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
@@ -232,7 +232,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // So no need for extra fields for MainResource.
     if (type() != Type::MainResource) {
         bool isServiceWorkerNavigationLoad = type() != Type::SVGDocumentResource && m_options.serviceWorkersMode == ServiceWorkersMode::None && (m_options.destination == FetchOptions::Destination::Document || m_options.destination == FetchOptions::Destination::Iframe);
-        frameLoader.updateRequestAndAddExtraFields(m_resourceRequest, IsMainResource::No, FrameLoadType::Standard, ShouldUpdateAppInitiatedValue::Yes, isServiceWorkerNavigationLoad ? FrameLoader::IsServiceWorkerNavigationLoad::Yes : FrameLoader::IsServiceWorkerNavigationLoad::No);
+        frameLoader->updateRequestAndAddExtraFields(m_resourceRequest, IsMainResource::No, FrameLoadType::Standard, ShouldUpdateAppInitiatedValue::Yes, isServiceWorkerNavigationLoad ? FrameLoader::IsServiceWorkerNavigationLoad::Yes : FrameLoader::IsServiceWorkerNavigationLoad::No);
     }
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
@@ -254,28 +254,28 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // FIXME: Deprecate that code path.
     if (m_options.keepAlive && shouldUsePingLoad(type()) && platformStrategies()->loaderStrategy()->usePingLoad()) {
         ASSERT(m_originalRequest);
-        CachedResourceHandle<CachedResource> protectedThis(this);
+        CachedResourceHandle protectedThis { *this };
 
         auto identifier = ResourceLoaderIdentifier::generate();
-        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frameLoader.activeDocumentLoader(), request, InspectorInstrumentation::LoadType::Beacon);
+        InspectorInstrumentation::willSendRequestOfType(frame.ptr(), identifier, frameLoader->protectedActiveDocumentLoader().get(), request, InspectorInstrumentation::LoadType::Beacon);
 
-        platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), m_options, m_options.contentSecurityPolicyImposition, [this, protectedThis = WTFMove(protectedThis), protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
+        platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), m_options, m_options.contentSecurityPolicyImposition, [this, protectedThis = WTFMove(protectedThis), frame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
             if (!response.isNull())
-                InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protectedFrame->loader().activeDocumentLoader(), response, nullptr);
+                InspectorInstrumentation::didReceiveResourceResponse(frame, identifier, frame->loader().protectedActiveDocumentLoader().get(), response, nullptr);
             if (!error.isNull()) {
                 setResourceError(error);
                 this->error(LoadError);
-                InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, error);
+                InspectorInstrumentation::didFailLoading(frame.ptr(), frame->loader().protectedActiveDocumentLoader().get(), identifier, error);
                 return;
             }
             finishLoading(nullptr, { });
             NetworkLoadMetrics emptyMetrics;
-            InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protectedFrame->loader().activeDocumentLoader(), identifier, emptyMetrics, nullptr);
+            InspectorInstrumentation::didFinishLoading(frame.ptr(), frame->loader().protectedActiveDocumentLoader().get(), identifier, emptyMetrics, nullptr);
         });
         return;
     }
 
-    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) {
+    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle { *this }, frameRef = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) {
         m_loader = WTFMove(loader);
         if (!m_loader) {
             RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frameRef.get()), FRAME_ID(frameRef.get()));
@@ -304,6 +304,11 @@ void CachedResource::loadFrom(const CachedResource& resource)
     setBodyDataFrom(resource);
     setStatus(Status::Cached);
     setLoading(false);
+}
+
+RefPtr<SecurityOrigin> CachedResource::protectedOrigin() const
+{
+    return m_origin;
 }
 
 void CachedResource::setBodyDataFrom(const CachedResource& resource)
@@ -364,7 +369,7 @@ void CachedResource::cancelLoad()
     if (!isLoading() && !stillNeedsLoad())
         return;
 
-    auto* documentLoader = (m_loader && m_loader->frame()) ? m_loader->frame()->loader().activeDocumentLoader() : nullptr;
+    RefPtr documentLoader = (m_loader && m_loader->frame()) ? m_loader->frame()->loader().activeDocumentLoader() : nullptr;
     if (m_options.keepAlive && (!documentLoader || documentLoader->isStopping())) {
         if (m_response)
             m_response->m_error = { };
@@ -603,8 +608,10 @@ void CachedResource::removeClient(CachedResourceClient& client)
 
 void CachedResource::allClientsRemoved()
 {
-    if (isLinkPreload() && m_loader)
-        m_loader->cancelIfNotFinishing();
+    if (isLinkPreload()) {
+        if (RefPtr loader = m_loader)
+            loader->cancelIfNotFinishing();
+    }
 }
 
 void CachedResource::destroyDecodedDataIfNeeded()
@@ -624,7 +631,7 @@ void CachedResource::decodedDataDeletionTimerFired()
 bool CachedResource::deleteIfPossible()
 {
     if (!canDelete()) {
-        LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can't delete (hasClients %d loader %p preloadCount %u handleCount %u resourceToRevalidate %p proxyResource %p)", this, hasClients(), m_loader.get(), m_preloadCount, m_handleCount, m_resourceToRevalidate, m_proxyResource);
+        LOG(ResourceLoading, "CachedResource %p deleteIfPossible - can't delete (hasClients %d loader %p preloadCount %u handleCount %u resourceToRevalidate %p proxyResource %p)", this, hasClients(), m_loader.get(), m_preloadCount, m_handleCount, m_resourceToRevalidate.get(), m_proxyResource.get());
         return false;
     }
 
@@ -650,8 +657,8 @@ bool CachedResource::deleteIfPossible()
         return true;
     }
 
-    if (m_data)
-        m_data->hintMemoryNotNeededSoon();
+    if (RefPtr data = m_data)
+        data->hintMemoryNotNeededSoon();
 
     return false;
 }
@@ -749,7 +756,7 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
 
     LOG(ResourceLoading, "CachedResource %p setResourceToRevalidate %p", this, resource);
 
-    resource->m_proxyResource = this;
+    resource->m_proxyResource = *this;
     m_resourceToRevalidate = resource;
 }
 
@@ -775,12 +782,12 @@ void CachedResource::switchClientsToRevalidatedResource()
     ASSERT(m_resourceToRevalidate->inCache());
     ASSERT(!inCache());
 
-    LOG(ResourceLoading, "CachedResource %p switchClientsToRevalidatedResource %p", this, m_resourceToRevalidate);
+    LOG(ResourceLoading, "CachedResource %p switchClientsToRevalidatedResource %p", this, m_resourceToRevalidate.get());
 
     m_switchingClientsToRevalidatedResource = true;
     for (auto& handle : m_handlesToRevalidate) {
-        handle->m_resource = m_resourceToRevalidate;
-        m_resourceToRevalidate->registerHandle(handle);
+        handle->m_resource = m_resourceToRevalidate.get();
+        protectedResourceToRevalidate()->registerHandle(handle);
         --m_handleCount;
     }
     ASSERT(!m_handleCount);
@@ -804,7 +811,7 @@ void CachedResource::switchClientsToRevalidatedResource()
 
     for (auto& client : clientsToMove) {
         if (client)
-            m_resourceToRevalidate->addClientToSet(*client);
+            protectedResourceToRevalidate()->addClientToSet(*client);
     }
     for (auto& client : clientsToMove) {
         // Calling didAddClient may do anything, including trying to cancel revalidation.
@@ -812,7 +819,7 @@ void CachedResource::switchClientsToRevalidatedResource()
         ASSERT(m_resourceToRevalidate);
         // Calling didAddClient for a client may end up removing another client. In that case it won't be in the set anymore.
         if (client && m_resourceToRevalidate->m_clients.contains(*client))
-            m_resourceToRevalidate->didAddClient(*client);
+            protectedResourceToRevalidate()->didAddClient(*client);
     }
     m_switchingClientsToRevalidatedResource = false;
 }
@@ -899,7 +906,12 @@ bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request)
     if (m_varyingHeaderValues.isEmpty())
         return true;
 
-    return verifyVaryingRequestHeaders(cookieJar(), m_varyingHeaderValues, request);
+    return verifyVaryingRequestHeaders(protectedCookieJar().get(), m_varyingHeaderValues, request);
+}
+
+CachedResourceHandle<CachedResource> CachedResource::protectedResourceToRevalidate() const
+{
+    return m_resourceToRevalidate.get();
 }
 
 unsigned CachedResource::overheadSize() const
@@ -976,6 +988,11 @@ const ResourceError& CachedResource::resourceError() const
     return m_response->m_error;
 }
 
+RefPtr<const CookieJar> CachedResource::protectedCookieJar() const
+{
+    return m_cookieJar;
+}
+
 bool CachedResource::wasCanceled() const
 {
     return resourceError().isCancellation();
@@ -1018,7 +1035,7 @@ inline void CachedResource::Callback::cancel()
 
 void CachedResource::Callback::timerFired()
 {
-    m_resource.didAddClient(m_client);
+    CachedResourceHandle { m_resource.get() }->didAddClient(m_client);
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -1037,7 +1054,7 @@ void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
     if (*m_data != newBuffer)
         return;
 
-    m_data = Ref { newBuffer };
+    m_data = &newBuffer;
     didReplaceSharedBufferContents();
 }
 

@@ -1,0 +1,468 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-92.05,-11.05) size 371x215 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-92.05,-11.05) size 369.86x213.81
+layer at (202.19,6.59) size 76x23
+  RenderSVGText {text} at (294,17) size 76x24 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 76x23
+      chunk 1 (middle anchor) text run 1 at (202.20,25.00) startOffset 0 endOffset 8 width 75.60: "graphics"
+layer at (-92.05,-11.05) size 340x214 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 339.13x213.81
+layer at (-92.05,-11.05) size 93x214 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 92.05x213.81
+layer at (-32.69,28.95) size 33x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (59,40) size 34x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 33x14
+      chunk 1 (end anchor) text run 1 at (-32.68,40.00) startOffset 0 endOffset 6 width 32.68: "stroke"
+layer at (-64.69,48.95) size 65x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (27,60) size 66x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x14
+      chunk 1 (end anchor) text run 1 at (-64.69,60.00) startOffset 0 endOffset 12 width 64.69: "stroke-width"
+layer at (-74.70,68.95) size 75x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (17,80) size 76x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x14
+      chunk 1 (end anchor) text run 1 at (-74.70,80.00) startOffset 0 endOffset 14 width 74.70: "stroke-linecap"
+layer at (-84.67,108.95) size 85x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (7,120) size 86x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 85x14
+      chunk 1 (end anchor) text run 1 at (-84.67,120.00) startOffset 0 endOffset 17 width 84.67: "stroke-miterlimit"
+layer at (-4.91,-9.59) size 253x17 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (87.14,1.45) size 251.98x15.83
+layer at (-4.91,-9.59) size 50x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 50x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x16
+      chunk 1 (middle anchor) text run 1 at (-4.90,3.00) startOffset 0 endOffset 7 width 49.81: "element"
+layer at (117.92,-9.59) size 24x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (122,0) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (117.93,3.00) startOffset 0 endOffset 3 width 24.14: "<g>"
+layer at (222.92,-9.59) size 24x16 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (227,0) size 25x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x16
+      chunk 1 (middle anchor) text run 1 at (222.93,3.00) startOffset 0 endOffset 3 width 24.14: "<a>"
+layer at (0,-6) size 21x27 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (92.05,5.05) size 20x26
+layer at (10,-6) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (10,0) size 8x14
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,6) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,8) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGHiddenContainer {defs} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {use} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {use} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {use} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {g} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (0,2) size 20x18
+  RenderSVGTransformableContainer {a} at (0,0) size 20x18
+layer at (0,2) size 20x18
+  RenderSVGPath {polyline} at (0,0) size 20x18 [stroke={[type=SOLID] [color=#CC0066]}] [fill={[type=SOLID] [color=#CC0066]}] [points="20 10 0 10 15 20 10 2 5 20 20 10"]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (10,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGHiddenContainer {defs} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#E65233] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#FFA500] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#E65233] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#FFA500] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#E65233] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#FFA500] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#E65233] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#FFA500] [stroke width=4.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,6) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (10,3) size 10x0
+  RenderSVGPath {line} at (10,3) size 10x0 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=3.00] [x2=20.00] [y2=3.00]
+layer at (10,8) size 10x0
+  RenderSVGPath {line} at (10,8) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 10x0
+  RenderSVGPath {line} at (10,8) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {a} at (0,0) size 0x0
+layer at (10,8) size 10x0
+  RenderSVGPath {line} at (10,8) size 10x0 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=20.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,6) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=12.00] [line cap=ROUND]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {a} at (0,0) size 0x0
+layer at (10,8) size 2x0
+  RenderSVGPath {line} at (10,8) size 2x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=12.00]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=10.00] [y1=8.00] [x2=12.00] [y2=8.00]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (5,8) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGHiddenContainer {defs} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00] [line join=BEVEL]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {use} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00] [line join=BEVEL]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {use} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00] [line join=BEVEL]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {use} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00] [line join=BEVEL]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {g} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,2) size 15x6
+  RenderSVGTransformableContainer {a} at (0,0) size 15x6
+layer at (5,2) size 15x6
+  RenderSVGPath {polyline} at (0,0) size 15x6 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=10.00]}] [points="5 2 20 5 5 8"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (5,6) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGHiddenContainer {defs} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {use} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {use} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {use} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [miter limit=10.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {g} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (5,0) size 15x10
+  RenderSVGTransformableContainer {a} at (0,0) size 15x10
+layer at (5,0) size 15x10
+  RenderSVGPath {polyline} at (0,0) size 15x10 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [miter limit=1.00]}] [points="5 0 20 5 5 10"]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,6) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {use} at (0,0) size 0x0
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CCCCCC] [stroke width=3.00] [dash offset=5.50] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {g} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (0,0) size 0x0
+  RenderSVGTransformableContainer {a} at (0,0) size 0x0
+layer at (0,0) size 25x0
+  RenderSVGPath {line} at (0,0) size 25x0 [stroke={[type=SOLID] [color=#CC0066] [stroke width=3.00] [dash array={3.00, 4.00, 5.00}]}] [fill={[type=SOLID] [color=#CC0066]}] [x1=0.00] [y1=0.00] [x2=25.00] [y2=0.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (10,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGHiddenContainer {defs} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (10,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGHiddenContainer {defs} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {use} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,0) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,-6) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (10,0) size 8x14
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,6) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {g} at (0,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,0) size 8x8
+  RenderSVGTransformableContainer {a} at (0,6) size 8x8
+layer at (10,0) size 8x8
+  RenderSVGRect {rect} at (0,0) size 8x8 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

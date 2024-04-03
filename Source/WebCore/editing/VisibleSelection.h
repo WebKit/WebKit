@@ -35,6 +35,7 @@ enum class SelectionDirection : uint8_t { Forward, Backward, Right, Left };
 class VisibleSelection {
 public:
     WEBCORE_EXPORT VisibleSelection();
+    static const VisibleSelection& emptySelection();
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
 
@@ -117,6 +118,8 @@ public:
 
     WEBCORE_EXPORT bool isInPasswordField() const;
     WEBCORE_EXPORT bool isInAutoFilledAndViewableField() const;
+
+    WEBCORE_EXPORT bool canEnableWritingSuggestions() const;
 
     WEBCORE_EXPORT static Position adjustPositionForEnd(const Position& currentPosition, Node* startContainerNode);
     WEBCORE_EXPORT static Position adjustPositionForStart(const Position& currentPosition, Node* startContainerNode);

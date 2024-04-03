@@ -40,10 +40,13 @@ using namespace JSC;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MessageEvent);
 
-MessageEvent::MessageEvent() = default;
+MessageEvent::MessageEvent()
+    : Event(EventInterfaceType::MessageEvent)
+{
+}
 
 inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::MessageEvent, type, initializer, isTrusted)
     , m_data(JSValueTag { })
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
@@ -54,7 +57,7 @@ inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, Is
 }
 
 inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : Event(type, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::MessageEvent, type, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)
@@ -123,11 +126,6 @@ void MessageEvent::initMessageEvent(const AtomString& type, bool canBubble, bool
     m_source = WTFMove(source);
     m_ports = WTFMove(ports);
     m_cachedPorts.clear();
-}
-
-EventInterface MessageEvent::eventInterface() const
-{
-    return MessageEventInterfaceType;
 }
 
 size_t MessageEvent::memoryCost() const

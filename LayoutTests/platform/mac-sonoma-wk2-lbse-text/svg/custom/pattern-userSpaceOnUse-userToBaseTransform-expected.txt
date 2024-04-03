@@ -1,0 +1,68 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x358
+  RenderBlock {html} at (0,0) size 800x358
+    RenderBody {body} at (8,8) size 784x342
+      RenderText {#text} at (0,0) size 773x18
+        text run at (0,0) width 773: "There should be no red displayed on the screen, and the patterns should not change when the browser window is resized."
+      RenderBR {br} at (772,0) size 1x18
+      RenderBR {br} at (0,18) size 0x18
+      RenderText {#text} at (202,324) size 4x18
+        text run at (202,324) width 4: " "
+      RenderText {#text} at (408,324) size 4x18
+        text run at (408,324) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 202x302 clip at (9,45) size 200x300
+  RenderSVGRoot {svg} at (0,36) size 202x302 [border: (1px solid #000000)]
+layer at (9,45) size 200x300
+  RenderSVGViewportContainer at (1,1) size 200x300
+layer at (9,45) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (9,145) size 100x50
+  RenderSVGRect {rect} at (0,100) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=100.00] [width=100.00] [height=50.00]
+layer at (109,45) size 100x50
+  RenderSVGRect {rect} at (100,0) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=100.00] [y=0.00] [width=100.00] [height=50.00]
+layer at (9,145) size 100x100
+  RenderSVGRect {rect} at (0,100) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (109,45) size 100x100
+  RenderSVGRect {rect} at (100,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (214,44) size 202x302 clip at (215,45) size 200x300
+  RenderSVGRoot {svg} at (206,36) size 202x302 [border: (1px solid #000000)]
+layer at (215,45) size 200x300
+  RenderSVGViewportContainer at (1,1) size 200x300
+layer at (220,311) size 83x18
+  RenderSVGText {text} at (5,266) size 83x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 83x18
+      chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 11 width 82.78: "+Transforms"
+layer at (215,45) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (215,45) size 100x50
+  RenderSVGRect {rect} at (0,0) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+layer at (215,45) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (215,45) size 100x100
+  RenderSVGTransformableContainer {g} at (0,0) size 100x100
+layer at (215,45) size 100x50
+  RenderSVGRect {rect} at (0,0) size 100x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+layer at (215,45) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (215,45) size 100x50
+  RenderSVGHiddenContainer {pattern} at (0,0) size 100x50
+layer at (215,45) size 100x25
+  RenderSVGRect {rect} at (0,0) size 100x25 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=25.00]
+layer at (215,70) size 100x25
+  RenderSVGRect {rect} at (0,25) size 100x25 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=25.00] [width=100.00] [height=25.00]
+layer at (420,44) size 202x302 clip at (421,45) size 200x300
+  RenderSVGRoot {svg} at (412,36) size 202x302 [border: (1px solid #000000)]
+layer at (421,45) size 200x300
+  RenderSVGViewportContainer at (1,1) size 200x300
+layer at (426,311) size 172x18
+  RenderSVGText {text} at (5,266) size 173x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 173x18
+      chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 24 width 172.09: "+Accelerated Compositing"
+layer at (421,45) size 200x200
+  RenderSVGTransformableContainer {g} at (0,0) size 200x200
+layer at (421,145) size 100x100
+  RenderSVGRect {rect} at (0,100) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+layer at (521,45) size 100x100
+  RenderSVGRect {rect} at (100,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]

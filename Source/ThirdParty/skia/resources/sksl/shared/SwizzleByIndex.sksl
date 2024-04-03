@@ -1,0 +1,15 @@
+uniform half4 testInputs, colorBlack, colorGreen, colorRed;
+
+half4 non_constant_swizzle() {
+    half4 v = half4(testInputs);
+    int4 i = int4(colorBlack);
+    half x = v[i[0]];
+    half y = v[i[1]];
+    half z = v[i[2]];
+    half w = v[i[3]];
+    return half4(x, y, z, w); // -1.25, -1.25, -1.25, 0
+}
+
+half4 main(float2 coords) {
+    return non_constant_swizzle() == half4(-1.25, -1.25, -1.25, 0) ? colorGreen : colorRed;
+}

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ScrollbarThemeGtk.h"
 
-#if !USE(GTK4)
+#if !USE(GTK4) && USE(CAIRO)
 
 #include "GRefPtrGtk.h"
 #include "GraphicsContextCairo.h"
@@ -552,4 +552,4 @@ int ScrollbarThemeGtk::minimumThumbLength(Scrollbar& scrollbar)
 
 } // namespace WebCore
 
-#endif // !USE(GTK4)
+#endif // !USE(GTK4) && USE(CAIRO)

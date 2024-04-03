@@ -108,6 +108,7 @@ public:
     Ref<LocalFrame> protectedFrame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
+    CheckedPtr<RenderView> checkedRenderView() const;
 
     int mapFromLayoutToCSSUnits(LayoutUnit) const;
     LayoutUnit mapFromCSSToLayoutUnits(int) const;
@@ -511,13 +512,13 @@ public:
     //    Similar to client coordinates, but affected by page zoom (but not page scale).
     //
 
-    float documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
-    float absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
+    float documentToAbsoluteScaleFactor(std::optional<float> usedZoom = std::nullopt) const;
+    float absoluteToDocumentScaleFactor(std::optional<float> usedZoom = std::nullopt) const;
 
-    WEBCORE_EXPORT FloatRect absoluteToDocumentRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
-    WEBCORE_EXPORT FloatPoint absoluteToDocumentPoint(FloatPoint, std::optional<float> effectiveZoom = std::nullopt) const;
+    WEBCORE_EXPORT FloatRect absoluteToDocumentRect(FloatRect, std::optional<float> usedZoom = std::nullopt) const;
+    WEBCORE_EXPORT FloatPoint absoluteToDocumentPoint(FloatPoint, std::optional<float> usedZoom = std::nullopt) const;
 
-    FloatRect absoluteToClientRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
+    FloatRect absoluteToClientRect(FloatRect, std::optional<float> usedZoom = std::nullopt) const;
 
     FloatSize documentToClientOffset() const;
     WEBCORE_EXPORT FloatRect documentToClientRect(FloatRect) const;
@@ -717,6 +718,8 @@ public:
     void updateScrollPositionForScrollAnchoringController() final;
     void invalidateScrollAnchoringElement() final;
     ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
+
+    WEBCORE_EXPORT void scrollbarStyleDidChange();
 
 private:
     explicit LocalFrameView(LocalFrame&);

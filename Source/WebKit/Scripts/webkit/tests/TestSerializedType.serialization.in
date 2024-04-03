@@ -19,6 +19,10 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
 }
 
+[Nested] class Namespace::ClassWithMemberPrecondition {
+    [Precondition='PAL::isPassKitCoreFrameworkAvailable()', SecureCodingAllowed=[PAL::getPKPaymentMethodClass()]] RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
+}
+
 [RefCounted] class Namespace::ReturnRefClass {
     double functionCall().member1
     double functionCall().member2
@@ -255,6 +259,8 @@ secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
     OptionalArrayKey: Array<DDScannerResult>?
     DictionaryKey: Dictionary<String, Number>
     OptionalDictionaryKey: Dictionary<String, DDScannerResult>?
+    DataArrayKey: Array<Data>
+    SecTrustArrayKey: Array<SecTrustRef>
 }
 #endif
 
@@ -267,6 +273,65 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
 }
 #endif
 
+#if USE(CFSTRING)
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
+}
+#endif
+
 [RValue] class WebKit::RValueWithFunctionCalls {
     SandboxExtensionHandle callFunction()
 }
+
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierReference; }
+additional_forward_declaration: namespace IPC { template<typename> class ObjectIdentifierWriteReference; }
+additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameReference {
+    WebKit::RemoteVideoFrameIdentifier identifier();
+    uint64_t version();
+};
+
+header: "RemoteVideoFrameIdentifier.h"
+[Alias=class IPC::ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteVideoFrameWriteReference {
+    IPC::ObjectIdentifierReference<WebKit::RemoteVideoFrameIdentifier> reference();
+    uint64_t pendingReads();
+};
+
+#if ENABLE(OUTER_CONDITION)
+class Namespace::OuterClass {
+    int outerValue;
+};
+
+#if ENABLE(INNER_CONDITION)
+enum class EnumNamespace::InnerEnumType : uint8_t {
+    InnerValue,
+#if ENABLE(INNER_INNER_CONDITION)
+    InnerInnerValue,
+#else
+    OtherInnerInnerValue,
+#endif
+}
+#else
+enum class EnumNamespace::InnerBoolType : bool
+#endif
+
+#else
+class Namespace::OtherOuterClass {
+    int outerValue;
+};
+#endif
+
+#if USE(APPKIT)
+header: <WebCore/ScrollbarTrackCornerSystemImageMac.h>
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted, ConstructSubclass=ScrollbarTrackCornerSystemImageMac] class WebCore::AppKitControlSystemImage {
+    [NotSerialized] WebCore::AppKitControlSystemImageType m_controlType;
+    WebCore::Color m_tintColor;
+    bool m_useDarkAppearance;
+}
+#endif // USE(APPKIT)
+
+#if USE(PASSKIT)
+PKPaymentMethod wrapped by CoreIPCPKPaymentMethod
+#endif
+NSNull wrapped by CoreIPCNull

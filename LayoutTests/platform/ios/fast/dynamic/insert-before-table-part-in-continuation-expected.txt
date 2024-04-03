@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 54x19
           text run at (0,0) width 54: "Test for "
-        RenderInline {I} at (0,0) size 638x19
-          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+        RenderInline {I} at (53,0) size 638x19
+          RenderInline {A} at (53,0) size 305x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 305x19
               text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=15362"
           RenderText {#text} at (357,0) size 334x19
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,172) size 784x25
-        RenderInline {SPAN} at (0,0) size 146x19
+        RenderInline {SPAN} at (0,5) size 146x19
           RenderText {#text} at (0,5) size 41x19
             text run at (0,5) width 41: "Text..."
           RenderTable at (40,0) size 106x20
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 0x19
+          RenderInline {SPAN} at (40,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection (anonymous) at (0,0) size 105x20
               RenderTableRow (anonymous) at (0,0) size 105x20
@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,277) size 784x25
-        RenderInline {SPAN} at (0,0) size 146x19
+        RenderInline {SPAN} at (0,5) size 146x19
           RenderText {#text} at (0,5) size 41x19
             text run at (0,5) width 41: "Text..."
           RenderTable at (40,0) size 106x20
@@ -106,7 +106,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,302) size 784x25
-        RenderInline {SPAN} at (0,0) size 146x19
+        RenderInline {SPAN} at (0,5) size 146x19
           RenderText {#text} at (0,5) size 41x19
             text run at (0,5) width 41: "Text..."
           RenderTable at (40,0) size 106x20
@@ -120,7 +120,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 0x19
+          RenderInline {SPAN} at (40,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection (anonymous) at (0,0) size 105x20
               RenderTableRow {DIV} at (0,0) size 105x20
@@ -155,7 +155,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,407) size 784x25
-        RenderInline {SPAN} at (0,0) size 146x19
+        RenderInline {SPAN} at (0,5) size 146x19
           RenderText {#text} at (0,5) size 41x19
             text run at (0,5) width 41: "Text..."
           RenderTable at (40,0) size 106x20
@@ -168,7 +168,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 105x19
                     text run at (0,0) width 105: "...continues here"
       RenderBlock {DIV} at (0,432) size 784x25
-        RenderInline {SPAN} at (0,0) size 146x19
+        RenderInline {SPAN} at (0,5) size 146x19
           RenderText {#text} at (0,5) size 41x19
             text run at (0,5) width 41: "Text..."
           RenderTable at (40,0) size 106x20
@@ -183,7 +183,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 0x19
+          RenderInline {SPAN} at (40,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection {DIV} at (0,0) size 105x20
               RenderTableRow (anonymous) at (0,0) size 105x20

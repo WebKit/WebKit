@@ -1,8 +1,9 @@
+(function() {
 var o = {};
 var a = [];
 var s = "str";
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < 2e5; ++i) {
     var [
         k00 = 0, k01 = 1, k02 = 2, k03 = 3, k04 = 4, k05 = 5, k06 = 6, k07 = 7, k08 = 8, k09 = 9,
         k10 = 0, k11 = 1, k12 = 2, k13 = 3, k14 = 4, k15 = 5, k16 = 6, k17 = 7, k18 = 8, k19 = 9,
@@ -21,3 +22,4 @@ for (var i = 0; i < 1e5; ++i) {
         o, a, s, o, a, s, o, a, s, o, a, s, o, a, s, o, o, s, o, a, s, o, o, s, o
     ];
 }
+})();

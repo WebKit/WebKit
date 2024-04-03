@@ -1,0 +1,82 @@
+From 42f538e7031069d8c2976f3dcc0d87d65f99ea8d Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 8 Feb 2024 12:49:47 +0000
+Subject: [PATCH] libsoup: Vendor another libsoup patch
+
+I suppose that will ship in libsoup 3.5.0.
+---
+ elements/components/libsoup.bst               |  2 +
+ .../libsoup/soup-multipart-input-stream.patch | 51 +++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+ create mode 100644 patches/libsoup/soup-multipart-input-stream.patch
+
+diff --git a/elements/components/libsoup.bst b/elements/components/libsoup.bst
+index c3ecd15..bc0112e 100644
+--- a/elements/components/libsoup.bst
++++ b/elements/components/libsoup.bst
+@@ -40,3 +40,5 @@ sources:
+   ref: 3.4.4-0-gd6133a8e116953dac824b835d4f788e21a3e6565
+ - kind: patch
+   path: patches/libsoup/0001-session-take-a-ref-of-the-item-when-calling-soup_mes.patch
++- kind: patch
++  path: patches/libsoup/soup-multipart-input-stream.patch
+diff --git a/patches/libsoup/soup-multipart-input-stream.patch b/patches/libsoup/soup-multipart-input-stream.patch
+new file mode 100644
+index 0000000..9ac7f72
+--- /dev/null
++++ b/patches/libsoup/soup-multipart-input-stream.patch
+@@ -0,0 +1,51 @@
++From a8bad1ae13df5b865b961410ef134574a0dfb52b Mon Sep 17 00:00:00 2001
++From: Vitaly Dyachkov <vitaly@igalia.com>
++Date: Fri, 2 Feb 2024 15:25:24 +0100
++Subject: [PATCH] soup_multipart_input_stream_next_part: return NULL when EOF
++ is reached
++
++Fixes #372
++---
++ libsoup/soup-multipart-input-stream.c | 5 ++++-
++ tests/multipart-test.c                | 2 +-
++ 2 files changed, 5 insertions(+), 2 deletions(-)
++
++diff --git a/libsoup/soup-multipart-input-stream.c b/libsoup/soup-multipart-input-stream.c
++index 99999ea1..5bbd4bed 100644
++--- a/libsoup/soup-multipart-input-stream.c
+++++ b/libsoup/soup-multipart-input-stream.c
++@@ -376,7 +376,7 @@ soup_multipart_input_stream_read_headers (SoupMultipartInputStream  *multipart,
++ 							    /* blocking */ TRUE, &got_lf, cancellable, error);
++ 
++ 		if (nread <= 0)
++-			break;
+++			return FALSE;
++ 
++ 		g_byte_array_append (priv->meta_buf, read_buf, nread);
++ 
++@@ -468,6 +468,9 @@ soup_multipart_input_stream_new (SoupMessage  *msg,
++  * the part; a new call to this function should be done at that point,
++  * to obtain the next part.
++  *
+++ * @error will only be set if an error happens during a read, %NULL
+++ * is a valid return value otherwise.
+++ *
++  * Returns: (nullable) (transfer full): a new #GInputStream, or
++  *   %NULL if there are no more parts
++  */
++diff --git a/tests/multipart-test.c b/tests/multipart-test.c
++index 8c80265e..2c0e7e96 100644
++--- a/tests/multipart-test.c
+++++ b/tests/multipart-test.c
++@@ -56,7 +56,7 @@ const char *payload = \
++ 	"Content-Type: text/css\r\n" \
++ 	"\r\n" \
++ 	"#soup { background-color: black; }" \
++-        "\r\n--cut-here--";
+++	"\r\n--cut-here\r\n"; /* Tests missing termination .*/
++ 
++ static void
++ server_callback (SoupServer        *server,
++-- 
++GitLab
++
+-- 
+2.43.0
+

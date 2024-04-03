@@ -32,6 +32,7 @@ static constexpr auto maximumAncestorCount = 4;
 
 StyleCustomPropertyData::StyleCustomPropertyData(const StyleCustomPropertyData& other)
     : m_size(other.m_size)
+    , m_mayHaveAnimatableProperties(other.m_mayHaveAnimatableProperties)
 {
     auto shouldReferenceAsParentValues = [&] {
         // Always reference the root style since it likely gets shared a lot.
@@ -80,6 +81,8 @@ void StyleCustomPropertyData::set(const AtomString& name, Ref<const CSSCustomPro
         auto* existing = get(name);
         return !existing || !existing->equals(value);
     }());
+
+    m_mayHaveAnimatableProperties = m_mayHaveAnimatableProperties || value->isAnimatable();
 
     auto addResult = m_ownValues.set(name, WTFMove(value));
 
@@ -166,11 +169,6 @@ AtomString StyleCustomPropertyData::findKeyAtIndex(unsigned index) const
         return IterationStatus::Continue;
     });
     return key;
-}
-
-unsigned StyleCustomPropertyData::size() const
-{
-    return m_size;
 }
 
 } // namespace WebCore

@@ -28,6 +28,8 @@
 #include "ASTExpression.h"
 
 namespace WGSL {
+class BoundsCheckVisitor;
+class RewriteGlobalVariables;
 class TypeChecker;
 
 namespace AST {
@@ -39,6 +41,8 @@ namespace AST {
 class CallExpression final : public Expression {
     WGSL_AST_BUILDER_NODE(CallExpression);
 
+    friend BoundsCheckVisitor;
+    friend RewriteGlobalVariables;
     friend TypeChecker;
 
 public:

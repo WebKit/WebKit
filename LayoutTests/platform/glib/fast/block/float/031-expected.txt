@@ -1,55 +1,56 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x332
-  RenderBlock {HTML} at (0,0) size 800x332
-    RenderBody {BODY} at (8,8) size 784x284
-      RenderBlock {P} at (0,0) size 784x50
-        RenderText {#text} at (16,16) size 348x17
-          text run at (16,16) width 348: "\"ONE\" and \"TWO\" below should be on the same line."
-      RenderBlock (floating) {UL} at (0,50) size 186x22 [border: (2px solid #0000FF)]
-        RenderBlock (floating) {LI} at (2,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 34x17
-              text run at (0,0) width 34: "ONE"
-        RenderBlock (floating) {LI} at (93,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 37x17
-              text run at (0,0) width 37: "TWO"
-        RenderBlock {DIV} at (2,2) size 182x0
-      RenderBlock {P} at (0,72) size 784x50
-        RenderText {#text} at (16,16) size 352x17
-          text run at (16,16) width 352: "\"ONE\" and \"TWO\" below should be on different lines."
-      RenderBlock (floating) {UL} at (0,122) size 95x40 [border: (2px solid #0000FF)]
-        RenderBlock (floating) {LI} at (2,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 34x17
-              text run at (0,0) width 34: "ONE"
-        RenderBlock (floating) {LI} at (2,20) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 37x17
-              text run at (0,0) width 37: "TWO"
-        RenderBlock {DIV} at (2,2) size 91x0
-      RenderBlock {P} at (0,162) size 784x50
-        RenderText {#text} at (16,16) size 348x17
-          text run at (16,16) width 348: "\"ONE\" and \"TWO\" below should be on the same line."
-      RenderBlock (floating) {UL} at (0,212) size 186x22 [border: (2px solid #0000FF)]
-        RenderBlock (floating) {LI} at (2,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 34x17
-              text run at (0,0) width 34: "ONE"
-        RenderBlock (floating) {LI} at (93,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 37x17
-              text run at (0,0) width 37: "TWO"
-      RenderBlock {P} at (0,234) size 784x50
-        RenderText {#text} at (16,16) size 352x17
-          text run at (16,16) width 352: "\"ONE\" and \"TWO\" below should be on different lines."
-      RenderBlock (floating) {UL} at (0,284) size 95x40 [border: (2px solid #0000FF)]
-        RenderBlock (floating) {LI} at (2,2) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 34x17
-              text run at (0,0) width 34: "ONE"
-        RenderBlock (floating) {LI} at (2,20) size 91x18
-          RenderBlock {SPAN} at (0,0) size 91x18 [bgcolor=#EEEEEE]
-            RenderText {#text} at (0,0) size 37x17
-              text run at (0,0) width 37: "TWO"
+layer at (0,0) size 800x223
+  RenderBlock {html} at (0,0) size 800x223
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 309x21
+          text run at (0,0) width 309: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 574x14
+          text run at (0,0) width 574: "error on line 41 at column 24: Opening and ending tag mismatch: span line 41 and a"
+          text run at (573,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 410x21
+          text run at (0,0) width 410: "Below is a rendering of the page up to the first error."
+    RenderBlock (anonymous) at (0,168) size 800x55
+      RenderInline {head} at (0,0) size 775x35
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {meta} at (0,0) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {link} at (0,0) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {title} at (0,0) size 36x17
+          RenderText {#text} at (0,0) size 36x17
+            text run at (0,0) width 36: "Killer"
+        RenderText {#text} at (36,0) size 4x17
+          text run at (36,0) width 4: " "
+        RenderInline {style} at (0,0) size 775x35
+          RenderText {#text} at (40,0) size 775x35
+            text run at (40,0) width 264: "p { clear: left; margin: 0; padding: 1em; } "
+            text run at (303,0) width 29: "ul { "
+            text run at (331,0) width 69: "margin: 0; "
+            text run at (399,0) width 76: "padding: 0; "
+            text run at (474,0) width 147: "border: 2px solid blue; "
+            text run at (620,0) width 63: "clear:left; "
+            text run at (682,0) width 73: "float:left; } "
+            text run at (754,0) width 21: "li {"
+            text run at (0,18) width 96: "display: block; "
+            text run at (96,18) width 64: "float: left; "
+            text run at (160,18) width 91: "padding: 0px; "
+            text run at (251,18) width 96: "margin: 0px; } "
+            text run at (346,18) width 46: "span { "
+            text run at (391,18) width 85: "width: 91px; "
+            text run at (475,18) width 97: "display: block; "
+            text run at (571,18) width 183: "background-color:#eeeeee; }"
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderInline {body} at (0,0) size 754x35
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {p} at (0,0) size 348x17
+          RenderText {#text} at (0,36) size 348x17
+            text run at (0,36) width 348: "\"ONE\" and \"TWO\" below should be on the same line."
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {ul} at (0,0) size 0x17
+          RenderInline {li} at (0,0) size 0x0
+            RenderInline {span} at (0,0) size 0x0

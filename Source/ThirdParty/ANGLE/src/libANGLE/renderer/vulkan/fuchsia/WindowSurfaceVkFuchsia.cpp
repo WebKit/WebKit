@@ -14,7 +14,7 @@
 #include "common/fuchsia_egl/fuchsia_egl.h"
 #include "common/fuchsia_egl/fuchsia_egl_backend.h"
 
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace rx

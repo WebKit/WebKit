@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -532,7 +532,7 @@ asm (
     "xpaci     x28" "\n"
     "cmp       x28, x27" "\n"
     "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone) "\n"
-    "brk       #0xc471" "\n"
+    "brk       #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone) ":" "\n"
 #endif
     "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
@@ -559,7 +559,7 @@ asm (
     "xpaci     x27" "\n"
     "cmp       x27, x28" "\n"
     "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2) "\n"
-    "brk       #0xc471" "\n"
+    "brk       #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2) ":" "\n"
     "add       x27, x30, #48" "\n" // Compute sp at return point.
     "pacib     x28, x27" "\n"
@@ -785,7 +785,7 @@ asm (
     "xpaci     x28" "\n"
     "cmp       x28, x27" "\n"
     "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDoneSIMD) "\n"
-    "brk       #0xc471" "\n"
+    "brk       #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDoneSIMD) ":" "\n"
 #endif
     "sub       x27, x27, #" STRINGIZE_VALUE_OF(2 * GPREG_SIZE) "\n" // The return point PC is at 2 instructions before the end of the probe.
@@ -812,7 +812,7 @@ asm (
     "xpaci     x27" "\n"
     "cmp       x27, x28" "\n"
     "beq     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2SIMD) "\n"
-    "brk       #0xc471" "\n"
+    "brk       #" STRINGIZE_VALUE_OF(WTF_FATAL_CRASH_CODE) "\n"
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolinePCAuthDone2SIMD) ":" "\n"
     "add       x27, x30, #48" "\n" // Compute sp at return point.
     "pacib     x28, x27" "\n"

@@ -44,9 +44,8 @@ Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
-    // Unable to ref the network process as it may have started destruction.
-    CheckedRef checkedProcess = m_networkProcessProxy.get();
-    checkedProcess->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
+    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    networkProcessProxy->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
     invalidate();
 }
 
@@ -62,9 +61,8 @@ void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID custom
 
 void LegacyCustomProtocolManagerProxy::invalidate()
 {
-    // Unable to ref the network process as it may have started destruction.
-    CheckedRef checkedProcess = m_networkProcessProxy.get();
-    checkedProcess->customProtocolManagerClient().invalidate(*this);
+    RefAllowingPartiallyDestroyed<NetworkProcessProxy> networkProcessProxy = m_networkProcessProxy.get();
+    networkProcessProxy->customProtocolManagerClient().invalidate(*this);
 }
 
 void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(LegacyCustomProtocolID customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
@@ -77,7 +75,7 @@ void LegacyCustomProtocolManagerProxy::didReceiveResponse(LegacyCustomProtocolID
     protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
 }
 
-void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, const IPC::DataReference& data)
+void LegacyCustomProtocolManagerProxy::didLoadData(LegacyCustomProtocolID customProtocolID, std::span<const uint8_t> data)
 {
     protectedProcess()->send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
 }

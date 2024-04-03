@@ -44,7 +44,7 @@ class SharedWorkerThread;
 struct WorkerFetchResult;
 struct WorkerInitializationData;
 
-class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
+class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeWeakPtr<SharedWorkerThreadProxy> {
 public:
     template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~SharedWorkerThreadProxy();

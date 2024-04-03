@@ -58,7 +58,7 @@ void WebTextTrackRepresentationCocoa::update()
     if (!image)
         return;
     auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create({ image->size(), image->colorSpace() });
+    RefPtr bitmap = WebCore::ShareableBitmap::create({ image->size(), image->colorSpace() });
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();
@@ -78,10 +78,10 @@ void WebTextTrackRepresentationCocoa::setContentScale(float scale)
     if (!m_page)
         return;
     Ref fullscreenManager = m_page->videoPresentationManager();
-    if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
+    RefPtr videoElement = dynamicDowncast<WebCore::HTMLVideoElement>(m_mediaElement.get());
+    if (!videoElement)
         return;
-    Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
-    fullscreenManager->setTextTrackRepresentationContentScaleForVideoElement(videoElement, scale);
+    fullscreenManager->setTextTrackRepresentationContentScaleForVideoElement(*videoElement, scale);
 }
 
 void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
@@ -90,10 +90,10 @@ void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
     if (!m_page)
         return;
     Ref fullscreenManager = m_page->videoPresentationManager();
-    if (!m_mediaElement || !is<WebCore::HTMLVideoElement>(m_mediaElement))
+    RefPtr videoElement = dynamicDowncast<WebCore::HTMLVideoElement>(m_mediaElement.get());
+    if (!videoElement)
         return;
-    Ref videoElement = downcast<WebCore::HTMLVideoElement>(*m_mediaElement);
-    fullscreenManager->setTextTrackRepresentationIsHiddenForVideoElement(videoElement, hidden);
+    fullscreenManager->setTextTrackRepresentationIsHiddenForVideoElement(*videoElement, hidden);
 }
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,36 +68,42 @@ static void runTest(NSArray *additionalSupportedImageTypes, Boolean expectedToLo
 
     DOMDocument *document = webView.get().mainFrameDocument;
     DOMElement *documentElement = [document documentElement];
+    DOMNodeList *images = [documentElement querySelectorAll:@"img"];
 
-    DOMHTMLImageElement *image = (DOMHTMLImageElement *)[documentElement querySelector:@"img"];
-    EXPECT_EQ(image != nullptr, expectedToLoad);
-    if (image)
-        EXPECT_EQ([image width], 100);
+    EXPECT_NE(images, nullptr);
+    EXPECT_EQ([images length] == 2, expectedToLoad);
+
+    for (unsigned index = 0; index < 2; ++index) {
+        DOMHTMLImageElement *image = (DOMHTMLImageElement *)[images item:index];
+        EXPECT_EQ(image != nullptr, expectedToLoad);
+        if (image)
+            EXPECT_EQ([image width], 100);
+    }
 }
 
-TEST(WebKitLegacy, AdditionalSupportedStringImageType)
+TEST(WebKitLegacy, AddUnsupportedImageTypes)
 {
-    runTest(@[@"com.truevision.tga-image"], true);
+    runTest(@[@"com.truevision.tga-image", @"public.jpeg-2000"], true);
 }
 
-TEST(WebKitLegacy, AdditionalBogusStringImageType)
+TEST(WebKitLegacy, AddBogusImageTypes)
 {
     runTest(@[@"public.bogus"], false);
 }
 
-TEST(WebKitLegacy, AdditionalEmptyArrayImageType)
+TEST(WebKitLegacy, AddEmptyArrayOfImageTypes)
 {
     runTest(@[], false);
 }
 
-TEST(WebKitLegacy, AdditionalArryOfNullImageType)
+TEST(WebKitLegacy, AddArrayOfNullImageTypes)
 {
     runTest(@[[NSNull null]], false);
 }
 
-TEST(WebKitLegacy, AdditionalArrayOfArrayImageType)
+TEST(WebKitLegacy, AddArraysOfUnsupportedImageTypes)
 {
-    runTest(@[@[@"com.truevision.tga-image"]], false);
+    runTest(@[@[@"com.truevision.tga-image"], @[@"public.jpeg-2000"]], false);
 }
 
 } // namespace TestWebKitAPI

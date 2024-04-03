@@ -76,13 +76,13 @@ void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnecti
     workQueue().stopAndWaitForCompletion();
 }
 
-void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<SharedMemory::Handle>&&)>&& completionHandler)
+void IPCStreamTester::syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&& completionHandler)
 {
-    auto result = [&]() -> std::optional<SharedMemory::Handle> {
-        auto sharedMemory = WebKit::SharedMemory::allocate(byteCount);
+    auto result = [&]() -> std::optional<WebCore::SharedMemory::Handle> {
+        auto sharedMemory = WebCore::SharedMemory::allocate(byteCount);
         if (!sharedMemory)
             return std::nullopt;
-        auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+        auto handle = sharedMemory->createHandle(WebCore::SharedMemory::Protection::ReadOnly);
         if (!handle)
             return std::nullopt;
         uint8_t* data = static_cast<uint8_t*>(sharedMemory->data());

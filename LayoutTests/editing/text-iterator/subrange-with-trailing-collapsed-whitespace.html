@@ -24,7 +24,6 @@ function test(description, rangeToSelect) {
 
     [
         [ ],
-        [ "IgnoresWhiteSpaceAtEndOfRun" ],
     ].forEach((behaviors) => {
         debug("  " + (behaviors.join("|") || "Default behavior"));
         for (let {text, range} of internals.statesOfTextIterator(rangeToSelect, behaviors))

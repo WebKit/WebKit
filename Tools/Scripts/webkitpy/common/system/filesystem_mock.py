@@ -30,8 +30,10 @@ import errno
 import hashlib
 import os
 import re
+import sys
 
 from webkitcorepy import UnicodeIO, string_utils
+
 
 class MockFileSystem(object):
     sep = '/'
@@ -199,6 +201,9 @@ class MockFileSystem(object):
     def isdir(self, path):
         return self.normpath(path) in self.dirs
 
+    def islink(self, path):
+        return False
+
     def _slow_but_correct_join(self, *comps):
         return re.sub(re.escape(os.path.sep), self.sep, os.path.join(*comps))
 
@@ -241,6 +246,9 @@ class MockFileSystem(object):
                 else:
                     files.append(remaining)
         return dirs + files
+
+    def scandir(self, path):
+        return ScanDirMock(self, path)
 
     def mtime(self, path):
         if self.exists(path):
@@ -436,6 +444,75 @@ class MockFileSystem(object):
 
     def copy_from_base_host(self, source, destination):
         self.move(source, destination)
+
+
+class ScanDirMock(object):
+    def __init__(self, fs, path):
+        self._fs = fs
+        self._path = path
+
+    def __iter__(self):
+        fs = self._fs
+        path = self._path
+
+        sep = fs.sep
+        if not fs.isdir(path):
+            raise OSError("%s is not a directory" % path)
+
+        if not path.endswith(sep):
+            path += sep
+
+        seen_dirs = set()
+        for f in fs.files:
+            if fs.exists(f) and f.startswith(path):
+                remaining = f[len(path):]
+                if sep in remaining:
+                    dir = remaining[:remaining.index(sep)]
+                    if dir not in seen_dirs:
+                        yield DirEntryMock(fs, fs.join(path, dir))
+                        seen_dirs.add(dir)
+                else:
+                    yield DirEntryMock(fs, f)
+
+    if sys.version_info >= (3, 6):
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            self.close()
+
+        def close(self):
+            pass
+
+
+class DirEntryMock(object):
+    def __init__(self, fs, path):
+        self._fs = fs
+        self.path = path
+
+    @property
+    def name(self):
+        return self._fs.basename(self.path)
+
+    def is_dir(self, follow_symlinks=True):
+        return self._fs.isdir(self.path) and (
+            follow_symlinks or not self._fs.islink(self.path)
+        )
+
+    def is_file(self, follow_symlinks=True):
+        return self._fs.isfile(self.path) and (
+            follow_symlinks or not self._fs.islink(self.path)
+        )
+
+    def is_symlink(self):
+        return self._fs.islink(self.path)
+
+    def stat(self, follow_symlinks=True):
+        raise NotImplementedError("mock only supports follow_symlinks")
+
+    def inode(self):
+        raise NotImplementedError
 
 
 class WritableBinaryFileObject(object):

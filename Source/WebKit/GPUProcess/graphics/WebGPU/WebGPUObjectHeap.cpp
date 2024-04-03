@@ -55,7 +55,10 @@
 
 namespace WebKit::WebGPU {
 
-ObjectHeap::ObjectHeap() = default;
+ObjectHeap::ObjectHeap()
+{
+    weakPtrFactory().prepareForUseOnlyOnNonMainThread();
+}
 
 ObjectHeap::~ObjectHeap() = default;
 

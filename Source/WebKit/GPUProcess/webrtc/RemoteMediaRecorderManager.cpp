@@ -26,9 +26,8 @@
 #include "config.h"
 #include "RemoteMediaRecorderManager.h"
 
-#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_RECORDER)
 
-#include "DataReference.h"
 #include "Decoder.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
@@ -55,8 +54,11 @@ void RemoteMediaRecorderManager::didReceiveRemoteMediaRecorderMessage(IPC::Conne
 
 void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifier, bool recordAudio, bool recordVideo, const MediaRecorderPrivateOptions& options, CompletionHandler<void(std::optional<ExceptionData>&&, String&&, unsigned, unsigned)>&& completionHandler)
 {
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return completionHandler({ }, { }, { }, { });
     ASSERT(!m_recorders.contains(identifier));
-    auto recorder = RemoteMediaRecorder::create(m_gpuConnectionToWebProcess, identifier, recordAudio, recordVideo, options);
+    auto recorder = RemoteMediaRecorder::create(*connection, identifier, recordAudio, recordVideo, options);
     if (!recorder)
         return completionHandler(ExceptionData { ExceptionCode::NotSupportedError, "Unable to create a recorder with the provided stream"_s }, { }, 0, 0);
 
@@ -67,8 +69,10 @@ void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifi
 void RemoteMediaRecorderManager::releaseRecorder(MediaRecorderIdentifier identifier)
 {
     m_recorders.remove(identifier);
-    if (allowsExitUnderMemoryPressure())
-        m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    if (allowsExitUnderMemoryPressure()) {
+        if (auto connection = m_gpuConnectionToWebProcess.get())
+            connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    }
 }
 
 bool RemoteMediaRecorderManager::allowsExitUnderMemoryPressure() const

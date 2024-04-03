@@ -51,8 +51,6 @@ public:
 
     const String& statusMessage() const { return m_statusMessage; }
 
-    EventInterface eventInterface() const override;
-
 private:
     WebGLContextEvent(const AtomString& type, CanBubble, IsCancelable, const String& statusMessage);
     WebGLContextEvent(const AtomString&, const Init&, IsTrusted);

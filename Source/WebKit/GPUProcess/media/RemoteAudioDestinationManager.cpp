@@ -43,15 +43,15 @@
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-#define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess.connection().ignoreInvalidMessageForTesting()
+#define WEB_PROCESS_TERMINATE_CONDITION !connection->connection().ignoreInvalidMessageForTesting()
 #else
 #define WEB_PROCESS_TERMINATE_CONDITION true
 #endif
 
 #define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
     if (WEB_PROCESS_TERMINATE_CONDITION) { \
-        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess.webProcessIdentifier().toUInt64(), #message); \
-        m_gpuConnectionToWebProcess.terminateWebProcess(); \
+        RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, connection->webProcessIdentifier().toUInt64(), #message); \
+        connection->terminateWebProcess(); \
     }
 
 #define MESSAGE_CHECK(assertion, message) do { \
@@ -92,9 +92,9 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    void setSharedMemory(SharedMemory::Handle&& handle)
+    void setSharedMemory(WebCore::SharedMemory::Handle&& handle)
     {
-        m_frameCount = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite);
+        m_frameCount = WebCore::SharedMemory::map(WTFMove(handle), WebCore::SharedMemory::Protection::ReadWrite);
     }
 
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle)
@@ -167,7 +167,7 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
-    RefPtr<SharedMemory> m_frameCount;
+    RefPtr<WebCore::SharedMemory> m_frameCount;
     const uint32_t m_numOutputChannels;
     std::unique_ptr<ConsumerSharedCARingBuffer> m_ringBuffer;
     uint64_t m_startFrame { 0 };
@@ -181,11 +181,14 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemory::Handle&& handle)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
+    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
-    auto destination = makeUniqueRef<RemoteAudioDestination>(m_gpuConnectionToWebProcess, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
+    auto destination = makeUniqueRef<RemoteAudioDestination>(*connection, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
 #if PLATFORM(COCOA)
     destination->setSharedMemory(WTFMove(handle));
 #else
@@ -196,17 +199,23 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a deleteAudioDestination() message from a webpage in Lockdown mode.");
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return;
+    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a deleteAudioDestination() message from a webpage in Lockdown mode.");
 
     m_audioDestinations.remove(identifier);
 
     if (allowsExitUnderMemoryPressure())
-        m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        connection->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a startAudioDestination() message from a webpage in Lockdown mode.");
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return completionHandler(false);
+    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a startAudioDestination() message from a webpage in Lockdown mode.");
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {
@@ -218,7 +227,10 @@ void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestination
 
 void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK(!m_gpuConnectionToWebProcess.isLockdownModeEnabled(), "Received a stopAudioDestination() message from a webpage in Lockdown mode.");
+    auto connection = m_gpuConnectionToWebProcess.get();
+    if (!connection)
+        return completionHandler(false);
+    MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a stopAudioDestination() message from a webpage in Lockdown mode.");
 
     bool isPlaying = false;
     if (auto* item = m_audioDestinations.get(identifier)) {

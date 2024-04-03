@@ -25,12 +25,6 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
-
-#import <CrashReporterClient.h>
-
-#else
-
 #define CRASHREPORTER_ANNOTATIONS_SECTION "__crash_info"
 #define CRASHREPORTER_ANNOTATIONS_VERSION 5
 #define CRASH_REPORTER_CLIENT_HIDDEN __attribute__((visibility("hidden")))
@@ -53,5 +47,3 @@ struct crashreporter_annotations_t {
 
 CRASH_REPORTER_CLIENT_HIDDEN
 extern struct crashreporter_annotations_t gCRAnnotations;
-
-#endif

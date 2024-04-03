@@ -30,11 +30,11 @@
 #include "BackgroundProcessResponsivenessTimer.h"
 #include "GPUProcessPreferencesForWebProcess.h"
 #include "MessageReceiverMap.h"
+#include "NetworkProcessPreferencesForWebProcess.h"
 #include "NetworkProcessProxy.h"
 #include "ProcessLauncher.h"
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
-#include "ProcessThrottlerClient.h"
 #include "RemoteWorkerInitializationData.h"
 #include "ResponsivenessTimer.h"
 #include "SpeechRecognitionServer.h"
@@ -57,6 +57,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/Seconds.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
@@ -95,6 +96,7 @@ class TextStream;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class ModelProcessProxy;
 class ObjCObjectGraph;
 class PageClient;
 class ProvisionalPageProxy;
@@ -115,12 +117,14 @@ class WebsiteDataStore;
 struct BackForwardListItemState;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
+struct ModelProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebsiteData;
 
+enum class ProcessThrottleState : uint8_t;
 enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
@@ -154,7 +158,7 @@ public:
     enum class LockdownMode : bool { Disabled, Enabled };
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
-    static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
+    static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&, LockdownMode);
 
     ~WebProcessProxy();
 
@@ -175,6 +179,9 @@ public:
 #if ENABLE(GPU_PROCESS)
     const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
 #endif
+    const std::optional<NetworkProcessPreferencesForWebProcess>& preferencesForNetworkProcess() const { return m_preferencesForNetworkProcess; }
+    void initializePreferencesForNetworkProcess(const API::PageConfiguration&);
+    void initializePreferencesForNetworkProcess(const WebPreferencesStore&);
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
@@ -301,9 +308,6 @@ public:
 
     void setIsHoldingLockedFiles(bool);
 
-    ProcessThrottler& throttler() final { return m_throttler; }
-    const ProcessThrottler& throttler() const { return m_throttler; }
-
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
     void didReceiveBackgroundResponsivenessPing();
@@ -316,6 +320,7 @@ public:
     void didExceedCPULimit();
     void didExceedActiveMemoryLimit();
     void didExceedInactiveMemoryLimit();
+    void didExceedMemoryFootprintThreshold(size_t);
 
     void didCommitProvisionalLoad() { m_hasCommittedAnyProvisionalLoads = true; }
     bool hasCommittedAnyProvisionalLoads() const { return m_hasCommittedAnyProvisionalLoads; }
@@ -390,7 +395,7 @@ public:
     void sendAudioComponentRegistrations();
 #endif
 
-    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
+    bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void enableRemoteInspectorIfNeeded();
@@ -423,6 +428,11 @@ public:
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
     void gpuProcessExited(ProcessTerminationReason);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidFinishLaunching();
+    void modelProcessExited(ProcessTerminationReason);
 #endif
 
 #if PLATFORM(COCOA)
@@ -465,6 +475,8 @@ public:
     void setCaptionLanguage(const String&);
 #endif
     void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void wrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void unwrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
     void setAppBadge(std::optional<WebPageProxyIdentifier>, const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
     void setClientBadge(WebPageProxyIdentifier, const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
@@ -495,6 +507,10 @@ public:
 
     void resetState();
 
+    Seconds totalForegroundTime() const;
+    Seconds totalBackgroundTime() const;
+    Seconds totalSuspendedTime() const;
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -521,13 +537,14 @@ protected:
     void validateFreezerStatus();
 
 private:
+    std::optional<Vector<uint8_t>> getWebCryptoMasterKey();
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
     static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& globalPageMap();
     static Vector<Ref<WebPageProxy>> globalPages();
 
-    void initializePreferencesForGPUProcess(const WebPageProxy&);
+    void initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy&);
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
@@ -537,7 +554,7 @@ private:
 
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);
-    void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
+    void didDestroyFrame(IPC::Connection&, WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(WebCore::PageIdentifier, uint64_t);
 
     bool canBeAddedToWebProcessCache() const;
@@ -550,6 +567,10 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     void createGPUProcessConnection(IPC::Connection::Handle&&, WebKit::GPUProcessConnectionParameters&&);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    void createModelProcessConnection(IPC::Connection::Handle&&, ModelProcessConnectionParameters&&);
 #endif
 
     bool shouldAllowNonValidInjectedCode() const;
@@ -597,7 +618,7 @@ private:
 
     void systemBeep();
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void isAXAuthenticated(CoreIPCAuditToken&&, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -607,6 +628,8 @@ private:
 
     bool shouldTakeNearSuspendedAssertion() const;
     bool shouldDropNearSuspendedAssertionAfterDelay() const;
+
+    void updateRuntimeStatistics();
 
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
@@ -660,7 +683,6 @@ private:
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-    ProcessThrottler m_throttler;
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
@@ -754,6 +776,13 @@ private:
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
+    mutable std::optional<NetworkProcessPreferencesForWebProcess> m_preferencesForNetworkProcess;
+
+    ProcessThrottleState m_throttleStateForStatistics { ProcessThrottleState::Suspended };
+    MonotonicTime m_throttleStateForStatisticsTimestamp;
+    Seconds m_totalForegroundTime;
+    Seconds m_totalBackgroundTime;
+    Seconds m_totalSuspendedTime;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

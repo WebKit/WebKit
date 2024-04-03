@@ -1,0 +1,12 @@
+anchor attribute relationship
+
+indirect anchor attribute relationship
+
+This is popover #2
+
+Popover 3 Popover 1  Dialog
+
+FAIL anchor attribute relationship assert_true: expected true got false
+FAIL indirect anchor attribute relationship assert_true: expected true got false
+FAIL more complex nesting, all using anchor ancestry assert_equals: Popover #1 incorrect state expected true but got false
+

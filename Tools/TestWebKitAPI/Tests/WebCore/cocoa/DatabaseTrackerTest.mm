@@ -40,10 +40,7 @@ namespace TestWebKitAPI {
 
 TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
 {
-    FileSystem::PlatformFileHandle handle;
-    String databaseFilePath = FileSystem::openTemporaryFile("tempEmptyDatabase"_s, handle);
-    FileSystem::closeFile(handle);
-
+    auto databaseFilePath = FileSystem::createTemporaryFile("tempEmptyDatabase"_s);
     auto fileSize = FileSystem::fileSize(databaseFilePath).value_or(0);
     EXPECT_EQ(0U, fileSize);
 

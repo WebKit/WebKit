@@ -97,15 +97,15 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
+String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool&)
 {
     LChar* characters;
-    if (!length)
+    if (bytes.empty())
         return emptyString();
-    String result = String::createUninitialized(length, characters);
+    String result = String::createUninitialized(bytes.size(), characters);
 
-    const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
-    const uint8_t* end = reinterpret_cast<const uint8_t*>(bytes + length);
+    const uint8_t* source = bytes.data();
+    const uint8_t* end = bytes.data() + bytes.size();
     const uint8_t* alignedEnd = WTF::alignToMachineWord(end);
     LChar* destination = characters;
 
@@ -148,7 +148,7 @@ useLookupTable:
     
 upConvertTo16Bit:
     UChar* characters16;
-    String result16 = String::createUninitialized(length, characters16);
+    String result16 = String::createUninitialized(bytes.size(), characters16);
 
     UChar* destination16 = characters16;
 
@@ -215,7 +215,7 @@ static Vector<uint8_t> encodeComplexWindowsLatin1(StringView string, Unencodable
             // No way to encode this character with Windows Latin-1.
             UnencodableReplacementArray replacement;
             int replacementLength = TextCodec::getUnencodableReplacement(character, handling, replacement);
-            result.append(replacement.data(), replacementLength);
+            result.append(std::span(replacement.data(), replacementLength));
             continue;
         }
     gotByte:

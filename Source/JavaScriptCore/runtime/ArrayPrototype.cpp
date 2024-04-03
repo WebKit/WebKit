@@ -418,7 +418,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
 
         bool sawHoles = false;
         bool genericCase = false;
-        JSValue result = fastJoin(globalObject, thisArray, { &comma, 1 }, length, sawHoles, genericCase);
+        JSValue result = fastJoin(globalObject, thisArray, span(comma), length, sawHoles, genericCase);
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!sawHoles && !genericCase && result && isJSString(result) && isCoW) {
@@ -627,7 +627,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncJoin, (JSGlobalObject* globalObject, Call
         unsigned unsignedLength = static_cast<unsigned>(length);
         ASSERT(static_cast<double>(unsignedLength) == length);
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(globalObject, thisObject, { &comma, 1 }, unsignedLength)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(fastJoin(globalObject, thisObject, span(comma), unsignedLength)));
     }
 
     // 4. Let sep be ? ToString(separator).

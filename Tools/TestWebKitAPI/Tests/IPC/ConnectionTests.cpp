@@ -495,7 +495,8 @@ TEST_P(ConnectionRunLoopTest, RunLoopSend)
             EXPECT_EQ(message.messageName, MockTestMessage1::name());
             EXPECT_EQ(message.destinationID, i);
         }
-        semaphore.wait(); // FIXME: We cannot yet invalidate() and expect all messages get delivered.
+        auto flushResult = b()->flushSentMessages(kDefaultWaitForTimeout);
+        EXPECT_EQ(flushResult, IPC::Error::NoError);
         b()->invalidate();
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
@@ -541,6 +542,87 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
     localReferenceBarrier();
 }
 
+class AutoWorkQueue {
+public:
+    class WorkQueueWithShutdown : public WorkQueue {
+    public:
+        static Ref<WorkQueueWithShutdown> create(const char* name) { return adoptRef(*new WorkQueueWithShutdown(name)); }
+        void beginShutdown()
+        {
+            dispatch([this, strong = Ref { *this }] {
+                m_shutdown = true;
+                m_semaphore.signal();
+            });
+        }
+        void waitUntilShutdown()
+        {
+            while (!m_shutdown)
+                m_semaphore.wait();
+        }
+
+    private:
+        WorkQueueWithShutdown(const char* name)
+            : WorkQueue(name, QOS::Default)
+        {
+        }
+        std::atomic<bool> m_shutdown { false };
+        BinarySemaphore m_semaphore;
+    };
+
+    AutoWorkQueue()
+        : m_workQueue(WorkQueueWithShutdown::create("com.apple.WebKit.Test.simple"))
+    {
+    }
+
+    Ref<WorkQueueWithShutdown> queue() { return m_workQueue; }
+
+    ~AutoWorkQueue()
+    {
+        m_workQueue->waitUntilShutdown();
+    }
+
+private:
+    Ref<WorkQueueWithShutdown> m_workQueue;
+};
+
+TEST_P(ConnectionRunLoopTest, RunLoopSendAsyncOnTarget)
+{
+    HashSet<uint64_t> replies;
+    {
+        AutoWorkQueue awq;
+
+        ASSERT_TRUE(openA());
+        aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+            auto listenerID = decoder.decode<uint64_t>();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            encoder.get() << decoder.destinationID();
+            a()->sendSyncReply(WTFMove(encoder));
+            return true;
+        });
+
+        auto runLoop = createRunLoop(RUN_LOOP_NAME);
+        dispatchAndWait(runLoop, [&] {
+            ASSERT_TRUE(openB());
+            for (uint64_t i = 100u; i < 160u; ++i) {
+                b()->sendWithAsyncReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), [&, j = i, queue = awq.queue()] (uint64_t value) {
+                    assertIsCurrent(queue);
+                    if (!value)
+                        WTFLogAlways("GOT: %llu", j);
+                    EXPECT_GE(value, 100u);
+                    replies.add(value);
+                }, i);
+            }
+            while (replies.size() < 60u)
+                RunLoop::current().cycle();
+            b()->invalidate();
+        });
+        awq.queue()->beginShutdown();
+    }
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
 TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 {
     ASSERT_TRUE(openA());
@@ -576,6 +658,211 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
 
     for (uint64_t i = 100u; i < 160u; ++i)
         EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnDispatcher)
+{
+    HashSet<uint64_t> replies;
+
+    {
+        AutoWorkQueue awq;
+        ASSERT_TRUE(openA());
+        aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+            auto listenerID = decoder.decode<uint64_t>();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            encoder.get() << decoder.destinationID();
+            a()->sendSyncReply(WTFMove(encoder));
+            return true;
+        });
+
+        auto runLoop = createRunLoop(RUN_LOOP_NAME);
+        dispatchAndWait(runLoop, [&] {
+            ASSERT_TRUE(openB());
+            for (uint64_t i = 100u; i < 160u; ++i) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->whenSettled(awq.queue(), [&, j = i] (auto&& result) {
+                    EXPECT_TRUE(result);
+                    auto value = *result;
+                    if (!value)
+                        WTFLogAlways("GOT: %llu", j);
+                    EXPECT_GE(value, 100u);
+                    replies.add(value);
+                });
+            }
+            while (replies.size() < 60u)
+                RunLoop::current().cycle();
+            b()->invalidate();
+        });
+        awq.queue()->beginShutdown();
+    }
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReplyOnMixAndMatchDispatcher)
+{
+    HashSet<uint64_t> replies;
+
+    {
+        AutoWorkQueue awq;
+        ASSERT_TRUE(openA());
+        aClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+            auto listenerID = decoder.decode<uint64_t>();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            encoder.get() << decoder.destinationID();
+            a()->sendSyncReply(WTFMove(encoder));
+            return true;
+        });
+
+        auto runLoop = createRunLoop(RUN_LOOP_NAME);
+        dispatchAndWait(runLoop, [&] {
+            ASSERT_TRUE(openB());
+            for (uint64_t i = 100u; i < 160u; ++i) {
+                b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->whenSettled(runLoop, [&, j = i] (auto&& result) {
+                    EXPECT_TRUE(result);
+                    auto value = *result;
+                    if (!value)
+                        WTFLogAlways("GOT: %llu", j);
+                    EXPECT_GE(value, 100u);
+                    replies.add(value);
+                });
+            }
+            while (replies.size() < 60u)
+                RunLoop::current().cycle();
+            b()->invalidate();
+        });
+        awq.queue()->beginShutdown();
+    }
+    for (uint64_t i = 100u; i < 160u; ++i)
+        EXPECT_TRUE(replies.contains(i));
+    localReferenceBarrier();
+}
+
+// Tests that all sent messages with async replies are received, even if sender invalidates
+// without synchronizing with the receiver. The async reply callbacks are always run, either
+// with the reply or the cancel value and always on the provided dispatcher
+TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidateOnDispatcher)
+{
+    HashSet<uint64_t> messages;
+    HashSet<uint64_t> replies;
+    constexpr uint64_t messageCount = 1536u;
+
+    {
+        AutoWorkQueue awq;
+
+        ASSERT_TRUE(openA());
+        auto runLoop = createRunLoop(RUN_LOOP_NAME);
+        BinarySemaphore semaphore;
+        runLoop->dispatch([&] {
+            bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+                auto listenerID = decoder.decode<uint64_t>();
+                auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+                encoder.get() << decoder.destinationID();
+                b()->sendSyncReply(WTFMove(encoder));
+                messages.add(decoder.destinationID());
+                return true;
+            });
+            ASSERT_TRUE(openB());
+            while (messages.size() < messageCount - 1)
+                RunLoop::current().cycle();
+            semaphore.signal();
+        });
+        for (uint64_t i = 1u; i < messageCount; ++i) {
+            a()->sendWithAsyncReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), [&, j = i] (uint64_t) {
+                assertIsCurrent(awq.queue());
+                // The reply value might be the reply value (destinationID) or zero in case the
+                // reply was resolved as invalid. Either of these are expected valid results.
+                // Use the `j` to prove that reply callback was run as expected.
+                replies.add(j);
+            }, i);
+        }
+        auto flushResult = a()->flushSentMessages(kDefaultWaitForTimeout);
+        EXPECT_EQ(flushResult, IPC::Error::NoError);
+        a()->invalidate();
+        semaphore.wait();
+
+        // Sending a message on an invalidated Connection should still deliver the message on the dispatcher.
+        a()->sendWithAsyncReplyOnDispatcher(MockTestMessageWithAsyncReply1 { }, awq.queue(), [queue = awq.queue()] (uint64_t) {
+            assertIsCurrent(queue);
+            queue->beginShutdown();
+        }, 0);
+    }
+
+    for (uint64_t i = 1u; i < messageCount; ++i) {
+        EXPECT_TRUE(replies.contains(i)) << i;
+        EXPECT_TRUE(messages.contains(i)) << i;
+    }
+    localReferenceBarrier();
+}
+
+// Tests that all sent messages are received, even if sender invalidates
+// without synchronizing with the receiver.
+TEST_P(ConnectionRunLoopTest, SendAndInvalidate)
+{
+    constexpr uint64_t messageCount = 1777;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 1u; i < messageCount; ++i) {
+            auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
+            EXPECT_EQ(message.messageName, MockTestMessage1::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+        semaphore.signal();
+    });
+    for (uint64_t i = 1u; i < messageCount; ++i)
+        a()->send(MockTestMessage1 { }, i);
+    auto flushResult = a()->flushSentMessages(kDefaultWaitForTimeout);
+    EXPECT_EQ(flushResult, IPC::Error::NoError);
+    a()->invalidate();
+    semaphore.wait();
+    localReferenceBarrier();
+}
+
+// Tests that all sent messages with async replies are received, even if sender invalidates
+// without synchronizing with the receiver. The async reply callbacks are always run, either
+// with the reply or the cancel value.
+TEST_P(ConnectionRunLoopTest, SendAsyncAndInvalidate)
+{
+    constexpr uint64_t messageCount = 1536u;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    HashSet<uint64_t> messages;
+    HashSet<uint64_t> replies;
+    BinarySemaphore semaphore;
+    runLoop->dispatch([&] {
+        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+            auto listenerID = decoder.decode<uint64_t>();
+            auto encoder = makeUniqueRef<IPC::Encoder>(MockTestMessageWithAsyncReply1::asyncMessageReplyName(), *listenerID);
+            encoder.get() << decoder.destinationID();
+            b()->sendSyncReply(WTFMove(encoder));
+            messages.add(decoder.destinationID());
+            return true;
+        });
+        ASSERT_TRUE(openB());
+        while (messages.size() < messageCount - 1)
+            RunLoop::current().cycle();
+        semaphore.signal();
+    });
+    for (uint64_t i = 1u; i < messageCount; ++i) {
+        a()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t) {
+            // The reply value might be the reply value (destinationID) or zero in case the
+            // reply was resolved as invalid. Either of these are expected valid results.
+            // Use the `j` to prove that reply callback was run as expected.
+            replies.add(j);
+        }, i);
+    }
+    auto flushResult = a()->flushSentMessages(kDefaultWaitForTimeout);
+    EXPECT_EQ(flushResult, IPC::Error::NoError);
+    a()->invalidate();
+    semaphore.wait();
+    for (uint64_t i = 1u; i < messageCount; ++i) {
+        EXPECT_TRUE(replies.contains(i)) << i;
+        EXPECT_TRUE(messages.contains(i)) << i;
+    }
     localReferenceBarrier();
 }
 

@@ -157,9 +157,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
         parentWorkerGlobalScope->thread().addChildThread(thread);
         if (auto* parentWorkerClient = parentWorkerGlobalScope->workerClient())
             thread->setWorkerClient(parentWorkerClient->createNestedWorkerClient(thread.get()).moveToUniquePtr());
-    } else if (is<Document>(m_scriptExecutionContext.get())) {
-        auto& document = downcast<Document>(*m_scriptExecutionContext);
-        if (auto* page = document.page()) {
+    } else if (RefPtr document = dynamicDowncast<Document>(m_scriptExecutionContext.get())) {
+        if (auto* page = document->page()) {
             if (auto workerClient = page->chrome().createWorkerClient(thread.get()))
                 thread->setWorkerClient(WTFMove(workerClient));
         }

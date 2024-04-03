@@ -61,7 +61,7 @@ RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType
     m_initData = initData;
 
     bool sawError = false;
-    String keyID = PAL::UTF8Encoding().decode(static_cast<char*>(m_initData->baseAddress()), m_initData->byteLength(), true, sawError);
+    String keyID = PAL::UTF8Encoding().decode(m_initData->span(), true, sawError);
     if (sawError) {
         errorCode = WebKitMediaKeyError::MEDIA_KEYERR_CLIENT;
         return nullptr;
@@ -82,7 +82,7 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
     ASSERT(rawKeysData);
 
     do {
-        auto rawKeysString = String::fromUTF8(rawKeysData->data(), rawKeysData->length());
+        auto rawKeysString = String::fromUTF8(rawKeysData->span());
         if (rawKeysString.isEmpty())  {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: empty message", this);
             break;

@@ -91,6 +91,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollbarGutter
     , scrollbarWidth(RenderStyle::initialScrollbarWidth())
     , zoom(RenderStyle::initialZoom())
+    , pseudoElementNameArgument(nullAtom())
     , blockStepSize(RenderStyle::initialBlockStepSize())
     , blockStepInsert(static_cast<unsigned>(RenderStyle::initialBlockStepInsert()))
     , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
@@ -119,6 +120,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , textBoxTrim(static_cast<unsigned>(RenderStyle::initialTextBoxTrim()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , hasClip(false)
+    , fieldSizing(RenderStyle::initialFieldSizing())
 {
 }
 
@@ -179,6 +181,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollbarGutter(o.scrollbarGutter)
     , scrollbarWidth(o.scrollbarWidth)
     , zoom(o.zoom)
+    , pseudoElementNameArgument(o.pseudoElementNameArgument)
     , blockStepSize(o.blockStepSize)
     , blockStepInsert(o.blockStepInsert)
     , overscrollBehaviorX(o.overscrollBehaviorX)
@@ -207,6 +210,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , textBoxTrim(o.textBoxTrim)
     , overflowAnchor(o.overflowAnchor)
     , hasClip(o.hasClip)
+    , fieldSizing(o.fieldSizing)
 {
 }
 
@@ -273,6 +277,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollbarGutter == o.scrollbarGutter
         && scrollbarWidth == o.scrollbarWidth
         && zoom == o.zoom
+        && pseudoElementNameArgument == o.pseudoElementNameArgument
         && blockStepSize == o.blockStepSize
         && blockStepInsert == o.blockStepInsert
         && overscrollBehaviorX == o.overscrollBehaviorX
@@ -301,10 +306,11 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && textBoxTrim == o.textBoxTrim
         && overflowAnchor == o.overflowAnchor
         && viewTransitionName == o.viewTransitionName
-        && hasClip == o.hasClip;
+        && hasClip == o.hasClip
+        && fieldSizing == o.fieldSizing;
 }
 
-OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
+OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
 {
     auto containment = contain;
 

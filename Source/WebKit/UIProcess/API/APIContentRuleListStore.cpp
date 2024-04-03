@@ -31,7 +31,6 @@
 #include "APIContentRuleList.h"
 #include "NetworkCacheData.h"
 #include "NetworkCacheFileSystem.h"
-#include "SharedMemory.h"
 #include "WebCompiledContentRuleList.h"
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/ContentExtensionCompiler.h>
@@ -39,6 +38,7 @@
 #include <WebCore/ContentExtensionParser.h>
 #include <WebCore/QualifiedName.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SharedMemory.h>
 #include <string>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
@@ -359,8 +359,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
         bool m_fileError { false };
     };
 
-    auto temporaryFileHandle = invalidPlatformFileHandle;
-    WTF::String temporaryFilePath = openTemporaryFile("ContentRuleList"_s, temporaryFileHandle);
+    auto [temporaryFilePath, temporaryFileHandle] = openTemporaryFile("ContentRuleList"_s);
     if (temporaryFileHandle == invalidPlatformFileHandle) {
         WTFLogAlways("Content Rule List compiling failed: Opening temporary file failed.");
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
@@ -459,14 +458,14 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     size_t start = headerSizeBytes + sizeof(bool);
     size_t length = mappedData.metaData.sourceSize - sizeof(bool);
     if (is8Bit)
-        return WTF::String(mappedData.data.data() + start, length);
+        return mappedData.data.span().subspan(start, length);
 
     if (length % sizeof(UChar)) {
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    return WTF::String(reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar));
+    return WTF::String({ reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar) });
 }
 
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)

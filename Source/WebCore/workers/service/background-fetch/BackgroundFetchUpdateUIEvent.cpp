@@ -40,7 +40,7 @@ Ref<BackgroundFetchUpdateUIEvent> BackgroundFetchUpdateUIEvent::create(const Ato
 }
 
 BackgroundFetchUpdateUIEvent::BackgroundFetchUpdateUIEvent(const AtomString& type, ExtendableEventInit&& eventInit, RefPtr<BackgroundFetchRegistration>&& registration, IsTrusted isTrusted)
-    : BackgroundFetchEvent(type, WTFMove(eventInit), WTFMove(registration), isTrusted)
+    : BackgroundFetchEvent(EventInterfaceType::BackgroundFetchUpdateUIEvent, type, WTFMove(eventInit), WTFMove(registration), isTrusted)
 {
 }
 

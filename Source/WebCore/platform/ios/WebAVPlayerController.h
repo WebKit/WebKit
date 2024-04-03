@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 namespace WebCore {
 class PlaybackSessionModel;
-class PlaybackSessionInterfaceAVKit;
+class PlaybackSessionInterfaceIOS;
 }
 
 @class AVTimeRange;
@@ -51,7 +51,7 @@ class PlaybackSessionInterfaceAVKit;
 
 @property (retain) AVPlayerController *playerControllerProxy;
 @property (assign, nullable /*weak*/) WebCore::PlaybackSessionModel* delegate;
-@property (assign, nullable /*weak*/) WebCore::PlaybackSessionInterfaceAVKit* playbackSessionInterface;
+@property (assign, nullable /*weak*/) WebCore::PlaybackSessionInterfaceIOS* playbackSessionInterface;
 
 @property (readonly) BOOL canScanForward;
 @property BOOL canScanBackward;

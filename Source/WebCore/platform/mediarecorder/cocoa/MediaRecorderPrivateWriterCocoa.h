@@ -74,7 +74,7 @@ public:
     void pause();
     void resume();
 
-    void appendData(const uint8_t*, size_t);
+    void appendData(std::span<const uint8_t>);
 
     const String& mimeType() const;
     unsigned audioBitRate() const;

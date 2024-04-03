@@ -440,12 +440,3 @@ class ServerProcess(object):
         self._target_host.executive.kill_process(self._proc.pid)
         if self._proc.poll() is None:
             self._proc.wait()
-
-    def replace_outputs(self, stdout, stderr):
-        assert self._proc
-        if stdout:
-            self._proc.stdout.close()
-            self._proc.stdout = stdout
-        if stderr:
-            self._proc.stderr.close()
-            self._proc.stderr = stderr

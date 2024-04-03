@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Development UI</title>
+        <style>
+            iframe {
+                border: 0;
+                margin: 0;
+                padding: 0;
+                width: 48%;
+                height: 800px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <h1>Demo page (not intended for workload)</h1>
+            <p>This page shows the various workloads to help with local development. The runner should open only one of them.</p>
+            <details open>
+                <summary><strong>Observable Plot</strong> (<a href="./observable-plot.html">open in full page</a>)</summary>
+                <iframe src="./observable-plot.html"></iframe>
+            </details>
+            <details open>
+                <summary>
+                    <strong>Chart.js (<a href="./chartjs.html">open in full page</a>)</strong>
+                </summary>
+                <iframe src="./chartjs.html"></iframe>
+            </details>
+        </div>
+    </body>
+</html>

@@ -97,7 +97,7 @@ extern PAS_API bool pas_probabilistic_guard_malloc_is_initialized;
 extern PAS_API uint16_t pas_probabilistic_guard_malloc_random;
 extern PAS_API uint16_t pas_probabilistic_guard_malloc_counter;
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_allocation_mode allocation_mode, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
 void pas_probabilistic_guard_malloc_deallocate(void* memory);
 
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);

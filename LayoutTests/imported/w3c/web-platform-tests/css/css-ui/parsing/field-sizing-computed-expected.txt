@@ -1,0 +1,4 @@
+
+PASS Property field-sizing value 'fixed'
+PASS Property field-sizing value 'content'
+

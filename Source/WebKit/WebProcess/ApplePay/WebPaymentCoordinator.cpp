@@ -29,7 +29,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayPaymentSetupFeaturesWebKit.h"
-#include "DataReference.h"
 #include "MessageSenderInlines.h"
 #include "PaymentSetupConfigurationWebKit.h"
 #include "WebCoreArgumentCoders.h"

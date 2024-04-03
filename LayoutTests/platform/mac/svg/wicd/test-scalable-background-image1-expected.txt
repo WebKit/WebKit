@@ -21,6 +21,6 @@ layer at (0,0) size 800x330
           text run at (10,10) width 681: "This test has failed, if you don't see any graphics on the background. (your user agent does not support SVG"
           text run at (10,26) width 144: "as background image)."
       RenderBlock {p} at (10,262) size 712x37
-        RenderInline {a} at (0,0) size 31x16 [color=#000066]
+        RenderInline {a} at (10,10) size 31x16 [color=#000066]
           RenderText {#text} at (10,10) size 31x16
             text run at (10,10) width 31: "Back"

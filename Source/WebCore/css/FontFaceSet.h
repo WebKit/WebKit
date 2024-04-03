@@ -107,7 +107,7 @@ private:
     const char* activeDOMObjectName() const final { return "FontFaceSet"; }
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return FontFaceSetEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::FontFaceSet; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

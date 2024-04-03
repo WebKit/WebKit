@@ -40,10 +40,12 @@
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
+#include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 
@@ -52,10 +54,15 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+namespace IDBServer {
+class UniqueIDBDatabaseTransaction;
+}
+
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
 class IDBObjectStoreInfo;
+class IDBOpenRequestData;
 class IDBRequestData;
 class IDBTransactionInfo;
 class IDBValue;
@@ -82,7 +89,7 @@ class ServiceWorkerStorageManager;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
-class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
+class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver, public CanMakeCheckedPtr {
 public:
     static Ref<NetworkStorageManager> create(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
@@ -175,17 +182,17 @@ private:
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
     // Message handlers for IndexedDB.
-    void openDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
-    void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void deleteDatabase(IPC::Connection&, const WebCore::IDBRequestData&);
-    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
-    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
-    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier);
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
+    void openDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&);
+    void deleteDatabase(IPC::Connection&, const WebCore::IDBOpenRequestData&);
+    void establishTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
+    void databaseConnectionPendingClose(WebCore::IDBDatabaseConnectionIdentifier);
+    void databaseConnectionClosed(WebCore::IDBDatabaseConnectionIdentifier);
+    void abortOpenAndUpgradeNeeded(WebCore::IDBDatabaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier);
+    void didFireVersionChangeEvent(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
     void abortTransaction(const WebCore::IDBResourceIdentifier&);
-    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t pendingRequestCount);
-    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
+    void commitTransaction(const WebCore::IDBResourceIdentifier&, uint64_t handledRequestResultsCount);
+    void didFinishHandlingVersionChangeTransaction(WebCore::IDBDatabaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
     void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);
@@ -241,6 +248,7 @@ private:
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
+    WebCore::IDBServer::UniqueIDBDatabaseTransaction* idbTransaction(const WebCore::IDBRequestData&);
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
@@ -266,7 +274,7 @@ private:
     std::optional<uint64_t> m_standardVolumeCapacity;
     std::optional<uint64_t> m_volumeCapacityOverride;
     std::optional<uint64_t> m_totalUsage;
-    uint64_t m_totalQuota;
+    std::optional<uint64_t> m_totalQuota;
     bool m_isEvictionScheduled { false };
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
     IPC::Connection::UniqueID m_parentConnection;

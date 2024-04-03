@@ -205,7 +205,7 @@ private:
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        Vector<uint8_t> buffer { other.m_pixels->data(), other.m_pixels->size() };
+        Vector<uint8_t> buffer(other.m_pixels->span());
         m_pixels = FragmentedSharedBuffer::DataSegment::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<uint32_t*>(const_cast<uint8_t*>(m_pixels->data()));
     }

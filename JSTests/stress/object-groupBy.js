@@ -116,6 +116,20 @@ shouldBeObject(Object.groupBy([0, 1, 2, 3], (x) => objectWithValueOfThatThrows)[
 
 shouldBeObject(Object.groupBy([0, 1, 2, 3], (x) => symbol)[symbol], [0, 1, 2, 3]);
 
+// String
+
+shouldBeObject(Object.groupBy("", (x) => x === "" ? "a" : "b"), {});
+shouldBeObject(Object.groupBy("", (x) => x === ""), {});
+
+shouldBeObject(Object.groupBy("wxyz", (x) => x < "y" ? "a" : "b"), {"a": ["w", "x"], "b": ["y", "z"]});
+shouldBeObject(Object.groupBy("wxyz", (x) => x < "y"), {"true": ["w", "x"], "false": ["y", "z"]});
+
+shouldBeObject(Object.groupBy(String("wxyz"), (x) => x < "y" ? "a" : "b"), {"a": ["w", "x"], "b": ["y", "z"]});
+shouldBeObject(Object.groupBy(String("wxyz"), (x) => x < "y"), {"true": ["w", "x"], "false": ["y", "z"]});
+
+shouldBeObject(Object.groupBy(new String("wxyz"), (x) => x < "y" ? "a" : "b"), {"a": ["w", "x"], "b": ["y", "z"]});
+shouldBeObject(Object.groupBy(new String("wxyz"), (x) => x < "y"), {"true": ["w", "x"], "false": ["y", "z"]});
+
 
 // Invalid parameters
 
@@ -123,7 +137,28 @@ try {
     shouldBeObject(Object.groupBy(null, () => {}), {});
     notReached();
 } catch (e) {
-    shouldBe(String(e), "TypeError: Object.groupBy requires that the first argument must be an object");
+    shouldBe(String(e), "TypeError: Object.groupBy requires that the first argument not be null or undefined");
+}
+
+try {
+    shouldBeObject(Object.groupBy(undefined, () => {}), {});
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Object.groupBy requires that the first argument not be null or undefined");
+}
+
+try {
+    shouldBeObject(Object.groupBy({}, () => {}), {});
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Object.groupBy requires that the property of the first argument, items[Symbol.iterator] be a function");
+}
+
+try {
+    shouldBeObject(Object.groupBy(0, () => {}), {});
+    notReached();
+} catch (e) {
+    shouldBe(String(e), "TypeError: Object.groupBy requires that the property of the first argument, items[Symbol.iterator] be a function");
 }
 
 try {

@@ -48,11 +48,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(IDBFactory);
 static bool shouldThrowSecurityException(ScriptExecutionContext& context)
 {
     ASSERT(is<Document>(context) || context.isWorkerGlobalScope());
-    if (is<Document>(context)) {
-        Document& document = downcast<Document>(context);
-        if (!document.frame())
+    if (auto* document = dynamicDowncast<Document>(context)) {
+        if (!document->frame())
             return true;
-        if (!document.page())
+        if (!document->page())
             return true;
     }
 

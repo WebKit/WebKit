@@ -32,15 +32,10 @@
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
+#include "WEBPImageDecoder.h"
 #endif
 #if USE(AVIF)
 #include "AVIFImageDecoder.h"
-#endif
-#if USE(OPENJPEG)
-#include "JPEG2000ImageDecoder.h"
-#endif
-#if USE(WEBP)
-#include "WEBPImageDecoder.h"
 #endif
 #if USE(JPEGXL)
 #include "JPEGXLImageDecoder.h"
@@ -111,6 +106,11 @@ static bool matchesCURSignature(char* contents)
 {
     return !memcmp(contents, "\x00\x00\x02\x00", 4);
 }
+
+static bool matchesWebPSignature(char* contents)
+{
+    return !memcmp(contents, "RIFF", 4) && !memcmp(contents + 8, "WEBPVP", 6);
+}
 #endif
 
 #if USE(AVIF)
@@ -129,26 +129,6 @@ static bool matchesAVIFSignature(char* contents, FragmentedSharedBuffer& data)
 #endif
 }
 #endif // USE(AVIF)
-
-#if USE(OPENJPEG)
-static bool matchesJP2Signature(char* contents)
-{
-    return !memcmp(contents, "\x00\x00\x00\x0C\x6A\x50\x20\x20\x0D\x0A\x87\x0A", 12)
-        || !memcmp(contents, "\x0D\x0A\x87\x0A", 4);
-}
-
-static bool matchesJ2KSignature(char* contents)
-{
-    return !memcmp(contents, "\xFF\x4F\xFF\x51", 4);
-}
-#endif
-
-#if USE(WEBP)
-static bool matchesWebPSignature(char* contents)
-{
-    return !memcmp(contents, "RIFF", 4) && !memcmp(contents + 8, "WEBPVP", 6);
-}
-#endif
 
 #if USE(JPEGXL)
 static bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
@@ -187,6 +167,9 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer
 
     if (matchesBMPSignature(contents))
         return BMPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
+
+    if (matchesWebPSignature(contents))
+        return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
 #if USE(AVIF)
@@ -195,19 +178,6 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer
 #else
     UNUSED_PARAM(alphaOption);
     UNUSED_PARAM(gammaAndColorProfileOption);
-#endif
-
-#if USE(OPENJPEG)
-    if (matchesJP2Signature(contents))
-        return JPEG2000ImageDecoder::create(JPEG2000ImageDecoder::Format::JP2, alphaOption, gammaAndColorProfileOption);
-
-    if (matchesJ2KSignature(contents))
-        return JPEG2000ImageDecoder::create(JPEG2000ImageDecoder::Format::J2K, alphaOption, gammaAndColorProfileOption);
-#endif
-
-#if USE(WEBP)
-    if (matchesWebPSignature(contents))
-        return WEBPImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 
 #if USE(JPEGXL)

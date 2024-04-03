@@ -45,7 +45,7 @@ public:
 
 private:
     static NavigatorAudioSession* from(Navigator&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     RefPtr<DOMAudioSession> m_audioSession;
 };

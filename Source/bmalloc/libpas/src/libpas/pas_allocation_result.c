@@ -34,6 +34,8 @@ pas_allocation_result pas_allocation_result_zero_large_slow(pas_allocation_resul
 {
     size_t page_size;
 
+    PAS_PROFILE(ZERO_ALLOCATION_RESULT, result.begin);
+
     page_size = pas_page_malloc_alignment();
     if (pas_is_aligned(size, page_size) && pas_is_aligned(result.begin, page_size))
         pas_page_malloc_zero_fill((void*)result.begin, size);

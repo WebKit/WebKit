@@ -102,13 +102,6 @@ void SpeechRecognitionPermissionManager::startNextRequest()
 
 void SpeechRecognitionPermissionManager::startProcessingRequest()
 {
-#if PLATFORM(COOCA)
-    if (!checkSandboxRequirementForType(MediaPermissionType::Audio)) {
-        completeCurrentRequest(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Sandbox check has failed"_s });
-        return;
-    }
-#endif
-
     auto page = protectedPage();
     page->syncIfMockDevicesEnabledChanged();
     if (page->preferences().mockCaptureDevicesEnabled()) {

@@ -1,0 +1,111 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  third_party_isystem = true
+}
+
+template("third_party_config") {
+  enabled = !defined(invoker.enabled) || invoker.enabled
+  config(target_name) {
+    if (enabled) {
+      forward_variables_from(invoker, "*", [ "include_dirs" ])
+      cflags = []
+      if (is_win) {
+        include_dirs = invoker.include_dirs
+        if (is_clang) {
+          foreach(dir, invoker.include_dirs) {
+            cflags += [
+              "/imsvc",
+              rebase_path(dir),
+            ]
+          }
+        }
+      } else {
+        foreach(dir, invoker.include_dirs) {
+          if (third_party_isystem) {
+            cflags += [
+              "-isystem",
+              rebase_path(dir),
+            ]
+          } else {
+            cflags += [
+              "-I",
+              rebase_path(dir),
+            ]
+          }
+        }
+      }
+    } else {
+      not_needed(invoker, "*")
+    }
+  }
+}
+
+template("third_party") {
+  enabled = !defined(invoker.enabled) || invoker.enabled
+  third_party_config(target_name + "_public") {
+    if (enabled) {
+      if (defined(invoker.public_defines)) {
+        defines = invoker.public_defines
+      }
+      include_dirs = invoker.public_include_dirs
+    } else {
+      not_needed(invoker, "*")
+    }
+  }
+
+  # You can't make a static_library() without object files to archive,
+  # but we can treat targets without object files as a source_set().
+  if (defined(invoker.sources)) {
+    _mode = "static_library"
+  } else {
+    _mode = "source_set"
+  }
+
+  target(_mode, target_name) {
+    if (enabled) {
+      # set_defaults(_mode) might not exist or set configs
+      if (!defined(configs)) {
+        configs = []
+      }
+      if (is_debug) {
+        configs += [ "../../gn/skia:optimize" ]
+      }
+      configs += [ "../../gn/skia:recover_pointer_overflow" ]
+
+      # "*" clobbers the current scope; append to existing configs
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "public_include_dirs",
+                               "configs",
+                             ])
+      if (defined(invoker.configs)) {
+        configs += invoker.configs
+      }
+      public_configs = [ ":" + target_name + "_public" ]
+
+      # Warnings are just noise if we're not maintaining the code.
+      if (!defined(cflags)) {
+        cflags = []
+      }
+      if (is_win) {
+        cflags += [ "/w" ]
+      } else {
+        cflags += [ "-w" ]
+      }
+    }
+  }
+}
+
+template("system") {
+  config(target_name + "_public") {
+    forward_variables_from(invoker, "*", [])
+  }
+  group(target_name) {
+    public_configs = [ ":" + target_name + "_public" ]
+  }
+}

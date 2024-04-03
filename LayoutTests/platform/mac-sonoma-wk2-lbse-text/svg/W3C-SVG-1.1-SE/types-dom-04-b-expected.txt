@@ -82,6 +82,8 @@ layer at (10,-14.41) size 33x21 backgroundClip at (0,0) size 480x360 clip at (0,
       chunk 1 text run 3 at (30.02,0.00) startOffset 2 endOffset 3 width 9.00: "c"
 layer at (-100,-100) size 200x200 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGEllipse {circle} at (0,0) size 200x200 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=100.00]
+layer at (0,0) size 3x3
+  RenderSVGResourceMarker {marker} at (100,100) size 3x3
 layer at (0,0) size 480x360 clip at (6.66,30) size 66.69x50
   RenderSVGViewportContainer {svg} at (100,100) size 480x360
 layer at (10,314.39) size 230x33

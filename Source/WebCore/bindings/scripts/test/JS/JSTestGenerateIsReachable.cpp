@@ -165,12 +165,12 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestGenerateIsReachable::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestGenerateIsReachable::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestGenerateIsReachable_aSecretAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestGenerateIsReachable& thisObject)
@@ -218,7 +218,7 @@ void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
 {
     auto* jsTestGenerateIsReachable = static_cast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestGenerateIsReachable->wrapped(), jsTestGenerateIsReachable);
+    uncacheWrapper(world, jsTestGenerateIsReachable->protectedWrapped().ptr(), jsTestGenerateIsReachable);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

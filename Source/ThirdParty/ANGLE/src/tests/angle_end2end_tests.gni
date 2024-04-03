@@ -70,6 +70,7 @@ angle_end2end_tests_sources = [
   "gl_tests/DrawBaseVertexBaseInstanceTest.cpp",
   "gl_tests/DrawBaseVertexVariantsTest.cpp",
   "gl_tests/DrawBuffersTest.cpp",
+  "gl_tests/DrawElementsIndirectTest.cpp",
   "gl_tests/DrawElementsTest.cpp",
   "gl_tests/DrawRangeElementsTest.cpp",
   "gl_tests/EGLImageMECFriendlyTest.cpp",
@@ -196,6 +197,7 @@ angle_end2end_tests_sources = [
   "gl_tests/gles1/PalettedTextureTest.cpp",
   "gl_tests/gles1/PointParameterTest.cpp",
   "gl_tests/gles1/PointSpriteTest.cpp",
+  "gl_tests/gles1/QueryTest.cpp",
   "gl_tests/gles1/ShadeModelTest.cpp",
   "gl_tests/gles1/TextureEnvTest.cpp",
   "gl_tests/gles1/TextureParameterTest.cpp",
@@ -220,6 +222,7 @@ angle_end2end_tests_mac_sources = [
   "egl_tests/EGLSyncTestMetalSharedEvent.mm",
   "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
   "gl_tests/ImageTestMetal.mm",
+  "gl_tests/VariableRasterizationRateTestMetal.mm",
 ]
 angle_end2end_tests_win_sources = [
   "egl_tests/EGLDeviceTest.cpp",

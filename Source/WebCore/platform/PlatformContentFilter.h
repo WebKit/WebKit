@@ -28,6 +28,7 @@
 
 #include "SharedBuffer.h"
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +39,7 @@ class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 
-class PlatformContentFilter {
+class PlatformContentFilter : public CanMakeWeakPtr<PlatformContentFilter> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PlatformContentFilter);
 

@@ -1,8 +1,7 @@
 import imghdr
-import struct
 from base64 import decodebytes
 
-from webdriver import Element, NoSuchAlertException, WebDriverException
+from webdriver import NoSuchAlertException, WebDriverException, WebElement
 
 
 # WebDriver specification ID: dfn-error-response-data
@@ -149,17 +148,17 @@ def assert_is_active_element(session, element):
 def assert_same_element(session, a, b):
     """Verify that two element references describe the same element."""
     if isinstance(a, dict):
-        assert Element.identifier in a, "Actual value does not describe an element"
-        a_id = a[Element.identifier]
-    elif isinstance(a, Element):
+        assert WebElement.identifier in a, "Actual value does not describe an element"
+        a_id = a[WebElement.identifier]
+    elif isinstance(a, WebElement):
         a_id = a.id
     else:
         raise AssertionError("Actual value is not a dictionary or web element")
 
     if isinstance(b, dict):
-        assert Element.identifier in b, "Expected value does not describe an element"
-        b_id = b[Element.identifier]
-    elif isinstance(b, Element):
+        assert WebElement.identifier in b, "Expected value does not describe an element"
+        b_id = b[WebElement.identifier]
+    elif isinstance(b, WebElement):
         b_id = b.id
     else:
         raise AssertionError("Expected value is not a dictionary or web element")
@@ -212,8 +211,22 @@ def assert_move_to_coordinates(point, target, events):
             assert e["target"] == target
 
 
+def assert_pdf(value):
+    data = decodebytes(value.encode())
+
+    assert data.startswith(b"%PDF-"), "Decoded data starts with the PDF signature"
+    assert data.endswith(b"%%EOF\n"), "Decoded data ends with the EOF flag"
+
+
 def assert_png(screenshot):
-    """Test that screenshot is a Base64 encoded PNG file."""
-    image = decodebytes(screenshot.encode())
+    """Test that screenshot is a Base64 encoded PNG file, or a bytestring representing a PNG.
+
+    Returns the bytestring for the PNG, if the assert passes
+    """
+    if type(screenshot) is str:
+        image = decodebytes(screenshot.encode())
+    else:
+        image = screenshot
     mime_type = imghdr.what("", image)
     assert mime_type == "png", "Expected image to be PNG, but it was {}".format(mime_type)
+    return image

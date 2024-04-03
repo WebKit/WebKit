@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x104
         RenderText {#text} at (0,86) size 96x17
           text run at (0,86) width 96: "Layout test for "
-        RenderInline {A} at (0,0) size 40x17 [color=#0000EE]
+        RenderInline {A} at (96,86) size 40x17 [color=#0000EE]
           RenderText {#text} at (96,86) size 40x17
             text run at (96,86) width 40: "11760"
         RenderText {#text} at (135,86) size 202x17

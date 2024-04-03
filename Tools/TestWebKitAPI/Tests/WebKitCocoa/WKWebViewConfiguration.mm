@@ -42,13 +42,14 @@
 
 TEST(WebKit, InvalidConfiguration)
 {
-    auto shouldThrowExceptionWhenUsed = [](Function<void(WKWebViewConfiguration *)>&& modifier) {
+    auto shouldThrowExceptionWhenUsed = [](Function<void(WKWebViewConfiguration *)>&& modifier, bool expectException) {
         @try {
             auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
             modifier(configuration.get());
             auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-            EXPECT_TRUE(false);
+            EXPECT_FALSE(expectException);
         } @catch (NSException *exception) {
+            EXPECT_TRUE(expectException);
             EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
         }
     };
@@ -56,19 +57,19 @@ TEST(WebKit, InvalidConfiguration)
     IGNORE_NULL_CHECK_WARNINGS_BEGIN
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration setProcessPool:nil];
-    });
+    }, false);
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration setPreferences:nil];
-    });
+    }, false);
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration setUserContentController:nil];
-    });
+    }, false);
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration setWebsiteDataStore:nil];
-    });
+    }, false);
     shouldThrowExceptionWhenUsed([](WKWebViewConfiguration *configuration) {
         [configuration _setVisitedLinkStore:nil];
-    });
+    }, false);
     IGNORE_NULL_CHECK_WARNINGS_END
 
     // Related WebViews cannot use different data stores.
@@ -77,7 +78,7 @@ TEST(WebKit, InvalidConfiguration)
     auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForEphemeralView.get()]);
     shouldThrowExceptionWhenUsed([&](WKWebViewConfiguration *configuration) {
         [configuration _setRelatedWebView:ephemeralWebView.get()];
-    });
+    }, true);
 }
 
 TEST(WebKit, ConfigurationGroupIdentifierIsCopied)
@@ -277,14 +278,14 @@ TEST(WebKit, ConfigurationMaskedURLSchemes)
 
     [[webView configuration].userContentController _addUserScriptImmediately:userScript.get()];
 
-    EXPECT_WK_STREQ([delegate waitForAlert], "global code@webkit-masked-url://hidden/:1:17");
+    EXPECT_WK_STREQ([delegate waitForAlert], "global code@webkit-masked-url://hidden/:1:8");
 
     scriptURL = [NSURL URLWithString:@"https://example.com/foo.js"];
     userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"alert((new Error).stack)" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:scriptURL contentWorld:nil deferRunningUntilNotification:NO]);
 
     [[webView configuration].userContentController _addUserScriptImmediately:userScript.get()];
 
-    EXPECT_WK_STREQ([delegate waitForAlert], "global code@https://example.com/foo.js:1:17");
+    EXPECT_WK_STREQ([delegate waitForAlert], "global code@https://example.com/foo.js:1:8");
 }
 
 TEST(WebKit, ConfigurationWebViewToCloneSessionStorageFrom)

@@ -46,6 +46,8 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         this._failedSourceMapConsoleMessages = new Set;
 
+        WI.settings.consoleClearAPIEnabled.addEventListener(WI.Setting.Event.Changed, this._handleConsoleClearAPIEnabledSettingChanged, this);
+
         WI.ConsoleSnippet.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleSnippetContentChanged, this);
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -82,6 +84,18 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (sourceCode instanceof WI.Script)
             return issue.sourceCodeLocation && issue.sourceCodeLocation.sourceCode === sourceCode;
         return false;
+    }
+
+    // Target
+
+    initializeTarget(target)
+    {
+        // Intentionally defer ConsoleAgent initialization to the end. We do this so that any
+        // previous initialization messages will have their responses arrive before a stream
+        // of console message added events come in after enabling Console.
+        // See WI.Target.prototype.initialize.
+
+        this._setConsoleClearAPIEnabled(target);
     }
 
     // Public
@@ -200,6 +214,12 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
 
         switch (reason) {
+        case WI.ConsoleManager.ClearReason.Frontend:
+            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.ClearReason.Frontend` did not exist yet.
+            // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.setConsoleClearAPIEnabled` did not exist yet.
+            console.assert(InspectorBackend.hasCommand("Console.setConsoleClearAPIEnabled"));
+            console.assert(WI.settings.consoleClearAPIEnabled.value);
+            // fallthrough
         case WI.ConsoleManager.ClearReason.ConsoleAPI:
             this._clearMessages();
             return;
@@ -276,6 +296,13 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
     }
+
+    _setConsoleClearAPIEnabled(target)
+    {
+        // COMPATIBILITY (iOS X.Y, macOS X.Y): `Console.setConsoleClearAPIEnabled` did not exist yet.
+        if (target.hasCommand("Console.setConsoleClearAPIEnabled"))
+            target.ConsoleAgent.setConsoleClearAPIEnabled(WI.settings.consoleClearAPIEnabled.value);
+    }
     
     _collectFailedSourceMapConsoleMessage(message)
     {
@@ -299,6 +326,12 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
 
         this._clearMessages();
+    }
+
+    _handleConsoleClearAPIEnabledSettingChanged(event)
+    {
+        for (let target of WI.targets)
+            this._setConsoleClearAPIEnabled(target);
     }
 
     _handleSnippetContentChanged(event)
@@ -339,5 +372,6 @@ WI.ConsoleManager.Event = {
 
 WI.ConsoleManager.ClearReason = {
     ConsoleAPI: "console-api",
+    Frontend: "frontend",
     MainFrameNavigation: "main-frame-navigation",
 }

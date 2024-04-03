@@ -1,0 +1,9 @@
+This test ensures that switches are exposed as such by the iOS wrapper.
+
+PASS: accessibilityController.accessibleElementById('html-switch').isSwitch === true
+PASS: accessibilityController.accessibleElementById('aria-switch').isSwitch === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  off on  Speaker power

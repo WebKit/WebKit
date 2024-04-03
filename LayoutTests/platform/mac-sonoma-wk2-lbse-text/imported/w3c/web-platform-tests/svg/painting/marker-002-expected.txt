@@ -1,0 +1,60 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x500
+  RenderSVGRoot {svg} at (0,0) size 500x500
+layer at (0,0) size 500x500
+  RenderSVGViewportContainer at (0,0) size 500x500
+layer at (30,17.50) size 380x256
+  RenderSVGTransformableContainer {g} at (30,17.50) size 379.16x255
+layer at (125,17.50) size 163x16
+  RenderSVGText {text} at (95,0) size 164x16 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 164x16
+      chunk 1 text run 1 at (125.00,30.00) startOffset 0 endOffset 27 width 163.28: "Marker Rendering Properties"
+layer at (30,60) size 121x83
+  RenderSVGTransformableContainer {g} at (0,42.50) size 120.84x82.50
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (-30,-60) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 2x2 clip at (0,0) size 2x2
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (100,130.50) size 51x12
+  RenderSVGText {text} at (70,70) size 51x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 51x12
+      chunk 1 text run 1 at (100.00,140.00) startOffset 0 endOffset 13 width 50.83: "Fill Property"
+layer at (30,60) size 50x50
+  RenderSVGPath {path} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 30 60 L 80 60 L 80 110 Z"]
+layer at (270,60) size 134x83
+  RenderSVGTransformableContainer {g} at (240,42.50) size 133.05x82.50
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (-270,-60) size 4x4
+layer at (0,0) size 20x20 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (340,130.50) size 63x12
+  RenderSVGText {text} at (70,70) size 64x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 64x12
+      chunk 1 text run 1 at (340.00,140.00) startOffset 0 endOffset 15 width 63.05: "Stroke Property"
+layer at (270,60) size 50x50
+  RenderSVGPath {path} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [start marker=marker2] [middle marker=marker2] [end marker=marker2] [data="M 270 60 L 320 60 L 320 110 Z"]
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (0,0) size 4x4
+layer at (0,0) size 20x20 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 4x4
+  RenderSVGResourceMarker {marker} at (0,0) size 4x4
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 4x4 clip at (0,0) size 4x4
+  RenderSVGRect {rect} at (0,0) size 10x10 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (30,190) size 130x83
+  RenderSVGTransformableContainer {g} at (0,172.50) size 129.16x82.50
+layer at (90,260.50) size 69x12
+  RenderSVGText {text} at (60,70) size 70x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x12
+      chunk 1 text run 1 at (90.00,270.00) startOffset 0 endOffset 16 width 69.16: "Mixed Properties"
+layer at (30,190) size 50x50
+  RenderSVGPath {path} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#800080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFA500]}] [start marker=marker3] [middle marker=marker3] [end marker=marker3] [data="M 30 190 L 80 190 L 80 240 Z"]
+layer at (270,190) size 140x83
+  RenderSVGTransformableContainer {g} at (240,172.50) size 139.16x82.50
+layer at (340,260.50) size 69x12
+  RenderSVGText {text} at (70,70) size 70x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x12
+      chunk 1 text run 1 at (340.00,270.00) startOffset 0 endOffset 16 width 69.16: "Mixed Properties"
+layer at (270,190) size 50x50
+  RenderSVGPath {path} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#800080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFA500]}] [start marker=marker4] [middle marker=marker4] [end marker=marker4] [data="M 270 190 L 320 190 L 320 240 Z"]

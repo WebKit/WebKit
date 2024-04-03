@@ -48,7 +48,7 @@ public:
     void setIntrinsicWidthMode(IntrinsicWidthMode);
 
 protected:
-    AbstractLineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+    AbstractLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
 
     void reset();
 
@@ -67,7 +67,7 @@ protected:
     const InlineLayoutState& layoutState() const;
     InlineLayoutState& layoutState();
     const BlockLayoutState& blockLayoutState() const { return layoutState().parentBlockLayoutState(); }
-    const ElementBox& root() const;
+    const ElementBox& root() const { return m_rootBox; }
     const RenderStyle& rootStyle() const;
 
 protected:
@@ -80,6 +80,7 @@ protected:
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;
+    const ElementBox& m_rootBox;
     HorizontalConstraints m_rootHorizontalConstraints;
 
     InlineContentBreaker m_inlineContentBreaker;

@@ -65,6 +65,7 @@ MotionMark = "MotionMark"
 MotionMark1_1 = "MotionMark-1.1"
 MotionMark1_1_1 = "MotionMark-1.1.1"
 MotionMark1_2 = "MotionMark-1.2"
+MotionMark1_3 = "MotionMark-1.3"
 
 unitMarker = "__unit__"
 
@@ -173,6 +174,8 @@ def motionMarkBreakdown(jsonObject):
         name = "MotionMark-1.1.1"
     elif detectMotionMark1_2(jsonObject):
         name = "MotionMark-1.2"
+    elif detectMotionMark1_3(jsonObject):
+        name = "MotionMark-1.3"
 
     for test in breakdown._results[name]["tests"].keys():
         result[test] = breakdown._results[name]["tests"][test]["metrics"]["Score"][None]["current"]
@@ -514,17 +517,22 @@ def detectMotionMark1_1_1(payload):
 def detectMotionMark1_2(payload):
     return "MotionMark-1.2" in payload
 
+def detectMotionMark1_3(payload):
+    return "MotionMark-1.3" in payload
+
 
 def motionMarkResults(payload):
-    assert any(validMotionMarkDetector(payload) for validMotionMarkDetector in [detectMotionMark, detectMotionMark1_1, detectMotionMark1_1_1, detectMotionMark1_2])
+    assert any(validMotionMarkDetector(payload) for validMotionMarkDetector in [detectMotionMark, detectMotionMark1_1, detectMotionMark1_1_1, detectMotionMark1_2, detectMotionMark1_3])
     if detectMotionMark(payload):
         payload = payload["MotionMark"]
     elif detectMotionMark1_1(payload):
         payload = payload["MotionMark-1.1"]
     elif detectMotionMark1_1_1(payload):
         payload = payload["MotionMark-1.1.1"]
-    else:
+    elif detectMotionMark1_2(payload):
         payload = payload["MotionMark-1.2"]
+    else:
+        payload = payload["MotionMark-1.3"]
     testNames = list(payload["tests"].keys())
     numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
     results = []
@@ -559,10 +567,12 @@ def detectBenchmark(payload):
         return MotionMark1_1
     if detectMotionMark1_2(payload):
         return MotionMark1_2
+    if detectMotionMark1_3(payload):
+        return MotionMark1_3
     return None
 
 def biggerIsBetter(benchmarkType):
-    if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2]:
+    if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]:
         return True
     elif benchmarkType in [PLT5, CompetitivePLT, PLUM3]:
         return False
@@ -696,7 +706,7 @@ def main():
 
         if args.csv:
             writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv)
-    elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2]):
+    elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3]):
         if args.breakdown:
             dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
 

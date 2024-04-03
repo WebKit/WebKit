@@ -26,6 +26,7 @@
 
 #include <algorithm>
 #include <wtf/EnumTraits.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace IPC {
 
@@ -240,6 +241,12 @@ inline bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName messageNa
 {
     messageName = std::min(messageName, MessageName::Last);
     return Detail::messageDescriptions[static_cast<size_t>(messageName)].messageAllowedWhenWaitingForUnboundedSyncReply;
+}
+
+inline ASCIILiteral descriptionLiteral(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return ASCIILiteral::fromLiteralUnsafe(Detail::messageDescriptions[static_cast<size_t>(messageName)].description);
 }
 
 constexpr bool messageIsSync(MessageName name)

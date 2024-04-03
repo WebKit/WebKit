@@ -1,0 +1,17 @@
+# This file seems to be needed only for bazel's dependency pinning to figure out
+# declared dependencies, actual build rules are in BUILD.bazel.
+
+[package]
+name = "fontations"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+read-fonts = "0.15"
+font-types = "0.4"
+skrifa = "0.15.4"
+cxx = "1.0.110"
+
+[lib]
+name = "fontations_ffi"
+path = "src/ffi.rs"

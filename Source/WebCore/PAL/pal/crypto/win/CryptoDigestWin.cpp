@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,11 +80,11 @@ std::unique_ptr<CryptoDigest> CryptoDigest::create(Algorithm algorithm)
     return nullptr;
 }
 
-void CryptoDigest::addBytes(const void* input, size_t length)
+void CryptoDigest::addBytes(std::span<const uint8_t> input)
 {
-    if (!input || !length)
+    if (input.empty())
         return;
-    RELEASE_ASSERT(CryptHashData(m_context->hHash, reinterpret_cast<const BYTE*>(input), length, 0));
+    RELEASE_ASSERT(CryptHashData(m_context->hHash, reinterpret_cast<const BYTE*>(input.data()), input.size(), 0));
 }
 
 Vector<uint8_t> CryptoDigest::computeHash()

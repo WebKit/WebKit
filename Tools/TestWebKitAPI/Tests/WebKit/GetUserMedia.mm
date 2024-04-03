@@ -380,6 +380,31 @@ TEST(WebKit2, CaptureStop)
     [delegate waitUntilPrompted];
 }
 
+TEST(WebKit2, CloseWKWebViewShortlyAfterStartingToCapture)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView loadTestPageNamed:@"getUserMedia"];
+    [delegate waitUntilPrompted];
+
+    // Wait a bit before closing so that WebPage is instructed to start capturing.
+    TestWebKitAPI::Util::spinRunLoop(5);
+
+    [webView _close];
+
+    // Wait a little bit to verify everything is fine.
+    TestWebKitAPI::Util::spinRunLoop(100);
+}
+
 TEST(WebKit2, CaptureIndicatorDelay)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -497,6 +522,101 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     [webView1 stringByEvaluatingJavaScript:@"checkIsPlaying()"];
 #endif
     TestWebKitAPI::Util::run(&done);
+}
+
+static constexpr auto transferTrackBetweenSameProcessPagesText = R"DOCDOCDOC(
+<html><body onload='start()'><script>
+function captureAndTransferAudioTrack()
+{
+    navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+        const track = stream.getAudioTracks()[0];
+        self.opener.postMessage({ state : "PASS", track }, [track]);
+    });
+}
+
+function captureAndTransferVideoTrack()
+{
+    navigator.mediaDevices.getUserMedia({video:true}).then(stream => {
+        const track = stream.getVideoTracks()[0];
+        self.opener.postMessage({ state : "PASS", track }, [track]);
+    });
+}
+
+function start()
+{
+    if (self.location.search == "") {
+        const popupWindow = window.open("http://127.0.0.1:9090?no-open", "newWindow");
+        if (!popupWindow)
+            window.webkit.messageHandlers.gum.postMessage("FAIL, no popup window");
+        window.onmessage = (event) => {
+            const eventData = event.data;
+            if (eventData.track) {
+                window.webkit.messageHandlers.gum.postMessage(eventData.track instanceof MediaStreamTrack ? "PASS" : "FAIL");
+                return;
+            }
+            window.webkit.messageHandlers.gum.postMessage(eventData.state);
+        };
+        return;
+    }
+    self.opener.postMessage({ state : "PASS" });
+}
+</script></body></html>
+)DOCDOCDOC"_s;
+
+TEST(WebKit, TransferTrackBetweenSameProcessPages)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { transferTrackBetweenSameProcessPagesText } },
+        { "/?no-open"_s, { transferTrackBetweenSameProcessPagesText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    configuration.get()._relatedWebView = webView1.get();
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    delegate.get().webViewForPopup = webView2.get();
+    webView1.get().UIDelegate = delegate.get();
+#if PLATFORM(IOS_FAMILY)
+    webView1.get().navigationDelegate = delegate.get();
+#endif
+    webView2.get().UIDelegate = delegate.get();
+
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+    [webView2 addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView2 addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView1 _setMediaCaptureReportingDelayForTesting:0];
+    [webView2 _setMediaCaptureReportingDelayForTesting:0];
+
+    done = false;
+    [webView1 loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    // webView2 captures audio and transfers track to webView1.
+    done = false;
+    microphoneCaptureStateChange = false;
+    [webView2 stringByEvaluatingJavaScript:@"captureAndTransferAudioTrack()"];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(waitUntilMicrophoneState(webView2.get(), WKMediaCaptureStateActive));
+
+    // webView2 captures video and transfers track to webView1.
+    done = false;
+    cameraCaptureStateChange = false;
+    [webView2 stringByEvaluatingJavaScript:@"captureAndTransferVideoTrack()"];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(waitUntilCameraState(webView2.get(), WKMediaCaptureStateActive));
+
+    EXPECT_EQ(webView1.get().microphoneCaptureState, WKMediaCaptureStateNone);
+    EXPECT_EQ(webView1.get().cameraCaptureState, WKMediaCaptureStateNone);
+
+    EXPECT_EQ(webView2.get().microphoneCaptureState, WKMediaCaptureStateActive);
+    EXPECT_EQ(webView2.get().cameraCaptureState, WKMediaCaptureStateActive);
 }
 
 #if PLATFORM(MAC)

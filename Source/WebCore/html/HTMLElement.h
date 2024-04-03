@@ -84,6 +84,9 @@ public:
     WEBCORE_EXPORT bool spellcheck() const;
     WEBCORE_EXPORT void setSpellcheck(bool);
 
+    WEBCORE_EXPORT bool writingsuggestions() const;
+    WEBCORE_EXPORT void setWritingsuggestions(bool);
+
     WEBCORE_EXPORT bool translate() const;
     WEBCORE_EXPORT void setTranslate(bool);
 
@@ -92,8 +95,6 @@ public:
     bool accessKeyAction(bool sendMouseEvents) override;
 
     String accessKeyLabel() const;
-
-    bool rendererIsEverNeeded() final;
 
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);
@@ -159,7 +160,7 @@ public:
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
-    virtual void handleInvokeInternal(const AtomString&) { }
+    bool handleInvokeInternal(const HTMLFormControlElement& invoker, const AtomString& action) final;
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

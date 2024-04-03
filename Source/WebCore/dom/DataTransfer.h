@@ -75,7 +75,7 @@ public:
     void setData(Document&, const String& type, const String& data);
     void setDataFromItemList(Document&, const String& type, const String& data);
 
-    void setDragImage(Element&, int x, int y);
+    void setDragImage(Ref<Element>&&, int x, int y);
 
     void makeInvalidForSecurity() { m_storeMode = StoreMode::Invalid; }
 

@@ -185,6 +185,21 @@ CTFontRef FontPlatformData::ctFont() const
     return m_ctFont.get();
 }
 
+RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
+{
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138683 This is a shallow pointer compare for web fonts
+    // because the URL contains the address of the font. This means we might erroneously get false negatives.
+    auto object = adoptCF(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontReferenceURLAttribute));
+    ASSERT(!object || CFGetTypeID(object.get()) == CFURLGetTypeID());
+    return object;
+}
+
+RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
+{
+    return objectForEqualityCheck(ctFont());
+}
+
 RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 {
     if (RetainPtr<CFDataRef> data = adoptCF(CTFontCopyTable(ctFont(), table, kCTFontTableOptionNoOptions)))
@@ -243,6 +258,75 @@ FontPlatformData::Attributes FontPlatformData::attributes() const
     }
 
     return result;
+}
+
+std::optional<FontPlatformData> FontPlatformData::tryMakeFontPlatformData(float size, WebCore::FontOrientation&& orientation, WebCore::FontWidthVariant&& widthVariant, WebCore::TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, FontPlatformData::PlatformDataVariant&& platformSerializationData)
+{
+    RetainPtr<CTFontRef> font;
+    RefPtr<FontCustomPlatformData> customPlatformData;
+
+    bool dataError = WTF::switchOn(platformSerializationData,
+        [&] (const FontPlatformSerializedData& d) {
+            font = WebCore::createCTFont(d.attributes.get(), size, d.options, d.referenceURL.get(), d.postScriptName.get());
+            if (!font)
+                return true;
+            return false;
+        },
+        [&] (FontPlatformSerializedCreationData& d) {
+            auto fontFaceData = SharedBuffer::create(WTFMove(d.fontFaceData));
+            RefPtr fontCustomPlatformData = FontCustomPlatformData::create(fontFaceData, d.itemInCollection);
+            if (!fontCustomPlatformData)
+                return true;
+            auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
+            if (!baseFontDescriptor)
+                return true;
+            auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, d.attributes.get()));
+
+            font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+            customPlatformData = fontCustomPlatformData;
+            return false;
+        }
+    );
+    if (dataError)
+        return std::nullopt;
+
+    return FontPlatformData(size, WTFMove(orientation), WTFMove(widthVariant), WTFMove(textRenderingMode), syntheticBold, syntheticOblique, WTFMove(font), WTFMove(customPlatformData));
+}
+
+FontPlatformData::FontPlatformData(float size, WebCore::FontOrientation&& orientation, WebCore::FontWidthVariant&& widthVariant, WebCore::TextRenderingMode&& textRenderingMode, bool syntheticBold, bool syntheticOblique, RetainPtr<CTFontRef>&& font, RefPtr<FontCustomPlatformData>&& customPlatformData)
+    : m_font(font)
+    , m_size(size)
+    , m_orientation(orientation)
+    , m_widthVariant(widthVariant)
+    , m_textRenderingMode(textRenderingMode)
+    , m_customPlatformData(customPlatformData)
+    , m_syntheticBold(syntheticBold)
+    , m_syntheticOblique(syntheticOblique)
+{
+    m_isColorBitmapFont = CTFontGetSymbolicTraits(m_font.get()) & kCTFontColorGlyphsTrait;
+    m_isSystemFont = WebCore::isSystemFont(m_font.get());
+    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(m_font.get(), kCTFontVariationAttribute)));
+    m_hasVariations = variations && CFDictionaryGetCount(variations.get());
+#if PLATFORM(IOS_FAMILY)
+    m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
+#endif
+}
+
+FontPlatformData::PlatformDataVariant FontPlatformData::platformSerializationData() const
+{
+    auto ctFont = font();
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
+    auto attributes = adoptCF(CTFontDescriptorCopyAttributes(fontDescriptor.get()));
+
+    const auto& data = creationData();
+    if (data)
+        return FontPlatformSerializedCreationData { { data->fontFaceData->span() }, attributes, data->itemInCollection };
+
+    auto options = CTFontDescriptorGetOptions(fontDescriptor.get());
+    auto referenceURL = adoptCF(static_cast<CFURLRef>(CTFontCopyAttribute(ctFont, kCTFontReferenceURLAttribute)));
+    auto urlString = CFURLGetString(referenceURL.get());
+    auto postScriptName = adoptCF(CTFontCopyPostScriptName(ctFont)).get();
+    return FontPlatformSerializedData { options, urlString, postScriptName, attributes };
 }
 
 } // namespace WebCore

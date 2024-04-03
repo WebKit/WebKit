@@ -23,11 +23,9 @@
 #include "config.h"
 #include "RenderSVGForeignObject.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
-#include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -36,8 +34,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGRenderSupport.h"
-#include "SVGRenderingContext.h"
-#include "SVGResourcesCache.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
@@ -59,13 +55,18 @@ SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
     return downcast<SVGForeignObjectElement>(RenderSVGBlock::graphicsElement());
 }
 
+Ref<SVGForeignObjectElement> RenderSVGForeignObject::protectedForeignObjectElement() const
+{
+    return foreignObjectElement();
+}
+
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaintSVGRenderer(paintInfo))
         return;
 
     if (paintInfo.phase == PaintPhase::ClippingMask) {
-        paintSVGClippingMask(paintInfo);
+        paintSVGClippingMask(paintInfo, objectBoundingBox());
         return;
     }
 
@@ -97,26 +98,21 @@ void RenderSVGForeignObject::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    auto& useForeignObjectElement = foreignObjectElement();
-    SVGLengthContext lengthContext(&useForeignObjectElement);
+    Ref useForeignObjectElement = foreignObjectElement();
+    SVGLengthContext lengthContext(useForeignObjectElement.ptr());
 
     // Cache viewport boundaries
-    auto x = useForeignObjectElement.x().value(lengthContext);
-    auto y = useForeignObjectElement.y().value(lengthContext);
-    auto width = useForeignObjectElement.width().value(lengthContext);
-    auto height = useForeignObjectElement.height().value(lengthContext);
+    auto x = useForeignObjectElement->x().value(lengthContext);
+    auto y = useForeignObjectElement->y().value(lengthContext);
+    auto width = useForeignObjectElement->width().value(lengthContext);
+    auto height = useForeignObjectElement->height().value(lengthContext);
     m_viewport = { x, y, width, height };
 
-    bool layoutChanged = everHadLayout() && selfNeedsLayout();
     RenderSVGBlock::layout();
     ASSERT(!needsLayout());
 
     setLocation(enclosingLayoutRect(m_viewport).location());
     updateLayerTransform();
-
-    // Invalidate all resources of this client if our layout changed.
-    if (layoutChanged)
-        SVGResourcesCache::clientLayoutChanged(*this);
 
     repainter.repaintAfterLayout();
 }
@@ -136,9 +132,7 @@ void RenderSVGForeignObject::updateFromStyle()
 
 void RenderSVGForeignObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    applySVGTransform(transform, foreignObjectElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+    applySVGTransform(transform, protectedForeignObjectElement(), style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

@@ -45,4 +45,3 @@ layer at (-850,8) size 1642x202 backgroundClip at (0,0) size 1650x600 clip at (0
       RenderInline {A} at (0,0) size 81x203 [color=#0000EE]
         RenderText {#text} at (2,0) size 81x203
           text run at (2,0) width 203: "link 10"
-scrolled to -850,0

@@ -50,9 +50,9 @@ void RemoteCDMFactory::registerFactory(Vector<CDMFactory*>& factories)
     factories.append(this);
 }
 
-const char* RemoteCDMFactory::supplementName()
+ASCIILiteral RemoteCDMFactory::supplementName()
 {
-    return "RemoteCDMFactory";
+    return "RemoteCDMFactory"_s;
 }
 
 GPUProcessConnection& RemoteCDMFactory::gpuProcessConnection()

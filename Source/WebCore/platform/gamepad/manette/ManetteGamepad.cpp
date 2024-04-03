@@ -97,6 +97,8 @@ static ManetteGamepad::StandardGamepadButton toStandardGamepadButton(uint16_t ma
         return ManetteGamepad::StandardGamepadButton::DPadLeft;
     case BTN_DPAD_RIGHT:
         return ManetteGamepad::StandardGamepadButton::DPadRight;
+    case BTN_MODE:
+        return ManetteGamepad::StandardGamepadButton::Mode;
     default:
         break;
     }
@@ -169,7 +171,7 @@ void ManetteGamepad::absoluteAxisChanged(ManetteDevice*, StandardGamepadAxis axi
     m_lastUpdateTime = MonotonicTime::now();
     m_axisValues[static_cast<int>(axis)].setValue(value);
 
-    ManetteGamepadProvider::singleton().gamepadHadInput(*this, ManetteGamepadProvider::ShouldMakeGamepadsVisible::No);
+    ManetteGamepadProvider::singleton().gamepadHadInput(*this, ManetteGamepadProvider::ShouldMakeGamepadsVisible::Yes);
 }
 
 } // namespace WebCore

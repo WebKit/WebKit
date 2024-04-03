@@ -109,8 +109,8 @@ void WorkerOrWorkletThread::stopRunningDebuggerTasks()
 void WorkerOrWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
-    if (is<WorkerDedicatedRunLoop>(m_runLoop.get()))
-        downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).run(m_globalScope.get());
+    if (auto* runLoop = dynamicDowncast<WorkerDedicatedRunLoop>(m_runLoop.get()))
+        runLoop->run(m_globalScope.get());
 }
 
 void WorkerOrWorkletThread::workerOrWorkletThread()

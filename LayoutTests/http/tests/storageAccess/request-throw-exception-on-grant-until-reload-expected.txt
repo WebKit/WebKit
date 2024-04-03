@@ -1,0 +1,11 @@
+Tests that requestStorageAccess throws exception on cross-site iframe until iframe is reloaded
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestStorageAccess result: NoModificationAllowedError
+PASS requestStorageAccess result: Granted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

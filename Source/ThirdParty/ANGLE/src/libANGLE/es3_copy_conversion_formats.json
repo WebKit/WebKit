@@ -29,6 +29,7 @@
         [ "GL_RGB", "GL_BGRA_EXT" ],
         [ "GL_RGBA", "GL_BGRA_EXT" ],
         [ "GL_BGRA_EXT", "GL_BGRA_EXT" ],
+        [ "GL_BGRA_EXT", "GL_RGBA" ],
 
         [ "GL_RED_INTEGER", "GL_RED_INTEGER" ],
         [ "GL_RED_INTEGER", "GL_RG_INTEGER" ],

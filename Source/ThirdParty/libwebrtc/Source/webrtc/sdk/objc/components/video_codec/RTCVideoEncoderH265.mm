@@ -26,6 +26,7 @@
 #import "helpers/UIDevice+RTCDevice.h"
 #endif
 
+#include "common_video/h265/h265_bitstream_parser.h"
 #include "common_video/include/bitrate_adjuster.h"
 #include "libyuv/convert_from.h"
 #include "modules/include/module_common_types.h"
@@ -179,6 +180,7 @@ void compressionOutputCallback(void* encoder,
   bool _needsToSendDescription;
   RTCVideoEncoderDescriptionCallback _descriptionCallback;
   RTCVideoEncoderErrorCallback _errorCallback;
+  webrtc::H265BitstreamParser _h265BitstreamParser;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -623,7 +625,11 @@ void compressionOutputCallback(void* encoder,
   frame.flags = webrtc::VideoSendTiming::kInvalid;
   frame.temporalIndex = -1;
 
-  // FIXME: QP is ignored because there is no H.265 bitstream parser.
+  if (_useAnnexB) {
+      _h265BitstreamParser.ParseBitstream(*buffer);
+      auto qp = _h265BitstreamParser.GetLastSliceQp();
+      frame.qp = @(qp.value_or(0));
+  }
 
   BOOL res = _callback(frame, [[RTCCodecSpecificInfoH265 alloc] init], nullptr);
   if (!res) {

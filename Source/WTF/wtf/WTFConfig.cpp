@@ -56,6 +56,10 @@ alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Sl
 
 } // namespace WebConfig
 
+#if !USE(SYSTEM_MALLOC)
+static_assert(Gigacage::startSlotOfGigacageConfig == WebConfig::reservedSlotsForExecutableAllocator + WebConfig::additionalReservedSlots);
+#endif
+
 #else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
 namespace WTF {

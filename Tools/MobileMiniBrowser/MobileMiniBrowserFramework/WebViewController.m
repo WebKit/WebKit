@@ -75,11 +75,17 @@ void* URLContext = &URLContext;
 {
     [super viewDidLoad];
     self.webViews = [[NSMutableArray alloc] initWithCapacity:1];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.tabViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"idTabViewController"];
+#pragma clang diagnostic pop
     self.tabViewController.parent = self;
     self.tabViewController.modalPresentationStyle = UIModalPresentationPopover;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.settingsViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"idSettingsViewController"];
+#pragma clang diagnostic pop
     self.settingsViewController.parent = self;
     self.settingsViewController.modalPresentationStyle = UIModalPresentationPopover;
 

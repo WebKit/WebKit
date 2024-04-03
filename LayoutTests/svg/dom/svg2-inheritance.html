@@ -2,16 +2,11 @@
 <html>
 <head>
 <link rel="help" href="http://www.w3.org/TR/2013/WD-SVG2-20130618/" />
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <script>
 description("Validates the SVG2 inheritance model.");
-
-function interfaceName(prototype)
-{
-    return prototype.toString().slice(8, -1);
-}
 
 function checkParent(type, expectedParent)
 {
@@ -22,16 +17,15 @@ function checkParent(type, expectedParent)
     }
     var parentPrototype = window[type].prototype.__proto__;
     var expectedPrototype = window[expectedParent] ? window[expectedParent].prototype : null;
-    
+
     if (expectedPrototype && parentPrototype === expectedPrototype)
         testPassed(type + " inherits " + expectedParent);
     else
-        testFailed(type + " should inherit " + expectedParent + " but got " + interfaceName(parentPrototype) + " instead");
+        testFailed(type + " should inherit " + expectedParent + " but got " + parentPrototype.constructor.name + " instead");
 }
 
 checkParent("SVGAElement", "SVGGraphicsElement");
 checkParent("SVGAngle", "Object");
-checkParent("SVGAnimateColorElement", "SVGAnimationElement");
 checkParent("SVGAnimateElement", "SVGAnimationElement");
 checkParent("SVGAnimateMotionElement", "SVGAnimationElement");
 checkParent("SVGAnimateTransformElement", "SVGAnimationElement");
@@ -132,6 +126,5 @@ checkParent("SVGViewElement", "SVGElement");
 checkParent("SVGViewSpec", "Object");
 checkParent("TimeEvent", "Event");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -20,7 +20,7 @@ layer at (0,0) size 800x170
                 text run at (2,82) width 18: "or "
                 text run at (19,82) width 41: "100px"
             RenderTableCell {td} at (102,32) size 294x44 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 281x39
+              RenderText {#text} at (2,32) size 281x39
                 text run at (2,2) width 281: "This column should have a width of 75% of"
                 text run at (2,22) width 88: "400 pixels or "
                 text run at (89,22) width 41: "300px"

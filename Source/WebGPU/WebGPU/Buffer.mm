@@ -85,7 +85,7 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
-    if ((usage & WGPUBufferUsage_MapRead) || (usage & WGPUBufferUsage_MapWrite))
+    if (usage & (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_Index))
         return MTLStorageModeShared;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (mappedAtCreation)
@@ -99,9 +99,9 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
 id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storageMode, MTLCPUCacheMode cpuCacheMode, MTLHazardTrackingMode hazardTrackingMode) const
 {
     MTLResourceOptions resourceOptions = (cpuCacheMode << MTLResourceCPUCacheModeShift) | (storageMode << MTLResourceStorageModeShift) | (hazardTrackingMode << MTLResourceHazardTrackingModeShift);
-    // FIXME(PERFORMANCE): Consider returning nil instead of clamping to 1.
-    // FIXME(PERFORMANCE): Suballocate multiple Buffers either from MTLHeaps or from larger MTLBuffers.
-    return [m_device newBufferWithLength:std::max(static_cast<NSUInteger>(1), length) options:resourceOptions];
+    id<MTLBuffer> buffer = [m_device newBufferWithLength:std::max<NSUInteger>(1, length) options:resourceOptions];
+    setOwnerWithIdentity(buffer);
+    return buffer;
 }
 
 Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
@@ -135,9 +135,9 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::Unmapped, { static_cast<size_t>(0), static_cast<size_t>(0) }, *this);
 }
 
-Buffer::Buffer(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)
-    , m_size(size)
+    , m_initialSize(initialSize)
     , m_usage(usage)
     , m_state(initialState)
     , m_mappingRange(initialMappingRange)
@@ -152,6 +152,16 @@ Buffer::Buffer(Device& device)
 
 Buffer::~Buffer() = default;
 
+void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
+{
+    UNUSED_PARAM(mayModifyBuffer);
+    m_commandEncoder = commandEncoder;
+    if (m_state == State::Mapped || m_state == State::MappedAtCreation)
+        commandEncoder.incrementBufferMapCount();
+    if (isDestroyed())
+        commandEncoder.makeSubmitInvalid();
+}
+
 void Buffer::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-destroy
@@ -162,8 +172,11 @@ void Buffer::destroy()
     }
 
     m_state = State::Destroyed;
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeSubmitInvalid();
 
-    m_buffer = nil;
+    m_commandEncoder = nullptr;
+    m_buffer = m_device->placeholderBuffer();
 }
 
 const void* Buffer::getConstMappedRange(size_t offset, size_t size)
@@ -209,14 +222,12 @@ static size_t computeRangeSize(uint64_t size, size_t offset)
 void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
-    if (!isValid()) {
-        m_emptyBuffer.resize(std::max<size_t>(size, 1));
-        return &m_emptyBuffer[0];
-    }
+    if (!isValid())
+        return nullptr;
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(m_size, offset);
+        rangeSize = computeRangeSize(this->currentSize(), offset);
 
     if (!validateGetMappedRange(offset, rangeSize))
         return nullptr;
@@ -224,14 +235,14 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     m_mappedRanges.add({ offset, offset + rangeSize });
     m_mappedRanges.compact();
 
-    m_device->getQueue().waitUntilIdle();
-    ASSERT(m_buffer.contents);
+    if (!m_buffer.contents)
+        return nullptr;
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
 NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
 {
-#define ERROR_STRING(x) (@"GPUTexture.mapAsync: " x)
+#define ERROR_STRING(x) (@"GPUBuffer.mapAsync: " x)
     if (!isValid())
         return ERROR_STRING(@"Buffer is not valid");
 
@@ -242,7 +253,7 @@ NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, 
         return ERROR_STRING(@"range size is not divisible by 4");
 
     auto end = checkedSum<uint64_t>(offset, rangeSize);
-    if (end.hasOverflowed() || end.value() > m_size)
+    if (end.hasOverflowed() || end.value() > currentSize())
         return ERROR_STRING(@"offset and rangeSize overflowed");
 
     if (m_state != State::Unmapped)
@@ -268,7 +279,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = computeRangeSize(m_size, offset);
+        rangeSize = computeRangeSize(currentSize(), offset);
 
     if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
         m_device->generateAValidationError(error);
@@ -284,6 +295,8 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->m_state = State::Mapped;
+            if (protectedThis->m_commandEncoder)
+                protectedThis->m_commandEncoder->incrementBufferMapCount();
 
             protectedThis->m_mappingRange = { offset, offset + rangeSize };
 
@@ -323,9 +336,8 @@ void Buffer::unmap()
     if (!validateUnmap() && !m_device->isValid())
         return;
 
-    // FIXME: "If this.[[state]] is mapping pending: Reject [[mapping]] with an AbortError."
-
-    // FIXME: Handle array buffer detaching.
+    if (m_commandEncoder)
+        m_commandEncoder->decrementBufferMapCount();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
@@ -343,14 +355,49 @@ void Buffer::setLabel(String&& label)
     m_buffer.label = label;
 }
 
-uint64_t Buffer::size() const
+uint64_t Buffer::initialSize() const
 {
-    return m_emptyBuffer.size() ?: m_size;
+    return m_initialSize;
+}
+
+uint64_t Buffer::currentSize() const
+{
+    return m_buffer.length;
+}
+
+bool Buffer::isValid() const
+{
+    return isDestroyed() || m_buffer;
 }
 
 bool Buffer::isDestroyed() const
 {
     return state() == State::Destroyed;
+}
+
+void Buffer::recomputeMaxIndexValues() const
+{
+    if (!(m_usage & WGPUBufferUsage_Index))
+        return;
+
+    NSUInteger lengthInBytes = m_buffer.length;
+    auto bufferPtr = static_cast<uint8_t*>(m_buffer.contents);
+    RELEASE_ASSERT(bufferPtr);
+    m_max16BitIndex = 0;
+    m_max32BitIndex = 0;
+    uint8_t* bufferEnd = bufferPtr + lengthInBytes;
+    for (; (bufferPtr += sizeof(uint32_t)) <= bufferEnd; bufferPtr += sizeof(uint32_t)) {
+        m_max32BitIndex = std::max(*reinterpret_cast<uint32_t*>(bufferPtr), m_max32BitIndex);
+        m_max16BitIndex = std::max(*(reinterpret_cast<uint16_t*>(bufferPtr) + 1), std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex));
+    }
+    if (bufferPtr + sizeof(uint16_t) <= bufferEnd)
+        m_max16BitIndex = std::max(*reinterpret_cast<uint16_t*>(bufferPtr), m_max16BitIndex);
+}
+
+uint32_t Buffer::maxIndex(MTLIndexType indexType) const
+{
+    ASSERT(m_usage & WGPUBufferUsage_Index);
+    return indexType == MTLIndexTypeUInt16 ? m_max16BitIndex : m_max32BitIndex;
 }
 
 } // namespace WebGPU
@@ -400,7 +447,7 @@ void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 
 uint64_t wgpuBufferGetSize(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).size();
+    return WebGPU::fromAPI(buffer).initialSize();
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)

@@ -62,7 +62,7 @@ static RefPtr<Document> documentFromClipboard(const Clipboard* clipboard)
 
 static FileReaderLoader::ReadType readTypeForMIMEType(const String& type)
 {
-    if (type == "text/uri-list"_s || type == "text/plain"_s || type == "text/html"_s)
+    if (type == "text/uri-list"_s || type == textPlainContentTypeAtom() || type == textHTMLContentTypeAtom())
         return FileReaderLoader::ReadAsText;
     return FileReaderLoader::ReadAsArrayBuffer;
 }
@@ -260,7 +260,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFinishLoading(
     if (!stringResult.isNull())
         m_data = { stringResult };
     else if (auto arrayBuffer = m_blobLoader->arrayBufferResult())
-        m_data = { SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength()) };
+        m_data = { SharedBuffer::create(arrayBuffer->span()) };
     m_blobLoader = nullptr;
     invokeCompletionHandler();
 }
@@ -276,7 +276,7 @@ String ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::dataAsString() 
 {
     if (std::holds_alternative<Ref<SharedBuffer>>(m_data)) {
         auto& buffer = std::get<Ref<SharedBuffer>>(m_data);
-        return String::fromUTF8(buffer->data(), buffer->size());
+        return String::fromUTF8(buffer->span());
     }
 
     if (std::holds_alternative<String>(m_data))
@@ -303,7 +303,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         m_data = { page->applyLinkDecorationFiltering(urlStringToSanitize, LinkDecorationFilteringTrigger::Copy) };
     }
 
-    if (m_type == "text/html"_s) {
+    if (m_type == textHTMLContentTypeAtom()) {
         auto markupToSanitize = dataAsString();
         if (markupToSanitize.isEmpty())
             return;

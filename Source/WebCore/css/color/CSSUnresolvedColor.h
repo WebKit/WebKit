@@ -50,6 +50,7 @@ public:
     ~CSSUnresolvedColor();
 
     bool containsCurrentColor() const;
+    bool containsColorSchemeDependentColor() const;
 
     void serializationForCSS(StringBuilder&) const;
     String serializationForCSS() const;

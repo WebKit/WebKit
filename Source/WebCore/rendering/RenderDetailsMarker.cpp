@@ -121,7 +121,7 @@ Path RenderDetailsMarker::getPath(const LayoutPoint& origin) const
 
 void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhase::Foreground || style().visibility() != Visibility::Visible) {
+    if (paintInfo.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible) {
         RenderBlockFlow::paint(paintInfo, paintOffset);
         return;
     }
@@ -134,9 +134,6 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     const Color color(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    paintInfo.context().setStrokeColor(color);
-    paintInfo.context().setStrokeStyle(StrokeStyle::SolidStroke);
-    paintInfo.context().setStrokeThickness(1.0f);
     paintInfo.context().setFillColor(color);
 
     boxOrigin.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
@@ -148,8 +145,8 @@ bool RenderDetailsMarker::isOpen() const
     for (RenderObject* renderer = parent(); renderer; renderer = renderer->parent()) {
         if (!renderer->node())
             continue;
-        if (is<HTMLDetailsElement>(*renderer->node()))
-            return !downcast<HTMLDetailsElement>(*renderer->node()).attributeWithoutSynchronization(openAttr).isNull();
+        if (auto* details = dynamicDowncast<HTMLDetailsElement>(*renderer->node()))
+            return !details->attributeWithoutSynchronization(openAttr).isNull();
         if (is<HTMLInputElement>(*renderer->node()))
             return true;
     }

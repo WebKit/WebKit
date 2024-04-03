@@ -48,10 +48,7 @@ public:
 private:
     BlobEvent(const AtomString&, Init&&, IsTrusted);
     BlobEvent(const AtomString&, CanBubble, IsCancelable, Ref<Blob>&&);
-    
-    // Event
-    EventInterface eventInterface() const final;
-    
+
     Ref<Blob> m_blob;
     double m_timecode { 0 };
 };

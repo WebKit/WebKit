@@ -256,9 +256,6 @@ class Preferences
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
-  STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
-
   # Corresponds to WebFeatureCategory enum cases.
   CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
 
@@ -274,10 +271,6 @@ class Preferences
       parsedPreferences.each do |name, options|
         webcoreSettingOnly = !options["webcoreBinding"] && options["defaultValue"].keys == ["WebCore"]
         status = options["status"]
-        if !STATUSES.include?(status)
-          reject.call "Preference #{name}'s status \"#{status}\" is not one of the known statuses: #{STATUSES}"
-          next
-        end
 
         if %w{ unstable internal developer testable preview stable }.include?(status)
           reject.call "Preference #{name} has no humanReadableName, which is required." if !options["humanReadableName"]

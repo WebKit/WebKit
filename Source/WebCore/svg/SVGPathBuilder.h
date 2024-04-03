@@ -52,7 +52,7 @@ private:
     void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
     void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) final { ASSERT_NOT_REACHED(); }
 
-    Path& m_path;
+    Path& m_path; // FIXME: This should use a WeakRef.
     FloatPoint m_current;
 };
 

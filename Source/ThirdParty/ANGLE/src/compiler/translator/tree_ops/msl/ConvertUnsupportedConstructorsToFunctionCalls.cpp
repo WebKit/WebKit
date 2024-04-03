@@ -7,8 +7,8 @@
 #include "compiler/translator/tree_ops/msl/ConvertUnsupportedConstructorsToFunctionCalls.h"
 
 #include "compiler/translator/ImmutableString.h"
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/Symbol.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/tree_util/FindFunction.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 

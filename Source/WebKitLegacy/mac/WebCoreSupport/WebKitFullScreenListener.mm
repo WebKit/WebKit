@@ -25,6 +25,7 @@
 
 #import "WebKitFullScreenListener.h"
 
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/Element.h>
 
 #if ENABLE(FULLSCREEN_API)

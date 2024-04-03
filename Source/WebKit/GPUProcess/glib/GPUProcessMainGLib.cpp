@@ -34,7 +34,7 @@
 namespace WebKit {
 
 #if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
-class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBaseNoSingleton<GPUProcess> {
+class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBase<GPUProcess> {
 };
 #endif
 

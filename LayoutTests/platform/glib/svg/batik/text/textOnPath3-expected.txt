@@ -92,7 +92,7 @@ layer at (0,0) size 450x500
         RenderSVGTextPath {textPath} at (0,0) size 158x110
           RenderSVGInlineText {#text} at (0,105) size 18x5
             chunk 1 (middle anchor) text run 1 at (100.00,-0.88) startOffset 9 endOffset 10 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 120x59
+          RenderSVGTSpan {tspan} at (38,0) size 120x59
             RenderSVGInlineText {#text} at (38,0) size 119x59
               chunk 1 (middle anchor) text run 1 at (135.76,-82.97) startOffset 0 endOffset 1 width 8.00: "p"
               chunk 1 (middle anchor) text run 2 at (142.19,-86.84) startOffset 1 endOffset 2 width 7.00: "a"

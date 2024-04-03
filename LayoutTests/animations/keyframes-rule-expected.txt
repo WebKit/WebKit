@@ -8,10 +8,6 @@ PASS CSSKeyframesRule exists on Window object
 PASS KEYFRAME_RULE exists on Window.CSSRule object
 PASS KEYFRAMES_RULE exists on Window.CSSRule object
 
-Check that the old values still work.
-PASS window.CSSRule.KEYFRAME_RULE is window.CSSRule.WEBKIT_KEYFRAME_RULE
-PASS window.CSSRule.KEYFRAMES_RULE is window.CSSRule.WEBKIT_KEYFRAMES_RULE
-
 PASS keyframes1.type is window.CSSRule.KEYFRAMES_RULE
 PASS keyframes1.name is 'test1'
 

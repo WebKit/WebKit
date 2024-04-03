@@ -54,7 +54,7 @@ public:
         , std::optional<WebKit::WebHitTestResultData>&&
         , String&& selectedText
 #if ENABLE(SERVICE_CONTROLS)
-        , std::optional<WebKit::ShareableBitmapHandle>&& controlledImageHandle
+        , std::optional<WebCore::ShareableBitmapHandle>&& controlledImageHandle
         , Vector<uint8_t>&& controlledSelectionData
         , Vector<String>&& selectedTelephoneNumbers
         , bool selectionIsEditable
@@ -64,14 +64,15 @@ public:
         , String&& controlledImageMIMEType
 #endif // ENABLE(SERVICE_CONTROLS)
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-        , std::optional<WebKit::ShareableBitmapHandle>&& potentialQRCodeNodeSnapshotImageHandle
-        , std::optional<WebKit::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
+        , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeNodeSnapshotImageHandle
+        , std::optional<WebCore::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
         , bool hasEntireImage
     );
 
     Type type() const { return m_type; }
     const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
+    void setMenuLocation(WebCore::IntPoint menuLocation) { m_menuLocation = menuLocation; }
     const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
 
     const std::optional<WebHitTestResultData>& webHitTestResultData() const { return m_webHitTestResultData; }
@@ -101,8 +102,8 @@ public:
 
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
 
-    ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
-    std::optional<ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
+    WebCore::ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
+    std::optional<WebCore::ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
 
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
     const Vector<String>& selectedTelephoneNumbers() const { return m_selectedTelephoneNumbers; }
@@ -118,10 +119,10 @@ public:
 #endif // ENABLE(SERVICE_CONTROLS)
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
-    std::optional<ShareableBitmap::Handle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const;
-    ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
-    std::optional<ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
+    WebCore::ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const;
+    WebCore::ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    std::optional<WebCore::ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
 
     const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
     void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
@@ -140,7 +141,7 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     void setImage(WebCore::Image&);
     
-    RefPtr<ShareableBitmap> m_controlledImage;
+    RefPtr<WebCore::ShareableBitmap> m_controlledImage;
     Vector<uint8_t> m_controlledSelectionData;
     Vector<String> m_selectedTelephoneNumbers;
     bool m_selectionIsEditable;
@@ -154,8 +155,8 @@ private:
     void setPotentialQRCodeNodeSnapshotImage(WebCore::Image&);
     void setPotentialQRCodeViewportSnapshotImage(WebCore::Image&);
 
-    RefPtr<ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
-    RefPtr<ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;
+    RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;
 
     String m_qrCodePayloadString;
 #endif

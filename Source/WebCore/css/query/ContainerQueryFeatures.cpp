@@ -26,8 +26,10 @@
 #include "ContainerQueryFeatures.h"
 
 #include "ContainerQueryEvaluator.h"
+#include "CustomPropertyRegistry.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "StyleBuilder.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore::CQ::Features {
@@ -45,7 +47,7 @@ struct SizeFeatureSchema : public FeatureSchema {
         // or the query container does not support container size queries on the relevant axes, then the result of
         // evaluating the size feature is unknown."
         // https://drafts.csswg.org/css-contain-3/#size-container
-        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer);
+        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer.get());
         if (!renderer)
             return MQ::EvaluationResult::Unknown;
 
@@ -158,6 +160,55 @@ const FeatureSchema& orientation()
     };
 
     static MainThreadNeverDestroyed<Schema> schema;
+    return schema;
+}
+
+struct StyleFeatureSchema : public FeatureSchema {
+    StyleFeatureSchema()
+        : FeatureSchema("style"_s, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::CustomProperty)
+    { }
+
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        if (!context.conversionData.style() || !context.conversionData.parentStyle())
+            return EvaluationResult::False;
+
+        auto& style = *context.conversionData.style();
+
+        auto* customPropertyValue = style.customPropertyValue(feature.name);
+        if (!feature.rightComparison)
+            return toEvaluationResult(!!customPropertyValue);
+
+        auto resolvedFeatureValue = [&]() -> RefPtr<const CSSCustomPropertyValue> {
+            auto featureValue = dynamicDowncast<CSSCustomPropertyValue>(feature.rightComparison->value);
+            if (!featureValue)
+                return nullptr;
+
+            // Resolve the queried custom property value for var() references, css-wide keywords and registered properties.
+            auto builderContext = Style::BuilderContext {
+                context.document.get(),
+                *context.conversionData.parentStyle(),
+                context.conversionData.rootStyle(),
+                context.conversionData.elementForContainerUnitResolution()
+            };
+
+            auto dummyStyle = RenderStyle::clone(style);
+
+            auto styleBuilder = Style::Builder { dummyStyle, WTFMove(builderContext), { }, { } };
+            return styleBuilder.resolveCustomPropertyForContainerQueries(*featureValue);
+        }();
+
+        if (!resolvedFeatureValue)
+            return toEvaluationResult(!customPropertyValue);
+
+        ASSERT(feature.rightComparison->op == ComparisonOperator::Equal);
+        return toEvaluationResult(customPropertyValue && *customPropertyValue == *resolvedFeatureValue);
+    }
+};
+
+const FeatureSchema& style()
+{
+    static MainThreadNeverDestroyed<StyleFeatureSchema> schema;
     return schema;
 }
 

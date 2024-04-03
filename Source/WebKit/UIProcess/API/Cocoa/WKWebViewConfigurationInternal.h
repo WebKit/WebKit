@@ -24,19 +24,29 @@
  */
 
 #import "APIPageConfiguration.h"
+#import "WKObject.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/Ref.h>
 
-@class WKWebView;
-@class WKWebViewContentProviderRegistry;
+namespace WebKit {
 
-@interface WKWebViewConfiguration ()
+template<> struct WrapperTraits<API::PageConfiguration> {
+    using WrapperClass = WKWebViewConfiguration;
+};
 
-#if PLATFORM(IOS_FAMILY)
-@property (nonatomic, setter=_setContentProviderRegistry:) WKWebViewContentProviderRegistry *_contentProviderRegistry;
-#endif
+}
+
+@interface WKWebViewConfiguration () <WKObject> {
+@package
+    API::ObjectStorage<API::PageConfiguration> _pageConfiguration;
+}
+
 @property (nonatomic, readonly) NSString *_applicationNameForDesktopUserAgent;
 
-- (Ref<API::PageConfiguration>)copyPageConfiguration;
-
 @end
+
+#if PLATFORM(IOS_FAMILY)
+_WKDragLiftDelay toDragLiftDelay(NSUInteger);
+_WKDragLiftDelay toWKDragLiftDelay(WebKit::DragLiftDelay);
+WebKit::DragLiftDelay fromWKDragLiftDelay(_WKDragLiftDelay);
+#endif

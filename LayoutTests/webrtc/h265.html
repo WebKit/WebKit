@@ -43,6 +43,7 @@ if (hasH265) {
 
     var track;
     var remoteTrack;
+    var sendingConnection;
     var receivingConnection;
     promise_test((test) => {
         return navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240, facingMode: "environment"}}).then((localStream) => {
@@ -50,6 +51,7 @@ if (hasH265) {
                 track = localStream.getVideoTracks()[0];
 
                 createConnections((firstConnection) => {
+                    sendingConnection = firstConnection;
                     firstConnection.addTrack(track, localStream);
                 }, (secondConnection) => {
                     receivingConnection = secondConnection;
@@ -95,6 +97,26 @@ if (hasH265) {
         track.enabled = true;
         return checkVideoBlack(false, canvas2, video);
     }, "Track is enabled, video should not be black 2");
+
+    function getOutboundRTPStats(connection)
+    {
+        return connection.getStats().then((report) => {
+            let stats;
+            report.forEach((statItem) => {
+                if (statItem.type === "outbound-rtp") {
+                    stats = statItem;
+                }
+            });
+            return stats;
+        });
+    }
+
+    promise_test(async (test) => {
+        const stats = await getOutboundRTPStats(sendingConnection);
+        assert_true(!!stats, "outbound-rtp stats should not be null");
+        assert_true(!stats.qpSum || Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
+        assert_greater_than(stats.qpSum, 0);
+    }, "outbound qpSum");
 }
         </script>
     </body>

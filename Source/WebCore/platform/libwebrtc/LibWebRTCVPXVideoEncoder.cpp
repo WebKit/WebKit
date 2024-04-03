@@ -272,7 +272,7 @@ webrtc::EncodedImageCallback::Result LibWebRTCVPXInternalVideoEncoder::OnEncoded
     }
 
     VideoEncoder::EncodedFrame encodedFrame {
-        Vector<uint8_t> { std::span<const uint8_t> { encodedImage.data(), encodedImage.size() } },
+        Vector<uint8_t> { std::span { encodedImage.data(), encodedImage.size() } },
         encodedImage._frameType == webrtc::VideoFrameType::kVideoFrameKey,
         m_timestamp,
         m_duration,

@@ -257,7 +257,7 @@ void VTTCueBox::applyCSSProperties()
     // The font shorthand property on the (root) list of WebVTT Node Objects
     // must be set to 5vh sans-serif. [CSS-VALUES]
     // NOTE: We use 'cqh' rather than 'vh' as the video element is not a proper viewport.
-    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::CSS_CQH, cue->fontSizeIsImportant());
+    setInlineStyleProperty(CSSPropertyFontSize, cue->fontSize(), CSSUnitType::CSS_CQMIN, cue->fontSizeIsImportant());
 
     if (!cue->snapToLines()) {
         setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
@@ -1008,10 +1008,6 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
         
         if (auto* childElement = dynamicDowncast<WebVTTElement>(*child))
             childElement->setIsPastNode(isPastNode);
-        else if (auto* childElement = dynamicDowncast<WebVTTRubyElement>(*child))
-            childElement->setIsPastNode(isPastNode);
-        else if (auto* childElement = dynamicDowncast<WebVTTRubyTextElement>(*child))
-            childElement->setIsPastNode(isPastNode);
 
         // Make an element id match a cue id for style matching purposes.
         if (auto* childElement = dynamicDowncast<Element>(*child); !id().isEmpty() && childElement)
@@ -1444,17 +1440,17 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
         return;
     }
 
-    auto& track = *this->track();
+    Ref track = *this->track();
     m_speechSynthesis = &speechSynthesis;
-    m_speechUtterance = SpeechSynthesisUtterance::create(track.document(), m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
+    m_speechUtterance = SpeechSynthesisUtterance::create(Ref { *track->scriptExecutionContext() }, m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
         protectedThis->m_speechUtterance = nullptr;
         protectedThis->m_speechSynthesis = nullptr;
         completion(protectedThis.get());
     });
 
-    auto trackLanguage = track.validBCP47Language();
+    auto trackLanguage = track->validBCP47Language();
     if (trackLanguage.isEmpty())
-        trackLanguage = track.language();
+        trackLanguage = track->language();
 
     m_speechUtterance->setLang(trackLanguage);
     m_speechUtterance->setVolume(volume);

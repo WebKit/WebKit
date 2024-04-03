@@ -1,0 +1,80 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone() }
+onload = async () => {
+  try {
+    let adapter0 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+
+    let device0 = await adapter0.requestDevice(
+    {
+    label: 'a',
+    requiredFeatures: [
+    'depth-clip-control',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage'
+    ],
+    requiredLimits: {
+    maxVertexAttributes: 23,
+    maxVertexBufferArrayStride: 46861,
+    maxStorageTexturesPerShaderStage: 33,
+    maxBindingsPerBindGroup: 1499,
+    },
+    }
+    );
+    
+    let canvas0 = document.createElement('canvas');
+    let imageBitMap0 = await createImageBitmap(canvas0);
+    
+    let videoFrame1 = new VideoFrame(imageBitMap0, {timestamp: 0});
+
+    let texture0 = device0.createTexture(
+    {
+    label: 'a',
+    size: {
+    width: 373,
+    depthOrArrayLayers: 1,
+    },
+    mipLevelCount: 6,
+    sampleCount: 1,
+    format: 'rg8unorm',
+    usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT,
+    }
+    );
+    
+    device0.queue.copyExternalImageToTexture(
+    {
+    source: videoFrame1,
+    origin: {
+    x: 2707,
+    y: 4310,
+    },
+    },
+    {
+    texture: texture0,
+    mipLevel: 2591,
+    origin: [
+    5319,
+    466,
+    9625,
+    6005,
+    622
+    ],
+    aspect: 'stencil-only',
+    colorSpace: 'srgb',
+    premultipliedAlpha: true,
+    },
+    [
+    4191
+    ]
+    );
+  } catch { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

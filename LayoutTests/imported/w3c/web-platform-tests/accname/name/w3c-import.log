@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_label.html
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_labelledby.html
+/LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_labelledby_hidden_nodes.html
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_name_from_content.html
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_text_node.html
 /LayoutTests/imported/w3c/web-platform-tests/accname/name/comp_tooltip.html

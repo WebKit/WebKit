@@ -77,17 +77,17 @@ static const uint64_t maxGeneratorValue = 0x20000000000000;
 #define BLOB_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, blobURL TEXT NOT NULL ON CONFLICT FAIL)"_s;
 #define BLOB_FILES_TABLE_SCHEMA_SUFFIX " (blobURL TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, fileName TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL)"_s;
 
-static int idbKeyCollate(int aLength, const void* aBuffer, int bLength, const void* bBuffer)
+static int idbKeyCollate(std::span<const uint8_t> aBuffer, std::span<const uint8_t> bBuffer)
 {
     IDBKeyData a, b;
-    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(aBuffer), aLength, a)) {
+    if (!deserializeIDBKeyData(aBuffer, a)) {
         LOG_ERROR("Unable to deserialize key A in collation function.");
 
         // There's no way to indicate an error to SQLite - we have to return a sorting decision.
         // We arbitrarily choose "A > B"
         return 1;
     }
-    if (!deserializeIDBKeyData(static_cast<const uint8_t*>(bBuffer), bLength, b)) {
+    if (!deserializeIDBKeyData(bBuffer, b)) {
         LOG_ERROR("Unable to deserialize key B in collation function.");
 
         // There's no way to indicate an error to SQLite - we have to return a sorting decision.
@@ -696,7 +696,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->bindText(2, info.name()) != SQLITE_OK
             || sql->bindInt64(3, info.objectStoreIdentifier()) != SQLITE_OK
-            || sql->bindBlob(4, keyPathBlob->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(4, keyPathBlob->span()) != SQLITE_OK
             || sql->bindInt(5, info.unique()) != SQLITE_OK
             || sql->bindInt(6, info.multiEntry()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
@@ -717,7 +717,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
         while (result == SQLITE_ROW) {
             auto keyBufferSpan = sql->columnBlobAsSpan(0);
             IDBKeyData keyData;
-            if (!deserializeIDBKeyData(keyBufferSpan.data(), keyBufferSpan.size(), keyData)) {
+            if (!deserializeIDBKeyData(keyBufferSpan, keyData)) {
                 LOG_ERROR("Unable to deserialize key data from database while getting all records");
                 return false;
             }
@@ -819,7 +819,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             auto keyPathBufferSpan = sql->columnBlobAsSpan(2);
 
             std::optional<IDBKeyPath> objectStoreKeyPath;
-            if (!deserializeIDBKeyPath(keyPathBufferSpan.data(), keyPathBufferSpan.size(), objectStoreKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBufferSpan, objectStoreKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -855,7 +855,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             auto keyPathBufferSpan = sql->columnBlobAsSpan(3);
 
             std::optional<IDBKeyPath> indexKeyPath;
-            if (!deserializeIDBKeyPath(keyPathBufferSpan.data(), keyPathBufferSpan.size(), indexKeyPath)) {
+            if (!deserializeIDBKeyPath(keyPathBufferSpan, indexKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -991,7 +991,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     m_sqliteDB->enableAutomaticWALTruncation();
 
     m_sqliteDB->setCollationFunction("IDBKEY"_s, [](int aLength, const void* a, int bLength, const void* b) {
-        return idbKeyCollate(aLength, a, bLength, b);
+        return idbKeyCollate(std::span { static_cast<const uint8_t*>(a), static_cast<size_t>(aLength) }, std::span { static_cast<const uint8_t*>(b), static_cast<size_t>(bLength) });
     });
 
     IDBError error = ensureValidRecordsTable();
@@ -1170,7 +1170,7 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         if (!sql
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->bindText(2, info.name()) != SQLITE_OK
-            || sql->bindBlob(3, keyPathBlob->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(3, keyPathBlob->span()) != SQLITE_OK
             || sql->bindInt(4, info.autoIncrement()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
@@ -1384,7 +1384,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
             || sql->bindInt64(1, info.identifier()) != SQLITE_OK
             || sql->bindText(2, info.name()) != SQLITE_OK
             || sql->bindInt64(3, info.objectStoreIdentifier()) != SQLITE_OK
-            || sql->bindBlob(4, keyPathBlob->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(4, keyPathBlob->span()) != SQLITE_OK
             || sql->bindInt(5, info.unique()) != SQLITE_OK
             || sql->bindInt(6, info.multiEntry()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
@@ -1458,7 +1458,7 @@ IDBError SQLiteIDBBackingStore::uncheckedHasIndexRecord(const IDBIndexInfo& info
     auto sql = cachedStatement(SQL::HasIndexRecord, "SELECT rowid FROM IndexRecords WHERE indexID = ? AND key = CAST(? AS TEXT);"_s);
     if (!sql
         || sql->bindInt64(1, info.identifier()) != SQLITE_OK
-        || sql->bindBlob(2, indexKeyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+        || sql->bindBlob(2, indexKeyBuffer->span()) != SQLITE_OK) {
         LOG_ERROR("Error checking for index record in database");
         return IDBError { ExceptionCode::UnknownError, "Error checking for index record in database"_s };
     }
@@ -1535,8 +1535,8 @@ IDBError SQLiteIDBBackingStore::uncheckedPutIndexRecord(int64_t objectStoreID, i
         if (!sql
             || sql->bindInt64(1, indexID) != SQLITE_OK
             || sql->bindInt64(2, objectStoreID) != SQLITE_OK
-            || sql->bindBlob(3, indexKeyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
-            || sql->bindBlob(4, valueBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(3, indexKeyBuffer->span()) != SQLITE_OK
+            || sql->bindBlob(4, valueBuffer->span()) != SQLITE_OK
             || sql->bindInt64(5, recordID) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put index record for index %" PRIi64 " in object store %" PRIi64 " in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
@@ -1655,7 +1655,7 @@ IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
     auto sql = cachedStatement(SQL::KeyExistsInObjectStore, "SELECT key FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT) LIMIT 1;"_s);
     if (!sql
         || sql->bindInt64(1, objectStoreID) != SQLITE_OK
-        || sql->bindBlob(2, keyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+        || sql->bindBlob(2, keyBuffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return IDBError { ExceptionCode::UnknownError, "Unable to check for existence of IDBKey in object store"_s };
     }
@@ -1741,7 +1741,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
-            || sql->bindBlob(2, keyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+            || sql->bindBlob(2, keyBuffer->span()) != SQLITE_OK) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Failed to delete record from object store"_s };
         }
@@ -1788,7 +1788,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
-            || sql->bindBlob(2, keyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(2, keyBuffer->span()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Failed to delete record from object store"_s };
@@ -1959,7 +1959,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         auto sql = cachedStatement(SQL::AddObjectStoreRecord, "INSERT INTO Records VALUES (?, CAST(? AS TEXT), ?, NULL);"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
-            || sql->bindBlob(2, keyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(2, keyBuffer->span()) != SQLITE_OK
             || sql->bindBlob(3, *value.data().data()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreInfo.identifier(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
@@ -1975,7 +1975,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         auto sql = cachedStatement(SQL::DeleteObjectStoreRecord, "DELETE FROM Records WHERE objectStoreID = ? AND key = CAST(? AS TEXT);"_s);
         if (!sql
             || sql->bindInt64(1, objectStoreInfo.identifier()) != SQLITE_OK
-            || sql->bindBlob(2, keyBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
+            || sql->bindBlob(2, keyBuffer->span()) != SQLITE_OK
             || sql->step() != SQLITE_DONE) {
             LOG_ERROR("Indexing new object store record failed, but unable to remove the object store record itself");
             return IDBError { ExceptionCode::UnknownError, "Indexing new object store record failed, but unable to remove the object store record itself"_s };
@@ -2105,7 +2105,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     if (!objectStoreInfo)
-        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the backing store"_s };
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
 
     auto key = keyRange.lowerKey;
     if (key.isNull())
@@ -2160,8 +2160,8 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
         if (!sql
             || sql->bindInt64(1, objectStoreID) != SQLITE_OK
-            || sql->bindBlob(2, lowerBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
-            || sql->bindBlob(3, upperBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+            || sql->bindBlob(2, lowerBuffer->span()) != SQLITE_OK
+            || sql->bindBlob(3, upperBuffer->span()) != SQLITE_OK) {
             LOG_ERROR("Could not get key range record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Failed to look up record in object store by key range"_s };
         }
@@ -2193,7 +2193,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     }
     
     IDBKeyData keyData;
-    if (!deserializeIDBKeyData(keyVector->data(), keyVector->size(), keyData)) {
+    if (!deserializeIDBKeyData(keyVector->span(), keyData)) {
         LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore");
         return IDBError { ExceptionCode::UnknownError, "Error extracting key data from database executing IDBObjectStore get"_s };
     }
@@ -2277,16 +2277,15 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     auto sql = cachedStatementForGetAllObjectStoreRecords(getAllRecordsData);
     if (!sql
         || sql->bindInt64(1, getAllRecordsData.objectStoreIdentifier) != SQLITE_OK
-        || sql->bindBlob(2, lowerBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
-        || sql->bindBlob(3, upperBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+        || sql->bindBlob(2, lowerBuffer->span()) != SQLITE_OK
+        || sql->bindBlob(3, upperBuffer->span()) != SQLITE_OK) {
         LOG_ERROR("Could not get key range record from object store %" PRIi64 " from Records table (%i) - %s", getAllRecordsData.objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return IDBError { ExceptionCode::UnknownError, "Failed to look up record in object store by key range"_s };
     }
 
     auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
     if (!objectStoreInfo)
-        return IDBError { ExceptionCode::UnknownError, "Failed to look up IDBObjectStoreInfo from identifier"_s };
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
 
     result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
 
@@ -2302,7 +2301,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     while (sqlResult == SQLITE_ROW && returnedResults < targetResults) {
         auto keyBufferSpan = sql->columnBlobAsSpan(0);
         IDBKeyData keyData;
-        if (!deserializeIDBKeyData(keyBufferSpan.data(), keyBufferSpan.size(), keyData)) {
+        if (!deserializeIDBKeyData(keyBufferSpan, keyData)) {
             LOG_ERROR("Unable to deserialize key data from database while getting all records");
             return IDBError { ExceptionCode::UnknownError, "Unable to deserialize key data while getting all records"_s };
         }
@@ -2361,7 +2360,9 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
     }
 
     auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
+    if (!objectStoreInfo)
+        return IDBError { ExceptionCode::InvalidStateError, "Object store cannot be found in the database"_s };
+
     result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
 
     uint32_t currentCount = 0;
@@ -2442,7 +2443,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     if (!sql
         || sql->bindInt64(1, indexID) != SQLITE_OK
-        || sql->bindBlob(2, buffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+        || sql->bindBlob(2, buffer->span()) != SQLITE_OK) {
         LOG_ERROR("Unable to lookup index record in database");
         return IDBError { ExceptionCode::UnknownError, "Unable to lookup index record in database"_s };
     }
@@ -2459,7 +2460,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
     IDBKeyData objectStoreKey;
     auto keySpan = sql->columnBlobAsSpan(0);
 
-    if (!deserializeIDBKeyData(keySpan.data(), keySpan.size(), objectStoreKey)) {
+    if (!deserializeIDBKeyData(keySpan, objectStoreKey)) {
         LOG_ERROR("Unable to deserialize key looking up index record in database");
         return IDBError { ExceptionCode::UnknownError, "Unable to deserialize key looking up index record in database"_s };
     }
@@ -2524,8 +2525,8 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
         
         if (!statement
             || statement->bindInt64(1, objectStoreIdentifier) != SQLITE_OK
-            || statement->bindBlob(2, lowerBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
-            || statement->bindBlob(3, upperBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+            || statement->bindBlob(2, lowerBuffer->span()) != SQLITE_OK
+            || statement->bindBlob(3, upperBuffer->span()) != SQLITE_OK) {
             LOG_ERROR("Could not count records in object store %" PRIi64 " from Records table (%i) - %s", objectStoreIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Unable to count records in object store due to binding failure"_s };
         }
@@ -2541,8 +2542,8 @@ IDBError SQLiteIDBBackingStore::getCount(const IDBResourceIdentifier& transactio
 
         if (!statement
             || statement->bindInt64(1, indexIdentifier) != SQLITE_OK
-            || statement->bindBlob(2, lowerBuffer->dataAsSpanForContiguousData()) != SQLITE_OK
-            || statement->bindBlob(3, upperBuffer->dataAsSpanForContiguousData()) != SQLITE_OK) {
+            || statement->bindBlob(2, lowerBuffer->span()) != SQLITE_OK
+            || statement->bindBlob(3, upperBuffer->span()) != SQLITE_OK) {
             LOG_ERROR("Could not count records with index %" PRIi64 " from IndexRecords table (%i) - %s", indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Unable to count records for index due to binding failure"_s };
         }

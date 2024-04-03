@@ -1,0 +1,27 @@
+load("//bazel:skia_rules.bzl", "exports_files_legacy")
+
+licenses(["notice"])
+
+exports_files_legacy()
+
+cc_binary(
+    name = "skdiff",
+    testonly = True,
+    srcs = [
+        "skdiff.cpp",
+        "skdiff.h",
+        "skdiff_html.cpp",
+        "skdiff_html.h",
+        "skdiff_main.cpp",
+        "skdiff_utils.cpp",
+        "skdiff_utils.h",
+    ],
+    features = ["layering_check"],
+    deps = [
+        "//:core",
+        "//:png_decode_codec",
+        "//:png_encode_codec",
+        "//src/base",
+        "//src/core:core_priv",
+    ],
+)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,13 @@
 
 #pragma once
 
-#if HAVE(CORE_TELEPHONY)
-
 #import <pal/spi/cocoa/CoreTelephonySPI.h>
+
+#if HAVE(CORE_TELEPHONY) && !HAVE(DELAY_INIT_LINKING)
+
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreTelephony)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, CoreTelephonyClient)
 
-#endif // HAVE(CORE_TELEPHONY)
+#endif // HAVE(CORE_TELEPHONY) && !HAVE(DELAY_INIT_LINKING)

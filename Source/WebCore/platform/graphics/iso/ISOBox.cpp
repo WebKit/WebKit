@@ -98,7 +98,7 @@ bool ISOBox::parse(DataView& view, unsigned& offset)
         if (!checkedRead<ExtendedType>(extendedTypeStruct, view, offset, BigEndian))
             return false;
 
-        m_extendedType = Vector<uint8_t>(extendedTypeStruct.value, std::size(extendedTypeStruct.value));
+        m_extendedType = Vector<uint8_t>(std::span { extendedTypeStruct.value });
     }
 
     return true;

@@ -34,7 +34,7 @@ namespace WebCore {
 template <>
 class ProcessQualified<WTF::UUID> {
 public:
-    static ProcessQualified generate() { return { WTF::UUID::createVersion4(), Process::identifier() }; }
+    static ProcessQualified generate() { return { WTF::UUID::createVersion4Weak(), Process::identifier() }; }
 
     ProcessQualified()
         : m_object(WTF::UUID::emptyValue)

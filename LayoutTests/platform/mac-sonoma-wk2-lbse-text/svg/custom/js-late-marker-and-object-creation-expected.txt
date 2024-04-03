@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 3.33x3.33 clip at (0,0) size 3.33x3.33
+  RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 3.33x3.33 clip at (0,0) size 3.33x3.33
+  RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
+layer at (0,0) size 2x2
+  RenderSVGResourceMarker {marker} at (0,0) size 2x2
+layer at (0,0) size 10x10 backgroundClip at (0,0) size 3.33x3.33 clip at (0,0) size 3.33x3.33
+  RenderSVGEllipse {circle} at (0,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
+layer at (130,135) size 50x50
+  RenderSVGTransformableContainer {g} at (130,135) size 50x50
+layer at (130,135) size 50x50
+  RenderSVGPath {path} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=markerStart] [middle marker=markerMiddle] [end marker=markerEnd] [data="M 130 135 L 180 135 L 180 185"]

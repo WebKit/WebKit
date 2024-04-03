@@ -1751,3 +1751,12 @@ both-edges
 // transition-behavior
 // normal
 allow-discrete
+
+// resize
+// none
+// both
+// horizontal
+// vertical
+// block
+// inline
+-internal-textarea-auto

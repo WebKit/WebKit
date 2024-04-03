@@ -34,9 +34,11 @@
 #if TARGET_OS_IPHONE
 @class UIImage;
 @class UIMenuElement;
+@class UIViewController;
 #else
 @class NSImage;
 @class NSMenuItem;
+@class NSPopover;
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -44,14 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @abstract This notification is sent whenever a @link WKWebExtensionAction has changed properties. */
 WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 WK_EXTERN NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification NS_SWIFT_NAME(_WKWebExtensionAction.propertiesDidChangeNotification);
-
-/*! @abstract This notification is sent when the `intrinsicContentSize` of the popup web view associated with a @link WKWebExtensionAction changes. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-WK_EXTERN NSNotificationName const _WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification NS_SWIFT_NAME(_WKWebExtensionAction.popupWebViewContentSizeDidChangeNotification);
-
-/*! @abstract This notification is sent when the popup web view associated with a @link WKWebExtensionAction is closed. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
-WK_EXTERN NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification NS_SWIFT_NAME(_WKWebExtensionAction.popupWebViewDidCloseNotification);
 
 /*!
  @abstract A `WKWebExtensionAction` object encapsulates the properties for an individual web extension action.
@@ -89,8 +83,19 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 /*! @abstract The localized display label for the action. */
 @property (nonatomic, readonly, copy) NSString *label;
 
-/*! @abstract The badge text for the action. */
+/*!
+ @abstract The badge text for the action.
+ @discussion This property represents the text that appears on the badge for the action. An empty string signifies that no badge should be shown.
+ */
 @property (nonatomic, readonly, copy) NSString *badgeText;
+
+/*!
+ @abstract A Boolean value indicating whether the badge text is unread.
+ @discussion This property is automatically set to `YES` when `badgeText` changes and is not empty. If `badgeText` becomes empty or the
+ popup associated with the action is presented, this property is automatically set to `NO`. Additionally, it should be set to `NO` by the app when the badge
+ has been presented to the user. This property is useful for higher-level notification badges when extensions might be hidden behind an action sheet.
+ */
+@property (nonatomic) BOOL hasUnreadBadgeText;
 
 /*! @abstract A Boolean value indicating whether the action is enabled. */
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
@@ -110,24 +115,48 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 
 /*!
  @abstract A Boolean value indicating whether the action has a popup.
- @discussion Use this property to check if the action has a popup before attempting to access the `popupWebView` property.
- @seealso popupWebView
+ @discussion Use this property to check if the action has a popup before attempting to show any popup views.
  */
 @property (nonatomic, readonly) BOOL presentsPopup;
 
+#if TARGET_OS_IPHONE
+/*!
+ @abstract A view controller that presents a web view loaded with the popup page for this action, or `nil` if no popup is specified.
+ @discussion The view controller adaptively adjusts its presentation style based on where it is presented from, preferring popover.
+ It contains a web view preloaded with the popup page and automatically adjusts tis `preferredContentSize` to fit the web view's
+ content size. The `presentsPopup` property should be checked to determine the availability of a popup before using this property.
+ Dismissing the view controller will close the popup and unload the web view.
+ @seealso presentsPopup
+ */
+@property (nonatomic, readonly, nullable) UIViewController *popupViewController;
+#endif
+
+#if TARGET_OS_OSX
+/*!
+ @abstract A popover that presents a web view loaded with the popup page for this action, or `nil` if no popup is specified.
+ @discussion This popover contains a view controller with a web view preloaded with the popup page. It automatically adjusts its size to fit
+ the web view's content size. The `presentsPopup` property should be checked to determine the availability of a popup before using this
+ property.  Dismissing the popover will close the popup and unload the web view.
+ @seealso presentsPopup
+ */
+@property (nonatomic, readonly, nullable) NSPopover *popupPopover;
+#endif
+
 /*!
  @abstract A web view loaded with the popup page for this action, or `nil` if no popup is specified.
- @discussion The web view will be preloaded with the popup page upon first access or after it has been closed. Use the `hasPopup`
- property to determine whether a popup should be displayed before accessing this property.
- @seealso hasPopup
+ @discussion The web view will be preloaded with the popup page upon first access or after it has been unloaded. Use the `presentsPopup`
+ property to determine whether a popup should be displayed before using this property.
+ @seealso presentsPopup
  */
 @property (nonatomic, readonly, nullable) WKWebView *popupWebView;
 
 /*!
- @abstract Should be called by the app to close the popup's web view.
- @discussion This method should be called when the popup web view is no longer presented to the user, indicating that it can safely be closed.
+ @abstract Triggers the dismissal process of the popup.
+ @discussion Invoke this method to manage the popup's lifecycle, ensuring the web view is unloaded and resources are released once the
+ popup closes. This method is automatically called upon the dismissal of the action's `UIViewController` or `NSPopover`.  For custom
+ scenarios where the popup's lifecycle is manually managed, it must be explicitly invoked to ensure proper closure.
  */
-- (void)closePopupWebView;
+- (void)closePopup;
 
 @end
 

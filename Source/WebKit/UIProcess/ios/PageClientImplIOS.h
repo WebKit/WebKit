@@ -28,12 +28,13 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "PageClientImplCocoa.h"
+#import "WKBrowserEngineDefinitions.h"
 #import "WebFullScreenManagerProxy.h"
 #import <WebCore/InspectorOverlay.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-OBJC_CLASS NSTextAlternatives;
+OBJC_CLASS PlatformTextAlternatives;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
@@ -81,10 +82,19 @@ private:
 #if ENABLE(GPU_PROCESS)
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) override;
 #endif // ENABLE(GPU_PROCESS)
+#if ENABLE(MODEL_PROCESS)
+    void didCreateContextInModelProcessForVisibilityPropagation(LayerHostingContextID) override;
+#endif // ENABLE(MODEL_PROCESS)
+#if USE(EXTENSIONKIT)
+    UIView *createVisibilityPropagationView() override;
+#endif
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidExit() override;
+#endif
+#if ENABLE(MODEL_PROCESS)
+    void modelProcessDidExit() override;
 #endif
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;
@@ -100,7 +110,7 @@ private:
     void clearAllEditCommands() override;
     bool canUndoRedo(UndoOrRedo) override;
     void executeUndoRedo(UndoOrRedo) override;
-    void accessibilityWebProcessTokenReceived(const IPC::DataReference&) override;
+    void accessibilityWebProcessTokenReceived(std::span<const uint8_t>, WebCore::FrameIdentifier, pid_t) override;
     bool executeSavedCommandBySelector(const String& selector) override;
     void updateSecureInputState() override;
     void resetSecureInputState() override;
@@ -125,7 +135,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
+    void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -237,7 +247,7 @@ private:
     void unlockFullscreenOrientation() override;
 #endif
 
-    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference&) override;
+    void didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, std::span<const uint8_t>) override;
 
     Vector<String> mimeTypesWithCustomContentProviders() override;
 
@@ -278,7 +288,7 @@ private:
     void didPerformDragOperation(bool handled) override;
     void didHandleDragStartRequest(bool started) override;
     void didHandleAdditionalDragItemsRequest(bool added) override;
-    void startDrag(const WebCore::DragItem&, ShareableBitmap::Handle&& image) override;
+    void startDrag(const WebCore::DragItem&, WebCore::ShareableBitmap::Handle&& image) override;
     void willReceiveEditDragSnapshot() override;
     void didReceiveEditDragSnapshot(std::optional<WebCore::TextIndicatorData>) override;
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
@@ -304,7 +314,7 @@ private:
     void showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext) final;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, WKBEScrollViewScrollUpdate *, void (^completion)(BOOL handled)) final;
 #endif
 
     WebCore::Color contentViewBackgroundColor() final;
@@ -312,12 +322,12 @@ private:
 
     String sceneID() final;
 
-    void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) final;
+    void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) final;
     void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
     bool isTextRecognitionInFullscreenVideoEnabled() const final;
 
 #if ENABLE(VIDEO)
-    void beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&&, WebCore::FloatRect) final;
+    void beginTextRecognitionForVideoInElementFullscreen(WebCore::ShareableBitmap::Handle&&, WebCore::FloatRect) final;
     void cancelTextRecognitionForVideoInElementFullscreen() final;
 #endif
 
@@ -326,6 +336,16 @@ private:
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     void didEnterFullscreen() final;
     void didExitFullscreen() final;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    UIViewController *presentingViewController() const final;
+#endif
+
+    WebCore::FloatRect rootViewToWebView(const WebCore::FloatRect&) const final;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    const String& spatialTrackingLabel() const final;
 #endif
 
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }

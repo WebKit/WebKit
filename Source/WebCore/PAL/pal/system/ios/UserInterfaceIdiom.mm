@@ -78,8 +78,10 @@ void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
 static UserInterfaceIdiom determineVisionSubidiom()
 {
 #if PLATFORM(VISION)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!_RSCurrentProcessUsesNewPointsPerMeter())
         return UserInterfaceIdiom::VisionLegacy;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     return UserInterfaceIdiom::Vision;
 }

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (152.56,-0.80) size 176x306 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (152.56,-0.80) size 174.88x305.75
+layer at (152.56,-0.80) size 175x306 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 174.88x305.75
+layer at (10,120) size 461x0
+  RenderSVGPath {path} at (-142.56,120.80) size 460x0 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 120 L 470 120"]
+layer at (10,240) size 461x0
+  RenderSVGPath {path} at (-142.56,240.80) size 460x0 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 240 L 470 240"]
+layer at (152.56,-0.80) size 175x186 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 175x186 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 175x186
+      chunk 1 (middle anchor) text run 1 at (152.57,120.00) startOffset 0 endOffset 4 width 174.86 RTL: "\x{622}\x{644}\x{627}\x{62A}"
+layer at (161.55,119.20) size 157x186
+  RenderSVGText {text} at (8,120) size 158x186 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 157x186
+      chunk 1 (middle anchor) text run 1 at (161.56,240.00) startOffset 0 endOffset 5 width 156.88 RTL: "\x{62B}\x{644}\x{627}\x{62B}\x{629}"
+layer at (10,310.55) size 248x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 247.27x36.81
+layer at (10,310.55) size 247x37
+  RenderSVGText {text} at (0,0) size 248x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 248x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 247.27: "$Revision: 1.10 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

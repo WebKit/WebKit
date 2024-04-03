@@ -41,15 +41,10 @@ Ref<BlobEvent> BlobEvent::create(const AtomString& type, Init&& init, IsTrusted 
 }
 
 BlobEvent::BlobEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(type, init, isTrusted)
+    : Event(EventInterfaceType::BlobEvent, type, init, isTrusted)
     , m_blob(init.data.releaseNonNull())
     , m_timecode(init.timecode)
 {
-}
-
-EventInterface BlobEvent::eventInterface() const
-{
-    return BlobEventInterfaceType;
 }
 
 } // namespace WebCore

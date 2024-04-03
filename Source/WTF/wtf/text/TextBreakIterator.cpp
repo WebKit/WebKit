@@ -43,21 +43,21 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 
 #if !PLATFORM(COCOA)
 
-TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, std::span<const UChar> priorContext, Mode mode, ContentAnalysis, const AtomString& locale)
 {
-    return switchOn(mode, [string, priorContext, priorContextLength, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
-    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
-    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
-    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
+    return switchOn(mode, [string, priorContext, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, priorContext, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, priorContext, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, priorContext, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, TextBreakIteratorICU::CharacterMode { }, locale);
     });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
-    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
+TextBreakIterator::TextBreakIterator(StringView string, std::span<const UChar> priorContext, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
+    : m_backing(mapModeToBackingIterator(string, priorContext, mode, contentAnalysis, locale))
     , m_mode(mode)
     , m_locale(locale)
 {
@@ -86,7 +86,7 @@ static UBreakIterator* setTextForIterator(UBreakIterator& iterator, StringView s
         textLocal.text.pExtra = textLocal.buffer;
 
         UErrorCode openStatus = U_ZERO_ERROR;
-        UText* text = openLatin1UTextProvider(&textLocal, string.characters8(), string.length(), &openStatus);
+        UText* text = openLatin1UTextProvider(&textLocal, string.span8(), &openStatus);
         if (U_FAILURE(openStatus)) {
             LOG_ERROR("uTextOpenLatin1 failed with status %d", openStatus);
             return nullptr;

@@ -8,7 +8,7 @@ layer at (0,0) size 785x1092
           text run at (0,0) width 382: "The table below should have the same width as the red DIV "
           text run at (382,0) width 365: "below this paragraph. The inner image should just fit. The"
           text run at (0,18) width 42: "image "
-        RenderInline {EM} at (0,0) size 66x17
+        RenderInline {EM} at (42,18) size 66x17
           RenderText {#text} at (42,18) size 66x17
             text run at (42,18) width 66: "should not"
         RenderText {#text} at (108,18) size 131x17
@@ -86,7 +86,7 @@ layer at (0,0) size 785x1092
       RenderBlock {P} at (0,1040) size 769x18
         RenderText {#text} at (0,0) size 56x17
           text run at (0,0) width 56: "See also "
-        RenderInline {A} at (0,0) size 98x17 [color=#0000EE]
+        RenderInline {A} at (56,0) size 98x17 [color=#0000EE]
           RenderText {#text} at (56,0) size 98x17
             text run at (56,0) width 98: "tablewidth.html"
         RenderText {#text} at (154,0) size 4x17

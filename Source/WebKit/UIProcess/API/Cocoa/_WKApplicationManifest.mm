@@ -214,8 +214,8 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     if (shortcut) {
         _name = adoptNS([shortcut->name copy]);
         _url = adoptNS([shortcut->url copy]);
-        _icons = createNSArray(shortcut->icons, [] (auto& icon) -> _WKApplicationManifestIcon * {
-            return [[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon];
+        _icons = createNSArray(shortcut->icons, [] (auto& icon) {
+            return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon]);
         });
     }
 

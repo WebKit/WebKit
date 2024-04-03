@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DataReference.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebPageProxyIdentifier.h"
@@ -81,13 +80,13 @@ private:
     void refThreadableWebSocketChannel() final { ref(); }
     void derefThreadableWebSocketChannel() final { deref(); }
 
-    void notifySendFrame(WebCore::WebSocketFrame::OpCode, const uint8_t* data, size_t length);
+    void notifySendFrame(WebCore::WebSocketFrame::OpCode, std::span<const uint8_t> data);
     void logErrorMessage(const String&);
 
     // Message receivers
     void didConnect(String&& subprotocol, String&& extensions);
     void didReceiveText(String&&);
-    void didReceiveBinaryData(IPC::DataReference&&);
+    void didReceiveBinaryData(std::span<const uint8_t>);
     void didClose(unsigned short code, String&&);
     void didReceiveMessageError(String&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);

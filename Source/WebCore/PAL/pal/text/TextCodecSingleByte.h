@@ -38,7 +38,7 @@ public:
     explicit TextCodecSingleByte(Encoding);
 
 private:
-    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     const Encoding m_encoding;

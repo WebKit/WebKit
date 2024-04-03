@@ -1,0 +1,7 @@
+This protects against a crash when AXUIElementForTextMarker is queried with an empty text marker.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+asdf asdf

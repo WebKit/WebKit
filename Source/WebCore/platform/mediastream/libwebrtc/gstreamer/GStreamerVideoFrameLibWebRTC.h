@@ -33,15 +33,17 @@ namespace WebCore {
 
 WARN_UNUSED_RETURN GRefPtr<GstSample> convertLibWebRTCVideoFrameToGStreamerSample(const webrtc::VideoFrame&);
 
-std::unique_ptr<webrtc::VideoFrame> convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&, webrtc::VideoRotation, int64_t timestamp, int64_t renderTimeMs);
+std::unique_ptr<webrtc::VideoFrame> convertGStreamerSampleToLibWebRTCVideoFrame(GRefPtr<GstSample>&&, webrtc::VideoRotation, int64_t timestamp, int64_t renderTimeMs);
 
 class GStreamerVideoFrameLibWebRTC : public rtc::RefCountedObject<webrtc::VideoFrameBuffer> {
 public:
-    GStreamerVideoFrameLibWebRTC(const GRefPtr<GstSample>& sample, GstVideoInfo info)
-        : m_sample(sample)
-        , m_info(info) { }
+    GStreamerVideoFrameLibWebRTC(GRefPtr<GstSample>&& sample, GstVideoInfo info)
+        : m_sample(WTFMove(sample))
+        , m_info(info)
+    {
+    }
 
-    static rtc::scoped_refptr<webrtc::VideoFrameBuffer> create(const GRefPtr<GstSample>&);
+    static rtc::scoped_refptr<webrtc::VideoFrameBuffer> create(GRefPtr<GstSample>&&);
 
     GstSample* getSample() const { return m_sample.get(); }
     rtc::scoped_refptr<webrtc::I420BufferInterface> ToI420() final;

@@ -35,44 +35,55 @@
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
 
+namespace WTF {
+class WorkQueue;
+}
+
 namespace WebCore {
 
 class CachedResourceMediaLoader;
 class DataURLResourceMediaLoader;
+class FragmentedSharedBuffer;
 class MediaPlayerPrivateAVFoundationObjC;
+class ParsedContentRange;
 class PlatformResourceMediaLoader;
 class ResourceError;
 class ResourceResponse;
-class FragmentedSharedBuffer;
 
-class WebCoreAVFResourceLoader : public RefCounted<WebCoreAVFResourceLoader> {
+class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceLoader> {
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, WTF::WorkQueue&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
     void stopLoading();
-    void invalidate();
 
 private:
-    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
+    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, WTF::WorkQueue&);
 
     friend class CachedResourceMediaLoader;
     friend class DataURLResourceMediaLoader;
     friend class PlatformResourceMediaLoader;
 
-    void responseReceived(const ResourceResponse&);
+    // Return true if stopLoading() got called, indicating that no further processing should occur.
+    bool responseReceived(const String&, int, const ParsedContentRange&, size_t);
+    bool newDataStoredInSharedBuffer(const FragmentedSharedBuffer&);
+
     void loadFailed(const ResourceError&);
     void loadFinished();
-    void newDataStoredInSharedBuffer(const FragmentedSharedBuffer&);
 
-    MediaPlayerPrivateAVFoundationObjC* m_parent;
+    ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     RetainPtr<AVAssetResourceLoadingRequest> m_avRequest;
     std::unique_ptr<DataURLResourceMediaLoader> m_dataURLMediaLoader;
     std::unique_ptr<CachedResourceMediaLoader> m_resourceMediaLoader;
-    WeakPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
+    RefPtr<PlatformResourceMediaLoader> m_platformMediaLoader;
     size_t m_responseOffset { 0 };
+    int64_t m_requestedLength { 0 };
+    int64_t m_requestedOffset { 0 };
+    int64_t m_currentOffset { 0 };
+
+    Ref<WTF::WorkQueue> m_targetQueue;
 };
 
 }

@@ -31,6 +31,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {

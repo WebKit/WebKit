@@ -46,8 +46,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueGeneric);
 
-static constexpr int DEFAULTCAPTIONFONTSIZE = 22; // Keep in sync with `font-size` in `video::-webkit-media-text-track-display`.
-
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
     WTF_MAKE_ISO_ALLOCATED_INLINE(TextTrackCueGenericBoxElement);
 public:

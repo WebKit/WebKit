@@ -182,12 +182,12 @@ void JSTestSetLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestSetLikeWithOverriddenOperationsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestSetLikeWithOverriddenOperations::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestSetLikeWithOverriddenOperations::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestSetLikeWithOverriddenOperations_addGetter(JSGlobalObject& lexicalGlobalObject, JSTestSetLikeWithOverriddenOperations& thisObject)
@@ -374,7 +374,7 @@ void JSTestSetLikeWithOverriddenOperationsOwner::finalize(JSC::Handle<JSC::Unkno
 {
     auto* jsTestSetLikeWithOverriddenOperations = static_cast<JSTestSetLikeWithOverriddenOperations*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestSetLikeWithOverriddenOperations->wrapped(), jsTestSetLikeWithOverriddenOperations);
+    uncacheWrapper(world, jsTestSetLikeWithOverriddenOperations->protectedWrapped().ptr(), jsTestSetLikeWithOverriddenOperations);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

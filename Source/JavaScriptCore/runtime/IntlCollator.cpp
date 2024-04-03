@@ -88,7 +88,7 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
             int32_t length = 0;
             while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
                 // 10.2.3 "The values "standard" and "search" must not be used as elements in any [[sortLocaleData]][locale].co and [[searchLocaleData]][locale].co array."
-                String collation(pointer, length);
+                String collation({ pointer, static_cast<size_t>(length) });
                 if (collation == "standard"_s || collation == "search"_s)
                     continue;
                 if (auto mapped = mapICUCollationKeywordToBCP47(collation))
@@ -448,7 +448,7 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
                         ASSERT(U_SUCCESS(status));
                         auto resultJSC = compareASCIIWithUCADUCET(xstring, 1, ystring, 1);
                         if (resultJSC && resultICU != resultJSC.value()) {
-                            dataLogLn("BAD ", locale, " ", makeString(hex(x)), "(", StringView(xstring, 1), ") <=> ", makeString(hex(y)), "(", StringView(ystring, 1), ") ICU:(", static_cast<int32_t>(resultICU), "),JSC:(", static_cast<int32_t>(resultJSC.value()), ")");
+                            dataLogLn("BAD ", locale, " ", makeString(hex(x)), "(", StringView { span(*xstring) }, ") <=> ", makeString(hex(y)), "(", StringView { span(*ystring) }, ") ICU:(", static_cast<int32_t>(resultICU), "),JSC:(", static_cast<int32_t>(resultJSC.value()), ")");
                             allAreGood = false;
                         }
                     }
@@ -498,8 +498,8 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
                         CRASH();
                     }
                 } else {
-                    if (StringView(buffer.data(), buffer.size()).containsOnlyASCII()) {
-                        dataLogLn("BAD ", locale, " ", String(buffer.data(), buffer.size()), " including ASCII tailored characters");
+                    if (charactersAreAllASCII(buffer.span())) {
+                        dataLogLn("BAD ", locale, " ", StringView(buffer.span()), " including ASCII tailored characters");
                         CRASH();
                     }
                 }

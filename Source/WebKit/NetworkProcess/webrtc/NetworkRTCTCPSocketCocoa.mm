@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
-#include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NetworkRTCUtilitiesCocoa.h"
@@ -63,7 +62,7 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
         if (content) {
             dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                buffer.append(static_cast<const uint8_t*>(data), size);
+                buffer.append(std::span { static_cast<const uint8_t*>(data), size });
                 return true;
             }).get());
             buffer = processData(WTFMove(buffer));
@@ -129,8 +128,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     }).get());
 
     processIncomingData(m_nwConnection.get(), [identifier = m_identifier, connection = m_connection.copyRef(), ip = remoteAddress.ipaddr(), port = remoteAddress.port(), isSTUN = m_isSTUN](Vector<uint8_t>&& buffer) mutable {
-        return WebRTC::extractMessages(WTFMove(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto* message, auto size) {
-            IPC::DataReference data(message, size);
+        return WebRTC::extractMessages(WTFMove(buffer), isSTUN ? WebRTC::MessageType::STUN : WebRTC::MessageType::Data, [&](auto data) {
             connection->send(Messages::LibWebRTCNetwork::SignalReadPacket { identifier, data, RTCNetwork::IPAddress(ip), port, rtc::TimeMillis() * 1000 }, 0);
         });
     });
@@ -168,40 +166,40 @@ static RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&& v)
     }));
 }
 
-Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(const uint8_t* data, size_t size)
+Vector<uint8_t> NetworkRTCTCPSocketCocoa::createMessageBuffer(std::span<const uint8_t> data)
 {
-    if (size >= std::numeric_limits<uint16_t>::max())
+    if (data.size() >= std::numeric_limits<uint16_t>::max())
         return { };
 
     if (m_isSTUN) {
-        auto messageLengths = WebRTC::getSTUNOrTURNMessageLengths(data, size);
+        auto messageLengths = WebRTC::getSTUNOrTURNMessageLengths(data);
         if (!messageLengths)
             return { };
 
-        ASSERT(messageLengths->messageLength == size);
-        ASSERT(messageLengths->messageLengthWithPadding >= size);
-        if (messageLengths->messageLengthWithPadding < size)
+        ASSERT(messageLengths->messageLength == data.size());
+        ASSERT(messageLengths->messageLengthWithPadding >= data.size());
+        if (messageLengths->messageLengthWithPadding < data.size())
             return { };
 
         Vector<uint8_t> buffer;
         buffer.reserveInitialCapacity(messageLengths->messageLengthWithPadding);
-        buffer.append(data, size);
-        for (size_t cptr = 0 ; cptr < messageLengths->messageLengthWithPadding - size; ++cptr)
+        buffer.append(data);
+        for (size_t cptr = 0 ; cptr < messageLengths->messageLengthWithPadding - data.size(); ++cptr)
             buffer.append(0);
         return buffer;
     }
 
     // Prepend length.
     Vector<uint8_t> buffer;
-    buffer.reserveInitialCapacity(size + 2);
-    buffer.appendList({ (size >> 8) & 0xFF, size & 0xFF });
-    buffer.append(data, size);
+    buffer.reserveInitialCapacity(data.size() + 2);
+    buffer.appendList({ (data.size() >> 8) & 0xFF, data.size() & 0xFF });
+    buffer.append(data);
     return buffer;
 }
 
-void NetworkRTCTCPSocketCocoa::sendTo(const uint8_t* data, size_t size, const rtc::SocketAddress&, const rtc::PacketOptions& options)
+void NetworkRTCTCPSocketCocoa::sendTo(std::span<const uint8_t> data, const rtc::SocketAddress&, const rtc::PacketOptions& options)
 {
-    auto buffer = createMessageBuffer(data, size);
+    auto buffer = createMessageBuffer(data);
     if (buffer.isEmpty())
         return;
 

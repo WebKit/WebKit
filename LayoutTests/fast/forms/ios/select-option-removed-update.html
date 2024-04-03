@@ -25,7 +25,7 @@ addEventListener("load", async () => {
     shouldBeTrue("areArraysEqual(items, " + '["Option 1", "Option 2", "Option 3"]' + ")");
 
     select.remove(0);
-    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.delayFor(200);
 
     items = await UIHelper.selectMenuItems();
     shouldBeTrue("areArraysEqual(items, " + '["Option 2", "Option 3"]' + ")");

@@ -103,6 +103,7 @@ if (angle_use_x11) {
   gl_backend_sources += [
     "glx/DisplayGLX.cpp",
     "glx/DisplayGLX.h",
+    "glx/DisplayGLX_api.h",
     "glx/FunctionsGLX.cpp",
     "glx/FunctionsGLX.h",
     "glx/PbufferSurfaceGLX.cpp",

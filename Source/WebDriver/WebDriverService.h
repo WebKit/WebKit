@@ -143,10 +143,8 @@ private:
     HTTPServer m_server;
     RefPtr<Session> m_session;
 
-#if USE(INSPECTOR_SOCKET_SERVER)
     String m_targetAddress;
     uint16_t m_targetPort { 0 };
-#endif
 };
 
 } // namespace WebDriver

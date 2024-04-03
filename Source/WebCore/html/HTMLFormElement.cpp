@@ -93,7 +93,7 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
 }
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
     ASSERT(hasTagName(formTag));
 }
@@ -116,9 +116,8 @@ HTMLFormElement::~HTMLFormElement()
 
     m_defaultButton = nullptr;
     for (auto& weakElement : m_listedElements) {
-        RefPtr element { weakElement.get() };
-        ASSERT(element);
-        auto* listedElement = element->asFormListedElement();
+        ASSERT(weakElement);
+        RefPtr listedElement = weakElement->asFormListedElement();
         ASSERT(listedElement);
         listedElement->formWillBeDestroyed();
     }
@@ -136,7 +135,7 @@ Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(Insertion
 
 void HTMLFormElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    Node& root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
+    auto& root = traverseToRootNode(); // Do not rely on rootNode() because our IsInTreeScope is outdated.
     auto listedElements = copyListedElementsVector();
     for (auto& listedElement : listedElements)
         listedElement->formOwnerRemovedFromTree(root);

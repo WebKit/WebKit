@@ -205,8 +205,9 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     if (!output->numberOfChannels())
         return Exception { ExceptionCode::InvalidAccessError, "Node has zero output channels"_s };
 
-    if (is<AudioContext>(context) && &destination == &context.destination() && !downcast<AudioContext>(context).destination().isConnected())
-        downcast<AudioContext>(context).defaultDestinationWillBecomeConnected();
+    RefPtr audioContext = dynamicDowncast<AudioContext>(context);
+    if (audioContext && &destination == &context.destination() && !audioContext->destination().isConnected())
+        audioContext->defaultDestinationWillBecomeConnected();
 
     input->connect(output);
 
@@ -444,9 +445,9 @@ void AudioNode::initializeDefaultNodeOptions(unsigned count, ChannelCountMode mo
     m_channelInterpretation = interpretation;
 }
 
-EventTargetInterface AudioNode::eventTargetInterface() const
+enum EventTargetInterfaceType AudioNode::eventTargetInterface() const
 {
-    return AudioNodeEventTargetInterfaceType;
+    return EventTargetInterfaceType::AudioNode;
 }
 
 ScriptExecutionContext* AudioNode::scriptExecutionContext() const

@@ -166,7 +166,7 @@ def diffErrorHandler(expectedFilename)
         outp.puts "    print " + prefixString("out", plan.name) + "\n"
         outp.puts "    print " + prefixString("\"ERROR: Unexpected exit code \#{status.exitstatus}\\n\"", plan.name) + "\n"
         outp.puts "    " + plan.failCommand
-        outp.puts "elsif File.exists?(\"../#{Shellwords.shellescape(expectedFilename)}\")\n"
+        outp.puts "elsif File.exist?(\"../#{Shellwords.shellescape(expectedFilename)}\")\n"
         outp.puts getDiff("../#{Shellwords.shellescape(expectedFilename)}", outputFilename)
         outp.puts "    if isDifferent\n"
         outp.puts "        print " + prefixString("\"DIFF FAILURE!\\n\"", plan.name) + "\n"
@@ -322,8 +322,8 @@ class Plan < BasePlan
         # guaranteed to be set; if it isn't, set the exit code to
         # something that's clearly invalid.
         <<-END_STATUS_COMMAND
-          File.open("#{statusFile}", "w") { |f|
-              f.puts("#{$runUniqueId} \#{status.nil? ? 999999999 : status.exitstatus} #{status_code}")
+          File.open("#{statusFile}", "a") { |f|
+              f.puts("#{@index} #{$runUniqueId} \#{status.nil? ? 999999999 : status.exitstatus} #{status_code}")
           }
         END_STATUS_COMMAND
     end
@@ -348,7 +348,7 @@ class Plan < BasePlan
     end
     
     def statusFile
-        "#{STATUS_FILE_PREFIX}#{@index}"
+        "#{STATUS_FILE}"
     end
 
     def writeRunScript(filename)

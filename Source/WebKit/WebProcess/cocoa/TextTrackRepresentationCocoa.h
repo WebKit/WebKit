@@ -48,7 +48,7 @@ private:
     void setHidden(bool) const final;
 
     WeakPtr<WebPage> m_page;
-    WeakPtr<WebCore::HTMLMediaElement, WebCore::WeakPtrImplWithEventTargetData> m_mediaElement;
+    WeakPtr<WebCore::HTMLMediaElement> m_mediaElement;
 };
 
 } // namespace WebKit

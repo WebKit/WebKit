@@ -1,0 +1,3 @@
+
+PASS Removing the text control should not add selection range
+

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -46,12 +46,12 @@ ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
 {
 }
 
-ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, String&& message, ErrorType errorType, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, String&& message, ErrorType errorType, LineColumn lineColumn, String&& sourceURL, String&& stackString)
 {
     VM& vm = globalObject->vm();
     Structure* structure = globalObject->errorStructure(errorType);
     ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm)) ErrorInstance(vm, structure, errorType);
-    instance->finishCreation(vm, WTFMove(message), line, column, WTFMove(sourceURL), WTFMove(stackString));
+    instance->finishCreation(vm, WTFMove(message), lineColumn, WTFMove(sourceURL), WTFMove(stackString));
     return instance;
 }
 
@@ -70,29 +70,17 @@ ErrorInstance* ErrorInstance::create(JSGlobalObject* globalObject, Structure* st
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    return create(globalObject, vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
+    return create(vm, structure, messageString, cause, appender, type, errorType, useCurrentFrame);
 }
 
-static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* exception, BytecodeIndex bytecodeIndex, const String& message)
+String appendSourceToErrorMessage(CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, const String& message, RuntimeType type, ErrorInstance::SourceAppender appender)
 {
-    ErrorInstance::SourceAppender appender = exception->sourceAppender();
-    exception->clearSourceAppender();
-    RuntimeType type = exception->runtimeTypeForCause();
-    exception->clearRuntimeTypeForCause();
-
     if (!codeBlock->hasExpressionInfo() || message.isNull())
         return message;
-    
-    unsigned startOffset = 0;
-    unsigned endOffset = 0;
-    unsigned divotPoint = 0;
-    unsigned line = 0;
-    unsigned column = 0;
 
-    codeBlock->expressionRangeForBytecodeIndex(bytecodeIndex, divotPoint, startOffset, endOffset, line, column);
-
-    int expressionStart = divotPoint - startOffset;
-    int expressionStop = divotPoint + endOffset;
+    auto info = codeBlock->expressionInfoForBytecodeIndex(bytecodeIndex);
+    int expressionStart = info.divot - info.startOffset;
+    int expressionStop = info.divot + info.endOffset;
 
     StringView sourceString = codeBlock->source().provider()->source();
     if (!expressionStop || expressionStart > static_cast<int>(sourceString.length()))
@@ -138,7 +126,7 @@ void ErrorInstance::captureStackTrace(VM& vm, JSGlobalObject* globalObject, size
             remaining = std::min(remaining, m_stackTrace->size());
             if (remaining > 0) {
                 ASSERT(m_stackTrace->size() >= remaining);
-                stackTrace->append(m_stackTrace->data(), remaining);
+                stackTrace->append(std::span { m_stackTrace->data(), remaining } );
             }
         }
 
@@ -147,7 +135,7 @@ void ErrorInstance::captureStackTrace(VM& vm, JSGlobalObject* globalObject, size
     vm.writeBarrier(this);
 }
 
-void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
+void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -155,7 +143,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
 
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(globalObject, vm, this, useCurrentFrame);
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, useCurrentFrame);
     {
         Locker locker { cellLock() };
         m_stackTrace = WTFMove(stackTrace);
@@ -166,8 +154,13 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
 
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         auto [codeBlock, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
-        if (codeBlock)
-            messageWithSource = appendSourceToErrorMessage(codeBlock, this, bytecodeIndex, message);
+        if (codeBlock) {
+            ErrorInstance::SourceAppender appender = sourceAppender();
+            clearSourceAppender();
+            RuntimeType type = runtimeTypeForCause();
+            clearRuntimeTypeForCause();
+            messageWithSource = appendSourceToErrorMessage(codeBlock, bytecodeIndex, message, type, appender);
+        }
     }
 
     if (!messageWithSource.isNull()) {
@@ -178,13 +171,30 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-void ErrorInstance::finishCreation(VM& vm, String&& message, unsigned line, unsigned column, String&& sourceURL, String&& stackString)
+void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause, JSCell* owner, CallLinkInfo* callLinkInfo)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    m_line = line;
-    m_column = column;
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, /* useCurrentFrame */ true, owner, callLinkInfo);
+    {
+        Locker locker { cellLock() };
+        m_stackTrace = WTFMove(stackTrace);
+    }
+    vm.writeBarrier(this);
+    if (!message.isNull())
+        putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (!cause.isEmpty())
+        putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
+}
+
+void ErrorInstance::finishCreation(VM& vm, String&& message, LineColumn lineColumn, String&& sourceURL, String&& stackString)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+    m_lineColumn = lineColumn;
     m_sourceURL = WTFMove(sourceURL);
     m_stackString = WTFMove(stackString);
     if (!message.isNull())
@@ -278,6 +288,9 @@ void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
 void ErrorInstance::computeErrorInfo(VM& vm, bool allocationAllowed)
 {
     ASSERT(!m_errorInfoMaterialized);
+    // Here we use DeferGCForAWhile instead of DeferGC since GC's Heap::runEndPhase can trigger this function. In
+    // that case, DeferGC's destructor might trigger another GC cycle which is unexpected.
+    DeferGCForAWhile deferGC(vm);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
         auto& fn = vm.onComputeErrorInfo();
@@ -286,11 +299,11 @@ void ErrorInstance::computeErrorInfo(VM& vm, bool allocationAllowed)
             // We cannot gurantee the lifetime of this stack trace to continue to be valid.
             // We have to move it out of the ErrorInstance.
             WTF::Vector<StackFrame> stackTrace = WTFMove(*m_stackTrace.get());
-            m_stackString = fn(vm, stackTrace, m_line, m_column, m_sourceURL, allocationAllowed ? this : nullptr);
+            m_stackString = fn(vm, stackTrace, m_lineColumn.line, m_lineColumn.column, m_sourceURL, allocationAllowed ? this : nullptr);
         } else if (fn && !allocationAllowed) {
-            m_stackString = fn(vm, *m_stackTrace.get(), m_line, m_column, m_sourceURL, nullptr);
+            m_stackString = fn(vm, *m_stackTrace.get(), m_lineColumn.line, m_lineColumn.column, m_sourceURL, nullptr);
         } else {
-            getLineColumnAndSource(vm, m_stackTrace.get(), m_line, m_column, m_sourceURL);
+            getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
             m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
         }
         m_stackTrace = nullptr;
@@ -307,8 +320,8 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     if (!m_stackString.isNull()) {
         auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);
 
-        putDirect(vm, vm.propertyNames->line, jsNumber(m_line), attributes);
-        putDirect(vm, vm.propertyNames->column, jsNumber(m_column), attributes);
+        putDirect(vm, vm.propertyNames->line, jsNumber(m_lineColumn.line), attributes);
+        putDirect(vm, vm.propertyNames->column, jsNumber(m_lineColumn.column), attributes);
         if (!m_sourceURL.isEmpty())
             putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)), attributes);
 

@@ -372,6 +372,8 @@ PrivateState::PrivateState(const EGLenum clientType,
       mLogicOp(LogicalOperation::Copy),
       mPatchVertices(3),
       mPixelLocalStorageActivePlanes(0),
+      mVariableRasterizationRateEnabled(false),
+      mVariableRasterizationRateMap(nullptr),
       mNoSimultaneousConstantColorAndAlphaBlendFunc(false),
       mSetBlendIndexedInvoked(false),
       mSetBlendFactorsIndexedInvoked(false),
@@ -1234,6 +1236,26 @@ void PrivateState::setLogicOp(LogicalOperation opcode)
     }
 }
 
+void PrivateState::setVariableRasterizationRateEnabled(bool enabled)
+{
+    if (mVariableRasterizationRateEnabled != enabled)
+    {
+        mVariableRasterizationRateEnabled = enabled;
+        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+    }
+}
+
+void PrivateState::setVariableRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
+{
+    if (mVariableRasterizationRateMap != map)
+    {
+        mVariableRasterizationRateMap = map;
+        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
+        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
+    }
+}
+
 void PrivateState::setVertexAttribf(GLuint index, const GLfloat values[4])
 {
     ASSERT(static_cast<size_t>(index) < mVertexAttribCurrentValues.size());
@@ -1362,6 +1384,9 @@ void PrivateState::setEnableFeature(GLenum feature, bool enabled)
             return;
         case GL_FETCH_PER_SAMPLE_ARM:
             mFetchPerSample = enabled;
+            return;
+        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
+            setVariableRasterizationRateEnabled(enabled);
             return;
         default:
             break;
@@ -1527,6 +1552,8 @@ bool PrivateState::getEnableFeature(GLenum feature) const
             return mShadingRatePreserveAspectRatio;
         case GL_FETCH_PER_SAMPLE_ARM:
             return mFetchPerSample;
+        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
+            return mVariableRasterizationRateEnabled;
     }
 
     ASSERT(mClientVersion.major == 1);
@@ -1664,8 +1691,15 @@ void PrivateState::getBooleanv(GLenum pname, GLboolean *params) const
             *params = mRasterizer.dither;
             break;
         case GL_COLOR_LOGIC_OP:
-            ASSERT(mClientVersion.major > 1);
-            *params = mLogicOpEnabled;
+            if (mClientVersion.major == 1)
+            {
+                // Handle logicOp in GLES1 through the GLES1 state management.
+                *params = getEnableFeature(pname);
+            }
+            else
+            {
+                *params = mLogicOpEnabled;
+            }
             break;
         case GL_PRIMITIVE_RESTART_FIXED_INDEX:
             *params = mPrimitiveRestart;
@@ -1740,7 +1774,14 @@ void PrivateState::getBooleanv(GLenum pname, GLboolean *params) const
             *params = mCaps.fragmentShaderFramebufferFetchMRT;
             break;
         default:
-            UNREACHABLE();
+            if (mClientVersion.major == 1)
+            {
+                *params = getEnableFeature(pname);
+            }
+            else
+            {
+                UNREACHABLE();
+            }
             break;
     }
 }
@@ -3390,6 +3431,9 @@ void State::getPointerv(const Context *context, GLenum pname, void **params) con
                                           context->vertexArrayIndex(ParamToVertexArrayType(pname))),
                                       GL_VERTEX_ATTRIB_ARRAY_POINTER, params);
             return;
+        case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
+            *params = privateState().getVariableRasterizationRateMap();
+            break;
         default:
             UNREACHABLE();
             break;
@@ -3691,10 +3735,6 @@ angle::Result State::syncProgram(const Context *context, Command command)
     {
         return mProgram->syncState(context);
     }
-    else if (mProgramPipeline.get())
-    {
-        return mProgramPipeline->syncState(context);
-    }
     return angle::Result::Continue;
 }
 
@@ -3850,6 +3890,10 @@ angle::Result State::onExecutableChange(const Context *context)
         }
     }
 
+    // Mark uniform blocks as _not_ dirty. When an executable changes, the backends should already
+    // reprocess all uniform blocks.  These dirty bits only track what's made dirty afterwards.
+    mDirtyUniformBlocks.reset();
+
     return angle::Result::Continue;
 }
 
@@ -3952,13 +3996,11 @@ void State::onImageStateChange(const Context *context, size_t unit)
 
 void State::onUniformBufferStateChange(size_t uniformBufferIndex)
 {
-    if (mProgram)
+    if (mExecutable)
     {
-        mProgram->onUniformBufferStateChange(uniformBufferIndex);
-    }
-    else if (mProgramPipeline.get())
-    {
-        mProgramPipeline->onUniformBufferStateChange(uniformBufferIndex);
+        // When a buffer at a given binding changes, set all blocks mapped to it dirty.
+        mDirtyUniformBlocks |=
+            mExecutable->getUniformBufferBlocksMappedToBinding(uniformBufferIndex);
     }
     // This could be represented by a different dirty bit. Using the same one keeps it simple.
     mDirtyBits.set(state::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);

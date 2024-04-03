@@ -62,10 +62,10 @@ CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKin
         unsigned length = str.length();
         unsigned step = (length >> 10) + 1;
 
-        sha1.addBytes(bitwise_cast<uint8_t*>(&length), sizeof(length));
+        sha1.addBytes(std::span { bitwise_cast<uint8_t*>(&length), sizeof(length) });
         do {
             UChar character = str[index];
-            sha1.addBytes(bitwise_cast<uint8_t*>(&character), sizeof(character));
+            sha1.addBytes(std::span { bitwise_cast<uint8_t*>(&character), sizeof(character) });
             oldIndex = index;
             index += step;
         } while (index > oldIndex && index < length);

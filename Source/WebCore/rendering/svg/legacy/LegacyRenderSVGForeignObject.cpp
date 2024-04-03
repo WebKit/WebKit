@@ -137,9 +137,10 @@ void LegacyRenderSVGForeignObject::layout()
     FloatRect oldViewport = m_viewport;
 
     // Cache viewport boundaries
-    SVGLengthContext lengthContext(&foreignObjectElement());
-    FloatPoint viewportLocation(foreignObjectElement().x().value(lengthContext), foreignObjectElement().y().value(lengthContext));
-    m_viewport = FloatRect(viewportLocation, FloatSize(foreignObjectElement().width().value(lengthContext), foreignObjectElement().height().value(lengthContext)));
+    Ref foreignObjectElement = this->foreignObjectElement();
+    SVGLengthContext lengthContext(foreignObjectElement.ptr());
+    FloatPoint viewportLocation(foreignObjectElement->x().value(lengthContext), foreignObjectElement->y().value(lengthContext));
+    m_viewport = FloatRect(viewportLocation, FloatSize(foreignObjectElement->width().value(lengthContext), foreignObjectElement->height().value(lengthContext)));
     if (!updateCachedBoundariesInParents)
         updateCachedBoundariesInParents = oldViewport != m_viewport;
 
@@ -155,8 +156,10 @@ void LegacyRenderSVGForeignObject::layout()
     ASSERT(!needsLayout());
 
     // If our bounds changed, notify the parents.
-    if (updateCachedBoundariesInParents)
-        RenderSVGBlock::setNeedsBoundariesUpdate();
+    if (updateCachedBoundariesInParents) {
+        if (CheckedPtr parent = this->parent())
+            parent->invalidateCachedBoundaries();
+    }
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)
@@ -184,7 +187,6 @@ bool LegacyRenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& reques
         || RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), HitTestChildBlockBackgrounds);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 LayoutSize LegacyRenderSVGForeignObject::offsetFromContainer(RenderElement& container, const LayoutPoint&, bool*) const
 {
     ASSERT_UNUSED(container, &container == this->container());
@@ -193,6 +195,5 @@ LayoutSize LegacyRenderSVGForeignObject::offsetFromContainer(RenderElement& cont
     ASSERT(!isInline());
     return locationOffset();
 }
-#endif
 
 }

@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 663x17
             text run at (0,0) width 491: "This test uses the eventSender to do a mouse click to focus the subframe. "
             text run at (490,0) width 173: "It won't run interactively."
-        RenderText {#text} at (662,0) size 721x35
+        RenderText {#text} at (0,0) size 721x35
           text run at (662,0) width 5: " "
           text run at (666,0) width 55: "To run it"
           text run at (0,18) width 352: "manually, click on the iframe, Select All, then hit delete."

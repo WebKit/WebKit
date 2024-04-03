@@ -40,6 +40,7 @@
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -108,7 +109,7 @@ protected:
 
     // Messages to be received.
     void ensureExtensionEnabled(String&&);
-    void createAndBindEGLImage(GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, CompletionHandler<void(uint64_t, WebCore::IntSize)>&&);
+    void createAndBindEGLImage(GCGLenum, GCGLenum, WebCore::GraphicsContextGL::EGLImageSource, GCGLint, CompletionHandler<void(uint64_t)>&&);
     void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(IPC::Semaphore&&, CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
@@ -125,16 +126,16 @@ protected:
     void surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-    void copyTextureFromVideoFrame(SharedVideoFrame&&, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
+    void copyTextureFromVideoFrame(SharedVideoFrame&&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 #endif
 #if PLATFORM(COCOA)
     virtual void createEGLSync(WTF::MachSendRight syncEvent, uint64_t signalValue, CompletionHandler<void(uint64_t)>&&) = 0;
 #endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
-    void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, IPC::ArrayReference<uint8_t>)>&&);
-    void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, SharedMemory::Handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
+    void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&&);
+    void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, WebCore::SharedMemory::Handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
     void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts);
     void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts);
     void multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type);
@@ -148,7 +149,7 @@ private:
     void paintNativeImageToImageBuffer(WebCore::NativeImage&, WebCore::RenderingResourceIdentifier);
 
 protected:
-    WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
@@ -170,6 +171,7 @@ protected:
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     const WebCore::ProcessIdentity m_resourceOwner;
+    HashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
 };
 
 

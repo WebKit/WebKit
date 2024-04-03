@@ -154,6 +154,11 @@ JSTestDefaultToJSONInheritFinal::JSTestDefaultToJSONInheritFinal(Structure* stru
 {
 }
 
+Ref<TestDefaultToJSONInheritFinal> JSTestDefaultToJSONInheritFinal::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONInheritFinal>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestDefaultToJSONInheritFinal::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -175,12 +180,12 @@ JSValue JSTestDefaultToJSONInheritFinal::getConstructor(VM& vm, const JSGlobalOb
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritFinalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONInheritFinalPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestDefaultToJSONInheritFinal::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestDefaultToJSONInheritFinal::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestDefaultToJSONInheritFinal_finalLongAttributeFooGetter(JSGlobalObject& lexicalGlobalObject, JSTestDefaultToJSONInheritFinal& thisObject)

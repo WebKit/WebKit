@@ -27,7 +27,7 @@
 #import "TextRecognitionResult.h"
 
 #import "CharacterRange.h"
-#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 #if USE(APPKIT)
 #import <AppKit/NSAttributedString.h>
@@ -39,11 +39,28 @@ namespace WebCore {
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
+RetainPtr<NSData> TextRecognitionResult::encodeVKCImageAnalysis(RetainPtr<VKCImageAnalysis> analysis)
+{
+    return [NSKeyedArchiver archivedDataWithRootObject:analysis.get() requiringSecureCoding:YES error:nil];
+}
+
+RetainPtr<VKCImageAnalysis> TextRecognitionResult::decodeVKCImageAnalysis(RetainPtr<NSData> data)
+{
+    if (!PAL::isVisionKitCoreFrameworkAvailable())
+        return nil;
+
+    // FIXME: This should use _enableStrictSecureDecodingMode or extract members into custom structures,
+    // but that is blocked by rdar://108673895. In the meantime, just make sure this can't
+    // be reached from outside the web content process to prevent sandbox escapes.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isInWebProcess());
+
+    return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getVKCImageAnalysisClass() fromData:data.get() error:nil];
+}
+
 RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult& result, const CharacterRange& range)
 {
-    if (auto analysis = result.platformData; [analysis respondsToSelector:@selector(_attributedStringForRange:)])
+    if (auto analysis = TextRecognitionResult::decodeVKCImageAnalysis(result.imageAnalysisData); [analysis respondsToSelector:@selector(_attributedStringForRange:)])
         return { [analysis _attributedStringForRange:static_cast<NSRange>(range)] };
-
     return nil;
 }
 

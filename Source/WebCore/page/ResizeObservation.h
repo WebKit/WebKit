@@ -65,6 +65,7 @@ public:
     FloatSize snappedContentBoxSize() const;
 
     Element* target() const { return m_target.get(); }
+    RefPtr<Element> protectedTarget() const;
     ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
     size_t targetElementDepth() const;
 

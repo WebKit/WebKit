@@ -36,6 +36,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/CacheValidation.h>
 #include <WebCore/HTTPHeaderNames.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LowPowerModeNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
@@ -490,7 +491,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
         auto key = makeCacheKey(request);
 
-        auto isSuccessfulRevalidation = response.httpStatusCode() == 304;
+        auto isSuccessfulRevalidation = response.httpStatusCode() == httpStatus304NotModified;
         if (!isSuccessfulRevalidation) {
             // Make sure we don't keep a stale entry in the cache.
             remove(key);
@@ -506,7 +507,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
         if (auto sharedMemory = bodyData.tryCreateSharedMemory()) {
-            mappedBody.shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
+            mappedBody.shareableResource = WebCore::ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
             if (!mappedBody.shareableResource) {
                 if (completionHandler)
                     completionHandler(WTFMove(mappedBody));

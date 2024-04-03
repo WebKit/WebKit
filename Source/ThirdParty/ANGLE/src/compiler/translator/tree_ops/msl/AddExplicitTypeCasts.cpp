@@ -5,8 +5,8 @@
 //
 
 #include "compiler/translator/tree_ops/msl/AddExplicitTypeCasts.h"
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 
 using namespace sh;
 

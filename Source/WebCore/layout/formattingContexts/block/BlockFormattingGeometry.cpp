@@ -68,7 +68,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) }; 
-        auto borderAndPaddingTop = boxGeometry.borderBefore() + boxGeometry.paddingBefore().value_or(0);
+        auto borderAndPaddingTop = boxGeometry.borderAndPaddingBefore();
         auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox);
 
         if (height)
@@ -149,8 +149,8 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = boxGeometry.borderStart();
         auto borderRight = boxGeometry.borderEnd();
-        auto paddingLeft = boxGeometry.paddingStart().value_or(0);
-        auto paddingRight = boxGeometry.paddingEnd().value_or(0);
+        auto paddingLeft = boxGeometry.paddingStart();
+        auto paddingRight = boxGeometry.paddingEnd();
 
         // #1
         if (width) {

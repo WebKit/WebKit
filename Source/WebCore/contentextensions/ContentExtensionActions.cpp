@@ -43,12 +43,12 @@ static void append(Vector<uint8_t>& vector, size_t length)
 {
     RELEASE_ASSERT(length <= std::numeric_limits<uint32_t>::max());
     uint32_t integer = length;
-    vector.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
+    vector.append(std::span { reinterpret_cast<const uint8_t*>(&integer), sizeof(integer) });
 }
 
 static void append(Vector<uint8_t>& vector, const CString& string)
 {
-    vector.append(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(string.data()), string.length() });
+    vector.append(string.span());
 }
 
 static size_t deserializeLength(std::span<const uint8_t> span, size_t offset)
@@ -60,7 +60,7 @@ static size_t deserializeLength(std::span<const uint8_t> span, size_t offset)
 static String deserializeUTF8String(std::span<const uint8_t> span, size_t offset, size_t length)
 {
     RELEASE_ASSERT(span.size() >= offset + length);
-    return String::fromUTF8(span.data() + offset, length);
+    return String::fromUTF8(span.subspan(offset, length));
 }
 
 static void writeLengthToVectorAtOffset(Vector<uint8_t>& vector, size_t offset)

@@ -38,14 +38,14 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(BufferedChangeEvent);
 
 BufferedChangeEvent::BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed)
-    : Event(eventNames().bufferedchangeEvent, CanBubble::No, IsCancelable::No)
+    : Event(EventInterfaceType::BufferedChangeEvent, eventNames().bufferedchangeEvent, CanBubble::No, IsCancelable::No)
     , m_added(WTFMove(added))
     , m_removed(WTFMove(removed))
 {
 }
 
 BufferedChangeEvent::BufferedChangeEvent(const AtomString& type, Init&& init)
-    : Event(type, init, IsTrusted::No)
+    : Event(EventInterfaceType::BufferedChangeEvent, type, init, IsTrusted::No)
     , m_added(WTFMove(init.addedRanges))
     , m_removed(WTFMove(init.removedRanges))
 {
@@ -61,11 +61,6 @@ RefPtr<TimeRanges> BufferedChangeEvent::addedRanges() const
 RefPtr<TimeRanges> BufferedChangeEvent::removedRanges() const
 {
     return m_removed;
-}
-
-EventInterface BufferedChangeEvent::eventInterface() const
-{
-    return BufferedChangeEventInterfaceType;
 }
 
 } // namespace WebCore

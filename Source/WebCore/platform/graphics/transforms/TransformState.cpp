@@ -43,7 +43,6 @@ TransformState& TransformState::operator=(const TransformState& other)
         m_lastPlanarSecondaryQuad = other.m_lastPlanarSecondaryQuad;
     }
     m_accumulatingTransform = other.m_accumulatingTransform;
-    m_useCSS3DTransformInterop = other.m_useCSS3DTransformInterop;
     m_direction = other.m_direction;
     
     m_accumulatedTransform = nullptr;
@@ -123,16 +122,12 @@ void TransformState::applyAccumulatedOffset()
 
 bool TransformState::shouldFlattenBefore(TransformAccumulation accumulate)
 {
-    if (m_useCSS3DTransformInterop)
-        return accumulate == FlattenTransform && m_direction != ApplyTransformDirection;
-    return false;
+    return accumulate == FlattenTransform && m_direction != ApplyTransformDirection;
 }
 
 bool TransformState::shouldFlattenAfter(TransformAccumulation accumulate)
 {
-    if (m_useCSS3DTransformInterop)
-        return accumulate == FlattenTransform && m_direction == ApplyTransformDirection;
-    return accumulate == FlattenTransform;
+    return accumulate == FlattenTransform && m_direction == ApplyTransformDirection;
 }
 
 // FIXME: We transform AffineTransform to TransformationMatrix. This is rather inefficient.

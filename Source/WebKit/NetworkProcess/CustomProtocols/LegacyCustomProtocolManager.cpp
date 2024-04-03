@@ -36,9 +36,9 @@
 
 namespace WebKit {
 
-const char* LegacyCustomProtocolManager::supplementName()
+ASCIILiteral LegacyCustomProtocolManager::supplementName()
 {
-    return "LegacyCustomProtocolManager";
+    return "LegacyCustomProtocolManager"_s;
 }
 
 LegacyCustomProtocolManager::LegacyCustomProtocolManager(NetworkProcess& networkProcess)

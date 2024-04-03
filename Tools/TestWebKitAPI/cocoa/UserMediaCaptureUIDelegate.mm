@@ -29,10 +29,14 @@
 #if ENABLE(MEDIA_STREAM)
 #import "PlatformUtilities.h"
 #import "Utilities.h"
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 
-@implementation UserMediaCaptureUIDelegate
+@implementation UserMediaCaptureUIDelegate {
+    WKWebView* _webViewForPopup;
+}
 @synthesize numberOfPrompts = _numberOfPrompts;
 @synthesize decision = _decision;
+@synthesize shouldCreateNewWebView = _shouldCreateNewWebView;
 
 -(id)init {
     self = [super init];
@@ -45,6 +49,10 @@
     }
 
     return self;
+}
+
+-(void)setWebViewForPopup:(WKWebView*)webView {
+    _webViewForPopup = webView;
 }
 
 -(BOOL)wasPrompted {
@@ -121,6 +129,23 @@
     _wasPrompted = true;
     decisionHandler(_getDisplayMediaDecision);
 }
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    if (_shouldCreateNewWebView)
+        return [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+
+    return _webViewForPopup;
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    auto websitePolicies = adoptNS([[WKWebpagePreferences alloc] init]);
+    [websitePolicies _setPopUpPolicy:_WKWebsitePopUpPolicyAllow];
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies.get());
+}
+#endif
 
 @end
 

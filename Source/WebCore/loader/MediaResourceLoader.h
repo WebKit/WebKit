@@ -33,9 +33,10 @@
 #include "FetchOptions.h"
 #include "PlatformMediaResourceLoader.h"
 #include "ResourceResponse.h"
+#include <wtf/Atomics.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -55,32 +56,33 @@ public:
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) final;
     void removeResource(MediaResource&);
 
-    Document* document() { return m_document.get(); }
-    const String& crossOriginMode() const { return m_crossOriginMode; }
+    Document* document();
+    RefPtr<Document> protectedDocument();
+    const String& crossOriginMode() const;
 
     WEBCORE_EXPORT static void recordResponsesForTesting();
-    Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
+    WEBCORE_EXPORT Vector<ResourceResponse> responsesForTesting() const;
     void addResponseForTesting(const ResourceResponse&);
 
 private:
     void contextDestroyed() override;
 
-    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
-    String m_crossOriginMode;
-    HashSet<MediaResource*> m_resources;
-    Vector<ResourceResponse> m_responsesForTesting;
-    FetchOptions::Destination m_destination;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document WTF_GUARDED_BY_CAPABILITY(mainThread);
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element WTF_GUARDED_BY_CAPABILITY(mainThread);
+    String m_crossOriginMode WTF_GUARDED_BY_CAPABILITY(mainThread);
+    SingleThreadWeakHashSet<MediaResource> m_resources WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Vector<ResourceResponse> m_responsesForTesting WTF_GUARDED_BY_CAPABILITY(mainThread);
+    FetchOptions::Destination m_destination WTF_GUARDED_BY_CAPABILITY(mainThread);
 };
 
-class MediaResource : public PlatformMediaResource, CachedRawResourceClient {
+class MediaResource : public PlatformMediaResource, public CachedRawResourceClient {
 public:
-    static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);
+    static Ref<MediaResource> create(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
     virtual ~MediaResource();
 
     // PlatformMediaResource
-    void stop() override;
-    bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck; }
+    void shutdown() override;
+    bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck.load(); }
 
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;
@@ -91,9 +93,13 @@ public:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
 
 private:
-    MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);
-    Ref<MediaResourceLoader> m_loader;
-    bool m_didPassAccessControlCheck { false };
+    Ref<MediaResourceLoader> protectedLoader() const;
+    CachedResourceHandle<CachedRawResource> protectedResource() const;
+
+    MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>&&);
+    void ensureShutdown();
+    const Ref<MediaResourceLoader> m_loader;
+    Atomic<bool> m_didPassAccessControlCheck { false };
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 

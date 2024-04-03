@@ -195,6 +195,7 @@ void *X509V3_EXT_d2i(const X509_EXTENSION *ext) {
 void *X509V3_get_d2i(const STACK_OF(X509_EXTENSION) *extensions, int nid,
                      int *out_critical, int *out_idx) {
   int lastpos;
+  size_t i;
   X509_EXTENSION *ex, *found_ex = NULL;
   if (!extensions) {
     if (out_idx) {
@@ -213,13 +214,13 @@ void *X509V3_get_d2i(const STACK_OF(X509_EXTENSION) *extensions, int nid,
   if (lastpos < 0) {
     lastpos = 0;
   }
-  for (size_t i = lastpos; i < sk_X509_EXTENSION_num(extensions); i++) {
+  for (i = lastpos; i < sk_X509_EXTENSION_num(extensions); i++) {
     ex = sk_X509_EXTENSION_value(extensions, i);
     if (OBJ_obj2nid(ex->object) == nid) {
       if (out_idx) {
         // TODO(https://crbug.com/boringssl/379): Consistently reject
         // duplicate extensions.
-        *out_idx = (int)i;
+        *out_idx = i;
         found_ex = ex;
         break;
       } else if (found_ex) {

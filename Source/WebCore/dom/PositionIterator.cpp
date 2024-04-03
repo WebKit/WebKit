@@ -176,14 +176,15 @@ bool PositionIterator::isCandidate() const
     if (is<HTMLHtmlElement>(*anchorNode))
         return false;
 
-    if (is<RenderBlockFlow>(*renderer) || is<RenderGrid>(*renderer) || is<RenderFlexibleBox>(*renderer)) {
-        auto& block = downcast<RenderBlock>(*renderer);
-        if (block.logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
-            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atStartOfNode() && !Position::nodeIsUserSelectNone(anchorNode.get());
-            return anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(anchorNode.get()) && Position(*this).atEditingBoundary();
+    if (auto* block = dynamicDowncast<RenderBlock>(*renderer)) {
+        if (is<RenderBlockFlow>(*block) || is<RenderGrid>(*block) || is<RenderFlexibleBox>(*block)) {
+            if (block->logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
+                if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
+                    return atStartOfNode() && !Position::nodeIsUserSelectNone(anchorNode.get());
+                return anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(anchorNode.get()) && Position(*this).atEditingBoundary();
+            }
+            return false;
         }
-        return false;
     }
 
     return anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(anchorNode.get()) && Position(*this).atEditingBoundary();

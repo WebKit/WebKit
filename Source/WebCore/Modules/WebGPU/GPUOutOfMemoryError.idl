@@ -31,5 +31,6 @@
     SecureContext
 ]
 interface GPUOutOfMemoryError {
-    constructor();
+    constructor(DOMString message);
+    readonly attribute DOMString message;
 };

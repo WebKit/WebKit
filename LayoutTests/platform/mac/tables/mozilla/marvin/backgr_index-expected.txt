@@ -13,10 +13,10 @@ layer at (0,0) size 785x1715
         RenderText {#text} at (0,0) size 710x30
           text run at (0,0) width 710: "This test suite is not endorsed or approved by the W3C or anyone besides fantasai. It tests"
           text run at (0,15) width 203: "conformance to fantasai's "
-        RenderInline {A} at (0,0) size 306x15 [color=#FFFF00]
+        RenderInline {A} at (202,15) size 306x15 [color=#FFFF00]
           RenderText {#text} at (202,15) size 306x15
             text run at (202,15) width 306: "table background clarification proposal"
-        RenderText {#text} at (507,15) size 757x60
+        RenderText {#text} at (0,15) size 757x60
           text run at (507,15) width 180: ", not the official CSS2"
           text run at (0,30) width 687: "specification. The intent is to demonstrate the proposal's effects under various styling"
           text run at (0,45) width 757: "conditions and to clarify any ambiguity in the proposal in preparation for a better-worded errata"
@@ -59,18 +59,18 @@ layer at (0,0) size 785x1715
         RenderText {#text} at (0,0) size 227x15
           text run at (0,0) width 227: "This test suite assumes that "
         RenderInline {STRONG} at (0,0) size 765x30
-          RenderText {#text} at (226,0) size 765x30
+          RenderText {#text} at (0,0) size 765x30
             text run at (226,0) width 539: "the border edge for a table element in a table with collapsed borders"
             text run at (0,15) width 55: "is the "
-          RenderInline {EM} at (0,0) size 48x15
+          RenderInline {EM} at (54,15) size 48x15
             RenderText {#text} at (54,15) size 48x15
               text run at (54,15) width 48: "middle"
           RenderText {#text} at (101,15) size 492x15
             text run at (101,15) width 492: " of the border around the element, not the outer or inner edge."
-        RenderText {#text} at (592,15) size 749x30
+        RenderText {#text} at (0,15) size 749x30
           text run at (592,15) width 157: " (This also needs to"
           text run at (0,30) width 656: "be addressed by CSS2.1.) It also assumes support for proper ordering of tables with "
-        RenderInline {CODE} at (0,0) size 55x15
+        RenderInline {CODE} at (655,30) size 55x15
           RenderText {#text} at (655,30) size 55x15
             text run at (655,30) width 55: "<tfoot>"
         RenderText {#text} at (709,30) size 9x15
@@ -242,7 +242,7 @@ layer at (0,0) size 785x1715
                       text run at (0,0) width 133: "Fixed Backgrounds"
                   RenderText {#text} at (0,0) size 0x0
           RenderBlock {DIV} at (0,150) size 729x34
-            RenderInline {A} at (0,0) size 88x15 [color=#FFFF00]
+            RenderInline {A} at (0,19) size 88x15 [color=#FFFF00]
               RenderImage {IMG} at (0,0) size 88x31
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {ADDRESS} at (0,184) size 729x15

@@ -452,7 +452,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(RegistrableDomain&& su
             }
             return;
         case StorageAccessStatus::HasAccess:
-            completionHandler({ StorageAccessWasGranted::Yes, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
+            completionHandler({ storageAccessWasGrantedValueForFrame(frameID, subFrameDomain), StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
             return;
         }
     };
@@ -525,7 +525,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral(Re
 void WebResourceLoadStatisticsStore::grantStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    postTask([this, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, promptWasShown, scope, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, weakStore = ThreadSafeWeakPtr { *this }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, promptWasShown, scope, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), promptWasShown, scope, completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler({ StorageAccessWasGranted::No, promptWasShown, scope, topFrameDomain, subFrameDomain });
@@ -533,8 +533,13 @@ void WebResourceLoadStatisticsStore::grantStorageAccess(RegistrableDomain&& subF
             return;
         }
 
-        m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, [subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), promptWasShown, scope, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted wasGrantedAccess) mutable {
-            postTaskReply([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), wasGrantedAccess, promptWasShown, scope, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_statisticsStore->grantStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, [weakStore = WTFMove(weakStore), frameID, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), promptWasShown, scope, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted wasGrantedAccess) mutable {
+            postTaskReply([weakStore = WTFMove(weakStore), frameID, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), wasGrantedAccess, promptWasShown, scope, completionHandler = WTFMove(completionHandler)]() mutable {
+                RefPtr store { weakStore.get() };
+                if (store && wasGrantedAccess == StorageAccessWasGranted::Yes) {
+                    completionHandler({ store->storageAccessWasGrantedValueForFrame(frameID, subFrameDomain), promptWasShown, scope, topFrameDomain, subFrameDomain });
+                    return;
+                }
                 completionHandler({ wasGrantedAccess, promptWasShown, scope, topFrameDomain, subFrameDomain });
             });
         });
@@ -548,7 +553,7 @@ void WebResourceLoadStatisticsStore::grantStorageAccessEphemeral(const Registrab
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession()) {
             storageSession->grantStorageAccess(subFrameDomain, topFrameDomain, frameID, pageID);
-            completionHandler({ StorageAccessWasGranted::Yes, promptWasShown, scope, topFrameDomain, subFrameDomain });
+            completionHandler({ storageAccessWasGrantedValueForFrame(frameID, subFrameDomain), promptWasShown, scope, topFrameDomain, subFrameDomain });
             return;
         }
     }
@@ -569,7 +574,13 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
         }
     }
 
-    return isStorageGranted ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::No;
+    if (!isStorageGranted)
+        return StorageAccessWasGranted::No;
+
+    if (!frameID)
+        return StorageAccessWasGranted::Yes;
+
+    return storageAccessWasGrantedValueForFrame(*frameID, resourceDomain);
 }
 
 void WebResourceLoadStatisticsStore::callGrantStorageAccessHandler(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
@@ -802,14 +813,14 @@ void WebResourceLoadStatisticsStore::logUserInteractionEphemeral(const Registrab
     completionHandler();
 }
 
-void WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, DidFilterKnownLinkDecoration didFilterKnownLinkDecoration, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(fromDomain != toDomain);
     
-    postTask([this, fromDomain = WTFMove(fromDomain).isolatedCopy(), toDomain = WTFMove(toDomain).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, fromDomain = WTFMove(fromDomain).isolatedCopy(), toDomain = WTFMove(toDomain).isolatedCopy(), didFilterKnownLinkDecoration, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
-            m_statisticsStore->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain);
+            m_statisticsStore->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, didFilterKnownLinkDecoration);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -1316,11 +1327,12 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
             m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::SetDomainsWithUserInteraction(domainsWithUserInteractionQuirk), 0);
         }
 
-        HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
-        for (auto& firstPartyDomain : domainsToBlock.domainsWithStorageAccess.keys()) {
-            auto requestingDomain = domainsToBlock.domainsWithStorageAccess.get(firstPartyDomain);
-            if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
-                domainsWithStorageAccessQuirk.add(firstPartyDomain, requestingDomain);
+        HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
+        for (auto& [firstPartyDomain, requestingDomains] : domainsToBlock.domainsWithStorageAccess) {
+            for (auto& requestingDomain : requestingDomains) {
+                if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
+                    domainsWithStorageAccessQuirk.add(firstPartyDomain, Vector<SubResourceDomain> { }).iterator->value.append(requestingDomain);
+            }
         }
 
         if (m_domainsWithCrossPageStorageAccessQuirk != domainsWithStorageAccessQuirk) {
@@ -1509,13 +1521,6 @@ void WebResourceLoadStatisticsStore::registrableDomainsWithWebsiteData(OptionSet
     completionHandler({ });
 }
 
-void WebResourceLoadStatisticsStore::sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample shouldSample) const
-{
-    ASSERT(RunLoop::isMain());
-    if (m_networkSession)
-        const_cast<WebResourceLoadStatisticsStore*>(this)->networkSession()->logDiagnosticMessageWithValue(message, description, value, sigDigits, shouldSample);
-}
-
 void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<void(Vector<ITPThirdPartyData>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1556,6 +1561,45 @@ void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(Registrabl
             m_statisticsStore->insertExpiredStatisticForTesting(WTFMove(domain), numberOfOperatingDaysPassed, hadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent);
         postTaskReply(WTFMove(completionHandler));
     });
+}
+
+void WebResourceLoadStatisticsStore::recordFrameLoadForStorageAccess(WebPageProxyIdentifier webPageProxyID, WebCore::FrameIdentifier frameID, const WebCore::RegistrableDomain& domain)
+{
+    auto currentTime = WallTime::now();
+    StorageAccessRequestRecordKey key { frameID, domain };
+    auto& recordValue = m_storageAccessRequestRecords.ensure(key, [&]() {
+        return StorageAccessRequestRecordValue { webPageProxyID, { }, currentTime };
+    }).iterator->value;
+    ASSERT(recordValue.webPageProxyID == webPageProxyID);
+    recordValue.lastLoadTime = currentTime;
+}
+
+void WebResourceLoadStatisticsStore::clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
+{
+    m_storageAccessRequestRecords.removeIf([&](auto& record) {
+        return record.key.first == frameID;
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearFrameLoadRecordsForStorageAccess(WebPageProxyIdentifier webPageProxyID)
+{
+    m_storageAccessRequestRecords.removeIf([&](auto& record) {
+        return record.value.webPageProxyID == webPageProxyID;
+    });
+}
+
+StorageAccessWasGranted WebResourceLoadStatisticsStore::storageAccessWasGrantedValueForFrame(WebCore::FrameIdentifier frameID, const WebCore::RegistrableDomain& domain)
+{
+    StorageAccessRequestRecordKey key { frameID, domain };
+    auto iter = m_storageAccessRequestRecords.find(key);
+    if (iter == m_storageAccessRequestRecords.end())
+        return StorageAccessWasGranted::Yes;
+
+    auto& value = iter->value;
+    if (!value.lastRequestTime)
+        value.lastRequestTime = WallTime::now();
+
+    return value.lastRequestTime.value() < value.lastLoadTime ? StorageAccessWasGranted::Yes : StorageAccessWasGranted::YesWithException;
 }
 
 } // namespace WebKit

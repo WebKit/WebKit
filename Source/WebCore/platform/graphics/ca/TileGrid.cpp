@@ -97,17 +97,21 @@ void TileGrid::setScale(float scale)
 
     for (auto& tile : m_tiles.values())
         tile.layer->setContentsScale(m_controller.deviceScaleFactor());
+
+    m_controller.willRepaintAllTiles(*this);
 }
 
 void TileGrid::setNeedsDisplay()
 {
     for (auto& entry : m_tiles) {
+        TileIndex tileIndex = entry.key;
         TileInfo& tileInfo = entry.value;
-        IntRect tileRect = rectForTileIndex(entry.key);
+        IntRect tileRect = rectForTileIndex(tileIndex);
 
-        if (tileRect.intersects(m_primaryTileCoverageRect) && tileInfo.layer->superlayer())
+        if (tileRect.intersects(m_primaryTileCoverageRect) && tileInfo.layer->superlayer()) {
             tileInfo.layer->setNeedsDisplay();
-        else
+            m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
+        } else
             tileInfo.hasStaleContent = true;
     }
 }
@@ -173,12 +177,14 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
     if (tileRepaintRect.isEmpty())
         return;
 
-    tileRepaintRect.moveBy(-tileRect.location());
+    auto tileLocalRepaintRect = tileRepaintRect;
+    tileLocalRepaintRect.moveBy(-tileRect.location());
     
     // We could test for intersection with the visible rect. This would reduce painting yet more,
     // but may make scrolling stale tiles into view more frequent.
     if (tileRect.intersects(coverageRectInTileCoords) && tileLayer->superlayer()) {
-        tileLayer->setNeedsDisplayInRect(tileRepaintRect);
+        tileLayer->setNeedsDisplayInRect(tileLocalRepaintRect);
+        m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRepaintRect);
 
         if (m_controller.rootLayer().owner()->platformCALayerShowRepaintCounter(0)) {
             FloatRect indicatorRect(0, 0, 52, 27);
@@ -288,13 +294,15 @@ unsigned TileGrid::blankPixelCount() const
     return TileController::blankPixelCountForTiles(tiles, m_controller.visibleRect(), IntPoint(0, 0));
 }
 
-void TileGrid::removeTiles(const Vector<TileGrid::TileIndex>& toRemove)
+void TileGrid::removeTiles(const Vector<TileIndex>& toRemove)
 {
     for (size_t i = 0; i < toRemove.size(); ++i) {
-        TileInfo tileInfo = m_tiles.take(toRemove[i]);
+        auto tileIndex = toRemove[i];
+        TileInfo tileInfo = m_tiles.take(tileIndex);
         tileInfo.layer->removeFromSuperlayer();
         m_tileRepaintCounts.removeAll(tileInfo.layer.get());
         tileInfo.layer->moveToLayerPool();
+        m_controller.willRemoveTile(*this, tileIndex);
     }
 }
 
@@ -368,6 +376,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
             if (tileInfo.hasStaleContent) {
                 // FIXME: store a dirty region per layer?
                 tileLayer->setNeedsDisplay();
+                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 tileInfo.hasStaleContent = false;
             }
         } else {
@@ -375,6 +384,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
             if (tileInfo.cohort == visibleTileCohort) {
                 tileInfo.cohort = currCohort;
                 ++tilesInCohort;
+                m_controller.willRemoveTile(*this, tileIndex);
                 tileLayer->removeFromSuperlayer();
             } else if (m_controller.shouldAggressivelyRetainTiles() && tileLayer->superlayer()) {
                 // Aggressive tile retention means we'll never remove cohorts, but we need to make sure they're unparented.
@@ -387,8 +397,10 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
                     if (timeUntilCohortExpires > 0_s) {
                         minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, timeUntilCohortExpires);
                         needsTileRevalidation = true;
-                    } else
+                    } else {
+                        m_controller.willRemoveTile(*this, tileIndex);
                         tileLayer->removeFromSuperlayer();
+                    }
                     break;
                 }
             }
@@ -416,8 +428,10 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     }
 
     if (validationPolicy & UnparentAllTiles) {
-        for (auto& tile : m_tiles.values())
-            tile.layer->removeFromSuperlayer();
+        for (auto& entry : m_tiles) {
+            m_controller.willRemoveTile(*this, entry.key);
+            entry.value.layer->removeFromSuperlayer();
+        }
     }
 
     auto boundsAtLastRevalidate = m_controller.boundsAtLastRevalidate();
@@ -565,6 +579,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
             if (!tileInfo.layer) {
                 tileInfo.layer = m_controller.createTileLayer(tileRect, *this);
+                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 ASSERT(!m_tileRepaintCounts.contains(tileInfo.layer.get()));
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
@@ -575,6 +590,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
                     tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
                     tileInfo.layer->setPosition(tileRect.location());
                     tileInfo.layer->setNeedsDisplay();
+                    m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
                 }
             }
 
@@ -751,6 +767,13 @@ bool TileGrid::isUsingDisplayListDrawing(PlatformCALayer*) const
 {
     if (auto* layerOwner = m_controller.rootLayer().owner())
         return layerOwner->isUsingDisplayListDrawing(nullptr);
+    return false;
+}
+
+bool TileGrid::platformCALayerNeedsPlatformContext(const PlatformCALayer* layer) const
+{
+    if (auto* layerOwner = m_controller.rootLayer().owner())
+        return layerOwner->platformCALayerNeedsPlatformContext(layer);
     return false;
 }
 

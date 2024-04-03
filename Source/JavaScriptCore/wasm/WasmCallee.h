@@ -203,7 +203,7 @@ private:
 };
 #endif
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
 
 struct WasmCodeOrigin {
     unsigned firstInlineCSI;
@@ -243,22 +243,8 @@ private:
     Vector<Ref<NameSection>, 0> nameSections;
 };
 
-class OMGCallee final : public OptimizingJITCallee {
-    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
-public:
-    static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-    {
-        return adoptRef(*new OMGCallee(index, WTFMove(name)));
-    }
-
-    using OptimizingJITCallee::setEntrypoint;
-
-private:
-    OMGCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
-        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTFMove(name))
-    {
-    }
-};
+constexpr int32_t stackCheckUnset = 0;
+constexpr int32_t stackCheckNotNeeded = -1;
 
 class OSREntryCallee final : public OptimizingJITCallee {
     WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
@@ -278,6 +264,19 @@ public:
         OptimizingJITCallee::setEntrypoint(WTFMove(entrypoint), WTFMove(unlinkedCalls), WTFMove(stackmaps), WTFMove(exceptionHandlers), WTFMove(exceptionHandlerLocations));
     }
 
+    void setStackCheckSize(int32_t stackCheckSize)
+    {
+        ASSERT(m_stackCheckSize == stackCheckUnset);
+        ASSERT(stackCheckSize > 0 || stackCheckSize == stackCheckNotNeeded);
+        m_stackCheckSize = stackCheckSize;
+    }
+
+    int32_t stackCheckSize() const
+    {
+        ASSERT(m_stackCheckSize > 0 || m_stackCheckSize == stackCheckNotNeeded);
+        return m_stackCheckSize;
+    }
+
 private:
     OSREntryCallee(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
         : OptimizingJITCallee(compilationMode, index, WTFMove(name))
@@ -287,7 +286,34 @@ private:
 
     unsigned m_osrEntryScratchBufferSize { 0 };
     uint32_t m_loopIndex;
+    int32_t m_stackCheckSize { stackCheckUnset };
 };
+
+#endif // ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+
+class OMGCallee final : public OptimizingJITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
+public:
+    static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    {
+        return adoptRef(*new OMGCallee(index, WTFMove(name)));
+    }
+
+    using OptimizingJITCallee::setEntrypoint;
+
+private:
+    OMGCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+        : OptimizingJITCallee(Wasm::CompilationMode::OMGMode, index, WTFMove(name))
+    {
+    }
+};
+
+#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
 
 class BBQCallee final : public OptimizingJITCallee {
     WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
@@ -309,11 +335,15 @@ public:
     bool didStartCompilingOSREntryCallee() const { return m_didStartCompilingOSREntryCallee; }
     void setDidStartCompilingOSREntryCallee(bool value) { m_didStartCompilingOSREntryCallee = value; }
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     OMGCallee* replacement() { return m_replacement.get(); }
     void setReplacement(Ref<OMGCallee>&& replacement)
     {
         m_replacement = WTFMove(replacement);
     }
+#else
+
+#endif
 
     TierUpCount* tierUpCount() { return m_tierUpCount.get(); }
 
@@ -338,6 +368,18 @@ public:
         return m_switchJumpTables.last().ptr();
     }
 
+    void setStackCheckSize(unsigned stackCheckSize)
+    {
+        ASSERT(m_stackCheckSize == stackCheckUnset);
+        ASSERT(stackCheckSize > 0 || int32_t(stackCheckSize) == stackCheckNotNeeded);
+        m_stackCheckSize = stackCheckSize;
+    }
+    int32_t stackCheckSize() const
+    {
+        ASSERT(m_stackCheckSize > 0 || int32_t(m_stackCheckSize) == stackCheckNotNeeded);
+        return m_stackCheckSize;
+    }
+
 private:
     BBQCallee(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, std::unique_ptr<TierUpCount>&& tierUpCount, SavedFPWidth savedFPWidth)
         : OptimizingJITCallee(Wasm::CompilationMode::BBQMode, index, WTFMove(name))
@@ -347,11 +389,14 @@ private:
     }
 
     RefPtr<OSREntryCallee> m_osrEntryCallee;
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     RefPtr<OMGCallee> m_replacement;
+#endif
     std::unique_ptr<TierUpCount> m_tierUpCount;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
     unsigned m_osrEntryScratchBufferSize { 0 };
+    unsigned m_stackCheckSize { 0 };
     bool m_didStartCompilingOSREntryCallee { false };
     SavedFPWidth m_savedFPWidth { SavedFPWidth::DontSaveVectors };
     Vector<UniqueRef<EmbeddedFixedVector<CodeLocationLabel<JSSwitchPtrTag>>>> m_switchJumpTables;
@@ -381,7 +426,7 @@ public:
 
     IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
     void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
     {
@@ -405,7 +450,7 @@ private:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
     uint32_t m_functionIndex { 0 };
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif
@@ -426,6 +471,7 @@ public:
     unsigned m_numRethrowSlotsToAlloc;
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
+    unsigned m_maxFrameSizeInV128;
 
     IPIntTierUpCounter m_tierUpCounter;
 };
@@ -485,7 +531,7 @@ public:
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
     void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
     {
@@ -525,7 +571,7 @@ private:
     LLIntTierUpCounter m_tierUpCounter;
     FixedVector<JumpTable> m_jumpTables;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
     RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
 #endif

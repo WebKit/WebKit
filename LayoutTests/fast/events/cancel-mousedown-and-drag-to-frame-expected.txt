@@ -2,6 +2,6 @@ This tests that dragging from an element that returns false from its mousedown h
 Drag Me!
 
 Drag started
-Root frame received mouse move
-Root frame received mouseup event
+Subframe received mousemove event
+Subframe received mouseup event
 PASS!

@@ -44,6 +44,7 @@
 #include "XRSessionEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebCore {
 
@@ -600,6 +601,7 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
             if (m_inputInitialized)
                 m_inputSources->update(now, m_frameData.inputSources);
 
+            tracePoint(WebXRSessionFrameCallbacksStart);
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:
             for (auto& callback : callbacks) {
                 //  6.6.If the entry’s cancelled boolean is true, continue to the next entry.
@@ -611,6 +613,8 @@ void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 
                 //  6.8.If an exception is thrown, report the exception.
             }
+            tracePoint(WebXRSessionFrameCallbacksEnd);
+
             // 6.9.Set session’s list of currently running animation frame callbacks to the empty list.
             m_callbacks.removeAllMatching([](auto& callback) {
                 return callback->isFiredOrCancelled();
@@ -642,8 +646,8 @@ bool WebXRSession::posesCanBeReported(const Document& document) const
     if (!sessionDocument || sessionDocument->domWindow() != document.domWindow())
         return false;
 
-    // 2. If session's visibilityState in not "visible", return false.
-    if (m_visibilityState != XRVisibilityState::Visible)
+    // 2. If session's visibilityState is "hidden", return false.
+    if (m_visibilityState == XRVisibilityState::Hidden)
         return false;
 
     // 5. Determine if the pose data can be returned as follows:

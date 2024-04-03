@@ -33,9 +33,11 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
+#include "JSWebExtensionAPIWebPageNamespace.h"
 #include "JSWebExtensionWrapper.h"
 #include "MessageSenderInlines.h"
 #include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIWebPageNamespace.h"
 #include "WebExtensionContextProxy.h"
 #include "WebExtensionControllerMessages.h"
 #include "WebExtensionFrameIdentifier.h"
@@ -49,11 +51,11 @@ using namespace WebCore;
 
 void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page, WebFrame& frame, DOMWrapperWorld& world)
 {
-    auto extension = extensionContext(frame, world);
+    RefPtr extension = extensionContext(frame, world);
     bool isMainWorld = world.isNormal();
 
     if (!extension && isMainWorld) {
-        // FIXME: <https://webkit.org/b/246491> Add bindings for externally connectable.
+        addBindingsToWebPageFrameIfNecessary(frame, world);
         return;
     }
 
@@ -72,10 +74,16 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
     if (!isMainWorld)
         extension->setContentScriptWorld(&world);
 
-    auto forMainWorld = isMainWorld ? WebExtensionAPINamespace::ForMainWorld::Yes : WebExtensionAPINamespace::ForMainWorld::No;
-    // FIXME: <https://webkit.org/b/246485> Handle inspector pages by setting forMainWorld to No.
+    auto contentWorldType = isMainWorld ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
 
-    namespaceObject = toJS(context, WebExtensionAPINamespace::create(forMainWorld, *extension).ptr());
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    if (page.isInspectorPage() || extension->isInspectorBackgroundPage(page)) {
+        // Inspector pages have a limited set of APIs (like content scripts).
+        contentWorldType = WebExtensionContentWorldType::Inspector;
+    }
+#endif
+
+    namespaceObject = toJS(context, WebExtensionAPINamespace::create(contentWorldType, *extension).ptr());
 
     JSObjectSetProperty(context, globalObject, toJSString("browser").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     JSObjectSetProperty(context, globalObject, toJSString("chrome").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
@@ -85,7 +93,7 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 {
     RELEASE_ASSERT(world.isNormal());
 
-    auto extension = extensionContext(frame, world);
+    RefPtr extension = extensionContext(frame, world);
     if (!extension)
         return;
 
@@ -98,32 +106,58 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
 
     extension->addFrameWithExtensionContent(frame);
 
-    namespaceObject = toJS(context, WebExtensionAPINamespace::create(WebExtensionAPINamespace::ForMainWorld::Yes, *extension).ptr());
+    namespaceObject = toJS(context, WebExtensionAPINamespace::create(WebExtensionContentWorldType::Main, *extension).ptr());
 
     JSObjectSetProperty(context, globalObject, toJSString("browser").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     JSObjectSetProperty(context, globalObject, toJSString("chrome").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 }
 
+void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame& frame, DOMWrapperWorld& world)
+{
+    auto context = frame.jsContextForWorld(world);
+    auto globalObject = JSContextGetGlobalObject(context);
+
+    auto namespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
+    if (namespaceObject && JSValueIsObject(context, namespaceObject))
+        return;
+
+    namespaceObject = toJS(context, WebExtensionAPIWebPageNamespace::create(WebExtensionContentWorldType::WebPage).ptr());
+
+    JSObjectSetProperty(context, globalObject, toJSString("browser").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
+}
+
 void WebExtensionControllerProxy::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
+    if (!hasLoadedContexts())
+        return;
+
     WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
     WebProcess::singleton().send(Messages::WebExtensionController::DidStartProvisionalLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didCommitLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
+    if (!hasLoadedContexts())
+        return;
+
     WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
     WebProcess::singleton().send(Messages::WebExtensionController::DidCommitLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFinishLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
+    if (!hasLoadedContexts())
+        return;
+
     WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
     WebProcess::singleton().send(Messages::WebExtensionController::DidFinishLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }
 
 void WebExtensionControllerProxy::didFailLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
+    if (!hasLoadedContexts())
+        return;
+
     WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());
     WebProcess::singleton().send(Messages::WebExtensionController::DidFailLoadForFrame(page.webPageProxyIdentifier(), toWebExtensionFrameIdentifier(frame), parentFrameID, url, WallTime::now()), identifier());
 }

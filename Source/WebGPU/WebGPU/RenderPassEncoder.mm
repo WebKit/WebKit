@@ -28,16 +28,29 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "BindableResource.h"
 #import "Buffer.h"
 #import "CommandEncoder.h"
+#import "ExternalTexture.h"
+#import "IsValidToUseWith.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import "TextureView.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, MTLRenderPassDescriptor* renderPassDescriptor, Device& device)
+#define RETURN_IF_FINISHED() \
+if (!m_parentEncoder->isLocked() || m_parentEncoder->isFinished()) { \
+    m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as encoding has finished", __PRETTY_FUNCTION__]); \
+    return; \
+} \
+if (!m_renderCommandEncoder || !m_parentEncoder->isValid()) \
+    return;
+
+
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, CommandEncoder& parentEncoder, id<MTLBuffer> visibilityResultBuffer, uint64_t maxDrawCount, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
@@ -45,8 +58,19 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_stencilReadOnly(stencilReadOnly)
     , m_parentEncoder(parentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
-    , m_renderPassDescriptor(renderPassDescriptor)
+    , m_descriptor(descriptor)
+    , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(std::span { descriptor.colorAttachments, descriptor.colorAttachmentCount }) : Vector<WGPURenderPassColorAttachment>())
+    , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
+    , m_descriptorTimestampWrites(descriptor.timestampWrites ? *descriptor.timestampWrites : WGPURenderPassTimestampWrites())
+    , m_maxDrawCount(maxDrawCount)
 {
+    if (m_descriptorColorAttachments.size())
+        m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
+    if (descriptor.depthStencilAttachment)
+        m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
+    if (descriptor.timestampWrites)
+        m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
+
     m_parentEncoder->lock(true);
 
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
@@ -68,6 +92,12 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_renderTargetWidth = texture.width();
         m_renderTargetHeight = texture.height();
         texture.setPreviouslyCleared();
+        addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
+
+        if (attachment.resolveTarget) {
+            auto& texture = fromAPI(attachment.resolveTarget);
+            addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
+        }
 
         id<MTLTexture> textureToClear = texture.texture();
         if (!textureToClear)
@@ -83,7 +113,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
-        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : attachment->depthClearValue;
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
         if (textureView.width() && !m_renderTargetWidth) {
@@ -92,39 +121,93 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         }
 
         id<MTLTexture> depthTexture = textureView.texture();
+        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard;
             m_depthStencilAttachmentToClear = depthTexture;
+            addResourceToActiveResources(textureView, attachment->depthReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_DepthOnly);
         }
 
         m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
         if (Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format)) {
             m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard;
             m_depthStencilAttachmentToClear = depthTexture;
+            addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
         }
+    }
+
+    m_viewportWidth = static_cast<float>(m_renderTargetWidth);
+    m_viewportHeight = static_cast<float>(m_renderTargetHeight);
+}
+
+double RenderPassEncoder::quantizedDepthValue(double depthClearValue, WGPUTextureFormat pixelFormat)
+{
+    if (depthClearValue < 0 || depthClearValue > 1)
+        return depthClearValue;
+    switch (pixelFormat) {
+    case WGPUTextureFormat_Depth16Unorm:
+        return std::nextafterf(depthClearValue + 0.5 / USHRT_MAX, 1.f);
+    default:
+        return depthClearValue;
     }
 }
 
-RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& device)
+RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
     : m_device(device)
     , m_parentEncoder(parentEncoder)
+    , m_lastErrorString(errorString)
 {
     m_parentEncoder->lock(true);
 }
 
 RenderPassEncoder::~RenderPassEncoder()
 {
-    [m_renderCommandEncoder endEncoding];
+    if (m_renderCommandEncoder)
+        m_parentEncoder->endEncoding(m_renderCommandEncoder);
+    m_renderCommandEncoder = nil;
+}
+
+bool RenderPassEncoder::occlusionQueryIsDestroyed() const
+{
+    return m_visibilityResultBufferSize == NSUIntegerMax;
 }
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
+    RETURN_IF_FINISHED();
+
     queryIndex *= sizeof(uint64_t);
-    if (queryIndex < m_visibilityResultBufferSize) {
-        m_visibilityResultBufferOffset = queryIndex;
-        [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
-        m_queryBufferIndicesToClear.add(m_visibilityResultBufferOffset);
+    if (m_occlusionQueryActive || m_queryBufferIndicesToClear.contains(queryIndex)) {
+        makeInvalid(@"beginOcclusionQuery validation failure");
+        return;
     }
+    m_occlusionQueryActive = true;
+    m_visibilityResultBufferOffset = queryIndex;
+    m_queryBufferIndicesToClear.add(m_visibilityResultBufferOffset);
+
+
+    if (occlusionQueryIsDestroyed())
+        return;
+    if (!m_visibilityResultBufferSize || queryIndex >= m_visibilityResultBufferSize) {
+        makeInvalid(@"beginOcclusionQuery validation failure");
+        return;
+    }
+
+    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeCounting offset:queryIndex];
+}
+
+void RenderPassEncoder::endOcclusionQuery()
+{
+    RETURN_IF_FINISHED();
+    if (!m_occlusionQueryActive) {
+        makeInvalid(@"endOcclusionQuery - occlusion query was not active");
+        return;
+    }
+    m_occlusionQueryActive = false;
+
+    if (occlusionQueryIsDestroyed())
+        return;
+    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeDisabled offset:m_visibilityResultBufferOffset];
 }
 
 static void setViewportMinMaxDepthIntoBuffer(auto& fragmentDynamicOffsets, float minDepth, float maxDepth)
@@ -139,12 +222,242 @@ static void setViewportMinMaxDepthIntoBuffer(auto& fragmentDynamicOffsets, float
     fragmentDynamicOffsets[1] = bitwise_cast<destType>(maxDepth);
 }
 
-void RenderPassEncoder::executePreDrawCommands()
+void RenderPassEncoder::addResourceToActiveResources(const void* resourceAddress, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> initialUsage, uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
 {
-    if (!m_pipeline)
+    if (!mtlResource)
         return;
 
-    m_issuedDrawCall = true;
+    if (isTextureBindGroupEntryUsage(initialUsage)) {
+        ASSERT([mtlResource conformsToProtocol:@protocol(MTLTexture)]);
+        id<MTLTexture> textureView = (id<MTLTexture>)mtlResource;
+        if (id<MTLTexture> parentTexture = textureView.parentTexture) {
+            mtlResource = parentTexture;
+            ASSERT(textureView.parentRelativeLevel <= std::numeric_limits<uint32_t>::max() && textureView.parentRelativeSlice <= std::numeric_limits<uint32_t>::max());
+            if (baseMipLevel || baseArrayLayer) {
+                ASSERT(textureView.parentRelativeLevel == baseMipLevel);
+                ASSERT(textureView.parentRelativeSlice == baseArrayLayer);
+            }
+            baseMipLevel = static_cast<uint32_t>(textureView.parentRelativeLevel);
+            baseArrayLayer = static_cast<uint32_t>(textureView.parentRelativeSlice);
+        }
+    }
+
+    auto mapKey = BindGroup::makeEntryMapKey(baseMipLevel, baseArrayLayer, aspect);
+    EntryUsage resourceUsage = initialUsage;
+    EntryMap* entryMap = nullptr;
+    if (auto it = m_usagesForResource.find(resourceAddress); it != m_usagesForResource.end()) {
+        entryMap = &it->value;
+        if (auto innerIt = it->value.find(mapKey); innerIt != it->value.end())
+            resourceUsage.add(innerIt->value);
+    }
+
+    if (!BindGroup::allowedUsage(resourceUsage)) {
+        makeInvalid([NSString stringWithFormat:@"Bind group has incompatible usage list: %@ for %p", BindGroup::usageName(resourceUsage), resourceAddress]);
+        return;
+    }
+    if (!entryMap) {
+        EntryMap entryMap;
+        entryMap.set(mapKey, resourceUsage);
+        m_usagesForResource.set(resourceAddress, entryMap);
+    } else
+        entryMap->set(mapKey, resourceUsage);
+}
+
+void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage, WGPUTextureAspect textureAspect)
+{
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+}
+
+void RenderPassEncoder::addResourceToActiveResources(const TextureView& texture, OptionSet<BindGroupEntryUsage> resourceUsage)
+{
+    WGPUTextureAspect textureAspect = texture.aspect();
+    if (textureAspect != WGPUTextureAspect_All) {
+        addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), textureAspect);
+        return;
+    }
+
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_DepthOnly);
+    addResourceToActiveResources(&texture.apiParentTexture(), texture.parentTexture(), resourceUsage, texture.baseMipLevel(), texture.baseArrayLayer(), WGPUTextureAspect_StencilOnly);
+}
+
+void RenderPassEncoder::addResourceToActiveResources(const BindGroupEntryUsageData::Resource& resource, id<MTLResource> mtlResource, OptionSet<BindGroupEntryUsage> resourceUsage)
+{
+    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
+        if (buffer.get())
+            addResourceToActiveResources(buffer.get(), buffer->buffer(), resourceUsage);
+        }, [&](const RefPtr<const TextureView>& textureView) {
+            if (textureView.get())
+                addResourceToActiveResources(*textureView.get(), resourceUsage);
+        }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
+            addResourceToActiveResources(externalTexture.get(), mtlResource, resourceUsage);
+    });
+}
+
+bool RenderPassEncoder::runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount)
+{
+    if (!m_pipeline || !m_indexBuffer) {
+        makeInvalid(@"Missing pipeline before draw command");
+        return false;
+    }
+
+    auto strideCount = firstInstance + instanceCount;
+    if (!strideCount)
+        return true;
+
+    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
+        auto it = m_vertexBuffers.find(bufferIndex);
+        RELEASE_ASSERT(it != m_vertexBuffers.end());
+        auto bufferSize = it->value.size;
+        auto stride = bufferData.stride;
+        auto lastStride = bufferData.lastStride;
+        if (bufferData.stepMode == WGPUVertexStepMode_Instance) {
+            if ((strideCount - 1) * stride + lastStride > bufferSize) {
+                makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%d) - 1) * stride(%llu) + lastStride(%llu) > bufferSize(%llu) / mtlBufferSize(%lu)", bufferIndex, strideCount, stride, lastStride, bufferSize, (unsigned long)it->value.buffer.length]);
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void RenderPassEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+{
+    if (!m_pipeline) {
+        makeInvalid(@"Missing pipeline before draw command");
+        return;
+    }
+
+    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
+        uint64_t strideCount = 0;
+        switch (bufferData.stepMode) {
+        case WGPUVertexStepMode_Vertex:
+            strideCount = firstVertex + vertexCount;
+            break;
+        case WGPUVertexStepMode_Instance:
+            strideCount = firstInstance + instanceCount;
+            break;
+        default:
+            break;
+        }
+        if (!strideCount)
+            continue;
+
+        auto it = m_vertexBuffers.find(bufferIndex);
+        RELEASE_ASSERT(it != m_vertexBuffers.end());
+        auto bufferSize = it->value.size;
+        if ((strideCount - 1) * bufferData.stride + bufferData.lastStride > bufferSize) {
+            makeInvalid([NSString stringWithFormat:@"Buffer[%d] fails: (strideCount(%llu) - 1) * bufferData.stride(%llu) + bufferData.lastStride(%llu) > bufferSize(%llu)", bufferIndex, strideCount, bufferData.stride,  bufferData.lastStride, bufferSize]);
+            return;
+        }
+    }
+}
+
+uint32_t RenderPassEncoder::maxVertexBufferIndex() const
+{
+    return m_maxVertexBufferSlot;
+}
+
+uint32_t RenderPassEncoder::maxBindGroupIndex() const
+{
+    return m_maxBindGroupSlot;
+}
+
+NSString* RenderPassEncoder::errorValidatingAndBindingBuffers()
+{
+    if (!m_pipeline)
+        return @"pipeline is not set";
+
+    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    for (auto& [bufferIndex, _] : requiredBufferIndices) {
+        auto it = m_vertexBuffers.find(bufferIndex);
+        if (it == m_vertexBuffers.end())
+            return [NSString stringWithFormat:@"Buffer1 index[%u] is missing", bufferIndex];
+
+        if (it->value.offset < it->value.buffer.length)
+            [m_renderCommandEncoder setVertexBuffer:it->value.buffer offset:it->value.offset atIndex:bufferIndex];
+        else if (it->value.size) {
+            makeInvalid(@"offset >= buffer.length && buffer.size");
+            return @"offset >= buffer.length && buffer.size";
+        } else
+            [m_renderCommandEncoder setVertexBuffer:m_device->placeholderBuffer() offset:0 atIndex:bufferIndex];
+    }
+
+    auto bindGroupSpaceUsed = maxBindGroupIndex() + 1;
+    auto vertexBufferSpaceUsed = maxVertexBufferIndex() + 1;
+    if (bindGroupSpaceUsed + vertexBufferSpaceUsed > m_device->limits().maxBindGroupsPlusVertexBuffers)
+        return @"Too many bind groups and vertex buffers used";
+
+    return nil;
+}
+
+NSString* RenderPassEncoder::errorValidatingDrawIndexed() const
+{
+    if (!m_indexBuffer)
+        return @"Index buffer is not set";
+
+    auto topology = m_pipeline->primitiveTopology();
+    if (topology == WGPUPrimitiveTopology_LineStrip || topology == WGPUPrimitiveTopology_TriangleStrip) {
+        if (m_indexType != m_pipeline->stripIndexFormat())
+            return @"Primitive topology mismiatch with render pipeline";
+    }
+
+    return nil;
+}
+
+void RenderPassEncoder::incrementDrawCount(uint32_t drawCalls)
+{
+    m_drawCount += drawCalls;
+    if (m_drawCount > m_maxDrawCount)
+        makeInvalid(@"m_drawCount > m_maxDrawCount");
+}
+
+bool RenderPassEncoder::issuedDrawCall() const
+{
+    return m_drawCount;
+}
+
+bool RenderPassEncoder::executePreDrawCommands(const Buffer* indirectBuffer)
+{
+    if (!m_pipeline) {
+        makeInvalid(@"Missing pipeline before draw command");
+        return false;
+    }
+    auto& pipeline = *m_pipeline.get();
+    if (NSString* error = pipeline.pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups, pipeline.vertexStageInBufferCount())) {
+        makeInvalid(error);
+        return false;
+    }
+
+    if (indirectBuffer)
+        addResourceToActiveResources(indirectBuffer, indirectBuffer->buffer(), BindGroupEntryUsage::Input);
+    if (NSString* error = errorValidatingAndBindingBuffers()) {
+        makeInvalid(error);
+        return false;
+    }
+
+    for (auto& [groupIndex, weakBindGroup] : m_bindGroups) {
+        if (!weakBindGroup.get()) {
+            makeInvalid(@"Bind group is missing");
+            return false;
+        }
+        auto& group = *weakBindGroup.get();
+        [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
+        [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
+    }
+
+    if (pipeline.renderPipelineState())
+        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
+    if (pipeline.depthStencilState())
+        [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
+    [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
+    [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
+    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
+    [m_renderCommandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
+    [m_renderCommandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
+
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
 
     for (auto& kvp : m_bindGroupDynamicOffsets) {
@@ -176,16 +489,23 @@ void RenderPassEncoder::executePreDrawCommands()
     [m_renderCommandEncoder setFragmentBytes:&m_fragmentDynamicOffsets[0] length:m_fragmentDynamicOffsets.size() * sizeof(m_fragmentDynamicOffsets[0]) atIndex:m_device->maxBuffersForFragmentStage()];
 
     m_bindGroupDynamicOffsets.clear();
+    incrementDrawCount();
+
+    return true;
 }
 
 void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    if (!instanceCount || !vertexCount)
-        return;
+    RETURN_IF_FINISHED();
 
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-draw
-    executePreDrawCommands();
+    if (!executePreDrawCommands())
+        return;
+    runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance);
+    if (!instanceCount || !vertexCount)
+        return;
+
     [m_renderCommandEncoder
         drawPrimitives:m_primitiveType
         vertexStart:firstVertex
@@ -196,39 +516,107 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
 
 void RenderPassEncoder::drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    if (!instanceCount || !indexCount)
+    RETURN_IF_FINISHED();
+
+    auto indexSizeInBytes = (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
+    if (!executePreDrawCommands())
         return;
 
-    executePreDrawCommands();
-    auto firstIndexOffsetInBytes = firstIndex * (m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t));
-    [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:(m_indexBufferOffset + firstIndexOffsetInBytes) instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
+    auto firstIndexOffsetInBytes = firstIndex * indexSizeInBytes;
+    id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
+    if (NSString* error = errorValidatingDrawIndexed()) {
+        makeInvalid(error);
+        return;
+    }
+
+    if (firstIndexOffsetInBytes + indexCount * indexSizeInBytes > m_indexBufferSize) {
+        makeInvalid(@"Values to drawIndexed are invalid");
+        return;
+    }
+
+    if (!runIndexBufferValidation(firstInstance, instanceCount))
+        return;
+
+    if (!instanceCount || !indexCount)
+        return;
+    [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexCount:indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:(m_indexBufferOffset + firstIndexOffsetInBytes) instanceCount:instanceCount baseVertex:baseVertex baseInstance:firstInstance];
 }
 
 void RenderPassEncoder::drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    if (!m_indexBuffer.length || !indirectBuffer.buffer().length)
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(indirectBuffer, *this)) {
+        makeInvalid(@"drawIndexedIndirect: buffer was invalid");
+        return;
+    }
+    indirectBuffer.setCommandEncoder(m_parentEncoder);
+    if (indirectBuffer.isDestroyed())
         return;
 
-    executePreDrawCommands();
-    [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:m_indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
+    if (!m_indexBuffer) {
+        makeInvalid(@"drawIndexedIndirect: index buffer is nil");
+        return;
+    }
+
+    id<MTLBuffer> indexBuffer = m_indexBuffer->buffer();
+    if (!indexBuffer.length)
+        return;
+
+    if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
+        makeInvalid(@"drawIndexedIndirect: validation failed");
+        return;
+    }
+
+    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawIndexedPrimitivesIndirectArguments)) {
+        makeInvalid(@"drawIndexedIndirect: validation failed");
+        return;
+    }
+
+    if (!executePreDrawCommands(&indirectBuffer))
+        return;
+    [m_renderCommandEncoder drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
 void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    executePreDrawCommands();
-    [m_renderCommandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
-}
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(indirectBuffer, *this)) {
+        makeInvalid(@"drawIndirect: buffer was invalid");
+        return;
+    }
+    indirectBuffer.setCommandEncoder(m_parentEncoder);
+    if (indirectBuffer.isDestroyed())
+        return;
+    if (!(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset % 4)) {
+        makeInvalid(@"drawIndirect: validation failed");
+        return;
+    }
 
-void RenderPassEncoder::endOcclusionQuery()
-{
-    [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeDisabled offset:m_visibilityResultBufferOffset];
+    if (indirectBuffer.initialSize() < indirectOffset + sizeof(MTLDrawPrimitivesIndirectArguments)) {
+        makeInvalid(@"drawIndirect: validation failed");
+        return;
+    }
+
+    if (!executePreDrawCommands(&indirectBuffer))
+        return;
+    [m_renderCommandEncoder drawPrimitives:m_primitiveType indirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset];
 }
 
 void RenderPassEncoder::endPass()
 {
-    if (m_debugGroupStackSize || !isValid()) {
-        [m_renderCommandEncoder endEncoding];
-        m_parentEncoder->makeInvalid();
+    if (m_passEnded) {
+        m_device->generateAValidationError([NSString stringWithFormat:@"%s: failed as pass is already ended", __PRETTY_FUNCTION__]);
+        return;
+    }
+    m_passEnded = true;
+
+    RETURN_IF_FINISHED();
+
+    auto passIsValid = isValid();
+    if (m_debugGroupStackSize || m_occlusionQueryActive || !passIsValid) {
+        m_parentEncoder->endEncoding(m_renderCommandEncoder);
+        m_renderCommandEncoder = nil;
+        m_parentEncoder->makeInvalid([NSString stringWithFormat:@"RenderPassEncoder.endPass failure, m_debugGroupStackSize = %llu, m_occlusionQueryActive = %d, isValid = %d, error = %@", m_debugGroupStackSize, m_occlusionQueryActive, passIsValid, m_lastErrorString]);
         return;
     }
 
@@ -238,27 +626,26 @@ void RenderPassEncoder::endPass()
     m_pendingTimestampWrites.clear();
 
     auto endEncoder = ^{
-        [m_renderCommandEncoder endEncoding];
+        m_parentEncoder->endEncoding(m_renderCommandEncoder);
     };
 
-    if (m_issuedDrawCall)
+    auto issuedDraw = issuedDrawCall();
+    if (issuedDraw)
         endEncoder();
 
-    if (m_attachmentsToClear.count || !m_issuedDrawCall || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
-        if (m_depthStencilAttachmentToClear && !m_issuedDrawCall) {
+    if (m_attachmentsToClear.count || !issuedDraw || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
+        if (m_depthStencilAttachmentToClear && !issuedDraw) {
             auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
             m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
             m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
         }
-        m_parentEncoder->runClearEncoder(m_issuedDrawCall ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, m_issuedDrawCall ? nil : m_renderCommandEncoder);
+        m_parentEncoder->runClearEncoder(issuedDraw ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, issuedDraw ? nil : m_renderCommandEncoder);
     }
 
     m_renderCommandEncoder = nil;
-    m_renderPassDescriptor = nil;
-
     m_parentEncoder->lock(false);
 
-    if (m_queryBufferIndicesToClear.size()) {
+    if (m_queryBufferIndicesToClear.size() && !occlusionQueryIsDestroyed()) {
         id<MTLBlitCommandEncoder> blitCommandEncoder = m_parentEncoder->ensureBlitCommandEncoder();
         for (auto& offset : m_queryBufferIndicesToClear)
             [blitCommandEncoder fillBuffer:m_visibilityResultBuffer range:NSMakeRange(static_cast<NSUInteger>(offset), sizeof(uint64_t)) value:0];
@@ -266,16 +653,44 @@ void RenderPassEncoder::endPass()
         m_queryBufferIndicesToClear.clear();
         m_parentEncoder->finalizeBlitCommandEncoder();
     }
+}
 
+void RenderPassEncoder::setCommandEncoder(const BindGroupEntryUsageData::Resource& resource)
+{
+    WTF::switchOn(resource, [&](const RefPtr<const Buffer>& buffer) {
+        if (buffer)
+            buffer->setCommandEncoder(m_parentEncoder);
+        }, [&](const RefPtr<const TextureView>& textureView) {
+            if (textureView)
+                textureView->setCommandEncoder(m_parentEncoder);
+        }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
+            if (externalTexture)
+                externalTexture->setCommandEncoder(m_parentEncoder);
+    });
 }
 
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles)
 {
+    RETURN_IF_FINISHED();
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
+
+    [m_renderCommandEncoder setViewport: { m_viewportX, m_viewportY, m_viewportWidth, m_viewportHeight, m_minDepth, m_maxDepth } ];
 
     for (auto& bundle : bundles) {
         auto& renderBundle = bundle.get();
+        if (!isValidToUseWith(renderBundle, *this)) {
+            makeInvalid([NSString stringWithFormat:@"executeBundles: render bundle is not valid, reason = %@", renderBundle.lastError()]);
+            return;
+        }
+
         renderBundle.updateMinMaxDepths(m_minDepth, m_maxDepth);
+
+        if (!renderBundle.validateRenderPass(m_depthReadOnly, m_stencilReadOnly, m_descriptor) || !renderBundle.validatePipeline(m_pipeline.get())) {
+            makeInvalid(@"executeBundles: validation failed");
+            return;
+        }
+
+        incrementDrawCount(renderBundle.drawCount());
 
         for (RenderBundleICBWithResources* icb in renderBundle.renderBundlesResources()) {
             if (id<MTLDepthStencilState> depthStencilState = icb.depthStencilState)
@@ -284,25 +699,46 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             [m_renderCommandEncoder setFrontFacingWinding:icb.frontFace];
             [m_renderCommandEncoder setDepthClipMode:icb.depthClipMode];
             [m_renderCommandEncoder setDepthBias:icb.depthBias slopeScale:icb.depthBiasSlopeScale clamp:icb.depthBiasClamp];
+            ASSERT(icb.resources);
 
             for (const auto& resource : *icb.resources) {
                 if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
                     [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+
+                ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+                for (size_t i = 0, resourceCount = resource.mtlResources.size(); i < resourceCount; ++i) {
+                    auto& resourceUsage = resource.resourceUsages[i];
+                    addResourceToActiveResources(resourceUsage.resource, resource.mtlResources[i], resourceUsage.usage);
+                    setCommandEncoder(resourceUsage.resource);
+                }
             }
 
             id<MTLIndirectCommandBuffer> indirectCommandBuffer = icb.indirectCommandBuffer;
-            m_issuedDrawCall = true;
             [m_renderCommandEncoder executeCommandsInBuffer:indirectCommandBuffer withRange:NSMakeRange(0, indirectCommandBuffer.size)];
         }
 
-        renderBundle.replayCommands(m_renderCommandEncoder);
+        renderBundle.replayCommands(*this);
     }
+}
+
+CommandEncoder& RenderPassEncoder::parentEncoder()
+{
+    return m_parentEncoder;
+}
+
+bool RenderPassEncoder::colorDepthStencilTargetsMatch(const RenderPipeline& pipeline) const
+{
+    return pipeline.colorDepthStencilTargetsMatch(m_descriptor);
+}
+
+id<MTLRenderCommandEncoder> RenderPassEncoder::renderCommandEncoder() const
+{
+    return m_renderCommandEncoder;
 }
 
 void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
-
     if (!prepareTheEncoderState())
         return;
 
@@ -311,17 +747,27 @@ void RenderPassEncoder::insertDebugMarker(String&& markerLabel)
 
 bool RenderPassEncoder::validatePopDebugGroup() const
 {
+    if (!m_parentEncoder->isLocked())
+        return false;
+
     if (!m_debugGroupStackSize)
         return false;
 
     return true;
 }
 
-void RenderPassEncoder::makeInvalid()
+void RenderPassEncoder::makeInvalid(NSString* errorString)
 {
-    [m_renderCommandEncoder endEncoding];
+    m_lastErrorString = errorString;
+
+    if (!m_renderCommandEncoder) {
+        m_parentEncoder->makeInvalid([NSString stringWithFormat:@"RenderPassEncoder.makeInvalid, rason = %@", errorString]);
+        return;
+    }
+
+    m_parentEncoder->setLastError(errorString);
+    m_parentEncoder->endEncoding(m_renderCommandEncoder);
     m_renderCommandEncoder = nil;
-    m_renderPassDescriptor = nil;
 }
 
 void RenderPassEncoder::popDebugGroup()
@@ -332,7 +778,7 @@ void RenderPassEncoder::popDebugGroup()
         return;
 
     if (!validatePopDebugGroup()) {
-        makeInvalid();
+        makeInvalid(@"popDebugGroup: validation failed");
         return;
     }
 
@@ -353,43 +799,99 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
 
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
+    RETURN_IF_FINISHED();
+
+    if (!isValidToUseWith(group, *this)) {
+        makeInvalid(@"setBindGroup: invalid bind group");
+        return;
+    }
+
+    if (groupIndex >= m_device->limits().maxBindGroups) {
+        makeInvalid(@"setBindGroup: groupIndex >= limits.maxBindGroups");
+        return;
+    }
+
+    auto* bindGroupLayout = group.bindGroupLayout();
+    if (!bindGroupLayout || !bindGroupLayout->validateDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
+        makeInvalid(@"insufficient dynamic offsets in layout for bind group");
+        return;
+    }
+
+    m_maxBindGroupSlot = std::max(groupIndex, m_maxBindGroupSlot);
     if (dynamicOffsetCount)
-        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
+        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
 
     for (const auto& resource : group.resources()) {
         if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))
             [m_renderCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage stages:resource.renderStages];
+
+        ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
+        for (size_t i = 0, sz = resource.mtlResources.size(); i < sz; ++i) {
+            auto& resourceUsage = resource.resourceUsages[i];
+            addResourceToActiveResources(resourceUsage.resource, resource.mtlResources[i], resourceUsage.usage);
+            setCommandEncoder(resourceUsage.resource);
+        }
     }
 
-    [m_renderCommandEncoder setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
-    [m_renderCommandEncoder setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
+    m_bindGroups.set(groupIndex, group);
 }
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
 {
+    RETURN_IF_FINISHED();
+
     [m_renderCommandEncoder setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
 }
 
 void RenderPassEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    m_indexBuffer = buffer.buffer();
+    RETURN_IF_FINISHED();
+    if (!isValidToUseWith(buffer, *this)) {
+        makeInvalid(@"setIndexBuffer: invalid buffer");
+        return;
+    }
+
+    buffer.setCommandEncoder(m_parentEncoder);
+    if (buffer.isDestroyed())
+        return;
+
+    auto indexSizeInBytes = (format == WGPUIndexFormat_Uint16 ? sizeof(uint16_t) : sizeof(uint32_t));
+    if (!(buffer.usage() & WGPUBufferUsage_Index) || (offset % indexSizeInBytes)) {
+        makeInvalid(@"setIndexBuffer: validation failed");
+        return;
+    }
+
+    if (computedSizeOverflows(buffer, offset, size)) {
+        makeInvalid(@"setIndexBuffer: computed size overflows");
+        return;
+    }
+
+    m_indexBuffer = buffer;
+    m_indexBufferSize = size;
     m_indexType = format == WGPUIndexFormat_Uint32 ? MTLIndexTypeUInt32 : MTLIndexTypeUInt16;
     m_indexBufferOffset = offset;
     UNUSED_PARAM(size);
+    addResourceToActiveResources(&buffer, buffer.buffer(), BindGroupEntryUsage::Input);
 }
 
 void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 {
+    RETURN_IF_FINISHED();
+
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-setpipeline.
-    if (!pipeline.isValid()) {
-        m_device->generateAValidationError("invalid RenderPipeline in RenderPassEncoder.setPipeline"_s);
-        makeInvalid();
+    if (!isValidToUseWith(pipeline, *this)) {
+        makeInvalid(@"setPipeline: invalid RenderPipeline");
         return;
     }
 
     if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly)) {
-        makeInvalid();
+        makeInvalid(@"setPipeline: invalid depth stencil state");
+        return;
+    }
+
+    if (!colorDepthStencilTargetsMatch(pipeline)) {
+        makeInvalid(@"setPipeline: color and depth targets from pass do not match pipeline");
         return;
     }
 
@@ -399,19 +901,6 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     m_vertexDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfVertexDynamicOffsets());
     m_fragmentDynamicOffsets.resize(pipeline.pipelineLayout().sizeOfFragmentDynamicOffsets() + RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
 
-    if (!pipeline.colorTargetsMatch(m_renderPassDescriptor.colorAttachments, m_allColorAttachments.count) || !pipeline.depthAttachmentMatches(m_renderPassDescriptor.depthAttachment) || !pipeline.stencilAttachmentMatches(m_renderPassDescriptor.stencilAttachment)) {
-        makeInvalid();
-        return;
-    }
-
-    if (pipeline.renderPipelineState())
-        [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
-    if (pipeline.depthStencilState())
-        [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
-    [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
-    [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
-    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
-    [m_renderCommandEncoder setDepthBias:pipeline.depthBias() slopeScale:pipeline.depthBiasSlopeScale() clamp:pipeline.depthBiasClamp()];
     if (m_fragmentDynamicOffsets.size() < RenderBundleEncoder::startIndexForFragmentDynamicOffsets)
         m_fragmentDynamicOffsets.grow(RenderBundleEncoder::startIndexForFragmentDynamicOffsets);
     static_assert(RenderBundleEncoder::startIndexForFragmentDynamicOffsets > 2, "code path assumes value is greater than 2");
@@ -420,31 +909,82 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-    [m_renderCommandEncoder setScissorRect: { x, y, std::min(width, m_renderTargetWidth), std::min(height, m_renderTargetHeight) } ];
+    RETURN_IF_FINISHED();
+    if (x + width > m_renderTargetWidth || y + height > m_renderTargetHeight) {
+        makeInvalid();
+        return;
+    }
+    [m_renderCommandEncoder setScissorRect: { x, y, width, height } ];
 }
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
+    RETURN_IF_FINISHED();
     [m_renderCommandEncoder setStencilReferenceValue:(reference & 0xFF)];
 }
 
-void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)
+void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer* optionalBuffer, uint64_t offset, uint64_t size)
 {
-    UNUSED_PARAM(size);
-    [m_renderCommandEncoder setVertexBuffer:buffer.buffer() offset:offset atIndex:slot];
+    RETURN_IF_FINISHED()
+    if (!optionalBuffer) {
+        m_vertexBuffers.remove(slot);
+        return;
+    }
+
+    auto& buffer = *optionalBuffer;
+    buffer.setCommandEncoder(m_parentEncoder);
+    if (!isValidToUseWith(buffer, *this)) {
+        makeInvalid(@"setVertexBuffer: invalid buffer");
+        return;
+    }
+
+    if (buffer.isDestroyed())
+        return;
+
+    if (computedSizeOverflows(buffer, offset, size)) {
+        makeInvalid(@"setVertexBuffer: size overflowed");
+        return;
+    }
+
+    if (slot >= m_device->limits().maxVertexBuffers || !(buffer.usage() & WGPUBufferUsage_Vertex) || (offset % 4)) {
+        makeInvalid(@"setVertexBuffer: validation failed");
+        return;
+    }
+
+    m_maxVertexBufferSlot = std::max(slot, m_maxVertexBufferSlot);
+    id<MTLBuffer> mtlBuffer = buffer.buffer();
+    auto bufferLength = mtlBuffer.length;
+    m_vertexBuffers.set(slot, BufferAndOffset { .buffer = mtlBuffer, .offset = offset, .size = size });
+    if (offset == bufferLength && !size)
+        return;
+    if (offset >= bufferLength) {
+        makeInvalid(@"setVertexBuffer: buffer length is invalid");
+        return;
+    }
+    addResourceToActiveResources(&buffer, mtlBuffer, BindGroupEntryUsage::Input);
 }
 
 void RenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
 {
+    RETURN_IF_FINISHED();
+    if (x < 0 || y < 0 || width < 0 || height < 0 || x + width > m_renderTargetWidth || y + height > m_renderTargetHeight || minDepth < 0 || maxDepth > 1 || minDepth > maxDepth) {
+        makeInvalid();
+        return;
+    }
     m_minDepth = minDepth;
     m_maxDepth = maxDepth;
-    [m_renderCommandEncoder setViewport: { x, y, width, height, minDepth, maxDepth } ];
+    m_viewportX = x;
+    m_viewportY = y;
+    m_viewportWidth = width;
+    m_viewportHeight = height;
 }
 
 void RenderPassEncoder::setLabel(String&& label)
 {
     m_renderCommandEncoder.label = label;
 }
+
+#undef RETURN_IF_FINISHED
 
 } // namespace WebGPU
 
@@ -550,7 +1090,10 @@ void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEn
 
 void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    WebGPU::fromAPI(renderPassEncoder).setVertexBuffer(slot, WebGPU::fromAPI(buffer), offset, size);
+    WebGPU::Buffer* optionalBuffer = nullptr;
+    if (buffer)
+        optionalBuffer = &WebGPU::fromAPI(buffer);
+    WebGPU::fromAPI(renderPassEncoder).setVertexBuffer(slot, optionalBuffer, offset, size);
 }
 
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)

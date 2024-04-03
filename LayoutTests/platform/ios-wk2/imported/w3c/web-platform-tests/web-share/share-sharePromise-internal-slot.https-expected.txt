@@ -1,4 +1,0 @@
-
-
-PASS Only allow one share call at a time, which is controlled by the [[sharePromise]] internal slot.
-

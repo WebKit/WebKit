@@ -10,7 +10,7 @@
 #ifndef LIBGLESV2_CL_STUBS_AUTOGEN_H_
 #define LIBGLESV2_CL_STUBS_AUTOGEN_H_
 
-#include "libANGLE/CLtypes.h"
+#include "libANGLE/cl_types.h"
 
 namespace cl
 {

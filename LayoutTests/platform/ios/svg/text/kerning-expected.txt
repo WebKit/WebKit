@@ -28,73 +28,73 @@ layer at (0,0) size 800x600
             RenderText {#text} at (31,0) size 274x14
               text run at (31,0) width 274: " t.getStartPositionOfChar(0).x is 0"
           RenderBR {br} at (304,0) size 1x14
-        RenderInline {span} at (0,0) size 430x14
-          RenderInline {span} at (0,0) size 430x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,14) size 430x14
+          RenderInline {span} at (0,14) size 430x14
+            RenderInline {span} at (0,14) size 32x14
               RenderText {#text} at (0,14) size 32x14
                 text run at (0,14) width 32: "FAIL"
             RenderText {#text} at (31,14) size 399x14
               text run at (31,14) width 399: " t.getStartPositionOfChar(1).x should be 0. Was 60."
           RenderBR {br} at (429,14) size 1x14
-        RenderInline {span} at (0,0) size 344x14
-          RenderInline {span} at (0,0) size 344x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,28) size 344x14
+          RenderInline {span} at (0,28) size 344x14
+            RenderInline {span} at (0,28) size 32x14
               RenderText {#text} at (0,28) size 32x14
                 text run at (0,28) width 32: "PASS"
             RenderText {#text} at (31,28) size 313x14
               text run at (31,28) width 313: " t.getStartPositionOfChar(2).x is 0 + 70"
           RenderBR {br} at (343,28) size 1x14
-        RenderInline {span} at (0,0) size 391x14
-          RenderInline {span} at (0,0) size 391x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,42) size 391x14
+          RenderInline {span} at (0,42) size 391x14
+            RenderInline {span} at (0,42) size 32x14
               RenderText {#text} at (0,42) size 32x14
                 text run at (0,42) width 32: "PASS"
             RenderText {#text} at (31,42) size 360x14
               text run at (31,42) width 360: " t.getStartPositionOfChar(3).x is 0 + 70 + 100"
           RenderBR {br} at (390,42) size 1x14
-        RenderInline {span} at (0,0) size 453x14
-          RenderInline {span} at (0,0) size 453x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,56) size 453x14
+          RenderInline {span} at (0,56) size 453x14
+            RenderInline {span} at (0,56) size 32x14
               RenderText {#text} at (0,56) size 32x14
                 text run at (0,56) width 32: "FAIL"
             RenderText {#text} at (31,56) size 422x14
               text run at (31,56) width 422: " t.getStartPositionOfChar(4).x should be 170. Was 230."
           RenderBR {br} at (452,56) size 1x14
-        RenderInline {span} at (0,0) size 430x14
-          RenderInline {span} at (0,0) size 430x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,70) size 430x14
+          RenderInline {span} at (0,70) size 430x14
+            RenderInline {span} at (0,70) size 32x14
               RenderText {#text} at (0,70) size 32x14
                 text run at (0,70) width 32: "PASS"
             RenderText {#text} at (31,70) size 399x14
               text run at (31,70) width 399: " t.getStartPositionOfChar(5).x is 0 + 70 + 100 + 70"
           RenderBR {br} at (429,70) size 1x14
-        RenderInline {span} at (0,0) size 453x14
-          RenderInline {span} at (0,0) size 453x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,84) size 453x14
+          RenderInline {span} at (0,84) size 453x14
+            RenderInline {span} at (0,84) size 32x14
               RenderText {#text} at (0,84) size 32x14
                 text run at (0,84) width 32: "FAIL"
             RenderText {#text} at (31,84) size 422x14
               text run at (31,84) width 422: " t.getStartPositionOfChar(6).x should be 240. Was 320."
           RenderBR {br} at (452,84) size 1x14
-        RenderInline {span} at (0,0) size 469x14
-          RenderInline {span} at (0,0) size 469x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,98) size 469x14
+          RenderInline {span} at (0,98) size 469x14
+            RenderInline {span} at (0,98) size 32x14
               RenderText {#text} at (0,98) size 32x14
                 text run at (0,98) width 32: "PASS"
             RenderText {#text} at (31,98) size 438x14
               text run at (31,98) width 438: " t.getStartPositionOfChar(7).x is 0 + 70 + 100 + 70 + 70"
           RenderBR {br} at (468,98) size 1x14
-        RenderInline {span} at (0,0) size 508x14
-          RenderInline {span} at (0,0) size 508x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,112) size 508x14
+          RenderInline {span} at (0,112) size 508x14
+            RenderInline {span} at (0,112) size 32x14
               RenderText {#text} at (0,112) size 32x14
                 text run at (0,112) width 32: "PASS"
             RenderText {#text} at (31,112) size 477x14
               text run at (31,112) width 477: " t.getStartPositionOfChar(8).x is 0 + 70 + 100 + 70 + 70 + 80"
           RenderBR {br} at (507,112) size 1x14
-        RenderInline {span} at (0,0) size 453x14
-          RenderInline {span} at (0,0) size 453x14
-            RenderInline {span} at (0,0) size 32x14
+        RenderInline {span} at (0,126) size 453x14
+          RenderInline {span} at (0,126) size 453x14
+            RenderInline {span} at (0,126) size 32x14
               RenderText {#text} at (0,126) size 32x14
                 text run at (0,126) width 32: "FAIL"
             RenderText {#text} at (31,126) size 422x14

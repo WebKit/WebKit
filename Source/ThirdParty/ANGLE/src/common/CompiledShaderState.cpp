@@ -183,10 +183,10 @@ void LoadShInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock *blo
 CompiledShaderState::CompiledShaderState(gl::ShaderType type)
     : shaderType(type),
       shaderVersion(100),
-      hasClipDistance(false),
-      hasDiscard(false),
-      enablesPerSampleShading(false),
       numViews(-1),
+      geometryShaderInputPrimitiveType(gl::PrimitiveMode::Triangles),
+      geometryShaderOutputPrimitiveType(gl::PrimitiveMode::Triangles),
+      geometryShaderMaxVertices(0),
       geometryShaderInvocations(1),
       tessControlShaderVertices(0),
       tessGenMode(0),
@@ -217,6 +217,7 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
     uniforms            = GetShaderVariables(sh::GetUniforms(compilerHandle));
     uniformBlocks       = GetShaderVariables(sh::GetUniformBlocks(compilerHandle));
     shaderStorageBlocks = GetShaderVariables(sh::GetShaderStorageBlocks(compilerHandle));
+    metadataFlags       = sh::CompilerMetadataFlags(sh::GetMetadataFlags(compilerHandle));
     specConstUsageBits  = SpecConstUsageBits(sh::GetShaderSpecConstUsageBits(compilerHandle));
 
     switch (shaderType)
@@ -233,7 +234,6 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             outputVaryings   = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
             allAttributes    = GetShaderVariables(sh::GetAttributes(compilerHandle));
             activeAttributes = GetActiveShaderVariables(&allAttributes);
-            hasClipDistance  = sh::HasClipDistanceInVertexShader(compilerHandle);
             numViews         = sh::GetVertexShaderNumViews(compilerHandle);
             break;
         }
@@ -246,8 +246,6 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             std::sort(inputVaryings.begin(), inputVaryings.end(), CompareShaderVar);
             activeOutputVariables =
                 GetActiveShaderVariables(sh::GetOutputVariables(compilerHandle));
-            hasDiscard              = sh::HasDiscardInFragmentShader(compilerHandle);
-            enablesPerSampleShading = sh::EnablesPerSampleShading(compilerHandle);
             advancedBlendEquations =
                 gl::BlendEquationBitSet(sh::GetAdvancedBlendEquations(compilerHandle));
             break;
@@ -257,17 +255,17 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
             inputVaryings  = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
             outputVaryings = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
 
-            if (sh::HasValidGeometryShaderInputPrimitiveType(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidGeometryShaderInputPrimitiveType])
             {
                 geometryShaderInputPrimitiveType = gl::FromGLenum<gl::PrimitiveMode>(
                     sh::GetGeometryShaderInputPrimitiveType(compilerHandle));
             }
-            if (sh::HasValidGeometryShaderOutputPrimitiveType(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidGeometryShaderOutputPrimitiveType])
             {
                 geometryShaderOutputPrimitiveType = gl::FromGLenum<gl::PrimitiveMode>(
                     sh::GetGeometryShaderOutputPrimitiveType(compilerHandle));
             }
-            if (sh::HasValidGeometryShaderMaxVertices(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidGeometryShaderMaxVertices])
             {
                 geometryShaderMaxVertices = sh::GetGeometryShaderMaxVertices(compilerHandle);
             }
@@ -285,19 +283,19 @@ void CompiledShaderState::buildCompiledShaderState(const ShHandle compilerHandle
         {
             inputVaryings  = GetShaderVariables(sh::GetInputVaryings(compilerHandle));
             outputVaryings = GetShaderVariables(sh::GetOutputVaryings(compilerHandle));
-            if (sh::HasValidTessGenMode(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidTessGenMode])
             {
                 tessGenMode = sh::GetTessGenMode(compilerHandle);
             }
-            if (sh::HasValidTessGenSpacing(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidTessGenSpacing])
             {
                 tessGenSpacing = sh::GetTessGenSpacing(compilerHandle);
             }
-            if (sh::HasValidTessGenVertexOrder(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidTessGenVertexOrder])
             {
                 tessGenVertexOrder = sh::GetTessGenVertexOrder(compilerHandle);
             }
-            if (sh::HasValidTessGenPointMode(compilerHandle))
+            if (metadataFlags[sh::MetadataFlags::HasValidTessGenPointMode])
             {
                 tessGenPointMode = sh::GetTessGenPointMode(compilerHandle);
             }
@@ -331,6 +329,7 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
         WriteShInterfaceBlock(&stream, interfaceBlock);
     }
 
+    stream.writeInt(metadataFlags.bits());
     stream.writeInt(specConstUsageBits.bits());
 
     switch (shaderType)
@@ -370,7 +369,6 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             {
                 WriteShaderVar(&stream, shaderVariable);
             }
-            stream.writeBool(hasClipDistance);
             stream.writeInt(numViews);
             break;
         }
@@ -386,15 +384,11 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
             {
                 WriteShaderVar(&stream, shaderVariable);
             }
-            stream.writeBool(hasDiscard);
-            stream.writeBool(enablesPerSampleShading);
             stream.writeInt(advancedBlendEquations.bits());
             break;
         }
         case gl::ShaderType::Geometry:
         {
-            bool valid;
-
             stream.writeInt(inputVaryings.size());
             for (const sh::ShaderVariable &shaderVariable : inputVaryings)
             {
@@ -406,25 +400,16 @@ void CompiledShaderState::serialize(gl::BinaryOutputStream &stream) const
                 WriteShaderVar(&stream, shaderVariable);
             }
 
-            valid = (bool)geometryShaderInputPrimitiveType.valid();
-            stream.writeBool(valid);
-            if (valid)
             {
-                unsigned char value = (unsigned char)geometryShaderInputPrimitiveType.value();
+                unsigned char value = static_cast<unsigned char>(geometryShaderInputPrimitiveType);
                 stream.writeBytes(&value, 1);
             }
-            valid = (bool)geometryShaderOutputPrimitiveType.valid();
-            stream.writeBool(valid);
-            if (valid)
             {
-                unsigned char value = (unsigned char)geometryShaderOutputPrimitiveType.value();
+                unsigned char value = static_cast<unsigned char>(geometryShaderOutputPrimitiveType);
                 stream.writeBytes(&value, 1);
             }
-            valid = geometryShaderMaxVertices.valid();
-            stream.writeBool(valid);
-            if (valid)
             {
-                int value = (int)geometryShaderMaxVertices.value();
+                int value = static_cast<int>(geometryShaderMaxVertices);
                 stream.writeInt(value);
             }
 
@@ -507,6 +492,7 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
         LoadShInterfaceBlock(&stream, &interfaceBlock);
     }
 
+    metadataFlags      = sh::CompilerMetadataFlags(stream.readInt<uint32_t>());
     specConstUsageBits = SpecConstUsageBits(stream.readInt<uint32_t>());
 
     switch (shaderType)
@@ -550,7 +536,6 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             {
                 LoadShaderVar(&stream, &shaderVariable);
             }
-            stream.readBool(&hasClipDistance);
             stream.readInt(&numViews);
             break;
         }
@@ -568,8 +553,6 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
             {
                 LoadShaderVar(&stream, &shaderVariable);
             }
-            stream.readBool(&hasDiscard);
-            stream.readBool(&enablesPerSampleShading);
             int advancedBlendEquationBits;
             stream.readInt(&advancedBlendEquationBits);
             advancedBlendEquations = gl::BlendEquationBitSet(advancedBlendEquationBits);
@@ -577,8 +560,6 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
         }
         case gl::ShaderType::Geometry:
         {
-            bool valid;
-
             size = stream.readInt<size_t>();
             inputVaryings.resize(size);
             for (sh::ShaderVariable &shaderVariable : inputVaryings)
@@ -592,40 +573,22 @@ void CompiledShaderState::deserialize(gl::BinaryInputStream &stream)
                 LoadShaderVar(&stream, &shaderVariable);
             }
 
-            stream.readBool(&valid);
-            if (valid)
             {
                 unsigned char value;
                 stream.readBytes(&value, 1);
                 geometryShaderInputPrimitiveType = static_cast<gl::PrimitiveMode>(value);
             }
-            else
-            {
-                geometryShaderInputPrimitiveType.reset();
-            }
 
-            stream.readBool(&valid);
-            if (valid)
             {
                 unsigned char value;
                 stream.readBytes(&value, 1);
                 geometryShaderOutputPrimitiveType = static_cast<gl::PrimitiveMode>(value);
             }
-            else
-            {
-                geometryShaderOutputPrimitiveType.reset();
-            }
 
-            stream.readBool(&valid);
-            if (valid)
             {
                 int value;
                 stream.readInt(&value);
                 geometryShaderMaxVertices = static_cast<GLint>(value);
-            }
-            else
-            {
-                geometryShaderMaxVertices.reset();
             }
 
             stream.readInt(&geometryShaderInvocations);

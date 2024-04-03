@@ -31,6 +31,7 @@
 
 #include "WCPlatformLayerGCGL.h"
 #include "WCTileGrid.h"
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/TransformState.h>
 
 namespace WebKit {
@@ -51,7 +52,7 @@ public:
             tileUpdate.index = entry.key;
             tileUpdate.willRemove = tile.willRemove();
             if (tileUpdate.willRemove) {
-                update.tileUpdate.append(WTFMove(tileUpdate));
+                update.background.tileUpdates.append(WTFMove(tileUpdate));
                 continue;
             }
             if (!tile.hasDirtyRect())
@@ -65,7 +66,7 @@ public:
             m_owner.paintGraphicsLayerContents(context, dirtyRect);
             image->flushDrawingContextAsync();
             tileUpdate.backingStore.setImageBuffer(WTFMove(image));
-            update.tileUpdate.append(WTFMove(tileUpdate));
+            update.background.tileUpdates.append(WTFMove(tileUpdate));
         }
         m_tileGrid.clearDirtyRects();
         return repainted;
@@ -89,6 +90,7 @@ public:
     TiledBacking* tiledBacking() const { return const_cast<WCTiledBacking*>(this); };
 
     // TiledBacking override
+    void setClient(TiledBackingClient*) final { }
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }
@@ -128,6 +130,7 @@ public:
     int rightMarginWidth() const final { return 0; };
     void setZoomedOutContentsScale(float) final { }
     float zoomedOutContentsScale() const final { return 1; }
+    float tilingScaleFactor() const final { return 1; }
     IntRect bounds() const final { return { { }, IntSize(m_owner.size()) }; };
     IntRect boundsWithoutMargin() const final { return bounds(); };
 
@@ -256,7 +259,15 @@ void GraphicsLayerWC::setPosition(const FloatPoint& point)
     if (point == m_position)
         return;
     GraphicsLayer::setPosition(point);
-    noteLayerPropertyChanged(WCLayerChange::Geometry);
+    noteLayerPropertyChanged(WCLayerChange::Position);
+}
+
+void GraphicsLayerWC::syncPosition(const FloatPoint& point)
+{
+    if (point == m_position)
+        return;
+    GraphicsLayer::syncPosition(point);
+    noteLayerPropertyChanged(WCLayerChange::Position, DontScheduleFlush);
 }
 
 void GraphicsLayerWC::setAnchorPoint(const FloatPoint3D& point)
@@ -264,7 +275,7 @@ void GraphicsLayerWC::setAnchorPoint(const FloatPoint3D& point)
     if (point == m_anchorPoint)
         return;
     GraphicsLayer::setAnchorPoint(point);
-    noteLayerPropertyChanged(WCLayerChange::Geometry);
+    noteLayerPropertyChanged(WCLayerChange::AnchorPoint);
 }
 
 void GraphicsLayerWC::setSize(const FloatSize& size)
@@ -273,7 +284,7 @@ void GraphicsLayerWC::setSize(const FloatSize& size)
         return;
     GraphicsLayer::setSize(size);
     m_tiledBacking->setSize(size);
-    noteLayerPropertyChanged(WCLayerChange::Geometry);
+    noteLayerPropertyChanged(WCLayerChange::Size);
 }
 
 void GraphicsLayerWC::setBoundsOrigin(const FloatPoint& origin)
@@ -281,7 +292,15 @@ void GraphicsLayerWC::setBoundsOrigin(const FloatPoint& origin)
     if (origin == m_boundsOrigin)
         return;
     GraphicsLayer::setBoundsOrigin(origin);
-    noteLayerPropertyChanged(WCLayerChange::Geometry);
+    noteLayerPropertyChanged(WCLayerChange::BoundsOrigin);
+}
+
+void GraphicsLayerWC::syncBoundsOrigin(const FloatPoint& origin)
+{
+    if (origin == m_boundsOrigin)
+        return;
+    GraphicsLayer::syncBoundsOrigin(origin);
+    noteLayerPropertyChanged(WCLayerChange::BoundsOrigin, DontScheduleFlush);
 }
 
 void GraphicsLayerWC::setTransform(const TransformationMatrix& t)
@@ -355,7 +374,7 @@ void GraphicsLayerWC::setContentsRectClipsDescendants(bool contentsRectClipsDesc
         return;
 
     GraphicsLayer::setContentsRectClipsDescendants(contentsRectClipsDescendants);
-    noteLayerPropertyChanged(WCLayerChange::ContentsClippingRect);
+    noteLayerPropertyChanged(WCLayerChange::ContentsRectClipsDescendants);
 }
 
 void GraphicsLayerWC::setDrawsContent(bool value)
@@ -425,14 +444,15 @@ void GraphicsLayerWC::setShowDebugBorder(bool show)
         return;
     GraphicsLayer::setShowDebugBorder(show);
     updateDebugIndicators();
-    noteLayerPropertyChanged(WCLayerChange::DebugVisuals);
+    noteLayerPropertyChanged(WCLayerChange::ShowDebugBorder);
 }
 
 void GraphicsLayerWC::setDebugBorder(const Color& color, float width)
 {
     m_debugBorderColor = color;
     m_debugBorderWidth = width;
-    noteLayerPropertyChanged(WCLayerChange::DebugVisuals);
+    noteLayerPropertyChanged(WCLayerChange::DebugBorderColor);
+    noteLayerPropertyChanged(WCLayerChange::DebugBorderWidth);
 }
 
 void GraphicsLayerWC::setShowRepaintCounter(bool show)
@@ -440,7 +460,7 @@ void GraphicsLayerWC::setShowRepaintCounter(bool show)
     if (isShowingRepaintCounter() == show)
         return;
     GraphicsLayer::setShowRepaintCounter(show);
-    noteLayerPropertyChanged(WCLayerChange::RepaintCount);
+    noteLayerPropertyChanged(WCLayerChange::ShowRepaintCounter);
 }
 
 static bool filtersCanBeComposited(const FilterOperations& filters)
@@ -489,7 +509,7 @@ void GraphicsLayerWC::setBackdropFiltersRect(const FloatRoundedRect& backdropFil
     if (m_backdropFiltersRect == backdropFiltersRect)
         return;
     GraphicsLayer::setBackdropFiltersRect(backdropFiltersRect);
-    noteLayerPropertyChanged(WCLayerChange::BackdropFilters);
+    noteLayerPropertyChanged(WCLayerChange::BackdropFiltersRect);
 }
 
 void GraphicsLayerWC::noteLayerPropertyChanged(OptionSet<WCLayerChange> flags, ScheduleFlushOrNot scheduleFlush)
@@ -507,7 +527,7 @@ void GraphicsLayerWC::flushCompositingState(const FloatRect& passedVisibleRect)
     // passedVisibleRect doesn't contain the scrollbar area. Inflate it.
     FloatRect visibleRect = passedVisibleRect;
     visibleRect.inflate(20.f);
-    TransformState state(client().useCSS3DTransformInteroperability(), TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(visibleRect));
     state.setSecondaryQuad(FloatQuad { visibleRect });
     recursiveCommitChanges(state);
 }
@@ -536,20 +556,22 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         else
             update.replicaLayer = std::nullopt;
     }
-    if (update.changes & WCLayerChange::Geometry) {
+    if (update.changes & WCLayerChange::Position)
         update.position = position();
+    if (update.changes & WCLayerChange::AnchorPoint)
         update.anchorPoint = anchorPoint();
+    if (update.changes & WCLayerChange::Size)
         update.size = size();
+    if (update.changes & WCLayerChange::BoundsOrigin)
         update.boundsOrigin = boundsOrigin();
-    }
     if (update.changes & WCLayerChange::Preserves3D)
         update.preserves3D = preserves3D();
     if (update.changes & WCLayerChange::ContentsRect)
         update.contentsRect = contentsRect();
-    if (update.changes & WCLayerChange::ContentsClippingRect) {
+    if (update.changes & WCLayerChange::ContentsClippingRect)
         update.contentsClippingRect = contentsClippingRect();
+    if (update.changes & WCLayerChange::ContentsRectClipsDescendants)
         update.contentsRectClipsDescendants = contentsRectClipsDescendants();
-    }
     if (update.changes & WCLayerChange::ContentsVisible)
         update.contentsVisible = contentsAreVisible();
     if (update.changes & WCLayerChange::BackfaceVisibility)
@@ -557,27 +579,28 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     if (update.changes & WCLayerChange::MasksToBounds)
         update.masksToBounds = masksToBounds();
     if (update.changes & WCLayerChange::Background) {
-        update.backgroundColor = backgroundColor();
+        update.background.color = backgroundColor();
         if (drawsContent() && contentsAreVisible()) {
-            update.hasBackingStore = true;
+            update.background.hasBackingStore = true;
             if (m_tiledBacking->paintAndFlush(update)) {
                 incrementRepaintCount();
                 update.changes.add(WCLayerChange::RepaintCount);
             }
         } else
-            update.hasBackingStore = false;
+            update.background.hasBackingStore = false;
     }
     if (update.changes & WCLayerChange::SolidColor)
         update.solidColor = m_solidColor;
-    if (update.changes & WCLayerChange::DebugVisuals) {
+    if (update.changes & WCLayerChange::ShowDebugBorder)
         update.showDebugBorder = isShowingDebugBorder();
+    if (update.changes & WCLayerChange::DebugBorderColor)
         update.debugBorderColor = m_debugBorderColor;
+    if (update.changes & WCLayerChange::DebugBorderWidth)
         update.debugBorderWidth = m_debugBorderWidth;
-    }
-    if (update.changes & WCLayerChange::RepaintCount) {
+    if (update.changes & WCLayerChange::ShowRepaintCounter)
         update.showRepaintCounter = isShowingRepaintCounter();
+    if (update.changes & WCLayerChange::RepaintCount)
         update.repaintCount = repaintCount();
-    }
     if (update.changes & WCLayerChange::Opacity)
         update.opacity = opacity();
     if (update.changes & WCLayerChange::Transform)
@@ -586,15 +609,15 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.childrenTransform = childrenTransform();
     if (update.changes & WCLayerChange::Filters)
         update.filters = filters();
-    if (update.changes & WCLayerChange::BackdropFilters) {
+    if (update.changes & WCLayerChange::BackdropFilters)
         update.backdropFilters = backdropFilters();
+    if (update.changes & WCLayerChange::BackdropFiltersRect)
         update.backdropFiltersRect = backdropFiltersRect();
-    }
     if (update.changes & WCLayerChange::PlatformLayer) {
-        update.hasPlatformLayer = m_platformLayer;
+        update.platformLayer.hasLayer = m_platformLayer;
 #if ENABLE(WEBGL)
         if (m_platformLayer)
-            update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
+            update.platformLayer.identifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
 #endif
     }
     if (update.changes & WCLayerChange::RemoteFrame)
@@ -636,11 +659,8 @@ TransformationMatrix GraphicsLayerWC::layerTransform(const FloatPoint& position,
     TransformationMatrix transform;
     transform.translate(position.x(), position.y());
 
-    TransformationMatrix currentTransform;
-    if (customTransform)
-        currentTransform = *customTransform;
-    else if (m_transform)
-        currentTransform = *m_transform;
+    const auto& currentTransform = customTransform ? *customTransform
+        : (m_transform ? *m_transform : TransformationMatrix::identity);
 
     transform.multiply(transformByApplyingAnchorPoint(currentTransform));
 

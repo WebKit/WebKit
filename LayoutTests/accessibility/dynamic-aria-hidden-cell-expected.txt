@@ -1,0 +1,29 @@
+This test ensures we report the right information for tables with presentational cells.
+
+PASS: table.rowCount === 2
+PASS: table.columnCount === 2
+PASS: accessibilityController.accessibleElementById('th0-1').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-1').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-2').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-2').columnIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-1').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-1').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('td1-2').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-2').columnIndexRange() === '{1, 1}'
+PASS: table.columnCount === 3
+PASS: accessibilityController.accessibleElementById('th0-0-hidden').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-0-hidden').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-1').rowIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('th0-1').columnIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-0-hidden').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-0-hidden').columnIndexRange() === '{0, 1}'
+PASS: accessibilityController.accessibleElementById('td1-1').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-1').columnIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-2').rowIndexRange() === '{1, 1}'
+PASS: accessibilityController.accessibleElementById('td1-2').columnIndexRange() === '{2, 1}'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Header one	Header two	Header three
+A	B	C

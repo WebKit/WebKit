@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x300
+  RenderSVGRoot {svg} at (0,0) size 500x300
+layer at (0,0) size 500x300
+  RenderSVGViewportContainer at (0,0) size 500x300
+layer at (0,0) size 10x10
+  RenderSVGResourceMarker {marker} at (0,0) size 10x10
+layer at (0,0) size 50x55 backgroundClip at (0,0) size 10x10 clip at (0,0) size 10x10
+  RenderSVGRect {rect} at (0,0) size 50x55 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=50.00] [height=55.00]
+layer at (10,50) size 90x0
+  RenderSVGPath {line} at (10,50) size 90x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=markerTest] [x1=10.00] [y1=50.00] [x2=100.00] [y2=50.00]
+layer at (10,100) size 90x0
+  RenderSVGPath {path} at (10,100) size 90x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=markerTest] [data="M 10 100 L 50 100 L 100 100"]
+layer at (10,150) size 90x0
+  RenderSVGPath {polygon} at (10,150) size 90x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=markerTest] [points="10 150 50 150 100 150"]
+layer at (10,200) size 90x0
+  RenderSVGPath {polyline} at (10,200) size 90x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [start marker=markerTest] [points="10 200 50 200 100 200"]
+layer at (150,50) size 100x0
+  RenderSVGPath {line} at (150,50) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [end marker=markerTest] [x1=150.00] [y1=50.00] [x2=250.00] [y2=50.00]
+layer at (150,100) size 100x0
+  RenderSVGPath {path} at (150,100) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [end marker=markerTest] [data="M 150 100 L 200 100 L 250 100"]
+layer at (200,150) size 50x0
+  RenderSVGPath {polygon} at (200,150) size 50x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [end marker=markerTest] [points="250 150 200 150"]
+layer at (150,200) size 100x0
+  RenderSVGPath {polyline} at (150,200) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [end marker=markerTest] [points="150 200 200 200 250 200"]
+layer at (300,50) size 100x0
+  RenderSVGPath {line} at (300,50) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [middle marker=markerTest] [x1=300.00] [y1=50.00] [x2=400.00] [y2=50.00]
+layer at (300,100) size 100x0
+  RenderSVGPath {path} at (300,100) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [middle marker=markerTest] [data="M 300 100 L 350 100 L 400 100"]
+layer at (300,150) size 50x0
+  RenderSVGPath {polygon} at (300,150) size 50x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [middle marker=markerTest] [points="300 150 350 150"]
+layer at (300,200) size 100x0
+  RenderSVGPath {polyline} at (300,200) size 100x0 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [middle marker=markerTest] [points="300 200 350 200 400 200"]

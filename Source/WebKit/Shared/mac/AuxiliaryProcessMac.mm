@@ -42,7 +42,6 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
-#import <pal/spi/cocoa/NotifySPI.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
@@ -69,11 +68,6 @@
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
 SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
-
-#if ENABLE(NOTIFY_FILTERING)
-SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
-SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
-#endif
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
@@ -192,14 +186,6 @@ static OSStatus enableSandboxStyleFileQuarantine()
 #endif
 }
 
-static void setNotifyOptions()
-{
-#if ENABLE(NOTIFY_FILTERING)
-    if (notify_set_optionsPtr())
-        notify_set_optionsPtr()(NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED);
-#endif
-}
-
 #if USE(CACHE_COMPILED_SANDBOX)
 static std::optional<Vector<char>> fileContents(const String& path, bool shouldLock = false, OptionSet<FileSystem::FileLockMode> lockMode = FileSystem::FileLockMode::Exclusive)
 {
@@ -213,7 +199,7 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
     Vector<char> contents;
     contents.reserveInitialCapacity(chunkSize);
     while (size_t bytesRead = file.read(chunk, chunkSize))
-        contents.append(chunk, bytesRead);
+        contents.append(std::span { chunk, bytesRead });
     contents.shrinkToFit();
 
     return contents;
@@ -255,7 +241,7 @@ static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInit
         auto contents = fileContents(profileOrProfilePath);
         if (!contents)
             return std::nullopt;
-        builder.appendCharacters(contents->data(), contents->size());
+        builder.append(*contents);
     } else
         builder.append(profileOrProfilePath);
     return builder.toString().ascii();
@@ -308,15 +294,9 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
     return directory.toString();
 }
 
-static String sandboxFilePath(const String& directoryPath, const CString& header)
+static String sandboxFilePath(const String& directoryPath)
 {
-    // Make the filename semi-unique based on the contents of the header.
-
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(header.data(), header.length());
-    auto hash = crypto->computeHash();
-
-    return makeString(directoryPath, "/CompiledSandbox+", base64URLEncoded(hash.data(), hash.size()));
+    return makeString(directoryPath, "/CompiledSandbox");
 }
 
 static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
@@ -444,11 +424,11 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
 
     Vector<char> cacheFile;
     cacheFile.reserveInitialCapacity(expectedFileSize);
-    cacheFile.append(bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader));
-    cacheFile.append(info.header.data(), info.header.length());
+    cacheFile.append(std::span { bitwise_cast<uint8_t*>(&cachedHeader), sizeof(CachedSandboxHeader) });
+    cacheFile.append(info.header.span());
     if (haveBuiltin)
-        cacheFile.append(sandboxProfile->builtin, cachedHeader.builtinSize);
-    cacheFile.append(sandboxProfile->data, cachedHeader.dataSize);
+        cacheFile.append(std::span { sandboxProfile->builtin, cachedHeader.builtinSize });
+    cacheFile.append(std::span { sandboxProfile->data, cachedHeader.dataSize });
 
     if (!writeSandboxDataToCacheFile(info, cacheFile))
         WTFLogAlways("%s: Unable to cache compiled sandbox\n", getprogname());
@@ -520,8 +500,6 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     ASSERT(static_cast<void *>(sandboxDataPtr + profile.size) <= static_cast<void *>(cachedSandboxContents.data() + cachedSandboxContents.size()));
     profile.data = sandboxDataPtr;
 
-    setNotifyOptions();
-
     if (sandbox_apply(&profile)) {
         WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         return false;
@@ -560,8 +538,6 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     char* errorBuf;
     CString temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : profileOrProfilePath.utf8();
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
-
-    setNotifyOptions();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterArray(), &errorBuf)) {
@@ -604,7 +580,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     }
 
     String directoryPath { sandboxDirectory(parameters.processType, dataVaultParentDirectory) };
-    String filePath = sandboxFilePath(directoryPath, *header);
+    String filePath = sandboxFilePath(directoryPath);
     SandboxInfo info {
         dataVaultParentDirectory,
         directoryPath,
@@ -624,8 +600,6 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     if (!sandboxProfile)
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
 
-    setNotifyOptions();
-    
     if (sandbox_apply(sandboxProfile.get())) {
         WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), safeStrerror(errno).data());
         CRASH();
@@ -821,18 +795,6 @@ void AuxiliaryProcess::setQOS(int latencyQOS, int throughputQOS)
 }
 
 #if PLATFORM(MAC)
-bool AuxiliaryProcess::isSystemWebKit()
-{
-    static bool isSystemWebKit = []() -> bool {
-#if HAVE(READ_ONLY_SYSTEM_VOLUME)
-        if ([[webKit2Bundle() bundlePath] hasPrefix:@"/Library/Apple/System/"])
-            return true;
-#endif
-        return [[webKit2Bundle() bundlePath] hasPrefix:@"/System/"];
-    }();
-    return isSystemWebKit;
-}
-
 void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
 {
     // When Open Directory has invalidated the in-process cache for the results of getpwnam/getpwuid_r,

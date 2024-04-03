@@ -7,19 +7,14 @@
 //   Tests to validate our Vulkan dynamic uniform updates are working as expected.
 //
 
-#include "test_utils/ANGLETest.h"
-#include "test_utils/angle_test_instantiate.h"
-// 'None' is defined as 'struct None {};' in
-// third_party/googletest/src/googletest/include/gtest/internal/gtest-type-util.h.
-// But 'None' is also defined as a numeric constant 0L in <X11/X.h>.
-// So we need to include ANGLETest.h first to avoid this conflict.
-
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
 #include "libANGLE/renderer/vulkan/TextureVk.h"
+#include "test_utils/ANGLETest.h"
+#include "test_utils/angle_test_instantiate.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 #include "util/random_utils.h"

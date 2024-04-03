@@ -37,7 +37,8 @@ float CalcExpressionNegation::evaluate(float maxValue) const
 
 bool CalcExpressionNegation::operator==(const CalcExpressionNode& other) const
 {
-    return is<CalcExpressionNegation>(other) && *this == downcast<CalcExpressionNegation>(other);
+    auto* otherExpressionNegation = dynamicDowncast<CalcExpressionNegation>(other);
+    return otherExpressionNegation && *this == *otherExpressionNegation;
 }
 
 void CalcExpressionNegation::dump(TextStream& ts) const

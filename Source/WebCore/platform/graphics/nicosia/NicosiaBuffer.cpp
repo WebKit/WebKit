@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Metrological Group B.V.
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2017, 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,25 @@
 
 #include <wtf/FastMalloc.h>
 
+#if USE(SKIA)
+#include "FontRenderOptions.h"
+#include "GLFence.h"
+#include "PlatformDisplay.h"
+#include <skia/core/SkCanvas.h>
+#include <skia/core/SkImage.h>
+#include <skia/core/SkStream.h>
+#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkSurfaceGanesh.h>
+#include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+#include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES3/gl3.h>
+#endif
+#endif
+
 namespace Nicosia {
 
 Lock Buffer::s_layersMemoryUsageLock;
@@ -52,14 +71,14 @@ double Buffer::getMemoryUsage()
     return memoryUsage;
 }
 
-Ref<Buffer> Buffer::create(const WebCore::IntSize& size, Flags flags)
+Ref<Buffer> UnacceleratedBuffer::create(const WebCore::IntSize& size, Flags flags)
 {
-    return adoptRef(*new Buffer(size, flags));
+    return adoptRef(*new UnacceleratedBuffer(size, flags));
 }
 
-Buffer::Buffer(const WebCore::IntSize& size, Flags flags)
-    : m_size(size)
-    , m_flags(flags)
+UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags flags)
+    : Buffer(flags)
+    , m_size(size)
 {
     const auto checkedArea = size.area() * 4;
     m_data = MallocPtr<unsigned char>::tryZeroedMalloc(checkedArea);
@@ -69,9 +88,16 @@ Buffer::Buffer(const WebCore::IntSize& size, Flags flags)
         s_currentLayersMemoryUsage += checkedArea;
         s_maxLayersMemoryUsage = std::max(s_maxLayersMemoryUsage, s_currentLayersMemoryUsage);
     }
+
+#if USE(SKIA)
+    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height());
+    // FIXME: ref buffer and unref on release proc?
+    SkSurfaceProps properties = { 0, WebCore::FontRenderOptions::singleton().subpixelOrder() };
+    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
+#endif
 }
 
-Buffer::~Buffer()
+UnacceleratedBuffer::~UnacceleratedBuffer()
 {
     const auto checkedArea = m_size.area().value() * 4;
     {
@@ -80,14 +106,14 @@ Buffer::~Buffer()
     }
 }
 
-void Buffer::beginPainting()
+void UnacceleratedBuffer::beginPainting()
 {
     Locker locker { m_painting.lock };
     ASSERT(m_painting.state == PaintingState::Complete);
     m_painting.state = PaintingState::InProgress;
 }
 
-void Buffer::completePainting()
+void UnacceleratedBuffer::completePainting()
 {
     Locker locker { m_painting.lock };
     ASSERT(m_painting.state == PaintingState::InProgress);
@@ -95,11 +121,72 @@ void Buffer::completePainting()
     m_painting.condition.notifyOne();
 }
 
-void Buffer::waitUntilPaintingComplete()
+void UnacceleratedBuffer::waitUntilPaintingComplete()
 {
     Locker locker { m_painting.lock };
-    m_painting.condition.wait(m_painting.lock,
-        [this] { return m_painting.state == PaintingState::Complete; });
+    m_painting.condition.wait(m_painting.lock, [this] {
+        return m_painting.state == PaintingState::Complete;
+    });
 }
+
+#if USE(SKIA)
+Ref<Buffer> AcceleratedBuffer::create(sk_sp<SkSurface>&& surface, Flags flags)
+{
+    return adoptRef(*new AcceleratedBuffer(WTFMove(surface), flags));
+}
+
+AcceleratedBuffer::AcceleratedBuffer(sk_sp<SkSurface>&& surface, Flags flags)
+    : Buffer(flags)
+{
+    m_surface = WTFMove(surface);
+}
+
+AcceleratedBuffer::~AcceleratedBuffer() = default;
+
+WebCore::IntSize AcceleratedBuffer::size() const
+{
+    return { m_surface->width(), m_surface->height() };
+}
+
+void AcceleratedBuffer::beginPainting()
+{
+    m_surface->getCanvas()->save();
+    m_surface->getCanvas()->clear(SkColors::kTransparent);
+}
+
+void AcceleratedBuffer::completePainting()
+{
+    m_surface->getCanvas()->restore();
+
+    auto* grContext = WebCore::PlatformDisplay::sharedDisplayForCompositing().skiaGrContext();
+    grContext->flush(m_surface.get());
+    m_fence = WebCore::GLFence::create();
+    grContext->submit(m_fence ? GrSyncCpu::kNo : GrSyncCpu::kYes);
+
+    auto texture = SkSurfaces::GetBackendTexture(m_surface.get(), SkSurface::BackendHandleAccess::kFlushRead);
+    ASSERT(texture.isValid());
+    GrGLTextureInfo textureInfo;
+    bool retrievedTextureInfo = GrBackendTextures::GetGLTextureInfo(texture, &textureInfo);
+    ASSERT_UNUSED(retrievedTextureInfo, retrievedTextureInfo);
+    m_textureID = textureInfo.fID;
+    RELEASE_ASSERT(m_textureID > 0);
+}
+
+void AcceleratedBuffer::waitUntilPaintingComplete()
+{
+    if (!m_fence)
+        return;
+
+    m_fence->wait(WebCore::GLFence::FlushCommands::No);
+    m_fence = nullptr;
+}
+#endif
+
+Buffer::Buffer(Flags flags)
+    : m_flags(flags)
+{
+}
+
+Buffer::~Buffer() = default;
 
 } // namespace Nicosia

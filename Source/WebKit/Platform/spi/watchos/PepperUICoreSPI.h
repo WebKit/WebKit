@@ -254,7 +254,6 @@ extern UIButtonType const PUICButtonTypePill;
 #endif
 
 @interface PUICQuickboardListViewController : PUICQuickboardViewController
-@property (nonatomic, readonly) PUICTableView *listView;
 @property (strong, nonatomic, readonly) PUICQuickboardListViewSpecs *specs;
 @property (nonatomic, copy) UITextContentType textContentType;
 @property (nonatomic, strong) PUICTextInputContext *textInputContext;

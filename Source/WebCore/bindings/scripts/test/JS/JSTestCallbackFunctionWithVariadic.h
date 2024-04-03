@@ -22,6 +22,7 @@
 
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
+#include "JSDOMConvertAny.h"
 #include "JSDOMConvertVariadic.h"
 #include "TestCallbackFunctionWithVariadic.h"
 #include <wtf/Forward.h>

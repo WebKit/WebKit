@@ -48,7 +48,7 @@ RemoteRenderBundle::~RemoteRenderBundle() = default;
 
 void RemoteRenderBundle::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteRenderBundle::stopListeningForIPC()

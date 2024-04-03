@@ -218,13 +218,20 @@ class Land(Command):
                     string_utils.join([p.name for p in pull_request.approvers]),
                     's' if len(pull_request.approvers) > 1 else '',
                 ))
-                if run([
+                command = [
                     repository.executable(), 'filter-branch', '-f',
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
                         date='{} -{}'.format(int(time.time()), repository.gmtoffset())
                     ), '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/{}/g"'.format(string_utils.join([p.name for p in pull_request.approvers])),
-                    '{}...{}'.format(source_branch, branch_point.hash),
-                ], cwd=repository.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}, capture_output=True).returncode:
+                ]
+                if repository.commit_signing_enabled():
+                    command += ['--commit-filter', 'git commit-tree -S "$@"']
+                if run(
+                    command + ['{}...{}'.format(source_branch, branch_point.hash)],
+                    cwd=repository.root_path,
+                    env={'FILTER_BRANCH_SQUELCH_WARNING': '1'},
+                    capture_output=True,
+                ).returncode:
                     sys.stderr.write('Failed to set reviewers\n')
                     return 1
                 commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))

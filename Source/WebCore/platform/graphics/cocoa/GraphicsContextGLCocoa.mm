@@ -65,6 +65,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
 namespace WebCore {
 
+using GL = GraphicsContextGL;
+
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
@@ -492,6 +494,8 @@ bool GraphicsContextGLCocoa::reshapeDrawingBuffer()
 
 void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
 {
+    if (!makeContextCurrent())
+        return;
     if (m_drawingBufferColorSpace == colorSpace)
         return;
     m_drawingBufferColorSpace = colorSpace;
@@ -614,21 +618,21 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source)
+GCEGLImage GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, EGLImageSource source, GCGLint layer)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
-        return std::nullopt;
+        return nullptr;
 
     id<MTLDevice> mtlDevice = nil;
     if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
-        return std::nullopt;
+        return nullptr;
 
     RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTFMove(source),
     [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> RetainPtr<id> {
         auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
         if (!surface)
-            return { };
+            return nullptr;
 
         auto size = surface->size();
         MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB width:size.width() height:size.height() mipmapped:NO];
@@ -641,15 +645,15 @@ std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::c
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
         UNUSED_VARIABLE(sharedTexture);
         ASSERT_NOT_REACHED();
-        return { };
+        return nullptr;
 #else
         auto handle = adoptNS([[MTLSharedTextureHandle alloc] initWithMachPort:sharedTexture.handle.sendRight()]);
         if (!handle)
-            return { };
+            return nullptr;
 
         if (mtlDevice != [handle device]) {
             LOG(WebGL, "MTLSharedTextureHandle does not have the same Metal device as platformDisplay.");
-            return { };
+            return nullptr;
         }
 
         // Create a MTLTexture out of the MTLSharedTextureHandle.
@@ -660,13 +664,22 @@ std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::c
     });
 
     if (!texture)
-        return std::nullopt;
+        return nullptr;
 
     // Create an EGLImage out of the MTLTexture
-    constexpr EGLint emptyAttributes[] = { EGL_NONE };
-    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    UNUSED_VARIABLE(internalFormat);
+    const EGLint attributes[] = { EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer, EGL_NONE };
+#else
+    const EGLint attributes[] = {
+        EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE, layer,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_NONE
+    };
+#endif
+    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), attributes);
     if (!eglImage)
-        return std::nullopt;
+        return nullptr;
 
     // Tell the currently bound texture to use the EGLImage.
     if (target == RENDERBUFFER)
@@ -674,10 +687,41 @@ std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::c
     else
         GL_EGLImageTargetTexture2DOES(target, eglImage);
 
-    GCGLuint textureWidth = [texture width];
-    GCGLuint textureHeight = [texture height];
+    return eglImage;
+}
 
-    return std::make_tuple(eglImage, IntSize(textureWidth, textureHeight));
+bool GraphicsContextGLCocoa::createFoveation(IntSize physicalSizeLeft, IntSize physicalSizeRight, IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamplesLeft, std::span<const GCGLfloat> horizontalSamplesRight)
+{
+#if ENABLE(WEBXR)
+    m_rasterizationRateMap[PlatformXR::Layout::Shared] = newRasterizationRateMap(m_displayObj, physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamplesLeft, horizontalSamplesRight);
+    return m_rasterizationRateMap[PlatformXR::Layout::Shared];
+#else
+    UNUSED_PARAM(physicalSizeLeft);
+    UNUSED_PARAM(physicalSizeRight);
+    UNUSED_PARAM(screenSize);
+    UNUSED_PARAM(horizontalSamplesLeft);
+    UNUSED_PARAM(verticalSamplesLeft);
+    UNUSED_PARAM(horizontalSamplesRight);
+    return false;
+#endif
+}
+
+void GraphicsContextGLCocoa::enableFoveation(GCGLuint fbo)
+{
+#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    GL_BindMetalRasterizationRateMapANGLE(fbo, m_rasterizationRateMap[PlatformXR::Layout::Shared].get());
+    GL_Enable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+#else
+    UNUSED_PARAM(fbo);
+#endif
+}
+
+void GraphicsContextGLCocoa::disableFoveation()
+{
+#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+    GL_Disable(GL::VARIABLE_RASTERIZATION_RATE_ANGLE);
+    GL_BindMetalRasterizationRateMapANGLE(0, nullptr);
+#endif
 }
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
@@ -715,7 +759,11 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
         && enableExtension("GL_ANGLE_framebuffer_blit"_s)
         && enableExtension("GL_EXT_sRGB"_s)
         && enableExtension("GL_OES_EGL_image"_s)
-        && enableExtension("GL_OES_rgb8_rgba8"_s);
+        && enableExtension("GL_OES_rgb8_rgba8"_s)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+        && enableExtension("GL_ANGLE_variable_rasterization_rate_metal"_s)
+#endif
+        && enableExtension("GL_NV_framebuffer_blit"_s);
 }
 #endif
 
@@ -762,12 +810,10 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
     insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
-    if (!bindNextDrawingBuffer()) {
-        // If the allocation failed, BindTexImage did not run. The fence must be scheduled.
-        waitUntilWorkScheduled();
+    bool success = bindNextDrawingBuffer();
+    waitUntilWorkScheduled();
+    if (!success)
         forceContextLost();
-        return;
-    }
 }
 
 

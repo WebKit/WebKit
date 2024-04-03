@@ -138,9 +138,9 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
     return [m_fileWrapper regularFileContents].length;
 }
 
-RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
+RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() const
 {
-    if (!m_hasEnclosingImage)
+    if (m_associatedElementType == WebCore::AttachmentAssociatedElementType::None)
         return nullptr;
 
     NSData *data = nil;
@@ -159,7 +159,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
     return WebCore::SharedBuffer::create(data);
 }
 
-NSData *Attachment::enclosingImageNSData() const
+NSData *Attachment::associatedElementNSData() const
 {
     Locker locker { m_fileWrapperLock };
 

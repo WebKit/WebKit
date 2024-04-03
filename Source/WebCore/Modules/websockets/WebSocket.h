@@ -108,7 +108,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    EventTargetInterface eventTargetInterface() const final;
+    enum EventTargetInterfaceType eventTargetInterface() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

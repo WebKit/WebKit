@@ -54,9 +54,9 @@ void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexForma
     m_backing->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer& buffer, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
-    m_backing->setVertexBuffer(slot, buffer.backing(), offset, size);
+    m_backing->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
 }
 
 void GPURenderPassEncoder::draw(GPUSize32 vertexCount, std::optional<GPUSize32> instanceCount,
@@ -89,16 +89,17 @@ void GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bi
     m_backing->setBindGroup(index, bindGroup.backing(), WTFMove(dynamicOffsets));
 }
 
-void GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
+ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,
     const Uint32Array& dynamicOffsetsData,
     GPUSize64 dynamicOffsetsDataStart,
     GPUSize32 dynamicOffsetsDataLength)
 {
     auto offset = checkedSum<uint64_t>(dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
-        return;
+        return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
     m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.data(), dynamicOffsetsData.length(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    return { };
 }
 
 void GPURenderPassEncoder::pushDebugGroup(String&& groupLabel)

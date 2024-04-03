@@ -121,6 +121,11 @@ JSTestDefaultToJSONIndirectInheritance::JSTestDefaultToJSONIndirectInheritance(S
 {
 }
 
+Ref<TestDefaultToJSONIndirectInheritance> JSTestDefaultToJSONIndirectInheritance::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, TestDefaultToJSONIndirectInheritance>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestDefaultToJSONIndirectInheritance::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
@@ -142,12 +147,12 @@ JSValue JSTestDefaultToJSONIndirectInheritance::getConstructor(VM& vm, const JSG
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONIndirectInheritanceConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDefaultToJSONIndirectInheritancePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestDefaultToJSONIndirectInheritance::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestDefaultToJSONIndirectInheritance::getConstructor(vm, prototype->globalObject()));
 }
 
 JSC::GCClient::IsoSubspace* JSTestDefaultToJSONIndirectInheritance::subspaceForImpl(JSC::VM& vm)

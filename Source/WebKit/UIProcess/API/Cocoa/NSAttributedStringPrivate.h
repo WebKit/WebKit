@@ -45,6 +45,13 @@ WK_EXTERN NSAttributedStringDocumentReadingOptionKey const _WKAllowNetworkLoadsO
     NS_SWIFT_NAME(allowNetworkLoads) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*!
+ @abstract Bundle identifier of the application to which network activity is attributed.
+ The value is an NSString.
+*/
+WK_EXTERN NSAttributedStringDocumentReadingOptionKey const _WKSourceApplicationBundleIdentifierOption
+    NS_SWIFT_NAME(sourceApplicationBundleIdentifier) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*!
  @discussion Private extension of @link //apple_ref/occ/NSAttributedString NSAttributedString @/link to
  translate HTML content into attributed strings using WebKit.
  */

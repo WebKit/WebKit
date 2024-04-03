@@ -48,6 +48,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogIdentifier(const void*) = 0;
+    virtual const Logger* logger() const { return nullptr; }
 #endif
 
     enum class RendererType { Audio, Video };

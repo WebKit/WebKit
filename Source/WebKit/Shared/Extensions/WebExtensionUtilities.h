@@ -27,9 +27,17 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "WebExtensionError.h"
 #import <JavaScriptCore/JSBase.h>
 
+#ifdef __OBJC__
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#endif
+
 namespace WebKit {
+
+#ifdef __OBJC__
 
 /// Verifies that a dictionary:
 ///  - Contains a required set of string keys, as listed in `requiredKeys`, all other types specified in `keyTypes` are optional keys.
@@ -59,8 +67,46 @@ JSObjectRef toJSError(JSContextRef, NSString *callingAPIName, NSString *sourceKe
 
 NSString *toWebAPI(NSLocale *);
 
-/// This matches the maximum message length enforced by Chromium in its `MessageFromJSONString()` function.
-constexpr size_t webExtensionMaxMessageLength = 1024 * 1024 * 64;
+/// Returns the storage size of a string.
+size_t storageSizeOf(NSString *);
+
+/// Returns the storage size of all of the key value pairs in a dictionary.
+size_t storageSizeOf(NSDictionary<NSString *, NSString *> *);
+
+/// Returns true if the size of any item in the dictionary exceeds the given quota.
+bool anyItemsExceedQuota(NSDictionary *, size_t quota, NSString **outKeyWithError = nullptr);
+
+enum class UseNullValue : bool { No, Yes };
+
+template<typename T>
+id toWebAPI(const std::optional<T>& result, UseNullValue useNull = UseNullValue::Yes)
+{
+    if (!result)
+        return useNull == UseNullValue::Yes ? NSNull.null : nil;
+    return toWebAPI(result.value());
+}
+
+template<typename T>
+NSArray *toWebAPI(const Vector<T>& items)
+{
+    return createNSArray(items, [](const T& item) {
+        return toWebAPI(item);
+    }).get();
+}
+
+inline NSNumber *toWebAPI(size_t index)
+{
+    return index != notFound ? @(index) : @(std::numeric_limits<double>::quiet_NaN());
+}
+
+/// Returns an error for Expected results in CompletionHandler.
+template<typename... Args>
+Unexpected<WebExtensionError> toWebExtensionError(NSString *callingAPIName, NSString *sourceKey, NSString *underlyingErrorString, Args&&... args)
+{
+    return makeUnexpected(String(toErrorString(callingAPIName, sourceKey, underlyingErrorString, std::forward<Args>(args)...)));
+}
+
+#endif // __OBJC__
 
 } // namespace WebKit
 

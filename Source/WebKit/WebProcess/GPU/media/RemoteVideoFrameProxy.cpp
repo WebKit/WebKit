@@ -72,7 +72,7 @@ void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Propertie
 
 RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
     : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTFMove(properties.colorSpace))
-    , m_connection(connection)
+    , m_connection(&connection)
     , m_referenceTracker(properties.reference)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
@@ -80,19 +80,28 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
 {
 }
 
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy& baseVideoFrame)
+    : VideoFrame(baseVideoFrame.presentationTime(), baseVideoFrame.isMirrored(), baseVideoFrame.rotation(), WebCore::PlatformVideoColorSpace { baseVideoFrame.colorSpace() })
+    , m_baseVideoFrame(&baseVideoFrame)
+    , m_size(baseVideoFrame.m_size)
+    , m_pixelFormat(baseVideoFrame.m_pixelFormat)
+{
+}
+
 RemoteVideoFrameProxy::~RemoteVideoFrameProxy()
 {
-    releaseRemoteVideoFrameProxy(m_connection, m_referenceTracker.write());
+    if (m_connection)
+        releaseRemoteVideoFrameProxy(*m_connection, m_referenceTracker->write());
 }
 
 RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
 {
-    return m_referenceTracker.identifier();
+    return m_baseVideoFrame ? m_baseVideoFrame->m_referenceTracker->identifier() : m_referenceTracker->identifier();
 }
 
 RemoteVideoFrameReadReference RemoteVideoFrameProxy::newReadReference() const
 {
-    return m_referenceTracker.read();
+    return m_baseVideoFrame ? m_baseVideoFrame->m_referenceTracker->read() : m_referenceTracker->read();
 }
 
 uint32_t RemoteVideoFrameProxy::pixelFormat() const
@@ -103,6 +112,9 @@ uint32_t RemoteVideoFrameProxy::pixelFormat() const
 #if PLATFORM(COCOA)
 CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
 {
+    if (m_baseVideoFrame)
+        return m_baseVideoFrame->pixelBuffer();
+
     Locker lock(m_pixelBufferLock);
     if (!m_pixelBuffer && m_videoFrameObjectHeapProxy) {
         auto videoFrameObjectHeapProxy = std::exchange(m_videoFrameObjectHeapProxy, nullptr);
@@ -128,6 +140,11 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
     return m_pixelBuffer.get();
 }
 #endif
+
+Ref<WebCore::VideoFrame> RemoteVideoFrameProxy::clone()
+{
+    return adoptRef(*new RemoteVideoFrameProxy(cloneConstructor, *this));
+}
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)
 {

@@ -31,9 +31,12 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "FullscreenManager.h"
 #include "HTMLAnchorElement.h"
@@ -58,6 +61,7 @@
 #include "RenderTheme.h"
 #include "RuleSetBuilder.h"
 #include "SVGElement.h"
+#include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/NeverDestroyed.h>
@@ -83,7 +87,6 @@ StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
-StyleSheetContents* UserAgentStyle::rubyStyleSheet;
 StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
@@ -126,6 +129,15 @@ void static addToCounterStyleRegistry(StyleSheetContents& sheet)
             CSSCounterStyleRegistry::addUserAgentCounterStyle(counterStyleRule->descriptors());
     }
     CSSCounterStyleRegistry::resolveUserAgentReferences();
+}
+
+void static addUserAgentKeyframes(StyleSheetContents& sheet)
+{
+    // This does not handle nested rules.
+    for (auto& rule : sheet.childRules()) {
+        if (auto* styleRuleKeyframes = dynamicDowncast<StyleRuleKeyframes>(rule.get()))
+            Style::Resolver::addUserAgentKeyframeStyle(*styleRuleKeyframes);
+    }
 }
 
 void UserAgentStyle::addToDefaultStyle(StyleSheetContents& sheet)
@@ -241,7 +253,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     }
 #endif // ENABLE(MATHML)
 
-    bool popoverAttributeEnabled = element.document().settings().popoverAttributeEnabled() && !element.document().quirks().shouldDisablePopoverAttributeQuirk();
+    bool popoverAttributeEnabled = element.document().settings().popoverAttributeEnabled();
     if (!popoverStyleSheet && popoverAttributeEnabled && element.hasAttributeWithoutSynchronization(popoverAttr)) {
         popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet, sizeof(popoverUserAgentStyleSheet)));
         addToDefaultStyle(*popoverStyleSheet);
@@ -252,13 +264,8 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToCounterStyleRegistry(*counterStylesStyleSheet);
     }
 
-    if (!rubyStyleSheet && element.document().settings().cssBasedRubyEnabled()) {
-        rubyStyleSheet = parseUASheet(StringImpl::createWithoutCopying(rubyUserAgentStyleSheet, sizeof(rubyUserAgentStyleSheet)));
-        addToDefaultStyle(*rubyStyleSheet);
-    }
-
 #if ENABLE(FULLSCREEN_API)
-    if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
+    if (CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists(); !fullscreenStyleSheet && fullscreenManager && fullscreenManager->isFullscreen()) {
         fullscreenStyleSheet = parseUASheet(StringImpl::createWithoutCopying(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)));
         addToDefaultStyle(*fullscreenStyleSheet);
     }
@@ -274,6 +281,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
     if (!viewTransitionsStyleSheet && element.document().settings().viewTransitionsEnabled()) {
         viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet, sizeof(viewTransitionsUserAgentStyleSheet)));
         addToDefaultStyle(*viewTransitionsStyleSheet);
+        addUserAgentKeyframes(*viewTransitionsStyleSheet);
     }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());

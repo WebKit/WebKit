@@ -74,7 +74,7 @@ const CString& backendCommandsHash()
         gconstpointer data = g_bytes_get_data(bytes.get(), &dataSize);
         ASSERT(dataSize);
         SHA1 sha1;
-        sha1.addBytes(static_cast<const uint8_t*>(data), dataSize);
+        sha1.addBytes(std::span { static_cast<const uint8_t*>(data), dataSize });
         hexDigest = sha1.computeHexDigest();
     }
     return hexDigest;

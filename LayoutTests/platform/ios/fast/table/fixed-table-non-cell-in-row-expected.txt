@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x40
         RenderText {#text} at (0,0) size 65x19
           text run at (0,0) width 65: "This tests "
-        RenderInline {A} at (0,0) size 61x19 [color=#0000EE]
+        RenderInline {A} at (64,0) size 61x19 [color=#0000EE]
           RenderText {#text} at (64,0) size 61x19
             text run at (64,0) width 61: "bug 6960"
-        RenderText {#text} at (124,0) size 773x39
+        RenderText {#text} at (0,0) size 773x39
           text run at (124,0) width 649: ", which was an assertion that failed for fixed-layout tables with non-cells in them. This can arise with"
           text run at (0,20) width 95: "forms, at least."
       RenderBlock {P} at (0,56) size 784x20

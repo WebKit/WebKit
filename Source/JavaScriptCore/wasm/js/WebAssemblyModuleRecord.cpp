@@ -76,7 +76,8 @@ void WebAssemblyModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& v
     Base::finishCreation(globalObject, vm);
     ASSERT(inherits(info()));
     for (const auto& exp : moduleInformation.exports) {
-        Identifier field = Identifier::fromString(vm, String::fromUTF8(exp.field));
+        auto fieldString = String::fromUTF8(exp.field);
+        Identifier field = Identifier::fromString(vm, fieldString.isNull() ? emptyString() : fieldString);
         addExportEntry(ExportEntry::createLocal(field, field));
     }
 }
@@ -134,9 +135,14 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         return makeString(before, ' ', String::fromUTF8(import.module), ':', String::fromUTF8(import.field), ' ', after);
     };
 
+    auto stringFromUTF8 = [](auto& span) {
+        auto string = String::fromUTF8(span);
+        return string.isNull() ? emptyString() : string;
+    };
+
     for (const auto& import : moduleInformation.imports) {
-        Identifier moduleName = Identifier::fromString(vm, String::fromUTF8(import.module));
-        Identifier fieldName = Identifier::fromString(vm, String::fromUTF8(import.field));
+        Identifier moduleName = Identifier::fromString(vm, stringFromUTF8(import.module));
+        Identifier fieldName = Identifier::fromString(vm, stringFromUTF8(import.field));
         JSValue value;
         if (creationMode == Wasm::CreationMode::FromJS) {
             // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
@@ -202,6 +208,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             Wasm::Instance* calleeInstance = nullptr;
             WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
+            const uintptr_t* boxedTargetCalleeLoadLocation = nullptr;
             JSObject* function = jsCast<JSObject*>(value);
 
             // ii. If v is an Exported Function Exotic Object:
@@ -214,6 +221,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     importedTypeIndex = wasmFunction->typeIndex();
                     calleeInstance = &wasmFunction->instance()->instance();
                     entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
+                    boxedTargetCalleeLoadLocation = wasmFunction->boxedWasmCalleeLoadLocation();
                 } else {
                     importedTypeIndex = wasmWrapperFunction->typeIndex();
                     // b. Let closure be v.[[Closure]].
@@ -232,6 +240,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             auto* info = m_instance->instance().importFunctionInfo(import.kindIndex);
             info->targetInstance = calleeInstance;
             info->wasmEntrypointLoadLocation = entrypointLoadLocation;
+            info->boxedTargetCalleeLoadLocation = boxedTargetCalleeLoadLocation;
             m_instance->instance().importFunction(import.kindIndex).set(vm, m_instance.get(), function);
             break;
         }
@@ -508,10 +517,11 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             //     b. Append func to funcs.
             //     c. Return func.
             Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
+            auto* wasmCallee = calleeGroup->wasmCalleeFromFunctionIndexSpace(functionIndexSpace);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace);
             Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(functionIndexSpace);
             const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(functionIndexSpace), m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex, Wasm::TypeInformation::getCanonicalRTT(typeIndex));
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(functionIndexSpace), m_instance.get(), jsEntrypointCallee, wasmCallee, entrypointLoadLocation, typeIndex, Wasm::TypeInformation::getCanonicalRTT(typeIndex));
             wrapper = function;
         }
 
@@ -586,7 +596,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 v128_t initialVector;
 
                 if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                    ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                    ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module()->moduleInformation().globals.size());
+                    ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                     initialVector = m_instance->instance().loadV128Global(global.initialBits.initialBitsOrImportNumber);
                 } else if (global.initializationType == Wasm::GlobalInformation::FromExpression)
                     initialVector = global.initialBits.initialVector;
@@ -612,7 +623,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
             uint64_t initialBits = 0;
             if (global.initializationType == Wasm::GlobalInformation::FromGlobalImport) {
-                ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
+                ASSERT(global.initialBits.initialBitsOrImportNumber < m_instance->module()->moduleInformation().globals.size());
+                ASSERT_IMPLIES(!Options::useWebAssemblyGC(), global.initialBits.initialBitsOrImportNumber < moduleInformation.firstInternalGlobal);
                 initialBits = m_instance->instance().loadI64Global(global.initialBits.initialBitsOrImportNumber);
             } else if (global.initializationType == Wasm::GlobalInformation::FromRefFunc) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.functionIndexSpaceSize());
@@ -722,7 +734,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         }
         }
 
-        Identifier propertyName = Identifier::fromString(vm, String::fromUTF8(exp.field));
+        String fieldString = String::fromUTF8(exp.field);
+        Identifier propertyName = Identifier::fromString(vm, fieldString.isNull() ? emptyString() : fieldString);
 
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
@@ -755,8 +768,9 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             m_startFunction.set(vm, this, startFunction);
         } else {
             Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            auto* wasmCallee = calleeGroup->wasmCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex, Wasm::TypeInformation::getCanonicalRTT(typeIndex));
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), jsEntrypointCallee, wasmCallee, entrypointLoadLocation, typeIndex, Wasm::TypeInformation::getCanonicalRTT(typeIndex));
             m_startFunction.set(vm, this, function);
         }
     }

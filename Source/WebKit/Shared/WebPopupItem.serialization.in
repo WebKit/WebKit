@@ -22,6 +22,8 @@
 
 [Nested] enum class WebKit::WebPopupItem::Type : bool
 
+enum class WebCore::TextDirection : bool;
+
 struct WebKit::WebPopupItem {
     WebKit::WebPopupItem::Type m_type;
     String m_text;

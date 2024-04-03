@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 628x84 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 204x56
+        RenderInline {SPAN} at (14,14) size 204x56
           RenderText {#text} at (14,14) size 204x28
             text run at (14,14) width 102: "Fourscore "
             text run at (115,14) width 42: "and "

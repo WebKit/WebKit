@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <WebCore/ApplePaySessionPaymentRequest.h>
 #include <wtf/Forward.h>
 
 OBJC_CLASS PKShippingMethod;
@@ -34,17 +35,18 @@ OBJC_CLASS PKShippingMethods;
 
 namespace WebCore {
 struct ApplePayShippingMethod;
+class ApplePaySessionPaymentRequest;
 }
 
 namespace WebKit {
 
 // FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
 // how to convert themselves to and from their platform representations.
-NSDecimalNumber *toDecimalNumber(const String& amount);
 PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod&);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
 PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMethod>&);
 #endif
+PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 
 } // namespace WebKit
 

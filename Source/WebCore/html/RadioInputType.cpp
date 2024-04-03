@@ -244,7 +244,7 @@ bool RadioInputType::matchesIndeterminatePseudoClass() const
     ASSERT(element());
     auto& element = *this->element();
     if (auto* radioButtonGroups = element.radioButtonGroups())
-        return !radioButtonGroups->hasCheckedButton(element);
+        return !radioButtonGroups->hasCheckedButton(Ref { element });
     return !element.checked();
 }
 

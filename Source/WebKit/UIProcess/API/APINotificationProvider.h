@@ -33,6 +33,9 @@ namespace WebKit {
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
+
+enum class WebNotificationIdentifierType;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 }
 
 namespace WebCore {
@@ -49,7 +52,7 @@ public:
     virtual bool show(WebKit::WebPageProxy*, WebKit::WebNotification&, RefPtr<WebCore::NotificationResources>&&) { return false; }
     virtual void cancel(WebKit::WebNotification&) { }
     virtual void didDestroyNotification(WebKit::WebNotification&) { }
-    virtual void clearNotifications(const Vector<uint64_t>& /*notificationIDs*/) { }
+    virtual void clearNotifications(const Vector<WebKit::WebNotificationIdentifier>&) { }
 
     virtual void addNotificationManager(WebKit::WebNotificationManagerProxy&) { }
     virtual void removeNotificationManager(WebKit::WebNotificationManagerProxy&) { }

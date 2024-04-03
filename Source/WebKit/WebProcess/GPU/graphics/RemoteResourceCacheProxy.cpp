@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "Logging.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemoteNativeImageBackendProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebProcess.h"
 #include <WebCore/FontCustomPlatformData.h>
@@ -96,38 +97,6 @@ void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageB
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
 }
 
-inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNativeImage(NativeImage& image)
-{
-    RefPtr<ShareableBitmap> bitmap;
-    PlatformImagePtr platformImage;
-
-#if USE(CG)
-    bitmap = ShareableBitmap::createFromImagePixels(image);
-    if (bitmap)
-        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-#endif
-
-    // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
-    if (!platformImage) {
-        bitmap = ShareableBitmap::createFromImageDraw(image);
-        if (bitmap)
-            platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-    }
-
-    if (!platformImage)
-        return std::nullopt;
-
-    auto handle = bitmap->createHandle();
-    if (!handle)
-        return std::nullopt;
-
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-
-    // Replace the PlatformImage of the input NativeImage with the shared one.
-    image.replaceContents(WTFMove(platformImage));
-    return handle;
-}
-
 void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decomposedGlyphs)
 {
     if (m_renderingResources.add(decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs).isNewEntry) {
@@ -156,14 +125,19 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     if (isMainRunLoop())
         WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
-
-    auto addResult = m_renderingResources.ensure(image.renderingResourceIdentifier(), [&] {
-        return ThreadSafeWeakPtr<RenderingResource> { image };
-    });
-    if (!addResult.isNewEntry)
+    auto identifier = image.renderingResourceIdentifier();
+    if (m_renderingResources.contains(identifier))
         return;
 
-    auto handle = createShareableBitmapFromNativeImage(image);
+    RemoteNativeImageBackendProxy* backend = dynamicDowncast<RemoteNativeImageBackendProxy>(image.backend());
+    std::unique_ptr<RemoteNativeImageBackendProxy> newBackend;
+    if (!backend) {
+        newBackend = RemoteNativeImageBackendProxy::create(image);
+        backend = newBackend.get();
+    }
+    std::optional<ShareableBitmap::Handle> handle;
+    if (backend)
+        handle = backend->createHandle();
     if (!handle) {
         // FIXME: Failing to send the image to GPUP will crash it when referencing this image.
         LOG_WITH_STREAM(Images, stream
@@ -173,13 +147,18 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
             << " ShareableBitmap could not be created; bailing.");
         return;
     }
-
+    m_renderingResources.add(identifier, ThreadSafeWeakPtr<RenderingResource> { image });
     // Set itself as an observer to NativeImage, so releaseNativeImage()
     // gets called when NativeImage is being deleleted.
     image.addObserver(*this);
 
+    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
+    // Replace the contents of the original NativeImage to save memory.
+    if (newBackend)
+        image.replaceBackend(makeUniqueRefFromNonNullUniquePtr(WTFMove(newBackend)));
+
     // Tell the GPU process to cache this resource.
-    m_remoteRenderingBackendProxy.cacheNativeImage(WTFMove(*handle), image.renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy.cacheNativeImage(WTFMove(*handle), identifier);
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)
@@ -229,19 +208,21 @@ void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentif
 
 void RemoteResourceCacheProxy::clearRenderingResourceMap()
 {
-    for (auto& renderingResource : m_renderingResources.values())
-        renderingResource.get()->removeObserver(*this);
+    for (auto& weakRenderingResource : m_renderingResources.values()) {
+        if (RefPtr renderingResource = weakRenderingResource.get())
+            renderingResource->removeObserver(*this);
+    }
     m_renderingResources.clear();
 }
 
 void RemoteResourceCacheProxy::clearNativeImageMap()
 {
     m_renderingResources.removeIf([&] (auto& keyValuePair) {
-        if (!is<NativeImage>(keyValuePair.value.get()))
+        RefPtr nativeImage = dynamicDowncast<NativeImage>(keyValuePair.value.get());
+        if (!nativeImage)
             return false;
 
-        auto& nativeImage = downcast<NativeImage>(*keyValuePair.value.get());
-        nativeImage.removeObserver(*this);
+        nativeImage->removeObserver(*this);
         return true;
     });
 }

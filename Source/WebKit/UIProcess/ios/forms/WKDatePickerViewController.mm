@@ -231,6 +231,8 @@ struct EraAndYear {
 {
     [super viewDidLoad];
 
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+
     self.headerView.hidden = YES;
 
     NSString *localeIdentifier = [NSLocale currentLocale].localeIdentifier;

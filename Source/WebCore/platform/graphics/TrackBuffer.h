@@ -56,9 +56,10 @@ public:
     
     bool reenqueueMediaForTime(const MediaTime&, const MediaTime& timeFudgeFactor);
     MediaTime findSeekTimeForTargetTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
-    bool removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime);
+    int64_t removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime);
     PlatformTimeRanges removeSamples(const DecodeOrderSampleMap::MapType&, const char*);
-    
+    int64_t codedFramesIntervalSize(const MediaTime& start, const MediaTime& end);
+
     void resetTimestampOffset();
     void reset();
     void clearSamples();

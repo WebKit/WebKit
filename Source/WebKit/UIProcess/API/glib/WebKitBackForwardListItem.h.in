@@ -51,7 +51,7 @@ WEBKIT_DECLARE_FINAL_TYPE (WebKitBackForwardListItem, webkit_back_forward_list_i
 WEBKIT_API const gchar *
 webkit_back_forward_list_item_get_uri          (WebKitBackForwardListItem* list_item);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_back_forward_list_item_get_title        (WebKitBackForwardListItem* list_item);
 
 WEBKIT_API const gchar *

@@ -48,12 +48,15 @@
 #include <wpe/wpe.h>
 #endif
 
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+#include "ScreenManager.h"
+#endif
+
 #if PLATFORM(GTK)
 #if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
 #include "GtkSettingsManager.h"
-#include "ScreenManager.h"
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -84,7 +87,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if USE(GBM)
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI)
-        parameters.renderDeviceFile = String::fromUTF8(wpe_render_node_device());
+        parameters.renderDeviceFile = String::fromUTF8(wpe_display_get_drm_render_node(wpe_display_get_primary()));
     else
         parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
 #else
@@ -124,7 +127,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK) && !USE(GTK4) && USE(CAIRO)
     parameters.useSystemAppearanceForScrollbars = m_configuration->useSystemAppearanceForScrollbars();
 #endif
 
@@ -159,6 +162,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(GTK)
     parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
     parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
+#endif
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (usingWPEPlatformAPI)
+        parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
 #endif
 }
 

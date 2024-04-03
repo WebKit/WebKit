@@ -41,7 +41,7 @@ namespace IPC {
 #if OS(DARWIN)
 using Attachment = MachSendRight;
 #elif OS(WINDOWS)
-using Attachment = int; // Windows does not need attachments at the moment.
+struct Attachment { }; // Windows does not need attachments at the moment.
 #elif USE(UNIX_DOMAIN_SOCKETS)
 using Attachment = UnixFileDescriptor;
 #else

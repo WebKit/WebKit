@@ -80,6 +80,12 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
+enum class AllowTrustedTypePolicy : uint8_t {
+    Allowed,
+    DisallowedName,
+    DisallowedDuplicateName,
+};
+
 class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -144,6 +150,10 @@ public:
     bool allowObjectFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false) const;
 
+    AllowTrustedTypePolicy allowTrustedTypesPolicy(const String&, bool isDuplicate) const;
+    bool requireTrustedTypesForSinkGroup(const String& sinkGroup) const;
+    bool allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, const String& source) const;
+
     void setOverrideAllowInlineStyle(bool);
 
     void gatherReportURIs(DOMStringList&) const;
@@ -157,6 +167,13 @@ public:
 
     // Used by ContentSecurityPolicyMediaListDirective
     void reportInvalidPluginTypes(const String&) const;
+
+    // Used by ContentSecurityPolicyTrustedTypesDirective
+    void reportInvalidTrustedTypesPolicy(const String&) const;
+    void reportInvalidTrustedTypesNoneKeyword() const;
+
+    void reportInvalidTrustedTypesSinkGroup(const String&) const;
+    void reportEmptyRequireTrustedTypesForDirective() const;
 
     // Used by ContentSecurityPolicySourceList
     void reportDirectiveAsSourceExpression(const String& directiveName, StringView sourceExpression) const;
@@ -190,8 +207,9 @@ public:
     void setUpgradeInsecureRequests(bool);
     bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }
     enum class InsecureRequestType { Load, FormSubmission, Navigation };
-    WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType) const;
-    WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType) const;
+    enum class AlwaysUpgradeRequest : bool { No, Yes };
+    WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
+    WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
 
     HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);

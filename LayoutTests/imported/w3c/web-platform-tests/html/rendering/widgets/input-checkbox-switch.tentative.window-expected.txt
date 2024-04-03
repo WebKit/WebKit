@@ -1,4 +1,6 @@
 
 PASS Default appearance value
+PASS Default appearance value: display:none
 PASS appearance:none should work
+PASS appearance:none should work: display gets its initial value
 

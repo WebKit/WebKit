@@ -60,7 +60,7 @@ private:
     RTCDtlsTransport(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return RTCDtlsTransportEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDtlsTransport; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

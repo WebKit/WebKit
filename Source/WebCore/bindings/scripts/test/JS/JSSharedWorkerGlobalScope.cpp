@@ -120,6 +120,11 @@ JSSharedWorkerGlobalScope::JSSharedWorkerGlobalScope(VM& vm, Structure* structur
 {
 }
 
+Ref<SharedWorkerGlobalScope> JSSharedWorkerGlobalScope::protectedWrapped() const
+{
+    return wrapped();
+}
+
 static_assert(!std::is_base_of<ActiveDOMObject, SharedWorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 #if ASSERT_ENABLED
@@ -137,12 +142,12 @@ JSValue JSSharedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* 
 
 JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSSharedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSSharedWorkerGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSSharedWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsSharedWorkerGlobalScope_ExposedStarConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSSharedWorkerGlobalScope& thisObject)

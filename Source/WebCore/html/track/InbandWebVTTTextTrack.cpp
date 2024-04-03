@@ -40,14 +40,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InbandWebVTTTextTrack);
 
-inline InbandWebVTTTextTrack::InbandWebVTTTextTrack(Document& document, InbandTextTrackPrivate& trackPrivate)
-    : InbandTextTrack(document, trackPrivate)
+inline InbandWebVTTTextTrack::InbandWebVTTTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
+    : InbandTextTrack(context, trackPrivate)
 {
 }
 
-Ref<InbandTextTrack> InbandWebVTTTextTrack::create(Document& document, InbandTextTrackPrivate& trackPrivate)
+Ref<InbandTextTrack> InbandWebVTTTextTrack::create(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
 {
-    auto textTrack = adoptRef(*new InbandWebVTTTextTrack(document, trackPrivate));
+    auto textTrack = adoptRef(*new InbandWebVTTTextTrack(context, trackPrivate));
     textTrack->suspendIfNeeded();
     return textTrack;
 }
@@ -56,14 +56,15 @@ InbandWebVTTTextTrack::~InbandWebVTTTextTrack() = default;
 
 WebVTTParser& InbandWebVTTTextTrack::parser()
 {
+    ASSERT(is<Document>(scriptExecutionContext()));
     if (!m_webVTTParser)
-        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), document());
+        m_webVTTParser = makeUnique<WebVTTParser>(static_cast<WebVTTParserClient&>(*this), downcast<Document>(*scriptExecutionContext()));
     return *m_webVTTParser;
 }
 
-void InbandWebVTTTextTrack::parseWebVTTCueData(const uint8_t* data, unsigned length)
+void InbandWebVTTTextTrack::parseWebVTTCueData(std::span<const uint8_t> data)
 {
-    parser().parseBytes(data, length);
+    parser().parseBytes(data);
 }
 
 void InbandWebVTTTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
@@ -73,8 +74,12 @@ void InbandWebVTTTextTrack::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 
 void InbandWebVTTTextTrack::newCuesParsed()
 {
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    if (!document)
+        return;
+
     for (auto& cueData : parser().takeCues()) {
-        auto cue = VTTCue::create(document(), cueData);
+        auto cue = VTTCue::create(*document, cueData);
         auto existingCue = matchCue(cue, TextTrackCue::IgnoreDuration);
         if (!existingCue) {
             INFO_LOG(LOGIDENTIFIER, cue.get());
@@ -94,10 +99,8 @@ void InbandWebVTTTextTrack::newCuesParsed()
     
 void InbandWebVTTTextTrack::newRegionsParsed()
 {
-    for (auto& region : parser().takeRegions()) {
-        region->setTrack(this);
+    for (auto& region : parser().takeRegions())
         regions()->add(WTFMove(region));
-    }
 }
 
 void InbandWebVTTTextTrack::newStyleSheetsParsed()

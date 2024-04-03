@@ -748,7 +748,7 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField"_s)), JSValue::decode(value));
 }
 
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
 static const struct CompactHashIndex staticCustomAccessorTableIndex[5] = {
     { 0, 4 },
     { -1, -1 },
@@ -854,7 +854,7 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutterSetFlag, (JSGlobalObject* globalOb
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValueSetterCalled"_s)), jsBoolean(true));
 }
 
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
 static const struct CompactHashIndex staticCustomValueTableIndex[5] = {
     { 1, 4 },
     { 2, -1 },
@@ -958,7 +958,7 @@ JSC_DEFINE_HOST_FUNCTION(staticDontDeleteDontEnumMethod, (JSGlobalObject*, CallF
     return encodedJSUndefined();
 }
 
-#if PLATFORM(MAC)
+#if ENABLE(WYHASH_STRING_HASHER)
 static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[5] = {
     { 0, -1 },
     { 1, 4 },
@@ -987,7 +987,7 @@ static const struct JSC::HashTable staticDontDeleteDontEnumTable =
 
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut | HasStaticPropertyTable;
 public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
@@ -2012,7 +2012,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingParserAddBytes, (JSGlobalObject* g
 
     auto data = getWasmBufferFromValue(globalObject, value, guard);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second)))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(static_cast<int32_t>(thisObject->streamingParser().addBytes(std::span { bitwise_cast<const uint8_t*>(data.first), data.second })))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingParserFinalize, (JSGlobalObject*, CallFrame* callFrame))
@@ -2112,7 +2112,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingCompilerAddBytes, (JSGlobalObject*
 
     auto data = getWasmBufferFromValue(globalObject, value, guard);
     RETURN_IF_EXCEPTION(scope, { });
-    thisObject->streamingCompiler().addBytes(bitwise_cast<const uint8_t*>(data.first), data.second);
+    thisObject->streamingCompiler().addBytes(std::span { bitwise_cast<const uint8_t*>(data.first), data.second });
     return JSValue::encode(jsUndefined());
 }
 

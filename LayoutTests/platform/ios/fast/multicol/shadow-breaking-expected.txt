@@ -12,7 +12,7 @@ layer at (22,38) size 200x560
     RenderBlock (floating) at (0,0) size 25x43
       RenderText at (0,1) size 25x41
         text run at (0,1) width 25: "L"
-    RenderText {#text} at (28,0) size 200x559
+    RenderText {#text} at (0,0) size 200x559
       text run at (28,0) width 172: "orem ipsum dolor sit"
       text run at (28,20) width 172: "amet, consectetur"
       text run at (0,40) width 200: "adipiscing elit. Cras pharetra"

@@ -76,9 +76,9 @@ void PlatformXRSystemProxy::requestPermissionOnSessionFeatures(const WebCore::Se
     m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestPermissionOnSessionFeatures(securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested), WTFMove(completionHandler));
 }
 
-void PlatformXRSystemProxy::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& requestedFeatures)
+void PlatformXRSystemProxy::initializeTrackingAndRendering()
 {
-    m_page.send(Messages::PlatformXRSystem::InitializeTrackingAndRendering(securityOriginData, mode, requestedFeatures));
+    m_page.send(Messages::PlatformXRSystem::InitializeTrackingAndRendering());
 }
 
 void PlatformXRSystemProxy::shutDownTrackingAndRendering()
@@ -122,6 +122,11 @@ RefPtr<XRDeviceProxy> PlatformXRSystemProxy::deviceByIdentifier(XRDeviceIdentifi
     }
 
     return nullptr;
+}
+
+bool PlatformXRSystemProxy::webXREnabled() const
+{
+    return m_page.corePage() && m_page.corePage()->settings().webXREnabled();
 }
 
 } // namespace WebKit

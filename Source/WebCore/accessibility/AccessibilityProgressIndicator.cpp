@@ -58,13 +58,13 @@ String AccessibilityProgressIndicator::valueDescription() const
     if (!description.isEmpty())
         return description;
 
-    auto* meter = meterElement();
+    RefPtr meter = meterElement();
     if (!meter)
         return description;
 
     // The HTML spec encourages authors to include a textual representation of the meter's state in
     // the element's contents. We'll fall back on that if there is not a more accessible alternative.
-    if (auto* nodeObject = dynamicDowncast<AccessibilityNodeObject>(axObjectCache()->getOrCreate(meter)))
+    if (auto* nodeObject = dynamicDowncast<AccessibilityNodeObject>(axObjectCache()->getOrCreate(*meter)))
         description = nodeObject->accessibilityDescriptionForChildren();
 
     if (description.isEmpty())
@@ -117,7 +117,7 @@ float AccessibilityProgressIndicator::minValueForRange() const
 
     return 0.0;
 }
-    
+
 AccessibilityRole AccessibilityProgressIndicator::determineAccessibilityRole()
 {
     if (meterElement())

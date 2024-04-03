@@ -74,6 +74,7 @@ WEBCORE_EXPORT
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property BOOL canTogglePictureInPicture;
 - (void)togglePictureInPicture;
+- (void)toggleInWindow;
 @property (nonatomic, readonly) BOOL canSeek;
 
 - (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;

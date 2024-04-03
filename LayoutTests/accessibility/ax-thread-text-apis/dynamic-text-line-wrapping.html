@@ -1,0 +1,56 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="paragraph" style="word-break: break-word;">Hello world.</p>
+
+<script>
+var output = "This tests that text runs are updated when a container is resized and text wraps.\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var range = paragraph.textMarkerRangeForElement(paragraph);
+    var start = paragraph.startTextMarkerForTextMarkerRange(range);
+    range = paragraph.lineTextMarkerRangeForTextMarker(start);
+    
+    var lineCount = 0;
+    var lineTextMarker = paragraph.nextLineEndTextMarkerForTextMarker(start);
+    while (paragraph.isTextMarkerValid(lineTextMarker)) {
+        lineCount++;
+        lineTextMarker = paragraph.nextLineEndTextMarkerForTextMarker(lineTextMarker);
+    }
+    output += `Line Count: ${lineCount}\n`;
+
+    output += "Wrapping text to two lines:\n";
+    document.getElementById("paragraph").style.width = "50px";
+    
+    setTimeout(async function() {
+        range = paragraph.textMarkerRangeForElement(paragraph);
+        start = paragraph.startTextMarkerForTextMarkerRange(range);
+        
+        await waitFor(() => {
+            lineCount = 0;
+            lineTextMarker = paragraph.nextLineEndTextMarkerForTextMarker(start);
+            while (paragraph.isTextMarkerValid(lineTextMarker)) {
+                lineCount++;
+                lineTextMarker = paragraph.nextLineEndTextMarkerForTextMarker(lineTextMarker);
+            }
+            return lineCount == 2;
+        });
+        
+        output += `Line Count: ${lineCount}\n`;
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

@@ -248,7 +248,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
-    if (candidateElement.hasKeyframeEffects(PseudoId::None))
+    if (candidateElement.hasKeyframeEffects(std::nullopt))
         return false;
 
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
@@ -300,7 +300,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())
+    if (CheckedPtr fullscreenManager = m_document.fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
         return false;
 #endif
 

@@ -56,7 +56,7 @@ public:
     explicit WebNotificationManager(WebProcess&);
     ~WebNotificationManager();
 
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
     
     bool show(WebCore::NotificationData&&, RefPtr<WebCore::NotificationResources>&&, WebPage*, CompletionHandler<void()>&&);
     void cancel(WebCore::NotificationData&&, WebPage*);

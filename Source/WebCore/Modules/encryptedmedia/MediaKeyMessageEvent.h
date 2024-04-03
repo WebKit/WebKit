@@ -57,9 +57,6 @@ public:
 private:
     MediaKeyMessageEvent(const AtomString&, const MediaKeyMessageEventInit&, IsTrusted);
 
-    // Event
-    EventInterface eventInterface() const override;
-
     MediaKeyMessageType m_messageType;
     RefPtr<JSC::ArrayBuffer> m_message;
 };

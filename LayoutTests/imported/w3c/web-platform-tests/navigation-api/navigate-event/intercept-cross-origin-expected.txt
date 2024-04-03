@@ -39,6 +39,7 @@ cors
 credential-management
 css
 custom-elements
+custom-state-pseudo-class
 density-size-correction
 deprecation-reporting
 docs
@@ -78,9 +79,11 @@ media-capabilities
 media-playback-quality
 media-source
 mediacapture-fromelement
+mediacapture-insertable-streams
 mediacapture-record
 mediacapture-streams
 mediasession
+merchant-validation
 mimesniff
 mixed-content
 mst-content-hint
@@ -123,6 +126,7 @@ subresource-integrity
 svg
 tools
 touch-events
+trusted-types
 uievents
 upgrade-insecure-requests
 url

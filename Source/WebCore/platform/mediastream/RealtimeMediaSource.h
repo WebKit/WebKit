@@ -222,9 +222,9 @@ public:
     virtual Ref<PhotoSettingsNativePromise> getPhotoSettings();
 
     struct ApplyConstraintsError {
-        String badConstraint;
+        MediaConstraintType invalidConstraint;
         String message;
-        ApplyConstraintsError isolatedCopy() && { return { WTFMove(badConstraint).isolatedCopy(), WTFMove(message).isolatedCopy() }; }
+        ApplyConstraintsError isolatedCopy() && { return { invalidConstraint, WTFMove(message).isolatedCopy() }; }
     };
     using ApplyConstraintsHandler = CompletionHandler<void(std::optional<ApplyConstraintsError>&&)>;
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
@@ -237,8 +237,8 @@ public:
     };
     WEBCORE_EXPORT VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaConstraints&);
 
-    bool supportsConstraints(const MediaConstraints&, String&);
-    bool supportsConstraint(const MediaConstraint&);
+    std::optional<MediaConstraintType> hasAnyInvalidConstraint(const MediaConstraints&);
+    bool supportsConstraint(MediaConstraintType);
 
     virtual bool isMockSource() const { return false; }
     virtual bool isCaptureSource() const { return false; }
@@ -277,6 +277,9 @@ public:
 
     virtual double facingModeFitnessScoreAdjustment() const { return 0; }
 
+    using OwnerCallback = std::function<void(RealtimeMediaSource&, bool isNewClonedSource)>;
+    void registerOwnerCallback(OwnerCallback&&);
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, PageIdentifier = { });
 
@@ -285,12 +288,18 @@ protected:
     virtual void startApplyingConstraints() { }
     virtual void endApplyingConstraints() { }
 
-    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
-    double fitnessDistance(const MediaConstraint&);
-    void applyConstraint(const MediaConstraint&);
-    void applyConstraints(const FlattenedConstraint&);
-    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const FlattenedConstraint&);
-    bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
+    std::optional<MediaConstraintType> selectSettings(const MediaConstraints&, MediaTrackConstraintSetMap&);
+
+    double fitnessDistance(MediaConstraintType, const IntConstraint&);
+    double fitnessDistance(MediaConstraintType, const DoubleConstraint&);
+    double fitnessDistance(MediaConstraintType, const StringConstraint&);
+    double fitnessDistance(MediaConstraintType, const BooleanConstraint&);
+    double fitnessDistance(MediaConstraintType, const MediaConstraint&);
+
+    void applyConstraint(MediaConstraintType, const MediaConstraint&);
+    void applyConstraints(const MediaTrackConstraintSetMap&);
+    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaTrackConstraintSetMap&);
+    std::optional<MediaConstraintType> hasInvalidSizeFrameRateAndZoomConstraints(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, double& fitnessDistance);
 
     virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
     virtual void setSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
@@ -317,6 +326,8 @@ protected:
     void setPersistentId(const String&);
 
     bool hasSeveralVideoFrameObserversWithAdaptors() const { return m_videoFrameObserversWithAdaptors > 1; }
+
+    OwnerCallback m_registerOwnerCallback;
 
 private:
     virtual void startProducingData() { }
@@ -383,15 +394,23 @@ private:
 
 struct CaptureSourceError {
     CaptureSourceError() = default;
-    CaptureSourceError(String&& message, MediaAccessDenialReason reason)
-        : errorMessage(WTFMove(message))
-        , denialReason(reason)
+    CaptureSourceError(String&& errorMessage, MediaAccessDenialReason denialReason, MediaConstraintType invalidConstraint = MediaConstraintType::Unknown)
+        : errorMessage(WTFMove(errorMessage))
+        , denialReason(denialReason)
+        , invalidConstraint(invalidConstraint)
+    {
+    }
+
+    explicit CaptureSourceError(MediaConstraintType invalidConstraint)
+        : denialReason(MediaAccessDenialReason::InvalidConstraint)
+        , invalidConstraint(invalidConstraint)
     { }
 
     operator bool() const { return denialReason != MediaAccessDenialReason::NoReason; }
 
     String errorMessage;
-    MediaAccessDenialReason denialReason = MediaAccessDenialReason::NoReason;
+    MediaAccessDenialReason denialReason { MediaAccessDenialReason::NoReason };
+    MediaConstraintType invalidConstraint { MediaConstraintType::Unknown };
 };
 
 struct CaptureSourceOrError {

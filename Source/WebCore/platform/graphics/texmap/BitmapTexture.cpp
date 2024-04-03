@@ -86,7 +86,11 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
     // We are updating a texture with format RGBA with content from a buffer that has BGRA format. Instead of turning BGRA
     // into RGBA and then uploading it, we upload it as is. This causes the texture format to be RGBA but the content to be BGRA,
     // so we mark the texture to convert the colors when painting the texture.
+#if CPU(LITTLE_ENDIAN)
     m_colorConvertFlags = TextureMapperFlags::ShouldConvertTextureBGRAToRGBA;
+#else
+    m_colorConvertFlags = TextureMapperFlags::ShouldConvertTextureARGBToRGBA;
+#endif
 
     glBindTexture(GL_TEXTURE_2D, m_id);
 
@@ -141,16 +145,17 @@ void BitmapTexture::updateContents(NativeImage* frameImage, const IntRect& targe
     if (!frameImage)
         return;
 
-    int bytesPerLine;
-    const uint8_t* imageData;
-
 #if USE(CAIRO)
     cairo_surface_t* surface = frameImage->platformImage().get();
-    imageData = cairo_image_surface_get_data(surface);
-    bytesPerLine = cairo_image_surface_get_stride(surface);
-#endif
+    const uint8_t* imageData = cairo_image_surface_get_data(surface);
+    int bytesPerLine = cairo_image_surface_get_stride(surface);
 
     updateContents(imageData, targetRect, offset, bytesPerLine);
+#else
+    UNUSED_PARAM(targetRect);
+    UNUSED_PARAM(offset);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
 }
 
 void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& offset, float scale)
@@ -271,6 +276,14 @@ BitmapTexture::~BitmapTexture()
 
 void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)
 {
+    copyFromExternalTexture(sourceTextureID, { 0, 0, m_size.width(), m_size.height() }, { });
+}
+
+void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset)
+{
+    RELEASE_ASSERT(sourceOffset.width() + targetRect.width() <= m_size.width());
+    RELEASE_ASSERT(sourceOffset.height() + targetRect.height() <= m_size.height());
+
     GLint boundTexture = 0;
     GLint boundFramebuffer = 0;
     GLint boundActiveTexture = 0;
@@ -288,13 +301,18 @@ void BitmapTexture::copyFromExternalTexture(GLuint sourceTextureID)
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, id());
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_size.width(), m_size.height());
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), sourceOffset.width(), sourceOffset.height(), targetRect.width(), targetRect.height());
 
     glBindTexture(GL_TEXTURE_2D, boundTexture);
     glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
     glBindTexture(GL_TEXTURE_2D, boundTexture);
     glActiveTexture(boundActiveTexture);
     glDeleteFramebuffers(1, &copyFbo);
+}
+
+void BitmapTexture::copyFromExternalTexture(BitmapTexture& sourceTexture, const IntRect& sourceRect, const IntSize& destinationOffset)
+{
+    copyFromExternalTexture(sourceTexture.id(), sourceRect, destinationOffset);
 }
 
 } // namespace WebCore

@@ -151,12 +151,24 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     StringBuilder searchBufferBuilder;
     for (auto& node : nodes)
         searchBufferBuilder.append(node->data());
-    // FIXME: try to use SearchBuffer in TextIterator.h instead.
     searchBuffer = searchBufferBuilder.toString();
     
     searchBuffer = foldQuoteMarks(searchBuffer);
     auto foldedQuery = foldQuoteMarks(query);
     
+    // FIXME: add quote folding to TextIterator instead of leaving it here?
+    FindOptions options = { FindOption::CaseInsensitive, FindOption::DoNotRevealSelection };
+
+    if (wordStartBounded == WordBounded::Yes)
+        options.add(FindOption::AtWordStarts);
+    if (wordEndBounded == WordBounded::Yes)
+        options.add(FindOption::AtWordEnds);
+
+    auto foundText = findPlainText(searchRange, foldedQuery, options);
+
+    if (!foundText.collapsed())
+        return foundText;
+
     unsigned searchStart = 0;
     
     if (nodes[0].ptr() == &searchRange.startContainer())

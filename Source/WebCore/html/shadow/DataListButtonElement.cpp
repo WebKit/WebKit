@@ -51,7 +51,7 @@ DataListButtonElement::DataListButtonElement(Document& document, DataListButtonO
 {
 }
 
-DataListButtonElement::~DataListButtonElement() { }
+DataListButtonElement::~DataListButtonElement() = default;
 
 void DataListButtonElement::defaultEventHandler(Event& event)
 {

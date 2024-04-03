@@ -91,6 +91,7 @@ private:
 #if ENABLE(INLINE_PATH_DATA)
     void recordFillLine(const PathDataLine&) final;
     void recordFillArc(const PathArc&) final;
+    void recordFillClosedArc(const PathClosedArc&) final;
     void recordFillQuadCurve(const PathDataQuadCurve&) final;
     void recordFillBezierCurve(const PathDataBezierCurve&) final;
 #endif
@@ -106,6 +107,7 @@ private:
     void recordStrokeLine(const PathDataLine&) final;
     void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) final;
     void recordStrokeArc(const PathArc&) final;
+    void recordStrokeClosedArc(const PathClosedArc&) final;
     void recordStrokeQuadCurve(const PathDataQuadCurve&) final;
     void recordStrokeBezierCurve(const PathDataBezierCurve&) final;
 #endif

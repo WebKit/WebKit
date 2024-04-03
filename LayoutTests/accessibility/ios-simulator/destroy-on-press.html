@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<details>
+  <summary onclick="destroySummary();" id="summary1">Summary</summary>
+  <p>This is some content.</p>
+</details>
+
+<script>
+let output = "This makes sure that we don't crash when activating an element that destroys itself.\n\n"
+
+if (window.accessibilityController) {
+    // Should not crash here
+    accessibilityController.accessibleElementById("summary1").childAtIndex(0).press();
+    output += "Did not crash when pressing #summary1.";
+    debug(output);
+}
+
+function destroySummary() {
+    document.getElementById("summary1").remove();
+}
+</script>
+
+</body>
+</html>
+

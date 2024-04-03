@@ -35,18 +35,18 @@ namespace WebCore {
 FEDisplacementMapSoftwareApplier::FEDisplacementMapSoftwareApplier(const FEDisplacementMap& effect)
     : Base(effect)
 {
-    ASSERT(m_effect.xChannelSelector() != CHANNEL_UNKNOWN);
-    ASSERT(m_effect.yChannelSelector() != CHANNEL_UNKNOWN);
+    ASSERT(m_effect.xChannelSelector() != ChannelSelectorType::CHANNEL_UNKNOWN);
+    ASSERT(m_effect.yChannelSelector() != ChannelSelectorType::CHANNEL_UNKNOWN);
 }
 
 int FEDisplacementMapSoftwareApplier::xChannelIndex() const
 {
-    return m_effect.xChannelSelector() - 1;
+    return static_cast<int>(m_effect.xChannelSelector()) - 1;
 }
 
 int FEDisplacementMapSoftwareApplier::yChannelIndex() const
 {
-    return m_effect.yChannelSelector() - 1;
+    return static_cast<int>(m_effect.yChannelSelector()) - 1;
 }
 
 bool FEDisplacementMapSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const

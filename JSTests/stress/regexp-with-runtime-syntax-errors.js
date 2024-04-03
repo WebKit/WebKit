@@ -5,7 +5,7 @@ function testThrowsSyntaxtError(f)
     try {
         f();
     } catch (e) {
-        if (!e instanceof SyntaxError)
+        if (!(e instanceof SyntaxError))
             throw "Expected SynteaxError, but got: " + e;
     }
 }

@@ -134,7 +134,7 @@ void ArrayBufferContents::tryAllocate(size_t numElements, unsigned elementByteSi
         data = Gigacage::tryZeroedMalloc(Gigacage::Primitive, allocationSize);
     else
         data = Gigacage::tryMalloc(Gigacage::Primitive, allocationSize);
-    m_data = DataType(data, sizeInBytes.value());
+    m_data = DataType(data);
     if (!data) {
         reset();
         return;
@@ -276,7 +276,7 @@ RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(const void* source, size_t byteLength
     return createInternal(WTFMove(contents), source, byteLength);
 }
 
-RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<uint8_t> span)
+RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(std::span<const uint8_t> span)
 {
     return tryCreate(span.data(), span.size_bytes());
 }

@@ -48,9 +48,7 @@ class SCMDetectorTest(unittest.TestCase):
             scm = detector.detect_scm_system('/')
         self.assertEqual(
             captured.root.log.getvalue(),
-            '''MOCK run_command: ['svn', 'info'], cwd=/
-MOCK run_command: ['git', 'rev-parse', '--is-inside-work-tree'], cwd=/
-''',
+            "MOCK run_command: ['git', 'rev-parse', '--is-inside-work-tree'], cwd=/\n",
         )
 
         self.assertIsNone(scm)

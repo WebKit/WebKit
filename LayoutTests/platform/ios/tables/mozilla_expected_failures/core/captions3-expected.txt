@@ -185,7 +185,7 @@ layer at (0,0) size 800x2939
                 text run at (1,1) width 31: "Data"
       RenderTable {TABLE} at (0,1265) size 91x137 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 71x66 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 52x59
+          RenderText {#text} at (9,3) size 52x59
             text run at (22,3) width 26: "The"
             text run at (15,23) width 41: "table's"
             text run at (9,43) width 52: "caption."
@@ -206,7 +206,7 @@ layer at (0,0) size 800x2939
                 text run at (1,1) width 31: "Data"
       RenderTable {TABLE} at (0,1401) size 91x137 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (20,0) size 71x66 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 52x59
+          RenderText {#text} at (9,3) size 52x59
             text run at (22,3) width 26: "The"
             text run at (15,23) width 41: "table's"
             text run at (9,43) width 52: "caption."
@@ -355,7 +355,7 @@ layer at (0,0) size 800x2939
                 text run at (1,1) width 31: "Data"
       RenderTable {TABLE} at (0,2431) size 91x137 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 71x66 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 52x59
+          RenderText {#text} at (9,3) size 52x59
             text run at (22,3) width 26: "The"
             text run at (15,23) width 41: "table's"
             text run at (9,43) width 52: "caption."
@@ -376,7 +376,7 @@ layer at (0,0) size 800x2939
                 text run at (1,1) width 31: "Data"
       RenderTable {TABLE} at (15,2567) size 91x137 [border: (10px solid #008000)]
         RenderBlock {CAPTION} at (0,0) size 71x66 [border: (3px solid #800080)]
-          RenderText {#text} at (22,3) size 52x59
+          RenderText {#text} at (9,3) size 52x59
             text run at (22,3) width 26: "The"
             text run at (15,23) width 41: "table's"
             text run at (9,43) width 52: "caption."
@@ -418,12 +418,12 @@ layer at (0,0) size 800x2939
       RenderBlock {P} at (0,2845) size 784x21
         RenderText {#text} at (0,0) size 59x19
           text run at (0,0) width 59: "(Back to "
-        RenderInline {A} at (0,0) size 161x19 [color=#0000EE]
+        RenderInline {A} at (58,0) size 161x19 [color=#0000EE]
           RenderText {#text} at (58,0) size 161x19
             text run at (58,0) width 161: "CSS Testing Information"
         RenderText {#text} at (218,0) size 9x19
           text run at (218,0) width 9: ", "
-        RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
+        RenderInline {A} at (226,0) size 83x19 [color=#0000EE]
           RenderText {#text} at (226,0) size 83x19
             text run at (226,0) width 83: "David Baron"
         RenderText {#text} at (308,0) size 6x19
@@ -434,7 +434,7 @@ layer at (0,0) size 800x2939
             text run at (0,0) width 32: "LDB"
         RenderText {#text} at (32,0) size 8x19
           text run at (32,0) width 8: ", "
-        RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
+        RenderInline {A} at (40,0) size 158x19 [color=#0000EE]
           RenderText {#text} at (40,0) size 158x19
             text run at (40,0) width 158: "dbaron@fas.harvard.edu"
 layer at (8,2849) size 784x2 clip at (0,0) size 0x0

@@ -3,6 +3,7 @@
 
 #include "avif/internal.h"
 
+#include <float.h>
 #include <math.h>
 #include <string.h>
 
@@ -69,6 +70,36 @@ avifColorPrimaries avifColorPrimariesFind(const float inPrimaries[8], const char
     return AVIF_COLOR_PRIMARIES_UNKNOWN;
 }
 
+avifResult avifTransferCharacteristicsGetGamma(avifTransferCharacteristics atc, float * gamma)
+{
+    switch (atc) {
+        case AVIF_TRANSFER_CHARACTERISTICS_BT470M:
+            *gamma = 2.2f;
+            return AVIF_RESULT_OK;
+        case AVIF_TRANSFER_CHARACTERISTICS_BT470BG:
+            *gamma = 2.8f;
+            return AVIF_RESULT_OK;
+        case AVIF_TRANSFER_CHARACTERISTICS_LINEAR:
+            *gamma = 1.0f;
+            return AVIF_RESULT_OK;
+        default:
+            return AVIF_RESULT_INVALID_ARGUMENT;
+    }
+}
+
+avifTransferCharacteristics avifTransferCharacteristicsFindByGamma(float gamma)
+{
+    if (matchesTo3RoundedPlaces(gamma, 2.2f)) {
+        return AVIF_TRANSFER_CHARACTERISTICS_BT470M;
+    } else if (matchesTo3RoundedPlaces(gamma, 1.0f)) {
+        return AVIF_TRANSFER_CHARACTERISTICS_LINEAR;
+    } else if (matchesTo3RoundedPlaces(gamma, 2.8f)) {
+        return AVIF_TRANSFER_CHARACTERISTICS_BT470BG;
+    }
+
+    return AVIF_TRANSFER_CHARACTERISTICS_UNKNOWN;
+}
+
 struct avifMatrixCoefficientsTable
 {
     avifMatrixCoefficients matrixCoefficientsEnum;
@@ -98,29 +129,7 @@ static const int avifMatrixCoefficientsTableSize = sizeof(matrixCoefficientsTabl
 static avifBool calcYUVInfoFromCICP(const avifImage * image, float coeffs[3])
 {
     if (image->matrixCoefficients == AVIF_MATRIX_COEFFICIENTS_CHROMA_DERIVED_NCL) {
-        float primaries[8];
-        avifColorPrimariesGetValues(image->colorPrimaries, primaries);
-        float const rX = primaries[0];
-        float const rY = primaries[1];
-        float const gX = primaries[2];
-        float const gY = primaries[3];
-        float const bX = primaries[4];
-        float const bY = primaries[5];
-        float const wX = primaries[6];
-        float const wY = primaries[7];
-        float const rZ = 1.0f - (rX + rY); // (Eq. 34)
-        float const gZ = 1.0f - (gX + gY); // (Eq. 35)
-        float const bZ = 1.0f - (bX + bY); // (Eq. 36)
-        float const wZ = 1.0f - (wX + wY); // (Eq. 37)
-        float const kr = (rY * (wX * (gY * bZ - bY * gZ) + wY * (bX * gZ - gX * bZ) + wZ * (gX * bY - bX * gY))) /
-                         (wY * (rX * (gY * bZ - bY * gZ) + gX * (bY * rZ - rY * bZ) + bX * (rY * gZ - gY * rZ)));
-        // (Eq. 32)
-        float const kb = (bY * (wX * (rY * gZ - gY * rZ) + wY * (gX * rZ - rX * gZ) + wZ * (rX * gY - gX * rY))) /
-                         (wY * (rX * (gY * bZ - bY * gZ) + gX * (bY * rZ - rY * bZ) + bX * (rY * gZ - gY * rZ)));
-        // (Eq. 33)
-        coeffs[0] = kr;
-        coeffs[2] = kb;
-        coeffs[1] = 1.0f - coeffs[0] - coeffs[2];
+        avifColorPrimariesComputeYCoeffs(image->colorPrimaries, coeffs);
         return AVIF_TRUE;
     } else {
         for (int i = 0; i < avifMatrixCoefficientsTableSize; ++i) {
@@ -168,4 +177,358 @@ void avifCalcYUVCoefficients(const avifImage * image, float * outR, float * outG
     *outR = kr;
     *outG = kg;
     *outB = kb;
+}
+
+// ---------------------------------------------------------------------------
+// Transfer characteristics
+//
+// Transfer characteristics are defined in ITU-T H.273 https://www.itu.int/rec/T-REC-H.273-201612-S/en
+// with formulas for linear to gamma conversion in Table 3.
+// This is based on tongyuantongyu's implementation in https://github.com/AOMediaCodec/libavif/pull/444
+// with some fixes/changes in the first commit:
+// - Fixed 5 transfer curves where toLinear and toGamma functions were swapped (470M, 470BG, Log100,
+//   Log100Sqrt10 and SMPTE428)
+// - 'avifToLinearLog100' and 'avifToLinearLog100Sqrt10' were modified to return the middle of the
+//   range of linear values that are gamma-encoded to 0.0 in order to reduce the max round trip error,
+//   based on vrabaud's change in
+//   https://chromium.googlesource.com/webm/libwebp/+/25d94f473b10882b8bee9288d00539001b692042
+// - In this file, PQ and HLG return "extended SDR" linear values in [0.0, 10000/203] and
+//   [0.0, 1000/203] respectively, where a value of 1.0 means SDR white brightness (203 nits), and any
+//   value above 1.0 is brigther.
+// See git history for further changes.
+
+struct avifTransferCharacteristicsTable
+{
+    avifTransferCharacteristics transferCharacteristicsEnum;
+    const char * name;
+    avifTransferFunction toLinear;
+    avifTransferFunction toGamma;
+};
+
+static float avifToLinear709(float gamma)
+{
+    if (gamma < 0.0f) {
+        return 0.0f;
+    } else if (gamma < 4.5f * 0.018053968510807f) {
+        return gamma / 4.5f;
+    } else if (gamma < 1.0f) {
+        return powf((gamma + 0.09929682680944f) / 1.09929682680944f, 1.0f / 0.45f);
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToGamma709(float linear)
+{
+    if (linear < 0.0f) {
+        return 0.0f;
+    } else if (linear < 0.018053968510807f) {
+        return linear * 4.5f;
+    } else if (linear < 1.0f) {
+        return 1.09929682680944f * powf(linear, 0.45f) - 0.09929682680944f;
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToLinear470M(float gamma)
+{
+    return powf(AVIF_CLAMP(gamma, 0.0f, 1.0f), 2.2f);
+}
+
+static float avifToGamma470M(float linear)
+{
+    return powf(AVIF_CLAMP(linear, 0.0f, 1.0f), 1.0f / 2.2f);
+}
+
+static float avifToLinear470BG(float gamma)
+{
+    return powf(AVIF_CLAMP(gamma, 0.0f, 1.0f), 2.8f);
+}
+
+static float avifToGamma470BG(float linear)
+{
+    return powf(AVIF_CLAMP(linear, 0.0f, 1.0f), 1.0f / 2.8f);
+}
+
+static float avifToLinearSMPTE240(float gamma)
+{
+    if (gamma < 0.0f) {
+        return 0.0f;
+    } else if (gamma < 4.0f * 0.022821585529445f) {
+        return gamma / 4.0f;
+    } else if (gamma < 1.0f) {
+        return powf((gamma + 0.111572195921731f) / 1.111572195921731f, 1.0f / 0.45f);
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToGammaSMPTE240(float linear)
+{
+    if (linear < 0.0f) {
+        return 0.0f;
+    } else if (linear < 0.022821585529445f) {
+        return linear * 4.0f;
+    } else if (linear < 1.0f) {
+        return 1.111572195921731f * powf(linear, 0.45f) - 0.111572195921731f;
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToGammaLinear(float gamma)
+{
+    return AVIF_CLAMP(gamma, 0.0f, 1.0f);
+}
+
+static float avifToLinearLog100(float gamma)
+{
+    // The function is non-bijective so choose the middle of [0, 0.01].
+    const float mid_interval = 0.01f / 2.f;
+    return (gamma <= 0.0f) ? mid_interval : powf(10.0f, 2.f * (AVIF_MIN(gamma, 1.f) - 1.0f));
+}
+
+static float avifToGammaLog100(float linear)
+{
+    return linear <= 0.01f ? 0.0f : 1.0f + log10f(AVIF_MIN(linear, 1.0f)) / 2.0f;
+}
+
+static float avifToLinearLog100Sqrt10(float gamma)
+{
+    // The function is non-bijective so choose the middle of [0, 0.00316227766f].
+    const float mid_interval = 0.00316227766f / 2.f;
+    return (gamma <= 0.0f) ? mid_interval : powf(10.0f, 2.5f * (AVIF_MIN(gamma, 1.f) - 1.0f));
+}
+
+static float avifToGammaLog100Sqrt10(float linear)
+{
+    return linear <= 0.00316227766f ? 0.0f : 1.0f + log10f(AVIF_MIN(linear, 1.0f)) / 2.5f;
+}
+
+static float avifToLinearIEC61966(float gamma)
+{
+    if (gamma < -4.5f * 0.018053968510807f) {
+        return powf((-gamma + 0.09929682680944f) / -1.09929682680944f, 1.0f / 0.45f);
+    } else if (gamma < 4.5f * 0.018053968510807f) {
+        return gamma / 4.5f;
+    } else {
+        return powf((gamma + 0.09929682680944f) / 1.09929682680944f, 1.0f / 0.45f);
+    }
+}
+
+static float avifToGammaIEC61966(float linear)
+{
+    if (linear < -0.018053968510807f) {
+        return -1.09929682680944f * powf(-linear, 0.45f) + 0.09929682680944f;
+    } else if (linear < 0.018053968510807f) {
+        return linear * 4.5f;
+    } else {
+        return 1.09929682680944f * powf(linear, 0.45f) - 0.09929682680944f;
+    }
+}
+
+static float avifToLinearBT1361(float gamma)
+{
+    if (gamma < -0.25f) {
+        return -0.25f;
+    } else if (gamma < 0.0f) {
+        return powf((gamma - 0.02482420670236f) / -0.27482420670236f, 1.0f / 0.45f) / -4.0f;
+    } else if (gamma < 4.5f * 0.018053968510807f) {
+        return gamma / 4.5f;
+    } else if (gamma < 1.0f) {
+        return powf((gamma + 0.09929682680944f) / 1.09929682680944f, 1.0f / 0.45f);
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToGammaBT1361(float linear)
+{
+    if (linear < -0.25f) {
+        return -0.25f;
+    } else if (linear < 0.0f) {
+        return -0.27482420670236f * powf(-4.0f * linear, 0.45f) + 0.02482420670236f;
+    } else if (linear < 0.018053968510807f) {
+        return linear * 4.5f;
+    } else if (linear < 1.0f) {
+        return 1.09929682680944f * powf(linear, 0.45f) - 0.09929682680944f;
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToLinearSRGB(float gamma)
+{
+    if (gamma < 0.0f) {
+        return 0.0f;
+    } else if (gamma < 12.92f * 0.0030412825601275209f) {
+        return gamma / 12.92f;
+    } else if (gamma < 1.0f) {
+        return powf((gamma + 0.0550107189475866f) / 1.0550107189475866f, 2.4f);
+    } else {
+        return 1.0f;
+    }
+}
+
+static float avifToGammaSRGB(float linear)
+{
+    if (linear < 0.0f) {
+        return 0.0f;
+    } else if (linear < 0.0030412825601275209f) {
+        return linear * 12.92f;
+    } else if (linear < 1.0f) {
+        return 1.0550107189475866f * powf(linear, 1.0f / 2.4f) - 0.0550107189475866f;
+    } else {
+        return 1.0f;
+    }
+}
+
+#define PQ_MAX_NITS 10000.0f
+#define HLG_PEAK_LUMINANCE_NITS 1000.0f
+#define SDR_WHITE_NITS 203.0f
+
+static float avifToLinearPQ(float gamma)
+{
+    if (gamma > 0.0f) {
+        const float powGamma = powf(gamma, 1.0f / 78.84375f);
+        const float num = AVIF_MAX(powGamma - 0.8359375f, 0.0f);
+        const float den = AVIF_MAX(18.8515625f - 18.6875f * powGamma, FLT_MIN);
+        const float linear = powf(num / den, 1.0f / 0.1593017578125f);
+        // Scale so that SDR white is 1.0 (extended SDR).
+        return linear * PQ_MAX_NITS / SDR_WHITE_NITS;
+    } else {
+        return 0.0f;
+    }
+}
+
+static float avifToGammaPQ(float linear)
+{
+    if (linear > 0.0f) {
+        // Scale from extended SDR range to [0.0, 1.0].
+        linear = AVIF_CLAMP(linear * SDR_WHITE_NITS / PQ_MAX_NITS, 0.0f, 1.0f);
+        const float powLinear = powf(linear, 0.1593017578125f);
+        const float num = 0.1640625f * powLinear - 0.1640625f;
+        const float den = 1.0f + 18.6875f * powLinear;
+        return powf(1.0f + num / den, 78.84375f);
+    } else {
+        return 0.0f;
+    }
+}
+
+static float avifToLinearSMPTE428(float gamma)
+{
+    return powf(AVIF_MAX(gamma, 0.0f), 2.6f) / 0.91655527974030934f;
+}
+
+static float avifToGammaSMPTE428(float linear)
+{
+    return powf(0.91655527974030934f * AVIF_MAX(linear, 0.0f), 1.0f / 2.6f);
+}
+
+// Formula from ITU-R BT.2100-2
+// Assumes Lw=1000 (max display luminance in nits).
+// For simplicity, approximates Ys (which should be 0.2627*r+0.6780*g+0.0593*b)
+// to the input value (r, g, or b depending on the current channel).
+static float avifToLinearHLG(float gamma)
+{
+    // Inverse OETF followed by the OOTF, see Table 5 in ITU-R BT.2100-2 page 7.
+    // Note that this differs slightly from  ITU-T H.273 which doesn't use the OOTF.
+    if (gamma < 0.0f) {
+        return 0.0f;
+    }
+    float linear = 0.0f;
+    if (gamma <= 0.5f) {
+        linear = powf((gamma * gamma) * (1.0f / 3.0f), 1.2f);
+    } else {
+        linear = powf((expf((gamma - 0.55991073f) / 0.17883277f) + 0.28466892f) / 12.0f, 1.2f);
+    }
+    // Scale so that SDR white is 1.0 (extended SDR).
+    return linear * HLG_PEAK_LUMINANCE_NITS / SDR_WHITE_NITS;
+}
+
+static float avifToGammaHLG(float linear)
+{
+    // Scale from extended SDR range to [0.0, 1.0].
+    linear = AVIF_CLAMP(linear * SDR_WHITE_NITS / HLG_PEAK_LUMINANCE_NITS, 0.0f, 1.0f);
+    // Inverse OOTF followed by OETF see Table 5 and Note 5i in ITU-R BT.2100-2 page 7-8.
+    linear = powf(linear, 1.0f / 1.2f);
+    if (linear < 0.0f) {
+        return 0.0f;
+    } else if (linear <= (1.0f / 12.0f)) {
+        return sqrtf(3.0f * linear);
+    } else {
+        return 0.17883277f * logf(12.0f * linear - 0.28466892f) + 0.55991073f;
+    }
+}
+
+static const struct avifTransferCharacteristicsTable transferCharacteristicsTables[] = {
+    { AVIF_TRANSFER_CHARACTERISTICS_BT709, "BT.709", avifToLinear709, avifToGamma709 },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT470M, "BT.470-6 System M", avifToLinear470M, avifToGamma470M },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT470BG, "BT.470-6 System BG", avifToLinear470BG, avifToGamma470BG },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT601, "BT.601", avifToLinear709, avifToGamma709 },
+    { AVIF_TRANSFER_CHARACTERISTICS_SMPTE240, "SMPTE 240M", avifToLinearSMPTE240, avifToGammaSMPTE240 },
+    { AVIF_TRANSFER_CHARACTERISTICS_LINEAR, "Linear", avifToGammaLinear, avifToGammaLinear },
+    { AVIF_TRANSFER_CHARACTERISTICS_LOG100, "100:1 Log", avifToLinearLog100, avifToGammaLog100 },
+    { AVIF_TRANSFER_CHARACTERISTICS_LOG100_SQRT10, "100sqrt(10):1 Log", avifToLinearLog100Sqrt10, avifToGammaLog100Sqrt10 },
+    { AVIF_TRANSFER_CHARACTERISTICS_IEC61966, "IEC 61966-2-4", avifToLinearIEC61966, avifToGammaIEC61966 },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT1361, "BT.1361", avifToLinearBT1361, avifToGammaBT1361 },
+    { AVIF_TRANSFER_CHARACTERISTICS_SRGB, "sRGB", avifToLinearSRGB, avifToGammaSRGB },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT2020_10BIT, "10bit BT.2020", avifToLinear709, avifToGamma709 },
+    { AVIF_TRANSFER_CHARACTERISTICS_BT2020_12BIT, "12bit BT.2020", avifToLinear709, avifToGamma709 },
+    { AVIF_TRANSFER_CHARACTERISTICS_SMPTE2084, "SMPTE ST 2084 (PQ)", avifToLinearPQ, avifToGammaPQ },
+    { AVIF_TRANSFER_CHARACTERISTICS_SMPTE428, "SMPTE ST 428-1", avifToLinearSMPTE428, avifToGammaSMPTE428 },
+    { AVIF_TRANSFER_CHARACTERISTICS_HLG, "ARIB STD-B67 (HLG)", avifToLinearHLG, avifToGammaHLG }
+};
+
+static const int avifTransferCharacteristicsTableSize =
+    sizeof(transferCharacteristicsTables) / sizeof(transferCharacteristicsTables[0]);
+
+avifTransferFunction avifTransferCharacteristicsGetGammaToLinearFunction(avifTransferCharacteristics atc)
+{
+    for (int i = 0; i < avifTransferCharacteristicsTableSize; ++i) {
+        const struct avifTransferCharacteristicsTable * const table = &transferCharacteristicsTables[i];
+        if (table->transferCharacteristicsEnum == atc) {
+            return table->toLinear;
+        }
+    }
+    return avifToLinear709; // Provide a reasonable default.
+}
+
+avifTransferFunction avifTransferCharacteristicsGetLinearToGammaFunction(avifTransferCharacteristics atc)
+{
+    for (int i = 0; i < avifTransferCharacteristicsTableSize; ++i) {
+        const struct avifTransferCharacteristicsTable * const table = &transferCharacteristicsTables[i];
+        if (table->transferCharacteristicsEnum == atc) {
+            return table->toGamma;
+        }
+    }
+    return avifToGamma709; // Provide a reasonable default.
+}
+
+void avifColorPrimariesComputeYCoeffs(avifColorPrimaries colorPrimaries, float coeffs[3])
+{
+    float primaries[8];
+    avifColorPrimariesGetValues(colorPrimaries, primaries);
+    float const rX = primaries[0];
+    float const rY = primaries[1];
+    float const gX = primaries[2];
+    float const gY = primaries[3];
+    float const bX = primaries[4];
+    float const bY = primaries[5];
+    float const wX = primaries[6];
+    float const wY = primaries[7];
+    float const rZ = 1.0f - (rX + rY); // (Eq. 34)
+    float const gZ = 1.0f - (gX + gY); // (Eq. 35)
+    float const bZ = 1.0f - (bX + bY); // (Eq. 36)
+    float const wZ = 1.0f - (wX + wY); // (Eq. 37)
+    float const kr = (rY * (wX * (gY * bZ - bY * gZ) + wY * (bX * gZ - gX * bZ) + wZ * (gX * bY - bX * gY))) /
+                     (wY * (rX * (gY * bZ - bY * gZ) + gX * (bY * rZ - rY * bZ) + bX * (rY * gZ - gY * rZ)));
+    // (Eq. 32)
+    float const kb = (bY * (wX * (rY * gZ - gY * rZ) + wY * (gX * rZ - rX * gZ) + wZ * (rX * gY - gX * rY))) /
+                     (wY * (rX * (gY * bZ - bY * gZ) + gX * (bY * rZ - rY * bZ) + bX * (rY * gZ - gY * rZ)));
+    // (Eq. 33)
+    coeffs[0] = kr;
+    coeffs[2] = kb;
+    coeffs[1] = 1.0f - coeffs[0] - coeffs[2];
 }

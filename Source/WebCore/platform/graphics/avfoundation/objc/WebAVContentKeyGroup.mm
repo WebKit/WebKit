@@ -35,11 +35,11 @@
 #import "ContentKeyGroupDataSource.h"
 #import "Logging.h"
 #import "NotImplemented.h"
-#import <wtf/CheckedPtr.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/text/WTFString.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation WebAVContentKeyGroup {
     WeakObjCPtr<AVContentKeySession> _contentKeySession;
-    CheckedPtr<WebCore::ContentKeyGroupDataSource> _dataSource;
+    WeakPtr<WebCore::ContentKeyGroupDataSource> _dataSource;
     RetainPtr<NSUUID> _groupIdentifier;
 }
 
@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
 
     _contentKeySession = contentKeySession;
-    _dataSource = &dataSource;
+    _dataSource = dataSource;
     _groupIdentifier = adoptNS([[NSUUID alloc] init]);
 
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "groupIdentifier=", _groupIdentifier.get());
@@ -101,6 +101,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)expire
 {
+    if (!_dataSource)
+        return;
+
 #if HAVE(AVCONTENTKEY_REVOKE)
     Vector keys = _dataSource->contentKeyGroupDataSourceKeys();
     OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys=", keys.size());
@@ -128,17 +131,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (const void*)logIdentifier
 {
-    return _dataSource->contentKeyGroupDataSourceLogIdentifier();
+    return _dataSource ? _dataSource->contentKeyGroupDataSourceLogIdentifier() : nullptr;
 }
 
 - (const Logger*)loggerPtr
 {
-    return &_dataSource->contentKeyGroupDataSourceLogger();
+    return _dataSource ? &_dataSource->contentKeyGroupDataSourceLogger() : nullptr;
 }
 
 - (WTFLogChannel*)logChannel
 {
-    return &_dataSource->contentKeyGroupDataSourceLogChannel();
+    return _dataSource ? &_dataSource->contentKeyGroupDataSourceLogChannel() : nullptr;
 }
 
 @end

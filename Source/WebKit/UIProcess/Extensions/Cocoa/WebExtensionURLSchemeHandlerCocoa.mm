@@ -59,7 +59,7 @@ WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionControlle
 
 void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    auto *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, &page, protectedThis = Ref { *this }, protectedTask = Ref { task }, protectedPage = Ref { page }]() {
+    auto *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, protectedThis = Ref { *this }, &task, protectedTask = Ref { task }, &page, protectedPage = Ref { page }]() {
         // If a frame is loading, the frame request URL will be an empty string, since the request is actually the frame URL being loaded.
         // In this case, consider the firstPartyForCookies() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.
@@ -72,7 +72,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             return;
         }
 
-        auto extensionContext = m_webExtensionController->extensionContext(requestURL);
+        RefPtr extensionContext = m_webExtensionController->extensionContext(requestURL);
         if (!extensionContext) {
             // We need to return the same error here, as we do below for URLs that don't match web_accessible_resources.
             // Otherwise, a page tracking extension injected content and watching extension UUIDs across page loads can fingerprint
@@ -81,9 +81,13 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             return;
         }
 
-        // FIXME: <https://webkit.org/b/246485> Support devtools' exception to web accessible resources.
-
-        if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL)) {
+#if ENABLE(INSPECTOR_EXTENSIONS)
+        // Chrome does not require devtools extensions to explicitly list resources as web_accessible_resources.
+        if (!frameDocumentURL.protocolIs("inspector-resource"_s) && !protocolHostAndPortAreEqual(frameDocumentURL, requestURL))
+#else
+        if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL))
+#endif
+        {
             if (!extensionContext->extension().isWebAccessibleResource(requestURL, frameDocumentURL)) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:noPermissionErrorCode userInfo:nil]);
                 return;
@@ -92,13 +96,12 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
 
         bool loadingExtensionMainFrame = false;
         if (task.frameInfo().isMainFrame() && requestURL == frameDocumentURL) {
-            loadingExtensionMainFrame = true;
-
-            auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
-            if (!requiredBaseURL || !extensionContext->isURLForThisExtension(requiredBaseURL)) {
+            if (!extensionContext->isURLForThisExtension(page.configuration().requiredWebExtensionBaseURL())) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:nil]);
                 return;
             }
+
+            loadingExtensionMainFrame = true;
         }
 
         auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
@@ -108,10 +111,8 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         }
 
         if (loadingExtensionMainFrame) {
-            if (auto tab = extensionContext->getTab(page.identifier())) {
-                auto window = tab->window();
-                page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt), extensionContext->identifier());
-            }
+            if (auto tab = extensionContext->getTab(page.identifier()))
+                extensionContext->addExtensionTabPage(page, *tab);
         }
 
         auto *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;

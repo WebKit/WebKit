@@ -230,6 +230,9 @@ typedef enum {
 @property (setter=_setUseEnhancedPrivacyMode:) BOOL _useEnhancedPrivacyMode;
 @property (setter=_setBlockTrackers:) BOOL _blockTrackers;
 #endif
+#if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
+@property (setter=_setAllowPrivateAccessTokensForThirdParty:) BOOL _allowPrivateAccessTokensForThirdParty;
+#endif
 @end
 
 @interface NSURLProtocol ()

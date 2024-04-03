@@ -82,6 +82,8 @@ class Printer(object):
             self._print_default("Placing new baselines in %s" % self._port.baseline_path())
 
         self._print_default("Using %s build" % self._options.configuration)
+        if self._options.additional_header:
+            self._print_default("Using additional header: '%s'" % self._options.additional_header)
         if self._options.pixel_tests:
             self._print_default("Pixel tests enabled")
         else:
@@ -96,6 +98,7 @@ class Printer(object):
     def print_baseline_search_path(self, device_type=None):
         fs = self._port.host.filesystem
         full_baseline_search_path = self._port.baseline_search_path(device_type=device_type)
+        full_expectations_files = self._port.expectations_files(device_type=device_type)
         normalize_baseline = lambda baseline_search_path: [
             fs.relpath(x, self._port.layout_tests_dir()).replace("../", "") for x in baseline_search_path]
 
@@ -105,6 +108,14 @@ class Printer(object):
         self._print_default('')
         self._print_default(u'Baseline search path: {} -> generic'.format(
             u' -> '.join(normalize_baseline([path for path in full_baseline_search_path if fs.exists(path)]))))
+        self._print_default('')
+
+        self._print_default(u'Verbose test expectations: {}'.format(
+            u' -> '.join(normalize_baseline(reversed(full_expectations_files)))))
+
+        self._print_default('')
+        self._print_default(u'Test expectations: {}'.format(
+            u' -> '.join(normalize_baseline([path for path in reversed(full_expectations_files) if fs.exists(path)]))))
         self._print_default('')
 
     def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):

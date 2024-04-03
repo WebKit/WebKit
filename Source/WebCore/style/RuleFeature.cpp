@@ -306,7 +306,9 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClass());
             if (!isLogicalCombination)
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
-            if (isLogicalCombination && selector->pseudoClass() != CSSSelector::PseudoClass::Has)
+
+            // Check for the :has(:is(foo bar)) case. In this case `foo` can match elements outside the :has() scope.
+            if (isLogicalCombination && isHasPseudoClassMatchElement(matchElement))
                 canBreakScope = CanBreakScope::Yes;
         }
 

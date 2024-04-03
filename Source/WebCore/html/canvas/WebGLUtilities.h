@@ -89,7 +89,7 @@ private:
     static constexpr PixelStoreParameters tightUnpack { 1, 0, 0, 0, 0 };
     void set(const PixelStoreParameters& oldValues, const PixelStoreParameters& newValues)
     {
-        auto* context = m_context->graphicsContextGL();
+        RefPtr context = m_context->graphicsContextGL();
         if (oldValues.alignment != newValues.alignment)
             context->pixelStorei(GraphicsContextGL::UNPACK_ALIGNMENT, newValues.alignment);
         if (oldValues.rowLength != newValues.rowLength)
@@ -114,14 +114,14 @@ public:
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->disable(GraphicsContextGL::RASTERIZER_DISCARD);
+        m_context->protectedGraphicsContextGL()->disable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
     ~ScopedDisableRasterizerDiscard()
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::RASTERIZER_DISCARD);
+        m_context->protectedGraphicsContextGL()->enable(GraphicsContextGL::RASTERIZER_DISCARD);
     }
 
 private:
@@ -138,9 +138,9 @@ public:
             return;
         GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
         if (m_context->isWebGL2())
-            m_context->graphicsContextGL()->drawBuffers(value);
+            m_context->protectedGraphicsContextGL()->drawBuffers(value);
         else
-            m_context->graphicsContextGL()->drawBuffersEXT(value);
+            m_context->protectedGraphicsContextGL()->drawBuffersEXT(value);
     }
 
     ~ScopedEnableBackbuffer()
@@ -149,9 +149,9 @@ public:
             return;
         GCGLenum value[1] { GraphicsContextGL::NONE };
         if (m_context->isWebGL2())
-            m_context->graphicsContextGL()->drawBuffers(value);
+            m_context->protectedGraphicsContextGL()->drawBuffers(value);
         else
-            m_context->graphicsContextGL()->drawBuffersEXT(value);
+            m_context->protectedGraphicsContextGL()->drawBuffersEXT(value);
     }
 
 private:
@@ -166,14 +166,14 @@ public:
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->disable(GraphicsContextGL::SCISSOR_TEST);
+        m_context->protectedGraphicsContextGL()->disable(GraphicsContextGL::SCISSOR_TEST);
     }
 
     ~ScopedDisableScissorTest()
     {
         if (!m_context)
             return;
-        m_context->graphicsContextGL()->enable(GraphicsContextGL::SCISSOR_TEST);
+        m_context->protectedGraphicsContextGL()->enable(GraphicsContextGL::SCISSOR_TEST);
     }
 
 private:
@@ -190,11 +190,10 @@ public:
 
     ~ScopedWebGLRestoreFramebuffer()
     {
-        auto* gl = m_context.graphicsContextGL();
-        if (m_context.isWebGL2()) {
-            auto& context2 = downcast<WebGL2RenderingContext>(m_context);
-            gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, objectOrZero(context2.m_readFramebufferBinding));
-            gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, objectOrZero(context2.m_framebufferBinding));
+        RefPtr gl = m_context.graphicsContextGL();
+        if (auto* gl2Ccontext = dynamicDowncast<WebGL2RenderingContext>(m_context)) {
+            gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, objectOrZero(gl2Ccontext->m_readFramebufferBinding));
+            gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, objectOrZero(gl2Ccontext->m_framebufferBinding));
         } else
             gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_context.m_framebufferBinding));
     }
@@ -213,7 +212,7 @@ public:
 
     ~ScopedWebGLRestoreRenderbuffer()
     {
-        auto* gl = m_context.graphicsContextGL();
+        RefPtr gl = m_context.graphicsContextGL();
         gl->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_context.m_renderbufferBinding));
     }
     WebGLRenderingContextBase& m_context;
@@ -249,14 +248,108 @@ public:
             // Not part of WebGL, does not need to be restored.
             return;
         }
-        auto* gl = m_context.graphicsContextGL();
+        RefPtr gl = m_context.graphicsContextGL();
         gl->bindTexture(m_target, texture);
     }
+
 private:
     WebGLRenderingContextBase& m_context;
     const GCGLenum m_target;
 };
 
+class ScopedClearColorAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearColorAndMask);
+public:
+    explicit ScopedClearColorAndMask(WebGLRenderingContextBase& context, GCGLclampf clearRed, GCGLclampf clearGreen, GCGLclampf clearBlue, GCGLclampf clearAlpha, GCGLboolean maskRed, GCGLboolean maskGreen, GCGLboolean maskBlue, GCGLboolean maskAlpha)
+        : m_context(context)
+    {
+        RefPtr gl = m_context.protectedGraphicsContextGL();
+        gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
+        if (m_context.m_oesDrawBuffersIndexed)
+            gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
+        else
+            gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+    }
+
+    ~ScopedClearColorAndMask()
+    {
+        auto clearRed   = m_context.m_clearColor[0];
+        auto clearGreen = m_context.m_clearColor[1];
+        auto clearBlue  = m_context.m_clearColor[2];
+        auto clearAlpha = m_context.m_clearColor[3];
+
+        auto maskRed   = m_context.m_colorMask[0];
+        auto maskGreen = m_context.m_colorMask[1];
+        auto maskBlue  = m_context.m_colorMask[2];
+        auto maskAlpha = m_context.m_colorMask[3];
+
+        RefPtr gl = m_context.protectedGraphicsContextGL();
+        gl->clearColor(clearRed, clearGreen, clearBlue, clearAlpha);
+        if (m_context.m_oesDrawBuffersIndexed)
+            gl->colorMaskiOES(0, maskRed, maskGreen, maskBlue, maskAlpha);
+        else
+            gl->colorMask(maskRed, maskGreen, maskBlue, maskAlpha);
+    }
+
+private:
+    WebGLRenderingContextBase& m_context;
+};
+
+class ScopedClearDepthAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearDepthAndMask);
+public:
+    explicit ScopedClearDepthAndMask(WebGLRenderingContextBase& context, GCGLclampf clear, bool mask, bool enabled)
+        : m_context(enabled ? &context : nullptr) // NOLINT
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->protectedGraphicsContextGL();
+        gl->clearDepth(clear);
+        gl->depthMask(mask);
+    }
+
+    ~ScopedClearDepthAndMask()
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->protectedGraphicsContextGL();
+        gl->clearDepth(m_context->m_clearDepth);
+        gl->depthMask(m_context->m_depthMask);
+    }
+
+private:
+    WebGLRenderingContextBase* const m_context;
+};
+
+class ScopedClearStencilAndMask {
+    WTF_MAKE_NONCOPYABLE(ScopedClearStencilAndMask);
+public:
+    explicit ScopedClearStencilAndMask(WebGLRenderingContextBase& context, GCGLint clear, GCGLenum face, GCGLuint mask, bool enabled)
+        : m_context(enabled ? &context : nullptr) // NOLINT
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->protectedGraphicsContextGL();
+        gl->clearStencil(clear);
+        gl->stencilMaskSeparate(face, mask);
+    }
+
+    ~ScopedClearStencilAndMask()
+    {
+        if (!m_context)
+            return;
+
+        RefPtr gl = m_context->protectedGraphicsContextGL();
+        gl->clearStencil(m_context->m_clearStencil);
+        gl->stencilMaskSeparate(GraphicsContextGL::FRONT, m_context->m_stencilMask);
+    }
+
+private:
+    WebGLRenderingContextBase* const m_context;
+};
 
 }
 

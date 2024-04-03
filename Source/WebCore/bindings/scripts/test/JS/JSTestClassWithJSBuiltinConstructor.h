@@ -31,8 +31,9 @@ public:
     using Base = JSDOMWrapper<TestClassWithJSBuiltinConstructor>;
     static JSTestClassWithJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
     {
-        JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(globalObject->vm())) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(vm)) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

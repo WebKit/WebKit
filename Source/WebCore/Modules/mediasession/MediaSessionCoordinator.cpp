@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include "Document.h"
 #include "EventNames.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"

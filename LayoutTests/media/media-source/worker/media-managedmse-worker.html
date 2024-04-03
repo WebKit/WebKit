@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource in worker</title>
+    <script src="../../../media/video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        testExpected('ManagedMediaSource.canConstructInDedicatedWorker', true);
+        const worker = new Worker('worker.js');
+        worker.onmessage = msg => {
+            switch (msg.data.topic) {
+            case 'handle':
+                logResult(true, 'received handle message: ' + msg.data.arg);
+                video.srcObject = msg.data.arg;
+                break;
+            case 'info':
+                logResult(true, 'info message from worker: ' + msg.data.arg);
+                endTest();
+                break;
+            case 'error':
+                logResult(false, 'error message from worker: ' + msg.data.arg);
+                endTest();
+                break;
+            default:
+                logResult(false, 'error: Unrecognized topic in message from worker');
+                break;
+            }
+        };
+        run('video.disableRemotePlayback = true');
+        worker.postMessage({ });
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

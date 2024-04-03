@@ -26,7 +26,9 @@
 #include "config.h"
 
 #include "RefLogger.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace TestWebKitAPI {
 
@@ -290,6 +292,64 @@ TEST(WTF_Ref, StaticReferenceCastFromRValueReference)
         auto ref2 = static_reference_cast<RefCheckingRefLogger>(WTFMove(ref));
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
+class PartiallyDestroyedRefTest : public RefCounted<PartiallyDestroyedRefTest> {
+public:
+    static Ref<PartiallyDestroyedRefTest> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefTest);
+    }
+
+    ~PartiallyDestroyedRefTest()
+    {
+        RefAllowingPartiallyDestroyed<PartiallyDestroyedRefTest> protectedThis { *this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefTest()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_Ref, RefAllowingPartiallyDestroyed)
+{
+    RefPtr partiallyDestroyedRefTest = PartiallyDestroyedRefTest::create();
+    partiallyDestroyedRefTest = nullptr;
+}
+
+class PartiallyDestroyedRefTestThreadSafe : public ThreadSafeRefCounted<PartiallyDestroyedRefTestThreadSafe> {
+public:
+    static Ref<PartiallyDestroyedRefTestThreadSafe> create()
+    {
+        return adoptRef(*new PartiallyDestroyedRefTestThreadSafe);
+    }
+
+    ~PartiallyDestroyedRefTestThreadSafe()
+    {
+        RefAllowingPartiallyDestroyed<PartiallyDestroyedRefTestThreadSafe> protectedThis { *this };
+        protectedThis->m_int = 0;
+    }
+
+private:
+    PartiallyDestroyedRefTestThreadSafe()
+        : m_int(std::make_unique<int>())
+    {
+        *m_int = 32;
+    }
+
+    std::unique_ptr<int> m_int;
+};
+
+TEST(WTF_Ref, RefAllowingPartiallyDestroyedThreadSafe)
+{
+    RefPtr partiallyDestroyedRefTest = PartiallyDestroyedRefTestThreadSafe::create();
+    partiallyDestroyedRefTest = nullptr;
 }
 
 } // namespace TestWebKitAPI

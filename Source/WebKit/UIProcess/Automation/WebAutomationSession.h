@@ -31,11 +31,11 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "ShareableBitmap.h"
 #include "SimulatedInputDispatcher.h"
 #include "WebEvent.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -259,7 +259,7 @@ private:
 
     // Called by WebAutomationSession messages.
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
-    void didTakeScreenshot(uint64_t callbackID, std::optional<ShareableBitmap::Handle>&&, const String& errorType);
+    void didTakeScreenshot(uint64_t callbackID, std::optional<WebCore::ShareableBitmap::Handle>&&, const String& errorType);
 
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -283,7 +283,7 @@ private:
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
     // Get base64-encoded PNG data from a bitmap.
-    static std::optional<String> platformGetBase64EncodedPNGData(ShareableBitmap::Handle&&);
+    static std::optional<String> platformGetBase64EncodedPNGData(WebCore::ShareableBitmap::Handle&&);
     static std::optional<String> platformGetBase64EncodedPNGData(const ViewSnapshot&);
 
     // Save base64-encoded file contents to a local file path and return the path.

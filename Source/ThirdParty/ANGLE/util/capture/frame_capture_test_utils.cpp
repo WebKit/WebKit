@@ -91,10 +91,34 @@ bool UncompressData(const std::vector<uint8_t> &compressedData,
     {
         std::cerr << "Failure to decompressed binary data: " << zResult
                   << " msg=" << (stream.msg ? stream.msg : "nil") << "\n";
+        fprintf(stderr,
+                "next_in %p (input %p) avail_in %d total_in %lu next_out %p (output %p) avail_out "
+                "%d total_out %ld adler %lX crc %lX crc_simd %lX\n",
+                stream.next_in, compressedData.data(), stream.avail_in, stream.total_in,
+                stream.next_out, uncompressedData->data(), stream.avail_out, stream.total_out,
+                stream.adler, crc32(0, uncompressedData->data(), uncompressedSize),
+                crc32(0, uncompressedData->data(), 16 * (uncompressedSize / 16)));
         return false;
     }
 
     return true;
+}
+
+void SaveDebugFile(const std::string &outputDir,
+                   const char *baseFileName,
+                   const char *suffix,
+                   const std::vector<uint8_t> data)
+{
+    if (outputDir.empty())
+    {
+        return;
+    }
+
+    std::ostringstream path;
+    path << outputDir << "/" << baseFileName << suffix;
+    FILE *fp = fopen(path.str().c_str(), "wb");
+    fwrite(data.data(), 1, data.size(), fp);
+    fclose(fp);
 }
 }  // namespace
 
@@ -232,11 +256,6 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
     libNameStr << "lib";
 #endif  // !defined(ANGLE_PLATFORM_WINDOWS)
     libNameStr << traceName;
-#if defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
-    // Added to shared library names in Android component builds in
-    // https://chromium.googlesource.com/chromium/src/+/9bacc8c4868cc802f69e1e858eea6757217a508f/build/toolchain/toolchain.gni#56
-    libNameStr << ".cr";
-#endif  // defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
     std::string libName = libNameStr.str();
     std::string loadError;
     mTraceLibrary.reset(OpenSharedLibraryAndGetError(libName.c_str(), searchType, &loadError));
@@ -283,8 +302,11 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
         if (!UncompressData(compressedData, &mBinaryData))
         {
             // Workaround for sporadic failures https://issuetracker.google.com/296921272
+            SaveDebugFile(mDebugOutputDir, fileName, ".gzdbg_input.gz", compressedData);
+            SaveDebugFile(mDebugOutputDir, fileName, ".gzdbg_attempt1", mBinaryData);
             std::vector<uint8_t> uncompressedData;
             bool secondResult = UncompressData(compressedData, &uncompressedData);
+            SaveDebugFile(mDebugOutputDir, fileName, ".gzdbg_attempt2", uncompressedData);
             if (!secondResult)
             {
                 std::cerr << "Uncompress retry failed\n";

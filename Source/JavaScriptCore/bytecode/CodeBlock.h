@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@
 #include "DirectEvalCodeCache.h"
 #include "EvalExecutable.h"
 #include "ExecutionCounter.h"
-#include "ExpressionRangeInfo.h"
+#include "ExpressionInfo.h"
 #include "FunctionExecutable.h"
 #include "HandlerInfo.h"
 #include "ICStatusMap.h"
@@ -152,6 +152,8 @@ public:
     void dumpAssumingJITType(PrintStream&, JITType) const;
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
+    void dumpSimpleName(PrintStream&) const;
+
     MetadataTable* metadataTable() const { return m_metadata.get(); }
 
     unsigned numParameters() const { return m_numParameters; }
@@ -241,10 +243,9 @@ public:
     HandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
     HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
-    unsigned lineNumberForBytecodeIndex(BytecodeIndex);
-    unsigned columnNumberForBytecodeIndex(BytecodeIndex);
-    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot,
-        unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
+
+    LineColumn lineColumnForBytecodeIndex(BytecodeIndex) const;
+    ExpressionInfo::Entry expressionInfoForBytecodeIndex(BytecodeIndex) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
@@ -281,8 +282,8 @@ public:
     void resetBaselineJITData();
 #endif // ENABLE(JIT)
 
-    void unlinkIncomingCalls();
-    void linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase*, bool skipFirstFrame = false);
+    void unlinkOrUpgradeIncomingCalls(VM&, CodeBlock*);
+    void linkIncomingCall(JSCell* caller, CallLinkInfoBase*);
 
     const JSInstruction* outOfLineJumpTarget(const JSInstruction* pc);
     int outOfLineJumpOffset(JSInstructionStream::Offset offset)
@@ -344,6 +345,8 @@ public:
     }
 
     bool useDataIC() const;
+
+    CodePtr<JSEntryPtrTag> addressForCallConcurrently(ArityCheckMode) const;
 
 #if ENABLE(JIT)
     CodeBlock* replacement();
@@ -880,7 +883,7 @@ private:
     
     CodeBlock* specialOSREntryBlockOrNull();
     
-    void noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool skipFirstFrame);
+    void noticeIncomingCall(JSCell* caller);
 
     void updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker&, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 

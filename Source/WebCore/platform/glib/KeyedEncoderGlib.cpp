@@ -50,9 +50,9 @@ KeyedEncoderGlib::~KeyedEncoderGlib()
     ASSERT(m_objectStack.isEmpty());
 }
 
-void KeyedEncoderGlib::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
+void KeyedEncoderGlib::encodeBytes(const String& key, std::span<const uint8_t> bytes)
 {
-    GRefPtr<GBytes> gBytes = adoptGRef(g_bytes_new_static(bytes, size));
+    GRefPtr<GBytes> gBytes = adoptGRef(g_bytes_new_static(bytes.data(), bytes.size()));
     g_variant_builder_add(m_variantBuilderStack.last(), "{sv}", key.utf8().data(), g_variant_new_from_bytes(G_VARIANT_TYPE("ay"), gBytes.get(), TRUE));
 }
 
@@ -137,7 +137,7 @@ RefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
     g_assert(m_variantBuilderStack.last() == &m_variantBuilder);
     GRefPtr<GVariant> variant = g_variant_builder_end(&m_variantBuilder);
     GRefPtr<GBytes> data = adoptGRef(g_variant_get_data_as_bytes(variant.get()));
-    return SharedBuffer::create(static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())));
+    return SharedBuffer::create(std::span { static_cast<const unsigned char*>(g_bytes_get_data(data.get(), nullptr)), static_cast<unsigned>(g_bytes_get_size(data.get())) });
 }
 
 } // namespace WebCore

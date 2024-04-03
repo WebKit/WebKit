@@ -112,12 +112,17 @@ function sleepFor(duration) {
     });
 }
 
-function testExpectedEventually(testFuncString, expected, comparison, timeout)
+function testExpectedEventuallySilent(testFuncString, expected, comparison, timeout)
 {
-    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null);
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, true);
 }
 
-function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work)
+function testExpectedEventually(testFuncString, expected, comparison, timeout)
+{
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null, false);
+}
+
+function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work, silent = false)
 {
     return new Promise(async resolve => {
         var success;
@@ -129,7 +134,8 @@ function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected
             try {
                 ({success, observed} = compare(testFuncString, expected, comparison));
                 if (success) {
-                    reportExpected(success, testFuncString, comparison, expected, observed);
+                    if (!silent)
+                        reportExpected(success, testFuncString, comparison, expected, observed);
                     resolve();
                     return;
                 }
@@ -258,6 +264,39 @@ function waitFor(element, type, silent, success) {
             
             resolve(event);
         }, { once: true });
+    });
+}
+
+function waitForConditionOrTimeout(condition, silent, completeTimeout, stepTimeout) {
+
+    if (completeTimeout == undefined)
+        completeTimeout = 1000;
+    if (stepTimeout == undefined)
+        stepTimeout = 100;
+
+    return new Promise(resolve => {
+        const initialTimestamp = Date.now();
+
+        function evalConditionOrTimeout() {
+            const result = eval(condition);
+            if (result) {
+                if (!silent)
+                    consoleWrite("EXPECTED (" + condition + ") OK");
+                resolve(result);
+                return;
+            }
+
+            if ((Date.now() - initialTimestamp) > completeTimeout) {
+                if (!silent)
+                    consoleWrite("EXPECTED (" + condition + ") FAIL");
+                resolve(result);
+                return;
+            }
+
+            setTimeout(evalConditionOrTimeout, stepTimeout);
+        }
+
+        evalConditionOrTimeout();
     });
 }
 
@@ -414,7 +453,9 @@ function consoleWrite(text)
 {
     if (testEnded)
         return;
-    logConsole().innerHTML += text + "<br>";
+    var span = document.createElement("span");
+    logConsole().appendChild(span);
+    span.innerHTML = text + '<br>';
 }
 
 function relativeURL(url)

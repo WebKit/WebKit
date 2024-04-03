@@ -40,9 +40,9 @@ void WebMediaKeyStorageManager::setWebsiteDataStore(const WebProcessDataStorePar
     m_mediaKeyStorageDirectory = parameters.mediaKeyStorageDirectory;
 }
 
-const char* WebMediaKeyStorageManager::supplementName()
+ASCIILiteral WebMediaKeyStorageManager::supplementName()
 {
-    return "WebMediaKeyStorageManager";
+    return "WebMediaKeyStorageManager"_s;
 }
 
 String WebMediaKeyStorageManager::mediaKeyStorageDirectoryForOrigin(const SecurityOriginData& originData)

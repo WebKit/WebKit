@@ -49,6 +49,13 @@
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+}
+
 - (void)reloadContextView
 {
     _contextViewNeedsUpdate = YES;

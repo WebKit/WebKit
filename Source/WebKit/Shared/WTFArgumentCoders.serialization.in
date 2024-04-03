@@ -26,6 +26,11 @@ webkit_platform_headers: "StreamConnectionEncoder.h"
     String string()
 }
 
+header: <wtf/text/CString.h>
+[CustomHeader] class WTF::CString {
+   std::span<const uint8_t> span()
+}
+
 [AdditionalEncoder=StreamConnectionEncoder] class WTF::MediaTime {
     int64_t timeValue()
     uint32_t timeScale()
@@ -100,16 +105,22 @@ template: enum class WebKit::RemoteRemoteCommandListenerIdentifierType
 template: enum class WebKit::RemoteSourceBufferIdentifierType
 template: enum class WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
 template: enum class WebKit::SampleBufferDisplayLayerIdentifierType
+template: enum class WebKit::ScriptMessageHandlerIdentifierType
 template: enum class WebKit::ShapeDetectionIdentifierType
 template: enum class WebKit::StorageAreaImplIdentifierType
 template: enum class WebKit::StorageAreaMapIdentifierType
 template: enum class WebKit::StorageNamespaceIdentifierType
+template: enum class WebKit::UserScriptIdentifierType
+template: enum class WebKit::UserStyleSheetIdentifierType
+template: enum class WebKit::VisitedLinkTableIdentifierType
 template: enum class WebKit::WCLayerTreeHostIdentifierType
 template: enum class WebKit::WebExtensionControllerIdentifierType
 template: enum class WebKit::XRDeviceIdentifierType
 template: struct WebCore::AttributedStringTextListIDType
+#if PLATFORM(COCOA)
 template: struct WebCore::AttributedStringTextTableBlockIDType
 template: struct WebCore::AttributedStringTextTableIDType
+#endif
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::DictationContextType
 template: struct WebCore::FrameIdentifierType
@@ -117,13 +128,14 @@ template: struct WebCore::HTMLMediaElementIdentifierType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaSessionIdentifierType
+template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
-template: struct WebCore::PolicyCheckIdentifierType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType
 template: struct WebCore::UserMediaRequestIdentifierType
+template: struct WebCore::ScrollingNodeIDType
 template: struct WebKit::AuthenticationChallengeIdentifierType
 template: struct WebKit::DataTaskIdentifierType
 template: struct WebKit::DisplayLinkObserverIDType
@@ -174,6 +186,7 @@ template: enum class WebCore::RenderingResourceIdentifierType
 template: enum class WebCore::ServiceWorkerIdentifierType
 template: enum class WebCore::ServiceWorkerJobIdentifierType
 template: enum class WebCore::ServiceWorkerRegistrationIdentifierType
+template: enum class WebCore::IDBDatabaseConnectionIdentifierType
 template: enum class WebCore::WebLockIdentifierType
 template: enum class WebCore::WebSocketIdentifierType
 template: enum class WebCore::WorkerFileSystemStorageConnectionCallbackIdentifierType
@@ -187,6 +200,7 @@ template: enum class WebKit::VideoDecoderIdentifierType
 template: enum class WebKit::VideoEncoderIdentifierType
 template: enum class WebKit::WCContentBufferIdentifierType
 template: enum class WebKit::WebGPUIdentifierType
+template: enum class TestWebKitAPI::TestedObjectIdentifierType
 template: struct IPC::AsyncReplyIDType
 template: struct WebCore::WebSocketFrame
 template: struct WebKit::ConnectionAsyncReplyHandler
@@ -208,6 +222,10 @@ header: <wtf/MemoryPressureHandler.h>
     double strictThresholdFraction;
     std::optional<double> killThresholdFraction;
     Seconds pollInterval;
+}
+
+header: <variant>
+[AdditionalEncoder=StreamConnectionEncoder, Nested] struct std::monostate {
 }
 
 enum class WTFLogLevel : uint8_t {

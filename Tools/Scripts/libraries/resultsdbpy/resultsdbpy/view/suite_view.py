@@ -58,7 +58,11 @@ class SuiteView(HasCommitContext):
         AssertRequest.query_kwargs_empty(**kwargs)
 
         with self.upload_controller.upload_context:
-            suites_by_configuration = self.upload_controller.upload_context.find_suites(configurations=configurations, recent=boolean_query(*recent)[0] if recent else True)
+            suites_by_configuration = self.upload_controller.upload_context.find_suites(
+                configurations=configurations,
+                recent=boolean_query(*recent)[0] if recent else True,
+                branch=branch[0] if branch else None,
+            )
             candidate_suites = set()
             for suites_for_config in suites_by_configuration.values():
                 for s in suites_for_config:
@@ -88,7 +92,11 @@ class SuiteView(HasCommitContext):
         AssertRequest.query_kwargs_empty(**kwargs)
 
         with self.upload_controller.upload_context:
-            suites_by_configuration = self.upload_controller.upload_context.find_suites(configurations=configurations, recent=boolean_query(*recent)[0] if recent else True)
+            suites_by_configuration = self.upload_controller.upload_context.find_suites(
+                configurations=configurations,
+                recent=boolean_query(*recent)[0] if recent else True,
+                branch=branch[0] if branch else None,
+            )
             candidate_suites = set()
             for suites_for_config in suites_by_configuration.values():
                 for s in suites_for_config:

@@ -60,7 +60,7 @@ void SharedBufferChunkReader::setSeparator(const Vector<char>& separator)
 void SharedBufferChunkReader::setSeparator(const char* separator)
 {
     m_separator.clear();
-    m_separator.append(separator, strlen(separator));
+    m_separator.append(span(separator));
 }
 
 bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSeparator)
@@ -76,7 +76,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
             if (currentCharacter != m_separator[m_separatorIndex]) {
                 if (m_separatorIndex > 0) {
                     ASSERT_WITH_SECURITY_IMPLICATION(m_separatorIndex <= m_separator.size());
-                    chunk.append(m_separator.data(), m_separatorIndex);
+                    chunk.append(m_separator.span().first(m_separatorIndex));
                     m_separatorIndex = 0;
                 }
                 chunk.append(currentCharacter);
@@ -96,7 +96,7 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
         if (++m_iteratorCurrent == m_iteratorEnd) {
             m_segment = nullptr;
             if (m_separatorIndex > 0)
-                chunk.append(reinterpret_cast<const uint8_t*>(m_separator.data()), m_separatorIndex);
+                chunk.append(std::span { reinterpret_cast<const uint8_t*>(m_separator.data()), m_separatorIndex });
             return !chunk.isEmpty();
         }
         m_segment = m_iteratorCurrent->segment->data();
@@ -112,7 +112,7 @@ String SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback(bool inc
     if (!nextChunk(data, includeSeparator))
         return String();
 
-    return data.size() ? String::fromUTF8WithLatin1Fallback(data.data(), data.size()) : emptyString();
+    return data.size() ? String::fromUTF8WithLatin1Fallback(data.span()) : emptyString();
 }
 
 size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize)
@@ -122,7 +122,7 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
         return 0;
 
     size_t availableInSegment = std::min(m_iteratorCurrent->segment->size() - m_segmentIndex, requestedSize);
-    data.append(m_segment + m_segmentIndex, availableInSegment);
+    data.append(std::span { m_segment + m_segmentIndex, availableInSegment });
 
     size_t readBytesCount = availableInSegment;
     requestedSize -= readBytesCount;
@@ -130,9 +130,8 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
     auto currentSegment = m_iteratorCurrent;
 
     while (requestedSize && ++currentSegment != m_iteratorEnd) {
-        const uint8_t* segment = currentSegment->segment->data();
         size_t lengthInSegment = std::min(currentSegment->segment->size(), requestedSize);
-        data.append(segment, lengthInSegment);
+        data.append(currentSegment->segment->span().first(lengthInSegment));
         readBytesCount += lengthInSegment;
         requestedSize -= lengthInSegment;
     }

@@ -39,9 +39,9 @@ namespace WebCore {
 FEColorMatrixSoftwareApplier::FEColorMatrixSoftwareApplier(const FEColorMatrix& effect)
     : Base(effect)
 {
-    if (m_effect.type() == FECOLORMATRIX_TYPE_SATURATE)
+    if (m_effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE)
         FEColorMatrix::calculateSaturateComponents(m_components, m_effect.values()[0]);
-    else if (m_effect.type() == FECOLORMATRIX_TYPE_HUEROTATE)
+    else if (m_effect.type() == ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE)
         FEColorMatrix::calculateHueRotateComponents(m_components, m_effect.values()[0]);
 }
 
@@ -100,10 +100,10 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
     dest.data = pixelBytes;
 
     switch (m_effect.type()) {
-    case FECOLORMATRIX_TYPE_UNKNOWN:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
         break;
 
-    case FECOLORMATRIX_TYPE_MATRIX: {
+    case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX: {
         const auto& values = m_effect.values();
 
         const int16_t matrix[4 * 4] = {
@@ -131,8 +131,8 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
         break;
     }
 
-    case FECOLORMATRIX_TYPE_SATURATE:
-    case FECOLORMATRIX_TYPE_HUEROTATE: {
+    case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE: {
         const int16_t matrix[4 * 4] = {
             static_cast<int16_t>(roundf(m_components[0] * divisor)),
             static_cast<int16_t>(roundf(m_components[3] * divisor)),
@@ -157,7 +157,7 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
         vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
         break;
     }
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
         const int16_t matrix[4 * 4] = {
             0,
             0,
@@ -191,10 +191,10 @@ void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixel
     auto pixelByteLength = pixelBuffer.sizeInBytes();
 
     switch (m_effect.type()) {
-    case FECOLORMATRIX_TYPE_UNKNOWN:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_UNKNOWN:
         break;
 
-    case FECOLORMATRIX_TYPE_MATRIX:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
             float red = pixelBuffer.item(pixelByteOffset);
             float green = pixelBuffer.item(pixelByteOffset + 1);
@@ -208,8 +208,8 @@ void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixel
         }
         break;
 
-    case FECOLORMATRIX_TYPE_SATURATE:
-    case FECOLORMATRIX_TYPE_HUEROTATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
             float red = pixelBuffer.item(pixelByteOffset);
             float green = pixelBuffer.item(pixelByteOffset + 1);
@@ -223,7 +223,7 @@ void FEColorMatrixSoftwareApplier::applyPlatformUnaccelerated(PixelBuffer& pixel
         }
         break;
 
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+    case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
         for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelByteLength; pixelByteOffset += 4) {
             float red = pixelBuffer.item(pixelByteOffset);
             float green = pixelBuffer.item(pixelByteOffset + 1);
@@ -246,7 +246,7 @@ void FEColorMatrixSoftwareApplier::applyPlatform(PixelBuffer& pixelBuffer) const
 
     // vImageMatrixMultiply_ARGB8888 takes a 4x4 matrix, if any value in the last column of the FEColorMatrix 5x4 matrix
     // is not zero, fall back to non-vImage code.
-    if (m_effect.type() != FECOLORMATRIX_TYPE_MATRIX || (!values[4] && !values[9] && !values[14] && !values[19])) {
+    if (m_effect.type() != ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX || (!values[4] && !values[9] && !values[14] && !values[19])) {
         applyPlatformAccelerated(pixelBuffer);
         return;
     }

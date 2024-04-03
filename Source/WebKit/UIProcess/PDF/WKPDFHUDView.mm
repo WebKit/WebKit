@@ -89,7 +89,6 @@ static NSArray<NSString *> *controlArray()
     CGFloat _deviceScaleFactor;
     RetainPtr<CALayer> _layer;
     RetainPtr<CALayer> _activeLayer;
-    CGSize _frameSize;
     RetainPtr<NSMutableDictionary<NSString *, NSImage *>> _cachedIcons;
     BOOL _visible;
     BOOL _mouseMovedToHUD;
@@ -123,15 +122,14 @@ static NSArray<NSString *> *controlArray()
     [super dealloc];
 }
 
-- (void)setFrame:(NSRect)rect
+- (void)layout
 {
-    [super setFrame:rect];
-    _frameSize = rect.size;
+    [super layout];
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     CGRect layerBounds = [_layer bounds];
-    [_layer setFrame:CGRectMake(rect.size.width / 2.0 - layerBounds.size.width / 2.0, layerVerticalOffset, layerBounds.size.width, layerBounds.size.height)];
+    [_layer setFrame:CGRectMake(self.frame.size.width / 2.0 - layerBounds.size.width / 2.0, layerVerticalOffset, layerBounds.size.width, layerBounds.size.height)];
     [CATransaction commit];
 }
 
@@ -179,29 +177,31 @@ static NSArray<NSString *> *controlArray()
         [self _setVisible:false];
 }
 
-- (void)mouseDown:(NSEvent *)event
+- (BOOL)handleMouseDown:(NSEvent *)event
 {
     _activeControl = [self _controlForEvent:event];
     if ([_activeControl isEqualToString:PDFHUDSeparatorControl])
         _activeControl = nil;
-    if (_activeControl) {
-        // Update rendering to highlight it..
-        _activeLayer = [self _layerForEvent:event];
-        
-        // Update layer image; do not animate
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-        
-        [_activeLayer setOpacity:controlLayerDownAlpha];
-        
-        [CATransaction commit];
-    }
+    if (!_activeControl)
+        return false;
+
+    // Update rendering to highlight it..
+    _activeLayer = [self _layerForEvent:event];
+
+    // Update layer image; do not animate
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    [_activeLayer setOpacity:controlLayerDownAlpha];
+
+    [CATransaction commit];
+    return true;
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (BOOL)handleMouseUp:(NSEvent *)event
 {
     if (!_activeControl)
-        return;
+        return false;
     
     NSString* mouseUpControl = [self _controlForEvent:event];
     if ([_activeControl isEqualToString:mouseUpControl])
@@ -214,6 +214,8 @@ static NSArray<NSString *> *controlArray()
 
     _activeLayer = nil;
     _activeControl = nil;
+
+    return true;
 }
 
 - (std::optional<NSUInteger>)_controlIndexForEvent:(NSEvent *)event
@@ -272,9 +274,9 @@ static NSArray<NSString *> *controlArray()
     _layer = adoptNS([[CALayer alloc] init]);
     [_layer setCornerRadius:layerCornerRadius];
     [_layer setCornerCurve:kCACornerCurveCircular];
-
     [_layer setBackgroundColor:WebCore::cachedCGColor({ WebCore::SRGBA<float>(layerGrayComponent, layerGrayComponent, layerGrayComponent) }).get()];
     [self _setLayerOpacity:layerAlpha];
+    [self setNeedsLayout:YES];
     
     [self _loadIconImages];
     CGFloat minIconImageHeight = std::numeric_limits<CGFloat>::max();
@@ -324,7 +326,6 @@ static NSArray<NSString *> *controlArray()
     CALayer *parentLayer = [_layer superlayer];
     [_layer removeFromSuperlayer];
     [self _setupLayer:parentLayer];
-    [self setFrameSize:_frameSize];
 }
 
 - (NSImage *)_getImageForControlName:(NSString *)control

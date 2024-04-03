@@ -10,7 +10,7 @@ Registrable domain: 127.0.0.1
     grandfathered: No
     TopFrameLoadedThirdPartyScripts:
         localhost
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     isPrevalentResource: No
     isVeryPrevalentResource: No
     dataRecordsRemoved: 0
@@ -18,7 +18,7 @@ Registrable domain: localhost
     hadUserInteraction: No
     mostRecentUserInteraction: -1
     grandfathered: No
-    IsScheduledForAllButCookieDataRemoval: No
+    DataRemovalFrequency: Never
     SubresourceUnderTopFrameDomains:
         127.0.0.1
     isPrevalentResource: No

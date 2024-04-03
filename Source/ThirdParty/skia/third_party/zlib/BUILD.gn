@@ -1,0 +1,317 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../third_party.gni")
+import("zlib.gni")
+
+if (skia_use_system_zlib) {
+  system("zlib") {
+    libs = [ "z" ]
+  }
+} else {
+  config("zlib_internal_config") {
+    defines = [ "ZLIB_IMPLEMENTATION" ]
+  }
+  source_set("zlib_common_headers") {
+    visibility = [ ":*" ]
+    sources = [
+      "../externals/zlib/chromeconf.h",
+      "../externals/zlib/deflate.h",
+      "../externals/zlib/inffast.h",
+      "../externals/zlib/inffixed.h",
+      "../externals/zlib/inflate.h",
+      "../externals/zlib/inftrees.h",
+      "../externals/zlib/zconf.h",
+      "../externals/zlib/zlib.h",
+      "../externals/zlib/zutil.h",
+    ]
+  }
+
+  use_arm_neon_optimizations =
+      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win)
+  use_x86_x64_optimizations =
+      (current_cpu == "x86" || current_cpu == "x64") && !is_ios
+
+  config("zlib_adler32_simd_config") {
+    if (use_x86_x64_optimizations) {
+      defines = [ "ADLER32_SIMD_SSSE3" ]
+      if (is_win) {
+        defines += [ "X86_WINDOWS" ]
+      } else {
+        defines += [ "X86_NOT_WINDOWS" ]
+      }
+    }
+
+    if (use_arm_neon_optimizations) {
+      defines = [ "ADLER32_SIMD_NEON" ]
+    }
+  }
+
+  source_set("zlib_adler32_simd") {
+    visibility = [ ":*" ]
+
+    if (use_x86_x64_optimizations) {
+      sources = [
+        "../externals/zlib/adler32_simd.c",
+        "../externals/zlib/adler32_simd.h",
+      ]
+
+      if (!is_win || is_clang) {
+        cflags = [ "-mssse3" ]
+      }
+    }
+
+    if (use_arm_neon_optimizations) {
+      sources = [
+        "../externals/zlib/adler32_simd.c",
+        "../externals/zlib/adler32_simd.h",
+      ]
+    }
+
+    configs += [ ":zlib_internal_config" ]
+
+    public_configs = [ ":zlib_adler32_simd_config" ]
+
+    public_deps = [ ":zlib_common_headers" ]
+  }
+
+  if (use_arm_neon_optimizations) {
+    config("zlib_arm_crc32_config") {
+      defines = [ "CRC32_ARMV8_CRC32" ]
+      if (is_android) {
+        defines += [ "ARMV8_OS_ANDROID" ]
+      } else if (is_linux || is_chromeos) {
+        defines += [ "ARMV8_OS_LINUX" ]
+      } else if (is_mac) {
+        defines += [ "ARMV8_OS_MACOS" ]
+      } else if (is_ios) {
+        defines += [ "ARMV8_OS_IOS" ]
+      } else if (is_fuchsia) {
+        defines += [ "ARMV8_OS_FUCHSIA" ]
+      } else if (is_win) {
+        defines += [ "ARMV8_OS_WINDOWS" ]
+      } else {
+        assert(false, "Unsupported ARM OS")
+      }
+    }
+
+    source_set("zlib_arm_crc32") {
+      visibility = [ ":*" ]
+
+      include_dirs = [
+        "../externals/zlib/",
+        "../externals/zlib/contrib/optimizations/",
+      ]
+
+      if (!is_win && !is_clang) {
+        cflags_c = [ "-march=armv8-a+aes+crc" ]
+      }
+
+      sources = [
+        "../externals/zlib/crc32_simd.c",
+        "../externals/zlib/crc32_simd.h",
+      ]
+
+      configs += [ ":zlib_internal_config" ]
+
+      public_configs = [ ":zlib_arm_crc32_config" ]
+
+      public_deps = [ ":zlib_common_headers" ]
+    }
+  }
+
+  config("zlib_inflate_chunk_simd_config") {
+    if (use_x86_x64_optimizations) {
+      defines = [ "INFLATE_CHUNK_SIMD_SSE2" ]
+
+      if (current_cpu == "x64") {
+        defines += [ "INFLATE_CHUNK_READ_64LE" ]
+      }
+    }
+
+    if (use_arm_neon_optimizations) {
+      defines = [ "INFLATE_CHUNK_SIMD_NEON" ]
+
+      if (current_cpu == "arm64") {
+        defines += [ "INFLATE_CHUNK_READ_64LE" ]
+      }
+    }
+  }
+
+  source_set("zlib_inflate_chunk_simd") {
+    visibility = [ ":*" ]
+
+    if (use_x86_x64_optimizations || use_arm_neon_optimizations) {
+      include_dirs = [
+        "../externals/zlib/",
+        "../externals/zlib/contrib/optimizations/",
+      ]
+      sources = [
+        "../externals/zlib/contrib/optimizations/chunkcopy.h",
+        "../externals/zlib/contrib/optimizations/inffast_chunk.c",
+        "../externals/zlib/contrib/optimizations/inffast_chunk.h",
+        "../externals/zlib/contrib/optimizations/inflate.c",
+      ]
+    }
+
+    configs += [ ":zlib_internal_config" ]
+    configs += [ ":zlib_warnings" ]
+
+    public_configs = [ ":zlib_inflate_chunk_simd_config" ]
+
+    public_deps = [ ":zlib_common_headers" ]
+  }
+
+  config("zlib_crc32_simd_config") {
+    if (use_x86_x64_optimizations) {
+      defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+    }
+  }
+
+  source_set("zlib_crc32_simd") {
+    visibility = [ ":*" ]
+
+    if (use_x86_x64_optimizations) {
+      sources = [
+        "../externals/zlib/crc32_simd.c",
+        "../externals/zlib/crc32_simd.h",
+        "../externals/zlib/crc_folding.c",
+      ]
+
+      if (!is_win || is_clang) {
+        cflags = [
+          "-msse4.2",
+          "-mpclmul",
+        ]
+      }
+    }
+
+    configs += [ ":zlib_internal_config" ]
+
+    public_configs = [ ":zlib_crc32_simd_config" ]
+
+    public_deps = [ ":zlib_common_headers" ]
+  }
+
+  config("zlib_slide_hash_simd_config") {
+    if (use_x86_x64_optimizations) {
+      defines = [ "DEFLATE_SLIDE_HASH_SSE2" ]
+    }
+
+    if (use_arm_neon_optimizations) {
+      defines = [ "DEFLATE_SLIDE_HASH_NEON" ]
+    }
+  }
+
+  source_set("zlib_slide_hash_simd") {
+    visibility = [ ":*" ]
+
+    if (use_x86_x64_optimizations) {
+      sources = [ "../externals/zlib/slide_hash_simd.h" ]
+    }
+
+    if (use_arm_neon_optimizations) {
+      sources = [ "../externals/zlib/slide_hash_simd.h" ]
+    }
+
+    configs += [ ":zlib_internal_config" ]
+
+    public_configs = [ ":zlib_slide_hash_simd_config" ]
+
+    public_deps = [ ":zlib_common_headers" ]
+  }
+
+  config("zlib_warnings") {
+    if (is_clang) {
+      cflags = [
+        "-Wno-incompatible-pointer-types",
+        "-Wunused-variable",
+      ]
+    }
+  }
+
+  third_party("zlib") {
+    public_include_dirs = [ "../externals/zlib" ]
+    defines = []
+    deps = []
+    configs = []
+
+    sources = [
+      "../externals/zlib/adler32.c",
+      "../externals/zlib/chromeconf.h",
+      "../externals/zlib/compress.c",
+      "../externals/zlib/contrib/optimizations/insert_string.h",
+      "../externals/zlib/cpu_features.c",
+      "../externals/zlib/cpu_features.h",
+      "../externals/zlib/crc32.c",
+      "../externals/zlib/crc32.h",
+      "../externals/zlib/deflate.c",
+      "../externals/zlib/deflate.h",
+      "../externals/zlib/gzclose.c",
+      "../externals/zlib/gzguts.h",
+      "../externals/zlib/gzlib.c",
+      "../externals/zlib/gzread.c",
+      "../externals/zlib/gzwrite.c",
+      "../externals/zlib/infback.c",
+      "../externals/zlib/inffast.c",
+      "../externals/zlib/inffast.h",
+      "../externals/zlib/inffixed.h",
+      "../externals/zlib/inflate.h",
+      "../externals/zlib/inftrees.c",
+      "../externals/zlib/inftrees.h",
+      "../externals/zlib/trees.c",
+      "../externals/zlib/trees.h",
+      "../externals/zlib/uncompr.c",
+      "../externals/zlib/zconf.h",
+      "../externals/zlib/zlib.h",
+      "../externals/zlib/zutil.c",
+      "../externals/zlib/zutil.h",
+    ]
+
+    if (is_android) {
+      deps += [ "//third_party/cpu-features" ]
+    }
+
+    if (!use_x86_x64_optimizations && !use_arm_neon_optimizations) {
+      defines += [ "CPU_NO_SIMD" ]
+    }
+
+    if (use_x86_x64_optimizations || use_arm_neon_optimizations) {
+      deps += [
+        ":zlib_adler32_simd",
+        ":zlib_inflate_chunk_simd",
+        ":zlib_slide_hash_simd",
+      ]
+
+      if (use_x86_x64_optimizations) {
+        deps += [ ":zlib_crc32_simd" ]
+      } else if (use_arm_neon_optimizations) {
+        deps += [ ":zlib_arm_crc32" ]
+      }
+    } else {
+      sources += [ "../externals/zlib/inflate.c" ]
+    }
+
+    configs += [
+      ":zlib_internal_config",
+      ":zlib_warnings",
+    ]
+
+    allow_circular_includes_from = deps
+  }
+}
+
+config("zlib_config") {
+}
+
+third_party("compression_utils_portable") {
+  visibility = [ "//third_party/externals/angle2:*" ]
+  public_include_dirs = [ "../externals/zlib/google" ]
+  sources = [
+    "../externals/zlib/google/compression_utils_portable.cc",
+    "../externals/zlib/google/compression_utils_portable.h",
+  ]
+  public_deps = [ ":zlib" ]  # either system or from source
+}

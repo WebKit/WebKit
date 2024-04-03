@@ -9,6 +9,7 @@ PASS ReadableStream interface object name
 PASS ReadableStream interface: existence and properties of interface prototype object
 PASS ReadableStream interface: existence and properties of interface prototype object's "constructor" property
 PASS ReadableStream interface: existence and properties of interface prototype object's @@unscopables property
+FAIL ReadableStream interface: operation from(any) assert_own_property: interface object missing static operation expected property "from" missing
 PASS ReadableStream interface: attribute locked
 PASS ReadableStream interface: operation cancel(optional any)
 PASS ReadableStream interface: operation getReader(optional ReadableStreamGetReaderOptions)
@@ -18,6 +19,8 @@ PASS ReadableStream interface: operation tee()
 FAIL ReadableStream interface: async iterable<any> undefined is not an object (evaluating 'desc.value')
 PASS ReadableStream must be primary interface of new ReadableStream()
 PASS Stringification of new ReadableStream()
+PASS ReadableStream interface: new ReadableStream() must inherit property "from(any)" with the proper type
+FAIL ReadableStream interface: calling from(any) on new ReadableStream() with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "from" missing
 PASS ReadableStream interface: new ReadableStream() must inherit property "locked" with the proper type
 PASS ReadableStream interface: new ReadableStream() must inherit property "cancel(optional any)" with the proper type
 PASS ReadableStream interface: calling cancel(optional any) on new ReadableStream() with too few arguments must throw TypeError
@@ -51,14 +54,14 @@ FAIL ReadableStreamBYOBReader interface object name assert_own_property: self do
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
-FAIL ReadableStreamBYOBReader interface: operation read(ArrayBufferView) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
+FAIL ReadableStreamBYOBReader interface: operation read(ArrayBufferView, optional ReadableStreamBYOBReaderReadOptions) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: operation releaseLock() assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: attribute closed assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader interface: operation cancel(optional any) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 FAIL ReadableStreamBYOBReader must be primary interface of (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) assert_own_property: self does not have own property "ReadableStreamBYOBReader" expected property "ReadableStreamBYOBReader" missing
 PASS Stringification of (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' })
-PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "read(ArrayBufferView)" with the proper type
-PASS ReadableStreamBYOBReader interface: calling read(ArrayBufferView) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
+PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "read(ArrayBufferView, optional ReadableStreamBYOBReaderReadOptions)" with the proper type
+PASS ReadableStreamBYOBReader interface: calling read(ArrayBufferView, optional ReadableStreamBYOBReaderReadOptions) on (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) with too few arguments must throw TypeError
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "releaseLock()" with the proper type
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "closed" with the proper type
 PASS ReadableStreamBYOBReader interface: (new ReadableStream({ type: 'bytes' })).getReader({ mode: 'byob' }) must inherit property "cancel(optional any)" with the proper type

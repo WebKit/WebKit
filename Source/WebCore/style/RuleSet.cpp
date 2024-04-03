@@ -34,6 +34,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
+#include "DocumentInlines.h"
 #include "HTMLNames.h"
 #include "MediaQueryEvaluator.h"
 #include "RuleSetBuilder.h"
@@ -112,7 +113,7 @@ static bool shouldHaveBucketForAttributeName(const CSSSelector& attributeSelecto
 
 void RuleSet::addRule(const StyleRule& rule, unsigned selectorIndex, unsigned selectorListIndex)
 {
-    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount);
+    RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleCount, IsStartingStyle::No);
     addRule(WTFMove(ruleData), 0, 0, 0);
 }
 
@@ -144,6 +145,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     const CSSSelector* attributeSelector = nullptr;
     const CSSSelector* linkSelector = nullptr;
     const CSSSelector* focusSelector = nullptr;
+    const CSSSelector* rootElementSelector = nullptr;
     const CSSSelector* hostPseudoClassSelector = nullptr;
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
@@ -219,6 +221,9 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 break;
             case CSSSelector::PseudoClass::Host:
                 hostPseudoClassSelector = selector;
+                break;
+            case CSSSelector::PseudoClass::Root:
+                rootElementSelector = selector;
                 break;
             default:
                 break;
@@ -307,6 +312,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         return;
     }
 
+    if (rootElementSelector) {
+        m_rootElementRules.append(ruleData);
+        return;
+    }
+
     if (tagSelector) {
         addToRuleSet(tagSelector->tagQName().localName(), m_tagLocalNameRules, ruleData);
         addToRuleSet(tagSelector->tagLowercaseLocalName(), m_tagLowercaseLocalNameRules, ruleData);
@@ -350,6 +360,7 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_slottedPseudoElementRules);
     traverseVector(m_partPseudoElementRules);
     traverseVector(m_focusPseudoClassRules);
+    traverseVector(m_rootElementRules);
     traverseVector(m_universalRules);
 }
 
@@ -443,6 +454,7 @@ void RuleSet::shrinkToFit()
     m_slottedPseudoElementRules.shrinkToFit();
     m_partPseudoElementRules.shrinkToFit();
     m_focusPseudoClassRules.shrinkToFit();
+    m_rootElementRules.shrinkToFit();
     m_universalRules.shrinkToFit();
 
     m_pageRules.shrinkToFit();
@@ -457,6 +469,13 @@ void RuleSet::shrinkToFit()
     m_containerQueries.shrinkToFit();
     m_containerQueryIdentifierForRulePosition.shrinkToFit();
     m_resolverMutatingRulesInLayers.shrinkToFit();
+}
+
+Vector<Ref<const StyleRuleContainer>> RuleSet::containerQueryRules() const
+{
+    return m_containerQueries.map([](auto& entry) {
+        return entry.containerRule;
+    });
 }
 
 Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleData) const
@@ -478,7 +497,6 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
 
     return queries;
 }
-
 
 } // namespace Style
 } // namespace WebCore

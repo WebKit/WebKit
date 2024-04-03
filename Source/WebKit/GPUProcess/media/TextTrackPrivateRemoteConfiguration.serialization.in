@@ -24,9 +24,9 @@
 
 struct WebKit::TextTrackPrivateRemoteConfiguration {
     WebCore::TrackID trackId;
-    AtomString label;
-    AtomString language;
-    AtomString inBandMetadataTrackDispatchType;
+    String label;
+    String language;
+    String inBandMetadataTrackDispatchType;
     MediaTime startTimeVariance;
     int trackIndex;
 

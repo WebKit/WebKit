@@ -100,23 +100,23 @@ TEST(WKWebExtensionTab, OpenTabs)
 
     [testController unloadExtensionContext:testContextOne.get() error:nullptr];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
+    EXPECT_NS_EQUAL(testContextOne.get().openTabs, [NSSet set]);
     EXPECT_NS_EQUAL(testContextTwo.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
 
     testWindowOne.get().tabs = @[ testTabOne.get() ];
     [testController didOpenTab:testTabOne.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
+    EXPECT_NS_EQUAL(testContextOne.get().openTabs, [NSSet set]);
     EXPECT_NS_EQUAL(testContextTwo.get().openTabs, ([NSSet setWithObjects:testTabOne.get(), testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
 
     [testController didCloseWindow:testWindowOne.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
+    EXPECT_NS_EQUAL(testContextOne.get().openTabs, [NSSet set]);
     EXPECT_NS_EQUAL(testContextTwo.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
 
     [testController didCloseWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openTabs, ([NSSet setWithObjects:testTabTwo.get(), testTabThree.get(), testTabFour.get(), nil]));
+    EXPECT_NS_EQUAL(testContextOne.get().openTabs, [NSSet set]);
     EXPECT_NS_EQUAL(testContextTwo.get().openTabs, [NSSet set]);
 }
 

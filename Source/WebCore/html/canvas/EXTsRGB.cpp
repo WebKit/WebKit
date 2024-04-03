@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTsRGB);
 EXTsRGB::EXTsRGB(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::EXTsRGB)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_sRGB"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_EXT_sRGB"_s);
 }
 
 EXTsRGB::~EXTsRGB() = default;

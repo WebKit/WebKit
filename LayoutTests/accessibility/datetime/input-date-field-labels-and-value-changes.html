@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="date-input" type="date" value="2022-11-21" />
+
+<script>
+var output = "Tests that subfield values update correctly for date inputs.\n\n";
+
+function keyDown(key, repeat = 1) {
+    for (let i = 0; i < repeat; i++)
+        eventSender.keyDown(key);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    const dateInput = document.getElementById("date-input");
+    var axDateInput = accessibilityController.accessibleElementById("date-input");
+
+    function getAndLogSubfields(axElement) {
+        let subfields = axElement.childAtIndex(0).childAtIndex(0).children;
+        subfields.forEach((child) => {
+            output += `${child.description} ${child.role} ${child.stringValue}\n`;
+        });
+        return subfields;
+    }
+
+    output+= "Original subfield values:\n";
+    var subfields = getAndLogSubfields(axDateInput);
+
+    setTimeout(async () => {
+        output += "\nFocus date element and press up arrow to increment the month field:\n";
+        dateInput.focus();
+        keyDown("upArrow");
+        output += await expectAsync("subfields[0].intValue", "12");
+
+        output += "\nPress down arrow twice to decrement the month field.\n";
+        keyDown("downArrow", 2);
+        output += await expectAsync("subfields[0].intValue", "10");
+
+        output += "\nPress the tab key to move to the day field in the date input.\n";
+        keyDown("\t");
+        output += await expectAsync("subfields[2].intValue", "21");
+
+        output += "\nType 10 in the day subfield.\n";
+        keyDown("1");
+        keyDown("0")
+        output += await expectAsync("subfields[2].intValue", "10");
+
+        output += "\nPress down arrow to decrement the day field.\n";
+        keyDown("downArrow");
+        output += await expectAsync("subfields[2].intValue", "9");
+
+        output += "\nPress up arrow twice to increment the day field.\n";
+        keyDown("upArrow", 2);
+        output += await expectAsync("subfields[2].intValue", "11");
+
+        output += "\nPress tab to move to the year field in the date input.\n";
+        keyDown("\t");
+        output += await expectAsync("subfields[4].intValue", "2022");
+
+        output+= "\nPress down arrow 10 times to decrement the year field.\n";
+        keyDown("downArrow", 10);
+        output += await expectAsync("subfields[4].intValue", "2012");
+
+        output += "\nPress up arrow to increment the year field.\n";
+        keyDown("upArrow");
+        output += await expectAsync("subfields[4].intValue", "2013");
+
+        output += "\nSet the date via JavaScript.\n";
+        dateInput.value = "2023-12-31";
+        await expectAsync("axDateInput.childAtIndex(0).childAtIndex(0).children[4].intValue", "2023");
+        getAndLogSubfields(axDateInput);
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
-
 #include "AccessibilityUIElement.h"
 
 #include "JSAccessibilityUIElement.h"
@@ -80,6 +78,7 @@ bool AccessibilityUIElement::hasContainedByFieldsetTrait() { return false; }
 bool AccessibilityUIElement::hasTextEntryTrait() { return false; }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::fieldsetAncestorElement() { return nullptr; }
 bool AccessibilityUIElement::isSearchField() const { return false; }
+bool AccessibilityUIElement::isSwitch() const { return false; }
 bool AccessibilityUIElement::isTextArea() const { return false; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForElement() { return nullptr; }
@@ -91,14 +90,28 @@ bool AccessibilityUIElement::supportsExpanded() const { return false; }
 #endif
 
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+
+#if PLATFORM(COCOA)
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::wordAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::lineAtOffset(int) { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return nullptr; }
-#endif
 
-#if !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
+unsigned AccessibilityUIElement::childrenCount()
+{
+    return getChildren().size();
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
+{
+    auto children = getChildrenInRange(index, 1);
+    return children.size() == 1 ? children[0] : nullptr;
+}
+
+#endif // PLATFORM(COCOA)
+
+#if !PLATFORM(MAC)
 bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* marker) { return !isTextMarkerValid(marker); }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
@@ -117,11 +130,15 @@ bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
 unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 JSValueRef AccessibilityUIElement::columns() { return { }; }
-#endif // !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::dateValue() { return nullptr; }
+#endif // !PLATFORM(MAC))
 
-#if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+#if !PLATFORM(COCOA)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const { return nullptr; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const { return nullptr; }
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleLabel() const { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::brailleRoleDescription() const { return nullptr; }
 
 bool AccessibilityUIElement::hasDocumentRoleAncestor() const { return false; }
 bool AccessibilityUIElement::hasWebApplicationAncestor() const { return false; }
@@ -145,7 +162,7 @@ void AccessibilityUIElement::dismiss() { }
 JSValueRef AccessibilityUIElement::children() const { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
-#endif // !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
+#endif // !PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::controllerElementAtIndex(unsigned) { return nullptr; }
@@ -176,4 +193,3 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ownerElementAtIndex(unsig
 #endif // PLATFORM(WIN) || PLATFORM(PLAYSTATION)
 
 } // namespace WTR
-#endif // ENABLE(ACCESSIBILITY)

@@ -22,8 +22,8 @@
 #include "FontSetCache.h"
 
 #include "CairoUtilities.h"
-#include "CharacterProperties.h"
 #include "FontCache.h"
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 

@@ -59,6 +59,7 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document& document, Fie
     : DateTimeFieldElement(document, fieldOwner)
     , m_range(range)
     , m_placeholder(formatValue(placeholder))
+    , m_placeholderValue(placeholder)
 {
 }
 
@@ -162,18 +163,13 @@ String DateTimeNumericFieldElement::placeholderValue() const
     return m_placeholder;
 }
 
-int DateTimeNumericFieldElement::valueAsInteger() const
-{
-    return m_hasValue ? m_value : -1;
-}
-
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != eventNames().keypressEvent)
         return;
 
     auto charCode = static_cast<UChar>(keyboardEvent.charCode());
-    String number = localeForOwner().convertFromLocalizedNumber(String(&charCode, 1));
+    String number = localeForOwner().convertFromLocalizedNumber(span(charCode));
     int digit = number[0] - '0';
     if (digit < 0 || digit > 9)
         return;

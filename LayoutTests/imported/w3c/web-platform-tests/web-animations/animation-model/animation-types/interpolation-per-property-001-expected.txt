@@ -231,6 +231,10 @@ PASS empty-cells (type: discrete) has testInterpolation function
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with linear easing
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with effect easing
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with keyframe easing
+PASS field-sizing (type: discrete) has testInterpolation function
+PASS field-sizing uses discrete animation when animating between "fixed" and "content" with linear easing
+PASS field-sizing uses discrete animation when animating between "fixed" and "content" with effect easing
+PASS field-sizing uses discrete animation when animating between "fixed" and "content" with keyframe easing
 PASS fill-opacity (type: opacity) has testInterpolation function
 PASS fill-opacity supports animating as a [0, 1] number
 PASS fill-rule (type: discrete) has testInterpolation function

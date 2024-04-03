@@ -28,6 +28,7 @@
 #include "EventTarget.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBConnectionProxy.h"
+#include "IDBDatabaseConnectionIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBKeyPath.h"
 #include "IDBTransactionMode.h"
@@ -74,7 +75,7 @@ public:
     void renameIndex(IDBIndex&, const String& newName);
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return IDBDatabaseEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ThreadSafeRefCounted<IDBDatabase>::ref(); }
     void derefEventTarget() final { ThreadSafeRefCounted<IDBDatabase>::deref(); }
@@ -83,7 +84,7 @@ public:
     using ThreadSafeRefCounted<IDBDatabase>::deref;
 
     IDBDatabaseInfo& info() { return m_info; }
-    uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
+    IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&, IDBOpenDBRequest&);
     void didStartTransaction(IDBTransaction&);
@@ -123,7 +124,7 @@ private:
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBDatabaseInfo m_info;
-    uint64_t m_databaseConnectionIdentifier { 0 };
+    IDBDatabaseConnectionIdentifier m_databaseConnectionIdentifier;
 
     bool m_closePending { false };
     bool m_closedInServer { false };

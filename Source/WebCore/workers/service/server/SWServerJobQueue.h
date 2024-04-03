@@ -29,6 +29,7 @@
 #include "ServiceWorkerJobData.h"
 #include "Timer.h"
 #include "WorkerFetchResult.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class SWServerWorker;
 class ServiceWorkerJob;
 struct WorkerFetchResult;
 
-class SWServerJobQueue {
+class SWServerJobQueue : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SWServerJobQueue(SWServer&, const ServiceWorkerRegistrationKey&);
@@ -77,10 +78,12 @@ private:
     void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
     void scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData&, SWServerRegistration&);
 
+    Ref<SWServer> protectedServer() const { return m_server.get(); }
+
     Deque<ServiceWorkerJobData> m_jobQueue;
 
     Timer m_jobTimer;
-    SWServer& m_server;
+    WeakRef<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     WorkerFetchResult m_workerFetchResult;
 };

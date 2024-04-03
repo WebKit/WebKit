@@ -1,0 +1,23 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+  try {
+    let adapter12 = await navigator.gpu.requestAdapter({ });
+    let device10 = await adapter12.requestDevice({ label: '\u0678' } );
+    let canvas25 = document.createElement('canvas');
+    canvas25.height = 1419621282;
+    let gpuCanvasContext17 = canvas25.getContext('webgpu');
+    gpuCanvasContext17.configure(
+    {
+    device: device10,
+    format: 'rgba16float',
+    colorSpace: 'srgb',
+    alphaMode: 'premultiplied',
+    }
+    );
+    let texture95 = gpuCanvasContext17.getCurrentTexture();
+  } catch (e) { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

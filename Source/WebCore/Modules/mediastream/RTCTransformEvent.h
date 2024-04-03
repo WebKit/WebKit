@@ -39,8 +39,6 @@ public:
 
     RTCRtpScriptTransformer& transformer();
 
-    EventInterface eventInterface() const final;
-
 private:
     RTCTransformEvent(const AtomString& type, Ref<RTCRtpScriptTransformer>&&, IsTrusted);
 

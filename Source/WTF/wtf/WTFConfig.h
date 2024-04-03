@@ -48,6 +48,16 @@ namespace WebConfig {
 using Slot = uint64_t;
 extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 
+constexpr size_t reservedSlotsForExecutableAllocator = 2;
+constexpr size_t additionalReservedSlots = 2;
+
+enum ReservedConfigByteOffset {
+    ReservedByteForAllocationProfiling,
+    NumberOfReservedConfigBytes
+};
+
+static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * additionalReservedSlots);
+
 } // namespace WebConfig
 #endif // ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 

@@ -43,9 +43,9 @@ static void expectBuilderContent(StringView expected, const StringBuilder& build
     // Not using builder.toString() or builder.toStringPreserveCapacity() because they all
     // change internal state of builder.
     if (builder.is8Bit())
-        EXPECT_EQ(expected, String(builder.characters8(), builder.length()));
+        EXPECT_EQ(expected, String(builder.span<LChar>()));
     else
-        EXPECT_EQ(expected, String(builder.characters16(), builder.length()));
+        EXPECT_EQ(expected, String(builder.span<UChar>()));
 }
 
 void expectEmpty(const StringBuilder& builder)
@@ -102,7 +102,7 @@ TEST(StringBuilderTest, Append)
     builderForUChar32Append.append(U'A');
     EXPECT_EQ(3U, builderForUChar32Append.length());
     const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
-    expectBuilderContent(String(resultArray, std::size(resultArray)), builderForUChar32Append);
+    expectBuilderContent(String({ resultArray, std::size(resultArray) }), builderForUChar32Append);
     {
         StringBuilder builder;
         StringBuilder builder2;
@@ -116,7 +116,7 @@ TEST(StringBuilderTest, Append)
         builder.appendCharacters(data, 2);
         EXPECT_EQ(4U, builder.length());
         const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
-        expectBuilderContent(String(resultArray, std::size(resultArray)), builder);
+        expectBuilderContent(String({ resultArray, std::size(resultArray) }), builder);
     }
 }
 
@@ -159,9 +159,9 @@ TEST(StringBuilderTest, VariadicAppend)
     {
         StringBuilder builder;
         builder.append(String("0123456789"_s), "abcd", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcd", String(&bullseye, 1)), builder);
+        expectBuilderContent(makeString("0123456789abcd", String({ &bullseye, 1 })), builder);
         builder.append(String("A"_s), "B", 'C', "");
-        expectBuilderContent(makeString("0123456789abcd", String(&bullseye, 1), "ABC"), builder);
+        expectBuilderContent(makeString("0123456789abcd", String({ &bullseye, 1 }), "ABC"), builder);
     }
 
     {
@@ -172,7 +172,7 @@ TEST(StringBuilderTest, VariadicAppend)
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_LT(builder.capacity(), builder.length() + 3);
         builder.append(String("A"_s), "B", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcdeAB", String(&bullseye, 1)), builder);
+        expectBuilderContent(makeString("0123456789abcdeAB", String({ &bullseye, 1 })), builder);
     }
 
     {
@@ -184,7 +184,7 @@ TEST(StringBuilderTest, VariadicAppend)
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_GE(builder.capacity(), builder.length() + 3);
         builder.append(String("A"_s), "B", bullseye, "");
-        expectBuilderContent(makeString("0123456789abcdeAB", String(&bullseye, 1)), builder);
+        expectBuilderContent(makeString("0123456789abcdeAB", String({ &bullseye, 1 })), builder);
     }
 }
 

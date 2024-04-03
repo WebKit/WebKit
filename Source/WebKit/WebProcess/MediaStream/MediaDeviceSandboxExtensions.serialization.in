@@ -24,8 +24,8 @@
 
 [RValue] class WebKit::MediaDeviceSandboxExtensions {
     Vector<String> takeIDs();
-    [Validator='takeIDs->size() == takeHandles->size()'] Vector<WebKit::SandboxExtension::Handle> takeHandles();
-    WebKit::SandboxExtension::Handle takeMachBootstrapHandle();
+    [Validator='takeIDs->size() == takeHandles->size()'] Vector<WebKit::SandboxExtensionHandle> takeHandles();
+    WebKit::SandboxExtensionHandle takeMachBootstrapHandle();
 }
 
 #endif

@@ -65,22 +65,59 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-static RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
-#else
-static RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
-#endif
-
-Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, const IntSize& size, DestinationColorSpace colorSpace)
+DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+    : m_bitmap(WTFMove(bitmap))
+    , m_originClean(originClean)
+    , m_premultiplyAlpha(premultiplyAlpha)
+    , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
 {
-    return create({ createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace) });
 }
 
-Ref<ImageBitmap> ImageBitmap::create(std::optional<ImageBitmapBacking>&& backingStore)
+DetachedImageBitmap::DetachedImageBitmap(DetachedImageBitmap&&) = default;
+
+DetachedImageBitmap::~DetachedImageBitmap() = default;
+
+DetachedImageBitmap& DetachedImageBitmap::operator=(DetachedImageBitmap&&) = default;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmap);
+
+static inline RenderingMode bufferRenderingMode(ScriptExecutionContext& scriptExecutionContext)
 {
-    return adoptRef(*new ImageBitmap(WTFMove(backingStore)));
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || USE(SKIA)
+    static RenderingMode defaultRenderingMode = RenderingMode::Accelerated;
+#else
+    static RenderingMode defaultRenderingMode = RenderingMode::Unaccelerated;
+#endif
+
+#if PLATFORM(GTK) && USE(SKIA)
+    if (!scriptExecutionContext.settingsValues().acceleratedCompositingEnabled)
+        return RenderingMode::Unaccelerated;
+#else
+    UNUSED_PARAM(scriptExecutionContext);
+#endif
+
+    return defaultRenderingMode;
+}
+
+RefPtr<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, const IntSize& size, DestinationColorSpace colorSpace)
+{
+    auto buffer = createImageBuffer(scriptExecutionContext, size, bufferRenderingMode(scriptExecutionContext), colorSpace);
+    if (!buffer)
+        return nullptr;
+    return create(buffer.releaseNonNull(), false);
+}
+
+Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, DetachedImageBitmap detached)
+{
+    auto buffer = SerializedImageBuffer::sinkIntoImageBuffer(detached.m_bitmap.moveToUniquePtr(), scriptExecutionContext.graphicsClient());
+    RELEASE_ASSERT(buffer);
+    return create(buffer.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha);
+}
+
+Ref<ImageBitmap> ImageBitmap::create(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+{
+    return adoptRef(*new ImageBitmap(WTFMove(bitmap), originClean, premultiplyAlpha, forciblyPremultiplyAlpha));
 }
 
 RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, DestinationColorSpace colorSpace, float resolutionScale)
@@ -122,15 +159,20 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
 RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, DestinationColorSpace colorSpace, float resolutionScale)
 {
-    return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode, colorSpace, resolutionScale);
+    return createImageBuffer(scriptExecutionContext, size, bufferRenderingMode(scriptExecutionContext), colorSpace, resolutionScale);
 }
 
-std::optional<ImageBitmapBacking> ImageBitmap::detach()
+std::optional<DetachedImageBitmap> ImageBitmap::detach()
 {
-    std::optional<ImageBitmapBacking> backing = takeImageBitmapBacking();
-    if (backing)
-        backing->disconnect();
-    return backing;
+    if (!m_bitmap)
+        return std::nullopt;
+    RefPtr bitmap = std::exchange(m_bitmap, nullptr);
+    if (!bitmap->hasOneRef())
+        bitmap = bitmap->clone();
+    std::unique_ptr serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(bitmap));
+    if (!serializedBitmap)
+        return std::nullopt;
+    return DetachedImageBitmap { makeUniqueRefFromNonNullUniquePtr(WTFMove(serializedBitmap)), originClean(), premultiplyAlpha(), forciblyPremultiplyAlpha() };
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, int sx, int sy, int sw, int sh, ImageBitmap::Promise&& promise)
@@ -258,21 +300,15 @@ Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scr
     // Source rectangle likely doesn't intersect the source image.
     // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
     // Resolve Promise with a blank 1x1 ImageBitmap.
-    auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), bufferRenderingMode, DestinationColorSpace::SRGB());
-
+    auto bitmapData = createImageBuffer(scriptExecutionContext, FloatSize(1, 1), bufferRenderingMode(scriptExecutionContext), DestinationColorSpace::SRGB());
+    RELEASE_ASSERT(bitmapData);
+    // 7. Create a new ImageBitmap object.
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
-    OptionSet<SerializationState> serializationState;
-    if (originClean)
-        serializationState.add(SerializationState::OriginClean);
-    
-    // 7. Create a new ImageBitmap object.
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
-
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
-    return imageBitmap;
+    return create(bitmapData.releaseNonNull(), originClean);
 }
 
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
@@ -393,16 +429,17 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRenderer = cachedImage->imageForRenderer(renderer);
+    RefPtr imageForRenderer = cachedImage->imageForRenderer(renderer);
     if (!imageForRenderer) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRenderer->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace());
+    const bool originClean = !taintsOrigin(*cachedImage);
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(*cachedImage)));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
         return;
     }
 
@@ -413,18 +450,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
+    // 7. Create a new ImageBitmap object.
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
-    OptionSet<SerializationState> serializationState;
-    if (!taintsOrigin(*cachedImage))
-        serializationState.add(SerializationState::OriginClean);
-
-    if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
-    // 7. Create a new ImageBitmap object.
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
@@ -470,19 +501,18 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, DestinationColorSpace::SRGB());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), DestinationColorSpace::SRGB());
 
+    const bool originClean = true;
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
         return;
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().paintVideoFrame(*internalFrame, destRect, true);
 
-    OptionSet<SerializationState> serializationState { SerializationState::OriginClean };
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
-
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean);
     completionHandler(WTFMove(imageBitmap));
 }
 #endif
@@ -507,34 +537,29 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         return;
     }
 
-    auto imageForRender = canvas.copiedImage();
+    RefPtr imageForRender = canvas.copiedImage();
     if (!imageForRender) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s });
         return;
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, imageForRender->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRender->colorSpace());
 
+    const bool originClean = canvas.originClean();
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, canvas.originClean()));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
         return;
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
+    const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
+    // 3. Create a new ImageBitmap object.
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same value as
     //    the origin-clean flag of the canvas element's bitmap.
-    OptionSet<SerializationState> serializationState;
-    if (canvas.originClean())
-        serializationState.add(SerializationState::OriginClean);
-
-    if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
-    // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -583,10 +608,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     if (!colorSpace)
         colorSpace = DestinationColorSpace::SRGB();
 
+    const bool originClean = !taintsOrigin(scriptExecutionContext.securityOrigin(), *video);
+
     // FIXME: Add support for pixel formats to ImageBitmap.
-    auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode, *colorSpace, PixelFormat::BGRA8);
+    auto bitmapData = video->createBufferForPainting(outputSize, bufferRenderingMode(scriptExecutionContext), *colorSpace, PixelFormat::BGRA8);
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, !taintsOrigin(scriptExecutionContext.securityOrigin(), *video)));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
         return;
     }
 
@@ -606,18 +633,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         video->paintCurrentFrameInContext(c, FloatRect(FloatPoint(), size));
     }
 
+    // 5. Let imageBitmap be a new ImageBitmap object.
     // 6.3. If the origin of image's video is not same origin with entry
     //      settings object's origin, then set the origin-clean flag of
     //      image's bitmap to false.
-    OptionSet<SerializationState> serializationState;
-    if (!taintsOrigin(scriptExecutionContext.securityOrigin(), *video))
-        serializationState.add(SerializationState::OriginClean);
-
-    if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
-    // 5. Let imageBitmap be a new ImageBitmap object.
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     // 6.4.1. Resolve p with imageBitmap.
     completionHandler(WTFMove(imageBitmap));
@@ -647,36 +668,32 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, existingImageBitmap->buffer()->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), existingImageBitmap->buffer()->colorSpace());
 
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, existingImageBitmap->originClean()));
         return;
     }
 
-    auto imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
+    RefPtr imageForRender = BitmapImage::create(existingImageBitmap->buffer()->copyNativeImage());
 
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
-    // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
-    //    value as the origin-clean flag of the bitmap of the image argument.
-    OptionSet<SerializationState> serializationState;
-    if (existingImageBitmap->originClean())
-        serializationState.add(SerializationState::OriginClean);
-
+    const bool originClean = existingImageBitmap->originClean();
+    bool forciblyPremultiplyAlpha = false;
     if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied) {
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
         // At least in the Core Graphics backend, when creating an ImageBitmap from
         // an ImageBitmap, the alpha channel of bitmapData isn't premultiplied even
         // though the alpha mode of the internal surface claims it is. Instruct
         // users of this ImageBitmap to ignore the internal surface's alpha mode.
-        serializationState.add(SerializationState::ForciblyPremultiplyAlpha);
+        forciblyPremultiplyAlpha = true;
     }
 
     // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
+    //    value as the origin-clean flag of the bitmap of the image argument.
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, forciblyPremultiplyAlpha, forciblyPremultiplyAlpha);
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -698,7 +715,6 @@ public:
 
     void didDraw(const Image&) override { }
 
-    bool canDestroyDecodedData(const Image&) override { return true; }
     void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* = nullptr, DecodingStatus = DecodingStatus::Invalid) override { }
     void changedInRect(const Image&, const IntRect* = nullptr) override { }
     void scheduleRenderingUpdate(const Image&) override { }
@@ -720,8 +736,10 @@ class PendingImageBitmap final : public RefCounted<PendingImageBitmap>, public A
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::ImageBitmapCompletionHandler&& completionHandler)
     {
-        if (scriptExecutionContext.activeDOMObjectsAreStopped())
+        if (scriptExecutionContext.activeDOMObjectsAreStopped()) {
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create ImageBitmap in a document without browsing context"_s });
             return;
+        }
         Ref pendingImageBitmap = adoptRef(*new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler)));
         pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
@@ -803,7 +821,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
         return;
     }
 
-    auto sharedBuffer = SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
+    auto sharedBuffer = SharedBuffer::create(arrayBuffer->span());
     auto observer = ImageBitmapImageObserver::create(mimeType, expectedContentLength, sourceURL);
     auto image = BitmapImage::create(observer.ptr());
     auto result = image->setData(sharedBuffer.copyRef(), true);
@@ -819,7 +837,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, image->colorSpace());
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace());
     if (!bitmapData) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
         return;
@@ -832,11 +850,9 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
 
-    OptionSet<SerializationState> serializationState = SerializationState::OriginClean;
-    if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    const bool originClean = true;
+    const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     completionHandler(WTFMove(imageBitmap));
 }
@@ -867,31 +883,29 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    RefPtr bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), toDestinationColorSpace(imageData->colorSpace()));
 
+    const bool originClean = true;
     if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
+        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
         return;
     }
 
     // If no cropping, resizing, flipping, etc. are needed, then simply use the
     // resulting ImageBuffer directly.
-    auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
+    const auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
+    const bool premultiplyAlpha = alphaPremultiplication == AlphaPremultiplication::Premultiplied;
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation != ImageBitmapOptions::Orientation::FlipY) {
         bitmapData->putPixelBuffer(imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
 
-        OptionSet<SerializationState> serializationState = SerializationState::OriginClean;
-        if (alphaPremultiplication == AlphaPremultiplication::Premultiplied)
-            serializationState.add(SerializationState::PremultiplyAlpha);
-
-        auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+        auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
         completionHandler(WTFMove(imageBitmap));
         return;
     }
 
     // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
     //      source rectangle with formatting.
-    auto tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode, toDestinationColorSpace(imageData->colorSpace()));
+    RefPtr tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode(scriptExecutionContext), toDestinationColorSpace(imageData->colorSpace()));
     if (!tempBitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
@@ -901,52 +915,40 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
-    OptionSet<SerializationState> serializationState = SerializationState::OriginClean;
-    if (alphaPremultiplication == AlphaPremultiplication::Premultiplied)
-        serializationState.add(SerializationState::PremultiplyAlpha);
-
-    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
+    Ref imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
 
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
     completionHandler(WTFMove(imageBitmap));
 }
 
-ImageBitmap::ImageBitmap(std::optional<ImageBitmapBacking>&& backingStore)
-    : m_backingStore(WTFMove(backingStore))
-{
-    ASSERT_IMPLIES(m_backingStore, m_backingStore->buffer());
-    updateMemoryCost();
-}
-
-ImageBitmap::~ImageBitmap()
+ImageBitmap::ImageBitmap(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+    : m_bitmap(WTFMove(bitmap))
+    , m_originClean(originClean)
+    , m_premultiplyAlpha(premultiplyAlpha)
+    , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
 {
 }
 
-std::optional<ImageBitmapBacking> ImageBitmap::takeImageBitmapBacking()
-{
-    auto result = std::exchange(m_backingStore, std::nullopt);
-    if (result)
-        updateMemoryCost();
-    return result;
-}
+ImageBitmap::~ImageBitmap() = default;
 
 RefPtr<ImageBuffer> ImageBitmap::takeImageBuffer()
 {
-    if (auto backingStore = takeImageBitmapBacking())
-        return backingStore->takeImageBuffer();
-    ASSERT(isDetached());
-    return nullptr;
+    return std::exchange(m_bitmap, nullptr);
+}
+
+unsigned ImageBitmap::width() const
+{
+    return m_bitmap ? m_bitmap->truncatedLogicalSize().width() : 0;
+}
+
+unsigned ImageBitmap::height() const
+{
+    return m_bitmap ? m_bitmap->truncatedLogicalSize().height() : 0;
 }
 
 void ImageBitmap::updateMemoryCost()
 {
-    if (m_backingStore) {
-        if (auto imageBuffer = m_backingStore->buffer()) {
-            m_memoryCost = imageBuffer->memoryCost();
-            return;
-        }
-    }
-    m_memoryCost = 0;
+    m_memoryCost = m_bitmap ? m_bitmap->memoryCost() : 0;
 }
 
 size_t ImageBitmap::memoryCost() const

@@ -34,8 +34,9 @@ OBJC_CLASS CALayer;
 OBJC_CLASS CAContext;
 
 #if USE(EXTENSIONKIT)
-OBJC_CLASS _SEHostable;
-OBJC_CLASS _SEHostingUpdateCoordinator;
+OBJC_CLASS BELayerHierarchy;
+OBJC_CLASS BELayerHierarchyHandle;
+OBJC_CLASS BELayerHierarchyHostingTransactionCoordinator;
 #endif
 
 namespace WTF {
@@ -43,6 +44,12 @@ class MachSendRight;
 }
 
 namespace WebKit {
+
+#if USE(EXTENSIONKIT)
+constexpr auto contextIDKey = "cid";
+constexpr auto processIDKey = "pid";
+constexpr auto machPortKey = "p";
+#endif
 
 using LayerHostingContextID = uint32_t;
 enum class LayerHostingMode : uint8_t;
@@ -107,7 +114,10 @@ public:
 
 #if USE(EXTENSIONKIT)
     OSObjectPtr<xpc_object_t> xpcRepresentation() const;
-    void commit();
+    RetainPtr<BELayerHierarchy> hostable() const { return m_hostable; }
+
+    static RetainPtr<BELayerHierarchyHandle> createHostingHandle(uint64_t pid, uint64_t contextID);
+    static RetainPtr<BELayerHierarchyHostingTransactionCoordinator> createHostingUpdateCoordinator(mach_port_t sendRight);
 #endif
 
 private:
@@ -118,8 +128,7 @@ private:
     LayerHostingContextID m_cachedContextID;
     RetainPtr<CAContext> m_context;
 #if USE(EXTENSIONKIT)
-    RetainPtr<_SEHostable> m_hostable;
-    RetainPtr<_SEHostingUpdateCoordinator> m_hostingUpdateCoordinator;
+    RetainPtr<BELayerHierarchy> m_hostable;
 #endif
 };
 

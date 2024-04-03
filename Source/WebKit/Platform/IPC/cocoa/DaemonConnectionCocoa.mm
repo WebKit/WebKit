@@ -109,7 +109,7 @@ void ConnectionToMachService<Traits>::sendWithReply(typename Traits::MessageType
         }
         size_t dataSize { 0 };
         const void* data = xpc_dictionary_get_data(reply, Traits::protocolEncodedMessageKey, &dataSize);
-        completionHandler({ static_cast<const uint8_t*>(data), dataSize });
+        completionHandler(Vector(std::span { static_cast<const uint8_t*>(data), dataSize }));
     });
 }
 

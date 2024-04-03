@@ -30,13 +30,11 @@ namespace WebCore {
 
 WEBCORE_EXPORT AttributedString attributedString(const SimpleRange&);
 
-#if PLATFORM(MAC)
 // This alternate implementation of HTML conversion doesn't handle as many advanced features,
 // such as tables, and doesn't produce document attributes, but it does use TextIterator so
 // text offsets will exactly match plain text and other editing machinery.
 // FIXME: This function and the one above should be merged.
 enum class IncludeImages : bool { No, Yes };
 WEBCORE_EXPORT AttributedString editingAttributedString(const SimpleRange&, IncludeImages = IncludeImages::Yes);
-#endif
 
 } // namespace WebCore

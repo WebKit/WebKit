@@ -97,6 +97,11 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBufferOffsets;
     }
 
+    const gl::AttribArray<GLuint> &getCurrentArrayBufferRelativeOffsets() const
+    {
+        return mCurrentArrayBufferRelativeOffsets;
+    }
+
     const gl::AttribArray<vk::BufferHelper *> &getCurrentArrayBuffers() const
     {
         return mCurrentArrayBuffers;
@@ -110,6 +115,16 @@ class VertexArrayVk : public VertexArrayImpl
     const gl::AttribArray<GLuint> &getCurrentArrayBufferStrides() const
     {
         return mCurrentArrayBufferStrides;
+    }
+
+    const gl::AttribArray<GLuint> &getCurrentArrayBufferDivisors() const
+    {
+        return mCurrentArrayBufferDivisors;
+    }
+
+    const gl::AttributesMask &getCurrentArrayBufferCompressed() const
+    {
+        return mCurrentArrayBufferCompressed;
     }
 
     // Update mCurrentElementArrayBuffer based on the vertex array state
@@ -139,7 +154,7 @@ class VertexArrayVk : public VertexArrayImpl
 
   private:
     gl::AttributesMask mergeClientAttribsRange(
-        RendererVk *renderer,
+        vk::Renderer *renderer,
         const gl::AttributesMask activeStreamedAttribs,
         size_t startVertex,
         size_t endVertex,
@@ -183,6 +198,7 @@ class VertexArrayVk : public VertexArrayImpl
     // Cache strides of attributes for a fast pipeline cache update when VAOs are changed
     gl::AttribArray<angle::FormatID> mCurrentArrayBufferFormats;
     gl::AttribArray<GLuint> mCurrentArrayBufferStrides;
+    gl::AttribArray<GLuint> mCurrentArrayBufferDivisors;
     gl::AttributesMask mCurrentArrayBufferCompressed;
     vk::BufferHelper *mCurrentElementArrayBuffer;
 

@@ -138,23 +138,22 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 {
     ASSERT(info.isVideo() || info.isAudio());
 
-    if (info.isAudio()) {
-        auto& audioInfo = downcast<const AudioInfo>(info);
-        if (!audioInfo.cookieData || !audioInfo.cookieData->size())
+    if (auto* audioInfo = dynamicDowncast<AudioInfo>(info)) {
+        if (!audioInfo->cookieData || !audioInfo->cookieData->size())
             return nullptr;
 
-        switch (audioInfo.codecName.value) {
+        switch (audioInfo->codecName.value) {
 #if ENABLE(OPUS)
         case kAudioFormatOpus:
             if (!isOpusDecoderAvailable())
                 return nullptr;
-            return createAudioFormatDescription(audioInfo);
+            return createAudioFormatDescription(*audioInfo);
 #endif
 #if ENABLE(VORBIS)
         case kAudioFormatVorbis:
             if (!isVorbisDecoderAvailable())
                 return nullptr;
-            return createAudioFormatDescription(audioInfo);
+            return createAudioFormatDescription(*audioInfo);
 #endif
         default:
             return nullptr;
@@ -371,7 +370,7 @@ size_t PacketDurationParser::framesInPacket(SharedBuffer& packet)
             return 0; // Invalid mode.
 
         uint32_t blockSize = 0;
-        if (!(m_vorbisModeInfo->mModeFlags & (1 << modeIndex)))
+        if (!(m_vorbisModeInfo->mModeFlags & (1ULL << modeIndex)))
             blockSize = m_vorbisModeInfo->mShortBlockSize;
         else
             blockSize = m_vorbisModeInfo->mLongBlockSize;
@@ -381,7 +380,6 @@ size_t PacketDurationParser::framesInPacket(SharedBuffer& packet)
         m_lastVorbisBlockSize = blockSize;
 
         return framesOfOutput;
-        break;
         }
 #endif
     default:

@@ -63,10 +63,10 @@ static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::Constan
     return MTLSizeMake(width, height, depth);
 }
 
-static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync)
+static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
 {
     if (!isAsync)
-        object.generateAValidationError("createComputePipeline failed"_s);
+        object.generateAValidationError(error ?: @"createComputePipeline failed");
     return ComputePipeline::createInvalid(object);
 }
 
@@ -80,34 +80,42 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return returnInvalidComputePipeline(*this, isAsync);
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
+    auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint(), label);
+    auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
         return returnInvalidComputePipeline(*this, isAsync);
 
     auto library = libraryCreationResult->library;
+    const auto& wgslConstantValues = libraryCreationResult->wgslConstantValues;
     const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
 
     if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
         return returnInvalidComputePipeline(*this, isAsync);
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-    auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation, shaderModule);
-    auto function = createFunction(library, entryPointInformation, constantValues, label);
+    auto function = createFunction(library, entryPointInformation, label);
     if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
         return returnInvalidComputePipeline(*this, isAsync);
 
     auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
-    auto& deviceLimits = limits();
-    if (size.width > deviceLimits.maxComputeWorkgroupSizeX || size.height > deviceLimits.maxComputeWorkgroupSizeY || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
+    if (entryPointInformation.sizeForWorkgroupVariables > deviceLimits.maxComputeWorkgroupStorageSize)
+        return returnInvalidComputePipeline(*this, isAsync);
+
+    if (!size.width || size.width > deviceLimits.maxComputeWorkgroupSizeX || !size.height || size.height > deviceLimits.maxComputeWorkgroupSizeY || !size.depth || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
         return returnInvalidComputePipeline(*this, isAsync);
 
     if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
         Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
-        addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
+        if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
+            return returnInvalidComputePipeline(*this, isAsync, error);
 
-        auto computePipelineState = createComputePipelineState(m_device, function, generatePipelineLayout(bindGroupEntries), size, label);
-        return ComputePipeline::create(computePipelineState, generatePipelineLayout(bindGroupEntries), size, *this);
+        auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
+        if (!generatedPipelineLayout->isValid())
+            return returnInvalidComputePipeline(*this, isAsync);
+        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label);
+        return ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, *this);
     }
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);
@@ -117,8 +125,8 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
     auto pipeline = createComputePipeline(descriptor, true);
-    instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
-        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
+    instance().scheduleWork([pipeline, callback = WTFMove(callback), protectedThis = Ref { *this }]() mutable {
+        callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
     });
 }
 
@@ -139,21 +147,21 @@ ComputePipeline::ComputePipeline(Device& device)
 
 ComputePipeline::~ComputePipeline() = default;
 
-RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
+Ref<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     if (!isValid()) {
         m_device->generateAValidationError("getBindGroupLayout: ComputePipeline is invalid"_s);
         m_pipelineLayout->makeInvalid();
-        return nullptr;
+        return BindGroupLayout::createInvalid(m_device);
     }
 
     if (groupIndex >= m_pipelineLayout->numberOfBindGroupLayouts()) {
         m_device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_s);
         m_pipelineLayout->makeInvalid();
-        return nullptr;
+        return BindGroupLayout::createInvalid(m_device);
     }
 
-    return &m_pipelineLayout->bindGroupLayout(groupIndex);
+    return m_pipelineLayout->bindGroupLayout(groupIndex);
 }
 
 void ComputePipeline::setLabel(String&&)

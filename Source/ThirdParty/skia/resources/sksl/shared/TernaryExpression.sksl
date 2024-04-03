@@ -1,0 +1,30 @@
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    const bool TRUE = true;
+    const bool FALSE = false;
+
+    int check = 0;
+
+    // Literal test
+    check += (true ? 0 : 1);
+    check += (false ? 1 : 0);
+
+    // Constant boolean test
+    check += (TRUE ? 0 : 1);
+    check += (FALSE ? 1 : 0);
+
+    // Constant-foldable test
+    check += (1 == 1 ? 0 : 1);
+    check += (0 == 1 ? 1 : 0);
+
+    // Unknown-value test
+    check += (colorGreen.g == 1 ? 0 : 1);
+    check += (colorGreen.r == 1 ? 1 : 0);
+
+    // Composite comparison test.
+    check += (colorGreen.gr == colorRed.rg ? 0 : 1);
+    check += (colorGreen.gr != colorRed.rg ? 1 : 0);
+
+    return check == 0 ? colorGreen : colorRed;
+}

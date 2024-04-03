@@ -1,0 +1,68 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,11.59) size 460x299
+  RenderSVGTransformableContainer {g} at (10,11.59) size 460x298.41
+layer at (99.42,11.59) size 282x23
+  RenderSVGText {text} at (89,0) size 282x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 282x23
+      chunk 1 (middle anchor) text run 1 at (99.43,30.00) startOffset 0 endOffset 30 width 281.13: "Gradient 'spreadMethod' values"
+layer at (10,60) size 225x41
+  RenderSVGRect {rect} at (0,48.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=60.00] [width=225.00] [height=40.00]
+layer at (10,40.27) size 150x18
+  RenderSVGText {text} at (0,28) size 150x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 150x19
+      chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 18 width 149.69: "spreadMethod=\"pad\""
+layer at (10,130) size 225x41
+  RenderSVGRect {rect} at (0,118.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=130.00] [width=225.00] [height=40.00]
+layer at (10,110.27) size 167x18
+  RenderSVGText {text} at (0,98) size 167x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 167x19
+      chunk 1 text run 1 at (10.00,125.00) startOffset 0 endOffset 22 width 166.56: "spreadMethod=\"reflect\""
+layer at (10,200) size 225x41
+  RenderSVGRect {rect} at (0,188.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=200.00] [width=225.00] [height=40.00]
+layer at (10,180.27) size 168x18
+  RenderSVGText {text} at (0,168) size 169x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 169x19
+      chunk 1 text run 1 at (10.00,195.00) startOffset 0 endOffset 21 width 168.36: "spreadMethod=\"repeat\""
+layer at (10,270) size 225x41
+  RenderSVGRect {rect} at (0,258.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=270.00] [width=225.00] [height=40.00]
+layer at (10,250.27) size 171x18
+  RenderSVGText {text} at (0,238) size 172x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 172x19
+      chunk 1 text run 1 at (10.00,265.00) startOffset 0 endOffset 22 width 171.03: "spreadMethod=\"default\""
+layer at (245,60) size 225x41
+  RenderSVGRect {rect} at (235,48.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=245.00] [y=60.00] [width=225.00] [height=40.00]
+layer at (245,40.27) size 150x18
+  RenderSVGText {text} at (235,28) size 150x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 150x19
+      chunk 1 text run 1 at (245.00,55.00) startOffset 0 endOffset 18 width 149.69: "spreadMethod=\"pad\""
+layer at (245,130) size 225x41
+  RenderSVGRect {rect} at (235,118.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=245.00] [y=130.00] [width=225.00] [height=40.00]
+layer at (245,110.27) size 167x18
+  RenderSVGText {text} at (235,98) size 167x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 167x19
+      chunk 1 text run 1 at (245.00,125.00) startOffset 0 endOffset 22 width 166.56: "spreadMethod=\"reflect\""
+layer at (245,200) size 225x41
+  RenderSVGRect {rect} at (235,188.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=245.00] [y=200.00] [width=225.00] [height=40.00]
+layer at (245,180.27) size 168x18
+  RenderSVGText {text} at (235,168) size 169x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 169x19
+      chunk 1 text run 1 at (245.00,195.00) startOffset 0 endOffset 21 width 168.36: "spreadMethod=\"repeat\""
+layer at (245,270) size 225x41
+  RenderSVGRect {rect} at (235,258.41) size 225x40 [fill={[type=SOLID] [color=#000000]}] [x=245.00] [y=270.00] [width=225.00] [height=40.00]
+layer at (245,250.27) size 171x18
+  RenderSVGText {text} at (235,238) size 172x20 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 172x19
+      chunk 1 text run 1 at (245.00,265.00) startOffset 0 endOffset 22 width 171.03: "spreadMethod=\"default\""
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

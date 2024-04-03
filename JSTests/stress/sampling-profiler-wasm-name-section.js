@@ -1,7 +1,7 @@
 // This test is statistical, and without optimizing Wasm tiers the likelihood
 // of hitting the deepest expected stack trace is very low, so disable.
 // FIXME: remove when 32-bit platforms support optimizing Wasm tiers
-//@ skip if ["arm", "mips"].include?($architecture)
+//@ skip if ["arm"].include?($architecture)
 //
 //@ runDefault
 

@@ -218,7 +218,7 @@ Vector<FontPlatformData::FontVariationAxis> FontPlatformData::variationAxes(Shou
 
     return WTF::map(defaultVariationValues(ftFace, shouldLocalizeAxisNames), [](auto&& entry) {
         auto& [tag, values] = entry;
-        return FontPlatformData::FontVariationAxis { values.axisName, String(tag.data(), tag.size()), values.defaultValue, values.minimumValue, values.maximumValue };
+        return FontPlatformData::FontVariationAxis { values.axisName, String(tag), values.defaultValue, values.minimumValue, values.maximumValue };
     });
 #else
     UNUSED_PARAM(shouldLocalizeAxisNames);

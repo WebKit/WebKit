@@ -51,7 +51,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTemplateElement);
 using namespace HTMLNames;
 
 inline HTMLTemplateElement::HTMLTemplateElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
 {
 }
 
@@ -154,9 +154,11 @@ void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
     if (!mode)
         return;
 
-    bool delegatesFocus = hasAttributeWithoutSynchronization(HTMLNames::shadowrootdelegatesfocusAttr);
+    auto delegatesFocus = hasAttributeWithoutSynchronization(HTMLNames::shadowrootdelegatesfocusAttr);
 
-    auto exceptionOrShadowRoot = host.attachDeclarativeShadow(*mode, delegatesFocus);
+    auto clonable = hasAttributeWithoutSynchronization(HTMLNames::shadowrootclonableAttr);
+
+    auto exceptionOrShadowRoot = host.attachDeclarativeShadow(*mode, delegatesFocus, clonable);
     if (exceptionOrShadowRoot.hasException())
         return;
 

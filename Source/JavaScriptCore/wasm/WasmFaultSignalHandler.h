@@ -28,7 +28,6 @@
 namespace JSC {
 
 namespace Wasm {
-
 #if ENABLE(WEBASSEMBLY)
 void activateSignalingMemory();
 void prepareSignalingMemory();
@@ -36,5 +35,13 @@ void prepareSignalingMemory();
 inline void activateSignalingMemory() { }
 inline void prepareSignalingMemory() { }
 #endif // ENABLE(WEBASSEMBLY)
+
+#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
+class MachExceptionSigningKey {
+public:
+    uint32_t randomSigningKey = { };
+    MachExceptionSigningKey();
+};
+#endif // CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
 
 } } // namespace JSC::Wasm

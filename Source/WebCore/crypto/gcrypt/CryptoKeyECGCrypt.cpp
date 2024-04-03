@@ -163,7 +163,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifi
     // Construct the Vector that represents the EC point in uncompressed format.
     Vector<uint8_t> q;
     q.reserveInitialCapacity(curveUncompressedPointSize(curve));
-    q.append(CryptoConstants::s_ecUncompressedFormatLeadingByte.data(), CryptoConstants::s_ecUncompressedFormatLeadingByte.size());
+    q.append(std::span { CryptoConstants::s_ecUncompressedFormatLeadingByte });
     q.appendVector(x);
     q.appendVector(y);
 
@@ -187,7 +187,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     // Construct the Vector that represents the EC point in uncompressed format.
     Vector<uint8_t> q;
     q.reserveInitialCapacity(curveUncompressedPointSize(curve));
-    q.append(CryptoConstants::s_ecUncompressedFormatLeadingByte.data(), CryptoConstants::s_ecUncompressedFormatLeadingByte.size());
+    q.append(std::span { CryptoConstants::s_ecUncompressedFormatLeadingByte });
     q.appendVector(x);
     q.appendVector(y);
 
@@ -519,8 +519,8 @@ bool CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
     if (qMPI) {
         auto q = mpiData(qMPI);
         if (q && q->size() == curveUncompressedPointSize(m_curve)) {
-            jwk.x = base64URLEncodeToString(Vector<uint8_t> { q->data() + 1, uncompressedFieldElementSize });
-            jwk.y = base64URLEncodeToString(Vector<uint8_t> { q->data() + 1 + uncompressedFieldElementSize, uncompressedFieldElementSize });
+            jwk.x = base64URLEncodeToString(q->subvector(1, uncompressedFieldElementSize));
+            jwk.y = base64URLEncodeToString(q->subvector(1 + uncompressedFieldElementSize, uncompressedFieldElementSize));
         }
     }
 

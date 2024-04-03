@@ -15,7 +15,7 @@
 #include "common/vulkan/vulkan_icd.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 namespace rx
 {
@@ -24,7 +24,7 @@ DeviceVkLinux::DeviceVkLinux(DisplayVk *display) : mDisplay(display) {}
 
 egl::Error DeviceVkLinux::initialize()
 {
-    RendererVk *renderer                           = mDisplay->getRenderer();
+    vk::Renderer *renderer                         = mDisplay->getRenderer();
     VkPhysicalDeviceDrmPropertiesEXT drmProperties = renderer->getPhysicalDeviceDrmProperties();
 
     // Unfortunately `VkPhysicalDeviceDrmPropertiesEXT` doesn't give us the information about the

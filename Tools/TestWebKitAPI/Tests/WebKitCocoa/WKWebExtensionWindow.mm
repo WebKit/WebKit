@@ -93,22 +93,22 @@ TEST(WKWebExtensionWindow, OpenWindows)
 
     [testController unloadExtensionContext:testContextOne.get() error:nullptr];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openWindows, openWindows);
+    EXPECT_NS_EQUAL(testContextOne.get().openWindows, @[ ]);
     EXPECT_NS_EQUAL(testContextTwo.get().openWindows, openWindows);
 
     [testController didFocusWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openWindows, openWindows);
+    EXPECT_NS_EQUAL(testContextOne.get().openWindows, @[ ]);
     EXPECT_NS_EQUAL(testContextTwo.get().openWindows, reversedOpenWindows);
 
     [testController didCloseWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openWindows, openWindows);
+    EXPECT_NS_EQUAL(testContextOne.get().openWindows, @[ ]);
     EXPECT_NS_EQUAL(testContextTwo.get().openWindows, @[ testWindowOne.get() ]);
 
     [testController didOpenWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().openWindows, openWindows);
+    EXPECT_NS_EQUAL(testContextOne.get().openWindows, @[ ]);
     EXPECT_NS_EQUAL(testContextTwo.get().openWindows, reversedOpenWindows);
 }
 
@@ -166,17 +166,17 @@ TEST(WKWebExtensionWindow, FocusedWindow)
 
     [testController unloadExtensionContext:testContextOne.get() error:nullptr];
 
-    EXPECT_NS_EQUAL(testContextOne.get().focusedWindow, testWindowOne.get());
+    EXPECT_NULL(testContextOne.get().focusedWindow);
     EXPECT_NS_EQUAL(testContextTwo.get().focusedWindow, testWindowOne.get());
 
     [testController didFocusWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().focusedWindow, testWindowOne.get());
+    EXPECT_NULL(testContextOne.get().focusedWindow);
     EXPECT_NS_EQUAL(testContextTwo.get().focusedWindow, testWindowTwo.get());
 
     [testController didCloseWindow:testWindowTwo.get()];
 
-    EXPECT_NS_EQUAL(testContextOne.get().focusedWindow, testWindowOne.get());
+    EXPECT_NULL(testContextOne.get().focusedWindow);
     EXPECT_NULL(testContextTwo.get().focusedWindow);
 }
 

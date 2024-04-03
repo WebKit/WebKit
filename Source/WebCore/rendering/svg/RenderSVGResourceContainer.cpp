@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (c) 2023 Igalia S.L.
+ * Copyright (c) 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,13 +21,12 @@
 #include "config.h"
 #include "RenderSVGResourceContainer.h"
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGResourceElementClient.h"
-
+#include "SVGVisitedElementTracking.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
@@ -69,6 +68,23 @@ void RenderSVGResourceContainer::idChanged()
     registerResource();
 }
 
+static inline void notifyResourceChanged(SVGElement& element)
+{
+    static NeverDestroyed<SVGVisitedElementTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedElementTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(element))
+        return;
+
+    SVGVisitedElementTracking::Scope recursionScope(recursionTracking, element);
+
+    for (auto& cssClient : element.referencingCSSClients()) {
+        if (!cssClient)
+            continue;
+        cssClient->resourceChanged(element);
+    }
+}
+
 void RenderSVGResourceContainer::registerResource()
 {
     auto& treeScope = this->treeScopeForSVGReferences();
@@ -79,26 +95,14 @@ void RenderSVGResourceContainer::registerResource()
     for (auto& element : elements) {
         ASSERT(element->hasPendingResources());
         treeScope.clearHasPendingSVGResourcesIfPossible(element);
-
-        for (auto& cssClient : element->referencingCSSClients()) {
-            if (!cssClient)
-                continue;
-            cssClient->resourceChanged(element.get());
-        }
+        notifyResourceChanged(element.get());
     }
 }
 
 void RenderSVGResourceContainer::repaintAllClients() const
 {
     Ref svgElement = element();
-
-    for (auto& cssClient : svgElement->referencingCSSClients()) {
-        if (!cssClient)
-            continue;
-        cssClient->resourceChanged(svgElement.get());
-    }
+    notifyResourceChanged(svgElement.get());
 }
 
 }
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

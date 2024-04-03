@@ -35,7 +35,7 @@ class IntlLocalePrototype;
 class IntlLocaleConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static IntlLocaleConstructor* create(VM&, Structure*, IntlLocalePrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

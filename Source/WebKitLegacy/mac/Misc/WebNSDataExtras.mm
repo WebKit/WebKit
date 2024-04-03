@@ -24,77 +24,10 @@
  */
 
 #import <WebKitLegacy/WebNSDataExtras.h>
-#import <WebKitLegacy/WebNSDataExtrasPrivate.h>
 
 #import <wtf/Assertions.h>
-#import <wtf/RetainPtr.h>
 
-@interface NSString (WebNSDataExtrasInternal)
-- (NSString *)_web_capitalizeRFC822HeaderFieldName;
-@end
-
-@implementation NSString (WebNSDataExtrasInternal)
-
-- (NSString *)_web_capitalizeRFC822HeaderFieldName
-{
-    CFStringRef name = (__bridge CFStringRef)self;
-    NSString *result = nil;
-
-    CFIndex len = CFStringGetLength(name);
-    char* charPtr = nullptr;
-    UniChar* uniCharPtr = nullptr;
-    Boolean useUniCharPtr = FALSE;
-    Boolean shouldCapitalize = TRUE;
-    Boolean somethingChanged = FALSE;
-
-    for (CFIndex i = 0; i < len; i ++) {
-        UniChar ch = CFStringGetCharacterAtIndex(name, i);
-        Boolean replace = FALSE;
-        if (shouldCapitalize && ch >= 'a' && ch <= 'z') {
-            ch = ch + 'A' - 'a';
-            replace = TRUE;
-        } else if (!shouldCapitalize && ch >= 'A' && ch <= 'Z') {
-            ch = ch + 'a' - 'A';
-            replace = TRUE;
-        }
-        if (replace) {
-            if (!somethingChanged) {
-                somethingChanged = TRUE;
-                if (CFStringGetBytes(name, CFRangeMake(0, len), kCFStringEncodingISOLatin1, 0, FALSE, NULL, 0, NULL) == len) {
-                    // Can be encoded in ISOLatin1
-                    useUniCharPtr = FALSE;
-                    charPtr = static_cast<char*>(CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0));
-                    CFStringGetCString(name, charPtr, len+1, kCFStringEncodingISOLatin1);
-                } else {
-                    useUniCharPtr = TRUE;
-                    uniCharPtr = static_cast<UniChar*>(CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof(UniChar), 0));
-                    CFStringGetCharacters(name, CFRangeMake(0, len), uniCharPtr);
-                }
-            }
-            if (useUniCharPtr)
-                uniCharPtr[i] = ch;
-            else
-                charPtr[i] = ch;
-        }
-        if (ch == '-')
-            shouldCapitalize = TRUE;
-        else
-            shouldCapitalize = FALSE;
-    }
-    if (somethingChanged) {
-        if (useUniCharPtr)
-            result = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, uniCharPtr, len, nullptr)).bridgingAutorelease();
-        else
-            result = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, charPtr, kCFStringEncodingISOLatin1, nullptr)).bridgingAutorelease();
-    } else
-        result = self;
-
-    return result;
-}
-
-@end
-
-@implementation NSData (WebKitExtras)
+@implementation NSData (WebNSDataExtras)
 
 - (NSString *)_webkit_guessedMIMETypeForXML
 {
@@ -239,140 +172,12 @@
     return nil;
 }
 
-@end
-
-@implementation NSData (WebNSDataExtras)
-
 - (BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string
 {
     ASSERT(string);
 
     const char* bytes = static_cast<const char*>([self bytes]);
     return !strncasecmp(bytes, string, [self length]);
-}
-
-static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
-{
-    // According to the HTTP specification EOL is defined as
-    // a CRLF pair. Unfortunately, some servers will use LF
-    // instead. Worse yet, some servers will use a combination
-    // of both (e.g. <header>CRLFLF<body>), so findEOL needs
-    // to be more forgiving. It will now accept CRLF, LF, or
-    // CR.
-    //
-    // It returns NULL if EOL is not found or it will return
-    // a pointer to the first terminating character.
-    for (CFIndex i = 0;  i < len; i++) {
-        UInt8 c = bytes[i];
-        if ('\n' == c)
-            return bytes + i;
-        if ('\r' == c) {
-            // Check to see if spanning buffer bounds
-            // (CRLF is across reads). If so, wait for
-            // next read.
-            if (i + 1 == len)
-                break;
-
-            return bytes + i;
-        }
-    }
-
-    return nullptr;
-}
-
-- (NSMutableDictionary *)_webkit_parseRFC822HeaderFields
-{
-    NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
-
-    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
-    NSUInteger length = [self length];
-    RetainPtr<NSString> lastKey;
-    const UInt8 *eol;
-
-    // Loop over lines until we're past the header, or we can't find any more end-of-lines
-    while ((eol = _findEOL(bytes, length))) {
-        const UInt8 *line = bytes;
-        SInt32 lineLength = eol - bytes;
-
-        // Move bytes to the character after the terminator as returned by _findEOL.
-        bytes = eol + 1;
-        if (('\r' == *eol) && ('\n' == *bytes))
-            bytes++; // Safe since _findEOL won't return a spanning CRLF.
-
-        length -= (bytes - line);
-        if (!lineLength) {
-            // Blank line; we're at the end of the header
-            break;
-        }
-        if (*line == ' ' || *line == '\t') {
-            // Continuation of the previous header
-            if (!lastKey) {
-                // malformed header; ignore it and continue
-                continue;
-            }
-            // Merge the continuation of the previous header
-            NSString *currentValue = [headerFields objectForKey:lastKey.get()];
-            auto newValue = adoptNS([[NSString alloc] initWithBytes:line length:lineLength encoding:NSISOLatin1StringEncoding]);
-            ASSERT(currentValue);
-            ASSERT(newValue);
-            [headerFields setObject:[currentValue stringByAppendingString:newValue.get()] forKey:lastKey.get()];
-        } else {
-            // Brand new header
-            const UInt8* colon;
-            for (colon = line; *colon != ':' && colon != eol; colon++) { }
-            if (colon == eol) {
-                // malformed header; ignore it and continue
-                continue;
-            }
-            lastKey = adoptNS([[NSString alloc] initWithBytes:line length:colon - line encoding:NSISOLatin1StringEncoding]);
-            lastKey = [lastKey _web_capitalizeRFC822HeaderFieldName];
-            for (colon++; colon != eol; colon++) {
-                if (*colon != ' ' && *colon != '\t')
-                    break;
-            }
-            auto value = adoptNS([[NSString alloc] initWithBytes:colon length:eol - colon encoding:NSISOLatin1StringEncoding]);
-            if (NSString *oldValue = [headerFields objectForKey:lastKey.get()])
-                value = adoptNS([[NSString alloc] initWithFormat:@"%@, %@", oldValue, value.get()]);
-            [headerFields setObject:value.get() forKey:lastKey.get()];
-        }
-    }
-
-    return headerFields;
-}
-
-- (BOOL)_web_startsWithBlankLine
-{
-    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
-}
-
-- (NSInteger)_web_locationAfterFirstBlankLine
-{
-    const char *bytes = (const char *)[self bytes];
-    NSUInteger length = [self length];
-
-    unsigned i;
-    for (i = 0; i < length - 4; i++) {
-
-        //  Support for Acrobat. It sends "\n\n".
-        if (bytes[i] == '\n' && bytes[i+1] == '\n')
-            return i+2;
-
-        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
-        if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-            i += 2;
-            if (i == 2)
-                return i;
-            if (bytes[i] == '\n') {
-                // Support for Director. It sends "\r\n\n" (3880387).
-                return i+1;
-            }
-            if (bytes[i] == '\r' && bytes[i+1] == '\n') {
-                // Support for Flash. It sends "\r\n\r\n" (3758113).
-                return i+2;
-            }
-        }
-    }
-    return NSNotFound;
 }
 
 @end

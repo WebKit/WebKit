@@ -204,7 +204,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     }
 
     if (selectionData.hasImage()) {
-        auto pixbuf = selectionData.image()->gdkPixbuf();
+        auto pixbuf = selectionData.image()->adapter().gdkPixbuf();
         providers.append(gdk_content_provider_new_typed(GDK_TYPE_PIXBUF, pixbuf.get()));
     }
 

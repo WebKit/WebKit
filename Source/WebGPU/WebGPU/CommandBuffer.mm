@@ -48,9 +48,26 @@ void CommandBuffer::setLabel(String&& label)
     m_commandBuffer.label = label;
 }
 
-void CommandBuffer::makeInvalid()
+void CommandBuffer::makeInvalid(NSString* lastError)
 {
+    m_lastErrorString = lastError;
+    m_device->getQueue().commitMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
+}
+
+NSString* CommandBuffer::lastError() const
+{
+    return m_lastErrorString;
+}
+
+void CommandBuffer::setBufferMapCount(int bufferMapCount)
+{
+    m_bufferMapCount = bufferMapCount;
+}
+
+int CommandBuffer::bufferMapCount() const
+{
+    return m_bufferMapCount;
 }
 
 } // namespace WebGPU

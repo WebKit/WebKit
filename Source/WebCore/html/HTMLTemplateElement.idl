@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (c) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,5 +34,7 @@
     Exposed=Window
 ] interface HTMLTemplateElement : HTMLElement {
     readonly attribute DocumentFragment content;
-    [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowRootsEnabled] attribute [AtomString] DOMString shadowRootMode;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString shadowRootMode;
+    [CEReactions=NotNeeded, Reflect=shadowrootdelegatesfocus] attribute boolean shadowRootDelegatesFocus;
+    [CEReactions=NotNeeded, Reflect=shadowrootclonable] attribute boolean shadowRootClonable;
 };

@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT bool isFocusingWithValidationMessage() const;
     // This must be called when a validation constraint or control value is changed.
     void updateValidity();
-    void setCustomValidity(const String&) override;
+    WEBCORE_EXPORT void setCustomValidity(const String&) override;
 
     void setDisabledByAncestorFieldset(bool isDisabled);
     virtual void reset() { }

@@ -5,6 +5,7 @@
     <meta name="robots" content="noodp">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="hsl(203.6, 100%, 12%)">
 
     <title><?php if ( is_front_page() ) echo "WebKit";
         else { wp_title(''); echo ' | WebKit'; } ?></title>

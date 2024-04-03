@@ -80,14 +80,13 @@ Ref<HTMLElement> InsertListCommand::mergeWithNeighboringLists(HTMLElement& list)
     if (canMergeLists(previousList.get(), &list))
         mergeIdenticalElements(*previousList, list);
 
-    RefPtr sibling = ElementTraversal::nextSibling(list);
-    if (!is<HTMLElement>(sibling))
+    RefPtr sibling = dynamicDowncast<HTMLElement>(ElementTraversal::nextSibling(list));
+    if (!sibling)
         return protectedList;
 
-    Ref<HTMLElement> nextList = downcast<HTMLElement>(*sibling);
-    if (canMergeLists(&list, nextList.ptr())) {
-        mergeIdenticalElements(list, nextList);
-        return nextList;
+    if (canMergeLists(&list, sibling.get())) {
+        mergeIdenticalElements(list, *sibling);
+        return sibling.releaseNonNull();
     }
     return protectedList;
 }

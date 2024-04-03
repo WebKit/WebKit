@@ -32,8 +32,9 @@ public:
     using Base = JSDOMWrapper<TestPluginInterface>;
     static JSTestPluginInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestPluginInterface>&& impl)
     {
-        JSTestPluginInterface* ptr = new (NotNull, JSC::allocateCell<JSTestPluginInterface>(globalObject->vm())) JSTestPluginInterface(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestPluginInterface* ptr = new (NotNull, JSC::allocateCell<JSTestPluginInterface>(vm)) JSTestPluginInterface(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 

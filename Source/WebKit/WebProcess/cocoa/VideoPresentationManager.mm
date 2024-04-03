@@ -42,6 +42,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/Color.h>
+#import <WebCore/DocumentInlines.h>
 #import <WebCore/Event.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLVideoElement.h>
@@ -274,13 +275,13 @@ bool VideoPresentationManager::supportsVideoFullscreen(WebCore::HTMLMediaElement
     return false;
 #endif
 #else
-    return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture());
+    return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow || (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture());
 #endif
 }
 
 bool VideoPresentationManager::supportsVideoFullscreenStandby() const
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(VISION)
     return true;
 #else
     return false;
@@ -388,7 +389,7 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
             return;
         page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, contextID, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, videoElement->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
 
-        if (auto player = videoElement->player()) {
+        if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
                 protectedThis->setPlayerIdentifier(contextId, identifier);
         }

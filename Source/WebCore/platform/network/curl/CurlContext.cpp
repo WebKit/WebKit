@@ -389,7 +389,7 @@ void CurlHandle::enableShareHandle()
     curl_easy_setopt(m_handle, CURLOPT_SHARE, CurlContext::singleton().shareHandle().handle());
 }
 
-void CurlHandle::setUrl(const URL& url)
+void CurlHandle::setURL(const URL& url, LocalhostAlias localhostAlias)
 {
     m_url = url.isolatedCopy();
 
@@ -410,6 +410,22 @@ void CurlHandle::setUrl(const URL& url)
 
     if (url.protocolIs("https"_s))
         enableSSL();
+
+    if (localhostAlias == LocalhostAlias::Enable) {
+        auto host = url.host();
+        auto port = url.port();
+        if (!port)
+            port = WTF::defaultPortForProtocol(url.protocol());
+
+        if (port) {
+            auto alias = makeString(host, ':', static_cast<unsigned>(*port), ":127.0.0.1"_s);
+
+            m_localhostAlias.clear();
+            m_localhostAlias.append(alias);
+
+            curl_easy_setopt(m_handle, CURLOPT_RESOLVE, m_localhostAlias.head());
+        }
+    }
 }
 
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)

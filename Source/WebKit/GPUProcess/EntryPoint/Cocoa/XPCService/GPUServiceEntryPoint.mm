@@ -42,12 +42,6 @@ public:
     }
 };
 
-template<>
-void initializeAuxiliaryProcess<GPUProcess>(AuxiliaryProcessInitializationParameters&& parameters)
-{
-    static NeverDestroyed<GPUProcess> gpuProcess(WTFMove(parameters));
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

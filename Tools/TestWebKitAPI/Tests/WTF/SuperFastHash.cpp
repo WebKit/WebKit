@@ -433,32 +433,40 @@ TEST(WTF, SuperFastHash_addCharactersAssumingAligned)
 
 TEST(WTF, SuperFastHash_computeHash)
 {
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(static_cast<LChar*>(0), 0));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(nullLChars, 0));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(static_cast<UChar*>(0), 0));
-    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(nullUChars, 0));
+    // Use `zeroLength` instead of hardcoding `0` to work around around llvm bug:
+    // Ambiguous constructor call error when calling std::span<T>(T*, 0).
+    // https://bugs.llvm.org/show_bug.cgi?id=49295
+    static constexpr size_t zeroLength = 0;
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const LChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullLChars, zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { static_cast<const UChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash, SuperFastHash::computeHash(std::span { nullUChars, zeroLength }));
 
-    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(nullLChars, 1));
-    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(nullUChars, 1));
+    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullLChars, 1 }));
+    ASSERT_EQ(singleNullCharacterHash, SuperFastHash::computeHash(std::span { nullUChars, 1 }));
 
-    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(testALChars, 5));
-    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(testAUChars, 5));
-    ASSERT_EQ(testBHash5, SuperFastHash::computeHash(testBUChars, 5));
+    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testALChars, 5 }));
+    ASSERT_EQ(testAHash5, SuperFastHash::computeHash(std::span { testAUChars, 5 }));
+    ASSERT_EQ(testBHash5, SuperFastHash::computeHash(std::span { testBUChars, 5 }));
 }
 
 TEST(WTF, SuperFastHash_computeHashAndMaskTop8Bits)
 {
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(static_cast<LChar*>(0), 0));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(nullLChars, 0));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(static_cast<UChar*>(0), 0));
-    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(nullUChars, 0));
+    // Use `zeroLength` instead of hardcoding `0` to work around around llvm bug:
+    // Ambiguous constructor call error when calling std::span<T>(T*, 0).
+    // https://bugs.llvm.org/show_bug.cgi?id=49295
+    static constexpr size_t zeroLength = 0;
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const LChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { static_cast<const UChar*>(0), zeroLength }));
+    ASSERT_EQ(emptyStringHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUChars, zeroLength }));
 
-    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(nullLChars, 1));
-    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(nullUChars, 1));
+    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullLChars, 1 }));
+    ASSERT_EQ(singleNullCharacterHash & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { nullUChars, 1 }));
 
-    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(testALChars, 5));
-    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(testAUChars, 5));
-    ASSERT_EQ(testBHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(testBUChars, 5));
+    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testALChars, 5 }));
+    ASSERT_EQ(testAHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testAUChars, 5 }));
+    ASSERT_EQ(testBHash5 & 0xFFFFFF, SuperFastHash::computeHashAndMaskTop8Bits(std::span { testBUChars, 5 }));
 }
 
 } // namespace TestWebKitAPI

@@ -145,29 +145,6 @@ namespace JSC {
         codeBlock->valueProfileForOffset(bytecode.profileName).m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_direct_arguments)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpCreateDirectArguments>();
-    RETURN(DirectArguments::createByCopying(globalObject, callFrame));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_scoped_arguments)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpCreateScopedArguments>();
-    JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(GET(bytecode.m_scope).jsValue());
-    ScopedArgumentsTable* table = scope->symbolTable()->arguments();
-    RETURN(ScopedArguments::createByCopying(globalObject, callFrame, table, scope));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpCreateClonedArguments>();
-    RETURN(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
 {
     BEGIN();
@@ -937,6 +914,14 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_property_key)
     RETURN(GET_C(bytecode.m_src).jsValue().toPropertyKeyValue(globalObject));
 }
 
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_property_key_or_number)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpToPropertyKeyOrNumber>();
+    JSValue srcValue = GET_C(bytecode.m_src).jsValue();
+    RETURN(srcValue.isNumber() ? srcValue : srcValue.toPropertyKeyValue(globalObject));
+}
+
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_property_enumerator)
 {
     BEGIN();
@@ -1073,18 +1058,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_unreachable)
     BEGIN();
     UNREACHABLE_FOR_PLATFORM();
     END();
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_lexical_environment)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpCreateLexicalEnvironment>();
-    JSScope* currentScope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    SymbolTable* symbolTable = jsCast<SymbolTable*>(GET_C(bytecode.m_symbolTable).jsValue());
-    JSValue initialValue = GET_C(bytecode.m_initialValue).jsValue();
-    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
-    JSScope* newScope = JSLexicalEnvironment::create(vm, globalObject, currentScope, symbolTable, initialValue);
-    RETURN(newScope);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_push_with_scope)

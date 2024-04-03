@@ -49,10 +49,11 @@ public:
 
 private:
     Image* findImageForRenderer(const RenderObject*) const;
+    RefPtr<SVGImage> protectedSVGImage() const;
 
     typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer>> ImageForContainerMap;
 
-    SVGImage* m_svgImage;
+    WeakPtr<SVGImage> m_svgImage;
     ImageForContainerMap m_imageForContainerMap;
 };
 

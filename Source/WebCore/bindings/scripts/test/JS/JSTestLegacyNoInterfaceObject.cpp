@@ -241,7 +241,7 @@ static inline bool setJSTestLegacyNoInterfaceObject_nodeAttributeSetter(JSGlobal
     UNUSED_PARAM(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject", "nodeAttribute", "Node"); });
+    RefPtr nativeValue = convert<IDLInterface<Node>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestLegacyNoInterfaceObject", "nodeAttribute", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setNodeAttribute(*nativeValue);
@@ -358,7 +358,7 @@ void JSTestLegacyNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> hand
 {
     auto* jsTestLegacyNoInterfaceObject = static_cast<JSTestLegacyNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestLegacyNoInterfaceObject->wrapped(), jsTestLegacyNoInterfaceObject);
+    uncacheWrapper(world, jsTestLegacyNoInterfaceObject->protectedWrapped().ptr(), jsTestLegacyNoInterfaceObject);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

@@ -24,6 +24,7 @@
 
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringParsingBuffer.h>
 
@@ -36,6 +37,8 @@ float SVGAngleValue::value() const
         return grad2deg(m_valueInSpecifiedUnits);
     case SVG_ANGLETYPE_RAD:
         return rad2deg(m_valueInSpecifiedUnits);
+    case SVG_ANGLETYPE_TURN:
+        return turn2deg(m_valueInSpecifiedUnits);
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
     case SVG_ANGLETYPE_DEG:
@@ -54,6 +57,9 @@ void SVGAngleValue::setValue(float value)
     case SVG_ANGLETYPE_RAD:
         m_valueInSpecifiedUnits = deg2rad(value);
         return;
+    case SVG_ANGLETYPE_TURN:
+        m_valueInSpecifiedUnits = deg2turn(value);
+        return;
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
     case SVG_ANGLETYPE_DEG:
@@ -70,6 +76,8 @@ String SVGAngleValue::valueAsString() const
         return makeString(m_valueInSpecifiedUnits, "deg");
     case SVG_ANGLETYPE_RAD:
         return makeString(m_valueInSpecifiedUnits, "rad");
+    case SVG_ANGLETYPE_TURN:
+        return makeString(m_valueInSpecifiedUnits, "turn");
     case SVG_ANGLETYPE_GRAD:
         return makeString(m_valueInSpecifiedUnits, "grad");
     case SVG_ANGLETYPE_UNSPECIFIED:
@@ -87,14 +95,16 @@ template<typename CharacterType> static inline SVGAngleValue::Type parseAngleTyp
     case 0:
         return SVGAngleValue::SVG_ANGLETYPE_UNSPECIFIED;
     case 3:
-        if (buffer[0] == 'd' && buffer[1] == 'e' && buffer[2] == 'g')
+        if (compareCharacters(buffer.position(), 'd', 'e', 'g'))
             return SVGAngleValue::SVG_ANGLETYPE_DEG;
-        if (buffer[0] == 'r' && buffer[1] == 'a' && buffer[2] == 'd')
+        if (compareCharacters(buffer.position(), 'r', 'a', 'd'))
             return SVGAngleValue::SVG_ANGLETYPE_RAD;
         break;
     case 4:
-        if (buffer[0] == 'g' && buffer[1] == 'r' && buffer[2] == 'a' && buffer[3] == 'd')
+        if (compareCharacters(buffer.position(), 'g', 'r', 'a', 'd'))
             return SVGAngleValue::SVG_ANGLETYPE_GRAD;
+        if (compareCharacters(buffer.position(), 't', 'u', 'r', 'n'))
+            return SVGAngleValue::SVG_ANGLETYPE_TURN;
         break;
     }
     return SVGAngleValue::SVG_ANGLETYPE_UNKNOWN;
@@ -141,6 +151,24 @@ ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType
         return { };
 
     switch (m_unitType) {
+    case SVG_ANGLETYPE_TURN:
+        switch (unitType) {
+        case SVG_ANGLETYPE_GRAD:
+            m_valueInSpecifiedUnits = turn2grad(m_valueInSpecifiedUnits);
+            break;
+        case SVG_ANGLETYPE_UNSPECIFIED:
+        case SVG_ANGLETYPE_DEG:
+            m_valueInSpecifiedUnits = turn2deg(m_valueInSpecifiedUnits);
+            break;
+        case SVG_ANGLETYPE_RAD:
+            m_valueInSpecifiedUnits = deg2rad(turn2deg(m_valueInSpecifiedUnits));
+            break;
+        case SVG_ANGLETYPE_TURN:
+        case SVG_ANGLETYPE_UNKNOWN:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
     case SVG_ANGLETYPE_RAD:
         switch (unitType) {
         case SVG_ANGLETYPE_GRAD:
@@ -149,6 +177,9 @@ ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType
         case SVG_ANGLETYPE_UNSPECIFIED:
         case SVG_ANGLETYPE_DEG:
             m_valueInSpecifiedUnits = rad2deg(m_valueInSpecifiedUnits);
+            break;
+        case SVG_ANGLETYPE_TURN:
+            m_valueInSpecifiedUnits = deg2turn(rad2deg(m_valueInSpecifiedUnits));
             break;
         case SVG_ANGLETYPE_RAD:
         case SVG_ANGLETYPE_UNKNOWN:
@@ -165,6 +196,9 @@ ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType
         case SVG_ANGLETYPE_DEG:
             m_valueInSpecifiedUnits = grad2deg(m_valueInSpecifiedUnits);
             break;
+        case SVG_ANGLETYPE_TURN:
+            m_valueInSpecifiedUnits = grad2turn(m_valueInSpecifiedUnits);
+            break;
         case SVG_ANGLETYPE_GRAD:
         case SVG_ANGLETYPE_UNKNOWN:
             ASSERT_NOT_REACHED();
@@ -180,6 +214,9 @@ ExceptionOr<void> SVGAngleValue::convertToSpecifiedUnits(unsigned short unitType
             break;
         case SVG_ANGLETYPE_GRAD:
             m_valueInSpecifiedUnits = deg2grad(m_valueInSpecifiedUnits);
+            break;
+        case SVG_ANGLETYPE_TURN:
+            m_valueInSpecifiedUnits = deg2turn(m_valueInSpecifiedUnits);
             break;
         case SVG_ANGLETYPE_UNSPECIFIED:
         case SVG_ANGLETYPE_DEG:

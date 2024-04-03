@@ -12,7 +12,7 @@ layer at (0,0) size 800x494
         RenderText {#text} at (0,0) size 62x18
           text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (26,0) width 36: " def "
-        RenderInline {SPAN} at (0,0) size 38x18
+        RenderInline {SPAN} at (61,0) size 38x18
           RenderText {#text} at (61,0) size 38x18
             text run at (61,0) width 38 RTL: "(\x{5D6}\x{5D7}\x{5D8}]"
         RenderText {#text} at (98,0) size 25x18
@@ -21,7 +21,7 @@ layer at (0,0) size 800x494
         RenderText {#text} at (0,0) size 62x18
           text run at (0,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"
           text run at (26,0) width 36: " def "
-        RenderInline {SPAN} at (0,0) size 36x18
+        RenderInline {SPAN} at (61,0) size 36x18
           RenderText {#text} at (61,0) size 36x18
             text run at (61,0) width 6 RTL: "]"
             text run at (66,0) width 25: "ghi"
@@ -31,7 +31,7 @@ layer at (0,0) size 800x494
       RenderBlock {P} at (0,138) size 784x18
         RenderText {#text} at (0,0) size 33x18
           text run at (0,0) width 33: "abc "
-        RenderInline {SPAN} at (0,0) size 57x18
+        RenderInline {SPAN} at (32,0) size 57x18
           RenderText {#text} at (32,0) size 57x18
             text run at (32,0) width 6 RTL: "]"
             text run at (37,0) width 21: "23"
@@ -59,7 +59,7 @@ layer at (0,0) size 800x494
       RenderBlock {P} at (0,240) size 784x18
         RenderText {#text} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 53x18
+        RenderInline {SPAN} at (10,0) size 53x18
           RenderText {#text} at (10,0) size 53x18
             text run at (10,0) width 6 RTL: "]"
             text run at (15,0) width 43: "ab cd"
@@ -68,7 +68,7 @@ layer at (0,0) size 800x494
       RenderBlock {P} at (0,274) size 784x18
         RenderText {#text} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 50x18
+        RenderInline {SPAN} at (10,0) size 50x18
           RenderText {#text} at (10,0) size 50x18
             text run at (10,0) width 26 RTL: " \x{5D2}\x{5D3}]"
             text run at (35,0) width 20: "ab"
@@ -77,7 +77,7 @@ layer at (0,0) size 800x494
       RenderBlock {P} at (0,308) size 784x18
         RenderText {#text} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 21x18
+        RenderInline {SPAN} at (10,0) size 21x18
           RenderText {#text} at (10,0) size 21x18
             text run at (10,0) width 6 RTL: "]"
             text run at (15,0) width 11: "2"
@@ -87,7 +87,7 @@ layer at (0,0) size 800x494
       RenderBlock {P} at (0,342) size 784x18
         RenderText {#text} at (0,0) size 11x18
           text run at (0,0) width 11: "1"
-        RenderInline {SPAN} at (0,0) size 20x18
+        RenderInline {SPAN} at (10,0) size 20x18
           RenderText {#text} at (10,0) size 20x18
             text run at (10,0) width 6 RTL: "]"
             text run at (15,0) width 10: "a"

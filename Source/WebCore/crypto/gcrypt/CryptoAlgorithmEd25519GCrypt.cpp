@@ -39,7 +39,7 @@ static bool extractEDDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t
     size_t dataSize = integerData->size();
     if (dataSize >= keySizeInBytes) {
         // Append the last `keySizeInBytes` bytes of the data Vector, if available.
-        signature.append(&integerData->at(dataSize - keySizeInBytes), keySizeInBytes);
+        signature.append(integerData->subspan(dataSize - keySizeInBytes, keySizeInBytes));
     } else {
         // If not, prefix the binary data with zero bytes.
         for (size_t paddingSize = keySizeInBytes - dataSize; paddingSize > 0; --paddingSize)

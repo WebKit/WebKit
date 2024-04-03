@@ -255,12 +255,25 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
     ASSERT(!total.hasException());
     request.setTotal(total.releaseReturnValue());
 
+    auto modifierException = firstApplicableModifier();
+    if (modifierException.hasException())
+        return modifierException.releaseException();
+    auto modifierData = modifierException.releaseReturnValue();
+    std::optional<ApplePayModifier> applePayModifier;
+    if (modifierData)
+        applePayModifier = WTFMove(std::get<1>(*modifierData));
+
     if (details.displayItems) {
         auto convertedLineItems = convertAndValidate(*details.displayItems, expectedCurrency);
         if (convertedLineItems.hasException())
             return convertedLineItems.releaseException();
-        request.setLineItems(convertedLineItems.releaseReturnValue());
-    }
+        Vector<ApplePayLineItem>  lineItems = convertedLineItems.releaseReturnValue();
+        if (applePayModifier)
+            lineItems.appendVector(applePayModifier->additionalLineItems);
+
+        request.setLineItems(lineItems);
+    } else if (applePayModifier)
+        request.setLineItems(applePayModifier->additionalLineItems);
 
     mergePaymentOptions(m_paymentRequest->paymentOptions(), request);
 
@@ -269,27 +282,28 @@ ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
         return shippingMethods.releaseException();
     request.setShippingMethods(shippingMethods.releaseReturnValue());
 
-    auto modifierException = firstApplicableModifier();
     if (modifierException.hasException())
         return modifierException.releaseException();
-    if (auto modifierData = modifierException.releaseReturnValue()) {
-        auto applePayModifier = WTFMove(std::get<1>(*modifierData));
-        UNUSED_VARIABLE(applePayModifier);
+    if (applePayModifier) {
 
 #if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-        request.setRecurringPaymentRequest(WTFMove(applePayModifier.recurringPaymentRequest));
+        request.setRecurringPaymentRequest(WTFMove(applePayModifier->recurringPaymentRequest));
 #endif
 
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-        request.setAutomaticReloadPaymentRequest(WTFMove(applePayModifier.automaticReloadPaymentRequest));
+        request.setAutomaticReloadPaymentRequest(WTFMove(applePayModifier->automaticReloadPaymentRequest));
 #endif
 
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-        request.setMultiTokenContexts(WTFMove(applePayModifier.multiTokenContexts));
+        request.setMultiTokenContexts(WTFMove(applePayModifier->multiTokenContexts));
 #endif
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
-        request.setDeferredPaymentRequest(WTFMove(applePayModifier.deferredPaymentRequest));
+        request.setDeferredPaymentRequest(WTFMove(applePayModifier->deferredPaymentRequest));
+#endif
+
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        request.setDisbursementPaymentRequest(WTFMove(applePayModifier->disbursementPaymentRequest));
 #endif
     }
 
@@ -699,6 +713,9 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<RefPtr<A
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+#endif
     }
 
     paymentCoordinator().completeShippingContactSelection(WTFMove(update));
@@ -746,6 +763,9 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
 #endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
+#endif
     }
 
     paymentCoordinator().completeShippingMethodSelection(WTFMove(update));
@@ -792,6 +812,9 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
             update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+            update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
 #endif
         }
 
@@ -842,6 +865,9 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
 
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
         update.newDeferredPaymentRequest = WTFMove(applePayModifier.deferredPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_DISBURSEMENTS)
+        update.newDisbursementPaymentRequest = WTFMove(applePayModifier.disbursementPaymentRequest);
 #endif
     }
 

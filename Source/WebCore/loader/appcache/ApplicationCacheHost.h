@@ -127,8 +127,8 @@ public:
     Vector<ResourceInfo> resourceList();
     CacheInfo applicationCacheInfo();
 
-    bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, ApplicationCacheResource*&);
-    bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = nullptr);
+    bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, RefPtr<ApplicationCacheResource>&);
+    bool getApplicationCacheFallbackResource(const ResourceRequest&, RefPtr<ApplicationCacheResource>&, ApplicationCache* = nullptr);
 
 private:
     friend class ApplicationCacheGroup;

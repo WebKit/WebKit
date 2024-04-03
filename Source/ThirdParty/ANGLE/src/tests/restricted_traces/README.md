@@ -17,6 +17,16 @@ Add the following to ANGLE's .gclient file:
       "checkout_angle_restricted_traces": True
     },
 ```
+
+Note: alternatively, you can checkout only a few specific traces using the following format (`angle_restricted_traces` in gn args below should be a matching list or a subset):
+```
+    "custom_vars": {
+      "checkout_angle_restricted_trace_{trace_name_1}": True,
+      "checkout_angle_restricted_trace_{trace_name_2}": True,
+      ...
+    },
+```
+
 Then use gclient to pull down binary files from CIPD.
 ```
 gclient sync -D

@@ -46,6 +46,7 @@ class IDBStorageRegistry;
 
 class IDBStorageManager final : public WebCore::IDBServer::UniqueIDBDatabaseManager {
 public:
+    static void createVersionDirectoryIfNeeded(const String& rootDirectory);
     static String idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin&);
     static uint64_t idbStorageSize(const String& originDirectory);
     static HashSet<WebCore::ClientOrigin> originsOfIDBStorageData(const String& rootDirectory);
@@ -60,9 +61,9 @@ public:
     void stopDatabaseActivitiesForSuspend();
     void handleLowMemoryWarning();
 
-    void openDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBRequestData&);
-    void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void deleteDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBRequestData&);
+    void openDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBOpenRequestData&);
+    void openDBRequestCancelled(const WebCore::IDBOpenRequestData&);
+    void deleteDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBOpenRequestData&);
     Vector<WebCore::IDBDatabaseNameAndVersion> getAllDatabaseNamesAndVersions();
 
 private:

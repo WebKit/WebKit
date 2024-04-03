@@ -25,11 +25,12 @@
 
 #pragma once
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "BytecodeIndex.h"
 #include "MacroAssembler.h"
 #include "WasmOpcodeOrigin.h"
+#include "WasmOps.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

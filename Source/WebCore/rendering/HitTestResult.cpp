@@ -246,7 +246,10 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!m_innerNonSharedNode)
         return String();
     
-    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Grammar);
+    CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
+    if (!markers)
+        return String();
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Grammar);
     if (!marker)
         return String();
 
@@ -261,8 +264,11 @@ String HitTestResult::replacedString() const
     // and is used for generating a contextual menu item that allows it to easily be changed back if desired.
     if (!m_innerNonSharedNode)
         return String();
-    
-    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Replacement);
+
+    CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
+    if (!markers)
+        return String();
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Replacement);
     if (!marker)
         return String();
     
@@ -782,7 +788,11 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!m_innerNonSharedNode)
         return Vector<String>();
 
-    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::Type::DictationAlternatives);
+    CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
+    if (!markers)
+        return Vector<String>();
+
+    WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::Type::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 
@@ -793,6 +803,11 @@ Vector<String> HitTestResult::dictationAlternatives() const
     return frame->editor().dictationAlternativesForMarker(*marker);
 }
 
+RefPtr<Node> HitTestResult::protectedTargetNode() const
+{
+    return innerNode();
+}
+
 Element* HitTestResult::targetElement() const
 {
     for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {
@@ -800,6 +815,11 @@ Element* HitTestResult::targetElement() const
             return element;
     }
     return nullptr;
+}
+
+RefPtr<Element> HitTestResult::protectedTargetElement() const
+{
+    return targetElement();
 }
 
 Element* HitTestResult::innerNonSharedElement() const

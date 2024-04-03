@@ -4,9 +4,7 @@
 #############################################################################
 # Ignore system libraries.
 src:*/usr/*
-# http://anglebug.com/7852 Ignore alignment errors
+# Ignore alignment errors from third parties
 [alignment]
-src:*src/libANGLE/renderer/vulkan/SecondaryCommandBuffer*
 src:*third_party/zlib*
-src:*third_party/SwiftShader*
 

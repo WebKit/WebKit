@@ -51,6 +51,10 @@ public:
 
     uint32_t id() const { return m_id; }
     unsigned index() const { return m_index; }
+    uint32_t x() const { return m_x; }
+    uint32_t y() const { return m_y; }
+    uint32_t width() const { return m_width; }
+    uint32_t height() const { return m_height; }
     const std::optional<drmModeModeInfo>& currentMode() const { return m_currentMode; }
     const Properties& properties() const { return m_properties; }
 
@@ -59,6 +63,10 @@ public:
 private:
     uint32_t m_id { 0 };
     unsigned m_index { 0 };
+    uint32_t m_x { 0 };
+    uint32_t m_y { 0 };
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
     std::optional<drmModeModeInfo> m_currentMode;
     Properties m_properties;
 };
@@ -78,6 +86,8 @@ public:
 
     uint32_t id() const { return m_id; }
     uint32_t encoderID() const { return m_encoderID; }
+    uint32_t widthMM() const { return m_widthMM; }
+    uint32_t heightMM() const { return m_heightMM; }
     const Vector<drmModeModeInfo>& modes() const { return m_modes; }
     const std::optional<unsigned> preferredModeIndex() const { return m_preferredModeIndex; }
     const Properties& properties() const { return m_properties; }
@@ -85,6 +95,8 @@ public:
 private:
     uint32_t m_id { 0 };
     uint32_t m_encoderID { 0 };
+    uint32_t m_widthMM { 0 };
+    uint32_t m_heightMM { 0 };
     Vector<drmModeModeInfo> m_modes;
     std::optional<unsigned> m_preferredModeIndex;
     Properties m_properties;

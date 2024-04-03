@@ -51,9 +51,9 @@ LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
 #endif
 }
 
-const char* LaunchServicesDatabaseObserver::supplementName()
+ASCIILiteral LaunchServicesDatabaseObserver::supplementName()
 {
-    return "LaunchServicesDatabaseObserverSupplement";
+    return "LaunchServicesDatabaseObserverSupplement"_s;
 }
 
 void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t> connection)

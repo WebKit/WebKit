@@ -96,6 +96,7 @@ class SharedBuffer;
 class SubstituteData;
 class Widget;
 
+enum class LoadWillContinueInAnotherProcess : bool;
 enum class LockBackForwardList : bool;
 enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
@@ -178,8 +179,8 @@ public:
     virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy) = 0;
     virtual void dispatchShow() = 0;
 
-    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String& downloadAttribute, FramePolicyFunction&&) = 0;
-    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, PolicyCheckIdentifier, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String& downloadAttribute, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, std::optional<HitTestResult>&&, FramePolicyFunction&&) = 0;
     virtual void cancelPolicyCheck() = 0;
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
@@ -220,7 +221,7 @@ public:
     // The indicated security origin has run active content (such as a
     // script) from an insecure source.  Note that the insecure content can
     // spread to other frames in the same origin.
-    virtual void didRunInsecureContent(SecurityOrigin&, const URL&) = 0;
+    virtual void didRunInsecureContent(SecurityOrigin&) = 0;
 
     virtual ResourceError cancelledError(const ResourceRequest&) const = 0;
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
@@ -258,6 +259,7 @@ public:
     virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
     virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
+    virtual bool hasCustomUserAgent() const { return false; }
     virtual String userAgent(const URL&) const = 0;
 
     virtual String overrideContentSecurityPolicy() const { return String(); }
@@ -275,7 +277,7 @@ public:
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
 
     virtual RefPtr<LocalFrame> createFrame(const AtomString& name, HTMLFrameOwnerElement&) = 0;
-    virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) = 0;
+    virtual RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) = 0;
     virtual void redirectDataToPlugin(Widget&) = 0;
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
@@ -288,6 +290,7 @@ public:
 #if PLATFORM(COCOA)
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
     virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
+    virtual IntPoint accessibilityRemoteFrameOffset() = 0;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     virtual void setAXIsolatedTreeRoot(AXCoreObject*) = 0;
 #endif
@@ -369,7 +372,6 @@ public:
     virtual void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const { }
 #endif
 
-    virtual void broadcastFrameRemovalToOtherProcesses() = 0;
     virtual void broadcastMainFrameURLChangeToOtherProcesses(const URL&) = 0;
 
     virtual void dispatchLoadEventToOwnerElementInAnotherProcess() = 0;
@@ -377,6 +379,8 @@ public:
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     virtual void didAccessWindowProxyPropertyViaOpener(SecurityOriginData&&, WindowProxyProperty) { }
 #endif
+
+    virtual void documentLoaderDetached(uint64_t, LoadWillContinueInAnotherProcess) { }
 };
 
 } // namespace WebCore

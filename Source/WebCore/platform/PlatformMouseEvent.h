@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include "PlatformEvent.h"
+#include "PointerEventTypeNames.h"
 #include "PointerID.h"
 #include <wtf/UUID.h>
 #include <wtf/WindowsExtras.h>
@@ -68,6 +69,8 @@ public:
     const IntPoint& position() const { return m_position; }
     const IntPoint& globalPosition() const { return m_globalPosition; }
     const IntPoint& movementDelta() const { return m_movementDelta; }
+    // Unaccelerated pointer movement
+    const IntPoint& unadjustedMovementDelta() const { return m_unadjustedMovementDelta; }
 
     MouseButton button() const { return m_button; }
     unsigned short buttons() const { return m_buttons; }
@@ -102,9 +105,10 @@ protected:
     IntPoint m_position;
     IntPoint m_globalPosition;
     IntPoint m_movementDelta;
+    IntPoint m_unadjustedMovementDelta;
     double m_force { 0 };
     PointerID m_pointerId { mousePointerID };
-    String m_pointerType { "mouse"_s };
+    String m_pointerType { mousePointerEventType() };
     int m_clickCount { 0 };
     unsigned m_modifierFlags { 0 };
     unsigned short m_buttons { 0 };

@@ -13,6 +13,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "common_video/h265/h265_sps_parser.h"
 #include "rtc_base/bitstream_reader.h"
 
 namespace rtc {
@@ -35,16 +36,19 @@ class H265PpsParser {
     uint32_t num_extra_slice_header_bits = 0;
     uint32_t num_ref_idx_l0_default_active_minus1 = 0;
     uint32_t num_ref_idx_l1_default_active_minus1 = 0;
-    int32_t pic_init_qp_minus26 = 0;
+    int32_t init_qp_minus26 = 0;
     bool weighted_pred_flag = false;
     bool weighted_bipred_flag = false;
     bool lists_modification_present_flag = false;
-    uint32_t id = 0;
+    uint32_t pps_id = 0;
     uint32_t sps_id = 0;
+    int qp_bd_offset_y = 0;
   };
 
   // Unpack RBSP and parse PPS state from the supplied buffer.
-  static absl::optional<PpsState> ParsePps(const uint8_t* data, size_t length);
+  static absl::optional<PpsState> ParsePps(const uint8_t* data,
+                                           size_t length,
+                                           const H265SpsParser::SpsState*);
 
   static bool ParsePpsIds(const uint8_t* data,
                           size_t length,
@@ -60,7 +64,8 @@ class H265PpsParser {
   // Parse the PPS state, for a bit buffer where RBSP decoding has already been
   // performed.
   static absl::optional<PpsState> ParseInternal(
-      rtc::ArrayView<const uint8_t> buffer);
+      rtc::ArrayView<const uint8_t> buffer,
+      const H265SpsParser::SpsState*);
   static bool ParsePpsIdsInternal(BitstreamReader& reader,
                                   uint32_t& pps_id,
                                   uint32_t& sps_id);

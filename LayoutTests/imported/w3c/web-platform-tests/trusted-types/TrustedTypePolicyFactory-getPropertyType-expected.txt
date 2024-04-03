@@ -1,0 +1,27 @@
+
+PASS sanity check trustedTypes.getPropertyType for the HTML script element.
+PASS sanity check trustedTypes.getAttributeType.
+FAIL sanity check trustedTypes.getTypeMapping trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
+PASS getPropertyType tests adapted from w3c/trusted-types polyfill
+PASS getAttributeType tests adapted from w3c/trusted-types polyfill
+FAIL getTypeMapping tests adapted from w3c/trusted-types polyfill trustedTypes.getTypeMapping is not a function. (In 'trustedTypes.getTypeMapping()', 'trustedTypes.getTypeMapping' is undefined)
+PASS object[codeBase] is defined
+PASS object.codeBase is maybe defined
+PASS OBJECT[codeBase] is defined
+PASS OBJECT.codeBase is maybe defined
+PASS oBjEcT[codeBase] is defined
+PASS oBjEcT.codeBase is maybe defined
+PASS object[CODEBASE] is defined
+PASS object.CODEBASE is maybe defined
+PASS OBJECT[CODEBASE] is defined
+PASS OBJECT.CODEBASE is maybe defined
+PASS oBjEcT[CODEBASE] is defined
+PASS oBjEcT.CODEBASE is maybe defined
+PASS object[codebase] is defined
+PASS object.codebase is maybe defined
+PASS OBJECT[codebase] is defined
+PASS OBJECT.codebase is maybe defined
+PASS oBjEcT[codebase] is defined
+PASS oBjEcT.codebase is maybe defined
+PASS getPropertyType vs getAttributeType for event handler.
+

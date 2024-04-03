@@ -22,34 +22,15 @@
 #include "SVGLengthValue.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGUnitTypes.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class SVGPatternElement;
+class WeakPtrImplWithEventTargetData;
 
 struct PatternAttributes {
-    PatternAttributes()
-        : m_x()
-        , m_y()
-        , m_width()
-        , m_height()
-        , m_viewBox()
-        , m_preserveAspectRatio()
-        , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-        , m_patternContentElement(nullptr)
-        , m_xSet(false)
-        , m_ySet(false)
-        , m_widthSet(false)
-        , m_heightSet(false)
-        , m_viewBoxSet(false)
-        , m_preserveAspectRatioSet(false)
-        , m_patternUnitsSet(false)
-        , m_patternContentUnitsSet(false)
-        , m_patternTransformSet(false)
-        , m_patternContentElementSet(false)
-    {
-    }
+    PatternAttributes() = default;
 
     SVGLengthValue x() const { return m_x; }
     SVGLengthValue y() const { return m_y; }
@@ -60,7 +41,7 @@ struct PatternAttributes {
     SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits; }
     SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits; }
     AffineTransform patternTransform() const { return m_patternTransform; }
-    const SVGPatternElement* patternContentElement() const { return m_patternContentElement; }
+    const SVGPatternElement* patternContentElement() const { return m_patternContentElement.get(); }
 
     void setX(SVGLengthValue value)
     {
@@ -141,22 +122,22 @@ private:
     SVGLengthValue m_height;
     FloatRect m_viewBox;
     SVGPreserveAspectRatioValue m_preserveAspectRatio;
-    SVGUnitTypes::SVGUnitType m_patternUnits;
-    SVGUnitTypes::SVGUnitType m_patternContentUnits;
+    SVGUnitTypes::SVGUnitType m_patternUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
+    SVGUnitTypes::SVGUnitType m_patternContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
     AffineTransform m_patternTransform;
-    const SVGPatternElement* m_patternContentElement;
+    WeakPtr<const SVGPatternElement, WeakPtrImplWithEventTargetData> m_patternContentElement;
 
     // Property states
-    bool m_xSet : 1;
-    bool m_ySet : 1;
-    bool m_widthSet : 1;
-    bool m_heightSet : 1;
-    bool m_viewBoxSet : 1;
-    bool m_preserveAspectRatioSet : 1;
-    bool m_patternUnitsSet : 1;
-    bool m_patternContentUnitsSet : 1;
-    bool m_patternTransformSet : 1;
-    bool m_patternContentElementSet : 1;
+    bool m_xSet : 1 { false };
+    bool m_ySet : 1 { false };
+    bool m_widthSet : 1 { false };
+    bool m_heightSet : 1 { false };
+    bool m_viewBoxSet : 1 { false };
+    bool m_preserveAspectRatioSet : 1 { false };
+    bool m_patternUnitsSet : 1 { false };
+    bool m_patternContentUnitsSet : 1 { false };
+    bool m_patternTransformSet : 1 { false };
+    bool m_patternContentElementSet : 1 { false };
 };
 
 } // namespace WebCore

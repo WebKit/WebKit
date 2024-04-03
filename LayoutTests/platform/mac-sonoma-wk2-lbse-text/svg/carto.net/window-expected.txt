@@ -104,22 +104,22 @@ layer at (10,12.31) size 204x124
   RenderSVGText {text} at (0,0) size 204x124 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 123x16
       chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 18 width 122.17: "This window should"
-    RenderSVGTSpan {tspan} at (0,0) size 147x16
+    RenderSVGTSpan {tspan} at (0,16) size 147x16
       RenderSVGInlineText {#text} at (0,16) size 147x16
         chunk 1 text run 1 at (10.00,41.00) startOffset 0 endOffset 24 width 146.32: "contain navigation tools"
-    RenderSVGTSpan {tspan} at (0,0) size 93x16
+    RenderSVGTSpan {tspan} at (0,38) size 93x16
       RenderSVGInlineText {#text} at (0,38) size 93x16
         chunk 1 text run 1 at (10.00,63.00) startOffset 0 endOffset 15 width 92.61: "Click on button"
-    RenderSVGTSpan {tspan} at (0,0) size 204x16
+    RenderSVGTSpan {tspan} at (0,54) size 204x16
       RenderSVGInlineText {#text} at (0,54) size 204x16
         chunk 1 text run 1 at (10.00,79.00) startOffset 0 endOffset 32 width 203.77: "'Resize Navigation Window' for a"
-    RenderSVGTSpan {tspan} at (0,0) size 184x16
+    RenderSVGTSpan {tspan} at (0,70) size 184x16
       RenderSVGInlineText {#text} at (0,70) size 184x16
         chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 28 width 183.63: "random resize of this Window"
-    RenderSVGTSpan {tspan} at (0,0) size 163x16
+    RenderSVGTSpan {tspan} at (0,92) size 163x16
       RenderSVGInlineText {#text} at (0,92) size 163x16
         chunk 1 text run 1 at (10.00,117.00) startOffset 0 endOffset 26 width 162.64: "Note that this window also"
-    RenderSVGTSpan {tspan} at (0,0) size 183x16
+    RenderSVGTSpan {tspan} at (0,108) size 183x16
       RenderSVGInlineText {#text} at (0,108) size 183x16
         chunk 1 text run 1 at (10.00,133.00) startOffset 0 endOffset 28 width 182.11: "features a window decoration"
 layer at (0,187) size 220x13
@@ -244,10 +244,10 @@ layer at (10,27.31) size 153x48
   RenderSVGText {text} at (0,0) size 153x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 153x16
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 23 width 152.52: "This is a none-moveable"
-    RenderSVGTSpan {tspan} at (0,0) size 137x16
+    RenderSVGTSpan {tspan} at (0,16) size 137x16
       RenderSVGInlineText {#text} at (0,16) size 137x16
         chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 21 width 136.20: "none-closeable status"
-    RenderSVGTSpan {tspan} at (0,0) size 47x16
+    RenderSVGTSpan {tspan} at (0,32) size 47x16
       RenderSVGInlineText {#text} at (0,32) size 47x16
         chunk 1 text run 1 at (10.00,72.00) startOffset 0 endOffset 6 width 46.69: "window"
 layer at (-5.50,-5.50) size 186x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -316,16 +316,16 @@ layer at (10,27.31) size 172x80
   RenderSVGText {text} at (0,0) size 172x80 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 170x16
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 26 width 169.63: "This window has a callback"
-    RenderSVGTSpan {tspan} at (0,0) size 158x16
+    RenderSVGTSpan {tspan} at (0,16) size 158x16
       RenderSVGInlineText {#text} at (0,16) size 158x16
         chunk 1 text run 1 at (10.00,56.00) startOffset 0 endOffset 25 width 157.99: "function indicating mouse"
-    RenderSVGTSpan {tspan} at (0,0) size 172x16
+    RenderSVGTSpan {tspan} at (0,32) size 172x16
       RenderSVGInlineText {#text} at (0,32) size 172x16
         chunk 1 text run 1 at (10.00,72.00) startOffset 0 endOffset 26 width 171.97: "movements in the statusbar"
-    RenderSVGTSpan {tspan} at (0,0) size 124x16
+    RenderSVGTSpan {tspan} at (0,48) size 124x16
       RenderSVGInlineText {#text} at (0,48) size 124x16
         chunk 1 text run 1 at (10.00,88.00) startOffset 0 endOffset 19 width 123.74: "and alerting window"
-    RenderSVGTSpan {tspan} at (0,0) size 42x16
+    RenderSVGTSpan {tspan} at (0,64) size 42x16
       RenderSVGInlineText {#text} at (0,64) size 42x16
         chunk 1 text run 1 at (10.00,104.00) startOffset 0 endOffset 6 width 41.25: "events"
 layer at (0,167) size 200x13
@@ -378,10 +378,10 @@ layer at (5,5.13) size 143x45
   RenderSVGText {text} at (0,0) size 143x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 133x14
       chunk 1 text run 1 at (5.00,16.00) startOffset 0 endOffset 24 width 132.70: "This is a minimal window"
-    RenderSVGTSpan {tspan} at (0,0) size 143x14
+    RenderSVGTSpan {tspan} at (0,16) size 143x14
       RenderSVGInlineText {#text} at (0,16) size 143x14
         chunk 1 text run 1 at (5.00,32.00) startOffset 0 endOffset 29 width 142.75: "without title and status bar."
-    RenderSVGTSpan {tspan} at (0,0) size 119x14
+    RenderSVGTSpan {tspan} at (0,32) size 119x14
       RenderSVGInlineText {#text} at (0,32) size 119x14
         chunk 1 text run 1 at (5.00,48.00) startOffset 0 endOffset 23 width 118.73: "it is also not moveable"
 layer at (-5.50,-5.50) size 706x23 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

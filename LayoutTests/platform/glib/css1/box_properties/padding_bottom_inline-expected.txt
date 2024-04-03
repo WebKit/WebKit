@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 756x60 [bgcolor=#00FFFF]
           RenderText {#text} at (475,0) size 144x17
             text run at (475,0) width 144: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
+          RenderInline {TT} at (618,3) size 25x15
             RenderText {#text} at (618,3) size 25x15
               text run at (618,3) width 25: "one"
-          RenderText {#text} at (642,0) size 756x35
+          RenderText {#text} at (0,0) size 756x35
             text run at (642,0) width 114: ", giving it an aqua"
             text run at (0,18) width 252: "background and a 25px bottom padding"
-        RenderText {#text} at (252,18) size 781x53
+        RenderText {#text} at (0,18) size 781x53
           text run at (252,18) width 8: ". "
           text run at (260,18) width 505: "Padding on inline elements does not affect line-height calculations, so all lines in"
           text run at (0,36) width 293: "this element should have the same line-height. "
@@ -39,13 +39,13 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 756x35 [bgcolor=#00FFFF]
           RenderText {#text} at (475,0) size 144x17
             text run at (475,0) width 144: "inline element of class "
-          RenderInline {TT} at (0,0) size 25x15
+          RenderInline {TT} at (618,3) size 25x15
             RenderText {#text} at (618,3) size 25x15
               text run at (618,3) width 25: "two"
-          RenderText {#text} at (642,0) size 756x35
+          RenderText {#text} at (0,0) size 756x35
             text run at (642,0) width 114: ", giving it an aqua"
             text run at (0,18) width 522: "background and no bottom padding, since negative padding values are not allowed"
-        RenderText {#text} at (522,18) size 757x35
+        RenderText {#text} at (0,18) size 757x35
           text run at (522,18) width 8: ". "
           text run at (530,18) width 227: "Padding on inline elements does not"
           text run at (0,36) width 567: "affect line-height calculations, so all lines in this element should have the same line-height."
@@ -53,12 +53,12 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x176
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 161x17
+              RenderInline {STRONG} at (4,4) size 161x17
                 RenderText {#text} at (4,4) size 161x17
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x150
             RenderTableCell {TD} at (0,88) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+              RenderText {#text} at (4,66) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x150 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x72 [bgcolor=#808080]
@@ -68,13 +68,13 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 756x60 [bgcolor=#00FFFF]
                   RenderText {#text} at (475,0) size 144x17
                     text run at (475,0) width 144: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
+                  RenderInline {TT} at (618,3) size 25x15
                     RenderText {#text} at (618,3) size 25x15
                       text run at (618,3) width 25: "one"
-                  RenderText {#text} at (642,0) size 756x35
+                  RenderText {#text} at (0,0) size 756x35
                     text run at (642,0) width 114: ", giving it an aqua"
                     text run at (0,18) width 252: "background and a 25px bottom padding"
-                RenderText {#text} at (252,18) size 749x53
+                RenderText {#text} at (0,18) size 749x53
                   text run at (252,18) width 8: ". "
                   text run at (260,18) width 489: "Padding on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 309: "in this element should have the same line-height. "
@@ -87,13 +87,13 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 756x35 [bgcolor=#00FFFF]
                   RenderText {#text} at (475,0) size 144x17
                     text run at (475,0) width 144: "inline element of class "
-                  RenderInline {TT} at (0,0) size 25x15
+                  RenderInline {TT} at (618,3) size 25x15
                     RenderText {#text} at (618,3) size 25x15
                       text run at (618,3) width 25: "two"
-                  RenderText {#text} at (642,0) size 756x35
+                  RenderText {#text} at (0,0) size 756x35
                     text run at (642,0) width 114: ", giving it an aqua"
                     text run at (0,18) width 522: "background and no bottom padding, since negative padding values are not allowed"
-                RenderText {#text} at (522,18) size 757x35
+                RenderText {#text} at (0,18) size 757x35
                   text run at (522,18) width 8: ". "
                   text run at (530,18) width 227: "Padding on inline elements does not"
                   text run at (0,36) width 567: "affect line-height calculations, so all lines in this element should have the same line-height."

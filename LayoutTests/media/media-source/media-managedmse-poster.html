@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>MSE starts when video has a poster.</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../utilities.js"></script>
+    <script>
+
+    var source;
+    var sourceBuffer;
+    var index;
+    var loader;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function init() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        await loaderPromise(loader);
+        video.disableRemotePlayback = true;
+        video.muted = true;
+        video.autoplay = true;
+        video.poster = "content/test-fragmented-video.png";
+        run('source = new ManagedMediaSource()');
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.timestampOffset = 0.012833333333333334');
+        index = 0;
+        while (loader.mediaSegment(index) != null) {
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(index++))');
+            await waitFor(sourceBuffer,'update');
+        };
+        await testExpectedEventually('video.currentTime', 1, '>=', 5000);
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    };
+    </script>
+</head>
+<body onload="init()">
+    <video playsinline></video>
+</body>
+</html>

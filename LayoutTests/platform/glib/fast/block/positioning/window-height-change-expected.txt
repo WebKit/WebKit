@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
         RenderInline {I} at (0,0) size 755x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+          RenderInline {A} at (212,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
-          RenderText {#text} at (559,0) size 755x35
+          RenderText {#text} at (0,0) size 755x35
             text run at (559,0) width 5: " "
             text run at (563,0) width 192: "positioned blocks don't update"
             text run at (0,18) width 226: "when resizing the window vertically"

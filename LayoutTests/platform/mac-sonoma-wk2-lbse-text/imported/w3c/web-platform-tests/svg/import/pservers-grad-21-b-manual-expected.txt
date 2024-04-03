@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-60,0) size 260x220 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-60,0) size 260x220
+layer at (-60,0) size 260x220 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 260x220
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (-60,0) size 240x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 240x90
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (-60,0) size 240x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 240x90
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (-60,0) size 240x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 240x90
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (-60,0) size 240x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 240x90
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (-60,0) size 240x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 240x90
+layer at (-60,0) size 120x90 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=-60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (60,0) size 120x90
+  RenderSVGRect {rect} at (120,0) size 120x90 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=0.00] [width=120.00] [height=90.00]
+layer at (36,27) size 48x36
+  RenderSVGEllipse {ellipse} at (96,27) size 48x36 [stroke={[type=SOLID] [color=#0000FF]}] [cx=60.00] [cy=45.00] [rx=24.00] [ry=18.00]
+layer at (120,20) size 80x200
+  RenderSVGRect {rect} at (180,20) size 80x200 [stroke={[type=SOLID] [color=#008000]}] [x=120.00] [y=20.00] [width=80.00] [height=200.00]
+layer at (132.31,188.95) size 56x14
+  RenderSVGText {text} at (192,188) size 56x15 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 56x14
+      chunk 1 (middle anchor) text run 1 at (132.32,200.00) startOffset 0 endOffset 9 width 55.37: "Reference"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

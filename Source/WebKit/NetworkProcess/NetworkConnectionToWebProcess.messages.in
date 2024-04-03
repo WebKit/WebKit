@@ -39,6 +39,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (String cookieString, bool didAccessSecureCookies) Synchronous
     SetCookiesFromDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, String cookieString, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
+    CookiesEnabledSync(URL firstParty, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (bool enabled) Synchronous
+    CookiesEnabled(URL firstParty, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (bool enabled)
     CookieRequestHeaderFieldValue(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (String cookieString, bool didAccessSecureCookies) Synchronous
     GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::ApplyTrackingPrevention applyTrackingPrevention, enum:bool WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) -> (Vector<WebCore::Cookie> cookies) Synchronous
     SetRawCookie(struct WebCore::Cookie cookie)
@@ -54,12 +56,13 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     UnsubscribeFromCookieChangeNotifications(String host) AllowedWhenWaitingForSyncReply
 #endif
 
-    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
+    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtensionHandle extensionHandle, String contentType)
     RegisterInternalBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer, std::optional<WebCore::SecurityOriginData> topOrigin)
     RegisterInternalBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
     RegisterInternalBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url, std::optional<WebCore::SecurityOriginData> topOrigin)
+    BlobType(URL url) -> (String result) Synchronous
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
     RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
@@ -76,7 +79,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> ()
     HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)
     RequestStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID, enum:bool WebCore::StorageAccessScope scope) -> (struct WebCore::RequestStorageAccessResult result)
-    StorageAccessQuirkForTopFrameDomain(WebCore::RegistrableDomain topFrameDomain) -> (Vector<WebCore::RegistrableDomain> domains)
+    StorageAccessQuirkForTopFrameDomain(URL topFrameURL) -> (Vector<WebCore::RegistrableDomain> domains)
     RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
 
     AddOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
@@ -118,7 +121,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogOnBehalfOfWebContent(IPC::DataReference logChannel, IPC::DataReference logCategory, IPC::DataReference logString, uint8_t logType, int32_t pid)
+    LogOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
 #endif
 
     AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
@@ -131,6 +134,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
-    InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
-    DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+    [EnabledIf='isWebTransportEnabled()'] InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
+    [EnabledIf='isWebTransportEnabled()'] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+
+    ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 }

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>media-source-video-seek-pause</title>
+        <script src="../video-test.js"></script>
+        <script src="media-source-loader.js"></script>
+        <script>
+var loader;
+var source;
+var sourceBuffer;
+
+function loaderPromise(loader) {
+    return new Promise((resolve, reject) => {
+        loader.onload = resolve;
+        loader.onerror = reject;
+    });
+}
+
+async function startTest()
+{
+    findMediaElement();
+
+    loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+    await loaderPromise(loader);
+
+    source = new MediaSource();
+    run('video.src = URL.createObjectURL(source)');
+    await waitFor(source, 'sourceopen');
+    waitFor(video, 'error').then(failTest);
+
+    run('sourceBuffer = source.addSourceBuffer(loader.type())');
+    run('sourceBuffer.appendBuffer(loader.initSegment())');
+    await waitFor(sourceBuffer, 'update');
+
+    consoleWrite('Append all media segments')
+    for (i = 0; i < loader.mediaSegmentsLength(); i++) {
+        sourceBuffer.appendBuffer(loader.mediaSegment(i));
+        await waitFor(sourceBuffer, 'update', true);
+    }
+
+    consoleWrite("RUN('video.play()')");
+    await video.play();
+    testExpected('video.paused', false);
+    run('video.currentTime = 2');
+    await sleepFor(5);
+    run('video.pause()');
+    await waitForConditionOrTimeout('internals.isPlayerPaused(video)');
+    testExpected('video.paused', true);
+    endTest();
+}
+        </script>
+    </head>
+    <body onload="startTest()">
+        <video controls></video>
+    </body>
+</html>

@@ -28,6 +28,7 @@
 
 #include "DOMPromiseProxy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "FontFace.h"
 #include "FrameDestructionObserverInlines.h"
@@ -84,9 +85,7 @@ FontFaceSet::FontFaceSet(ScriptExecutionContext& context, CSSFontFaceSet& backin
     m_backing->addFontEventClient(*this);
 }
 
-FontFaceSet::~FontFaceSet()
-{
-}
+FontFaceSet::~FontFaceSet() = default;
 
 FontFaceSet::Iterator::Iterator(FontFaceSet& set)
     : m_target(set)

@@ -134,14 +134,17 @@ struct ListResult
         caseSensitive = false;
         memset(&modifiedTime, 0, sizeof(FTPTime));
     }
+
+    std::span<const char> filenameSpan() const { return { filename, filenameLength }; }
+    std::span<const char> linknameSpan() const { return { linkname, linknameLength }; }
     
     bool valid;
     FTPEntryType type;        
     
-    const char* filename;
+    const char* filename; // FIXME: Should be stored as a std::span.
     uint32_t filenameLength;
     
-    const char* linkname;
+    const char* linkname; // FIXME: Should be stored as a std::span.
     uint32_t linknameLength;
     
     String fileSize;      

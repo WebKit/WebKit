@@ -33,11 +33,17 @@
 
 namespace WGSL {
 
+enum class Direction : uint8_t {
+    Input,
+    Output,
+};
+
 class AttributeValidator : public AST::Visitor {
 public:
     AttributeValidator(ShaderModule&);
 
     std::optional<FailedCheck> validate();
+    std::optional<FailedCheck> validateIO();
 
     void visit(AST::Function&) override;
     void visit(AST::Parameter&) override;
@@ -53,6 +59,12 @@ private:
 
     void validateInterpolation(const SourceSpan&, const std::optional<AST::Interpolation>&, const std::optional<unsigned>&);
     void validateInvariant(const SourceSpan&, const std::optional<Builtin>&, bool);
+
+    using Builtins = HashSet<Builtin, WTF::IntHash<Builtin>, WTF::StrongEnumHashTraits<Builtin>>;
+    using Locations = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
+    void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, unsigned, Locations&);
+    void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
 
     template<typename T>
     void update(const SourceSpan&, std::optional<T>&, const T&);
@@ -91,13 +103,13 @@ void AttributeValidator::visit(AST::Function& function)
             continue;
         }
 
-        if (is<AST::StageAttribute>(attribute)) {
-            update(attribute.span(), function.m_stage, downcast<AST::StageAttribute>(attribute).stage());
+        if (auto* stageAttribute = dynamicDowncast<AST::StageAttribute>(attribute)) {
+            update(attribute.span(), function.m_stage, stageAttribute->stage());
             continue;
         }
 
-        if (is<AST::WorkgroupSizeAttribute>(attribute)) {
-            auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute).workgroupSize();
+        if (auto* workgroupSizeAttribute = dynamicDowncast<AST::WorkgroupSizeAttribute>(attribute)) {
+            auto& workgroupSize = workgroupSizeAttribute->workgroupSize();
             const auto& check = [&](AST::Expression* dimension) {
                 if (!dimension)
                     return;
@@ -186,10 +198,17 @@ void AttributeValidator::visit(AST::Variable& variable)
     }();
 
     for (auto& attribute : variable.attributes()) {
-        if (is<AST::BindingAttribute>(attribute)) {
+        if (auto* bindingAttribute = dynamicDowncast<AST::BindingAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@binding attribute must only be applied to resource variables");
-            auto bindingValue = downcast<AST::BindingAttribute>(attribute).binding().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = bindingAttribute->binding().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@binding attribute must only be applied to resource variables");
+                continue;
+            }
+
+            auto bindingValue = constantValue->integerValue();
             if (bindingValue < 0)
                 error(attribute.span(), "@binding value must be non-negative");
             else
@@ -197,10 +216,16 @@ void AttributeValidator::visit(AST::Variable& variable)
             continue;
         }
 
-        if (is<AST::GroupAttribute>(attribute)) {
+        if (auto* groupAttribute = dynamicDowncast<AST::GroupAttribute>(attribute)) {
             if (!isResource)
                 error(attribute.span(), "@group attribute must only be applied to resource variables");
-            auto groupValue = downcast<AST::GroupAttribute>(attribute).group().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = groupAttribute->group().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@group attribute must only be applied to resource variables");
+                continue;
+            }
+            auto groupValue = constantValue->integerValue();
             if (groupValue < 0)
                 error(attribute.span(), "@group value must be non-negative");
             else
@@ -208,11 +233,17 @@ void AttributeValidator::visit(AST::Variable& variable)
             continue;
         }
 
-        if (is<AST::IdAttribute>(attribute)) {
-            auto& idExpression = downcast<AST::IdAttribute>(attribute).value();
+        if (auto* idAttribute = dynamicDowncast<AST::IdAttribute>(attribute)) {
+            auto& idExpression = idAttribute->value();
             if (variable.flavor() != AST::VariableFlavor::Override || !satisfies(variable.storeType(), Constraints::Scalar))
                 error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
-            auto idValue = idExpression.constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22binding%22
+            auto& constantValue = idExpression.constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@id attribute must only be applied to override variables of scalar type");
+                continue;
+            }
+            auto idValue = constantValue->integerValue();
             if (idValue < 0)
                 error(attribute.span(), "@id value must be non-negative");
             else {
@@ -229,6 +260,9 @@ void AttributeValidator::visit(AST::Variable& variable)
 
         error(attribute.span(), "invalid attribute for variable declaration");
     }
+
+    if (isResource && (!variable.m_group || !variable.m_binding))
+        error(variable.span(), "resource variables require @group and @binding attributes");
 }
 
 void AttributeValidator::visit(AST::Structure& structure)
@@ -295,24 +329,40 @@ void AttributeValidator::visit(AST::StructureMember& member)
         if (parseLocation(nullptr, member.m_location, attribute, member.type().inferredType()))
             continue;
 
-        if (is<AST::SizeAttribute>(attribute)) {
+        if (auto* sizeAttribute = dynamicDowncast<AST::SizeAttribute>(attribute)) {
             // FIXME: check that the member type must have creation-fixed footprint.
             m_hasSizeOrAlignmentAttributes = true;
-            auto sizeValue = downcast<AST::SizeAttribute>(attribute).size().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
+            auto& constantValue = sizeAttribute->size().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@size constant value is not found");
+                continue;
+            }
+            auto sizeValue = constantValue->integerValue();
             if (sizeValue < 0)
                 error(attribute.span(), "@size value must be non-negative");
-            else if (sizeValue < member.type().inferredType()->size())
+            else if (m_errors.isEmpty() && sizeValue < member.type().inferredType()->size()) {
+                // We can't call Type::size() if we already have errors, as we might
+                // try to read the size of a struct, which we will not have computed
+                // if we already encountered errors
                 error(attribute.span(), "@size value must be at least the byte-size of the type of the member");
+            }
             update(attribute.span(), member.m_size, static_cast<unsigned>(sizeValue));
             continue;
         }
 
-        if (is<AST::AlignAttribute>(attribute)) {
+        if (auto* alignAttribute = dynamicDowncast<AST::AlignAttribute>(attribute)) {
             m_hasSizeOrAlignmentAttributes = true;
-            auto alignmentValue = downcast<AST::AlignAttribute>(attribute).alignment().constantValue()->integerValue();
+            // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;attribute=%22align%22
+            auto constantValue = alignAttribute->alignment().constantValue();
+            if (!constantValue) {
+                error(attribute.span(), "@align constant value does not exist");
+                continue;
+            }
+            auto alignmentValue = constantValue->integerValue();
             auto isPowerOf2 = !(alignmentValue & (alignmentValue - 1));
-            if (alignmentValue < 0)
-                error(attribute.span(), "@align value must be non-negative");
+            if (alignmentValue < 1)
+                error(attribute.span(), "@align value must be positive");
             else if (!isPowerOf2)
                 error(attribute.span(), "@align value must be a power of two");
             // FIXME: validate that alignment is a multiple of RequiredAlignOf(T,C)
@@ -331,19 +381,21 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
 bool AttributeValidator::parseBuiltin(AST::Function* function, std::optional<Builtin>& builtin, AST::Attribute& attribute)
 {
-    if (!is<AST::BuiltinAttribute>(attribute))
+    auto* builtinAttribute = dynamicDowncast<AST::BuiltinAttribute>(attribute);
+    if (!builtinAttribute)
         return false;
     if (function && !function->stage())
         error(attribute.span(), "@builtin is not valid for non-entry point function types");
-    update(attribute.span(), builtin, downcast<AST::BuiltinAttribute>(attribute).builtin());
+    update(attribute.span(), builtin, builtinAttribute->builtin());
     return true;
 }
 
 bool AttributeValidator::parseInterpolate(std::optional<AST::Interpolation>& interpolation, AST::Attribute& attribute)
 {
-    if (!is<AST::InterpolateAttribute>(attribute))
+    auto* interpolateAttribute = dynamicDowncast<AST::InterpolateAttribute>(attribute);
+    if (!interpolateAttribute)
         return false;
-    update(attribute.span(), interpolation, downcast<AST::InterpolateAttribute>(attribute).interpolation());
+    update(attribute.span(), interpolation, interpolateAttribute->interpolation());
     return true;
 }
 
@@ -357,7 +409,8 @@ bool AttributeValidator::parseInvariant(bool& invariant, AST::Attribute& attribu
 
 bool AttributeValidator::parseLocation(AST::Function* function, std::optional<unsigned>& location, AST::Attribute& attribute, const Type* declarationType)
 {
-    if (!is<AST::LocationAttribute>(attribute))
+    auto* locationAttribute = dynamicDowncast<AST::LocationAttribute>(attribute);
+    if (!locationAttribute)
         return false;
     if (function && !function->stage())
         error(attribute.span(), "@location is not valid for non-entry point function types");
@@ -373,7 +426,13 @@ bool AttributeValidator::parseLocation(AST::Function* function, std::optional<un
     if (!isNumeric && !isNumericVector)
         error(attribute.span(), "@location must only be applied to declarations of numeric scalar or numeric vector type");
 
-    auto locationValue = downcast<AST::LocationAttribute>(attribute).location().constantValue()->integerValue();
+    auto& constantValue = locationAttribute->location().constantValue();
+    // https://gpuweb.github.io/cts/standalone/?q=webgpu:shader,validation,parse,attribute:expressions:value=%22override%22;*
+    if (!constantValue) {
+        error(attribute.span(), "@location constant value is missing");
+        return false;
+    }
+    auto locationValue = constantValue->integerValue();
     if (locationValue < 0)
         error(attribute.span(), "@location value must be non-negative");
     else
@@ -392,6 +451,7 @@ void AttributeValidator::validateInvariant(const SourceSpan& span, const std::op
     if (invariant && (!builtin || *builtin != Builtin::Position))
         error(span, "@invariant is only allowed on declarations that have a @builtin(position) attribute");
 }
+
 
 template<typename T>
 void AttributeValidator::update(const SourceSpan& span, std::optional<T>& destination, const T& source)
@@ -416,9 +476,171 @@ void AttributeValidator::error(const SourceSpan& span, Arguments&&... arguments)
     m_errors.append({ makeString(std::forward<Arguments>(arguments)...), span });
 }
 
+std::optional<FailedCheck> AttributeValidator::validateIO()
+{
+    for (auto& entryPoint : m_shaderModule.callGraph().entrypoints()) {
+        auto& function = entryPoint.function;
+        Builtins builtins;
+        Locations locations;
+        for (auto& parameter : function.parameters()) {
+            const auto& span = parameter.span();
+            const auto* type = parameter.typeName().inferredType();
+
+            if (auto builtin = parameter.builtin()) {
+                validateBuiltinIO(span, type, entryPoint.stage, *builtin, Direction::Input, builtins);
+                continue;
+            }
+
+            if (auto location = parameter.location()) {
+                validateLocationIO(span, type, entryPoint.stage, *location, locations);
+                continue;
+            }
+
+            if (auto* structType = std::get_if<Types::Struct>(type)) {
+                validateStructIO(entryPoint.stage, *structType, Direction::Input, builtins, locations);
+                continue;
+            }
+
+            error(span, "missing entry point IO attribute on parameter");
+        }
+
+        if (!function.maybeReturnType()) {
+            if (entryPoint.stage == ShaderStage::Vertex)
+                error(function.span(), "a vertex shader must include the 'position' builtin in its return type");
+            continue;
+        }
+
+        builtins.clear();
+        locations.clear();
+        const auto& span = function.maybeReturnType()->span();
+        const auto* type = function.maybeReturnType()->inferredType();
+
+        if (auto builtin = function.returnTypeBuiltin())
+            validateBuiltinIO(span, type, entryPoint.stage, *builtin, Direction::Output, builtins);
+        else if (auto location = function.returnTypeLocation())
+            validateLocationIO(span, type, entryPoint.stage, *location, locations);
+        else if (auto* structType = std::get_if<Types::Struct>(type))
+            validateStructIO(entryPoint.stage, *structType, Direction::Output, builtins, locations);
+        else {
+            error(span, "missing entry point IO attribute on return type");
+            continue;
+        }
+
+        if (entryPoint.stage == ShaderStage::Vertex && !builtins.contains(Builtin::Position))
+            error(span, "a vertex shader must include the 'position' builtin in its return type");
+    }
+
+    if (m_errors.isEmpty())
+        return std::nullopt;
+    return FailedCheck { WTFMove(m_errors), { } };
+}
+
+void AttributeValidator::validateBuiltinIO(const SourceSpan& span, const Type* type, ShaderStage stage, Builtin builtin, Direction direction, Builtins& builtins)
+{
+
+
+#define TYPE_CHECK(__type) \
+    type != m_shaderModule.types().__type##Type(), *m_shaderModule.types().__type##Type()
+
+#define VEC_CHECK(__count, __elementType) \
+    auto* vector = std::get_if<Types::Vector>(type); !vector || vector->size != __count || vector->element != m_shaderModule.types().__elementType##Type(), "vec" #__count "<" #__elementType ">"
+
+#define CASE_(__case, __typeCheck, __type) \
+case Builtin::__case: \
+    if (__typeCheck)  { \
+        error(span, "store type of @builtin(", toString(Builtin::__case), ") must be '", __type, "'"); \
+        return; \
+    } \
+
+#define CASE(__case, __typeCheck, __stage, __direction) \
+    CASE_(__case, __typeCheck); \
+    if (stage != ShaderStage::__stage || direction != Direction::__direction) { \
+        error(span, "@builtin(", toString(Builtin::__case), ") cannot be used for ", toString(stage), " shader ", direction == Direction::Input ? "input" : "output"); \
+        return; \
+    } \
+    break;
+
+#define CASE2(__case, __typeCheck, __stage1, __direction1, __stage2, __direction2) \
+    CASE_(__case, __typeCheck); \
+    if ((stage != ShaderStage::__stage1 || direction != Direction::__direction1) && (stage != ShaderStage::__stage2 || direction != Direction::__direction2)) { \
+        error(span, "@builtin(", toString(Builtin::__case), ") cannot be used for ", toString(stage), " shader ", direction == Direction::Input ? "input" : "output"); \
+        return; \
+    } \
+    break;
+
+    switch (builtin) {
+        CASE(FragDepth, TYPE_CHECK(f32), Fragment, Output)
+        CASE(FrontFacing, TYPE_CHECK(bool), Fragment, Input)
+        CASE(GlobalInvocationId, VEC_CHECK(3, u32), Compute, Input)
+        CASE(InstanceIndex, TYPE_CHECK(u32), Vertex, Input)
+        CASE(LocalInvocationId, VEC_CHECK(3, u32), Compute, Input)
+        CASE(LocalInvocationIndex, TYPE_CHECK(u32), Compute, Input)
+        CASE(NumWorkgroups, VEC_CHECK(3, u32), Compute, Input)
+        CASE(SampleIndex, TYPE_CHECK(u32), Fragment, Input)
+        CASE(VertexIndex, TYPE_CHECK(u32), Vertex, Input)
+        CASE(WorkgroupId, VEC_CHECK(3, u32), Compute, Input)
+        CASE2(SampleMask, TYPE_CHECK(u32), Fragment, Input, Fragment, Output)
+        CASE2(Position, VEC_CHECK(4, f32), Vertex, Output, Fragment, Input)
+    }
+
+    auto result = builtins.add(builtin);
+    if (!result.isNewEntry)
+        error(span, "@builtin(", toString(builtin), ") appears multiple times as pipeline input");
+}
+
+void AttributeValidator::validateLocationIO(const SourceSpan& span, const Type* type, ShaderStage stage, unsigned location, Locations& locations)
+{
+    if (stage == ShaderStage::Compute) {
+        error(span, "@location cannot be used by compute shaders");
+        return;
+    }
+
+    if (!satisfies(type, Constraints::Number)) {
+        auto* vector = std::get_if<Types::Vector>(type);
+        if (!vector || !satisfies(vector->element, Constraints::Number)) {
+            error(span, "cannot apply @location to declaration of type '", *type, "'");
+            return;
+        }
+    }
+
+    auto result = locations.add(location);
+    if (!result.isNewEntry)
+        error(span, "@location(", String::number(location), ") appears multiple times");
+}
+
+void AttributeValidator::validateStructIO(ShaderStage stage, const Types::Struct& structType, Direction direction, Builtins& builtins, Locations& locations)
+{
+    for (auto& member : structType.structure.members()) {
+        const auto& span = member.span();
+        const auto* type = member.type().inferredType();
+
+        if (auto builtin = member.builtin()) {
+            validateBuiltinIO(span, type, stage, *builtin, direction, builtins);
+            continue;
+        }
+
+        if (auto location = member.location()) {
+            validateLocationIO(span, type, stage, *location, locations);
+            continue;
+        }
+
+        if (auto* structType = std::get_if<Types::Struct>(member.type().inferredType())) {
+            error(span, "nested structures cannot be used for entry point IO");
+            continue;
+        }
+
+        error(span, "missing entry point IO attribute");
+    }
+}
+
 std::optional<FailedCheck> validateAttributes(ShaderModule& shaderModule)
 {
     return AttributeValidator(shaderModule).validate();
+}
+
+std::optional<FailedCheck> validateIO(ShaderModule& shaderModule)
+{
+    return AttributeValidator(shaderModule).validateIO();
 }
 
 } // namespace WGSL

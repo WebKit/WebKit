@@ -39,11 +39,13 @@
 #include "CSSValuePool.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleFontSizeFunctions.h"
 #include "StylePropertyShorthand.h"
 
@@ -142,22 +144,32 @@ void Builder::applyProperties(int firstProperty, int lastProperty)
 template<Builder::CustomPropertyCycleTracking trackCycles>
 inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
 {
-    for (int id = firstProperty; id <= lastProperty; ++id) {
-        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!m_cascade.hasNormalProperty(propertyID))
-            continue;
+    auto applyProperty = [&](size_t index) ALWAYS_INLINE_LAMBDA {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(index);
         ASSERT(propertyID != CSSPropertyCustom);
         auto& property = m_cascade.normalProperty(propertyID);
 
-        if (trackCycles == CustomPropertyCycleTracking::Enabled) {
+        if constexpr (trackCycles == CustomPropertyCycleTracking::Enabled) {
             m_state.m_inProgressProperties.set(propertyID);
             applyCascadeProperty(property);
             m_state.m_inProgressProperties.clear(propertyID);
-            continue;
+            return;
         }
 
         // If we don't have any custom properties, then there can't be any cycles.
         applyCascadeProperty(property);
+    };
+
+    if (m_cascade.propertyIsPresent().size() == static_cast<size_t>(lastProperty + 1)) {
+        m_cascade.propertyIsPresent().forEachSetBit(firstProperty, applyProperty);
+        return;
+    }
+
+    for (int id = firstProperty; id <= lastProperty; ++id) {
+        CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
+        if (!m_cascade.hasNormalProperty(propertyID))
+            continue;
+        applyProperty(id);
     }
 }
 
@@ -289,8 +301,14 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         registeredCustomProperty = m_state.document().customPropertyRegistry().get(name);
     }
 
-    bool isInherit = valueID == CSSValueInherit;
-    bool isInitial = valueID == CSSValueInitial;
+    auto valueType = [&] {
+        if (valueID == CSSValueInherit)
+            return ApplyValueType::Inherit;
+        if (valueID == CSSValueInitial)
+            return ApplyValueType::Initial;
+        return ApplyValueType::Value;
+    }();
+
     bool isUnset = valueID == CSSValueUnset;
     bool isRevert = valueID == CSSValueRevert;
     bool isRevertLayer = valueID == CSSValueRevertLayer;
@@ -336,20 +354,15 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     if (isUnset) {
         // https://drafts.csswg.org/css-cascade-4/#inherit-initial
         // The unset CSS-wide keyword acts as either inherit or initial, depending on whether the property is inherited or not.
-        if (isInheritedProperty())
-            isInherit = true;
-        else
-            isInitial = true;
+        valueType = isInheritedProperty() ? ApplyValueType::Inherit : ApplyValueType::Initial;
     }
-
-    ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
     if (!m_state.applyPropertyToRegularStyle() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
 
-    if (isInherit && !isInheritedProperty())
+    if (valueType == ApplyValueType::Inherit && !isInheritedProperty())
         style.setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
@@ -365,7 +378,57 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 #endif
 
-    BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), isInitial, isInherit, registeredCustomProperty);
+    if (customPropertyValue) {
+        ASSERT(id == CSSPropertyCustom);
+        applyCustomPropertyValue(*customPropertyValue, valueType, registeredCustomProperty);
+        return;
+    }
+
+    BuilderGenerated::applyProperty(id, m_state, valueToApply.get(), valueType);
+}
+
+void Builder::applyCustomPropertyValue(const CSSCustomPropertyValue& value, ApplyValueType valueType, const CSSRegisteredCustomProperty* registered)
+{
+    auto applyValue = [&](auto& valueToApply) {
+        ASSERT(valueToApply.isResolved());
+
+        bool isInherited = !registered || registered->inherits;
+        state().style().setCustomPropertyValue(valueToApply, isInherited);
+    };
+
+    auto applyInitial = [&] {
+        if (registered && registered->initialValue) {
+            applyValue(*registered->initialValue);
+            return;
+        }
+        auto invalid = CSSCustomPropertyValue::createWithID(value.name(), CSSValueInvalid);
+        applyValue(invalid.get());
+    };
+
+    auto applyInherit = [&] {
+        auto* parentValue = state().parentStyle().inheritedCustomProperties().get(value.name());
+        if (parentValue && !(registered && !registered->inherits)) {
+            applyValue(const_cast<CSSCustomPropertyValue&>(*parentValue));
+            return;
+        }
+        if (auto* nonInheritedParentValue = state().parentStyle().nonInheritedCustomProperties().get(value.name())) {
+            applyValue(const_cast<CSSCustomPropertyValue&>(*nonInheritedParentValue));
+            return;
+        }
+        applyInitial();
+    };
+
+    switch (valueType) {
+    case ApplyValueType::Initial:
+        applyInitial();
+        break;
+    case ApplyValueType::Inherit:
+        applyInherit();
+        break;
+    case ApplyValueType::Value:
+        applyValue(value);
+        break;
+    };
 }
 
 Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSValue& value)
@@ -387,6 +450,48 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
         return CSSPrimitiveValue::create(CSSValueUnset);
 
     return *variableValue;
+}
+
+RefPtr<const CSSCustomPropertyValue> Builder::resolveCustomPropertyForContainerQueries(const CSSCustomPropertyValue& value)
+{
+    if (value.containsCSSWideKeyword()) {
+        auto name = value.name();
+        auto* registered = m_state.document().customPropertyRegistry().get(name);
+        bool isInherited = !registered || registered->inherits;
+
+        auto initial = [&]() -> RefPtr<const CSSCustomPropertyValue> {
+            if (registered)
+                return registered->initialValue;
+            return nullptr;
+        };
+
+        auto inherit = [&]() -> RefPtr<const CSSCustomPropertyValue> {
+            auto parentValue = isInherited
+                ? m_state.parentStyle().inheritedCustomProperties().get(name)
+                : m_state.parentStyle().nonInheritedCustomProperties().get(name);
+            if (parentValue)
+                return parentValue;
+
+            return initial();
+        };
+
+        auto valueId = std::get<CSSValueID>(value.value());
+        switch (valueId) {
+        case CSSValueInitial:
+            return initial();
+        case CSSValueInherit:
+            return inherit();
+        case CSSValueUnset:
+            return isInherited ? inherit() : initial();
+        case CSSValueRevert:
+        case CSSValueRevertLayer:
+            return nullptr;
+        default:
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    }
+    return resolveCustomPropertyValue(const_cast<CSSCustomPropertyValue&>(value));
 }
 
 RefPtr<CSSCustomPropertyValue> Builder::resolveCustomPropertyValue(CSSCustomPropertyValue& value)

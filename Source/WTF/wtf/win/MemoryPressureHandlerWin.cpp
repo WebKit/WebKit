@@ -38,12 +38,12 @@ void MemoryPressureHandler::platformInitialize()
 
 void MemoryPressureHandler::windowsMeasurementTimerFired()
 {
-    setMemoryPressureStatus(MemoryPressureStatus::Normal);
+    setMemoryPressureStatus(SystemMemoryPressureStatus::Normal);
 
     BOOL memoryLow;
 
     if (QueryMemoryResourceNotification(m_lowMemoryHandle.get(), &memoryLow) && memoryLow) {
-        setMemoryPressureStatus(MemoryPressureStatus::SystemCritical);
+        setMemoryPressureStatus(SystemMemoryPressureStatus::Critical);
         releaseMemory(Critical::Yes);
         return;
     }
@@ -60,7 +60,7 @@ void MemoryPressureHandler::windowsMeasurementTimerFired()
     const int maxMemoryUsageBytes = 0.9 * 1024 * 1024 * 1024;
 
     if (counters.PrivateUsage > maxMemoryUsageBytes) {
-        setMemoryPressureStatus(MemoryPressureStatus::ProcessLimitCritical);
+        didExceedProcessMemoryLimit(ProcessMemoryLimit::Critical);
         releaseMemory(Critical::Yes);
     }
 #endif

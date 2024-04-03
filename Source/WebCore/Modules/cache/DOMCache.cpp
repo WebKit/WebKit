@@ -337,7 +337,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 }
 
                 if (auto* chunk = result.returnValue())
-                    data.append(chunk->data(), chunk->size());
+                    data.append(*chunk);
                 else
                     taskHandler->addResponseBody(recordPosition, response, data.takeAsContiguous());
             });
@@ -416,7 +416,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
             }
 
             if (auto* chunk = result.returnValue())
-                data.append(chunk->data(), chunk->size());
+                data.append(*chunk);
             else
                 this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { data.takeAsContiguous() });
         });

@@ -46,11 +46,21 @@ MediaSession& NavigatorMediaSession::mediaSession(Navigator& navigator)
     return NavigatorMediaSession::from(navigator)->mediaSession();
 }
 
+RefPtr<MediaSession> NavigatorMediaSession::mediaSessionIfExists(Navigator& navigator)
+{
+    return NavigatorMediaSession::from(navigator)->mediaSessionIfExists();
+}
+
 MediaSession& NavigatorMediaSession::mediaSession()
 {
     if (!m_mediaSession)
         m_mediaSession = MediaSession::create(m_navigator);
     return *m_mediaSession;
+}
+
+RefPtr<MediaSession> NavigatorMediaSession::mediaSessionIfExists()
+{
+    return m_mediaSession;
 }
 
 NavigatorMediaSession* NavigatorMediaSession::from(Navigator& navigator)
@@ -64,9 +74,9 @@ NavigatorMediaSession* NavigatorMediaSession::from(Navigator& navigator)
     return supplement;
 }
 
-const char* NavigatorMediaSession::supplementName()
+ASCIILiteral NavigatorMediaSession::supplementName()
 {
-    return "NavigatorMediaSession";
+    return "NavigatorMediaSession"_s;
 }
 
 }

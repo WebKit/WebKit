@@ -1,8 +1,8 @@
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
     if (PORT STREQUAL "WPE")
-        find_package(WPEBackend_fdo 1.9.0)
-        if ((NOT WPEBACKEND_FDO_FOUND) OR WPEBACKEND_FDO_AUDIO_EXTENSION STREQUAL "WPEBACKEND_FDO_AUDIO_EXTENSION-NOTFOUND")
+        find_package(WPEBackendFDO 1.9.0)
+        if ((NOT WPEBackendFDO_FOUND) OR (NOT WPEBackendFDO_AUDIO_EXTENSION))
             message(WARNING "WPEBackend-fdo audio extension not found. Disabling external audio rendering support")
             SET_AND_EXPOSE_TO_BUILD(USE_WPEBACKEND_FDO_AUDIO_EXTENSION FALSE)
         else ()

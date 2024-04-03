@@ -3,7 +3,7 @@ function assertSyntaxError(code) {
         eval(code);
         throw new Error("Should throw SyntaxError, but executed code without throwing");
     } catch(e) {
-        if (!e instanceof SyntaxError)
+        if (!(e instanceof SyntaxError))
             throw new Error("Should throw SyntaxError, but threw " + e);
     }
 }

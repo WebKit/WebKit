@@ -53,7 +53,7 @@ public:
     CALayer *layerForID(WebCore::PlatformLayerIdentifier) const;
     CALayer *rootLayer() const;
 
-    RemoteLayerTreeDrawingAreaProxy& drawingArea() const { return *m_drawingArea; }
+    RemoteLayerTreeDrawingAreaProxy& drawingArea() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
@@ -86,15 +86,13 @@ public:
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
     bool replayDynamicContentScalingDisplayListsIntoBackingStore() const;
-    bool css3DTransformInteroperabilityEnabled() const;
     bool threadedAnimationResolutionEnabled() const;
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionIDs() const { return m_overlayRegionIDs; }
-    void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
-#endif
+
+    bool cssUnprefixedBackdropFilterEnabled() const;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds acceleratedTimelineTimeOrigin() const;
+    MonotonicTime animationCurrentTime() const;
 #endif
 
     void remotePageProcessCrashed(WebCore::ProcessIdentifier);
@@ -107,9 +105,9 @@ private:
 
     void layerWillBeRemoved(WebCore::ProcessIdentifier, WebCore::PlatformLayerIdentifier);
 
-    RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType() const;
+    LayerContentsType layerContentsType() const;
 
-    RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
+    WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
     HashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;

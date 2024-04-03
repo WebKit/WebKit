@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2021 Igalia S.L
+ *  Copyright (C) 2024 Alexander M (webkit@sata.lol)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,11 @@
 
 namespace WebCore {
 
+enum class MediaSessionGLibMprisRegistrationEligiblilty : uint8_t {
+    Eligible,
+    NotEligible,
+};
+
 class MediaSessionManagerGLib;
 
 class MediaSessionGLib {
@@ -48,20 +54,43 @@ public:
     void updateNowPlaying(NowPlayingInfo&);
     void playbackStatusChanged(PlatformMediaSession&);
 
+    void unregisterMprisSession();
+
+    using MprisRegistrationEligiblilty = MediaSessionGLibMprisRegistrationEligiblilty;
+    void setMprisRegistrationEligibility(MprisRegistrationEligiblilty eligibility) { m_registrationEligibility = eligibility; }
+    MprisRegistrationEligiblilty mprisRegistrationEligibility() const { return m_registrationEligibility; }
 private:
     void emitPropertiesChanged(GVariant*);
     std::optional<NowPlayingInfo> nowPlayingInfo();
-    void ensureMprisSessionRegistered();
+    bool ensureMprisSessionRegistered();
 
     MediaSessionIdentifier m_identifier;
     MediaSessionManagerGLib& m_manager;
     GRefPtr<GDBusConnection> m_connection;
+    MprisRegistrationEligiblilty m_registrationEligibility { MprisRegistrationEligiblilty::NotEligible };
     String m_instanceId;
     unsigned m_ownerId { 0 };
     unsigned m_rootRegistrationId { 0 };
     unsigned m_playerRegistrationId { 0 };
 };
 
+String convertEnumerationToString(MediaSessionGLib::MprisRegistrationEligiblilty);
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::MediaSessionGLib::MprisRegistrationEligiblilty> {
+    static String toString(const WebCore::MediaSessionGLib::MprisRegistrationEligiblilty state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+} // namespace WTF
 
 #endif // USE(GLIB) && ENABLE(MEDIA_SESSION)

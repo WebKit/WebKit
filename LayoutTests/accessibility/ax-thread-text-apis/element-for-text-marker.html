@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- Near-copy of mac/element-for-text-marker.html, either this one or the other should be removed after AccessibilityThreadTextApisEnabled is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+text here
+<div id="text1">text block</div>
+text here
+
+<script>
+if (window.accessibilityController) {
+    let testOutput = "This tests the text marker system will return the correct element when given a text marker.\n\n";
+
+    var text = accessibilityController.accessibleElementById("text1").childAtIndex(0);
+
+    // Check that we can get the start marker for this element's range.
+    var range = text.textMarkerRangeForElement(text);
+    testOutput += expect("text.textMarkerRangeLength(range)", "10");
+    var start = text.startTextMarkerForTextMarkerRange(range);
+
+    // Check that the start marker will give us the same element that we started with.
+    testOutput += expect("text.accessibilityElementForTextMarker(start).isEqual(text)", "true");
+
+    // Get the end marker and check that it gives us the same element.
+    var end = text.endTextMarkerForTextMarkerRange(range);
+    testOutput += expect("text.accessibilityElementForTextMarker(end).isEqual(text)", "true");
+
+    // Make a marker range out of the start and end markers and check the length.
+    var newRange = text.textMarkerRangeForMarkers(start, end);
+    testOutput += expect("text.textMarkerRangeLength(newRange)", "10");
+
+    // And make sure it equals the same marker range we started with
+    testOutput += expect("newRange.isEqual(range)", "true");
+
+    debug(testOutput);
+}
+</script>
+</body>
+</html>

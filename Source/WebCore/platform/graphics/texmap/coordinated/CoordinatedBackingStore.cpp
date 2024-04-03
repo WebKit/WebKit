@@ -57,7 +57,19 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
             m_texture->reset(update.tileRect.size(), flags);
 
         update.buffer->waitUntilPaintingComplete();
-        m_texture->updateContents(update.buffer->data(), update.sourceRect, update.bufferOffset, update.buffer->stride());
+
+#if USE(SKIA)
+        if (update.buffer->isBackedByOpenGL()) {
+            auto& buffer = static_cast<Nicosia::AcceleratedBuffer&>(*update.buffer);
+            m_texture->copyFromExternalTexture(buffer.textureID(), update.sourceRect, toIntSize(update.bufferOffset));
+            update.buffer = nullptr;
+            continue;
+        }
+#endif
+
+        ASSERT(!update.buffer->isBackedByOpenGL());
+        auto& buffer = static_cast<Nicosia::UnacceleratedBuffer&>(*update.buffer);
+        m_texture->updateContents(buffer.data(), update.sourceRect, update.bufferOffset, buffer.stride());
         update.buffer = nullptr;
     }
 }

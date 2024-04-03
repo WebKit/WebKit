@@ -73,7 +73,7 @@ private:
         vector.append(0x6);
         auto oidBytes = bytes();
         vector.append(oidBytes.size());
-        vector.append(oidBytes.data(), oidBytes.size());
+        vector.append(std::span { oidBytes });
     }
     std::array<uint8_t, 9> bytes() const
     {

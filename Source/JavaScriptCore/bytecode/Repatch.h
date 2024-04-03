@@ -31,6 +31,7 @@
 namespace JSC {
 
 class CallLinkInfo;
+class DirectCallLinkInfo;
 class OptimizingCallLinkInfo;
 class StructureStubInfo;
 
@@ -84,10 +85,9 @@ void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIde
 void repatchCheckPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, StructureStubInfo&);
 void repatchSetPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, Structure*, CacheableIdentifier, StructureStubInfo&);
 void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, StructureStubInfo&, bool wasFound);
-void linkMonomorphicCall(VM&, CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, CodePtr<JSEntryPtrTag>);
-void linkDirectCall(CallFrame*, OptimizingCallLinkInfo&, CodeBlock*, CodePtr<JSEntryPtrTag>);
-void unlinkCall(VM&, CallLinkInfo&);
-void linkPolymorphicCall(JSGlobalObject*, JSCell*, CallFrame*, CallLinkInfo&, CallVariant);
+void linkMonomorphicCall(VM&, JSCell*, CallLinkInfo&, CodeBlock*, JSObject* callee, CodePtr<JSEntryPtrTag>);
+void linkDirectCall(DirectCallLinkInfo&, CodeBlock*, CodePtr<JSEntryPtrTag>);
+void linkPolymorphicCall(VM&, JSCell*, CallFrame*, CallLinkInfo&, CallVariant);
 void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
 void resetPutBy(CodeBlock*, StructureStubInfo&, PutByKind);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
@@ -99,6 +99,7 @@ void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
 
 void repatchGetBySlowPathCall(CodeBlock*, StructureStubInfo&, GetByKind);
 void repatchPutBySlowPathCall(CodeBlock*, StructureStubInfo&, PutByKind);
+void repatchInBySlowPathCall(CodeBlock*, StructureStubInfo&, InByKind);
 
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, CodePtr<CFunctionPtrTag> newCalleeFunction);
 CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind, JSObject* callee);

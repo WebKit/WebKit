@@ -110,9 +110,9 @@ void main()
     my_FragColor = texture(tex, texCoord);
 })";
 
-    std::array<GLColor, kWidth *kHeight> redColor = {
+    std::array<GLColor, kWidth * kHeight> redColor = {
         {GLColor::red, GLColor::red, GLColor::red, GLColor::red}};
-    std::array<GLColor, kWidth *kHeight> greenColor = {
+    std::array<GLColor, kWidth * kHeight> greenColor = {
         {GLColor::green, GLColor::green, GLColor::green, GLColor::green}};
 
     // Create a red texture and bind to texture unit 0
@@ -137,7 +137,7 @@ void main()
 
     GLProgram program;
     program.makeRaster(vertString, fragString);
-    ASSERT_NE(0u, program.get());
+    ASSERT_NE(0u, program);
     glUseProgram(program);
 
     GLint location = glGetUniformLocation(program, "tex");

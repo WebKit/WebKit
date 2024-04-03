@@ -61,6 +61,9 @@ public:
     {
         return static_cast<LocalDOMWindow&>(Base::wrapped());
     }
+
+    Ref<LocalDOMWindow> protectedWrapped() const;
+
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance;
 protected:
@@ -98,6 +101,8 @@ private:
     }
 
     void finishCreation(JSC::VM&);
+public:
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSLocalDOMWindowPrototype, JSLocalDOMWindowPrototype::Base);
 

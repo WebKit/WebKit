@@ -35,6 +35,8 @@ const MQ::FeatureSchema& inlineSize();
 const MQ::FeatureSchema& blockSize();
 const MQ::FeatureSchema& aspectRatio();
 const MQ::FeatureSchema& orientation();
+const MQ::FeatureSchema& style();
+
 };
 
 }

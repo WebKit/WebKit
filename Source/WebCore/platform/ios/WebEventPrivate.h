@@ -25,18 +25,17 @@
 
 #pragma once
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(BROWSERENGINEKIT)
 
-#import "WebSEDefinitions.h"
 #import <WebCore/WebEvent.h>
 
-@class WebSEKeyEvent;
+@class BEKeyEntry;
 
-@interface WebEvent (WebSEKeyEventSupport)
+@interface WebEvent (BEKeyEntrySupport)
 
-- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event;
-@property (nonatomic, readonly) WebSEKeyEvent *originalKeyEvent;
+- (instancetype)initWithKeyEntry:(BEKeyEntry *)event;
+@property (nonatomic, readonly) BEKeyEntry *originalKeyEntry;
 
 @end
 
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#endif // USE(BROWSERENGINEKIT)

@@ -535,7 +535,7 @@ TEST(WKWebExtensionAPIWindows, CreateIncognitoWithoutPrivateAccess)
         @"};",
 
         @"const window = await browser.windows.create(windowOptions);",
-        @"browser.test.assertEq(window, undefined, 'The window should be created but undefined without access');",
+        @"browser.test.assertEq(window, null, 'The window should be created but null without access');",
 
         @"browser.test.notifyPass();"
     ]);
@@ -652,6 +652,22 @@ TEST(WKWebExtensionAPIWindows, Remove)
     ]);
 
     Util::loadAndRunExtension(windowsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIWindows, RemoveUnsupported)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.windows.remove, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.windows.remove"];
+
+    [manager loadAndRun];
 }
 
 #endif // PLATFORM(MAC)

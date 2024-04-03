@@ -26,6 +26,10 @@ int main(int argc, char * argv[])
     memset(&rgb, 0, sizeof(rgb));
 
     avifImage * image = avifImageCreate(128, 128, 8, AVIF_PIXEL_FORMAT_YUV444); // these values dictate what goes into the final AVIF
+    if (!image) {
+        fprintf(stderr, "Out of memory\n");
+        goto cleanup;
+    }
     // Configure image here: (see avif/avif.h)
     // * colorPrimaries
     // * transferCharacteristics
@@ -62,7 +66,11 @@ int main(int argc, char * argv[])
 
         // Alternative: set rgb.pixels and rgb.rowBytes yourself, which should match your chosen rgb.format
         // Be sure to use uint16_t* instead of uint8_t* for rgb.pixels/rgb.rowBytes if (rgb.depth > 8)
-        avifRGBImageAllocatePixels(&rgb);
+        avifResult allocationResult = avifRGBImageAllocatePixels(&rgb);
+        if (allocationResult != AVIF_RESULT_OK) {
+            fprintf(stderr, "Allocation of RGB samples failed: %s\n", avifResultToString(allocationResult));
+            goto cleanup;
+        }
 
         // Fill your RGB(A) data here
         memset(rgb.pixels, 255, rgb.rowBytes * image->height);
@@ -75,17 +83,21 @@ int main(int argc, char * argv[])
     }
 
     encoder = avifEncoderCreate();
+    if (!encoder) {
+        fprintf(stderr, "Out of memory\n");
+        goto cleanup;
+    }
     // Configure your encoder here (see avif/avif.h):
     // * maxThreads
-    // * minQuantizer
-    // * maxQuantizer
-    // * minQuantizerAlpha
-    // * maxQuantizerAlpha
+    // * quality
+    // * qualityAlpha
     // * tileRowsLog2
     // * tileColsLog2
     // * speed
     // * keyframeInterval
     // * timescale
+    encoder->quality = 60;
+    encoder->qualityAlpha = AVIF_QUALITY_LOSSLESS;
 
     // Call avifEncoderAddImage() for each image in your sequence
     // Only set AVIF_ADD_IMAGE_FLAG_SINGLE if you're not encoding a sequence

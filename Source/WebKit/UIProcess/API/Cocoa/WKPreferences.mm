@@ -29,6 +29,7 @@
 #import "APIArray.h"
 #import "Logging.h"
 #import "WKNSArray.h"
+#import "WKTextExtractionUtilities.h"
 #import "WebPreferences.h"
 #import "_WKFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
@@ -186,14 +187,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     case WKInactiveSchedulingPolicySuspend:
         _preferences->setShouldTakeNearSuspendedAssertions(false);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(WebKit::defaultShouldDropNearSuspendedAssertionAfterDelay());
         break;
     case WKInactiveSchedulingPolicyThrottle:
         _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     case WKInactiveSchedulingPolicyNone:
         _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
+        _preferences->setShouldDropNearSuspendedAssertionAfterDelay(false);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -280,16 +284,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 - (void)_setStorageBlockingPolicy:(_WKStorageBlockingPolicy)policy
 {
     _preferences->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
-}
-
-- (BOOL)_offlineApplicationCacheIsEnabled
-{
-    return _preferences->offlineWebApplicationCacheEnabled();
-}
-
-- (void)_setOfflineApplicationCacheIsEnabled:(BOOL)offlineApplicationCacheIsEnabled
-{
-    _preferences->setOfflineWebApplicationCacheEnabled(offlineApplicationCacheIsEnabled);
 }
 
 - (BOOL)_fullScreenEnabled
@@ -761,17 +755,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setShouldAllowUserInstalledFonts(_shouldAllowUserInstalledFonts);
 }
 
-- (BOOL)_shouldAllowDesignSystemUIFonts
-{
-    // These fonts are always enabled. This function only exists for binary compatibility.
-    return YES;
-}
-
-- (void)_setShouldAllowDesignSystemUIFonts:(BOOL)_shouldAllowDesignSystemUIFonts
-{
-    // These fonts are always enabled. This function only exists for binary compatibility.
-}
-
 static _WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)
 {
     switch (behavior) {
@@ -828,6 +811,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_avFoundationEnabled
 {
     return _preferences->isAVFoundationEnabled();
+}
+
+- (void)_setTextExtractionEnabled:(BOOL)enabled
+{
+    _preferences->setTextExtractionEnabled(enabled);
+}
+
+- (BOOL)_textExtractionEnabled
+{
+    return _preferences->textExtractionEnabled();
 }
 
 - (void)_setColorFilterEnabled:(BOOL)enabled
@@ -1051,15 +1044,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->usesBackForwardCache();
 }
 
-- (void)_setPageCacheSupportsPlugins:(BOOL)enabled
-{
-}
-
-- (BOOL)_pageCacheSupportsPlugins
-{
-    return NO;
-}
-
 - (void)_setShouldPrintBackgrounds:(BOOL)enabled
 {
     self.shouldPrintBackgrounds = enabled;
@@ -1110,33 +1094,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->suppressesIncrementalRendering();
 }
 
-- (void)_setAsynchronousPluginInitializationEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_asynchronousPluginInitializationEnabled
-{
-    return NO;
-}
-
-- (void)_setArtificialPluginInitializationDelayEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_artificialPluginInitializationDelayEnabled
-{
-    return NO;
-}
-
-- (void)_setExperimentalPlugInSandboxProfilesEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_experimentalPlugInSandboxProfilesEnabled
-{
-    return NO;
-}
-
 - (void)_setCookieEnabled:(BOOL)enabled
 {
     _preferences->setCookieEnabled(enabled);
@@ -1145,15 +1102,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_cookieEnabled
 {
     return _preferences->cookieEnabled();
-}
-
-- (void)_setPlugInSnapshottingEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_plugInSnapshottingEnabled
-{
-    return NO;
 }
 
 - (void)_setViewGestureDebuggingEnabled:(BOOL)enabled
@@ -1720,7 +1668,7 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (void)setPlugInsEnabled:(BOOL)plugInsEnabled
 {
     if (plugInsEnabled)
-        RELEASE_LOG_FAULT(Plugins, "Application attempted to enable NPAPI plug ins, which are no longer supported");
+        RELEASE_LOG_FAULT(Plugins, "Application attempted to enable NPAPI plugins, which are no longer supported");
 }
 
 #endif
@@ -1738,6 +1686,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 @end
 
 @implementation WKPreferences (WKPrivateDeprecated)
+
+- (BOOL)_shouldAllowDesignSystemUIFonts
+{
+    return YES;
+}
+
+- (void)_setShouldAllowDesignSystemUIFonts:(BOOL)_shouldAllowDesignSystemUIFonts
+{
+}
 
 - (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
 {
@@ -1758,6 +1715,51 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 #if !TARGET_OS_IPHONE
+
+- (void)_setPageCacheSupportsPlugins:(BOOL)enabled
+{
+}
+
+- (BOOL)_pageCacheSupportsPlugins
+{
+    return NO;
+}
+
+- (void)_setAsynchronousPluginInitializationEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_asynchronousPluginInitializationEnabled
+{
+    return NO;
+}
+
+- (void)_setArtificialPluginInitializationDelayEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_artificialPluginInitializationDelayEnabled
+{
+    return NO;
+}
+
+- (void)_setExperimentalPlugInSandboxProfilesEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_experimentalPlugInSandboxProfilesEnabled
+{
+    return NO;
+}
+
+- (void)_setPlugInSnapshottingEnabled:(BOOL)enabled
+{
+}
+
+- (BOOL)_plugInSnapshottingEnabled
+{
+    return NO;
+}
 
 - (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
 {
@@ -1787,6 +1789,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 - (void)_setDisplayListDrawingEnabled:(BOOL)displayListDrawingEnabled
+{
+}
+
+- (BOOL)_offlineApplicationCacheIsEnabled
+{
+    return NO;
+}
+
+- (void)_setOfflineApplicationCacheIsEnabled:(BOOL)offlineApplicationCacheIsEnabled
 {
 }
 

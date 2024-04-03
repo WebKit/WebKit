@@ -29,7 +29,7 @@ from datetime import datetime
 
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import program, mocks
+from webkitscmpy import program, mocks, local
 
 
 class TestPublish(testing.PathTestCase):
@@ -81,7 +81,7 @@ class TestPublish(testing.PathTestCase):
                 '    branch-b is a branch, referencing 2.3@branch-b',
                 'User specified 1 branch and 0 tags, request comprises 1 commit',
                 "Inferred 'origin' as the target remote",
-                "Invoking '/usr/bin/git push --atomic origin 790725a6d79e:refs/heads/branch-b'",
+                "Invoking '{} push --atomic origin 790725a6d79e:refs/heads/branch-b'".format(local.Git.executable()),
             ],
         )
 

@@ -102,6 +102,7 @@ public:
         unsigned glyphCount() const { return m_glyphCount; }
         const Font& font() const { return m_font; }
         const UChar* characters() const { return m_characters; }
+        std::span<const UChar> span() const { return { m_characters, stringLength() }; }
         unsigned stringLocation() const { return m_stringLocation; }
         unsigned stringLength() const { return m_stringLength; }
         ALWAYS_INLINE unsigned indexAt(unsigned) const;
@@ -163,7 +164,7 @@ private:
 
     FloatPoint glyphOrigin(unsigned index) const { return index < m_glyphOrigins.size() ? m_glyphOrigins[index] : FloatPoint(); }
 
-    bool advanceByCombiningCharacterSequence(const WTF::CachedTextBreakIterator& graphemeClusterIterator, unsigned& location, char32_t& baseCharacter, unsigned& markCount);
+    void advanceByCombiningCharacterSequence(const WTF::CachedTextBreakIterator& graphemeClusterIterator, unsigned& location, char32_t& baseCharacter);
 
     Vector<FloatSize, 256> m_adjustedBaseAdvances;
     Vector<FloatPoint, 256> m_glyphOrigins;

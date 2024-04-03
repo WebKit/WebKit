@@ -152,6 +152,9 @@ enum class PreflightPolicy : uint8_t {
 };
 static constexpr unsigned bitWidthOfPreflightPolicy = 2;
 
+enum class ShouldEnableContentExtensionsCheck : bool { No, Yes };
+static constexpr unsigned bitWidthOfShouldEnableContentExtensionsCheck = 1;
+
 enum class LoadedFromOpaqueSource : bool { No, Yes };
 static constexpr unsigned bitWidthOfLoadedFromOpaqueSource = 1;
 
@@ -186,6 +189,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
         , fetchPriorityHint(RequestPriority::Auto)
+        , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     { }
 
     ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
@@ -209,6 +213,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
         , fetchPriorityHint(RequestPriority::Auto)
+        , shouldEnableContentExtensionsCheck(ShouldEnableContentExtensionsCheck::Yes)
     {
         this->credentials = credentials;
         this->mode = mode;
@@ -241,6 +246,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
     LoadedFromPluginElement loadedFromPluginElement : bitWidthOfLoadedFromPluginElement;
     RequestPriority fetchPriorityHint : bitWidthOfFetchPriorityHint;
+    ShouldEnableContentExtensionsCheck shouldEnableContentExtensionsCheck : bitWidthOfShouldEnableContentExtensionsCheck;
 
     FetchIdentifier navigationPreloadIdentifier;
     String nonce;

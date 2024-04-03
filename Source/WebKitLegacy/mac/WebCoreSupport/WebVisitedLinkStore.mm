@@ -85,14 +85,14 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
     size_t length = urlString.length;
 
     if (auto characters = CFStringGetCharactersPtr((__bridge CFStringRef)urlString)) {
-        addVisitedLinkHash(computeSharedStringHash(reinterpret_cast<const UChar*>(characters), length));
+        addVisitedLinkHash(computeSharedStringHash(std::span { reinterpret_cast<const UChar*>(characters), length }));
         return;
     }
 
     Vector<UniChar, 512> buffer(length);
     [urlString getCharacters:buffer.data()];
 
-    addVisitedLinkHash(computeSharedStringHash(reinterpret_cast<const UChar*>(buffer.data()), length));
+    addVisitedLinkHash(computeSharedStringHash(std::span { reinterpret_cast<const UChar*>(buffer.data()), length }));
 }
 
 void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)

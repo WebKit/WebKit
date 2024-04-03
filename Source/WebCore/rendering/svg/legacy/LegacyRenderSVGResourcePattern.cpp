@@ -39,13 +39,18 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
 LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(Type::SVGResourcePattern, element, WTFMove(style))
+    : LegacyRenderSVGResourceContainer(Type::LegacySVGResourcePattern, element, WTFMove(style))
 {
 }
 
 SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
 {
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
+}
+
+Ref<SVGPatternElement> LegacyRenderSVGResourcePattern::protectedPatternElement() const
+{
+    return patternElement();
 }
 
 void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
@@ -57,7 +62,7 @@ void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool mark
 
 void LegacyRenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_patternMap.remove(&client);
+    m_patternMap.remove(client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
@@ -66,8 +71,8 @@ void LegacyRenderSVGResourcePattern::collectPatternAttributes(PatternAttributes&
     const LegacyRenderSVGResourcePattern* current = this;
 
     while (current) {
-        const SVGPatternElement& pattern = current->patternElement();
-        pattern.collectPatternAttributes(attributes);
+        Ref pattern = current->patternElement();
+        pattern->collectPatternAttributes(attributes);
 
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
         ASSERT_IMPLIES(resources && resources->linkedResource(), is<LegacyRenderSVGResourcePattern>(resources->linkedResource()));
@@ -79,7 +84,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
 {
     ASSERT(!m_shouldCollectPatternAttributes);
 
-    PatternData* currentData = m_patternMap.get(&renderer);
+    PatternData* currentData = m_patternMap.get(renderer);
     if (currentData && currentData->pattern)
         return currentData;
 
@@ -94,7 +99,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(renderer, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(renderer, m_attributes, protectedPatternElement(), tileBoundaries, tileImageTransform))
         return nullptr;
 
     auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
@@ -134,7 +139,7 @@ PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& rendere
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
     // removeAllClientsFromCache(), we only make it visible in the cache at the very end.
-    return m_patternMap.set(&renderer, WTFMove(patternData)).iterator->value.get();
+    return m_patternMap.set(renderer, WTFMove(patternData)).iterator->value.get();
 }
 
 bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
@@ -143,7 +148,7 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     ASSERT(!resourceMode.isEmpty());
 
     if (m_shouldCollectPatternAttributes) {
-        patternElement().synchronizeAllAttributes();
+        protectedPatternElement()->synchronizeAllAttributes();
 
         m_attributes = PatternAttributes();
         collectPatternAttributes(m_attributes);
@@ -163,16 +168,16 @@ bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     // Draw pattern
     context->save();
 
-    const SVGRenderStyle& svgStyle = style.svgStyle();
+    Ref svgStyle = style.svgStyle();
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-        context->setAlpha(svgStyle.fillOpacity());
+        context->setAlpha(svgStyle->fillOpacity());
         context->setFillPattern(*patternData->pattern);
-        context->setFillRule(svgStyle.fillRule());
+        context->setFillRule(svgStyle->fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
-        if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke)
+        if (svgStyle->vectorEffect() == VectorEffect::NonScalingStroke)
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
-        context->setAlpha(svgStyle.strokeOpacity());
+        context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokePattern(*patternData->pattern);
         SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
     }
@@ -259,7 +264,7 @@ RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsCont
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(*attributes.patternContentElement())) {
+    for (auto& child : childrenOfType<SVGElement>(Ref { *attributes.patternContentElement() })) {
         if (!child.renderer())
             continue;
         if (child.renderer()->needsLayout())

@@ -27,6 +27,7 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
+#include "ASTConstAssert.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
 #include "ASTFunction.h"
@@ -66,6 +67,7 @@ public:
     Result<void> parseEnableDirective();
     Result<void> parseRequireDirective();
     Result<AST::Declaration::Ref> parseDeclaration();
+    Result<AST::ConstAssert::Ref> parseConstAssert();
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
     Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);
@@ -123,6 +125,7 @@ private:
     Lexer& m_lexer;
     Vector<Token> m_tokens;
     unsigned m_currentTokenIndex { 0 };
+    unsigned m_parseDepth { 0 };
     Token m_current;
     SourcePosition m_currentPosition;
 };

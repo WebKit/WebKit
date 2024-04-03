@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class CSSRectValue : public CSSValue {
+class CSSRectValue final : public CSSValue {
 public:
     static Ref<CSSRectValue> create(Rect);
 

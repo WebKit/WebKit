@@ -49,7 +49,7 @@ private:
     CredentialsContainer* credentials(WeakPtr<Document, WeakPtrImplWithEventTargetData>&&);
 
     static NavigatorCredentials* from(Navigator*);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     RefPtr<CredentialsContainer> m_credentialsContainer;
 };

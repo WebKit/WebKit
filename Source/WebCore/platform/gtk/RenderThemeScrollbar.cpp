@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RenderThemeScrollbar.h"
 
-#if !USE(GTK4)
+#if !USE(GTK4) && USE(CAIRO)
 
 #include "GtkUtilities.h"
 #include <wtf/HashMap.h>
@@ -135,4 +135,4 @@ RenderThemeGadget* RenderThemeScrollbar::stepper(RenderThemeScrollbarGadget::Ste
 
 } // namespace WebCore
 
-#endif // !USE(GTK4)
+#endif // !USE(GTK4) && USE(CAIRO)

@@ -76,7 +76,11 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityImageMapLink) \
-    static bool isType(const WebCore::AXCoreObject& object) { return object.isAccessibilityObject() && downcast<WebCore::AccessibilityObject>(object).isImageMapLink(); } \
-    static bool isType(const WebCore::AccessibilityObject& object) { return object.isImageMapLink(); } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityImageMapLink)
+    static bool isType(const WebCore::AXCoreObject& object)
+    {
+        auto* accessibilityObject = dynamicDowncast<WebCore::AccessibilityObject>(object);
+        return accessibilityObject && accessibilityObject->isImageMapLink();
+    }
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isImageMapLink(); }
 SPECIALIZE_TYPE_TRAITS_END()

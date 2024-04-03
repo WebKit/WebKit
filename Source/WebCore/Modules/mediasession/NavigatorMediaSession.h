@@ -42,11 +42,13 @@ public:
     ~NavigatorMediaSession();
 
     WEBCORE_EXPORT static MediaSession& mediaSession(Navigator&);
+    static RefPtr<MediaSession> mediaSessionIfExists(Navigator&);
     MediaSession& mediaSession();
+    RefPtr<MediaSession> mediaSessionIfExists();
 
 private:
     static NavigatorMediaSession* from(Navigator&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     RefPtr<MediaSession> m_mediaSession;
     Navigator& m_navigator;

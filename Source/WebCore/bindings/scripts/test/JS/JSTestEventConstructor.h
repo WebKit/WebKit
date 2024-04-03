@@ -33,8 +33,9 @@ public:
     using DOMWrapped = TestEventConstructor;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
     {
-        JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(globalObject->vm())) JSTestEventConstructor(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
+        auto& vm = globalObject->vm();
+        JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(vm)) JSTestEventConstructor(structure, *globalObject, WTFMove(impl));
+        ptr->finishCreation(vm);
         return ptr;
     }
 
@@ -61,6 +62,9 @@ public:
     {
         return static_cast<TestEventConstructor&>(Base::wrapped());
     }
+
+    Ref<TestEventConstructor> protectedWrapped() const;
+
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&);
 

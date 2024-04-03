@@ -96,6 +96,9 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
     if (!innerText)
         return RenderBox::computeLogicalHeight(LayoutUnit(), LayoutUnit());
 
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
+
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingLogicalHeight() + innerTextBox->marginLogicalHeight();
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
@@ -139,7 +142,7 @@ float RenderTextControl::getAverageCharWidth()
         return width;
 
     const UChar ch = '0';
-    const String str = String(&ch, 1);
+    const String str = span(ch);
     const FontCascade& font = style().fontCascade();
     TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
     return font.width(textRun);
@@ -154,6 +157,11 @@ float RenderTextControl::scaleEmToUnits(int x) const
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    // FIXME: Fix field-sizing: content with size containment
+    // https://bugs.webkit.org/show_bug.cgi?id=269169
+    if (style().fieldSizing() == FieldSizing::Content)
+        return RenderBlockFlow::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto width = explicitIntrinsicInnerLogicalWidth()) {
             minLogicalWidth = width.value();
@@ -172,6 +180,10 @@ void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
 void RenderTextControl::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
+    if (style().fieldSizing() == FieldSizing::Content) {
+        RenderBlockFlow::computePreferredLogicalWidths();
+        return;
+    }
 
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;

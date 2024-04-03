@@ -1,0 +1,29 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- New test added while implementing AccessibilityThreadTextApisEnabled. Keep it when the feature is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+This is static text<br>with a line break.
+<p id="p">This is text inside a p tag<br>with a line break</p>
+<div>This is text inside a div<br>with a line break</div>
+<p>This is text in a p tag with no line break</p>
+
+<script>
+let output = "This test ensures we can get the index of a zero offset text marker without crashing.\n\n";
+
+if (window.accessibilityController) {
+    var axElement = accessibilityController.accessibleElementById("p");
+    const range = axElement.textMarkerRangeForElement(axElement);
+    var startMarker = axElement.startTextMarkerForTextMarkerRange(range);
+
+    output += expect("axElement.indexForTextMarker(startMarker)", "39");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

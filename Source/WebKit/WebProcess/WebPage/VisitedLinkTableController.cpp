@@ -36,14 +36,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<uint64_t, WeakPtr<VisitedLinkTableController>>& visitedLinkTableControllers()
+static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& visitedLinkTableControllers()
 {
-    static NeverDestroyed<HashMap<uint64_t, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
+    static NeverDestroyed<HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
     RELEASE_ASSERT(isMainRunLoop());
     return visitedLinkTableControllers;
 }
 
-Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(uint64_t identifier)
+Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(VisitedLinkTableIdentifier identifier)
 {
     auto& visitedLinkTableControllerPtr = visitedLinkTableControllers().add(identifier, nullptr).iterator->value;
     if (RefPtr ptr = visitedLinkTableControllerPtr.get())
@@ -55,7 +55,7 @@ Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(uint64_t
     return visitedLinkTableController;
 }
 
-VisitedLinkTableController::VisitedLinkTableController(uint64_t identifier)
+VisitedLinkTableController::VisitedLinkTableController(VisitedLinkTableIdentifier identifier)
     : m_identifier(identifier)
 {
     WebProcess::singleton().addMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier, *this);

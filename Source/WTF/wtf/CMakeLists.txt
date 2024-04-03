@@ -131,6 +131,8 @@ set(WTF_PUBLIC_HEADERS
     KeyValuePair.h
     LEBDecoder.h
     Language.h
+    LazyRef.h
+    LazyUniqueRef.h
     LikelyDenseUnsignedIntegerSet.h
     ListDump.h
     ListHashSet.h
@@ -292,6 +294,7 @@ set(WTF_PUBLIC_HEADERS
     SystemMalloc.h
     SystemTracing.h
     TZoneMalloc.h
+    TZoneMallocInitialization.h
     TZoneMallocInlines.h
     TaggedArrayStoragePtr.h
     ThreadAssertions.h
@@ -390,12 +393,14 @@ set(WTF_PUBLIC_HEADERS
 
     text/ASCIIFastPath.h
     text/ASCIILiteral.h
+    text/AdaptiveStringSearcher.h
     text/AtomString.h
     text/AtomStringHash.h
     text/AtomStringImpl.h
     text/AtomStringTable.h
     text/Base64.h
     text/CString.h
+    text/CharacterProperties.h
     text/CodePointIterator.h
     text/ConversionMode.h
     text/EscapedFormsForJSON.h
@@ -486,7 +491,6 @@ set(WTF_SOURCES
     HexNumber.cpp
     Int128.cpp
     JSONValues.cpp
-    JSValueMalloc.cpp
     Language.cpp
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
@@ -607,6 +611,10 @@ if (APPLE)
     list(APPEND WTF_SOURCES
         darwin/OSLogPrintStream.mm
     )
+endif ()
+
+if (MSVC AND WTF_CPU_X86_64)
+    list(APPEND WTF_SOURCES win/AsmStubsMSVC64.asm)
 endif ()
 
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES

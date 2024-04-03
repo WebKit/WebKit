@@ -140,11 +140,6 @@ _PATH_RULES_SPECIFIER = [
     # API and therefore do not follow the same header including
     # discipline as WebCore.
 
-    ([  # TestNetscapePlugIn has no config.h and uses funny names like
-      # NPP_SetWindow.
-      os.path.join('Tools', 'DumpRenderTree', 'TestNetscapePlugIn')],
-     ["-build/include",
-      "-readability/naming"]),
     ([  # Ignore use of RetainPtr<NSObject *> for tests that ensure its compatibility with ReteainPtr<NSObject>.
       os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WTF', 'ns', 'RetainPtr.mm')],
      ["-runtime/retainptr"]),
@@ -220,9 +215,6 @@ _PATH_RULES_SPECIFIER = [
 
     # WebKit rules:
     # WebKit and certain directories have idiosyncracies.
-    ([  # NPAPI has function names with underscores.
-      os.path.join('Source', 'WebKit', 'WebProcess', 'Plugins', 'Netscape')],
-     ["-readability/naming"]),
     ([
       # The WebKit C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
@@ -276,6 +268,12 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebKit', 'NetworkProcess', 'soup', 'WebKitDirectoryInputStream.h')],
      ["-readability/naming",
       "-readability/enum_casing"]),
+    ([
+      # This file needs to define symbols with underscores to integrate
+      # with the rest of Skia, and does not have a corresponding header.
+      os.path.join('Source', 'WebCore', 'platform', 'skia', 'SkiaAllocatorFastMalloc.cpp')],
+     ["-build/include_order",
+      "-readability/naming/underscores"]),
 
     # For third-party code, keep only the following checks--
     #
@@ -288,6 +286,7 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'ThirdParty', 'ANGLE'),
       os.path.join('Source', 'ThirdParty', 'libwebrtc'),
       os.path.join('Source', 'ThirdParty', 'openvr'),
+      os.path.join('Source', 'ThirdParty', 'skia'),
       os.path.join('Source', 'ThirdParty', 'xdgmime'),
       os.path.join('Tools', 'WebGPUAPIStructure')],
      ["-",
@@ -488,6 +487,9 @@ _SKIPPED_FILES_WITHOUT_WARNING = [
     os.path.join('Source', 'WebCore', 'icu'),
     os.path.join('Source', 'WebKitLegacy', 'mac', 'icu'),
     os.path.join('Source', 'WTF', 'icu'),
+
+    # Skia.
+    os.path.join('Source', 'ThirdParty', 'skia'),
     ]
 
 # Extensions of files which are allowed to contain carriage returns.

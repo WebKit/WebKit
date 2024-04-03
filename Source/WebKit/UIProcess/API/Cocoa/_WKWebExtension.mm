@@ -30,6 +30,7 @@
 #import "config.h"
 #import "_WKWebExtensionInternal.h"
 
+#import "CocoaHelpers.h"
 #import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
@@ -40,6 +41,8 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 @implementation _WKWebExtension
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtension, WebExtension, _webExtension);
 
 + (instancetype)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
@@ -144,13 +147,6 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
 
     return self;
-}
-
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtension->~WebExtension();
 }
 
 - (NSDictionary<NSString *, id> *)manifest

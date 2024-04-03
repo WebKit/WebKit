@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "CryptoKeyRaw.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMPromiseDeferred.h"
@@ -67,9 +68,7 @@ RTCRtpSFrameTransform::RTCRtpSFrameTransform(ScriptExecutionContext& context, Op
     m_transformer->setAuthenticationSize(options.authenticationSize);
 }
 
-RTCRtpSFrameTransform::~RTCRtpSFrameTransform()
-{
-}
+RTCRtpSFrameTransform::~RTCRtpSFrameTransform() = default;
 
 void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
 {
@@ -244,9 +243,9 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
         }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
             transformFrame(*value, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBuffer>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
+            transformFrame(value->span(), globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         }, [&](RefPtr<ArrayBufferView>& value) {
-            transformFrame({ static_cast<const uint8_t*>(value->data()), value->byteLength() }, globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
+            transformFrame(value->span(), globalObject, transformer.get(), *readableStreamSource, context.identifier(), weakThis);
         });
         return { };
     }));

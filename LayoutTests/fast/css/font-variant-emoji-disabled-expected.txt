@@ -1,0 +1,12 @@
+When font-variant-emoji is disabled, the following should not parse:
+
+
+PASS e.style['font-variant'] = "normal" should set the property value
+PASS e.style['font-variant'] = "text" should not set the property value
+PASS e.style['font-variant'] = "emoji" should not set the property value
+PASS e.style['font-variant'] = "unicode" should not set the property value
+PASS e.style['font-variant-emoji'] = "normal" should not set the property value
+PASS e.style['font-variant-emoji'] = "text" should not set the property value
+PASS e.style['font-variant-emoji'] = "emoji" should not set the property value
+PASS e.style['font-variant-emoji'] = "unicode" should not set the property value
+

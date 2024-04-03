@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+    <style>
+        iframe {
+            width: 700px;
+            height: 500px;
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        function testComplete()
+        {
+            const pdfFadeInDelay = 300;
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, pdfFadeInDelay);
+            });
+        }
+    </script>
+</head>
+<body>
+    <iframe onload="testComplete()" src="/pdf/resources/non-linearized.pdf"></iframe>
+</body>
+</html>

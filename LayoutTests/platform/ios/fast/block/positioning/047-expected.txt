@@ -15,7 +15,7 @@ layer at (8,8) size 512x842
         text run at (0,60) width 459: "the text position marked by the dagger, there is a"
         text run at (0,89) width 491: "<span> element that is positioned to the right of the"
         text run at (0,118) width 394: "<div> block that contains this paragraph\x{2020}"
-      RenderText {#text} at (393,118) size 501x112
+      RenderText {#text} at (0,118) size 501x112
         text run at (393,118) width 99: ". In IE 5.x,"
         text run at (0,147) width 470: "Mozilla 1.2, and Chimera 0.6+, the contents of the"
         text run at (0,176) width 501: "<span> element appears in the margin directly to the"
@@ -43,11 +43,11 @@ layer at (8,8) size 512x842
     RenderBlock {P} at (0,726) size 512x117
       RenderText {#text} at (0,2) size 72x25
         text run at (0,2) width 72: "Worse, "
-      RenderInline {I} at (0,0) size 490x54
-        RenderText {#text} at (71,2) size 490x54
+      RenderInline {I} at (0,2) size 490x54
+        RenderText {#text} at (0,2) size 490x54
           text run at (71,2) width 419: "the \"make text bigger\" button does not scale"
           text run at (0,31) width 328: "line-height when it scales font-size"
-      RenderText {#text} at (327,31) size 497x83
+      RenderText {#text} at (0,31) size 497x83
         text run at (327,31) width 170: " (hit it a few times"
         text run at (0,60) width 490: "on this page). This is a crippling flaw for people who"
         text run at (0,89) width 429: "need to enlarge the fonts to read comfortably."

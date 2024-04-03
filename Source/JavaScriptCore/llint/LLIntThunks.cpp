@@ -32,6 +32,7 @@
 #include "LLIntCLoop.h"
 #include "LLIntData.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "VMEntryRecord.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
@@ -83,7 +84,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpTo(LLIntCode target, cons
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -110,7 +111,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpToPrologue(OpcodeID opcod
     jit.farJump(scratch, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s jump to prologue thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s jump to prologue thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -120,7 +121,7 @@ static MacroAssemblerCodeRef<tag> generateThunkWithJumpToLLIntReturnPoint(LLIntC
     assertIsTaggedWith<OperationPtrTag>(target);
     jit.farJump(CCallHelpers::TrustedImmPtr(target), OperationPtrTag);
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, tag, "LLInt %s return point thunk", thunkKind);
+    return FINALIZE_THUNK(patchBuffer, tag, ASCIILiteral::fromLiteralUnsafe(thunkKind), "LLInt %s return point thunk", thunkKind);
 }
 
 template<PtrTag tag>
@@ -260,7 +261,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
         jit.farJump(scratch, OperationPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
+        codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "inPlaceInterpreterEntryThunk"_s, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
     });
     return codeRef;
 }
@@ -295,11 +296,53 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunkSIMD()
         jit.farJump(scratch, OperationPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
+        codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "inPlaceInterpreterEntryThunkSIMD"_s, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
     });
     return codeRef;
 }
 #endif // ENABLE(WEBASSEMBLY)
+
+MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk()
+{
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<JSEntryPtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
+        // The return address is on the stack, or in the link register. We will hence
+        // jump to the callee, or save the return address to the call frame while we
+        // make a C++ function call to the appropriate JIT operation.
+
+        // regT0 => callee
+        // regT1 => tag (32bit)
+        // regT2 => CallLinkInfo*
+
+        CCallHelpers jit;
+
+        jit.emitFunctionPrologue();
+        if (maxFrameExtentForSlowPathCall)
+            jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), CCallHelpers::stackPointerRegister);
+        jit.setupArguments<decltype(operationDefaultCall)>(GPRInfo::regT2);
+        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationDefaultCall)), GPRInfo::nonArgGPR0);
+        jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+        if (maxFrameExtentForSlowPathCall)
+            jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
+
+        // This slow call will return the address of one of the following:
+        // 1) Exception throwing thunk.
+        // 2) Host call return value returner thingy.
+        // 3) The function to call.
+        // The second return value GPR will hold a non-zero value for tail calls.
+
+        jit.emitFunctionEpilogue();
+        jit.untagReturnAddress();
+        jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
+
+        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
+        codeRef.construct(FINALIZE_CODE(patchBuffer, JSEntryPtrTag, "DefaultCall"_s, "Default Call thunk"));
+        return;
+    });
+    return codeRef;
+}
 
 MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
 {
@@ -325,7 +368,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> getHostCallReturnValueThunk()
         jit.ret();
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, JSEntryPtrTag, "LLInt::getHostCallReturnValue thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, JSEntryPtrTag, "getHostCallReturnValue"_s, "LLInt::getHostCallReturnValue thunk"));
     });
     return codeRef;
 }
@@ -503,7 +546,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createJSGateThunk(void* pointer, Pt
     jit.farJump(GPRInfo::regT5, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s call gate thunk", name);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "CallJSGate"_s, "LLInt %s call gate thunk", name);
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, PtrTag tag, const char* name)
@@ -515,7 +558,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmGateThunk(void* pointer, 
     jit.farJump(GPRInfo::wasmScratchGPR1, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt %s wasm call gate thunk", name);
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "CallWasmGate"_s, "LLInt %s wasm call gate thunk", name);
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool untag)
@@ -529,7 +572,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool
     jit.farJump(GPRInfo::argumentGPR7, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt tail call gate thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "TailCallJSGate"_s, "LLInt tail call gate thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmTailCallGate(PtrTag tag)
@@ -541,7 +584,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createWasmTailCallGate(PtrTag tag)
     jit.farJump(GPRInfo::wasmScratchGPR0, tag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "LLInt wasm tail call gate thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "TailCallWasmGate"_s, "LLInt wasm tail call gate thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> loopOSREntryGateThunk()
@@ -554,7 +597,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> loopOSREntryGateThunk()
         jit.farJump(GPRInfo::argumentGPR0, JSEntryPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "loop OSR entry thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "LoopOSREntry"_s, "loop OSR entry thunk"));
     });
     return codeRef;
 }
@@ -570,7 +613,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> entryOSREntryGateThunk()
         jit.farJump(GPRInfo::argumentGPR0, JSEntryPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "entry OSR entry thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "OSREntry"_s, "entry OSR entry thunk"));
     });
     return codeRef;
 }
@@ -586,7 +629,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> wasmOSREntryGateThunk()
         jit.farJump(GPRInfo::wasmScratchGPR0, WasmEntryPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "wasm OSR entry thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "WasmOSREntry"_s, "wasm OSR entry thunk"));
     });
     return codeRef;
 }
@@ -601,7 +644,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> exceptionHandlerGateThunk()
         jit.farJump(GPRInfo::regT0, ExceptionHandlerPtrTag);
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "exception handler thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "exceptionHandler"_s, "exception handler thunk"));
     });
     return codeRef;
 }
@@ -616,7 +659,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> returnFromLLIntGateThunk()
         jit.ret();
 
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "returnFromLLInt thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "returnFromLLInt"_s, "returnFromLLInt thunk"));
     });
     return codeRef;
 }
@@ -632,7 +675,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> tagGateThunk(void* pointer)
     jit.farJump(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "tag"_s, "tag thunk");
 }
 
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
@@ -647,7 +690,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> untagGateThunk(void* pointer)
     jit.farJump(GPRInfo::regT3, OperationPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "untag thunk");
+    return FINALIZE_THUNK(patchBuffer, NativeToJITGatePtrTag, "untag"_s, "untag thunk");
 }
 
 #endif // CPU(ARM64E)
@@ -662,7 +705,7 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk()
         CCallHelpers jit;
         JSC_JIT_CAGE_COMPILE_IMPL(jit);
         LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "jitCagePtr thunk"));
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "jitCagePtr"_s, "jitCagePtr thunk"));
     });
     return codeRef;
 }

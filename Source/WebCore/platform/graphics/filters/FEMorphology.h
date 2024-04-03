@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-enum class MorphologyOperatorType {
+enum class MorphologyOperatorType : uint8_t {
     Unknown,
     Erode,
     Dilate
@@ -66,19 +66,5 @@ private:
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MorphologyOperatorType> {
-    using values = EnumValues<
-        WebCore::MorphologyOperatorType,
-
-        WebCore::MorphologyOperatorType::Unknown,
-        WebCore::MorphologyOperatorType::Erode,
-        WebCore::MorphologyOperatorType::Dilate
-    >;
-};
-
-} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEMorphology)

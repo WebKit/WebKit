@@ -95,7 +95,7 @@ void RenderProgress::updateAnimationState()
 {
     auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
 
-    bool animating = style().hasEffectiveAppearance() && repeatInterval > 0_s && !isDeterminate();
+    bool animating = style().hasUsedAppearance() && repeatInterval > 0_s && !isDeterminate();
     if (animating == m_animating)
         return;
 
@@ -112,8 +112,8 @@ HTMLProgressElement* RenderProgress::progressElement() const
     if (!element())
         return nullptr;
 
-    if (is<HTMLProgressElement>(*element()))
-        return downcast<HTMLProgressElement>(element());
+    if (auto* progressElement = dynamicDowncast<HTMLProgressElement>(*element()))
+        return progressElement;
 
     ASSERT(element()->shadowHost());
     return downcast<HTMLProgressElement>(element()->shadowHost());

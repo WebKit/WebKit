@@ -30,6 +30,7 @@
 
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GRefPtrGtk.h>
+#include <WebCore/GdkSkiaUtilities.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
@@ -68,7 +69,7 @@ DragSource::DragSource(GtkWidget* webView)
             break;
         }
         case DragTargetType::Image: {
-            auto pixbuf = drag.m_selectionData->image()->gdkPixbuf();
+            auto pixbuf = drag.m_selectionData->image()->adapter().gdkPixbuf();
             gtk_selection_data_set_pixbuf(data, pixbuf.get());
             break;
         }
@@ -139,7 +140,12 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
 
     m_drag = gtk_drag_begin_with_coordinates(m_webView, list.get(), dragOperationToGdkDragActions(operationMask), GDK_BUTTON_PRIMARY, nullptr, -1, -1);
     if (image) {
+#if USE(CAIRO)
         RefPtr<cairo_surface_t> imageSurface(image->createCairoSurface());
+#else
+        auto skiaImage = image->createPlatformImage();
+        RefPtr<cairo_surface_t> imageSurface(skiaImageToCairoSurface(*skiaImage));
+#endif
         cairo_surface_set_device_offset(imageSurface.get(), -imageHotspot.x(), -imageHotspot.y());
         gtk_drag_set_icon_surface(m_drag.get(), imageSurface.get());
     } else

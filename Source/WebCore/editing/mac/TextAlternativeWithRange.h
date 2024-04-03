@@ -23,19 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "AlternativeTextClient.h"
-#include <wtf/RetainPtr.h>
+#pragma once
 
-@class NSTextAlternatives;
+#include "AlternativeTextClient.h"
+#include "PlatformTextAlternatives.h"
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 struct TextAlternativeWithRange {
-    WEBCORE_EXPORT TextAlternativeWithRange(NSTextAlternatives* anAlternatives, NSRange aRange);
+    WEBCORE_EXPORT TextAlternativeWithRange(PlatformTextAlternatives *, NSRange);
     NSRange range;
-    RetainPtr<NSTextAlternatives> alternatives;
+    RetainPtr<PlatformTextAlternatives> alternatives;
 };
 
-WEBCORE_EXPORT void collectDictationTextAlternatives(NSAttributedString*, Vector<TextAlternativeWithRange>& alternatives);
+#if PLATFORM(MAC)
+WEBCORE_EXPORT void collectDictationTextAlternatives(NSAttributedString *, Vector<TextAlternativeWithRange>& alternatives);
+#endif
 
 } // namespace WebCore

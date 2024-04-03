@@ -1,8 +1,0 @@
-Tests the load event on HTMLTrackElement and LOADED readyState on TextTrack when src is set from JavaScript.
-
-
-EXPECTED (track.readyState == '0') OK
-EVENT(load)
-EXPECTED (track.readyState == '2') OK
-END OF TEST
-

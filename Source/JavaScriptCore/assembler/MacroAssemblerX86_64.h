@@ -1265,6 +1265,23 @@ public:
         transfer64(src, dest);
     }
 
+    void transfer32(BaseIndex src, BaseIndex dest)
+    {
+        load32(src, scratchRegister());
+        store32(scratchRegister(), dest);
+    }
+
+    void transfer64(BaseIndex src, BaseIndex dest)
+    {
+        load64(src, scratchRegister());
+        store64(scratchRegister(), dest);
+    }
+
+    void transferPtr(BaseIndex src, BaseIndex dest)
+    {
+        transfer64(src, dest);
+    }
+
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         padBeforePatch();
@@ -1928,6 +1945,13 @@ public:
         TrustedImm32 mask8(static_cast<int8_t>(mask.m_value));
         MacroAssemblerX86Common::move(TrustedImmPtr(address.m_ptr), scratchRegister());
         return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask8);
+    }
+
+    using MacroAssemblerX86Common::branch16;
+    Jump branch16(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    {
+        MacroAssemblerX86Common::move(TrustedImmPtr(left.m_ptr), scratchRegister());
+        return MacroAssemblerX86Common::branch16(cond, Address(scratchRegister()), right);
     }
 
     using MacroAssemblerX86Common::branchTest16;

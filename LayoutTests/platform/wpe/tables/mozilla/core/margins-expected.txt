@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 21x17
                         text run at (2,2) width 21: "foo"
             RenderTableCell {TD} at (118,7) size 277x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 80x17
+              RenderText {#text} at (2,7) size 80x17
                 text run at (2,2) width 80: "x x x x x x x"
       RenderBlock (anonymous) at (0,364) size 784x18
         RenderText {#text} at (0,0) size 223x17
@@ -98,7 +98,7 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 16x17
                         text run at (2,2) width 16: "50"
             RenderTableCell {TD} at (172,7) size 223x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 80x17
+              RenderText {#text} at (2,7) size 80x17
                 text run at (2,2) width 80: "x x x x x x x"
       RenderBlock (anonymous) at (0,422) size 784x18
         RenderText {#text} at (0,0) size 19x17

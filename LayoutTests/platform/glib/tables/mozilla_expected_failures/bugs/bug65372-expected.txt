@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 65x52
           RenderTableRow {TR} at (0,2) size 65x22
             RenderTableCell {TD} at (2,3) size 61x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 57x17
+              RenderText {#text} at (2,3) size 57x17
                 text run at (2,2) width 57: "First row"
           RenderTableRow {TR} at (0,26) size 65x0
           RenderTableRow {TR} at (0,28) size 65x22
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 65x54
           RenderTableRow {TR} at (0,2) size 65x22
             RenderTableCell {TD} at (2,4) size 61x22 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
-              RenderText {#text} at (2,2) size 57x17
+              RenderText {#text} at (2,4) size 57x17
                 text run at (2,2) width 57: "First row"
           RenderTableRow {TR} at (0,26) size 65x0
           RenderTableRow {TR} at (0,28) size 65x0
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 65x56
           RenderTableRow {TR} at (0,2) size 65x22
             RenderTableCell {TD} at (2,5) size 61x22 [border: (1px inset #808080)] [r=0 c=0 rs=4 cs=1]
-              RenderText {#text} at (2,2) size 57x17
+              RenderText {#text} at (2,5) size 57x17
                 text run at (2,2) width 57: "First row"
           RenderTableRow {TR} at (0,26) size 65x0
           RenderTableRow {TR} at (0,28) size 65x0
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 30x52
           RenderTableRow {TR} at (0,2) size 30x22
             RenderTableCell {TD} at (2,3) size 26x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 8x17
+              RenderText {#text} at (2,3) size 8x17
                 text run at (2,2) width 8: "1"
           RenderTableRow {TR} at (0,26) size 30x0
           RenderTableRow {TR} at (0,28) size 30x22

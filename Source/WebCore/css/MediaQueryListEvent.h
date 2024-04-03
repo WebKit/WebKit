@@ -43,8 +43,6 @@ public:
     const String& media() const { return m_media; }
     bool matches() const { return m_matches; }
 
-    EventInterface eventInterface() const final { return MediaQueryListEventInterfaceType; }
-
 private:
     MediaQueryListEvent(const AtomString& type, const String& media, bool matches);
     MediaQueryListEvent(const AtomString& type, const Init&, IsTrusted);

@@ -51,7 +51,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_dmabuf_video_sink_debug);
 
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
     GST_STATIC_CAPS(
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
         GST_VIDEO_DMA_DRM_CAPS_MAKE ";"
 #endif
         GST_VIDEO_CAPS_MAKE(GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST)
@@ -103,7 +103,7 @@ static void webKitDMABufVideoSinkConstructed(GObject* object)
     // In case of raw data, dmabuf objects are produced on the spot and filled with that data, and then pushed to the graphics pipeline.
 
     static GstStaticCaps s_dmabufCaps = GST_STATIC_CAPS(
-#if GST_CHECK_VERSION(1, 23, 0)
+#if GST_CHECK_VERSION(1, 24, 0)
         GST_VIDEO_DMA_DRM_CAPS_MAKE ";"
 #endif
         GST_VIDEO_CAPS_MAKE_WITH_FEATURES(GST_CAPS_FEATURE_MEMORY_DMABUF, GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST));
@@ -181,7 +181,7 @@ bool webKitDMABufVideoSinkIsEnabled()
     std::call_once(s_flag, [&] {
         const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED");
         s_disabled = value && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
-        if (!s_disabled && !GBMDevice::singleton().device()) {
+        if (!s_disabled && !GBMDevice::singleton().device(GBMDevice::Type::Render)) {
             WTFLogAlways("Unable to access the GBM device, disabling DMABuf video sink.");
             s_disabled = true;
         }

@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
               RenderInline {SPAN} at (0,0) size 38x17
                 RenderText {#text} at (0,0) size 38x17
                   text run at (0,0) width 38: "PASS"
-              RenderInline {SPAN} at (0,0) size 0x17
+              RenderInline {SPAN} at (37,0) size 0x17

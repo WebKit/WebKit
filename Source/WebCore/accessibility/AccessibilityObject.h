@@ -35,6 +35,7 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Path.h"
+#include "RuntimeApplicationChecks.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
@@ -65,7 +66,6 @@ public:
     virtual ~AccessibilityObject();
 
     AXID treeID() const final;
-    ProcessID processID() const override;
     String dbg() const final;
 
     // After constructing an AccessibilityObject, it must be given a
@@ -102,13 +102,14 @@ public:
     virtual bool isAccessibilityNodeObject() const { return false; }
     bool isAccessibilityRenderObject() const override { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
+    bool isAXRemoteFrame() const override { return false; }
     virtual bool isAccessibilityScrollViewInstance() const { return false; }
     virtual bool isAccessibilitySVGRoot() const { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
     virtual bool isAccessibilityTableColumnInstance() const { return false; }
-    bool isAccessibilityARIAGridInstance() const override { return false; }
     bool isAccessibilityARIAGridRowInstance() const override { return false; }
     bool isAccessibilityARIAGridCellInstance() const override { return false; }
+    virtual bool isAccessibilityLabelInstance() const { return false; }
     virtual bool isAccessibilityListBoxInstance() const { return false; }
     bool isAXIsolatedObjectInstance() const override { return false; }
 
@@ -125,7 +126,8 @@ public:
     bool isInputImage() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
     bool isControl() const override { return false; }
-    virtual bool isLabel() const { return false; }
+    bool isRadioInput() const override { return false; }
+    bool isLabel() const { return isAccessibilityLabelInstance() || labelForObjects().size(); }
 
     bool isList() const override { return false; }
     virtual bool isUnorderedList() const { return false; }
@@ -238,6 +240,8 @@ public:
     bool hasHighlighting() const override;
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
 
+    WallTime dateTimeValue() const override { return { }; }
+    DateComponentsType dateTimeComponentsType() const override;
     bool supportsDatetimeAttribute() const override;
     String datetimeAttributeValue() const override;
 
@@ -347,11 +351,10 @@ public:
     Vector<String> performTextOperation(const AccessibilityTextOperation&) override;
 
     virtual AccessibilityObject* observableObject() const { return nullptr; }
-    AccessibilityChildrenVector linkedObjects() const override { return { }; }
-    AccessibilityObject* titleUIElement() const override { return nullptr; }
-    AccessibilityObject* correspondingLabelForControlElement() const override { return nullptr; }
-    AccessibilityObject* correspondingControlForLabelElement() const override { return nullptr; }
+    virtual AccessibilityObject* controlForLabelElement() const { return nullptr; }
     AccessibilityObject* scrollBar(AccessibilityOrientation) override { return nullptr; }
+    AXCoreObject* internalLinkElement() const override { return nullptr; }
+    AccessibilityChildrenVector radioButtonGroup() const override { return { }; }
 
     virtual AccessibilityRole ariaRoleAttribute() const { return AccessibilityRole::Unknown; }
     bool hasExplicitGenericRole() const { return ariaRoleAttribute() == AccessibilityRole::Generic; }
@@ -381,11 +384,14 @@ public:
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
     String stringValue() const override { return { }; }
-    String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
+    bool dependsOnTextUnderElement() const;
+    String textUnderElement(TextUnderElementMode = TextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
     unsigned textLength() const final;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     virtual AXTextRuns textRuns() { return { }; }
+    bool hasTextRuns() final { return textRuns().size(); }
+    bool shouldEmitNewlinesBeforeAndAfterNode() const override { return false; }
 #endif
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
@@ -459,12 +465,17 @@ public:
     Widget* widgetForAttachmentView() const override { return nullptr; }
     bool isPlugin() const override { return false; }
 
+    IntPoint remoteFrameOffset() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const override;
+    RetainPtr<id> remoteFramePlatformElement() const override { return nil; }
 #endif
+    bool hasRemoteFrameChild() const override { return false; }
+
     Page* page() const override;
     Document* document() const override;
+    RefPtr<Document> protectedDocument() const;
     LocalFrameView* documentFrameView() const override;
     LocalFrame* frame() const;
     LocalFrame* mainFrame() const;
@@ -703,20 +714,14 @@ public:
     void overrideAttachmentParent(AccessibilityObject*) { }
 #endif
 
-#if ENABLE(ACCESSIBILITY)
     // A platform-specific method for determining if an attachment is ignored.
     bool accessibilityIgnoreAttachment() const;
     // Gives platforms the opportunity to indicate if an object should be included.
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const;
-#else
-    bool accessibilityIgnoreAttachment() const { return true; }
-    AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return AccessibilityObjectInclusion::DefaultBehavior; }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
-    int accessibilitySecureFieldLength() override;
+    unsigned accessibilitySecureFieldLength() final;
     bool hasTouchEventListener() const override;
-    bool isInputTypePopupButton() const override;
 #endif
 
     // allows for an AccessibilityObject to update its render tree or perform
@@ -774,6 +779,9 @@ public:
     void setLastPresentedTextPrediction(Node&, CompositionState, const String&, size_t, bool);
 #endif // PLATFORM(IOS_FAMILY)
 
+    virtual FloatRect frameRect() const { return { }; }
+    virtual bool isNonLayerSVGObject() const { return false; }
+
 protected:
     AccessibilityObject() = default;
 
@@ -806,6 +814,7 @@ protected:
     unsigned getLengthForTextRange() const;
 
 private:
+    ProcessID processID() const final { return presentingApplicationPID(); }
     bool hasAncestorFlag(AXAncestorFlag flag) const { return ancestorFlagsAreInitialized() && m_ancestorFlags.contains(flag); }
     std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     std::optional<SimpleRange> selectionRange() const;
@@ -849,10 +858,10 @@ protected: // FIXME: Make the data members private.
     bool m_subtreeDirty { false };
 };
 
-#if ENABLE(ACCESSIBILITY)
 inline bool AccessibilityObject::hasDisplayContents() const
 {
-    return is<Element>(node()) && downcast<Element>(node())->hasDisplayContents();
+    RefPtr element = this->element();
+    return element && element->hasDisplayContents();
 }
 
 inline void AccessibilityObject::recomputeIsIgnored()
@@ -870,23 +879,8 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
 {
     return previousLineStartPositionInternal(position).value_or(VisiblePosition());
 }
-#else
-inline bool AccessibilityObject::hasDisplayContents() const { return false; }
-inline void AccessibilityObject::recomputeIsIgnored() { }
-inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&) const { return std::nullopt; }
-inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition&) const { return { }; }
-#endif
 
-#if !ENABLE(ACCESSIBILITY)
-inline const AccessibilityObject::AccessibilityChildrenVector& AccessibilityObject::children(bool) { return m_children; }
-inline String AccessibilityObject::localizedActionVerb() const { return emptyString(); }
-inline String AccessibilityObject::actionVerb() const { return emptyString(); }
-inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { return -1; }
-inline void AccessibilityObject::updateBackingStore() { }
-inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
-#endif
-
-#if !(ENABLE(ACCESSIBILITY) && USE(ATSPI))
+#if !USE(ATSPI)
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
 inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
 #endif

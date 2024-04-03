@@ -302,12 +302,15 @@ void PoolAllocator::pop()
 
     while (mInUseList != page)
     {
+        // Grab the pageCount before calling the destructor.  While the destructor doesn't actually
+        // touch this variable, it's confusing MSAN.
+        const size_t pageCount = mInUseList->pageCount;
+        PageHeader *nextInUse  = mInUseList->nextPage;
 
         // invoke destructor to free allocation list
         mInUseList->~PageHeader();
 
-        PageHeader *nextInUse = mInUseList->nextPage;
-        if (mInUseList->pageCount > 1)
+        if (pageCount > 1)
         {
             delete[] reinterpret_cast<char *>(mInUseList);
         }

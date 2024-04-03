@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x37
         RenderText {#text} at (0,0) size 399x37
           text run at (0,0) width 399: "This is fixed pitch. "
-        RenderInline {FONT} at (0,0) size 50x11
+        RenderInline {FONT} at (399,18) size 50x11
           RenderText {#text} at (399,18) size 50x11
             text run at (399,18) width 50: "This is not."
       RenderBlock (anonymous) at (0,37) size 784x30
@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 111x17
                   text run at (2,2) width 111: "This is also not."
       RenderBlock (anonymous) at (0,67) size 784x37
-        RenderInline {FONT} at (0,0) size 43x11
+        RenderInline {FONT} at (0,18) size 43x11
           RenderText {#text} at (0,18) size 43x11
             text run at (0,18) width 43: "More text"
         RenderText {#text} at (43,0) size 152x37

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Attachment.h"
-#include "DataReference.h"
 #include "MessageNames.h"
 #include "ReceiverMatcher.h"
 #include <wtf/Algorithms.h>
@@ -70,10 +69,10 @@ template<typename T, typename = IsObjCObject<T>> Class getClass()
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<Decoder> create(DataReference buffer, Vector<Attachment>&&);
-    using BufferDeallocator = Function<void(DataReference)>;
-    static std::unique_ptr<Decoder> create(DataReference buffer, BufferDeallocator&&, Vector<Attachment>&&);
-    Decoder(DataReference stream, uint64_t destinationID);
+    static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, Vector<Attachment>&&);
+    using BufferDeallocator = Function<void(std::span<const uint8_t>)>;
+    static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
+    Decoder(std::span<const uint8_t> stream, uint64_t destinationID);
 
     ~Decoder();
 
@@ -105,7 +104,7 @@ public:
 
     static std::unique_ptr<Decoder> unwrapForTesting(Decoder&);
 
-    DataReference buffer() const { return m_buffer; }
+    std::span<const uint8_t> buffer() const { return m_buffer; }
     size_t currentBufferOffset() const { return static_cast<size_t>(std::distance(m_buffer.begin(), m_bufferPosition)); }
 
     WARN_UNUSED_RETURN bool isValid() const { return !!m_buffer.data(); }
@@ -192,10 +191,10 @@ public:
     std::optional<Attachment> takeLastAttachment();
 
 private:
-    Decoder(DataReference buffer, BufferDeallocator&&, Vector<Attachment>&&);
+    Decoder(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
 
-    DataReference m_buffer;
-    DataReference::iterator m_bufferPosition;
+    std::span<const uint8_t> m_buffer;
+    std::span<const uint8_t>::iterator m_bufferPosition;
     BufferDeallocator m_bufferDeallocator;
 
     Vector<Attachment> m_attachments;
@@ -213,6 +212,12 @@ private:
 
     uint64_t m_destinationID;
 };
+
+template<>
+inline std::optional<Attachment> Decoder::decode<Attachment>()
+{
+    return takeLastAttachment();
+}
 
 inline bool alignedBufferIsLargeEnoughToContain(size_t bufferSize, const size_t alignedBufferPosition, size_t bytesNeeded)
 {

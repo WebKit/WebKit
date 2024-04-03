@@ -52,8 +52,7 @@ public:
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
     static constexpr bool isOriginAtBottomLeftCorner = true;
 
-    std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
-    void setOwnershipIdentity(const WebCore::ProcessIdentity&) final;
+    std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
     WebCore::GraphicsContext& context() final;
     bool originAtBottomLeftCorner() const override { return isOriginAtBottomLeftCorner; }
 private:

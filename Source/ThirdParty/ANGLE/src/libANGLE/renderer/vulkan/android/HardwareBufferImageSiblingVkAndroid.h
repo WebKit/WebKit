@@ -21,7 +21,7 @@ class HardwareBufferImageSiblingVkAndroid : public ExternalImageSiblingVk
     HardwareBufferImageSiblingVkAndroid(EGLClientBuffer buffer);
     ~HardwareBufferImageSiblingVkAndroid() override;
 
-    static egl::Error ValidateHardwareBuffer(RendererVk *renderer,
+    static egl::Error ValidateHardwareBuffer(vk::Renderer *renderer,
                                              EGLClientBuffer buffer,
                                              const egl::AttributeMap &attribs);
 
@@ -43,7 +43,7 @@ class HardwareBufferImageSiblingVkAndroid : public ExternalImageSiblingVk
     // ExternalImageSiblingVk interface
     vk::ImageHelper *getImage() const override;
 
-    void release(RendererVk *renderer) override;
+    void release(vk::Renderer *renderer) override;
 
   private:
     angle::Result initImpl(DisplayVk *displayVk);

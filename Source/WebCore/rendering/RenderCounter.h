@@ -54,7 +54,7 @@ private:
 
     CounterContent m_counter;
     SingleThreadWeakPtr<CounterNode> m_counterNode;
-    RenderCounter* m_nextForSameCounter { nullptr };
+    SingleThreadWeakPtr<RenderCounter> m_nextForSameCounter;
     friend class CounterNode;
 };
 

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CSSProperty;
 
-class CSSPendingSubstitutionValue : public CSSValue {
+class CSSPendingSubstitutionValue final : public CSSValue {
 public:
     static Ref<CSSPendingSubstitutionValue> create(CSSPropertyID shorthandPropertyId, Ref<CSSVariableReferenceValue>&& shorthandValue)
     {
@@ -50,6 +50,13 @@ public:
     static String customCSSText() { return emptyString(); }
 
     RefPtr<CSSValue> resolveValue(Style::BuilderState&, CSSPropertyID) const;
+
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        if (func(m_shorthandValue.get()) == IterationStatus::Done)
+            return IterationStatus::Done;
+        return IterationStatus::Continue;
+    }
 
 private:
     CSSPendingSubstitutionValue(CSSPropertyID shorthandPropertyId, Ref<CSSVariableReferenceValue>&& shorthandValue)

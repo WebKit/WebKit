@@ -7,17 +7,12 @@
 //   Prints all format support info
 //
 
-#include "test_utils/ANGLETest.h"
-#include "test_utils/angle_test_instantiate.h"
-// 'None' is defined as 'struct None {};' in
-// third_party/googletest/src/googletest/include/gtest/internal/gtest-type-util.h.
-// But 'None' is also defined as a numeric constant 0L in <X11/X.h>.
-// So we need to include ANGLETest.h first to avoid this conflict.
-
 #include "common/gl_enum_utils.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/formatutils.h"
+#include "test_utils/ANGLETest.h"
+#include "test_utils/angle_test_instantiate.h"
 #include "util/EGLWindow.h"
 
 using namespace angle;

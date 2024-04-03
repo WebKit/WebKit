@@ -265,7 +265,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             origins.append({ offsetX, offsetY });
         }
         bool ltr = !item.a.fRTL;
-        auto stringIndices = stringIndicesFromClusters(clusters, StringView(str, length), item.iCharPos, glyphs.size(), ltr);
+        auto stringIndices = stringIndicesFromClusters(clusters, std::span(str, length), item.iCharPos, glyphs.size(), ltr);
         FloatSize initialAdvance = toFloatSize(origins[0]);
         m_complexTextRuns.append(ComplexTextRun::create(baseAdvances, origins, glyphs, stringIndices, initialAdvance, *font, cp, stringLocation, stringLength, item.iCharPos, items[i+1].iCharPos, ltr));
     }

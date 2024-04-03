@@ -34,6 +34,7 @@
 #include "FetchResponse.h"
 #include "FetchResponseBodyLoader.h"
 #include "JSBackgroundFetchRecord.h"
+#include "Node.h"
 #include "RetrieveRecordsOptions.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerContainer.h"

@@ -339,7 +339,7 @@ static String x509Serialize(X509* x509)
     if (!length)
         return { };
 
-    return String(buffer.data(), length);
+    return buffer.subspan(0, length);
 }
 
 static String privateKeySerialize(EVP_PKEY* privateKey)
@@ -357,7 +357,7 @@ static String privateKeySerialize(EVP_PKEY* privateKey)
     if (!length)
         return { };
 
-    return String(buffer.data(), length);
+    return buffer.subspan(0, length);
 }
 
 std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& origin, const PeerConnectionBackend::CertificateInformation& info)

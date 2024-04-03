@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "DataReference.h"
 #include "RemoteMediaResourceManagerMessages.h"
 #include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
@@ -77,7 +76,7 @@ void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, con
     m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
         if (bufferHandle)
-            bufferHandle->takeOwnershipOfMemory(MemoryLedger::Media);
+            bufferHandle->takeOwnershipOfMemory(WebCore::MemoryLedger::Media);
     }, 0);
 }
 

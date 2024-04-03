@@ -143,7 +143,7 @@ void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatu
     if (!factory)
         return;
 
-    auto* gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 
@@ -158,7 +158,7 @@ void RemoteCDMInstanceSessionProxy::sendMessage(CDMMessageType type, Ref<SharedB
     if (!factory)
         return;
 
-    auto* gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 
@@ -174,7 +174,7 @@ void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
     if (!factory)
         return;
 
-    auto* gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 

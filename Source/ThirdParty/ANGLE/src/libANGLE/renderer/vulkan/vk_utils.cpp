@@ -14,10 +14,10 @@
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/ResourceVk.h"
 #include "libANGLE/renderer/vulkan/android/vk_android_utils.h"
 #include "libANGLE/renderer/vulkan/vk_mem_alloc_wrapper.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_resource.h"
 
 namespace angle
 {
@@ -105,7 +105,7 @@ VkResult FindAndAllocateCompatibleMemory(vk::Context *context,
     allocInfo.allocationSize       = memoryRequirements.size;
 
     // Add the new allocation for tracking.
-    RendererVk *renderer = context->getRenderer();
+    vk::Renderer *renderer = context->getRenderer();
     renderer->getMemoryAllocationTracker()->setPendingMemoryAlloc(
         memoryAllocationType, allocInfo.allocationSize, *memoryTypeIndexOut);
 
@@ -369,7 +369,7 @@ VkImageAspectFlags GetFormatAspectFlags(const angle::Format &format)
 }
 
 // Context implementation.
-Context::Context(RendererVk *renderer) : mRenderer(renderer), mPerfCounters{} {}
+Context::Context(Renderer *renderer) : mRenderer(renderer), mPerfCounters{} {}
 
 Context::~Context() {}
 
@@ -468,7 +468,7 @@ VkResult MemoryProperties::findCompatibleMemoryIndex(
 // StagingBuffer implementation.
 StagingBuffer::StagingBuffer() : mSize(0) {}
 
-void StagingBuffer::destroy(RendererVk *renderer)
+void StagingBuffer::destroy(Renderer *renderer)
 {
     VkDevice device = renderer->getDevice();
     mBuffer.destroy(device);
@@ -491,7 +491,7 @@ angle::Result StagingBuffer::init(Context *context, VkDeviceSize size, StagingUs
     VkMemoryPropertyFlags requiredFlags =
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-    RendererVk *renderer       = context->getRenderer();
+    Renderer *renderer         = context->getRenderer();
     const Allocator &allocator = renderer->getAllocator();
 
     uint32_t memoryTypeIndex = 0;
@@ -518,7 +518,7 @@ void StagingBuffer::release(ContextVk *contextVk)
     contextVk->addGarbage(&mAllocation);
 }
 
-void StagingBuffer::collectGarbage(RendererVk *renderer, const QueueSerial &queueSerial)
+void StagingBuffer::collectGarbage(Renderer *renderer, const QueueSerial &queueSerial)
 {
     GarbageObjects garbageObjects;
     garbageObjects.emplace_back(GetGarbage(&mBuffer));
@@ -674,7 +674,7 @@ GarbageObject &GarbageObject::operator=(GarbageObject &&rhs)
 // GarbageObject implementation
 // Using c-style casts here to avoid conditional compile for MSVC 32-bit
 //  which fails to compile with reinterpret_cast, requiring static_cast.
-void GarbageObject::destroy(RendererVk *renderer)
+void GarbageObject::destroy(Renderer *renderer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "GarbageObject::destroy");
     VkDevice device = renderer->getDevice();
@@ -774,7 +774,7 @@ angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
                                       uint64_t handle,
                                       const std::string &label)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    Renderer *renderer = contextVk->getRenderer();
 
     VkDebugUtilsObjectNameInfoEXT objectNameInfo = {};
     objectNameInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
@@ -1000,6 +1000,9 @@ PFN_vkCmdSetPatchControlPointsEXT vkCmdSetPatchControlPointsEXT           = null
 PFN_vkCmdSetPrimitiveRestartEnableEXT vkCmdSetPrimitiveRestartEnableEXT   = nullptr;
 PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = nullptr;
 
+// VK_EXT_vertex_input_dynamic_state
+PFN_vkCmdSetVertexInputEXT vkCmdSetVertexInputEXT = nullptr;
+
 // VK_KHR_fragment_shading_rate
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
 PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR                         = nullptr;
@@ -1110,6 +1113,12 @@ void InitExtendedDynamicState2EXTFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCmdSetPatchControlPointsEXT);
     GET_DEVICE_FUNC(vkCmdSetPrimitiveRestartEnableEXT);
     GET_DEVICE_FUNC(vkCmdSetRasterizerDiscardEnableEXT);
+}
+
+// VK_EXT_vertex_input_dynamic_state
+void InitVertexInputDynamicStateEXTFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCmdSetVertexInputEXT);
 }
 
 // VK_KHR_fragment_shading_rate

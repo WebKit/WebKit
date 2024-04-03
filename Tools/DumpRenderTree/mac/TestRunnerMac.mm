@@ -46,7 +46,6 @@
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLInputElementPrivate.h>
-#import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
@@ -154,43 +153,6 @@ void TestRunner::addDisallowedURL(JSStringRef url)
 bool TestRunner::callShouldCloseOnWebView()
 {
     return [[mainFrame webView] shouldClose];
-}
-
-void TestRunner::clearAllApplicationCaches()
-{
-    [WebApplicationCache deleteAllApplicationCaches];
-}
-
-long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
-{
-    auto urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
-    auto origin = adoptNS([[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(__bridge NSString *)urlCF.get()]]);
-    long long usage = [WebApplicationCache diskUsageForOrigin:origin.get()];
-    return usage;
-}
-
-void TestRunner::clearApplicationCacheForOrigin(JSStringRef url)
-{
-    auto urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
-    auto origin = adoptNS([[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(__bridge NSString *)urlCF.get()]]);
-    [WebApplicationCache deleteCacheForOrigin:origin.get()];
-}
-
-static JSObjectRef originsArrayToJS(JSContextRef context, NSArray *origins)
-{
-    auto count = [origins count];
-    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
-    for (NSUInteger i = 0; i < count; i++) {
-        NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
-        auto originJS = adopt(JSStringCreateWithCFString((__bridge CFStringRef)origin));
-        JSObjectSetPropertyAtIndex(context, array, i, JSValueMakeString(context, originJS.get()), 0);
-    }
-    return array;
-}
-
-JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
-{
-    return originsArrayToJS(context, [WebApplicationCache originsWithCache]);
 }
 
 void TestRunner::clearAllDatabases()
@@ -405,11 +367,6 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool onlyAcceptFirstPartyCookies
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = onlyAcceptFirstPartyCookies ? static_cast<NSHTTPCookieAcceptPolicy>(NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain) : NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:cookieAcceptPolicy];
-}
-
-void TestRunner::setAppCacheMaximumSize(unsigned long long size)
-{
-    [WebApplicationCache setMaximumSize:size];
 }
 
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)

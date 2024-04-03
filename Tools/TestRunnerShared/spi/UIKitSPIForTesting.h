@@ -63,18 +63,6 @@
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-#import <UIKit/UIAsyncTextInput.h>
-#import <UIKit/UIAsyncTextInputClient.h>
-#import <UIKit/UIAsyncTextInteraction.h>
-#import <UIKit/UIKeyEventContext.h>
-#endif
-
-#if !__has_include(<UIKit/UIAsyncTextInput_ForWebKitOnly.h>)
-#define UITextDocumentContext UIWKDocumentContext
-#define UITextDocumentRequest UIWKDocumentRequest
-#endif
-
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebScrollView.h>
@@ -90,9 +78,6 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #else // USE(APPLE_INTERNAL_SDK)
-
-#define UITextDocumentContext UIWKDocumentContext
-#define UITextDocumentRequest UIWKDocumentRequest
 
 @interface NSTextAlternatives : NSObject
 - (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
@@ -143,6 +128,7 @@ WTF_EXTERN_C_END
 
 @interface UITextSuggestion : NSObject
 @property (nonatomic, copy) NSString *displayText;
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText;
 @end
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
@@ -162,8 +148,6 @@ WTF_EXTERN_C_END
 @end
 
 @class WebEvent;
-
-@class UITextInputArrowKeyHistory;
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
 - (UITextInputTraits *)textInputTraits;
@@ -238,6 +222,8 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @property (nonatomic, copy) NSString *contextBeforeSelection;
 @property (nonatomic, copy) NSString *selectedText;
 @property (nonatomic, copy) NSString *contextAfterSelection;
+@property (nonatomic, copy) NSString *markedText;
+@property (nonatomic) NSRange rangeInMarkedText;
 @end
 
 typedef NS_ENUM(NSInteger, UIWKGestureType) {
@@ -261,9 +247,9 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input shouldUnderline:(BOOL)shouldUnderline withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler;
 
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
-- (void)requestDocumentContext:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
+- (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
 - (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
-- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
+- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
 #endif
 
 @property (nonatomic, readonly) NSString *selectedText;
@@ -500,9 +486,17 @@ typedef enum {
 - (UIEventButtonMask)_buttonMask;
 @end
 
+#if USE(BROWSERENGINEKIT)
+@interface UIKeyEvent : NSObject
+- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
+@end
+#endif
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 // Start of UIKit IPI
+
+@class UITextInputArrowKeyHistory;
 
 @interface UITextAutofillSuggestion ()
 + (instancetype)autofillSuggestionWithUsername:(NSString *)username password:(NSString *)password;
@@ -549,8 +543,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)clickDriver:(id<_UIClickInteractionDriving>)driver didUpdateHighlightProgress:(CGFloat)progress;
 - (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
-
-@class UITextInputArrowKeyHistory;
 
 @protocol UITextInputInternal
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
@@ -620,10 +612,17 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @end
 #endif
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-@interface UIKeyEvent (Internal)
-- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
-@property (nonatomic, readonly) WebEvent *webEvent;
+#if USE(BROWSERENGINEKIT)
+// FIXME: Replace this with BEResponderEditActions once that's in the SDK.
+@interface UIResponder (Staging_121208689)
+- (void)addShortcut:(id)sender;
+- (void)lookup:(id)sender;
+- (void)findSelected:(id)sender;
+- (void)promptForReplace:(id)sender;
+- (void)share:(id)sender;
+- (void)translate:(id)sender;
+- (void)transliterateChinese:(id)sender;
+- (void)replace:(id)sender;
 @end
 #endif
 
@@ -648,5 +647,11 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @interface UIApplication (IPI)
 - (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
 @end
+
+#if USE(BROWSERENGINEKIT)
+@interface UIKeyEvent (IPI)
+@property (nonatomic, readonly) WebEvent *webEvent;
+@end
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ANGLEInstancedArrays);
 ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
     : WebGLExtension(context, WebGLExtensionName::ANGLEInstancedArrays)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_instanced_arrays"_s);
+    context.protectedGraphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_instanced_arrays"_s);
 }
 
 ANGLEInstancedArrays::~ANGLEInstancedArrays() = default;

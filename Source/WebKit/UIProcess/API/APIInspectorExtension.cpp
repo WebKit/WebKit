@@ -82,7 +82,7 @@ void InspectorExtension::navigateTab(const Inspector::ExtensionTabID& extensionT
     m_extensionControllerProxy->navigateTabForExtension(extensionTabID, sourceURL, WTFMove(completionHandler));
 }
 
-void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionVoidResult)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));

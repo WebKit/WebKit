@@ -415,9 +415,9 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
         for (auto& message : iterator->value) {
             auto data = message.payload.utf8();
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
+            resultMessages.append(WebKit::WebPushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) });
 #else
-            resultMessages.append(WebKit::WebPushMessage { Vector<uint8_t> { reinterpret_cast<const uint8_t*>(data.data()), data.length() }, message.pushPartitionString, message.registrationURL, { } });
+            resultMessages.append(WebKit::WebPushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, { } });
 #endif
         }
         m_testingPushMessages.remove(iterator);
@@ -523,7 +523,7 @@ void WebPushDaemon::setPublicTokenForTesting(const String& publicToken, Completi
             return;
         }
 
-        m_pushService->setPublicTokenForTesting(Vector<uint8_t> { publicToken.utf8().bytes() });
+        m_pushService->setPublicTokenForTesting(Vector<uint8_t> { publicToken.utf8().span() });
         replySender();
     });
 }

@@ -27,8 +27,10 @@
 
 #include "config.h"
 #include "ContentType.h"
+#include "MIMETypeRegistry.h"
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -40,6 +42,27 @@ ContentType::ContentType(String&& contentType)
 ContentType::ContentType(const String& contentType)
     : m_type(contentType)
 {
+}
+
+ContentType::ContentType(const String& contentType, bool typeWasInferredFromExtension)
+    : m_type(contentType)
+    , m_typeWasInferredFromExtension(typeWasInferredFromExtension)
+{
+}
+
+ContentType ContentType::fromURL(const URL& url)
+{
+    ASSERT(isMainThread());
+
+    auto lastPathComponent = url.lastPathComponent();
+    size_t pos = lastPathComponent.reverseFind('.');
+    if (pos != notFound) {
+        auto extension = lastPathComponent.substring(pos + 1);
+        String mediaType = MIMETypeRegistry::mediaMIMETypeForExtension(extension);
+        if (!mediaType.isEmpty())
+            return ContentType(WTFMove(mediaType), true);
+    }
+    return ContentType();
 }
 
 const String& ContentType::codecsParameter()

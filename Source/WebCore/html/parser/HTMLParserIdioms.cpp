@@ -73,7 +73,7 @@ Decimal parseToDecimalForNumberType(StringView string, const Decimal& fallbackVa
         return fallbackValue;
 
     // Numbers are considered finite IEEE 754 Double-precision floating point values.
-    const Decimal doubleMax = Decimal::fromDouble(std::numeric_limits<double>::max());
+    const Decimal doubleMax = Decimal::doubleMax();
     if (value < -doubleMax || value > doubleMax)
         return fallbackValue;
 
@@ -342,7 +342,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     while (position < end && isASCIIDigit(*position))
         ++position;
 
-    StringView timeString(numberStart, position - numberStart);
+    StringView timeString(std::span(numberStart, position - numberStart));
     if (timeString.isEmpty()) {
         if (position >= end || *position != '.')
             return false;
@@ -379,7 +379,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
         return true;
 
     if (*position == 'U' || *position == 'u') {
-        StringView url(position, end - position);
+        StringView url(std::span(position, end - position));
 
         ++position;
 
@@ -418,7 +418,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     } else
         quote = '\0';
 
-    StringView url(position, end - position);
+    StringView url(std::span(position, end - position));
 
     if (quote != '\0') {
         size_t index = url.find(quote);

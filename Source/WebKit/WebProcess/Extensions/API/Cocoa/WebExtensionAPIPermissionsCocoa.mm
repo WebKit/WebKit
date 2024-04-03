@@ -30,6 +30,8 @@
 #import "config.h"
 #import "WebExtensionAPIPermissions.h"
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
@@ -39,8 +41,6 @@
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
-
-#if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
 
@@ -56,7 +56,7 @@ void WebExtensionAPIPermissions::getAll(Ref<WebExtensionCallbackHandler>&& callb
             permissionsKey: createNSArray(permissions).get(),
             originsKey: createNSArray(origins).get()
         });
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -75,7 +75,7 @@ void WebExtensionAPIPermissions::contains(NSDictionary *details, Ref<WebExtensio
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsContains(permissions, origins), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool containsPermissions) {
         callback->call(containsPermissions ? @YES : @NO);
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -112,7 +112,7 @@ void WebExtensionAPIPermissions::request(NSDictionary *details, Ref<WebExtension
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsRequest(permissions, origins), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool success) {
         callback->call(success ? @YES : @NO);
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -141,7 +141,7 @@ void WebExtensionAPIPermissions::remove(NSDictionary *details, Ref<WebExtensionC
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::PermissionsRemove(permissions, origins), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool success) {
         callback->call(success ? @YES : @NO);
-    }, extensionContext().identifier().toUInt64());
+    }, extensionContext().identifier());
 }
 
 bool WebExtensionAPIPermissions::parseDetailsDictionary(NSDictionary *details, HashSet<String>& permissions, HashSet<String>& origins, NSString *callingAPIName, NSString **outExceptionString)
@@ -245,7 +245,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onAdded()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onAdded
 
     if (!m_onAdded)
-        m_onAdded = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PermissionsOnAdded);
+        m_onAdded = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnAdded);
 
     return *m_onAdded;
 }
@@ -255,7 +255,7 @@ WebExtensionAPIEvent& WebExtensionAPIPermissions::onRemoved()
     // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/permissions/onRemoved
 
     if (!m_onRemoved)
-        m_onRemoved = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::PermissionsOnRemoved);
+        m_onRemoved = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::PermissionsOnRemoved);
 
     return *m_onRemoved;
 }

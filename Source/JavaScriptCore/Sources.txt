@@ -236,6 +236,7 @@ bytecode/ExitFlag.cpp
 bytecode/ExitKind.cpp
 bytecode/ExitingInlineKind.cpp
 bytecode/ExitingJITType.cpp
+bytecode/ExpressionInfo.cpp
 bytecode/FullCodeOrigin.cpp
 bytecode/FunctionCodeBlock.cpp
 bytecode/GetByStatus.cpp
@@ -280,6 +281,7 @@ bytecode/ReduceWhitespace.cpp
 bytecode/Repatch.cpp
 bytecode/SetPrivateBrandStatus.cpp
 bytecode/SetPrivateBrandVariant.cpp
+bytecode/SharedJITStubSet.cpp
 bytecode/SpeculatedType.cpp
 bytecode/StructureSet.cpp
 bytecode/StructureStubClearingWatchpoint.cpp
@@ -1020,6 +1022,7 @@ runtime/RegExpMatchesArray.cpp
 runtime/RegExpObject.cpp
 runtime/RegExpPrototype.cpp
 runtime/RegExpStringIteratorPrototype.cpp
+runtime/RegisterTZoneTypes.cpp
 runtime/ResourceExhaustion.cpp
 runtime/RuntimeTZoneImpls.cpp
 runtime/RuntimeType.cpp
@@ -1053,6 +1056,7 @@ runtime/SymbolObject.cpp
 runtime/SymbolPrototype.cpp
 runtime/SymbolTable.cpp
 runtime/SyntheticModuleRecord.cpp
+runtime/TZoneInit.cpp
 runtime/TemplateObjectDescriptor.cpp
 runtime/TemporalCalendar.cpp
 runtime/TemporalCalendarConstructor.cpp
@@ -1110,15 +1114,18 @@ tools/Integrity.cpp
 tools/JSDollarVM.cpp
 tools/VMInspector.cpp
 
-wasm/WasmB3IRGenerator.cpp
+wasm/WasmOMGIRGenerator.cpp
 wasm/WasmBBQDisassembler.cpp
 wasm/WasmBBQJIT.cpp @no-unify
+wasm/WasmBBQJIT32_64.cpp @no-unify
+wasm/WasmBBQJIT64.cpp @no-unify
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
 wasm/WasmBranchHintsSectionParser.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmCallingConvention.cpp
+wasm/WasmCompilationContext.cpp
 wasm/WasmCompilationMode.cpp
 wasm/WasmConstExprGenerator.cpp
 wasm/WasmContext.cpp

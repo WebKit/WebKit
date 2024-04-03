@@ -1,0 +1,67 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+
+function videoWithData() {
+  const veryBrightVideo = `data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAvG1kYXQAAAAfTgEFGkdWStxcTEM/lO/FETzRQ6gD7gAA7gIAA3EYgAAAAEgoAa8iNjAkszOL+e58c//cEe//0TT//scp1n/381P/RWP/zOW4QtxorfVogeh8nQDbQAAAAwAQMCcWUTAAAAMAAAMAAAMA84AAAAAVAgHQAyu+KT35E7gAADFgAAADABLQAAAAEgIB4AiS76MTkNbgAAF3AAAPSAAAABICAeAEn8+hBOTXYAADUgAAHRAAAAPibW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAKcAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAw10cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAKcAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAACnAAAAAAABAAAAAAKFbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABdwAAAD6BVxAAAAAAAMWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABDb3JlIE1lZGlhIFZpZGVvAAAAAixtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAAHsc3RibAAAARxzdHNkAAAAAAAAAAEAAAEMaHZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAQABAASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABj//wAAAHVodmNDAQIgAAAAsAAAAAAAPPAA/P36+gAACwOgAAEAGEABDAH//wIgAAADALAAAAMAAAMAPBXAkKEAAQAmQgEBAiAAAAMAsAAAAwAAAwA8oBQgQcCTDLYgV7kWVYC1CRAJAICiAAEACUQBwChkuNBTJAAAAApmaWVsAQAAAAATY29scm5jbHgACQAQAAkAAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAALPwAACz8AAAAKHN0dHMAAAAAAAAAAwAAAAIAAAPoAAAAAQAAAAEAAAABAAAD6AAAABRzdHNzAAAAAAAAAAEAAAABAAAAEHNkdHAAAAAAIBAQGAAAAChjdHRzAAAAAAAAAAMAAAABAAAAAAAAAAEAAAfQAAAAAgAAAAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAQAAAABAAAAJHN0c3oAAAAAAAAAAAAAAAQAAABvAAAAGQAAABYAAAAWAAAAFHN0Y28AAAAAAAAAAQAAACwAAABhdWR0YQAAAFltZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAACxpbHN0AAAAJKl0b28AAAAcZGF0YQAAAAEAAAAATGF2ZjYwLjMuMTAw`;
+  let video = document.createElement('video');
+  video.src = veryBrightVideo;
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+onload = async () => {
+  try {
+    let adapter0 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+    let promise0 = adapter0.requestDevice(
+    {
+    label: '\ue3b5',
+    requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable'
+    ],
+    requiredLimits: {
+    maxColorAttachmentBytesPerSample: 34,
+    maxVertexBufferArrayStride: 8035,
+    maxStorageTexturesPerShaderStage: 9,
+    maxBindingsPerBindGroup: 6910,
+    maxTextureArrayLayers: 980,
+    maxTextureDimension1D: 8875,
+    maxTextureDimension2D: 14193,
+    minStorageBufferOffsetAlignment: 32,
+    minUniformBufferOffsetAlignment: 128,
+    },
+    }
+    );
+    let device1 = await promise0;
+    let canvas1 = document.createElement('canvas');
+    let gpuCanvasContext1 = canvas1.getContext('webgpu');
+    try {
+    gpuCanvasContext1.configure(
+    {
+    device: device1,
+    format: 'rgba16float',
+    usage: 0,
+    viewFormats: [
+    ],
+    colorSpace: 'srgb',
+    alphaMode: 'opaque',
+    }
+    );
+    } catch {}
+    device1.destroy();
+    let texture10 = gpuCanvasContext1.getCurrentTexture();
+    let video3 = await videoWithData();
+  } catch { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

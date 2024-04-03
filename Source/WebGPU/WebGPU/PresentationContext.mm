@@ -39,14 +39,14 @@ Ref<PresentationContext> Device::createSwapChain(PresentationContext& presentati
     return presentationContext;
 }
 
-Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor& descriptor)
+Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor& descriptor, const Instance& instance)
 {
     if (!descriptor.nextInChain || descriptor.nextInChain->next)
         return PresentationContext::createInvalid();
 
     switch (static_cast<unsigned>(descriptor.nextInChain->sType)) {
     case WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking:
-        return PresentationContextIOSurface::create(descriptor);
+        return PresentationContextIOSurface::create(descriptor, instance);
     case WGPUSType_SurfaceDescriptorFromMetalLayer:
         return PresentationContextCoreAnimation::create(descriptor);
     default:

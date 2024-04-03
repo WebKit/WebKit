@@ -27,7 +27,6 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,8 +34,9 @@ namespace WebCore {
 class DeferredPromise;
 class Document;
 class UserGestureIndicator;
+class WeakPtrImplWithEventTargetData;
 
-enum class StorageAccessWasGranted : bool { No, Yes };
+enum class StorageAccessWasGranted : uint8_t { No, Yes, YesWithException };
 
 enum class StorageAccessPromptWasShown : bool { No, Yes };
 
@@ -85,7 +85,7 @@ private:
     void requestStorageAccessQuirk(RegistrableDomain&& requestingDomain, CompletionHandler<void(StorageAccessWasGranted)>&&);
 
     static DocumentStorageAccess* from(Document&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
     bool hasFrameSpecificStorageAccess() const;
     void setWasExplicitlyDeniedFrameSpecificStorageAccess() { ++m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess; };
     bool isAllowedToRequestStorageAccess() { return m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess < maxNumberOfTimesExplicitlyDeniedStorageAccess; };
@@ -96,7 +96,7 @@ private:
 
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
     
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
 

@@ -32,7 +32,6 @@
 
 #import "CocoaHelpers.h"
 #import "Logging.h"
-#import "WebExtensionDynamicScripts.h"
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import "_WKWebExtensionSQLiteHelpers.h"
 #import "_WKWebExtensionSQLiteRow.h"
@@ -107,7 +106,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray *keys)
             return;
 
         NSString *errorMessage;
-        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage createIfNecessary:NO]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler(errorMessage);
             });
@@ -191,7 +190,7 @@ static NSString *rowFilterStringFromRowKeys(NSArray *keys)
 {
     dispatch_assert_queue(_databaseQueue);
 
-    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage])
+    if (![self _openDatabaseIfNecessaryReturningErrorMessage:outErrorMessage createIfNecessary:NO])
         return @[ ];
 
     ASSERT(!(*outErrorMessage).length);

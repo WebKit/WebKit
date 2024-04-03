@@ -30,20 +30,24 @@
 
 #include "ArgumentCodersGtk.h"
 #include "MessageSenderInlines.h"
-#include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/CairoOperations.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionData.h>
+#include <WebCore/ShareableBitmap.h>
+
+#if USE(CAIRO)
+#include <WebCore/CairoOperations.h>
 #include <cairo.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
 
+#if USE(CAIRO)
 static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surface_t* surface)
 {
     if (!surface)
@@ -58,6 +62,24 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
     Cairo::drawSurface(*graphicsContext->platformContext(), surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), state.imageInterpolationQuality(), state.alpha(), Cairo::ShadowState(state));
     return bitmap;
 }
+#endif
+
+#if USE(SKIA)
+static RefPtr<ShareableBitmap> convertSkiaImageToShareableBitmap(SkImage* image)
+{
+    if (!image)
+        return nullptr;
+
+    IntSize imageSize(image->width(), image->height());
+    RefPtr bitmap = ShareableBitmap::create({ imageSize });
+    auto graphicsContext = bitmap->createGraphicsContext();
+
+    ASSERT(graphicsContext->hasPlatformContext());
+    graphicsContext->platformContext()->drawImage(image, 0, 0);
+
+    return bitmap;
+}
+#endif
 
 void WebDragClient::didConcludeEditDrag()
 {
@@ -65,9 +87,15 @@ void WebDragClient::didConcludeEditDrag()
 
 void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame&)
 {
-    auto& dragImage = dragItem.image;
-    auto bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());
     std::optional<ShareableBitmap::Handle> handle;
+    auto* dragSurface = dragItem.image.get().get();
+    RefPtr<ShareableBitmap> bitmap;
+
+#if USE(CAIRO)
+    bitmap = convertCairoSurfaceToShareableBitmap(dragSurface);
+#elif USE(SKIA)
+    bitmap = convertSkiaImageToShareableBitmap(dragSurface);
+#endif
 
     if (bitmap) {
         handle = bitmap->createHandle();

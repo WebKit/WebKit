@@ -35,7 +35,9 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
 #import <WebKit/NSAttributedStringPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -434,7 +436,7 @@ TEST(WKWebView, AttributedStringFromList)
     checkListAtIndex(7, @"Four", secondList);
 }
 
-TEST(WKWebView, DoNotAllowNetworkLoads)
+TEST(WKWebView, AttributedStringWithoutNetworkLoads)
 {
     [TestProtocol registerWithScheme:@"https"];
 
@@ -472,6 +474,41 @@ TEST(WKWebView, DoNotAllowNetworkLoads)
     EXPECT_FALSE(attemptedImageLoad);
 }
 
+TEST(WKWebView, AttributedStringWithSourceApplicationBundleID)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    RetainPtr markup = @"<p>Remote image</p><img src='https://bundle-file/icon.png'>";
+    RetainPtr bundleID = @"com.apple.Safari";
+    auto options = @{
+        _WKAllowNetworkLoadsOption : @YES,
+        _WKSourceApplicationBundleIdentifierOption : bundleID.get()
+    };
+
+    __block bool done = false;
+    __block RetainPtr<NSAttributedString> resultString;
+    __block RetainPtr<NSError> resultError;
+    __block RetainPtr<WKWebView> loaderWebView;
+    [NSAttributedString _loadFromHTMLWithOptions:options contentLoader:^(WKWebView *webView) {
+        loaderWebView = webView;
+        return [webView loadHTMLString:markup.get() baseURL:nil];
+    } completionHandler:^(NSAttributedString *string, NSDictionary *, NSError *error) {
+        resultString = string;
+        resultError = error;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_NULL(resultError);
+
+    auto dataStore = [loaderWebView configuration].websiteDataStore;
+    EXPECT_FALSE(dataStore.isPersistent);
+    EXPECT_WK_STREQ(bundleID.get(), dataStore._configuration.sourceApplicationBundleIdentifier);
+
+    auto textRange = [[resultString string] rangeOfString:@"Remote image"];
+    EXPECT_EQ(textRange.location, 0U);
+}
+
 TEST(WKWebView, TextWithWebFontAsAttributedString)
 {
     auto archiveURL = [NSBundle.mainBundle URLForResource:@"text-with-web-font" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
@@ -505,4 +542,23 @@ TEST(WKWebView, TextWithWebFontAsAttributedString)
     EXPECT_TRUE([substringsAndFonts[1].second.fontName containsString:@"Times"]);
     EXPECT_WK_STREQ(substringsAndFonts[0].second.fontName, substringsAndFonts[2].second.fontName);
     EXPECT_FALSE([substringsAndFonts[2].second.fontName containsString:@"LastResort"]);
+}
+
+TEST(WKWebView, AttributedStringAndCDATASection)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<body>1<script>document.body.append('2', new Document().createCDATASection('3'));</script>4"];
+
+    __block bool finished = false;
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        EXPECT_EQ([attributedString length], 4U);
+        auto expectedSubstring = [[attributedString string] rangeOfString:@"1234"];
+        EXPECT_EQ(expectedSubstring.location, 0U);
+        EXPECT_EQ(expectedSubstring.length, 4U);
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
 }

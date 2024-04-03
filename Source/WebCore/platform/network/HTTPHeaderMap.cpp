@@ -89,10 +89,10 @@ void HTTPHeaderMap::set(CFStringRef name, const String& value)
     if (auto* nameCharacters = CFStringGetCStringPtr(name, kCFStringEncodingASCII)) {
         unsigned length = CFStringGetLength(name);
         HTTPHeaderName headerName;
-        if (findHTTPHeaderName(StringView(nameCharacters, length), headerName))
+        if (findHTTPHeaderName(StringView(std::span { nameCharacters, length }), headerName))
             set(headerName, value);
         else
-            setUncommonHeader(String(nameCharacters, length), value);
+            setUncommonHeader(String({ nameCharacters, length }), value);
 
         return;
     }

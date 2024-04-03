@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBDatabaseConnectionIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBError.h"
 #include "IDBGetAllResult.h"
@@ -99,7 +100,7 @@ public:
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
 
     const IDBError& error() const { return m_error; }
-    uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
+    IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return *m_databaseConnectionIdentifier; }
 
     const IDBDatabaseInfo& databaseInfo() const;
     const IDBTransactionInfo& transactionInfo() const;
@@ -125,7 +126,7 @@ private:
     IDBResourceIdentifier m_requestIdentifier;
 
     IDBError m_error;
-    uint64_t m_databaseConnectionIdentifier { 0 };
+    std::optional<IDBDatabaseConnectionIdentifier> m_databaseConnectionIdentifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBTransactionInfo> m_transactionInfo;
     std::unique_ptr<IDBKeyData> m_resultKey;

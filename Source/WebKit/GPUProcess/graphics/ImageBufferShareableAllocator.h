@@ -27,9 +27,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "SharedMemory.h"
 #include <WebCore/ImageBufferAllocator.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/SharedMemory.h>
 
 namespace WebKit {
 
@@ -41,7 +41,7 @@ private:
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, WebCore::RenderingMode) const final;
     RefPtr<WebCore::PixelBuffer> createPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntSize&) const final;
 
-    void transferMemoryOwnership(SharedMemory::Handle&&) const;
+    void transferMemoryOwnership(WebCore::SharedMemory::Handle&&) const;
 
     const WebCore::ProcessIdentity m_resourceOwner;
 };

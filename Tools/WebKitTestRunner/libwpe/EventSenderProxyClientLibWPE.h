@@ -65,7 +65,6 @@ private:
     void prepareAndDispatchTouchEvent(uint32_t, double);
 #endif // ENABLE(TOUCH_EVENTS)
 
-    struct wpe_view_backend* m_backend { nullptr };
     uint32_t m_buttonState { 0 };
 #if ENABLE(TOUCH_EVENTS)
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;

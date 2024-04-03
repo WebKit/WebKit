@@ -36,6 +36,10 @@
 #include <variant>
 #include <wtf/Vector.h>
 
+#if USE(SKIA)
+#include <skia/core/SkShader.h>
+#endif
+
 #if USE(CG)
 #include "GradientRendererCG.h"
 #endif
@@ -105,6 +109,10 @@ public:
     void paint(CGContextRef);
 #endif
 
+#if USE(SKIA)
+    sk_sp<SkShader> shader(float globalAlpha, const AffineTransform&);
+#endif
+
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, std::optional<RenderingResourceIdentifier>);
 
@@ -121,6 +129,11 @@ private:
 #if USE(CG)
     std::optional<GradientRendererCG> m_platformRenderer;
 #endif
+
+#if USE(SKIA)
+    sk_sp<SkShader> m_shader;
+#endif
+
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);

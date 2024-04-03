@@ -31,6 +31,7 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, CoreText)
 
 // FIXME: Move this to strong linking as soon as people have a chance to update to an SDK that includes it.
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(PAL, CoreText, CTFontCopyColorGlyphCoverage, CFBitVectorRef, (CTFontRef font), (font))
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(PAL, CoreText, CTFontManagerCreateMemorySafeFontDescriptorFromData, CTFontDescriptorRef, (CFDataRef data), (data));
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, OTSVG)
 

@@ -37,6 +37,7 @@
 @property (nonatomic, copy) void (^didStartInputSessionHandler)(WKWebView *, id <_WKFormInputSession>);
 @property (nonatomic, copy) NSDictionary<id, NSString *> * (^webViewAdditionalContextForStrongPasswordAssistanceHandler)(WKWebView *);
 @property (nonatomic, copy) BOOL (^focusRequiresStrongPasswordAssistanceHandler)(WKWebView *, id <_WKFocusedElementInfo>);
+@property (nonatomic, copy) void (^insertTextSuggestionHandler)(WKWebView *, UITextSuggestion *, id<_WKFormInputSession>);
 @end
 
 #endif

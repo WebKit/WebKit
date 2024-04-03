@@ -89,7 +89,7 @@ static void checkColor(PlatformColor *color, CGFloat red, CGFloat green, CGFloat
     [color getRed:&observedRed green:&observedGreen blue:&observedBlue alpha:&observedAlpha];
 
     EXPECT_EQ(red, observedRed);
-    EXPECT_EQ(green, observedRed);
+    EXPECT_EQ(green, observedGreen);
     EXPECT_EQ(blue, observedBlue);
     EXPECT_EQ(alpha, observedAlpha);
 }

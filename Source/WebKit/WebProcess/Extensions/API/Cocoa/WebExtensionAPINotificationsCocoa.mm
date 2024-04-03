@@ -39,7 +39,7 @@ WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onClicked
 
     if (!m_onClicked)
-        m_onClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::NotificationsOnClicked);
+        m_onClicked = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::NotificationsOnClicked);
 
     return *m_onClicked;
 }
@@ -49,7 +49,7 @@ WebExtensionAPIEvent& WebExtensionAPINotifications::onButtonClicked()
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/onButtonClicked
 
     if (!m_onButtonClicked)
-        m_onButtonClicked = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::NotificationsOnButtonClicked);
+        m_onButtonClicked = WebExtensionAPIEvent::create(*this, WebExtensionEventListenerType::NotificationsOnButtonClicked);
 
     return *m_onButtonClicked;
 }

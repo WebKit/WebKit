@@ -27,5 +27,6 @@ typedef USVString CSSOMString;
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
     [SameObject] readonly attribute CSSStyleSheet styleSheet;
     readonly attribute CSSOMString? layerName;
+    readonly attribute CSSOMString? supportsText;
 };
 

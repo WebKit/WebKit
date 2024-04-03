@@ -40,6 +40,230 @@ layer at (0,0) size 5x5
   RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
 layer at (5,5) size 5x5
   RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 20x20
+  RenderSVGHiddenContainer {pattern} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {use} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGTransformableContainer {g} at (0,0) size 20x20
+layer at (0,0) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#DC143C]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFFFF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+layer at (0,0) size 10x10
+  RenderSVGTransformableContainer {g} at (0,0) size 10x10
+layer at (0,0) size 5x5
+  RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+layer at (5,5) size 5x5
+  RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
 layer at (0,-19.48) size 199x40 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (5,0) size 198.30x39.48
 layer at (0,0) size 20x21

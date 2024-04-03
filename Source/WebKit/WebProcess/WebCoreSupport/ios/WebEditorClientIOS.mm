@@ -117,6 +117,11 @@ bool WebEditorClient::shouldSuppressPasswordEcho() const
     return m_page->screenIsBeingCaptured() || m_page->hardwareKeyboardIsAttached();
 }
 
+bool WebEditorClient::shouldRemoveDictationAlternativesAfterEditing() const
+{
+    return m_page->shouldRemoveDictationAlternativesAfterEditing();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

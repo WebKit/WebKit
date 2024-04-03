@@ -60,7 +60,7 @@ void ImageQualityController::set(RenderBoxModelObject* object, LayerSizeMap* inn
     else {
         LayerSizeMap newInnerMap;
         newInnerMap.set(layer, size);
-        m_objectLayerSizeMap.set(object, newInnerMap);
+        m_objectLayerSizeMap.set(*object, newInnerMap);
     }
 }
 

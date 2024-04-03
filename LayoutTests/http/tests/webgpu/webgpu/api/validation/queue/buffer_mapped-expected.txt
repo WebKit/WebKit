@@ -1,1 +1,7 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :writeBuffer:
+PASS :copyBufferToBuffer:
+PASS :copyBufferToTexture:
+PASS :copyTextureToBuffer:
+PASS :map_command_recording_order:
+

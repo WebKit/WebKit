@@ -21,7 +21,6 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderSVGContainer.h"
 
 namespace WebCore {
@@ -38,6 +37,7 @@ private:
 
     void element() const = delete;
     SVGGraphicsElement& graphicsElement() const;
+    Ref<SVGGraphicsElement> protectedGraphicsElement() const;
 
     FloatSize additionalContainerTranslation() const;
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
@@ -50,5 +50,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTransformableContainer, isRenderSVGTransformableContainer())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

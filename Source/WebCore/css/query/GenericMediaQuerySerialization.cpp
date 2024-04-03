@@ -34,6 +34,8 @@ namespace MQ {
 static void serialize(StringBuilder& builder, const QueryInParens& queryInParens)
 {
     WTF::switchOn(queryInParens, [&](auto& node) {
+        if (node.functionId)
+            builder.append(nameString(*node.functionId));
         builder.append('(');
         serialize(builder, node);
         builder.append(')');

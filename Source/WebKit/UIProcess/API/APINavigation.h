@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "APIWebsitePolicies.h"
-#include "DataReference.h"
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
 #include "ProcessThrottler.h"

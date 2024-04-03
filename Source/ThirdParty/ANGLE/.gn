@@ -21,7 +21,7 @@ script_executable = "python3"
 # matching these patterns (see "gn help label_pattern" for format) will have
 # their includes checked for proper dependencies when you run either
 # "gn check" or "gn gen --check".
-check_targets = [ "*" ]
+# check_targets = [ "*" ]
 
 # These are the list of GN files that run exec_script. This allowlist exists
 # to force additional review for new uses of exec_script, which is strongly
@@ -54,3 +54,5 @@ default_args = {
   android32_ndk_api_level = 29
   android64_ndk_api_level = 29
 }
+
+no_check_targets = [ "third_party/dawn/*" ]

@@ -27,12 +27,17 @@
 #include "WPEDisplayDRM.h"
 
 #include "DRMUniquePtr.h"
+#include "RefPtrUdev.h"
+#include "WPEDRMSession.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
+#include "WPEMonitorDRMPrivate.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
 #include <gio/gio.h>
+#include <libudev.h>
 #include <wtf/glib/WTFGType.h>
+#include <wtf/text/CString.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 /**
@@ -40,6 +45,9 @@
  *
  */
 struct _WPEDisplayDRMPrivate {
+    std::unique_ptr<WPE::DRM::Session> session;
+    CString drmDevice;
+    CString drmRenderNode;
     UnixFileDescriptor fd;
     struct gbm_device* device;
     bool atomicSupported;
@@ -47,7 +55,7 @@ struct _WPEDisplayDRMPrivate {
     uint32_t cursorWidth;
     uint32_t cursorHeight;
     std::unique_ptr<WPE::DRM::Connector> connector;
-    std::unique_ptr<WPE::DRM::Crtc> crtc;
+    GRefPtr<WPEMonitor> monitor;
     std::unique_ptr<WPE::DRM::Plane> primaryPlane;
     std::unique_ptr<WPE::DRM::Cursor> cursor;
     std::unique_ptr<WPE::DRM::Seat> seat;
@@ -70,36 +78,61 @@ static void wpeDisplayDRMDispose(GObject* object)
     G_OBJECT_CLASS(wpe_display_drm_parent_class)->dispose(object);
 }
 
-static UnixFileDescriptor findDevice(GError** error)
-{
-    drmDevicePtr devices[64];
-    memset(devices, 0, sizeof(devices));
-
-    int numDevices = drmGetDevices2(0, devices, std::size(devices));
-    if (numDevices <= 0) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No DRM devices found");
-        return { };
-    }
-
+struct DisplayDevice {
+    CString filename;
     UnixFileDescriptor fd;
-    for (int i = 0; i < numDevices; ++i) {
-        drmDevice* device = devices[i];
-        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY)))
+
+    bool isNull() const
+    {
+        return !fd && filename.isNull();
+    }
+};
+
+// This is based on weston function find_primary_gpu(). It tries to find the boot VGA device that is KMS capable, or the first KMS device.
+static struct DisplayDevice findDevice(struct udev* udev, const char* seatID)
+{
+    RefPtr<struct udev_enumerate> udevEnumerate = adoptRef(udev_enumerate_new(udev));
+    udev_enumerate_add_match_subsystem(udevEnumerate.get(), "drm");
+    udev_enumerate_add_match_sysname(udevEnumerate.get(), "card[0-9]*");
+    udev_enumerate_scan_devices(udevEnumerate.get());
+
+    struct DisplayDevice displayDevice;
+    struct udev_list_entry* entry;
+    udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(udevEnumerate.get())) {
+        RefPtr<struct udev_device> udevDevice = adoptRef(udev_device_new_from_syspath(udev, udev_list_entry_get_name(entry)));
+        if (!udevDevice)
             continue;
 
-        fd = UnixFileDescriptor { open(device->nodes[DRM_NODE_PRIMARY], O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-        if (fd)
-            break;
+        const char* deviceSeatID = udev_device_get_property_value(udevDevice.get(), "ID_SEAT");
+        if (!deviceSeatID)
+            deviceSeatID = "seat0";
+        if (g_strcmp0(deviceSeatID, seatID))
+            continue;
+
+        bool isBootVGA = false;
+        if (auto* pciDevice = udev_device_get_parent_with_subsystem_devtype(udevDevice.get(), "pci", nullptr)) {
+            const char* id = udev_device_get_sysattr_value(pciDevice, "boot_vga");
+            isBootVGA = id && !strcmp(id, "1");
+        }
+
+        if (!isBootVGA && !displayDevice.isNull())
+            continue;
+
+        const char* filename = udev_device_get_devnode(udevDevice.get());
+        auto fd = UnixFileDescriptor { open(filename, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        if (!fd)
+            continue;
+
+        WPE::DRM::UniquePtr<drmModeRes> resources(drmModeGetResources(fd.value()));
+        if (!resources || !resources->count_crtcs || !resources->count_connectors || !resources->count_encoders)
+            continue;
+
+        displayDevice = { CString(filename), WTFMove(fd) };
+        if (isBootVGA)
+            return displayDevice;
     }
 
-    drmFreeDevices(devices, numDevices);
-
-    if (!fd) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
-        return { };
-    }
-
-    return fd;
+    return displayDevice;
 }
 
 static bool wpeDisplayDRMInitializeCapabilities(WPEDisplayDRM* display, int fd, GError** error)
@@ -132,7 +165,7 @@ static std::unique_ptr<WPE::DRM::Connector> chooseConnector(int fd, drmModeRes* 
 {
     for (int i = 0; i < resources->count_connectors; ++i) {
         WPE::DRM::UniquePtr<drmModeConnector> connector(drmModeGetConnector(fd, resources->connectors[i]));
-        if (!connector || connector->connection != DRM_MODE_CONNECTED || connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK || !connector->encoder_id)
+        if (!connector || connector->connection != DRM_MODE_CONNECTED || connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
             continue;
 
         if (auto conn = WPE::DRM::Connector::create(fd, connector.get()))
@@ -145,16 +178,29 @@ static std::unique_ptr<WPE::DRM::Connector> chooseConnector(int fd, drmModeRes* 
 
 static std::unique_ptr<WPE::DRM::Crtc> chooseCrtcForConnector(int fd, drmModeRes* resources, const WPE::DRM::Connector& connector, GError** error)
 {
+    // Try the currently connected encoder+crtc.
     WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, connector.encoderID()));
-    if (!encoder) {
-        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to get the connector encoder");
-        return nullptr;
+    if (encoder) {
+        for (int i = 0; i < resources->count_crtcs; ++i) {
+            if (resources->crtcs[i] == encoder->crtc_id) {
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[i]));
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+            }
+        }
     }
 
-    for (int i = 0; i < resources->count_crtcs; ++i) {
-        if (resources->crtcs[i] == encoder->crtc_id) {
-            WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[i]));
-            return WPE::DRM::Crtc::create(fd, drmCrtc.get(), i);
+    // If no active crtc was found, pick the first possible crtc, then try the first possible for crtc.
+    for (int i = 0; i < resources->count_encoders; ++i) {
+        WPE::DRM::UniquePtr<drmModeEncoder> encoder(drmModeGetEncoder(fd, resources->encoders[i]));
+        if (!encoder)
+            continue;
+
+        for (int j = 0; j < resources->count_crtcs; ++j) {
+            const uint32_t crtcMask = 1 << j;
+            if (encoder->possible_crtcs & crtcMask) {
+                WPE::DRM::UniquePtr<drmModeCrtc> drmCrtc(drmModeGetCrtc(fd, resources->crtcs[j]));
+                return WPE::DRM::Crtc::create(fd, drmCrtc.get(), j);
+            }
         }
     }
 
@@ -186,11 +232,20 @@ static std::unique_ptr<WPE::DRM::Plane> choosePlaneForCrtc(int fd, WPE::DRM::Pla
 
 static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
 {
-    // FIXME: make it possible to pass a device.
-    auto fd = findDevice(error);
-    if (!fd)
+    RefPtr<struct udev> udev = adoptRef(udev_new());
+    if (!udev) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to create udev context");
         return FALSE;
+    }
 
+    auto session = WPE::DRM::Session::create();
+    auto displayDevice = findDevice(udev.get(), session->seatID());
+    if (displayDevice.isNull()) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "No suitable DRM device found");
+        return FALSE;
+    }
+
+    auto fd = WTFMove(displayDevice.fd);
     if (drmSetMaster(fd.value()) == -1) {
         g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to become DRM master");
         return FALSE;
@@ -226,12 +281,23 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
         return FALSE;
     }
 
+    auto seat = WPE::DRM::Seat::create(udev.get(), *session);
+    if (!seat) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_CONNECTION_FAILED, "Failed to initialize input");
+        return FALSE;
+    }
+
+    std::unique_ptr<char, decltype(free)*> renderNodePath(drmGetRenderDeviceNameFromFd(fd.value()), free);
+
+    displayDRM->priv->session = WTFMove(session);
     displayDRM->priv->fd = WTFMove(fd);
+    displayDRM->priv->drmDevice = WTFMove(displayDevice.filename);
+    displayDRM->priv->drmRenderNode = renderNodePath.get();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
-    displayDRM->priv->crtc = WTFMove(crtc);
+    displayDRM->priv->monitor = wpeMonitorDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
-    displayDRM->priv->seat = WPE::DRM::Seat::create();
+    displayDRM->priv->seat = WTFMove(seat);
     if (cursorPlane)
         displayDRM->priv->cursor = makeUnique<WPE::DRM::Cursor>(WTFMove(cursorPlane), device, displayDRM->priv->cursorWidth, displayDRM->priv->cursorHeight);
 
@@ -259,6 +325,31 @@ static GList* wpeDisplayDRMGetPreferredDMABufFormats(WPEDisplay* display)
     return g_list_reverse(preferredFormats);
 }
 
+static guint wpeDisplayDRMGetNMonitors(WPEDisplay*)
+{
+    return 1;
+}
+
+static WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplay* display, guint index)
+{
+    if (index)
+        return nullptr;
+    return WPE_DISPLAY_DRM(display)->priv->monitor.get();
+}
+
+static const char* wpeDisplayDRMGetDRMDevice(WPEDisplay* display)
+{
+    return WPE_DISPLAY_DRM(display)->priv->drmDevice.data();
+}
+
+static const char* wpeDisplayDRMGetDRMRenderNode(WPEDisplay* display)
+{
+    auto* priv = WPE_DISPLAY_DRM(display)->priv;
+    if (!priv->drmRenderNode.isNull())
+        priv->drmRenderNode.data();
+    return priv->drmDevice.data();
+}
+
 static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(displayDRMClass);
@@ -268,6 +359,10 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->connect = wpeDisplayDRMConnect;
     displayClass->create_view = wpeDisplayDRMCreateView;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayDRMGetPreferredDMABufFormats;
+    displayClass->get_n_monitors = wpeDisplayDRMGetNMonitors;
+    displayClass->get_monitor = wpeDisplayDRMGetMonitor;
+    displayClass->get_drm_device = wpeDisplayDRMGetDRMDevice;
+    displayClass->get_drm_render_node = wpeDisplayDRMGetDRMRenderNode;
 }
 
 const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
@@ -275,9 +370,9 @@ const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
     return *display->priv->connector;
 }
 
-const WPE::DRM::Crtc& wpeDisplayDRMGetCrtc(WPEDisplayDRM* display)
+WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM* display)
 {
-    return *display->priv->crtc;
+    return display->priv->monitor.get();
 }
 
 const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM* display)
@@ -313,7 +408,7 @@ WPEDisplay* wpe_display_drm_new(void)
  *
  * Get the GBM device for @display
  *
- * Returns: (transfer none) (nullable): a `struct gbm_display`,
+ * Returns: (transfer none) (nullable): a `struct gbm_device`,
      or %NULL if display is not connected
  */
 struct gbm_device* wpe_display_drm_get_device(WPEDisplayDRM* display)

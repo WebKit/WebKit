@@ -107,6 +107,8 @@ static NSString *timePickerDateFormat = @"HH:mm";
 {
     [super viewDidLoad];
 
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+
     self.headerView.hidden = YES;
 
     _timePicker = adoptNS([allocCLKUIWheelsOfTimeViewInstance() initWithFrame:self.view.bounds style:CLKUIWheelsOfTimeStyleAlarm12]);

@@ -30,6 +30,8 @@
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
 
+OBJC_CLASS AVContentKeyRequest;
+
 namespace WebCore {
 
 struct FourCC;
@@ -86,7 +88,18 @@ public:
     static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
 
+#if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
+    static const AtomString& mptsName();
+    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsMpts(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeMpts(const SharedBuffer&);
+    static const Vector<Ref<SharedBuffer>>& mptsKeyIDs();
+#endif
+
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
+
+#if HAVE(AVCONTENTKEYSESSION)
+    static Vector<Ref<SharedBuffer>> keyIDsForRequest(AVContentKeyRequest *);
+#endif
 
 private:
 #if !RELEASE_LOG_DISABLED

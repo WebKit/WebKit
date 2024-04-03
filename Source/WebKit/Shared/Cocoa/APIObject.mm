@@ -65,6 +65,7 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WKWebViewConfigurationInternal.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
@@ -87,6 +88,7 @@
 #import "_WKResourceLoadInfoInternal.h"
 #import "_WKResourceLoadStatisticsFirstPartyInternal.h"
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
+#import "_WKTargetedElementInfoInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
@@ -109,6 +111,7 @@
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionDataRecordInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionMessagePortInternal.h"
@@ -224,6 +227,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::ProcessPoolConfiguration:
         wrapper = [_WKProcessPoolConfiguration alloc];
+        break;
+
+    case Type::PageConfiguration:
+        wrapper = [WKWebViewConfiguration alloc];
         break;
 
     case Type::Data:
@@ -381,6 +388,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         wrapper = [WKContentWorld alloc];
         break;
 
+    case Type::TargetedElementInfo:
+        wrapper = [_WKTargetedElementInfo alloc];
+        break;
+
     case Type::UserInitiatedAction:
         wrapper = [_WKUserInitiatedAction alloc];
         break;
@@ -420,6 +431,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::WebExtensionControllerConfiguration:
         wrapper = [_WKWebExtensionControllerConfiguration alloc];
+        break;
+
+    case Type::WebExtensionDataRecord:
+        wrapper = [_WKWebExtensionDataRecord alloc];
         break;
 
     case Type::WebExtensionMatchPattern:

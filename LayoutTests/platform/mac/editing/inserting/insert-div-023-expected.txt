@@ -33,10 +33,10 @@ layer at (0,0) size 785x688
         RenderText {#text} at (0,0) size 755x56
           text run at (0,0) width 755: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
           text run at (0,28) width 343: "2\" should be bold. Fix for this bug: "
-        RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
+        RenderInline {A} at (342,28) size 257x28 [color=#0000EE]
           RenderText {#text} at (342,28) size 257x28
             text run at (342,28) width 257: "<rdar://problem/3939523>"
-        RenderText {#text} at (598,28) size 749x56
+        RenderText {#text} at (0,28) size 749x56
           text run at (598,28) width 151: " in some cases, "
           text run at (0,56) width 537: "text does not retain style info after pressing return twice"
       RenderBlock {DIV} at (0,84) size 769x12
@@ -46,14 +46,14 @@ layer at (0,0) size 785x688
       RenderBlock {P} at (0,200) size 769x56 [border: (2px solid #0000FF)]
         RenderBR {BR} at (14,14) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,280) size 769x56 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 56x28
+        RenderInline {B} at (14,14) size 56x28
           RenderText {#text} at (14,14) size 56x28
             text run at (14,14) width 56: "line 2"
       RenderBlock {P} at (0,360) size 769x56 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 0x28
+        RenderInline {B} at (14,14) size 0x28
           RenderBR {BR} at (14,14) size 0x28 [bgcolor=#008000]
       RenderBlock {P} at (0,440) size 769x56 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 12x28
+        RenderInline {B} at (14,14) size 12x28
           RenderText {#text} at (14,14) size 12x28
             text run at (14,14) width 12: "x"
       RenderBlock {P} at (0,520) size 769x56 [border: (2px solid #0000FF)]

@@ -7,10 +7,10 @@ layer at (8,8) size 784x54
     RenderBlock {DIV} at (0,0) size 784x54
       RenderText {#text} at (0,0) size 129x17
         text run at (0,0) width 129: "You should see two "
-      RenderInline {I} at (0,0) size 110x17
+      RenderInline {I} at (128,0) size 110x17
         RenderText {#text} at (128,0) size 110x17
           text run at (128,0) width 110: "vertically stacked"
-      RenderText {#text} at (237,0) size 763x53
+      RenderText {#text} at (0,0) size 763x53
         text run at (237,0) width 157: " green rectangles below. "
         text run at (393,0) width 182: "Each one is 100 pixels wide "
         text run at (574,0) width 116: "and 50 pixels tall. "

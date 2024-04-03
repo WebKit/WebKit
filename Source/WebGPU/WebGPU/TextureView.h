@@ -56,7 +56,7 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_texture; }
+    bool isValid() const;
 
     id<MTLTexture> texture() const { return m_texture; }
     id<MTLTexture> parentTexture() const;
@@ -68,6 +68,7 @@ public:
     void setPreviouslyCleared();
     uint32_t width() const;
     uint32_t height() const;
+    uint32_t depthOrArrayLayers() const;
     WGPUTextureUsageFlags usage() const;
     uint32_t sampleCount() const;
     WGPUTextureFormat parentFormat() const;
@@ -81,7 +82,8 @@ public:
     WGPUTextureViewDimension dimension() const;
     bool isDestroyed() const;
     void destroy();
-    void setCommandEncoder(CommandEncoder&);
+    void setCommandEncoder(CommandEncoder&) const;
+    const Texture& apiParentTexture() const { return m_parentTexture; }
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
@@ -93,8 +95,8 @@ private:
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
-    Texture& m_parentTexture;
-    WeakPtr<CommandEncoder> m_commandEncoder;
+    Ref<Texture> m_parentTexture;
+    mutable WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

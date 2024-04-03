@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 #define WPE_TYPE_BUFFER_DMA_BUF (wpe_buffer_dma_buf_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEBufferDMABuf, wpe_buffer_dma_buf, WPE, BUFFER_DMA_BUF, WPEBuffer)
 
-WPE_API WPEBufferDMABuf *wpe_buffer_dma_buf_new          (WPEDisplay      *display,
+WPE_API WPEBufferDMABuf *wpe_buffer_dma_buf_new          (WPEView         *view,
                                                           int              width,
                                                           int              height,
                                                           guint32          format,

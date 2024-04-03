@@ -63,7 +63,7 @@ public:
         return adoptRef(*new MediaKeys(document, useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTFMove(implementation), WTFMove(instance)));
     }
 
-    ~MediaKeys();
+    WEBCORE_EXPORT ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(Document&, MediaKeySessionType);
     void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
@@ -75,6 +75,7 @@ public:
     bool hasOpenSessions() const;
     CDMInstance& cdmInstance() { return m_instance; }
     const CDMInstance& cdmInstance() const { return m_instance; }
+    Ref<CDMInstance> protectedCDMInstance() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* nextChildIdentifier() const;

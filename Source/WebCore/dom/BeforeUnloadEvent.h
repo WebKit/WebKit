@@ -49,7 +49,6 @@ private:
     BeforeUnloadEvent();
     BeforeUnloadEvent(ForBindingsFlag);
 
-    EventInterface eventInterface() const final { return BeforeUnloadEventInterfaceType; }
     bool isBeforeUnloadEvent() const final;
 
     String m_returnValue;

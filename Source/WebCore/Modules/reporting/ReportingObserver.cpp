@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReportingObserver.h"
 
+#include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "InspectorInstrumentation.h"
 #include "LocalDOMWindow.h"

@@ -28,6 +28,7 @@
 #include <optional>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore::WebGPU {
@@ -35,7 +36,7 @@ namespace WebCore::WebGPU {
 class TextureView;
 struct TextureViewDescriptor;
 
-class Texture : public RefCounted<Texture> {
+class Texture : public RefCounted<Texture>, public CanMakeWeakPtr<Texture> {
 public:
     virtual ~Texture() = default;
 
@@ -47,7 +48,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
+    virtual RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) = 0;
 
     virtual void destroy() = 0;
 

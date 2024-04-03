@@ -44,7 +44,7 @@ public:
 
 private:
     static DOMCSSRegisterCustomProperty* from(DOMCSSNamespace&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 };
 
 }

@@ -1,0 +1,75 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+onload = async () => {
+  try {
+    let adapter1 = await navigator.gpu.requestAdapter(
+    {
+    }
+    );
+
+    let device1 = await adapter1.requestDevice(
+    {
+    label: '\u026b',
+    requiredLimits: {
+    maxColorAttachmentBytesPerSample: 39,
+    maxVertexAttributes: 30,
+    maxVertexBufferArrayStride: 52234,
+    maxStorageTexturesPerShaderStage: 5,
+    maxBindingsPerBindGroup: 2969,
+    maxTextureArrayLayers: 896,
+    maxTextureDimension1D: 12165,
+    maxTextureDimension2D: 10419,
+    maxVertexBuffers: 12,
+    minStorageBufferOffsetAlignment: 32,
+    minUniformBufferOffsetAlignment: 64,
+    },
+    }
+    );
+
+    let texture9 = device1.createTexture(
+    {
+    label: '\u8d2c',
+    size: {width: 3482, height: 1, depthOrArrayLayers: 165},
+    mipLevelCount: 10,
+    dimension: '2d',
+    format: 'bgra8unorm',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_DST,
+    viewFormats: [
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm',
+    'bgra8unorm-srgb',
+    'bgra8unorm-srgb',
+    'bgra8unorm'
+    ],
+    }
+    );
+    
+    let video0 = document.createElement('video');
+    video0.height = 278;
+
+    device1.queue.copyExternalImageToTexture(
+    {
+      source: video0,
+      origin: { x: 3, y: 6 },
+      flipY: true,
+    },
+    {
+      texture: texture9,
+      mipLevel: 3,
+      origin: { x: 404, y: 0, z: 6 },
+      aspect: 'all',
+      colorSpace: 'srgb',
+      premultipliedAlpha: false,
+    },
+    {width: 10, height: 0, depthOrArrayLayers: 1}
+    );
+  } catch { }
+  if (window.testRunner) { testRunner.notifyDone() }
+};
+</script>
+This test passes if it does not crash.

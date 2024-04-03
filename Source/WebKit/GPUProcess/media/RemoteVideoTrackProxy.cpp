@@ -45,13 +45,15 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     , m_id(trackPrivate.id())
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
-    m_trackPrivate->setClient(*this);
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
+    m_clientRegistrationId = trackPrivate.addClient([](auto&& task) {
+        ensureOnMainThread(WTFMove(task));
+    }, *this);
+    connectionToWebProcess.connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
 {
-    m_trackPrivate->clearClient();
+    m_trackPrivate->removeClient(m_clientRegistrationId);
 }
 
 VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
@@ -72,10 +74,10 @@ VideoTrackPrivateRemoteConfiguration RemoteVideoTrackProxy::configuration()
 
 void RemoteVideoTrackProxy::updateConfiguration()
 {
-    if (!m_connectionToWebProcess)
+    auto connection = m_connectionToWebProcess.get();
+    if (!connection)
         return;
-
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
+    connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteVideoTrackProxy::willRemove()

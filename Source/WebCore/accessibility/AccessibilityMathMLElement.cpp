@@ -66,11 +66,11 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     return AccessibilityRole::MathElement;
 }
 
-String AccessibilityMathMLElement::textUnderElement(AccessibilityTextUnderElementMode mode) const
+String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
-        return operatorChar ? String(&operatorChar, 1) : String();
+        return operatorChar ? String(span(operatorChar)) : String();
     }
 
     return AccessibilityRenderObject::textUnderElement(mode);
@@ -152,18 +152,14 @@ bool AccessibilityMathMLElement::isAnonymousMathOperator() const
 
 bool AccessibilityMathMLElement::isMathFenceOperator() const
 {
-    if (!is<RenderMathMLOperator>(renderer()))
-        return false;
-
-    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Fence);
+    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Fence);
 }
 
 bool AccessibilityMathMLElement::isMathSeparatorOperator() const
 {
-    if (!is<RenderMathMLOperator>(renderer()))
-        return false;
-
-    return downcast<RenderMathMLOperator>(*m_renderer).hasOperatorFlag(MathMLOperatorDictionary::Separator);
+    auto* mathMLOperator = dynamicDowncast<RenderMathMLOperator>(renderer());
+    return mathMLOperator && mathMLOperator->hasOperatorFlag(MathMLOperatorDictionary::Separator);
 }
 
 bool AccessibilityMathMLElement::isMathText() const
@@ -388,7 +384,7 @@ void AccessibilityMathMLElement::mathPrescripts(AccessibilityMathMultiscriptPair
     std::pair<AccessibilityObject*, AccessibilityObject*> prescriptPair;
     for (Node* child = node()->firstChild(); child; child = child->nextSibling()) {
         if (foundPrescript) {
-            AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+            AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
             if (axChild && axChild->isMathElement()) {
                 if (!prescriptPair.first)
                     prescriptPair.first = axChild;
@@ -421,7 +417,7 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
         if (child->hasTagName(MathMLNames::mprescriptsTag))
             break;
 
-        AccessibilityObject* axChild = axObjectCache()->getOrCreate(child);
+        AccessibilityObject* axChild = axObjectCache()->getOrCreate(*child);
         if (axChild && axChild->isMathElement()) {
             if (!foundBaseElement)
                 foundBaseElement = true;
@@ -443,10 +439,11 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
 
 int AccessibilityMathMLElement::mathLineThickness() const
 {
-    if (!is<RenderMathMLFraction>(renderer()))
+    auto* fraction = dynamicDowncast<RenderMathMLFraction>(renderer());
+    if (!fraction)
         return -1;
 
-    return downcast<RenderMathMLFraction>(*m_renderer).relativeLineThickness();
+    return fraction->relativeLineThickness();
 }
 
 } // namespace WebCore

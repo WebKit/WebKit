@@ -27,10 +27,17 @@
 
 messages -> WebExtensionController {
 
-    DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [EnabledIf='hasLoadedContexts()'] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [EnabledIf='hasLoadedContexts()'] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [EnabledIf='hasLoadedContexts()'] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [EnabledIf='hasLoadedContexts()'] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+
+    // Test APIs
+    [EnabledIf='inTestingMode()'] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
+    [EnabledIf='inTestingMode()'] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
+    [EnabledIf='inTestingMode()'] TestMessage(String message, String sourceURL, unsigned lineNumber)
+    [EnabledIf='inTestingMode()'] TestYielded(String message, String sourceURL, unsigned lineNumber)
+    [EnabledIf='inTestingMode()'] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
 
 }
 

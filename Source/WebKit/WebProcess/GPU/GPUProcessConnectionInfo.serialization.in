@@ -30,7 +30,9 @@ struct WebKit::GPUProcessConnectionInfo {
 
 #if ENABLE(VP9)
     bool hasVP9HardwareDecoder;
-    bool hasVP9ExtensionSupport;
+#endif
+#if ENABLE(AV1)
+    bool hasAV1HardwareDecoder;
 #endif
 
 }

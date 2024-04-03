@@ -14,7 +14,7 @@ PASS: keyup
 PASS: selectionchange
 PASS: mousedown
 PASS: selectionchange
-PASS: selectionchange
+OPTIONAL: selectionchange
 PASS: mouseup
 PASS: click
 PASS: keydown

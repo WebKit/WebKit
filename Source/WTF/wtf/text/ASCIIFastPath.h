@@ -67,6 +67,13 @@ template<> struct NonASCIIMask<8, LChar> {
     static inline uint64_t value() { return 0x8080808080808080ULL; }
 };
 
+template<size_t size, typename CharacterType> struct NonLatin1Mask;
+template<> struct NonLatin1Mask<4, UChar> {
+    static inline uint32_t value() { return 0xFF00FF00U; }
+};
+template<> struct NonLatin1Mask<8, UChar> {
+    static inline uint64_t value() { return 0xFF00FF00FF00FF00ULL; }
+};
 
 template<typename CharacterType>
 inline bool containsOnlyASCII(MachineWord word)
@@ -77,10 +84,11 @@ inline bool containsOnlyASCII(MachineWord word)
 // Note: This function assume the input is likely all ASCII, and
 // does not leave early if it is not the case.
 template<typename CharacterType>
-inline bool charactersAreAllASCII(const CharacterType* characters, size_t length)
+inline bool charactersAreAllASCII(std::span<const CharacterType> span)
 {
     MachineWord allCharBits = 0;
-    const CharacterType* end = characters + length;
+    auto* characters = span.data();
+    auto* end = characters + span.size();
 
     // Prologue: align the input.
     while (!isAlignedToMachineWord(characters) && characters != end) {
@@ -104,6 +112,43 @@ inline bool charactersAreAllASCII(const CharacterType* characters, size_t length
 
     MachineWord nonASCIIBitMask = NonASCIIMask<sizeof(MachineWord), CharacterType>::value();
     return !(allCharBits & nonASCIIBitMask);
+}
+
+// Note: This function assume the input is likely all Latin1, and
+// does not leave early if it is not the case.
+template<typename CharacterType>
+inline bool charactersAreAllLatin1(std::span<const CharacterType> span)
+{
+    if constexpr (sizeof(CharacterType) == 1)
+        return true;
+    else {
+        MachineWord allCharBits = 0;
+        auto* characters = span.data();
+        auto* end = characters + span.size();
+
+        // Prologue: align the input.
+        while (!isAlignedToMachineWord(characters) && characters != end) {
+            allCharBits |= *characters;
+            ++characters;
+        }
+
+        // Compare the values of CPU word size.
+        const CharacterType* wordEnd = alignToMachineWord(end);
+        const size_t loopIncrement = sizeof(MachineWord) / sizeof(CharacterType);
+        while (characters < wordEnd) {
+            allCharBits |= *(reinterpret_cast_ptr<const MachineWord*>(characters));
+            characters += loopIncrement;
+        }
+
+        // Process the remaining bytes.
+        while (characters != end) {
+            allCharBits |= *characters;
+            ++characters;
+        }
+
+        MachineWord nonLatin1BitMask = NonLatin1Mask<sizeof(MachineWord), CharacterType>::value();
+        return !(allCharBits & nonLatin1BitMask);
+    }
 }
 
 } // namespace WTF

@@ -71,7 +71,7 @@ ANGLE_LIBTESTER_EXPORT bool deqp_libtester_init_platform(int argc,
         char deqpDataDir[kMaxDataDirLen];
         if (!angle::FindTestDataPath(ANGLE_DEQP_DATA_DIR, deqpDataDir, kMaxDataDirLen))
         {
-            std::cout << "Failed to find dEQP data directory." << std::endl;
+            std::cout << "Failed to find dEQP data directory: " << ANGLE_DEQP_DATA_DIR << std::endl;
             return false;
         }
 

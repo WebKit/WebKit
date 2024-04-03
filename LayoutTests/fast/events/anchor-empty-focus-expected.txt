@@ -1,3 +1,11 @@
-This tests that focus() works on an empty anchor.
+This tests that focus() and sequential focus navigation work on empty anchors.
 
-TEST PASSED
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is emptyAnchor1
+PASS document.activeElement is emptyAnchor2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

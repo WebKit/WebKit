@@ -38,10 +38,8 @@ static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutU
         return;
     auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
     isHorizontalWritingMode ? displayBox.moveHorizontally(offset) : displayBox.moveVertically(offset);
-    if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox()) {
-        auto& boxGeometry = inlineFormattingContext.geometryForBox(displayBox.layoutBox());
-        isHorizontalWritingMode ? boxGeometry.moveHorizontally(LayoutUnit { offset }) : boxGeometry.moveVertically(LayoutUnit { offset });
-    }
+    if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox())
+        inlineFormattingContext.geometryForBox(displayBox.layoutBox()).moveHorizontally(LayoutUnit { offset });
 }
 
 static inline void expandInlineBox(InlineLayoutUnit expansion, InlineDisplay::Box& displayBox, InlineFormattingContext& inlineFormattingContext)

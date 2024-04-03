@@ -31,7 +31,6 @@ class CLContextImpl : angle::NonCopyable
                                              CLCommandQueueImpl::Ptr *commandQueueOut) = 0;
 
     virtual angle::Result createBuffer(const cl::Buffer &buffer,
-                                       size_t size,
                                        void *hostPtr,
                                        CLMemoryImpl::Ptr *bufferOut) = 0;
 

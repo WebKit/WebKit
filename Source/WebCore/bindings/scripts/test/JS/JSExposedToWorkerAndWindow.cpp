@@ -52,7 +52,7 @@ using namespace JSC;
 
 template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWindow::Dict>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    VM& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -134,7 +134,7 @@ using JSExposedToWorkerAndWindowDOMConstructor = JSDOMConstructor<JSExposedToWor
 
 template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOMConstructor::construct(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
-    VM& vm = lexicalGlobalObject->vm();
+    auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* castedThis = jsCast<JSExposedToWorkerAndWindowDOMConstructor*>(callFrame->jsCallee());
     ASSERT(castedThis);
@@ -219,12 +219,12 @@ void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSExposedToWorkerAndWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSExposedToWorkerAndWindow::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSC::EncodedJSValue jsExposedToWorkerAndWindowPrototypeFunction_doSomethingBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSExposedToWorkerAndWindow>::ClassParameter castedThis)
@@ -273,7 +273,7 @@ void JSExposedToWorkerAndWindowOwner::finalize(JSC::Handle<JSC::Unknown> handle,
 {
     auto* jsExposedToWorkerAndWindow = static_cast<JSExposedToWorkerAndWindow*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsExposedToWorkerAndWindow->wrapped(), jsExposedToWorkerAndWindow);
+    uncacheWrapper(world, jsExposedToWorkerAndWindow->protectedWrapped().ptr(), jsExposedToWorkerAndWindow);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

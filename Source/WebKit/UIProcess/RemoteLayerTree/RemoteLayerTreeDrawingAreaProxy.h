@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DrawingAreaProxy.h"
+#include "RemoteImageBufferSetIdentifier.h"
 #include "RemoteLayerTreeHost.h"
 #include "TransactionID.h"
 #include <WebCore/AnimationFrameRate.h>
@@ -48,6 +49,7 @@ public:
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
     virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
+    virtual bool isRemoteLayerTreeDrawingAreaProxyIOS() const { return false; }
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
@@ -68,10 +70,6 @@ public:
 
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionIDs) { m_remoteLayerTreeHost->updateOverlayRegionIDs(overlayRegionIDs); }
-#endif
-
     void viewWillStartLiveResize() final;
     void viewWillEndLiveResize() final;
 
@@ -79,6 +77,7 @@ public:
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     Seconds acceleratedTimelineTimeOrigin() const { return m_acceleratedTimelineTimeOrigin; }
+    MonotonicTime animationCurrentTime() const { return m_animationCurrentTime; }
 #endif
 
     // For testing.
@@ -136,7 +135,7 @@ private:
 
     void willCommitLayerTree(IPC::Connection&, TransactionID);
     void commitLayerTreeNotTriggered(IPC::Connection&, TransactionID);
-    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&);
+    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&, HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
 
@@ -185,6 +184,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     Seconds m_acceleratedTimelineTimeOrigin;
+    MonotonicTime m_animationCurrentTime;
 #endif
 };
 

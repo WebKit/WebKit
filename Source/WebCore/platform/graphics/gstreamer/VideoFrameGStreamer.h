@@ -44,9 +44,9 @@ public:
 
     static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, std::optional<PlatformVideoColorSpace>&& = std::nullopt);
 
-    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime, Rotation videoRotation = Rotation::None);
+    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>&, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None);
 
-    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation = VideoFrame::Rotation::None, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt, PlatformVideoColorSpace&& = { });
+    static RefPtr<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation = VideoFrame::Rotation::None, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt, PlatformVideoColorSpace&& = { });
 
     RefPtr<VideoFrameGStreamer> resizeTo(const IntSize&);
 
@@ -63,9 +63,10 @@ public:
 
 private:
     VideoFrameGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt, PlatformVideoColorSpace&& = { });
-    VideoFrameGStreamer(const GRefPtr<GstSample>&, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
+    VideoFrameGStreamer(const GRefPtr<GstSample>&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
 
     bool isGStreamer() const final { return true; }
+    Ref<VideoFrame> clone() final;
 
     GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&);
 

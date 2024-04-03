@@ -178,12 +178,12 @@ void JSTestOperationConditional::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestOperationConditionalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestOperationConditionalPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestOperationConditional::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestOperationConditional::getConstructor(vm, prototype->globalObject()));
 }
 
 #if ENABLE(ConditionBase)
@@ -253,7 +253,7 @@ void JSTestOperationConditionalOwner::finalize(JSC::Handle<JSC::Unknown> handle,
 {
     auto* jsTestOperationConditional = static_cast<JSTestOperationConditional*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestOperationConditional->wrapped(), jsTestOperationConditional);
+    uncacheWrapper(world, jsTestOperationConditional->protectedWrapped().ptr(), jsTestOperationConditional);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

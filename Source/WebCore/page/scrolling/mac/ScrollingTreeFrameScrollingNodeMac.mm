@@ -75,37 +75,36 @@ bool ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     if (!ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (!scrollingStateNode)
         return false;
 
-    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
+        m_rootContentsLayer = static_cast<CALayer*>(scrollingStateNode->rootContentsLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RootContentsLayer))
-        m_rootContentsLayer = static_cast<CALayer*>(scrollingStateNode.rootContentsLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
+        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode->counterScrollingLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
-        m_counterScrollingLayer = static_cast<CALayer*>(scrollingStateNode.counterScrollingLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
+        m_insetClipLayer = static_cast<CALayer*>(scrollingStateNode->insetClipLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::InsetClipLayer))
-        m_insetClipLayer = static_cast<CALayer*>(scrollingStateNode.insetClipLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
+        m_contentShadowLayer = static_cast<CALayer*>(scrollingStateNode->contentShadowLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentShadowLayer))
-        m_contentShadowLayer = static_cast<CALayer*>(scrollingStateNode.contentShadowLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
+        m_headerLayer = static_cast<CALayer*>(scrollingStateNode->headerLayer());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
-        m_headerLayer = static_cast<CALayer*>(scrollingStateNode.headerLayer());
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
-        m_footerLayer = static_cast<CALayer*>(scrollingStateNode.footerLayer());
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
+        m_footerLayer = static_cast<CALayer*>(scrollingStateNode->footerLayer());
 
     bool logScrollingMode = !m_hadFirstUpdate;
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
         logScrollingMode = true;
 
     if (logScrollingMode && isRootNode() && scrollingTree().scrollingPerformanceTestingEnabled())
         scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
-    m_delegate->updateFromStateNode(scrollingStateNode);
+    m_delegate->updateFromStateNode(*scrollingStateNode);
 
     m_hadFirstUpdate = true;
     return true;
@@ -116,14 +115,14 @@ bool ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
     if (!ScrollingTreeFrameScrollingNode::commitStateAfterChildren(stateNode))
         return false;
 
-    if (!is<ScrollingStateScrollingNode>(stateNode))
+    auto* scrollingStateNode = dynamicDowncast<ScrollingStateScrollingNode>(stateNode);
+    if (!scrollingStateNode)
         return false;
 
-    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
     if (isRootNode()
-        && (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)
-        || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)
-        || scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize)))
+        && (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer)
+        || scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)
+        || scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaSize)))
         updateMainFramePinAndRubberbandState();
 
     return true;

@@ -46,9 +46,19 @@ RemoteExternalTexture::RemoteExternalTexture(WebCore::WebGPU::ExternalTexture& e
 
 RemoteExternalTexture::~RemoteExternalTexture() = default;
 
+void RemoteExternalTexture::destroy()
+{
+    m_backing->destroy();
+}
+
+void RemoteExternalTexture::undestroy()
+{
+    m_backing->undestroy();
+}
+
 void RemoteExternalTexture::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteExternalTexture::stopListeningForIPC()

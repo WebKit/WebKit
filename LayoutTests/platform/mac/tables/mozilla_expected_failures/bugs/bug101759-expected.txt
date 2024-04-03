@@ -26,7 +26,7 @@ layer at (0,0) size 785x1646
                 text run at (0,270) width 47: "XXXX"
                 text run at (0,288) width 47: "XXXX"
             RenderTableCell {TD} at (46,153) size 723x0 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 0x0 [bgcolor=#FFFF00]
+              RenderTable {TABLE} at (0,153) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,306) size 769x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,324) size 769x310 [border: (1px outset #808080)]
@@ -52,7 +52,7 @@ layer at (0,0) size 785x1646
                 text run at (1,271) width 47: "XXXX"
                 text run at (1,289) width 47: "XXXX"
             RenderTableCell {TD} at (48,153) size 719x2 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 0x0 [bgcolor=#FFFF00]
+              RenderTable {TABLE} at (1,154) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,634) size 769x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,652) size 769x312 [border: (1px outset #808080)]
@@ -78,7 +78,7 @@ layer at (0,0) size 785x1646
                 text run at (2,272) width 47: "XXXX"
                 text run at (2,290) width 47: "XXXX"
             RenderTableCell {TD} at (50,153) size 717x4 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 0x0 [bgcolor=#FFFF00]
+              RenderTable {TABLE} at (2,155) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,964) size 769x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,982) size 769x306
@@ -123,7 +123,7 @@ layer at (0,0) size 785x1646
                 text run at (0,270) width 47: "XXXX"
                 text run at (0,288) width 47: "XXXX"
             RenderTableCell {TD} at (92,153) size 677x0 [bgcolor=#008000] [r=0 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 0x0 [bgcolor=#FFFF00]
+              RenderTable {TABLE} at (0,153) size 0x0 [bgcolor=#FFFF00]
       RenderBlock (anonymous) at (0,1288) size 769x18
         RenderBR {BR} at (0,0) size 0x18
       RenderTable {TABLE} at (0,1306) size 769x306
@@ -149,7 +149,7 @@ layer at (0,0) size 785x1646
                 text run at (0,270) width 47: "XXXX"
                 text run at (0,288) width 47: "XXXX"
             RenderTableCell {TD} at (46,144) size 723x18 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 8x18
+              RenderText {#text} at (0,144) size 8x18
                 text run at (0,0) width 8: "x"
       RenderBlock (anonymous) at (0,1612) size 769x18
         RenderText {#text} at (0,0) size 20x18

@@ -14,7 +14,7 @@ layer at (0,0) size 785x680
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (0,7) size 128x18
             text run at (0,7) width 128: "Lorem ipsum dolor "
-          RenderInline {SPAN} at (0,0) size 191x20 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (152,6) size 191x20 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (172,7) size 136x18
               text run at (172,7) width 136: "sit amet, consectetur "
           RenderText {#text} at (352,7) size 342x18
@@ -24,8 +24,8 @@ layer at (0,0) size 785x680
             text run at (0,7) width 604: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (603,7) width 148: "labore et dolore magna"
             text run at (0,39) width 441: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 741x116 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (440,39) size 741x114
+          RenderInline {SPAN} at (0,38) size 741x116 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (0,39) size 741x114
               text run at (440,39) width 242: "laboris nisi ut aliquip ex ea commodo"
               text run at (0,71) width 331: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (331,71) width 366: "voluptate velit esse cillum dolore eu fugiat nulla pariatur."
@@ -41,7 +41,7 @@ layer at (0,0) size 785x680
         RenderBlock {P} at (6,22) size 757x32
           RenderText {#text} at (67,7) size 129x18
             text run at (67,7) width 129: "Lorem ipsum dolor "
-          RenderInline {SPAN} at (0,0) size 191x20 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+          RenderInline {SPAN} at (220,6) size 191x20 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
             RenderText {#text} at (240,7) size 136x18
               text run at (240,7) width 136: "sit amet, consectetur "
           RenderText {#text} at (63,7) size 694x18
@@ -52,8 +52,8 @@ layer at (0,0) size 785x680
             text run at (6,7) width 604: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (609,7) width 148: "labore et dolore magna"
             text run at (30,39) width 442: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 749x116 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (516,39) size 749x114
+          RenderInline {SPAN} at (8,38) size 749x116 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (8,39) size 749x114
               text run at (516,39) width 241: "laboris nisi ut aliquip ex ea commodo"
               text run at (60,71) width 332: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (391,71) width 366: "voluptate velit esse cillum dolore eu fugiat nulla pariatur."

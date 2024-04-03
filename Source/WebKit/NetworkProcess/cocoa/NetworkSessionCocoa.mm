@@ -29,7 +29,6 @@
 #import "AppStoreDaemonSPI.h"
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
-#import "DataReference.h"
 #import "DefaultWebBrowserChecks.h"
 #import "Download.h"
 #import "LegacyCustomProtocolManager.h"
@@ -49,6 +48,7 @@
 #import <WebCore/Credential.h>
 #import <WebCore/FormDataStreamMac.h>
 #import <WebCore/FrameLoaderTypes.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/ResourceError.h>
@@ -67,6 +67,7 @@
 #import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/WeakLinking.h>
@@ -549,7 +550,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     completionHandler(WebCore::createHTTPBodyNSInputStream(body.releaseNonNull()).get());
 }
 
-static NSURLRequest* downgradeRequest(NSURLRequest *request)
+static RetainPtr<NSURLRequest> downgradeRequest(NSURLRequest *request)
 {
     auto nsMutableRequest = adoptNS([request mutableCopy]);
     if ([[nsMutableRequest URL].scheme isEqualToString:@"https"]) {
@@ -557,7 +558,7 @@ static NSURLRequest* downgradeRequest(NSURLRequest *request)
         components.scheme = @"http";
         [nsMutableRequest setURL:components.URL];
         ASSERT([[nsMutableRequest URL].scheme isEqualToString:@"http"]);
-        return nsMutableRequest.autorelease();
+        return nsMutableRequest;
     }
 
     ASSERT_NOT_REACHED();
@@ -617,9 +618,13 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(firstPartyForCookies, request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
-                request = downgradeRequest(request);
-                ASSERT([request.URL.scheme isEqualToString:@"http"]);
-                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+                RetainPtr newRequest = downgradeRequest(request);
+                ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
+                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, newRequest.get().URL.absoluteString.UTF8String);
+
+                updateIgnoreStrictTransportSecuritySetting(newRequest, shouldIgnoreHSTS);
+                completionHandler(newRequest.get());
+                return;
             }
         } else
             ASSERT_NOT_REACHED();
@@ -666,9 +671,13 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
                 && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking());
             if (shouldIgnoreHSTS) {
-                request = downgradeRequest(request);
-                ASSERT([request.URL.scheme isEqualToString:@"http"]);
-                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, request.URL.absoluteString.UTF8String);
+                RetainPtr newRequest = downgradeRequest(request);
+                ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
+                LOG(NetworkSession, "%llu Downgraded %s from https to http", taskIdentifier, newRequest.get().URL.absoluteString.UTF8String);
+
+                updateIgnoreStrictTransportSecuritySetting(newRequest, shouldIgnoreHSTS);
+                completionHandler(newRequest.get());
+                return;
             }
         } else
             ASSERT_NOT_REACHED();
@@ -915,7 +924,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
             }
         }
 
-        auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
+        auto resumeDataReference = span(resumeData);
         download->didFail(error, resumeDataReference);
     }
 }
@@ -1075,7 +1084,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response isKindOfClass:NSHTTPURLResponse.class] ? [(NSHTTPURLResponse *)response statusCode] : 0;
-        if (statusCode != 304) {
+        if (statusCode != httpStatus304NotModified) {
             bool isMainResourceLoad = networkDataTask->firstRequest().requester() == WebCore::ResourceRequestRequester::Main;
             WebCore::adjustMIMETypeIfNecessary(response._CFURLResponse, isMainResourceLoad);
         }
@@ -1357,25 +1366,6 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSessionCreationParameters& parameters)
-{
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
-    // Don't override an explicitly set value.
-    if (parameters.resourceLoadStatisticsParameters.isTrackingPreventionStateExplicitlySet)
-        return;
-
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    bool trackingPreventionEnabled = doesParentProcessHaveTrackingPreventionEnabled(session.networkProcess(), parameters.appHasRequestedCrossWebsiteTrackingPermission);
-    bool passedEnabledState = session.isTrackingPreventionEnabled();
-
-    // We do not need to log a discrepancy between states for WebKitTestRunner or TestWebKitAPI.
-    if (trackingPreventionEnabled != passedEnabledState && !isRunningTest(WebCore::applicationBundleIdentifier()))
-        WTFLogAlways("Passed ITP enabled state (%d) does not match TCC setting (%d)\n", passedEnabledState, trackingPreventionEnabled);
-    session.setTrackingPreventionEnabled(passedEnabledState);
-#endif
-#endif
-}
-
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : NetworkSession(networkProcess, parameters)
     , m_defaultSessionSet(SessionSet::create())
@@ -1507,7 +1497,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
         m_resourceLoadStatistics->setManagedDomains(HashSet<WebCore::RegistrableDomain> { parameters.resourceLoadStatisticsParameters.managedDomains }, [] { });
 #endif
 
-    activateSessionCleanup(*this, parameters);
+#if HAVE(NW_PROXY_CONFIG)
+    if (parameters.proxyConfigData)
+        setProxyConfigData(WTFMove(*parameters.proxyConfigData));
+#endif
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa() = default;
@@ -1802,7 +1795,7 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
         if (credential.persistence() == WebCore::CredentialPersistence::ForSession && authenticationChallenge.protectionSpace().isPasswordBased()) {
             WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistence::None);
             URL urlToStore;
-            if (authenticationChallenge.failureResponse().httpStatusCode() == 401)
+            if (authenticationChallenge.failureResponse().httpStatusCode() == httpStatus401Unauthorized)
                 urlToStore = authenticationChallenge.failureResponse().url();
             if (auto storageSession = networkProcess->storageSession(sessionID))
                 storageSession->credentialStorage().set(partition, nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
@@ -1983,7 +1976,7 @@ private:
     {
         if (!m_connection)
             return;
-        buffer.forEachSegment([&] (auto& segment) {
+        buffer.forEachSegment([&](auto segment) {
             m_connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(m_identifier, segment), 0);
         });
     }
@@ -2174,7 +2167,7 @@ void NetworkSessionCocoa::clearProxyConfigData()
         clearProxies(context);
 }
 
-void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&& proxyConfigurations)
+void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, WTF::UUID>>& proxyConfigurations)
 {
     auto* clearProxies = nw_context_clear_proxiesPtr();
     auto* addProxy = nw_context_add_proxyPtr();
@@ -2190,7 +2183,7 @@ void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, W
     bool recreateSessions = false;
     for (auto& config : proxyConfigurations) {
         uuid_t identifier;
-        memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
+        memcpy(identifier, config.second.span().data(), sizeof(uuid_t));
 
         auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier));
 

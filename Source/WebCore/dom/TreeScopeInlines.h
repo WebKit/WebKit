@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+inline IdTargetObserverRegistry& TreeScope::idTargetObserverRegistry()
+{
+    if (m_idTargetObserverRegistry)
+        return *m_idTargetObserverRegistry;
+    return ensureIdTargetObserverRegistry();
+}
+
 inline Ref<ContainerNode> TreeScope::protectedRootNode() const
 {
     return rootNode();

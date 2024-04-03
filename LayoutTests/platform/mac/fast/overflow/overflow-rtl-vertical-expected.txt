@@ -7,7 +7,7 @@ layer at (0,0) size 331x600
         RenderText {#text} at (0,0) size 18x139
           text run at (0,0) width 139: "This is a test case for "
         RenderInline {I} at (0,0) size 36x570
-          RenderText {#text} at (0,138) size 36x570
+          RenderText {#text} at (0,0) size 36x570
             text run at (0,138) width 432: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5826 Blocks with"
             text run at (18,0) width 422: "direction:rtl and overflow:auto or scroll have incorrect scrollbars"
         RenderText {#text} at (18,421) size 18x5
@@ -40,7 +40,7 @@ layer at (179,15) size 43x115 clip at (179,25) size 28x100 scrollHeight 191
 layer at (226,15) size 43x115 clip at (226,25) size 43x100
   RenderBlock {DIV} at (52,5) size 44x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderBlock {DIV} at (0,10) size 18x100 [bgcolor=#D3D3D3]
-      RenderText {#text} at (0,-91) size 18x192
+      RenderText {#text} at (0,-92) size 18x192
         text run at (0,-91) width 192: "abcdefghijklmnopqrstuvwxyz"
 layer at (273,15) size 43x115 clip at (273,25) size 28x100 scrollHeight 191
   RenderBlock {DIV} at (99,5) size 44x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
@@ -49,7 +49,7 @@ layer at (273,15) size 43x115 clip at (273,25) size 28x100 scrollHeight 191
         text run at (0,0) width 192: "abcdefghijklmnopqrstuvwxyz"
 layer at (179,142) size 43x115 clip at (179,147) size 28x100 scrollY 91 scrollHeight 191
   RenderBlock {DIV} at (5,5) size 44x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
-    RenderText {#text} at (0,-86) size 18x192
+    RenderText {#text} at (0,-87) size 18x192
       text run at (0,-86) width 192: "zyxwvutsrqponmlkjihgfedcba"
 layer at (226,142) size 43x115 clip at (226,147) size 43x100
   RenderBlock {DIV} at (52,5) size 44x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
@@ -59,5 +59,5 @@ layer at (226,142) size 43x115 clip at (226,147) size 43x100
 layer at (273,142) size 43x115 clip at (273,147) size 28x100 scrollY 91 scrollHeight 191
   RenderBlock {DIV} at (99,5) size 44x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderBlock {DIV} at (0,5) size 18x100 [bgcolor=#D3D3D3]
-      RenderText {#text} at (0,-91) size 18x192
+      RenderText {#text} at (0,-92) size 18x192
         text run at (0,-91) width 192: "zyxwvutsrqponmlkjihgfedcba"

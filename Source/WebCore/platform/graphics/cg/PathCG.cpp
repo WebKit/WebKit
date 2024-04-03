@@ -154,6 +154,18 @@ static inline void addToCGContextPath(CGContextRef context, PathArc segment)
     CGContextAddArc(context, segment.center.x(), segment.center.y(), segment.radius, segment.startAngle, segment.endAngle, segment.direction == RotationDirection::Counterclockwise);
 }
 
+void PathCG::add(PathClosedArc closedArc)
+{
+    add(closedArc.arc);
+    add(PathCloseSubpath());
+}
+
+static inline void addToCGContextPath(CGContextRef context, PathClosedArc segment)
+{
+    addToCGContextPath(context, segment.arc);
+    CGContextClosePath(context);
+}
+
 static inline AffineTransform ellipseTransform(const PathEllipse& ellipse)
 {
     AffineTransform transform;
@@ -300,39 +312,6 @@ void PathCG::addPath(const PathCG& path, const AffineTransform& transform)
 
     auto pathCopy = adoptCF(CGPathCreateCopy(path.platformPath()));
     CGPathAddPath(ensureMutablePlatformPath(), &transformCG, pathCopy.get());
-}
-
-static void pathSegmentApplierCallback(void* info, const CGPathElement* element)
-{
-    const auto& applier = *(PathSegmentApplier*)info;
-    auto* cgPoints = element->points;
-
-    switch (element->type) {
-    case kCGPathElementMoveToPoint:
-        applier({ PathMoveTo { cgPoints[0] } });
-        break;
-
-    case kCGPathElementAddLineToPoint:
-        applier({ PathLineTo { cgPoints[0] } });
-        break;
-
-    case kCGPathElementAddQuadCurveToPoint:
-        applier({ PathQuadCurveTo { cgPoints[0], cgPoints[1] } });
-        break;
-
-    case kCGPathElementAddCurveToPoint:
-        applier({ PathBezierCurveTo { cgPoints[0], cgPoints[1], cgPoints[2] } });
-        break;
-
-    case kCGPathElementCloseSubpath:
-        applier({ PathCloseSubpath { } });
-        break;
-    }
-}
-
-void PathCG::applySegments(const PathSegmentApplier& applier) const
-{
-    CGPathApply(platformPath(), (void*)&applier, pathSegmentApplierCallback);
 }
 
 static void pathElementApplierCallback(void* info, const CGPathElement* element)

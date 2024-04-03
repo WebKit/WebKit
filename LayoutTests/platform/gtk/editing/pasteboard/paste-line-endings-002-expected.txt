@@ -26,10 +26,10 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+          RenderInline {A} at (161,27) size 261x26 [color=#0000EE]
             RenderText {#text} at (161,27) size 261x26
               text run at (161,27) width 261: "<rdar://problem/4045511>"
-          RenderText {#text} at (421,27) size 705x53
+          RenderText {#text} at (0,27) size 705x53
             text run at (421,27) width 284: " Copying and pasting end-of-"
             text run at (0,54) width 533: "paragraph selection puts insertion point in wrong place"
         RenderBlock {DIV} at (14,111) size 756x81

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -110,6 +110,7 @@ public:
 
     unsigned size() const;
     unsigned capacity() const;
+    size_t byteSize() const;
     bool isEmpty() const;
 
     void reserveInitialCapacity(unsigned keyCount) { m_impl.reserveInitialCapacity(keyCount); }
@@ -166,6 +167,8 @@ public:
     void clear();
 
     MappedTakeType take(const KeyType&); // efficient combination of get with remove
+    MappedTakeType take(iterator);
+    MappedTakeType takeFirst();
 
     // An alternate version of find() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion. HashTranslator
@@ -283,6 +286,12 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 inline unsigned HashMap<T, U, V, W, X, Y>::capacity() const
 { 
     return m_impl.capacity(); 
+}
+
+template<typename T, typename U, typename V, typename W, typename X, typename Y>
+inline size_t HashMap<T, U, V, W, X, Y>::byteSize() const
+{
+    return m_impl.byteSize();
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y>
@@ -530,12 +539,23 @@ inline void HashMap<T, U, V, W, X, Y>::clear()
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
 auto HashMap<T, U, V, W, MappedTraits, Y>::take(const KeyType& key) -> MappedTakeType
 {
-    iterator it = find(key);
+    return take(find(key));
+}
+
+template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
+auto HashMap<T, U, V, W, MappedTraits, Y>::take(iterator it) -> MappedTakeType
+{
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());
     auto value = MappedTraits::take(WTFMove(it->value));
     remove(it);
     return value;
+}
+
+template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
+auto HashMap<T, U, V, W, MappedTraits, Y>::takeFirst() -> MappedTakeType
+{
+    return take(begin());
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y>

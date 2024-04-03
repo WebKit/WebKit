@@ -159,52 +159,65 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString *)attribute
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    if (!WebCore::AXObjectCache::accessibilityEnabled())
-        WebCore::AXObjectCache::enableAccessibility();
+    callOnMainRunLoopAndWait([] {
+        if (!WebCore::AXObjectCache::accessibilityEnabled())
+            WebCore::AXObjectCache::enableAccessibility();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
-        WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+        if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
+            WebCore::AXObjectCache::initializeAXThreadIfNeeded();
 #endif
+    });
 
-    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-        return m_parent.get();
-    
-    if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-        return [m_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
-    
-    if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-        return [m_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
-    
+    // The following attributes can be handled off the main thread.
+
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
-    
+
     if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
         return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
-    
+
     if ([attribute isEqualToString:NSAccessibilityFocusedAttribute])
         return @NO;
-    
-    if (!m_pageID)
-        return nil;
-    
+
     if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
         return [self accessibilityAttributePositionValue];
-    
-    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
-        return @(WebCore::screenRectForPrimaryScreen().size().height());
-    
+
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
         return [self accessibilityAttributeSizeValue];
-    
-    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
-        return [self accessibilityChildren];
-    
-    // [self accessibilityChildren] is just the root object, so it's already in navigation order.
-    if ([attribute isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute])
-        return [self accessibilityChildren];
 
-    return nil;
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]
+        || [attribute isEqualToString:NSAccessibilityChildrenInNavigationOrderAttribute]) {
+        // The root object is the only child.
+        return [self accessibilityChildren];
+    }
+
+    // The follwoing attributes have to be retrieved from the main thread. Return nil for any other attribute.
+    if (![attribute isEqualToString:NSAccessibilityParentAttribute]
+        && ![attribute isEqualToString:NSAccessibilityWindowAttribute]
+        && ![attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute]
+        && ![attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+        return nil;
+
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([attribute = retainPtr(attribute), PROTECTED_SELF] () -> RetainPtr<id> {
+        if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+            return protectedSelf->m_parent.get();
+
+        if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
+            return [protectedSelf->m_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+
+        if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
+            return [protectedSelf->m_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+
+        // FIXME: do we need this check?
+        if (!protectedSelf->m_pageID)
+            return nil;
+
+        if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+            return @(WebCore::screenRectForPrimaryScreen().size().height());
+
+        return nil;
+    });
 }
 
 - (NSValue *)accessibilityAttributeSizeValue

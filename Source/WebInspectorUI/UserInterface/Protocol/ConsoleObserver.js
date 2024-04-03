@@ -29,7 +29,7 @@ WI.ConsoleObserver = class ConsoleObserver extends InspectorBackend.Dispatcher
 
     messageAdded(message)
     {
-        if (message.source === "console-api" && message.type === "clear")
+        if (message.type === "clear")
             return;
 
         if (message.type === "assert" && !message.text)

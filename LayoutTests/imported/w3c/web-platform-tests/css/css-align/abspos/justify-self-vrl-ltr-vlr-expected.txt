@@ -1,0 +1,96 @@
+
+
+
+FAIL .item 1 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: start;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 2 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: center;" data-expected-height="20" data-offset-y="10"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 3 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: end;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 4 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: baseline;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 5 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: last baseline;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 6 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: self-start;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 7 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: self-end;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 8 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: left;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 9 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: right;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+PASS .item 10
+FAIL .item 11 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: start;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 12 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: center;" data-expected-height="20" data-offset-y="10"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 13 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: end;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 14 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: baseline;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 15 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: last baseline;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 16 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: self-start;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 17 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: self-end;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 18 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: left;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+height expected 20 but got 40
+FAIL .item 19 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: right;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+height expected 20 but got 40
+PASS .item 20
+

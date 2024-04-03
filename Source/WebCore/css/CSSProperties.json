@@ -452,6 +452,17 @@
                 "url": "https://www.w3.org/TR/css-display-3/#the-display-properties"
             }
         },
+        "field-sizing": {
+            "codegen-properties": {
+                "parser-grammar": "fixed | content",
+                "settings-flag": "cssFieldSizingEnabled"
+            },
+            "specification": {
+                "category": "css-ui",
+                "url": "https://drafts.csswg.org/css-ui/#field-sizing"
+            },
+            "status": "in development"
+        },
         "font-family": {
             "inherited": true,
             "values": [
@@ -5412,8 +5423,8 @@
                     "url": "https://www.w3.org/TR/css-logical/#resize"
                 },
                 {
-                    "value": "auto",
-                    "status": "non-standard"
+                    "value": "-internal-textarea-auto",
+                    "status": "internal"
                 }
             ],
             "codegen-properties": {
@@ -6392,8 +6403,7 @@
                 "longhands": [
                     "contain-intrinsic-width",
                     "contain-intrinsic-height"
-                ],
-                "settings-flag": "cssContainIntrinsicSizeEnabled"
+                ]
             },
             "specification": {
                 "category": "css-sizing",
@@ -6403,7 +6413,6 @@
         "contain-intrinsic-height": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "vertical"
@@ -6421,7 +6430,6 @@
         "contain-intrinsic-width": {
             "codegen-properties": {
                 "custom": "All",
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "horizontal"
@@ -6439,7 +6447,6 @@
         "contain-intrinsic-block-size": {
             "codegen-properties": {
                 "skip-builder": true,
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "block"
@@ -6457,7 +6464,6 @@
         "contain-intrinsic-inline-size": {
             "codegen-properties": {
                 "skip-builder": true,
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
                 "logical-property-group": {
                     "name": "contain-intrinsic-size",
                     "resolver": "inline"
@@ -6476,7 +6482,6 @@
             "codegen-properties": {
                 "converter": "Contain",
                 "initial": "initialContainment",
-                "settings-flag": "cssContainmentEnabled",
                 "parser-function": "consumeContain",
                 "parser-grammar-unused": "none | strict | content | [ size || layout || paint ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
@@ -6501,7 +6506,6 @@
         },
         "container-name": {
             "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled",
                 "converter": "ContainerName",
                 "name-for-methods": "ContainerNames",
                 "parser-function": "consumeContainerName",
@@ -6520,7 +6524,6 @@
                 "inline-size"
             ],
             "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
@@ -9251,7 +9254,9 @@
         "view-transition-name": {
             "codegen-properties": {
                 "converter": "ViewTransitionName",
-                "parser-grammar": "none | <custom-ident>",
+                "parser-function": "consumeViewTransitionName",
+                "parser-grammar-unused": "none | <custom-ident>",
+                "parser-grammar-unused-reason": "Needs support for applying restrictions to <custom-ident>. The <custom-ident> production used here excludes the keyword auto.",
                 "settings-flag": "viewTransitionsEnabled"
             },
             "specification": {
@@ -9407,7 +9412,6 @@
                     "parser-function-requires-context": true,
                     "parser-grammar-unused": "[ <integer [0,inf]> && <symbol> ]#",
                     "parser-grammar-unused-reason": "Needs support for '&&' groups"
-                    
                 },
                 "specification": {
                     "category": "css-counter-styles",
@@ -9860,7 +9864,6 @@
         "@property": {
             "syntax": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "<string>"
                 },
                 "specification": {
@@ -9870,7 +9873,6 @@
             },
             "inherits": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "true | false"
                 },
                 "specification": {
@@ -9880,7 +9882,6 @@
             },
             "initial-value": {
                 "codegen-properties": {
-                    "settings-flag": "cssCustomPropertiesAndValuesEnabled",
                     "parser-grammar": "<declaration-value>"
                 },
                 "specification": {

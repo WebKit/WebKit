@@ -36,11 +36,7 @@ namespace WebCore {
 
 ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::encode(const BufferSource&& input)
 {
-    auto* data = input.data();
-    if (!data)
-        return Exception { ExceptionCode::TypeError, "No data provided"_s };
-
-    auto compressedDataCheck = compress(data, input.length());
+    auto compressedDataCheck = compress(input.span());
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
 
@@ -55,7 +51,7 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
 {
     m_didFinish = true;
 
-    auto compressedDataCheck = compress(0, 0);
+    auto compressedDataCheck = compress({ });
     if (compressedDataCheck.hasException())
         return compressedDataCheck.releaseException();
     
@@ -112,16 +108,16 @@ static bool didDeflateFail(int result)
     return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
 }
 
-ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const uint8_t* input, const size_t inputLength)
+ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(std::span<const uint8_t> input)
 {
-    size_t allocateSize = (inputLength < startingAllocationSize) ? startingAllocationSize : inputLength;
+    size_t allocateSize = std::max(input.size(), startingAllocationSize);
     auto storage = SharedBufferBuilder();
 
     int result;    
     bool shouldCompress = true;
 
-    m_zstream.next_in = const_cast<z_const Bytef*>(input);
-    m_zstream.avail_in = inputLength;
+    m_zstream.next_in = const_cast<z_const Bytef*>(input.data());
+    m_zstream.avail_in = input.size();
 
     if (!m_initialized) {
         auto initializeResult = initialize();

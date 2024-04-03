@@ -27,28 +27,41 @@ div#attachment-container {
 #if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
     --icon-margin: 8px;
     --information-margin-end: 8px;
-    width: 187px;
+    --width: 187px;
 #else
     --icon-margin: 10px;
     --information-margin-end: 26px;
-    width: 338px;
+    --width: 338px;
 #endif
     gap: 0;
-    background-color: -apple-system-quaternary-fill;
 #else
     --icon-margin: 14px;
     gap: 4px;
     --information-margin-end: 24px;
-    width: 266px;
-    background-color: -apple-system-tertiary-fill;
+    --width: 266px;
 #endif
-    min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
-    display: flex;
+    --min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
+    width: var(--width);
+    min-height: var(--min-height);
+    background-color: canvas;
     border-radius: 8px;
     font: caption;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
+    display: flex;
+}
+
+/* This div is needed to blend the transparent background color *over* the opaque container above. */
+div#attachment-background {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    background-color: -apple-system-quaternary-fill;
+#else
+    background-color: -apple-system-tertiary-fill;
+#endif
+    width: 100%;
+    border-radius: inherit;
+    display: flex;
 }
 
 div#attachment-preview-area {

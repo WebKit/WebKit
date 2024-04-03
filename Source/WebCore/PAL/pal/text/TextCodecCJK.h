@@ -39,19 +39,19 @@ public:
     explicit TextCodecCJK(Encoding);
 
 private:
-    String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) final;
+    String decode(std::span<const uint8_t>, bool flush, bool stopOnError, bool& sawError) final;
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     enum class SawError : bool { No, Yes };
-    String decodeCommon(const uint8_t*, size_t, bool, bool, bool&, const Function<SawError(uint8_t, StringBuilder&)>&);
+    String decodeCommon(std::span<const uint8_t>, bool, bool, bool&, const Function<SawError(uint8_t, StringBuilder&)>&);
 
-    String eucJPDecode(const uint8_t*, size_t, bool, bool, bool&);
-    String iso2022JPDecode(const uint8_t*, size_t, bool, bool, bool&);
-    String shiftJISDecode(const uint8_t*, size_t, bool, bool, bool&);
-    String eucKRDecode(const uint8_t*, size_t, bool, bool, bool&);
-    String big5Decode(const uint8_t*, size_t, bool, bool, bool&);
-    String gbkDecode(const uint8_t*, size_t, bool, bool, bool&);
-    String gb18030Decode(const uint8_t*, size_t, bool, bool, bool&);
+    String eucJPDecode(std::span<const uint8_t>, bool, bool, bool&);
+    String iso2022JPDecode(std::span<const uint8_t>, bool, bool, bool&);
+    String shiftJISDecode(std::span<const uint8_t>, bool, bool, bool&);
+    String eucKRDecode(std::span<const uint8_t>, bool, bool, bool&);
+    String big5Decode(std::span<const uint8_t>, bool, bool, bool&);
+    String gbkDecode(std::span<const uint8_t>, bool, bool, bool&);
+    String gb18030Decode(std::span<const uint8_t>, bool, bool, bool&);
 
     const Encoding m_encoding;
 

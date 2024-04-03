@@ -105,8 +105,8 @@ void ScrollingTreeGestureState::nodeDidHandleEvent(ScrollingNodeID nodeID, const
 
 void ScrollingTreeGestureState::clearAllNodes()
 {
-    m_mayBeginNodeID = 0;
-    m_activeNodeID = 0;
+    m_mayBeginNodeID = std::nullopt;
+    m_activeNodeID = std::nullopt;
 }
 
 };

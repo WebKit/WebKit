@@ -40,6 +40,8 @@
 
     [Reflect] attribute boolean interactive;
 
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] attribute DOMMatrixReadOnly entityTransform;
+
     undefined enterFullscreen();
 
     [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<HTMLModelElementCamera> getCamera();

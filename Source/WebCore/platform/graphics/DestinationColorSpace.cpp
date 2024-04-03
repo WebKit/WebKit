@@ -64,7 +64,6 @@ const DestinationColorSpace& DestinationColorSpace::SRGB()
 #endif
 }
 
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
 const DestinationColorSpace& DestinationColorSpace::LinearSRGB()
 {
 #if USE(CG)
@@ -73,7 +72,6 @@ const DestinationColorSpace& DestinationColorSpace::LinearSRGB()
     return knownColorSpace<PlatformColorSpace::Name::LinearSRGB>();
 #endif
 }
-#endif
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 const DestinationColorSpace& DestinationColorSpace::DisplayP3()
@@ -128,10 +126,8 @@ TextStream& operator<<(TextStream& ts, const DestinationColorSpace& colorSpace)
 {
     if (colorSpace == DestinationColorSpace::SRGB())
         ts << "sRGB";
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     else if (colorSpace == DestinationColorSpace::LinearSRGB())
         ts << "LinearSRGB";
-#endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
     else if (colorSpace == DestinationColorSpace::DisplayP3())
         ts << "DisplayP3";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,6 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntDegrees.h>
-#include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -52,6 +51,7 @@
 #include <wtf/Logger.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 #include "SampleBufferDisplayLayerIdentifier.h"
@@ -119,9 +119,12 @@ class RemoteWCLayerTreeHost;
 
 #if ENABLE(VIDEO)
 class RemoteMediaPlayerManagerProxy;
-class RemoteMediaRecorderManager;
 class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
+class RemoteMediaRecorderManager;
 #endif
 
 #if ENABLE(WEBGL)
@@ -129,7 +132,7 @@ class RemoteGraphicsContextGL;
 #endif
 
 class GPUConnectionToWebProcess
-    : public ThreadSafeRefCounted<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUConnectionToWebProcess, WTF::DestructionThread::Main>
     , public WebCore::NowPlayingManager::Client
     , IPC::Connection::Client {
 public:
@@ -264,7 +267,7 @@ private:
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
@@ -282,10 +285,6 @@ private:
 
     void clearNowPlayingInfo();
     void setNowPlayingInfo(WebCore::NowPlayingInfo&&);
-
-#if ENABLE(VP9)
-    void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource();
@@ -351,7 +350,7 @@ private:
     std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
 #if ENABLE(VIDEO)
-    std::unique_ptr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
+    RefPtr<RemoteMediaResourceManager> m_remoteMediaResourceManager WTF_GUARDED_BY_CAPABILITY(mainThread);
     UniqueRef<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 #endif
     PAL::SessionID m_sessionID;
@@ -361,7 +360,9 @@ private:
     bool m_isLastToCaptureAudio { false };
 
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
+#endif
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
     std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)

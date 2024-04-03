@@ -22,7 +22,11 @@
 
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
-   
+
+enum class WebKit::ContextMenuItemEnablement : bool;
+enum class WebKit::ContextMenuItemHasAction : bool;
+enum class WebKit::ContextMenuItemIsSeparator : bool;
+
 [CustomHeader] struct WebKit::PDFContextMenuItem {
     String title;
     int state;
@@ -35,7 +39,7 @@
 struct WebKit::PDFContextMenu {
     WebCore::IntPoint point;
     Vector<WebKit::PDFContextMenuItem> items;
-    std::optional<int> openInPreviewIndex;
+    std::optional<int> openInPreviewTag;
 };
 
 #endif

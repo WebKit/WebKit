@@ -8,8 +8,8 @@
 #include <limits>
 
 #include "compiler/translator/ImmutableStringBuilder.h"
+#include "compiler/translator/IntermRebuild.h"
 #include "compiler/translator/msl/AstHelpers.h"
-#include "compiler/translator/msl/IntermRebuild.h"
 #include "compiler/translator/msl/SymbolEnv.h"
 #include "compiler/translator/util.h"
 

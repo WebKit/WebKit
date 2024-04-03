@@ -1,8 +1,5 @@
 Checks that element reflection is exposed to the a11y tree for 'ariaOwnsElements'
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 PASS: axTarget1.ariaOwnsElementAtIndex(0).isEqual(axOwn1) === true
 PASS: axOwn1.parentElement().isEqual(axTarget1) === true
 PASS: axTarget2.role === 'AXRole: AXGroup'

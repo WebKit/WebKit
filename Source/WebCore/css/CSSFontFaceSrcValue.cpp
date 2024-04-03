@@ -135,6 +135,11 @@ void CSSFontFaceSrcResourceValue::customClearReplacementURLForSubresources()
     m_replacementURLString = { };
 }
 
+bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
+{
+    return WebCore::mayDependOnBaseURL(m_location);
+}
+
 String CSSFontFaceSrcResourceValue::customCSSText() const
 {
     StringBuilder builder;

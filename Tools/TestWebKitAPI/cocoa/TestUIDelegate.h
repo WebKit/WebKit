@@ -35,8 +35,11 @@
 @property (nonatomic, copy) void (^getContextMenuFromProposedMenu)(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^)(NSMenu *));
 @property (nonatomic, copy) void (^getWindowFrameWithCompletionHandler)(WKWebView *, void(^)(CGRect));
 #endif
+@property (nonatomic, copy) void (^requestStorageAccessPanelForDomain)(WKWebView *, NSString *, NSString *, void  (^completionHandler)(BOOL));
+@property (nonatomic, copy) void (^requestStorageAccessPanelForQuirksForDomain)(WKWebView *, NSString *, NSString *, NSDictionary<NSString *, NSArray<NSString *> *> *, void  (^completionHandler)(BOOL));
 @property (nonatomic, copy) void (^saveDataToFile)(WKWebView *, NSData *, NSString *, NSString *, NSURL *);
 @property (nonatomic, copy) void (^focusWebView)(WKWebView *);
+@property (nonatomic, copy) void (^unfocusWebView)(WKWebView *);
 @property (nonatomic, copy) void (^webViewDidClose)(WKWebView *);
 
 - (NSString *)waitForAlert;

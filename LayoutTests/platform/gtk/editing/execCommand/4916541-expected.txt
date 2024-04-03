@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 21x17
               text run at (0,0) width 21: "foo"
             RenderBR {BR} at (21,0) size 0x17
-          RenderInline {SPAN} at (0,0) size 20x17
+          RenderInline {SPAN} at (0,18) size 20x17
             RenderText {#text} at (0,18) size 20x17
               text run at (0,18) width 20: "bar"
 selection start: position 1 of child 0 {#text} of child 0 {SPAN} of child 0 {BLOCKQUOTE} of child 2 {DIV} of body

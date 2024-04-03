@@ -436,14 +436,14 @@ void ScrollingEffectsController::willStartRubberBandAnimation()
 {
     m_isAnimatingRubberBand = true;
     m_client.willStartRubberBandAnimation();
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
+    m_client.deferWheelEventTestCompletionForReason(m_client.scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::didStopRubberBandAnimation()
 {
     m_isAnimatingRubberBand = false;
     m_client.didStopRubberBandAnimation();
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
+    m_client.removeWheelEventTestCompletionDeferralForReason(m_client.scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::startRubberBandAnimationIfNecessary()

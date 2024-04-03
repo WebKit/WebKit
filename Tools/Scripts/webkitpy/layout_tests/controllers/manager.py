@@ -319,12 +319,15 @@ class Manager(object):
     def run(self, args):
         num_failed_uploads = 0
 
+        if self._options.test_list:
+            for list_path in self._options.test_list:
+                if not self._port.host.filesystem.isfile(list_path):
+                    _log.critical('')
+                    _log.critical('--test-list file "{}" not found'.format(list_path))
+                    return test_run_results.RunDetails(exit_code=-1)
+
         device_type_list = self._port.supported_device_types()
-        try:
-            tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
-        except IOError:
-            # This is raised if --test-list doesn't exist
-            return test_run_results.RunDetails(exit_code=-1)
+        tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
 
         aggregate_tests_to_run = set()  # type: Set[Test]
         for v in tests_to_run_by_device.values():
@@ -748,11 +751,14 @@ class Manager(object):
     def print_expectations(self, args):
         device_type_list = self._port.supported_device_types()
 
-        try:
-            tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
-        except IOError:
-            # This is raised if --test-list doesn't exist
-            return -1
+        if self._options.test_list:
+            for list_path in self._options.test_list:
+                if not self._port.host.filesystem.isfile(list_path):
+                    _log.critical('')
+                    _log.critical('--test-list file "{}" not found'.format(list_path))
+                    return -1
+
+        tests_to_run_by_device, aggregate_tests_to_skip = self._collect_tests(args, device_type_list)
 
         aggregate_tests_to_run = set()
         for v in tests_to_run_by_device.values():
@@ -773,11 +779,14 @@ class Manager(object):
         device_type_list = self._port.supported_device_types()
         test_stats = {}
 
-        try:
-            self._collect_tests(args, device_type_list)
-        except IOError:
-            # This is raised if --test-list doesn't exist
-            return test_run_results.RunDetails(exit_code=-1)
+        if self._options.test_list:
+            for list_path in self._options.test_list:
+                if not self._port.host.filesystem.isfile(list_path):
+                    _log.critical('')
+                    _log.critical('--test-list file "{}" not found'.format(list_path))
+                    return test_run_results.RunDetails(exit_code=-1)
+
+        self._collect_tests(args, device_type_list)
 
         for device_type, expectations in self._expectations.items():
             test_stats[device_type] = {'__root__': {'count': 0, 'skip': 0, 'pass': 0, 'flaky': 0, 'fail': 0, 'has_tests': False}}

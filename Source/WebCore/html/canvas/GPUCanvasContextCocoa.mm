@@ -106,26 +106,26 @@ static GPUPresentationContextDescriptor presentationContextDescriptor(GPUComposi
     };
 }
 
-static int getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
+static GPUIntegerCoordinate getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
         return htmlCanvas->width();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
         return offscreenCanvas->width();
     }
 #endif
     );
 }
 
-static int getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
+static GPUIntegerCoordinate getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
 {
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> GPUIntegerCoordinate {
         return htmlCanvas->height();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> GPUIntegerCoordinate {
         return offscreenCanvas->height();
     }
 #endif
@@ -136,14 +136,14 @@ GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas()
 {
     if (auto* c = htmlCanvas())
         return c;
-    return &checkedDowncast<OffscreenCanvas>(canvasBase());
+    return &downcast<OffscreenCanvas>(canvasBase());
 }
 
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(GPUDisplayBufferDisplayDelegate::create())
     , m_compositorIntegration(gpu.createCompositorIntegration())
-    , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor(m_compositorIntegration)))
+    , m_presentationContext(m_compositorIntegration ? gpu.createPresentationContext(presentationContextDescriptor(*m_compositorIntegration)) : nullptr)
     , m_width(getCanvasWidth(htmlOrOffscreenCanvas()))
     , m_height(getCanvasHeight(htmlOrOffscreenCanvas()))
 {
@@ -151,11 +151,11 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
 
 void GPUCanvasContextCocoa::reshape(int width, int height)
 {
-    if (m_width == width && m_height == height)
+    if (width <= 0 || height <= 0 || (m_width == static_cast<GPUIntegerCoordinate>(width) && m_height == static_cast<GPUIntegerCoordinate>(height)))
         return;
 
-    m_width = width;
-    m_height = height;
+    m_width = static_cast<GPUIntegerCoordinate>(width);
+    m_height = static_cast<GPUIntegerCoordinate>(height);
 
     auto configuration = WTFMove(m_configuration);
     m_configuration.reset();
@@ -177,9 +177,10 @@ void GPUCanvasContextCocoa::drawBufferToCanvas(SurfaceBuffer)
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     auto& base = canvasBase();
     base.clearCopiedImage();
-    if (auto buffer = base.buffer()) {
+    if (auto buffer = base.buffer(); buffer && m_configuration) {
         buffer->flushDrawingContext();
-        m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
+        if (m_compositorIntegration)
+            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
     }
 }
 
@@ -188,23 +189,35 @@ GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
     return htmlOrOffscreenCanvas();
 }
 
-void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
+ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
 {
     if (isConfigured())
-        return;
+        return { };
 
     if (!m_width || !m_height)
-        return; // FIXME: This should probably do something more sensible.
+        return { }; // FIXME: This should probably do something more sensible.
 
     ASSERT(configuration.device);
     if (!configuration.device)
-        return;
+        return { };
+
+    if (!configuration.device->isSupportedFormat(configuration.format))
+        return Exception { ExceptionCode::TypeError, "GPUCanvasContext.configure: Unsupported texture format."_s };
+
+    for (auto viewFormat : configuration.viewFormats) {
+        if (!configuration.device->isSupportedFormat(viewFormat))
+            return Exception { ExceptionCode::TypeError, "Unsupported texture view format."_s };
+    }
+
+    if (!m_compositorIntegration)
+        return { };
 
     auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height);
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 
-    m_presentationContext->configure(configuration);
+    if (!m_presentationContext || !m_presentationContext->configure(configuration, m_width, m_height))
+        return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
 
     m_configuration = {
         *configuration.device,
@@ -216,11 +229,13 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
         WTFMove(renderBuffers),
         0,
     };
+    return { };
 }
 
 void GPUCanvasContextCocoa::unconfigure()
 {
-    m_presentationContext->unconfigure();
+    if (m_presentationContext)
+        m_presentationContext->unconfigure();
     m_configuration = std::nullopt;
     ASSERT(!isConfigured());
 }
@@ -236,6 +251,8 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
         return m_currentTexture;
 
     markContextChangedAndNotifyCanvasObservers();
+    if (!m_presentationContext)
+        return nullptr;
     m_currentTexture = m_presentationContext->getCurrentTexture();
     return m_currentTexture;
 }
@@ -262,45 +279,30 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 
     ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
 
-    m_compositorIntegration->prepareForDisplay([&] {
+    if (!m_compositorIntegration)
+        return;
+
+    m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        if (m_configuration->frameCount >= m_configuration->renderBuffers.size())
+            return;
         m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[m_configuration->frameCount]);
         m_compositingResultsNeedsUpdating = false;
         m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
+        if (m_currentTexture)
+            m_currentTexture->destroy();
         m_currentTexture = nullptr;
-        m_presentationContext->present();
+        if (m_presentationContext)
+            m_presentationContext->present();
     });
 }
 
 void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()
 {
     m_compositingResultsNeedsUpdating = true;
-
-    bool canvasIsDirty = false;
-
-    auto canvas = htmlOrOffscreenCanvas();
-    CanvasBase *canvasBase = nullptr;
-    WTF::switchOn(canvas, [&](RefPtr<HTMLCanvasElement>& htmlCanvas) {
-        auto* renderBox = htmlCanvas->renderBox();
-        canvasBase = htmlCanvas.get();
-        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
-            canvasIsDirty = true;
-            htmlCanvas->clearCopiedImage();
-            renderBox->contentChanged(CanvasChanged);
-        }
-    }, [&](RefPtr<OffscreenCanvas>& offscreenCanvas) {
-        canvasBase = offscreenCanvas.get();
-    });
-
-    if (!canvasIsDirty)
-        this->canvasBase().didDraw({ });
-
-    if (!isAccelerated())
-        return;
-
-    if (!canvasBase)
-        return;
-
-    canvasBase->notifyObserversCanvasChanged({ });
+    markCanvasChanged();
 }
+
 
 } // namespace WebCore

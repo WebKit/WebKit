@@ -49,7 +49,6 @@ class SVGMarkerData {
 public:
     SVGMarkerData(Vector<MarkerPosition>& positions, bool reverseStart)
         : m_positions(positions)
-        , m_elementIndex(0)
         , m_reverseStart(reverseStart)
     {
     }
@@ -57,16 +56,25 @@ public:
     static void updateFromPathElement(SVGMarkerData& markerData, const PathElement& element)
     {
         // First update the outslope for the previous element.
-        markerData.updateOutslope(element.points[0]);
+        if (element.type != PathElement::Type::MoveToPoint)
+            markerData.updateOutslope(element.points[0]);
 
         // Record the marker for the previous element.
         if (markerData.m_elementIndex > 0) {
             SVGMarkerType markerType = markerData.m_elementIndex == 1 ? StartMarker : MidMarker;
-            markerData.m_positions.append(MarkerPosition(markerType, markerData.m_origin, markerData.currentAngle(markerType)));
+            SVGMarkerType markerTypeForOrientation;
+            if (markerData.m_previousWasMoveTo)
+                markerTypeForOrientation = StartMarker;
+            else if (element.type == PathElement::Type::MoveToPoint)
+                markerTypeForOrientation = EndMarker;
+            else
+                markerTypeForOrientation = markerType;
+            markerData.m_positions.append(MarkerPosition(markerType, markerData.m_origin, markerData.currentAngle(markerTypeForOrientation)));
         }
 
         // Update our marker data for this element.
         markerData.updateMarkerDataForPathElement(element);
+        markerData.m_previousWasMoveTo = element.type == PathElement::Type::MoveToPoint;
         ++markerData.m_elementIndex;
     }
 
@@ -109,6 +117,12 @@ private:
         m_outslopePoints[1] = point;
     }
 
+    void updateInslope(const FloatPoint& point)
+    {
+        m_inslopePoints[0] = m_origin;
+        m_inslopePoints[1] = point;
+    }
+
     void updateMarkerDataForPathElement(const PathElement& element)
     {
         auto& points = element.points;
@@ -137,19 +151,14 @@ private:
         }
     }
 
-    void updateInslope(const FloatPoint& point)
-    {
-        m_inslopePoints[0] = m_origin;
-        m_inslopePoints[1] = point;
-    }
-
     Vector<MarkerPosition>& m_positions;
-    unsigned m_elementIndex;
+    unsigned m_elementIndex { 0 };
     FloatPoint m_origin;
     FloatPoint m_subpathStart;
     FloatPoint m_inslopePoints[2];
     FloatPoint m_outslopePoints[2];
     bool m_reverseStart;
+    bool m_previousWasMoveTo { false };
 };
 
 } // namespace WebCore

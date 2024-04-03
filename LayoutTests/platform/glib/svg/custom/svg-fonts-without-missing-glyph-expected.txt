@@ -6,7 +6,7 @@ layer at (0,0) size 800x288
       RenderBlock {h1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 112x36
           text run at (0,0) width 112: "Test for "
-        RenderInline {a} at (0,0) size 144x36 [color=#0000EE]
+        RenderInline {a} at (111,0) size 144x36 [color=#0000EE]
           RenderText {#text} at (111,0) size 144x36
             text run at (111,0) width 144: "Bug 42352"
       RenderBlock {p} at (0,58) size 784x19

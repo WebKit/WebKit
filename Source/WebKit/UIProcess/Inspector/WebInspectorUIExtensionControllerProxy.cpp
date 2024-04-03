@@ -167,23 +167,24 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension {extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError> error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptForExtension { extensionID, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext }, [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError> error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;
             }
 
             if (details) {
-                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
-                return completionHandler({ returnedValue });
+                Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                completionHandler({ returnedValue });
+                return;
             }
 
-            completionHandler({ { API::SerializedScriptValue::createFromWireBytes(Vector { dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ API::SerializedScriptValue::createFromWireBytes(dataReference) });
         });
     });
 }
 
-void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector::ExtensionID& extensionID, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector::ExtensionID& extensionID, const std::optional<bool>& ignoreCache, const std::optional<String>& userAgent, const std::optional<String>& injectedScript, WTF::CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     whenFrontendHasLoaded([weakThis = WeakPtr { *this }, extensionID, ignoreCache, userAgent, injectedScript, completionHandler = WTFMove(completionHandler)] () mutable {
         if (!weakThis || !weakThis->m_inspectorPage) {
@@ -236,18 +237,19 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab {extensionTabID, scriptSource}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError>& error) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab { extensionTabID, scriptSource }, [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError>& error) mutable {
             if (error) {
                 completionHandler(makeUnexpected(error.value()));
                 return;
             }
 
             if (details) {
-                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
-                return completionHandler({ returnedValue });
+                Expected<Ref<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                completionHandler({ returnedValue });
+                return;
             }
 
-            completionHandler({ { API::SerializedScriptValue::createFromWireBytes({ dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ API::SerializedScriptValue::createFromWireBytes(dataReference) });
         });
     });
 }
@@ -304,6 +306,17 @@ void WebInspectorUIExtensionControllerProxy::inspectedPageDidNavigate(const URL&
             continue;
 
         extensionClient->inspectedPageDidNavigate(newURL);
+    }
+}
+
+void WebInspectorUIExtensionControllerProxy::effectiveAppearanceDidChange(Inspector::ExtensionAppearance appearance)
+{
+    for (auto& extension : copyToVector(m_extensionAPIObjectMap.values())) {
+        auto extensionClient = extension->client();
+        if (!extensionClient)
+            continue;
+
+        extensionClient->effectiveAppearanceDidChange(appearance);
     }
 }
 

@@ -152,6 +152,8 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
 void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreationContext& creationContext)
 {
     m_ioSurfacePool = creationContext.surfacePool;
+    if (creationContext.resourceOwner)
+        m_surface->setOwnershipIdentity(creationContext.resourceOwner);
 }
 
 void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()

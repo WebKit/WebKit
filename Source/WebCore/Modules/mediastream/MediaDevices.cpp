@@ -46,6 +46,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaTrackSupportedConstraints.h"
+#include "PermissionsPolicy.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
@@ -188,8 +189,8 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         return true;
 
     bool invalid = false;
-    constraints.mandatoryConstraints.filter([&invalid] (const MediaConstraint& constraint) mutable {
-        switch (constraint.constraintType()) {
+    constraints.mandatoryConstraints.filter([&invalid] (auto constraintType, const MediaConstraint& constraint) mutable {
+        switch (constraintType) {
         case MediaConstraintType::Width:
         case MediaConstraintType::Height: {
             auto& intConstraint = downcast<IntConstraint>(constraint);
@@ -231,6 +232,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
         case MediaConstraintType::WhiteBalanceMode:
         case MediaConstraintType::Zoom:
         case MediaConstraintType::Torch:
+        case MediaConstraintType::BackgroundBlur:
             // Ignored.
             break;
 
@@ -253,7 +255,7 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
 
     bool isUserGesturePriviledged = computeUserGesturePriviledge(GestureAllowedRequest::Display);
     if (!isUserGesturePriviledged) {
-        promise.reject(Exception { ExceptionCode::InvalidAccessError, "getDisplayMedia must be called from a user gesture handler."_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "getDisplayMedia must be called from a user gesture handler."_s });
         return;
     }
 
@@ -275,19 +277,19 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
 
 static inline bool checkCameraAccess(const Document& document)
 {
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::No);
+    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, document, LogPermissionsPolicyFailure::No);
 }
 
 static inline bool checkMicrophoneAccess(const Document& document)
 {
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
+    return isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, document, LogPermissionsPolicyFailure::No);
 }
 
 static inline bool checkSpeakerAccess(const Document& document)
 {
     return document.frame()
         && document.frame()->settings().exposeSpeakersEnabled()
-        && isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::SpeakerSelection, document, LogFeaturePolicyFailure::No);
+        && isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::SpeakerSelection, document, LogPermissionsPolicyFailure::No);
 }
 
 void MediaDevices::exposeDevices(Vector<CaptureDeviceWithCapabilities>&& newDevices, MediaDeviceHashSalts&& deviceIDHashSalts, EnumerateDevicesPromise&& promise)
@@ -362,24 +364,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise)
 
 MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 {
-    auto& supported = RealtimeMediaSourceCenter::singleton().supportedConstraints();
-    MediaTrackSupportedConstraints result;
-    result.width = supported.supportsWidth();
-    result.height = supported.supportsHeight();
-    result.aspectRatio = supported.supportsAspectRatio();
-    result.frameRate = supported.supportsFrameRate();
-    result.facingMode = supported.supportsFacingMode();
-    result.whiteBalanceMode = supported.supportsWhiteBalanceMode();
-    result.volume = supported.supportsVolume();
-    result.sampleRate = supported.supportsSampleRate();
-    result.sampleSize = supported.supportsSampleSize();
-    result.echoCancellation = supported.supportsEchoCancellation();
-    result.deviceId = supported.supportsDeviceId();
-    result.groupId = supported.supportsGroupId();
-    result.displaySurface = supported.supportsDisplaySurface();
-    result.zoom = supported.supportsZoom();
-
-    return result;
+    return { };
 }
 
 void MediaDevices::scheduledEventTimerFired()
@@ -410,8 +395,8 @@ void MediaDevices::listenForDeviceChanges()
     if (!controller)
         return;
 
-    bool canAccessCamera = isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, *document, LogFeaturePolicyFailure::No);
-    bool canAccessMicrophone = isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No);
+    bool canAccessCamera = isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Camera, *document, LogPermissionsPolicyFailure::No);
+    bool canAccessMicrophone = isPermissionsPolicyAllowedByDocumentAndAllOwners(PermissionsPolicy::Type::Microphone, *document, LogPermissionsPolicyFailure::No);
 
     if (m_listeningForDeviceChanges || (!canAccessCamera && !canAccessMicrophone))
         return;

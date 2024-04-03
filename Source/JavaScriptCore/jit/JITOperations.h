@@ -29,6 +29,7 @@
 
 #include "JITMathICForwards.h"
 #include "JITOperationValidation.h"
+#include "MegamorphicCache.h"
 #include "PrivateFieldPutKind.h"
 #include "UGPRPair.h"
 #include <wtf/Platform.h>
@@ -45,7 +46,9 @@ class BinaryArithProfile;
 class Butterfly;
 class CallFrame;
 class CallLinkInfo;
+class ClonedArguments;
 class CodeBlock;
+class DirectArguments;
 class JSArray;
 class JSBoundFunction;
 class JSCell;
@@ -60,6 +63,7 @@ class JSValue;
 class RegExp;
 class RegExpObject;
 class Register;
+class ScopedArguments;
 class Structure;
 class StructureStubInfo;
 class Symbol;
@@ -194,10 +198,14 @@ JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisGeneric, EncodedJSValue, (JSGl
 JSC_DECLARE_JIT_OPERATION(operationGetByIdWithThisMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (EncodedJSValue, JSGlobalObject*, StructureStubInfo*));
+JSC_DECLARE_JIT_OPERATION(operationInByIdMegamorphic, EncodedJSValue, (EncodedJSValue, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationInByIdGaveUp, EncodedJSValue, (EncodedJSValue, JSGlobalObject*, StructureStubInfo*));
+JSC_DECLARE_JIT_OPERATION(operationInByIdMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uintptr_t));
 
 JSC_DECLARE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSValue, EncodedJSValue, JSGlobalObject*, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationInByValMegamorphic, EncodedJSValue, (EncodedJSValue, EncodedJSValue, JSGlobalObject*, StructureStubInfo*, ArrayProfile*));
 JSC_DECLARE_JIT_OPERATION(operationInByValGaveUp, EncodedJSValue, (EncodedJSValue, EncodedJSValue, JSGlobalObject*, StructureStubInfo*, ArrayProfile*));
+JSC_DECLARE_JIT_OPERATION(operationInByValMegamorphicGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
 
 JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameOptimize, EncodedJSValue, (EncodedJSValue, EncodedJSValue, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationHasPrivateNameGaveUp, EncodedJSValue, (EncodedJSValue, EncodedJSValue, JSGlobalObject*, StructureStubInfo*));
@@ -214,6 +222,8 @@ JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyOptimize, void, (EncodedJSValue 
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphic, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdSloppyMegamorphicGeneric, void, (JSGlobalObject*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, uintptr_t));
+
+JSC_DECLARE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM*, JSObject*, EncodedJSValue encodedValue, const MegamorphicCache::StoreEntry*));
 
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictOptimize, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
 JSC_DECLARE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, JSGlobalObject*, StructureStubInfo*));
@@ -304,11 +314,10 @@ JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (J
 
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegister, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
-JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
+
+JSC_DECLARE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame*, CallLinkInfo*));
+JSC_DECLARE_JIT_OPERATION(operationDefaultCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 
 JSC_DECLARE_JIT_OPERATION(operationCompareLess, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCompareLessEq, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
@@ -324,6 +333,11 @@ JSC_DECLARE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject*, JS
 #endif
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, const JSValue* values, int32_t size));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, EncodedJSValue size));
+JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentTDZ, EncodedJSValue, (JSGlobalObject*, JSScope*, SymbolTable*));
+JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentUndefined, EncodedJSValue, (JSGlobalObject*, JSScope*, SymbolTable*));
+JSC_DECLARE_JIT_OPERATION(operationCreateDirectArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
+JSC_DECLARE_JIT_OPERATION(operationCreateScopedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*, JSLexicalEnvironment*));
+JSC_DECLARE_JIT_OPERATION(operationCreateClonedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (VM*, JSScope*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (VM*, JSScope*, JSCell*));
@@ -381,6 +395,10 @@ JSC_DECLARE_JIT_OPERATION(operationExceptionFuzzWithCallFrame, void, (VM*));
 
 JSC_DECLARE_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable, JSCell*, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance));
+
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+JSC_DECLARE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject*, JSArrayIterator*, JSArray*, void*));
+#endif
 
 JSC_DECLARE_JIT_OPERATION(operationValueAdd, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2));
 JSC_DECLARE_JIT_OPERATION(operationValueAddProfiled, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, BinaryArithProfile*));

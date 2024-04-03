@@ -54,20 +54,21 @@ Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPagePro
     return adoptRef(*new WebSocketChannel(webPageProxyID, document, client));
 }
 
-void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, const uint8_t* data, size_t length)
+void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, std::span<const uint8_t> data)
 {
-    WebSocketFrame frame(opCode, true, false, true, data, length);
+    WebSocketFrame frame(opCode, true, false, true, data);
     m_inspector.didSendWebSocketFrame(frame);
 }
 
 NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSocketChannel& channel)
 {
     return { document, [&channel](auto& utf8String) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.dataAsUInt8Ptr(), utf8String.length());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { utf8String.dataAsUInt8Ptr(), utf8String.length() } }, utf8String.length());
-    }, [&channel](auto& span) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span.data(), span.size());
-        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { span.data(), span.size() } }, span.size());
+        auto data = utf8String.span();
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, data);
+        channel.sendMessage(Messages::NetworkSocketChannel::SendString { data }, utf8String.length());
+    }, [&channel](auto span) {
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span);
+        channel.sendMessage(Messages::NetworkSocketChannel::SendData { span }, span.size());
     }, [&channel](ExceptionCode exceptionCode) {
         auto code = static_cast<int>(exceptionCode);
         channel.fail(makeString("Failed to load Blob: exception code = ", code));
@@ -97,7 +98,7 @@ IPC::Connection* WebSocketChannel::messageSenderConnection() const
 
 uint64_t WebSocketChannel::messageSenderDestinationID() const
 {
-    return m_identifier.toUInt64();
+    return identifier().toUInt64();
 }
 
 String WebSocketChannel::subprotocol()
@@ -160,7 +161,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, frameID, pageID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, frameID, pageID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy });
     return ConnectStatus::OK;
 }
 
@@ -305,7 +306,7 @@ void WebSocketChannel::didReceiveText(String&& message)
     m_client->didReceiveMessage(WTFMove(message));
 }
 
-void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
+void WebSocketChannel::didReceiveBinaryData(std::span<const uint8_t> data)
 {
     if (m_isClosing)
         return;

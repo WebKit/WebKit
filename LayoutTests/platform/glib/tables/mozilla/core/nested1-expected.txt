@@ -50,7 +50,7 @@ layer at (0,0) size 800x585
                       RenderText {#text} at (1,1) size 177x17
                         text run at (1,1) width 177: "nested in auto, width=100%"
             RenderTableCell {TD} at (191,5) size 31x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x17
+              RenderText {#text} at (2,5) size 27x17
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,190) size 784x18
         RenderBR {BR} at (0,0) size 0x17
@@ -65,7 +65,7 @@ layer at (0,0) size 800x585
                       RenderText {#text} at (1,1) size 179x17
                         text run at (1,1) width 179: "nested in 100%, width=50%"
             RenderTableCell {TD} at (689,5) size 92x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x17
+              RenderText {#text} at (2,5) size 21x17
                 text run at (2,2) width 21: "foo"
       RenderBlock (anonymous) at (0,242) size 784x18
         RenderBR {BR} at (0,0) size 0x17
@@ -84,5 +84,5 @@ layer at (0,0) size 800x585
                               RenderText {#text} at (1,1) size 45x17
                                 text run at (1,1) width 45: "2n50%"
             RenderTableCell {TD} at (554,8) size 227x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x17
+              RenderText {#text} at (2,8) size 21x17
                 text run at (2,2) width 21: "foo"

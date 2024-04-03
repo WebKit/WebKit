@@ -125,7 +125,7 @@ int RenderFileUploadControl::maxFilenameLogicalWidth() const
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style().visibility() != Visibility::Visible)
+    if (style().usedVisibility() != Visibility::Visible)
         return;
     
     if (!paintInfo.context().paintingDisabled())
@@ -194,15 +194,15 @@ void RenderFileUploadControl::paintControl(PaintInfo& paintInfo, const LayoutPoi
 
                         if (!isHorizontalWritingMode) {
                             if (isFlippedBlocksWritingMode)
-                                return textVisualRect.x() - metrics.ascent();
+                                return textVisualRect.x() - metrics.intAscent();
 
-                            return textVisualRect.x() + metrics.descent();
+                            return textVisualRect.x() + metrics.intDescent();
                         }
 
                         if (isFlippedBlocksWritingMode)
-                            return textVisualRect.y() - metrics.descent();
+                            return textVisualRect.y() - metrics.intDescent();
 
-                        return textVisualRect.y() + metrics.ascent();
+                        return textVisualRect.y() + metrics.intAscent();
                     }
                 }
             }
@@ -267,7 +267,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
     const UChar character = '0';
-    const String characterAsString = String(&character, 1);
+    const String characterAsString = span(character);
     const FontCascade& font = style().fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
     float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(characterAsString, style(), ExpansionBehavior::allowRightOnly()));
@@ -300,7 +300,7 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
+VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*)
 {
     return VisiblePosition();
 }

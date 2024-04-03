@@ -34,6 +34,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
+#include "SVGVisitedRendererTracking.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -42,7 +43,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
 LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
-    : LegacyRenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)
+    : LegacyRenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer | SVGModelObjectFlag::UsesBoundaryCaching)
 {
 }
 
@@ -82,8 +83,8 @@ void LegacyRenderSVGContainer::layout()
         // New bounds can affect transforms, so recompute them here if needed.
         calculateLocalTransform();
 
-        // If our bounds changed, notify the parents.
-        LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
+        if (CheckedPtr parent = this->parent())
+            parent->invalidateCachedBoundaries();
     }
 
     repainter.repaintAfterLayout();
@@ -98,7 +99,7 @@ bool LegacyRenderSVGContainer::selfWillPaint()
 
 void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (paintInfo.context().paintingDisabled())
+    if (paintInfo.phase != PaintPhase::EventRegion && paintInfo.context().paintingDisabled())
         return;
 
     // Spec: groups w/o children still may render filter content.
@@ -116,7 +117,10 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
         // Let the LegacyRenderSVGViewportContainer subclass clip if necessary
         applyViewportClip(childPaintInfo);
 
-        childPaintInfo.applyTransform(localToParentTransform());
+        auto transform = localToParentTransform();
+        childPaintInfo.applyTransform(transform);
+        if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+            childPaintInfo.eventRegionContext()->pushTransform(transform);
 
         SVGRenderingContext renderingContext;
         bool continueRendering = true;
@@ -130,14 +134,18 @@ void LegacyRenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
             for (auto& child : childrenOfType<RenderElement>(*this))
                 child.paint(childPaintInfo, IntPoint());
         }
+
+        if (paintInfo.phase == PaintPhase::EventRegion && childPaintInfo.eventRegionContext())
+            childPaintInfo.eventRegionContext()->popTransform();
     }
+
     
     // FIXME: This really should be drawn from local coordinates, but currently we hack it
     // to avoid our clip killing our outline rect. Thus we translate our
     // outline rect into parent coords before drawing.
     // FIXME: This means our focus ring won't share our rotation like it should.
     // We should instead disable our clip during PaintPhase::Outline
-    if (paintInfo.phase == PaintPhase::SelfOutline && style().outlineWidth() && style().visibility() == Visibility::Visible) {
+    if (paintInfo.phase == PaintPhase::SelfOutline && style().outlineWidth() && style().usedVisibility() == Visibility::Visible) {
         IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRect));
         paintOutline(paintInfo, paintRectInParent);
     }
@@ -196,17 +204,22 @@ bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, H
     if (!pointIsInsideViewportClip(pointInParent))
         return false;
 
-    FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
-    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
         return false;
 
-    SVGHitTestCycleDetectionScope hitTestScope(*this);
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+    FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
+    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+        return false;
 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
         if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
             updateHitTestResult(result, LayoutPoint(localPoint));
-            if (result.addNodeToListBasedTestResult(child->node(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
+            if (result.addNodeToListBasedTestResult(child->protectedNode().get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
                 return true;
         }
     }
@@ -214,7 +227,7 @@ bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, H
     // Accessibility wants to return SVG containers, if appropriate.
     if (request.type() & HitTestRequest::Type::AccessibilityHitTest && m_objectBoundingBox.contains(localPoint)) {
         updateHitTestResult(result, LayoutPoint(localPoint));
-        if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(protectedNodeForHitTest().get(), request, flooredLayoutPoint(localPoint)) == HitTestProgress::Stop)
             return true;
     }
     

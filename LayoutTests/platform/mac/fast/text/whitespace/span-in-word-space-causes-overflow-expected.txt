@@ -8,7 +8,7 @@ layer at (0,0) size 800x52
           text run at (0,0) width 61: "Overflow"
           text run at (80,0) width 48: " should"
           text run at (147,0) width 5: " "
-        RenderInline {SPAN} at (0,0) size 21x18
+        RenderInline {SPAN} at (151,0) size 21x18
           RenderText {#text} at (151,0) size 21x18
             text run at (151,0) width 21: "not"
         RenderText {#text} at (0,18) size 154x18

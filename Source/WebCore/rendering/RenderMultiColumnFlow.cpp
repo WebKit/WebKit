@@ -62,8 +62,8 @@ ASCIILiteral RenderMultiColumnFlow::renderName() const
 RenderMultiColumnSet* RenderMultiColumnFlow::firstMultiColumnSet() const
 {
     for (RenderObject* sibling = nextSibling(); sibling; sibling = sibling->nextSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto* multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }
@@ -73,8 +73,8 @@ RenderMultiColumnSet* RenderMultiColumnFlow::lastMultiColumnSet() const
     ASSERT(multiColumnBlockFlow());
 
     for (RenderObject* sibling = multiColumnBlockFlow()->lastChild(); sibling; sibling = sibling->previousSibling()) {
-        if (is<RenderMultiColumnSet>(*sibling))
-            return downcast<RenderMultiColumnSet>(sibling);
+        if (auto* multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*sibling))
+            return multiColumnSet;
     }
     return nullptr;
 }
@@ -116,9 +116,9 @@ void RenderMultiColumnFlow::layout()
     m_inLayout = true;
     m_lastSetWorkedOn = nullptr;
     if (RenderBox* first = firstColumnSetOrSpanner()) {
-        if (is<RenderMultiColumnSet>(*first)) {
-            m_lastSetWorkedOn = downcast<RenderMultiColumnSet>(first);
-            m_lastSetWorkedOn->beginFlow(this);
+        if (CheckedPtr multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*first)) {
+            m_lastSetWorkedOn = multiColumnSet.get();
+            multiColumnSet->beginFlow(this);
         }
     }
     RenderFragmentedFlow::layout();
@@ -155,22 +155,23 @@ void RenderMultiColumnFlow::willBeRemovedFromTree(IsInternalMove isInternalMove)
 
 void RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut(RenderBox* descendant)
 {
-    if (!is<RenderMultiColumnSpannerPlaceholder>(*descendant))
+    CheckedPtr placeholder = dynamicDowncast<RenderMultiColumnSpannerPlaceholder>(*descendant);
+    if (!placeholder)
         return;
-    auto& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*descendant);
-    RenderBlock* container = placeholder.containingBlock();
 
-    for (RenderBox* prev = previousColumnSetOrSpannerSiblingOf(placeholder.spanner()); prev; prev = previousColumnSetOrSpannerSiblingOf(prev)) {
-        if (is<RenderMultiColumnSet>(*prev)) {
-            downcast<RenderMultiColumnSet>(*prev).endFlow(container, placeholder.logicalTop());
+    CheckedPtr container = placeholder->containingBlock();
+
+    for (RenderBox* prev = previousColumnSetOrSpannerSiblingOf(placeholder->spanner()); prev; prev = previousColumnSetOrSpannerSiblingOf(prev)) {
+        if (CheckedPtr multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*prev)) {
+            multiColumnSet->endFlow(container.get(), placeholder->logicalTop());
             break;
         }
     }
 
-    for (RenderBox* next = nextColumnSetOrSpannerSiblingOf(placeholder.spanner()); next; next = nextColumnSetOrSpannerSiblingOf(next)) {
-        if (is<RenderMultiColumnSet>(*next)) {
-            m_lastSetWorkedOn = downcast<RenderMultiColumnSet>(next);
-            m_lastSetWorkedOn->beginFlow(container);
+    for (RenderBox* next = nextColumnSetOrSpannerSiblingOf(placeholder->spanner()); next; next = nextColumnSetOrSpannerSiblingOf(next)) {
+        if (CheckedPtr multiColumnSet = dynamicDowncast<RenderMultiColumnSet>(*next)) {
+            m_lastSetWorkedOn = multiColumnSet.get();
+            multiColumnSet->beginFlow(container.get());
             break;
         }
     }
@@ -292,8 +293,8 @@ LayoutSize RenderMultiColumnFlow::offsetFromContainer(RenderElement& enclosingCo
         translatedPhysicalPoint.moveBy(fragment->topLeftLocation());
     
     LayoutSize offset(translatedPhysicalPoint.x(), translatedPhysicalPoint.y());
-    if (is<RenderBox>(enclosingContainer))
-        offset -= toLayoutSize(downcast<RenderBox>(enclosingContainer).scrollPosition());
+    if (auto* enclosingBox = dynamicDowncast<RenderBox>(enclosingContainer))
+        offset -= toLayoutSize(enclosingBox->scrollPosition());
     return offset;
 }
     

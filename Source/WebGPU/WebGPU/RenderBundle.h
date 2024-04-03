@@ -35,53 +35,68 @@ struct WGPURenderBundleImpl {
 };
 
 @interface ResourceUsageAndRenderStage : NSObject
-- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages;
+- (instancetype)initWithUsage:(MTLResourceUsage)usage renderStages:(MTLRenderStages)renderStages entryUsage:(OptionSet<WebGPU::BindGroupEntryUsage>)entryUsage binding:(uint32_t)binding resource:(WebGPU::BindGroupEntryUsageData::Resource)resource;
 
 @property (nonatomic) MTLResourceUsage usage;
 @property (nonatomic) MTLRenderStages renderStages;
+@property (nonatomic) OptionSet<WebGPU::BindGroupEntryUsage> entryUsage;
+@property (nonatomic) uint32_t binding;
+@property (nonatomic) WebGPU::BindGroupEntryUsageData::Resource resource;
 @end
 
 @class RenderBundleICBWithResources;
 
 namespace WebGPU {
 
+class Buffer;
+class CommandEncoder;
 class Device;
-
 class RenderBundleEncoder;
+class RenderPassEncoder;
+class RenderPipeline;
+class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, encoder, device));
+        return adoptRef(*new RenderBundle(resources, encoder, descriptor, commandCount, device));
     }
-    static Ref<RenderBundle> createInvalid(Device& device)
+    static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
     {
-        return adoptRef(*new RenderBundle(device));
+        return adoptRef(*new RenderBundle(device, errorString));
     }
 
     ~RenderBundle();
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_renderBundlesResources != nil; }
+    bool isValid() const;
 
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
 
-    void replayCommands(id<MTLRenderCommandEncoder>) const;
+    void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
+    bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const WGPURenderPassDescriptor&) const;
+    bool validatePipeline(const RenderPipeline*);
+    uint64_t drawCount() const;
+    NSString* lastError() const;
 
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, Device&);
-    RenderBundle(Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, Device&);
+    RenderBundle(Device&, NSString*);
 
     const Ref<Device> m_device;
     RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
+    WGPURenderBundleEncoderDescriptor m_descriptor;
+    Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    NSString* m_lastErrorString { nil };
+    uint64_t m_commandCount { 0 };
     float m_minDepth { 0.f };
     float m_maxDepth { 1.f };
 };

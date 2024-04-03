@@ -42,7 +42,7 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
-class BroadcastChannel : public RefCounted<BroadcastChannel>, public EventTarget, public ActiveDOMObject {
+class BroadcastChannel : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BroadcastChannel>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(BroadcastChannel);
 public:
     static Ref<BroadcastChannel> create(ScriptExecutionContext& context, const String& name)
@@ -53,8 +53,8 @@ public:
     }
     ~BroadcastChannel();
 
-    using RefCounted<BroadcastChannel>::ref;
-    using RefCounted<BroadcastChannel>::deref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
 
     BroadcastChannelIdentifier identifier() const;
     String name() const;
@@ -72,10 +72,10 @@ private:
     bool isEligibleForMessaging() const;
 
     // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return BroadcastChannelEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::BroadcastChannel; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() final { RefCounted<BroadcastChannel>::ref(); }
-    void derefEventTarget() final { RefCounted<BroadcastChannel>::deref(); }
+    void refEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     void eventListenersDidChange() final;
 
     // ActiveDOMObject

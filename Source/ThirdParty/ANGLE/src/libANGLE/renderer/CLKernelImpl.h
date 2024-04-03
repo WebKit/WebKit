@@ -8,7 +8,7 @@
 #ifndef LIBANGLE_RENDERER_CLKERNELIMPL_H_
 #define LIBANGLE_RENDERER_CLKERNELIMPL_H_
 
-#include "libANGLE/renderer/CLtypes.h"
+#include "libANGLE/renderer/cl_types.h"
 
 namespace rx
 {
@@ -44,8 +44,8 @@ class CLKernelImpl : angle::NonCopyable
         ArgInfo();
         ~ArgInfo();
 
-        ArgInfo(const ArgInfo &)            = delete;
-        ArgInfo &operator=(const ArgInfo &) = delete;
+        ArgInfo(const ArgInfo &)            = default;
+        ArgInfo &operator=(const ArgInfo &) = default;
 
         ArgInfo(ArgInfo &&);
         ArgInfo &operator=(ArgInfo &&);

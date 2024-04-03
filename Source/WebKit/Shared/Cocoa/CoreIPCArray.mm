@@ -38,15 +38,25 @@ CoreIPCArray::CoreIPCArray(NSArray *array)
     for (id value in array) {
         if (!IPC::isSerializableValue(value))
             continue;
-        m_array.append(WTF::makeUniqueRef<CoreIPCNSCFObject>(value));
+        m_array.append(CoreIPCNSCFObject(value));
     }
 }
+
+CoreIPCArray::CoreIPCArray(const RetainPtr<NSArray>& array)
+    : CoreIPCArray(array.get()) { }
+
+CoreIPCArray::CoreIPCArray(CoreIPCArray&&) = default;
+
+CoreIPCArray::~CoreIPCArray() = default;
+
+CoreIPCArray::CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
+    : m_array(WTFMove(array)) { }
 
 RetainPtr<id> CoreIPCArray::toID() const
 {
     auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);
     for (auto& object : m_array)
-        [result addObject:object->toID().get()];
+        [result addObject:object.toID().get()];
     return result;
 }
 

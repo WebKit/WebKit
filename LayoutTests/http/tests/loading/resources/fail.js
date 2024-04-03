@@ -1,0 +1,1 @@
+window.fail=true;

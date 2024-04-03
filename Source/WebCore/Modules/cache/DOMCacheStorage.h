@@ -58,7 +58,7 @@ private:
     void doRemove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void doSequentialMatch(DOMCache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
     void retrieveCaches(CompletionHandler<void(std::optional<Exception>&&)>&&);
-    Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&);
+    Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&, ScriptExecutionContext&);
     std::optional<ClientOrigin> origin() const;
 
     Vector<Ref<DOMCache>> m_caches;

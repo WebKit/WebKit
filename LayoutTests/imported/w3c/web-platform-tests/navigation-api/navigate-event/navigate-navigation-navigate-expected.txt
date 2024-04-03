@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigate event for navigation.navigate() Test timed out
+FAIL navigate event for navigation.navigate() assert_equals: expected "replace" but got "push"
 

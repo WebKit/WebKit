@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm" && !$cloop
 function assert(b) {
     if (!b)
         throw new Error("Bad");

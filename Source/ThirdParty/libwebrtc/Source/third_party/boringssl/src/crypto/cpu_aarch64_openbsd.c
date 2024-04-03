@@ -25,6 +25,7 @@
 
 #include "internal.h"
 
+extern uint32_t OPENSSL_armcap_P;
 
 void OPENSSL_cpuid_setup(void) {
   int isar0_mib[] = { CTL_MACHDEP, CPU_ID_AA64ISAR0 };

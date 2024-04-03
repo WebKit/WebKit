@@ -225,7 +225,7 @@ private:
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID { 0 };
+    ScrollingNodeID m_scrollingNodeID;
 #endif
     EventRegion m_eventRegion;
     bool m_wantsDeepColorBackingStore { false };

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FormattingContext.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutUnits.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
@@ -53,8 +54,8 @@ public:
     void setVerticalSpacing(LayoutUnit verticalSpacing) { m_verticalSpacing = verticalSpacing; }
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
-    void setCollapsedBorder(const Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
-    std::optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
+    void setCollapsedBorder(const BoxGeometry::Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
+    std::optional<BoxGeometry::Edges> collapsedBorder() const { return m_collapsedBorder; }
 
     void setWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
     std::optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
@@ -225,7 +226,7 @@ private:
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
-    std::optional<Edges> m_collapsedBorder;
+    std::optional<BoxGeometry::Edges> m_collapsedBorder;
 };
 
 inline void TableGrid::Column::setComputedLogicalWidth(Length&& computedLogicalWidth)

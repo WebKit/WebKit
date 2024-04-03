@@ -29,8 +29,8 @@
 
 @interface ASCWebKitSPISupport : NSObject
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
-+ (BOOL)arePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty;
-+ (BOOL)canCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty;
++ (void)getArePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler NS_REFINED_FOR_SWIFT;
++ (void)getCanCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
 + (void)getClientCapabilitiesForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(NSDictionary<NSString *, NSNumber *> * _Nonnull))completionHandler;
 @end
 
@@ -155,11 +155,14 @@ typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
 
 - (instancetype)initWithKind:(ASCPublicKeyCredentialKind)credentialKind relyingPartyIdentifier:(NSString *)relyingPartyIdentifier clientDataHash:(NSData *)clientDataHash userVerificationPreference:(nullable NSString *)userVerificationPreference allowedCredentials:(nullable NSArray<ASCPublicKeyCredentialDescriptor *> *)allowedCredentials;
 
+- (instancetype)initWithKind:(ASCPublicKeyCredentialKind)credentialKind relyingPartyIdentifier:(NSString *)relyingPartyIdentifier clientDataJSON:(NSData *)clientDataJSON userVerificationPreference:(nullable NSString *)userVerificationPreference allowedCredentials:(nullable NSArray<ASCPublicKeyCredentialDescriptor *> *)allowedCredentials;
+
 @property (nonatomic, readonly) ASCPublicKeyCredentialKind credentialKind;
 @property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
+// There should always be exactly one of these set.
 @property (nonatomic, nullable, copy, readonly) NSData *challenge;
-// If clientDataHash is null, then gets generated from challenge and relyingPartyIdentifier.
 @property (nonatomic, nullable, copy) NSData *clientDataHash;
+@property (nonatomic, nullable, copy) NSData *clientDataJSON;
 @property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
 @property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
 @property (nonatomic, nullable, copy) NSData *extensionsCBOR;
@@ -193,6 +196,7 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialResidentKeyPreference) {
 
 @property (nonatomic, nullable, copy) NSData *challenge;
 @property (nonatomic, nullable, copy) NSData *clientDataHash;
+@property (nonatomic, nullable, copy) NSData *clientDataJSON;
 @property (nonatomic, copy) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSData *userIdentifier;
@@ -406,17 +410,23 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 extern NSErrorDomain const ASCAuthorizationErrorDomain;
 
 typedef NS_ERROR_ENUM(ASCAuthorizationErrorDomain, ASCAuthorizationError) {
-    ASCAuthorizationErrorUnknown,
-    ASCAuthorizationErrorFailed,
-    ASCAuthorizationErrorUserCanceled,
-    ASCAuthorizationErrorPINRequired,
-    ASCAuthorizationErrorMultipleNFCTagsPresent,
-    ASCAuthorizationErrorNoCredentialsFound,
-    ASCAuthorizationErrorLAError,
-    ASCAuthorizationErrorLAExcludeCredentialsMatched,
-    ASCAuthorizationErrorPINInvalid,
-    ASCAuthorizationErrorAuthenticatorTemporarilyLocked,
-    ASCAuthorizationErrorAuthenticatorPermanentlyLocked,
+    ASCAuthorizationErrorUnknown = 0,
+    ASCAuthorizationErrorFailed = 1,
+    ASCAuthorizationErrorUserCanceled = 2,
+    ASCAuthorizationErrorPINRequired = 3,
+    ASCAuthorizationErrorMultipleNFCTagsPresent = 4,
+    ASCAuthorizationErrorNoCredentialsFound = 5,
+    ASCAuthorizationErrorLAError = 6,
+    ASCAuthorizationErrorLAExcludeCredentialsMatched = 7,
+    ASCAuthorizationErrorPINInvalid = 8,
+    ASCAuthorizationErrorAuthenticatorTemporarilyLocked = 9,
+    ASCAuthorizationErrorAuthenticatorPermanentlyLocked = 10,
+    ASCAuthorizationErrorAlreadyStarted = 11,
+    ASCAuthorizationErrorInternalCancel = 12,
+    ASCAuthorizationErrorKeyStoreFull = 13,
+    ASCAuthorizationErrorInvalidResponse = 14,
+    ASCAuthorizationErrorNotSupportedInSTP = 16,
+    ASCAuthorizationErrorSecurityError = 17,
 };
 
 NS_ASSUME_NONNULL_END

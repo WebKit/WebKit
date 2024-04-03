@@ -27,6 +27,7 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
@@ -54,6 +55,8 @@ struct Feature {
     std::optional<Comparison> leftComparison;
     std::optional<Comparison> rightComparison;
 
+    std::optional<CSSValueID> functionId { };
+
     const FeatureSchema* schema { nullptr };
 };
 
@@ -67,21 +70,23 @@ using QueryInParens = std::variant<Condition, Feature, GeneralEnclosed>;
 struct Condition {
     LogicalOperator logicalOperator { LogicalOperator::And };
     Vector<QueryInParens> queries;
+
+    std::optional<CSSValueID> functionId { };
 };
 
 enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 struct FeatureEvaluationContext {
-    const Document& document;
+    WeakRef<const Document, WeakPtrImplWithEventTargetData> document;
     CSSToLengthConversionData conversionData { };
-    const RenderElement* renderer { nullptr };
+    CheckedPtr<const RenderElement> renderer { };
 };
 
 struct FeatureSchema {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     enum class Type : uint8_t { Discrete, Range };
-    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier };
+    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };
 
     AtomString name;
     Type type;
@@ -109,7 +114,8 @@ void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& fun
     }, [&](const MQ::Feature& feature) {
         function(feature);
     }, [&](const MQ::GeneralEnclosed&) {
-        return;
+        MQ::Feature dummy { };
+        function(dummy);
     });
 }
 

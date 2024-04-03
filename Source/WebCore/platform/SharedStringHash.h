@@ -45,7 +45,7 @@ using SharedStringHashMarkableTraits = IntegralMarkableTraits<SharedStringHash, 
 
 // Returns the hash of the string that will be used for visited link coloring.
 WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const String& url);
-WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const UChar* url, unsigned length);
+WEBCORE_EXPORT SharedStringHash computeSharedStringHash(std::span<const UChar> url);
 
 // Resolves the potentially relative URL "attributeURL" relative to the given
 // base URL, and returns the hash of the string that will be used for visited

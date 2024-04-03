@@ -81,7 +81,7 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     Vector<uint8_t> credentialId;
     {
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_1);
-        digest->addBytes(nsPublicKeyData.bytes, nsPublicKeyData.length);
+        digest->addBytes(span(nsPublicKeyData));
         credentialId = digest->computeHash();
     }
 
@@ -141,7 +141,7 @@ Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Ve
         ASSERT(!errorRef);
     }
 
-    return vectorFromNSData((NSData *)signature.get());
+    return makeVector((NSData *)signature.get());
 }
 
 } // namespace WebKit

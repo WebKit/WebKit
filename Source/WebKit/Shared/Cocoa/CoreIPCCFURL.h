@@ -47,7 +47,7 @@ public:
     }
 
     std::optional<CoreIPCCFURL> baseURL() const;
-    Vector<uint8_t> bytes() const;
+    Vector<uint8_t> toVector() const;
 
     RetainPtr<CFURLRef> createCFURL() const { return m_cfURL; }
 

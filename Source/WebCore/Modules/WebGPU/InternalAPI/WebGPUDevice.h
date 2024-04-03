@@ -36,6 +36,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
@@ -76,7 +77,7 @@ class Surface;
 class Texture;
 struct TextureDescriptor;
 
-class Device : public RefCounted<Device> {
+class Device : public RefCounted<Device>, public CanMakeWeakPtr<Device> {
 public:
     virtual ~Device() = default;
 
@@ -97,28 +98,29 @@ public:
 
     virtual void destroy() = 0;
 
-    virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
-    virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
-    virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
-    virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
+    virtual RefPtr<Buffer> createBuffer(const BufferDescriptor&) = 0;
+    virtual RefPtr<Texture> createTexture(const TextureDescriptor&) = 0;
+    virtual RefPtr<Sampler> createSampler(const SamplerDescriptor&) = 0;
+    virtual RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 
-    virtual Ref<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) = 0;
-    virtual Ref<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) = 0;
-    virtual Ref<BindGroup> createBindGroup(const BindGroupDescriptor&) = 0;
+    virtual RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) = 0;
+    virtual RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) = 0;
+    virtual RefPtr<BindGroup> createBindGroup(const BindGroupDescriptor&) = 0;
 
-    virtual Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
-    virtual Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
-    virtual Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
+    virtual RefPtr<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
+    virtual RefPtr<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
+    virtual RefPtr<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
     virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&&) = 0;
     virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&&) = 0;
 
-    virtual Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) = 0;
-    virtual Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;
+    virtual RefPtr<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) = 0;
+    virtual RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;
 
-    virtual Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
+    virtual RefPtr<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
 
     virtual void pushErrorScope(ErrorFilter) = 0;
-    virtual void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) = 0;
+    virtual void popErrorScope(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
+    virtual void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<Error>&&)>&&) = 0;
     virtual void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) = 0;
     class DeviceLostClient {
         virtual ~DeviceLostClient() = default;

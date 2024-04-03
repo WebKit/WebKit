@@ -17,22 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://w3c.github.io/uievents/#idl-uievent
+
 [
     Exposed=Window
 ] interface UIEvent : Event {
-    constructor([AtomString] DOMString type, optional UIEventInit eventInitDict);
-
-    readonly attribute WindowProxy view;
+    constructor([AtomString] DOMString type, optional UIEventInit eventInitDict = {});
+    readonly attribute WindowProxy? view;
     readonly attribute long detail;
     
+    // https://w3c.github.io/uievents/#idl-interface-UIEvent-initializers
     undefined initUIEvent([AtomString] DOMString type, optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
 
     readonly attribute long layerX;
     readonly attribute long layerY;
     readonly attribute long pageX;
     readonly attribute long pageY;
-
-    // FIXME: This should be on KeyboardEvent only as per the specification but Firefox and Chrome
-    // still have this attribute on UIEvent as of December 2016.
-    readonly attribute long which;
+    readonly attribute unsigned long which;
 };

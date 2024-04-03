@@ -46,7 +46,7 @@ public:
 
 private:
     static ServiceWorkerRegistrationBackgroundFetchAPI& from(ServiceWorkerRegistration&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     ServiceWorkerRegistration& m_serviceWorkerRegistration;
     RefPtr<BackgroundFetchManager> m_backgroundFetchManager;

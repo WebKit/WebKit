@@ -50,6 +50,9 @@ public:
     Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
 
+    bool shouldStoreInDocument() const { return m_matchType == MatchType::TagNameMatch || m_matchType == MatchType::ClassNameMatch; }
+    AtomString classNameToMatch() const;
+
 private:
     struct SelectorData {
         const CSSSelector* selector;
@@ -65,6 +68,7 @@ private:
     template <typename OutputType> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, OutputType&) const;
     template <typename OutputType> void executeSingleTagNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleClassNameSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
+    template <typename OutputType> void executeSingleAttributeExactSelectorData(const ContainerNode& rootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleSelectorData(const ContainerNode& rootNode, const ContainerNode& searchRootNode, const SelectorData&, OutputType&) const;
     template <typename OutputType> void executeSingleMultiSelectorData(const ContainerNode& rootNode, OutputType&) const;
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -87,6 +91,7 @@ private:
         RightMostWithIdMatch,
         TagNameMatch,
         ClassNameMatch,
+        AttributeExactMatch,
         MultipleSelectorMatch,
     } m_matchType;
 };
@@ -101,6 +106,9 @@ public:
     Element* closest(Element&) const;
     Ref<NodeList> queryAll(ContainerNode& rootNode) const;
     Element* queryFirst(ContainerNode& rootNode) const;
+
+    bool shouldStoreInDocument() const { return m_selectors.shouldStoreInDocument(); }
+    AtomString classNameToMatch() const { return m_selectors.classNameToMatch(); }
 
 private:
     CSSSelectorList m_selectorList;

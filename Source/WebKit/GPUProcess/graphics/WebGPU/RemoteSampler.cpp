@@ -48,7 +48,7 @@ RemoteSampler::~RemoteSampler() = default;
 
 void RemoteSampler::destruct()
 {
-    m_objectHeap.removeObject(m_identifier);
+    m_objectHeap->removeObject(m_identifier);
 }
 
 void RemoteSampler::stopListeningForIPC()

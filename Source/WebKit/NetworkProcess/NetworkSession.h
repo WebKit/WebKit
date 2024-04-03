@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AppPrivacyReport.h"
-#include "DataReference.h"
 #include "DataTaskIdentifier.h"
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkNotificationManager.h"
@@ -46,6 +45,7 @@
 #include <WebCore/SWServerDelegate.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
@@ -101,8 +101,7 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkSession
-    : public WebCore::SWServerDelegate {
+class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -132,7 +131,6 @@ public:
     void notifyResourceLoadStatisticsProcessed();
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
-    void logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample);
     bool enableResourceLoadStatisticsLogTestingEvent() const { return m_enableResourceLoadStatisticsLogTestingEvent; }
     void setResourceLoadStatisticsLogTestingEvent(bool log) { m_enableResourceLoadStatisticsLogTestingEvent = log; }
     virtual bool hasIsolatedSession(const WebCore::RegistrableDomain&) const { return false; }
@@ -233,6 +231,8 @@ public:
     bool privateClickMeasurementDebugModeEnabled() const { return m_privateClickMeasurementDebugModeEnabled; }
 
     void setBlobRegistryTopOriginPartitioningEnabled(bool);
+    void setShouldSendPrivateTokenIPCForTesting(bool);
+    bool shouldSendPrivateTokenIPCForTesting() const { return m_shouldSendPrivateTokenIPCForTesting; }
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
@@ -263,7 +263,7 @@ public:
 
 #if HAVE(NW_PROXY_CONFIG)
     virtual void clearProxyConfigData() { }
-    virtual void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) { };
+    virtual void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&) { };
 #endif
 
     void setInspectionForServiceWorkersAllowed(bool);
@@ -334,16 +334,17 @@ protected:
     unsigned m_testSpeedMultiplier { 1 };
     bool m_allowsServerPreconnect { true };
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };
+    bool m_shouldSendPrivateTokenIPCForTesting { false };
     std::optional<unsigned> m_overrideServiceWorkerRegistrationCountTestingValue;
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
-    HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_navigationPreloaders;
+    HashMap<WebCore::FetchIdentifier, WeakRef<ServiceWorkerFetchTask>> m_navigationPreloaders;
 
     struct ServiceWorkerInfo {
         String databasePath;
         bool processTerminationDelayEnabled { true };
     };
     std::optional<ServiceWorkerInfo> m_serviceWorkerInfo;
-    std::unique_ptr<WebCore::SWServer> m_swServer;
+    RefPtr<WebCore::SWServer> m_swServer;
     RefPtr<BackgroundFetchStoreImpl> m_backgroundFetchStore;
     bool m_inspectionForServiceWorkersAllowed { true };
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;

@@ -59,7 +59,7 @@ private:
 
     void setMatches(bool);
 
-    EventTargetInterface eventTargetInterface() const final { return MediaQueryListEventTargetInterfaceType; }
+    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaQueryList; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

@@ -96,7 +96,9 @@ class WebDriverW3CWebServer(object):
         config_filename = os.path.join(doc_root, 'config.json')
         config = json.loads(self._port.host.filesystem.read_text_file(config_filename))
         config['doc_root'] = doc_root
-        config['ssl']['openssl']['base_path'] = os.path.join(self._runtime_path, '_wpt_certs')
+        self._wpt_certs_dir = os.path.join(self._runtime_path, '_wpt_certs')
+        self._wpt_certs_cacert_pem = os.path.join(self._wpt_certs_dir, 'cacert.pem')
+        config['ssl']['openssl']['base_path'] = self._wpt_certs_dir
         self._port.host.filesystem.write_text_file(os.path.join(self._layout_doc_root, 'config.json'), json.dumps(config))
         self._server_host = config['browser_host']
         self._server_http_port = config['ports']['http'][0]
@@ -141,6 +143,9 @@ class WebDriverW3CWebServer(object):
 
     def document_root(self):
         return self._layout_doc_root
+
+    def cacert_pem_file(self):
+        return self._wpt_certs_cacert_pem
 
     # Waits indefinitely until the webserver process is terminated.
     def wait(self):

@@ -149,11 +149,11 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture2D(GL_TEXTURE_2D, destTexture.get());
+        pixelsOut->toTexture2D(GL_TEXTURE_2D, destTexture);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, kReadWidth, kReadHeight);
-        readTexture2D(GL_TEXTURE_2D, destTexture.get(), kReadWidth, kReadHeight, pixelsOut);
+        readTexture2D(GL_TEXTURE_2D, destTexture, kReadWidth, kReadHeight, pixelsOut);
     }
 
     // Read framebuffer to 'pixelsOut' via glCopyTexSubImage2D and cube map.
@@ -161,11 +161,11 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture2D(GL_TEXTURE_CUBE_MAP, destTexture.get());
+        pixelsOut->toTexture2D(GL_TEXTURE_CUBE_MAP, destTexture);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 0, 0, x, y, kReadWidth, kReadHeight);
-        readTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, destTexture.get(), kReadWidth, kReadHeight,
+        readTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, destTexture, kReadWidth, kReadHeight,
                       pixelsOut);
     }
 
@@ -174,7 +174,7 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture3D(GL_TEXTURE_2D_ARRAY, destTexture.get(), kTextureDepth);
+        pixelsOut->toTexture3D(GL_TEXTURE_2D_ARRAY, destTexture, kTextureDepth);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, z, x, y, kReadWidth, kReadHeight);
@@ -186,7 +186,7 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture3D(GL_TEXTURE_3D, destTexture.get(), kTextureDepth);
+        pixelsOut->toTexture3D(GL_TEXTURE_3D, destTexture, kTextureDepth);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, z, x, y, kReadWidth, kReadHeight);
@@ -198,11 +198,11 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture2D(GL_TEXTURE_2D, destTexture.get());
+        pixelsOut->toTexture2D(GL_TEXTURE_2D, destTexture);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, kReadWidth, kReadHeight, 0);
-        readTexture2D(GL_TEXTURE_2D, destTexture.get(), kReadWidth, kReadHeight, pixelsOut);
+        readTexture2D(GL_TEXTURE_2D, destTexture, kReadWidth, kReadHeight, pixelsOut);
     }
 
     // Read framebuffer to 'pixelsOut' via glCopyTexImage2D and cube map.
@@ -210,7 +210,7 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture2D(GL_TEXTURE_CUBE_MAP, destTexture.get());
+        pixelsOut->toTexture2D(GL_TEXTURE_CUBE_MAP, destTexture);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, x, y, kReadWidth, kReadHeight,

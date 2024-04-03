@@ -75,8 +75,6 @@ private:
     DeviceOrientationEvent();
     DeviceOrientationEvent(const AtomString& eventType, DeviceOrientationData*);
 
-    EventInterface eventInterface() const override;
-
     RefPtr<DeviceOrientationData> m_orientation;
 };
 

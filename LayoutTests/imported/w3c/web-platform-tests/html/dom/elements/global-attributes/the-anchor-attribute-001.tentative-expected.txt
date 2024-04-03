@@ -1,0 +1,4 @@
+
+FAIL The anchor attribute should position the target element next to its implicit anchor assert_equals: expected 150 but got 0
+FAIL The element.anchorElement IDL should reflect the element pointed to by the anchor attribute assert_equals: expected (object) Element node <div id="anchor"></div> but got (undefined) undefined
+

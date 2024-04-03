@@ -46,11 +46,11 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
         break;
 
     case TrackBase::AudioTrack:
-        return wrap(lexicalGlobalObject, globalObject, downcast<AudioTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, uncheckedDowncast<AudioTrack>(track));
     case TrackBase::VideoTrack:
-        return wrap(lexicalGlobalObject, globalObject, downcast<VideoTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, uncheckedDowncast<VideoTrack>(track));
     case TrackBase::TextTrack:
-        return wrap(lexicalGlobalObject, globalObject, downcast<TextTrack>(track));
+        return wrap(lexicalGlobalObject, globalObject, uncheckedDowncast<TextTrack>(track));
     }
 
     return jsNull();

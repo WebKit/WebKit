@@ -66,14 +66,11 @@ void AccessibilityTableHeaderContainer::addChildren()
     ASSERT(!m_childrenInitialized); 
     
     m_childrenInitialized = true;
-    if (!is<AccessibilityTable>(m_parent))
+    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
+    if (!parentTable || !parentTable->isExposable())
         return;
 
-    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
-    if (!parentTable.isExposable())
-        return;
-
-    for (auto& columnHeader : parentTable.columnHeaders())
+    for (auto& columnHeader : parentTable->columnHeaders())
         addChild(columnHeader.get());
 
     for (const auto& child : m_children)

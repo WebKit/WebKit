@@ -131,7 +131,7 @@ String LazyJSValue::tryGetString(Graph& graph) const
         return u.stringImpl;
 
     case SingleCharacterString:
-        return String(&u.character, 1);
+        return span(u.character);
 
     case KnownValue:
     case KnownStringImpl:
@@ -238,7 +238,7 @@ uintptr_t LazyJSValue::switchLookupValue(SwitchKind kind) const
     return 0;
 }
 
-void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
+void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result, Plan& planRef) const
 {
     if (m_kind == KnownValue) {
         jit.moveValue(value()->value(), result);
@@ -263,14 +263,15 @@ void LazyJSValue::emit(CCallHelpers& jit, JSValueRegs result) const
 
     CodeBlock* codeBlock = jit.codeBlock();
     
+    auto* plan = &planRef;
     jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
         auto patchLocation = linkBuffer.locationOf<JITCompilationPtrTag>(label);
-        linkBuffer.addMainThreadFinalizationTask([=] {
+        plan->addMainThreadFinalizationTask([=] {
             JSValue realValue = thisValue.getValue(codeBlock->vm());
             RELEASE_ASSERT(realValue.isCell());
 
             codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), realValue);
-            
+
             if (thisValue.m_kind == NewStringImpl)
                 thisValue.u.stringImpl->deref();
 

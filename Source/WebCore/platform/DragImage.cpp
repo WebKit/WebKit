@@ -104,11 +104,11 @@ static DragImageRef createDragImageFromSnapshot(RefPtr<ImageBuffer> snapshot, No
 
     ImageOrientation orientation;
     if (node) {
-        RenderObject* renderer = node->renderer();
-        if (!renderer || !is<RenderElement>(renderer))
+        auto* elementRenderer = dynamicDowncast<RenderElement>(node->renderer());
+        if (!elementRenderer)
             return nullptr;
 
-        orientation = downcast<RenderElement>(*renderer).imageOrientation();
+        orientation = elementRenderer->imageOrientation();
     }
 
     auto image = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTFMove(snapshot)));

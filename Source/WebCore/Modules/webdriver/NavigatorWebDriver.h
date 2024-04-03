@@ -40,7 +40,7 @@ public:
     static NavigatorWebDriver* from(Navigator*);
     static bool webdriver(const Navigator&);
 private:
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
     static bool isControlledByAutomation(const Navigator&);
 };
 

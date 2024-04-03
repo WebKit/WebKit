@@ -207,14 +207,41 @@ void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(FramesPerSe
     [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
 }
 
+void RemoteLayerTreeDrawingAreaProxyIOS::didRefreshDisplay()
+{
+    if (m_needsDisplayRefreshCallbacksForDrawing)
+        RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay();
+
+    if (m_needsDisplayRefreshCallbacksForAnimation) {
+        if (auto displayID = m_webPageProxy->displayID())
+            m_webPageProxy->scrollingCoordinatorProxy()->displayDidRefresh(*displayID);
+    }
+}
+
 void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacks()
 {
+    m_needsDisplayRefreshCallbacksForDrawing = true;
     [displayLinkHandler() schedule];
 }
 
 void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacks()
 {
-    [displayLinkHandler() pause];
+    m_needsDisplayRefreshCallbacksForDrawing = false;
+    if (!m_needsDisplayRefreshCallbacksForAnimation)
+        [displayLinkHandler() pause];
+}
+
+void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacksForAnimation()
+{
+    m_needsDisplayRefreshCallbacksForAnimation = true;
+    [displayLinkHandler() schedule];
+}
+
+void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForAnimation()
+{
+    m_needsDisplayRefreshCallbacksForAnimation = false;
+    if (!m_needsDisplayRefreshCallbacksForDrawing)
+        [displayLinkHandler() pause];
 }
 
 std::optional<WebCore::FramesPerSecond> RemoteLayerTreeDrawingAreaProxyIOS::displayNominalFramesPerSecond()

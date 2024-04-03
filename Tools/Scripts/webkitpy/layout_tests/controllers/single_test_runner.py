@@ -108,12 +108,17 @@ class SingleTestRunner(object):
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._test_name, device_type=self._driver.host.device_type)
-        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr)
+        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr, self._options.additional_header)
 
     def run(self):
         self_comparison_header = self._port.get_option('self_compare_with_header')
         if self_comparison_header:
             return self._run_self_comparison_test(self_comparison_header)
+        if self._options.site_isolation:
+            comparison_header = 'SiteIsolationEnabled=true runInCrossOriginFrame=true'
+            if self._reference_files:
+                return self._run_self_comparison_test(comparison_header)
+            return self._run_self_comparison_without_reference_test(comparison_header)
         if self._reference_files:
             if self._port.get_option('no_ref_tests') or self._options.reset_results:
                 reftest_type = set([reference_file[0] for reference_file in self._reference_files])
@@ -393,6 +398,23 @@ class SingleTestRunner(object):
         assert(reference_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
         return TestResult(self._test_input, test_result.failures, test_result.test_run_time, test_result.has_stderr, pid=test_result.pid)
+
+    def _run_self_comparison_without_reference_test(self, header):
+        driver_input = self._driver_input()
+        expected_driver_output = self._driver.run_test(driver_input, self._stop_when_done)
+        driver_input.self_comparison_header = header
+        driver_output = self._driver.run_test(driver_input, self._stop_when_done)
+
+        for output in (expected_driver_output, driver_output):
+            if self._options.ignore_metrics:
+                output.strip_metrics()
+            output.strip_patterns(self._port.logging_patterns_to_strip())
+            output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(driver_input.test_name))
+            output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
+
+        test_result = self._compare_output(expected_driver_output, driver_output)
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, expected_driver_output, test_result.failures)
+        return test_result
 
     @staticmethod
     def _relative_reference_path(test_full_path, reference_full_path):

@@ -4,5 +4,5 @@
 
 : # The odd choice of comment style in this file is to try to share this script between *nix and win32.
 
-git clone -b v1.2.12 --depth 1 https://github.com/madler/zlib.git
-git clone -b v1.6.37 --depth 1 https://github.com/glennrp/libpng.git
+git clone -b v1.3 --depth 1 https://github.com/madler/zlib.git
+git clone -b v1.6.40 --depth 1 https://github.com/glennrp/libpng.git

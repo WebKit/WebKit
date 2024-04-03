@@ -136,6 +136,17 @@ asm (
      ".previous" "\n"
 );
 
+#elif CPU(LOONGARCH64) && COMPILER(GCC_COMPATIBLE)
+asm (
+    ".text" "\n"
+    ".globl " SYMBOL_STRING(currentStackPointer) "\n"
+    SYMBOL_STRING(currentStackPointer) ":" "\n"
+
+     "move $r4, $r3" "\n"
+     "jr   $r1" "\n"
+     ".previous" "\n"
+);
+
 #else
 #error "Unsupported platform: need implementation of currentStackPointer."
 #endif

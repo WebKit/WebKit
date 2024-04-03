@@ -1,11 +1,11 @@
 // RUN: %not %wgslc | %check
 
 struct S {
-    // CHECK-L: @size value must be non-negative
-    @size(-1) x: i32,
-
     // CHECK-L: @size value must be at least the byte-size of the type of the member
-    @size(2) y: i32,
+    @size(2) x: i32,
+
+    // CHECK-L: @size value must be non-negative
+    @size(-1) y: i32,
 
     // CHECK-L: @align value must be non-negative
     @align(-1) z: i32,
@@ -62,3 +62,12 @@ fn f8() { }
 // CHECK-L: @workgroup_size argument must be at least 1
 @workgroup_size(-1) @compute
 fn f9() { }
+
+struct S1 {
+  @size(16) x : f32
+};
+
+struct S2 {
+  // check that we don't crash by trying to read the size of S2, which won't have been computed
+  @size(32) x: array<S1, 2>,
+};

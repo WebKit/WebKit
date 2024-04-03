@@ -124,7 +124,7 @@ public:
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
-    enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
+    enum class ContentsClonedForMutation : bool { No, Yes };
 
     class RuleMutationScope {
         WTF_MAKE_NONCOPYABLE(RuleMutationScope);
@@ -136,13 +136,13 @@ public:
     private:
         CSSStyleSheet* m_styleSheet;
         RuleMutationType m_mutationType;
-        WhetherContentsWereClonedForMutation m_contentsWereClonedForMutation;
+        ContentsClonedForMutation m_contentsClonedForMutation;
         RefPtr<StyleRuleKeyframes> m_insertedKeyframesRule;
         String m_modifiedKeyframesRuleName;
     };
 
-    WhetherContentsWereClonedForMutation willMutateRules();
-    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName);
+    ContentsClonedForMutation willMutateRules();
+    void didMutateRules(RuleMutationType, ContentsClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule, const String& modifiedKeyframesRuleName);
     void didMutateRuleFromCSSStyleDeclaration();
     void didMutate();
     
@@ -162,6 +162,8 @@ public:
     String debugDescription() const final;
     String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&);
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
+
+    bool isDetached() const;
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);

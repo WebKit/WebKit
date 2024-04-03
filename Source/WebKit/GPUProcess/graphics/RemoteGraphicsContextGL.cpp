@@ -51,7 +51,7 @@ namespace {
 template<typename S, int I, typename T>
 Vector<S> vectorCopyCast(const T& arrayReference)
 {
-    return { reinterpret_cast<const S*>(arrayReference.template data<I>()), arrayReference.size() };
+    return Vector(std::span { reinterpret_cast<const S*>(arrayReference.template data<I>()), arrayReference.size() });
 }
 }
 
@@ -165,12 +165,11 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
-void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, WebCore::GraphicsContextGL::EGLImageSource source, CompletionHandler<void(uint64_t handle, WebCore::IntSize size)>&& completionHandler)
+void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer, CompletionHandler<void(uint64_t handle)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    auto attachment = m_context->createAndBindEGLImage(target, WTFMove(source));
-    auto [handle, size] = attachment.value_or(std::make_tuple(nullptr, IntSize { }));
-    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)), size);
+    auto handle = m_context->createAndBindEGLImage(target, internalFormat, WTFMove(source), layer);
+    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)));
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
@@ -269,7 +268,7 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
     m_context->simulateEventForTesting(event);
 }
 
-void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, IPC::ArrayReference<uint8_t>)>&& completionHandler)
+void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, std::span<const uint8_t>)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     static constexpr size_t readPixelsInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGLProxy too.

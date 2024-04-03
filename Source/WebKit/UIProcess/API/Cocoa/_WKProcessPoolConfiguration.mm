@@ -377,6 +377,34 @@
     _processPoolConfiguration->setTimeZoneOverride(timeZone);
 }
 
+- (void)setMemoryFootprintPollIntervalForTesting:(NSTimeInterval)pollInterval
+{
+    _processPoolConfiguration->setMemoryFootprintPollIntervalForTesting(Seconds { pollInterval });
+}
+
+- (NSTimeInterval)memoryFootprintPollIntervalForTesting
+{
+    return _processPoolConfiguration->memoryFootprintPollIntervalForTesting().seconds();
+}
+
+- (NSArray<NSNumber *> *)memoryFootprintNotificationThresholds
+{
+    const auto& thresholds = _processPoolConfiguration->memoryFootprintNotificationThresholds();
+    RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity: thresholds.size()]);
+    for (auto& threshold : thresholds)
+        [result addObject:@(threshold)];
+    return result.autorelease();
+}
+
+- (void)setMemoryFootprintNotificationThresholds:(NSArray<NSNumber *> *)thresholds
+{
+    Vector<size_t> sizes;
+    sizes.reserveCapacity(thresholds.count);
+    for (NSNumber *threshold in thresholds)
+        sizes.append(static_cast<size_t>(threshold.unsignedLongLongValue));
+    _processPoolConfiguration->setMemoryFootprintNotificationThresholds(WTFMove(sizes));
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

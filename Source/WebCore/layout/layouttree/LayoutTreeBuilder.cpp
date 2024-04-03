@@ -93,10 +93,7 @@ static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const Character
     auto* rawCharacters = characters.data();
     for (unsigned i = 0; i < characters.size(); ++i) {
         auto character = rawCharacters[i]; // Not using characters[i] to bypass the bounds check.
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+        if (!fontCascade.canUseSimplifiedTextMeasuring(character, AutoVariant, whitespaceIsCollapsed, primaryFont))
             return false;
     }
     return true;
@@ -176,18 +173,17 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
     };
 
     std::unique_ptr<Box> childLayoutBox = nullptr;
-    if (is<RenderText>(childRenderer)) {
-        auto& textRenderer = downcast<RenderText>(childRenderer);
+    if (auto* textRenderer = dynamicDowncast<RenderText>(childRenderer)) {
         // RenderText::text() has already applied text-transform and text-security properties.
-        String text = textRenderer.text();
+        String text = textRenderer->text();
         auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
-        auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
+        auto hasPositionDependentContentWidth = textRenderer->hasPositionDependentContentWidth();
         if (!hasPositionDependentContentWidth)
             hasPositionDependentContentWidth = TextUtil::hasPositionDependentContentWidth(text);
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer->canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
@@ -219,16 +215,15 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             tableWrapperBoxStyle.setMarginRight(Length { renderer.style().marginRight() });
 
             childLayoutBox = createContainer(Box::ElementAttributes { Box::NodeType::TableWrapperBox, Box::IsAnonymous::Yes }, WTFMove(tableWrapperBoxStyle));
-        } else if (is<RenderReplaced>(renderer)) {
+        } else if (auto* replacedRenderer = dynamicDowncast<RenderReplaced>(renderer)) {
             auto replacedAttributes = ElementBox::ReplacedAttributes {
-                downcast<RenderReplaced>(renderer).intrinsicSize()
+                replacedRenderer->intrinsicSize()
             };
-            if (is<RenderImage>(renderer)) {
-                auto& imageRenderer = downcast<RenderImage>(renderer);
-                if (imageRenderer.shouldDisplayBrokenImageIcon())
+            if (auto* imageRenderer = dynamicDowncast<RenderImage>(*replacedRenderer)) {
+                if (imageRenderer->shouldDisplayBrokenImageIcon())
                     replacedAttributes.intrinsicRatio = 1;
-                if (imageRenderer.cachedImage())
-                    replacedAttributes.cachedImage = imageRenderer.cachedImage();
+                if (imageRenderer->cachedImage())
+                    replacedAttributes.cachedImage = imageRenderer->cachedImage();
             }
             childLayoutBox = createReplacedBox(elementAttributes(renderer), WTFMove(replacedAttributes), WTFMove(clonedStyle));
         } else {
@@ -268,12 +263,11 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
 
         if (is<RenderTableCell>(renderer)) {
             auto* tableCellElement = renderer.element();
-            if (is<HTMLTableCellElement>(tableCellElement)) {
-                auto& cellElement = downcast<HTMLTableCellElement>(*tableCellElement);
-                auto rowSpan = cellElement.rowSpan();
+            if (auto* cellElement = dynamicDowncast<HTMLTableCellElement>(tableCellElement)) {
+                auto rowSpan = cellElement->rowSpan();
                 if (rowSpan > 1)
                     childLayoutBox->setRowSpan(rowSpan);
-                auto columnSpan = cellElement.colSpan();
+                auto columnSpan = cellElement->colSpan();
                 if (columnSpan > 1)
                     childLayoutBox->setColumnSpan(columnSpan);
             }
@@ -364,8 +358,8 @@ void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, ElementBox& 
         auto& childLayoutBox = appendChild(parentContainer, createLayoutBox(parentContainer, childRenderer));
         if (childLayoutBox.isTableWrapperBox())
             buildTableStructure(downcast<RenderTable>(childRenderer), downcast<ElementBox>(childLayoutBox));
-        else if (is<ElementBox>(childLayoutBox))
-            buildSubTree(downcast<RenderElement>(childRenderer), downcast<ElementBox>(childLayoutBox));
+        else if (auto* elementBox = dynamicDowncast<ElementBox>(childLayoutBox))
+            buildSubTree(downcast<RenderElement>(childRenderer), *elementBox);
     }
 }
 
@@ -507,8 +501,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         stream << " at (" << borderBox.left() << "," << borderBox.top() << ") size " << borderBox.width() << "x" << borderBox.height();
     }
     stream << " (" << &layoutBox << ")";
-    if (is<InlineTextBox>(layoutBox)) {
-        auto textContent = downcast<InlineTextBox>(layoutBox).content();
+    if (auto* inlineTextBox = dynamicDowncast<InlineTextBox>(layoutBox)) {
+        auto textContent = inlineTextBox->content();
         stream << " length->(" << textContent.length() << ")";
 
         textContent = makeStringByReplacingAll(textContent, '\\', "\\\\"_s);
@@ -538,8 +532,8 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
         } else
             outputLayoutBox(stream, child, nullptr, depth);
 
-        if (is<ElementBox>(child))
-            outputLayoutTree(layoutState, stream, downcast<ElementBox>(child), depth + 1);
+        if (auto* elementBox = dynamicDowncast<ElementBox>(child))
+            outputLayoutTree(layoutState, stream, *elementBox, depth + 1);
     }
 }
 

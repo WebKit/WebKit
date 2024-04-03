@@ -60,6 +60,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    UserInterfaceLayoutDirection scrollbarLayoutDirection,
     RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::PluginScrolling,
@@ -89,6 +90,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     WTFMove(mouseLocationState),
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
+    scrollbarLayoutDirection,
     WTFMove(scrollData)
 )
 {

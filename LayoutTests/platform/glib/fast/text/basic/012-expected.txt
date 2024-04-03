@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 281: "spaces (&#160;), however, are an exception."
       RenderBlock (anonymous) at (0,150) size 784x73
         RenderBR {BR} at (0,0) size 0x17
-        RenderInline {FONT} at (0,0) size 330x53 [color=#CC0000]
+        RenderInline {FONT} at (0,18) size 330x53 [color=#CC0000]
           RenderText {#text} at (0,18) size 330x17
             text run at (0,18) width 69: "\x{BB} England "
             text run at (69,18) width 60: "\x{BB} Ireland "

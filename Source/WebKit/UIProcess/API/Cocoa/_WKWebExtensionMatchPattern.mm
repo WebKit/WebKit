@@ -33,7 +33,9 @@
 #import "WebExtensionMatchPattern.h"
 #import <wtf/URLParser.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS)
 static NSString * const stringCodingKey = @"string";
+#endif
 
 NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMatchPatternErrorDomain";
 
@@ -44,27 +46,9 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
     return YES;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)coder
-{
-    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
-
-    return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey] error:nullptr];
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
-
-    [coder encodeObject:self.string forKey:stringCodingKey];
-}
-
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    // _WKWebExtensionMatchPattern is immutable.
-    return self;
-}
-
 #if ENABLE(WK_WEB_EXTENSIONS)
+
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionMatchPattern, WebExtensionMatchPattern, _webExtensionMatchPattern);
 
 + (void)registerCustomURLScheme:(NSString *)urlScheme
 {
@@ -136,11 +120,24 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
     return _webExtensionMatchPattern->isValid() ? self : nil;
 }
 
-- (void)dealloc
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
-    ASSERT(isMainRunLoop());
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
 
-    _webExtensionMatchPattern->~WebExtensionMatchPattern();
+    return [self initWithString:[coder decodeObjectOfClass:[NSString class] forKey:stringCodingKey] error:nullptr];
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    NSParameterAssert([coder isKindOfClass:NSCoder.class]);
+
+    [coder encodeObject:self.string forKey:stringCodingKey];
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    // _WKWebExtensionMatchPattern is immutable.
+    return self;
 }
 
 - (NSUInteger)hash
@@ -300,6 +297,20 @@ static OptionSet<WebKit::WebExtensionMatchPattern::Options> toImpl(_WKWebExtensi
 }
 
 - (instancetype)initWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path error:(NSError **)error
+{
+    return nil;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    return [self initWithString:@"" error:nullptr];
+}
+
+- (id)copyWithZone:(NSZone *)zone
 {
     return nil;
 }

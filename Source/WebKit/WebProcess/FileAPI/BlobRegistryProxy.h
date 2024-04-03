@@ -37,6 +37,7 @@ public:
     void registerInternalBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<WebCore::BlobDataFileReference>&&, const String& contentType) final;
     void unregisterBlobURL(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;
     void registerInternalBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) final;
+    String blobType(const URL&) final;
     unsigned long long blobSize(const URL&) final;
     void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) final;
     void registerBlobURLHandle(const URL&, const std::optional<WebCore::SecurityOriginData>& topOrigin) final;

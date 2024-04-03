@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 
 
@@ -37,7 +44,6 @@ L$ordK:
 .p2align	5
 _ecp_nistz256_neg:
 
-_CET_ENDBR
 	pushq	%r12
 
 	pushq	%r13
@@ -83,7 +89,7 @@ L$neg_body:
 	leaq	16(%rsp),%rsp
 
 L$neg_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -98,7 +104,6 @@ L$neg_epilogue:
 .p2align	5
 _ecp_nistz256_ord_mul_mont:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -411,7 +416,7 @@ L$ord_mul_body:
 	leaq	48(%rsp),%rsp
 
 L$ord_mul_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -427,7 +432,6 @@ L$ord_mul_epilogue:
 .p2align	5
 _ecp_nistz256_ord_sqr_mont:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -710,7 +714,7 @@ L$oop_ord_sqr:
 	leaq	48(%rsp),%rsp
 
 L$ord_sqr_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -946,7 +950,7 @@ L$ord_mulx_body:
 	leaq	48(%rsp),%rsp
 
 L$ord_mulx_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1154,7 +1158,7 @@ L$oop_ord_sqrx:
 	leaq	48(%rsp),%rsp
 
 L$ord_sqrx_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1169,7 +1173,6 @@ L$ord_sqrx_epilogue:
 .p2align	5
 _ecp_nistz256_mul_mont:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -1226,7 +1229,7 @@ L$mul_mont_done:
 	leaq	48(%rsp),%rsp
 
 L$mul_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1444,7 +1447,7 @@ __ecp_nistz256_mul_montq:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1461,7 +1464,6 @@ __ecp_nistz256_mul_montq:
 .p2align	5
 _ecp_nistz256_sqr_mont:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -1513,7 +1515,7 @@ L$sqr_mont_done:
 	leaq	48(%rsp),%rsp
 
 L$sqr_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1677,7 +1679,7 @@ __ecp_nistz256_sqr_montq:
 	movq	%r14,16(%rdi)
 	movq	%r15,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1845,7 +1847,7 @@ __ecp_nistz256_mul_montx:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1975,7 +1977,7 @@ __ecp_nistz256_sqr_montx:
 	movq	%r14,16(%rdi)
 	movq	%r15,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -1986,7 +1988,6 @@ __ecp_nistz256_sqr_montx:
 .p2align	5
 _ecp_nistz256_select_w5:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rax
 	movq	8(%rax),%rax
 	testl	$32,%eax
@@ -2041,7 +2042,7 @@ L$select_loop_sse_w5:
 	movdqu	%xmm5,48(%rdi)
 	movdqu	%xmm6,64(%rdi)
 	movdqu	%xmm7,80(%rdi)
-	ret
+	.byte	0xf3,0xc3
 
 L$SEH_end_ecp_nistz256_select_w5:
 
@@ -2054,7 +2055,6 @@ L$SEH_end_ecp_nistz256_select_w5:
 .p2align	5
 _ecp_nistz256_select_w7:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rax
 	movq	8(%rax),%rax
 	testl	$32,%eax
@@ -2098,7 +2098,7 @@ L$select_loop_sse_w7:
 	movdqu	%xmm3,16(%rdi)
 	movdqu	%xmm4,32(%rdi)
 	movdqu	%xmm5,48(%rdi)
-	ret
+	.byte	0xf3,0xc3
 
 L$SEH_end_ecp_nistz256_select_w7:
 
@@ -2161,7 +2161,7 @@ L$select_loop_avx2_w5:
 	vmovdqu	%ymm3,32(%rdi)
 	vmovdqu	%ymm4,64(%rdi)
 	vzeroupper
-	ret
+	.byte	0xf3,0xc3
 
 L$SEH_end_ecp_nistz256_avx2_select_w5:
 
@@ -2175,7 +2175,6 @@ L$SEH_end_ecp_nistz256_avx2_select_w5:
 _ecp_nistz256_avx2_select_w7:
 
 L$avx2_select_w7:
-_CET_ENDBR
 	vzeroupper
 	vmovdqa	L$Three(%rip),%ymm0
 
@@ -2243,7 +2242,7 @@ L$select_loop_avx2_w7:
 	vmovdqu	%ymm2,0(%rdi)
 	vmovdqu	%ymm3,32(%rdi)
 	vzeroupper
-	ret
+	.byte	0xf3,0xc3
 
 L$SEH_end_ecp_nistz256_avx2_select_w7:
 
@@ -2277,7 +2276,7 @@ __ecp_nistz256_add_toq:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2310,7 +2309,7 @@ __ecp_nistz256_sub_fromq:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2339,7 +2338,7 @@ __ecp_nistz256_subq:
 	cmovnzq	%rcx,%r8
 	cmovnzq	%r10,%r9
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -2373,7 +2372,7 @@ __ecp_nistz256_mul_by_2q:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 .globl	_ecp_nistz256_point_double
@@ -2382,7 +2381,6 @@ __ecp_nistz256_mul_by_2q:
 .p2align	5
 _ecp_nistz256_point_double:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -2602,7 +2600,7 @@ L$point_double_shortcutq:
 	leaq	(%rsi),%rsp
 
 L$point_doubleq_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 .globl	_ecp_nistz256_point_add
@@ -2611,7 +2609,6 @@ L$point_doubleq_epilogue:
 .p2align	5
 _ecp_nistz256_point_add:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -3034,7 +3031,7 @@ L$add_doneq:
 	leaq	(%rsi),%rsp
 
 L$point_addq_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 .globl	_ecp_nistz256_point_add_affine
@@ -3043,7 +3040,6 @@ L$point_addq_epilogue:
 .p2align	5
 _ecp_nistz256_point_add_affine:
 
-_CET_ENDBR
 	leaq	_OPENSSL_ia32cap_P(%rip),%rcx
 	movq	8(%rcx),%rcx
 	andl	$0x80100,%ecx
@@ -3363,7 +3359,7 @@ L$add_affineq_body:
 	leaq	(%rsi),%rsp
 
 L$add_affineq_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3397,7 +3393,7 @@ __ecp_nistz256_add_tox:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3432,7 +3428,7 @@ __ecp_nistz256_sub_fromx:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3463,7 +3459,7 @@ __ecp_nistz256_subx:
 	cmovcq	%rcx,%r8
 	cmovcq	%r10,%r9
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3498,7 +3494,7 @@ __ecp_nistz256_mul_by_2x:
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -3720,7 +3716,7 @@ L$point_double_shortcutx:
 	leaq	(%rsi),%rsp
 
 L$point_doublex_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -4145,7 +4141,7 @@ L$add_donex:
 	leaq	(%rsi),%rsp
 
 L$point_addx_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
 
@@ -4467,7 +4463,11 @@ L$add_affinex_body:
 	leaq	(%rsi),%rsp
 
 L$add_affinex_epilogue:
-	ret
+	.byte	0xf3,0xc3
 
 
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif

@@ -296,7 +296,7 @@ TEST_P(FenceSyncTest, MultipleFenceDraw)
 
     // Create a texture/FBO to draw to
     GLTexture texture;
-    glBindTexture(GL_TEXTURE_2D, texture.get());
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
     ASSERT_GL_NO_ERROR();
     GLFramebuffer fbo;
@@ -322,11 +322,11 @@ TEST_P(FenceSyncTest, MultipleFenceDraw)
             GLuint program = 0;
             if (drawGreen)
             {
-                program = greenProgram.get();
+                program = greenProgram;
             }
             else
             {
-                program = redProgram.get();
+                program = redProgram;
             }
             drawQuad(program, std::string(essl1_shaders::PositionAttrib()), 0.0f);
             ASSERT_GL_NO_ERROR();

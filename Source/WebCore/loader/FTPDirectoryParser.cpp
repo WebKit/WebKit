@@ -154,7 +154,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                             while (pos < linelen && isASCIIDigit(line[pos]))
                                 pos++;
                             if (pos < linelen && line[pos] == ',')
-                                result.fileSize = String(p + 1, &line[pos] - p + 1);
+                                result.fileSize = String({ p + 1, static_cast<size_t>(&line[pos] - p + 1) });
                         }
                     } else if (isASCIIAlpha(*p)) { /* 'i'/'up' or unknown "fact" (property) */
                         while (pos < linelen && *++p != ',')
@@ -663,7 +663,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                     }
                     result.type = FTPFileEntry;
                     pos = toklen[2];
-                    result.fileSize = String(tokens[2], pos);
+                    result.fileSize = String({ tokens[2], pos });
                 } else {
                     // try to handle correctly spaces at the beginning of the filename
                     // token[2] must begin at offset 24, the length is 5 or 10
@@ -782,7 +782,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
                 if (result.type != FTPDirectoryEntry) {
                     pos = toklen[0];
-                    result.fileSize = String(tokens[0], pos);
+                    result.fileSize = String({ tokens[0], pos });
                 }
 
                 result.modifiedTime.tm_mon = atoi(&p[35 - 18]) - 1;
@@ -930,7 +930,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
 
                 if (result.type != FTPDirectoryEntry) {
                     pos = toklen[tokmarker];
-                    result.fileSize = String(tokens[tokmarker], pos);
+                    result.fileSize = String({ tokens[tokmarker], pos });
                 }
 
                 result.modifiedTime.tm_mon = monthNum;
@@ -1114,7 +1114,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 if (isASCIIDigit(*p)) {
                     result.type = FTPFileEntry;
                     pos = toklen[1];
-                    result.fileSize = String(p, pos);
+                    result.fileSize = String({ p, pos });
                 }
 
                 p = tokens[2];
@@ -1293,7 +1293,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                     }
                 } else if (isASCIIDigit(*tokens[tokmarker])) {
                     pos = toklen[tokmarker];
-                    result.fileSize = String(tokens[tokmarker], pos);
+                    result.fileSize = String({ tokens[tokmarker], pos });
                 }
 
                 if ((tokmarker + 3) < numtoks && (&(tokens[numtoks - 1][toklen[numtoks - 1]]) - tokens[tokmarker + 1]) >= (1 + 1 + 3 + 1 + 4)) {

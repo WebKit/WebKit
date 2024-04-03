@@ -23,6 +23,7 @@ x
 y
 Tab one's stuff
 Tab two's stuff
+x x
 
 PASS div role is tablist
 PASS role is tab (in div tablist)
@@ -61,4 +62,5 @@ PASS role is tab (within li with role none), tab is selected and in tab order
 PASS role is tab (within li with role none), tab is not selected and in tab order
 PASS role is tabpanel as sibling to ul with child role none li elements
 PASS role is tabpanel as sibling to ul with child role none li elements (duplicate)
+FAIL orphan button with tab role assert_equals: <button role="tab" data-testname="orphan button with tab role" data-expectedrole="button" class="ex">x</button> expected "button" but got "tab"
 

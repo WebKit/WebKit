@@ -72,6 +72,8 @@ static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
         return MTLRenderStageFragment;
     case ShaderStage::Compute:
         return BindGroup::MTLRenderStageCompute;
+    case ShaderStage::Undefined:
+        return BindGroup::MTLRenderStageUndefined;
     }
 }
 
@@ -561,19 +563,20 @@ static bool valid32bppFloatSampleType(WGPUTextureSampleType sampleType)
 }
 
 enum FormatType {
-    FormatType_Undefined,
-    FormatType_Float,
-    FormatType_Depth,
-    FormatType_SignedInt,
-    FormatType_UnsignedInt
+    FormatType_Undefined = 0,
+    FormatType_Float = 1 << 0,
+    FormatType_UnfilterableFloat = 1 << 1,
+    FormatType_Depth = 1 << 2,
+    FormatType_SignedInt = 1 << 3,
+    FormatType_UnsignedInt = 1 << 4
 };
 
-static FormatType formatType(WGPUTextureFormat format)
+static std::underlying_type<FormatType>::type formatType(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
 {
     switch (format) {
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
-        return FormatType_Float;
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_R8Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_R8Sint:
@@ -585,13 +588,13 @@ static FormatType formatType(WGPUTextureFormat format)
     case WGPUTextureFormat_R16Float:
     case WGPUTextureFormat_RG8Unorm:
     case WGPUTextureFormat_RG8Snorm:
-        return FormatType_Float;
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_RG8Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_RG8Sint:
         return FormatType_SignedInt;
     case WGPUTextureFormat_R32Float:
-        return FormatType_Float;
+        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
     case WGPUTextureFormat_R32Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_R32Sint:
@@ -604,21 +607,22 @@ static FormatType formatType(WGPUTextureFormat format)
     case WGPUTextureFormat_RGBA8Unorm:
     case WGPUTextureFormat_RGBA8UnormSrgb:
     case WGPUTextureFormat_RGBA8Snorm:
-        return FormatType_Float;
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_RGBA8Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_RGBA8Sint:
         return FormatType_SignedInt;
     case WGPUTextureFormat_BGRA8Unorm:
     case WGPUTextureFormat_BGRA8UnormSrgb:
-        return FormatType_Float;
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_RGB10A2Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RG11B10Ufloat:
     case WGPUTextureFormat_RGB9E5Ufloat:
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_RG32Float:
-        return FormatType_Float;
+        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
     case WGPUTextureFormat_RG32Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_RG32Sint:
@@ -628,19 +632,33 @@ static FormatType formatType(WGPUTextureFormat format)
     case WGPUTextureFormat_RGBA16Sint:
         return FormatType_SignedInt;
     case WGPUTextureFormat_RGBA16Float:
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_RGBA32Float:
-        return FormatType_Float;
+        return FormatType_UnfilterableFloat | (device.hasFeature(WGPUFeatureName_Float32Filterable) ? FormatType_Float : 0);
     case WGPUTextureFormat_RGBA32Uint:
         return FormatType_UnsignedInt;
     case WGPUTextureFormat_RGBA32Sint:
         return FormatType_SignedInt;
     case WGPUTextureFormat_Stencil8:
+        return FormatType_UnsignedInt;
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
+        return FormatType_Depth | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_Depth24PlusStencil8:
+    case WGPUTextureFormat_Depth32FloatStencil8: {
+        switch (aspect) {
+        case WGPUTextureAspect_All:
+            return FormatType_Depth | FormatType_UnfilterableFloat | FormatType_UnsignedInt;
+        case WGPUTextureAspect_StencilOnly:
+            return FormatType_UnsignedInt;
+        case WGPUTextureAspect_DepthOnly:
+            return FormatType_Depth | FormatType_UnfilterableFloat;
+        case WGPUTextureAspect_Force32:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
     case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return FormatType_Depth;
+        return FormatType_Depth | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
     case WGPUTextureFormat_BC2RGBAUnorm:
@@ -693,46 +711,52 @@ static FormatType formatType(WGPUTextureFormat format)
     case WGPUTextureFormat_ASTC12x10UnormSrgb:
     case WGPUTextureFormat_ASTC12x12Unorm:
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return FormatType_Float;
+        return FormatType_Float | FormatType_UnfilterableFloat;
     case WGPUTextureFormat_Undefined:
     case WGPUTextureFormat_Force32:
         return FormatType_Undefined;
     }
 }
 
-static bool formatIsFloat(WGPUTextureFormat format)
+static bool formatIsFloat(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
 {
-    return formatType(format) == FormatType_Float;
+    return formatType(format, aspect, device) & FormatType_Float;
 }
-static bool formatIsDepth(WGPUTextureFormat format)
+static bool formatIsUnfilterableFloat(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
 {
-    return formatType(format) == FormatType_Depth;
+    return formatType(format, aspect, device) & FormatType_UnfilterableFloat;
 }
-static bool formatIsSignedInt(WGPUTextureFormat format)
+static bool formatIsDepth(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
 {
-    return formatType(format) == FormatType_SignedInt;
+    return formatType(format, aspect, device) & FormatType_Depth;
 }
-static bool formatIsUnsignedInt(WGPUTextureFormat format)
+static bool formatIsSignedInt(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
 {
-    return formatType(format) == FormatType_UnsignedInt;
+    return formatType(format, aspect, device) & FormatType_SignedInt;
+}
+static bool formatIsUnsignedInt(WGPUTextureFormat format, WGPUTextureAspect aspect, const Device& device)
+{
+    return formatType(format, aspect, device) & FormatType_UnsignedInt;
 }
 
-static bool validateTextureSampleType(const WGPUTextureBindingLayout* textureEntry, const TextureView& apiTextureView)
+static bool validateTextureSampleType(const WGPUTextureBindingLayout* textureEntry, const TextureView& apiTextureView, const Device& device)
 {
     if (!textureEntry)
         return true;
 
     auto format = apiTextureView.format();
+    auto aspect = apiTextureView.aspect();
     switch (textureEntry->sampleType) {
     case WGPUTextureSampleType_Float:
+        return formatIsFloat(format, aspect, device);
     case WGPUTextureSampleType_UnfilterableFloat:
-        return formatIsFloat(format);
+        return formatIsUnfilterableFloat(format, aspect, device);
     case WGPUTextureSampleType_Depth:
-        return formatIsDepth(format);
+        return formatIsDepth(format, aspect, device);
     case WGPUTextureSampleType_Sint:
-        return formatIsSignedInt(format);
+        return formatIsSignedInt(format, aspect, device);
     case WGPUTextureSampleType_Uint:
-        return formatIsUnsignedInt(format);
+        return formatIsUnsignedInt(format, aspect, device);
     case WGPUTextureSampleType_Force32:
     case WGPUTextureSampleType_Undefined:
         return false;
@@ -786,13 +810,62 @@ static bool validateSamplerType(WGPUSamplerBindingType type, const Sampler& samp
     }
 }
 
+static BindGroupEntryUsage usageForTexture(const WGPUTextureBindingLayout&)
+{
+    return BindGroupEntryUsage::ConstantTexture;
+}
+
+static BindGroupEntryUsage usageForStorageTexture(const WGPUStorageTextureBindingLayout& textureLayout)
+{
+    switch (textureLayout.access) {
+    case WGPUStorageTextureAccess_Undefined:
+        return BindGroupEntryUsage::Undefined;
+    case WGPUStorageTextureAccess_ReadOnly:
+        return BindGroupEntryUsage::StorageTextureRead;
+    case WGPUStorageTextureAccess_ReadWrite:
+        return BindGroupEntryUsage::StorageTextureReadWrite;
+    case WGPUStorageTextureAccess_WriteOnly:
+        return BindGroupEntryUsage::StorageTextureWriteOnly;
+    case WGPUStorageTextureAccess_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return BindGroupEntryUsage::Undefined;
+}
+
+static BindGroupEntryUsage usageForBuffer(WGPUBufferBindingType bufferBindingType)
+{
+    switch (bufferBindingType) {
+    case WGPUBufferBindingType_Undefined:
+        return BindGroupEntryUsage::Undefined;
+    case WGPUBufferBindingType_Uniform:
+        return BindGroupEntryUsage::Constant;
+    case WGPUBufferBindingType_Storage:
+        return BindGroupEntryUsage::Storage;
+    case WGPUBufferBindingType_ReadOnlyStorage:
+        return BindGroupEntryUsage::StorageRead;
+    case WGPUBufferBindingType_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    return BindGroupEntryUsage::Undefined;
+}
+
+static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage usage, uint32_t bindingIndex, auto& resource)
+{
+    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = &resource };
+}
+
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
     if (descriptor.nextInChain || !descriptor.layout || !isValid())
         return BindGroup::createInvalid(*this);
 
     constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+    constexpr ShaderStage stagesPlusUndefined[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
     constexpr size_t stageCount = std::size(stages);
+    constexpr size_t stagesPlusUndefinedCount = std::size(stagesPlusUndefined);
     const auto& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
     if (!bindGroupLayout.isValid() || (!bindGroupLayout.isAutoGenerated() && descriptor.entryCount != bindGroupLayout.entries().size()) || &bindGroupLayout.device() != this) {
         generateAValidationError("invalid BindGroupLayout createBindGroup"_s);
@@ -809,8 +882,15 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
-    Vector<id<MTLResource>> stageResources[stageCount][maxResourceUsageValue];
+    Vector<id<MTLResource>> stageResources[stagesPlusUndefinedCount][maxResourceUsageValue];
+    Vector<BindGroupEntryUsageData> stageResourceUsages[stagesPlusUndefinedCount][maxResourceUsageValue];
     auto& bindGroupLayoutEntries = bindGroupLayout.entries();
+    Vector<WGPUBindGroupEntry> descriptorEntries(std::span { descriptor.entries, descriptor.entryCount });
+    std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupEntry& a, const WGPUBindGroupEntry& b) {
+        return a.binding < b.binding;
+    });
+    BindGroup::DynamicBuffersContainer dynamicBuffers;
+
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
@@ -836,7 +916,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             return BindGroup::createInvalid(*this);
 
         bool bindingContainedInStage = false;
-        for (ShaderStage stage : stages) {
+        bool appendedBufferToDynamicBuffers = false;
+        for (ShaderStage stage : stagesPlusUndefined) {
             auto bindingIndex = entry.binding;
             auto index = bindGroupLayout.argumentBufferIndexForEntryIndex(bindingIndex, stage);
             if (index == NSNotFound)
@@ -855,44 +936,56 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiBuffer = WebGPU::fromAPI(entry.buffer);
+                id<MTLBuffer> buffer = apiBuffer.buffer();
+                auto entrySize = entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size;
+                if (layoutBinding->hasDynamicOffset && !appendedBufferToDynamicBuffers) {
+                    dynamicBuffers.append({ .type = layoutBinding->type, .bindingSize = entrySize, .bufferSize = apiBuffer.currentSize() });
+                    appendedBufferToDynamicBuffers = true;
+                }
+
                 if (!apiBuffer.isValid() || &apiBuffer.device() != this) {
                     if (!apiBuffer.isDestroyed())
                         generateAValidationError("Buffer is invalid or created from a different device"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                id<MTLBuffer> buffer = apiBuffer.buffer();
-                if (entry.offset >= buffer.length || !hasProperUsageFlags(layoutBinding->type, apiBuffer.usage())) {
-                    generateAValidationError("Unexpected buffer length or type"_s);
                     return BindGroup::createInvalid(*this);
                 }
 
                 auto& deviceLimits = limits();
                 const bool isUniformBuffer = layoutBinding->type == WGPUBufferBindingType_Uniform;
                 const bool isStorageBuffer = layoutBinding->type == WGPUBufferBindingType_Storage || layoutBinding->type == WGPUBufferBindingType_ReadOnlyStorage;
-                if ((isUniformBuffer && (entry.offset % deviceLimits.minUniformBufferOffsetAlignment))
-                    || (isStorageBuffer && (entry.offset % deviceLimits.minStorageBufferOffsetAlignment))) {
-                    generateAValidationError("Buffer offset is not a multiple of the device buffer alignment"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                uint32_t entrySize = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
-                if ((isUniformBuffer && entrySize > deviceLimits.maxUniformBufferBindingSize)
-                    || (isStorageBuffer && entrySize > deviceLimits.maxStorageBufferBindingSize)) {
-                    generateAValidationError("Buffer size is larger than the device limits"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (isStorageBuffer && entrySize % 4) {
-                    generateAValidationError("Storage buffer size is not multiple of 4"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!entrySize || entrySize > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
-                    generateAValidationError("Buffer size is invalid"_s);
-                    return BindGroup::createInvalid(*this);
+                if (!apiBuffer.isDestroyed()) {
+                    if (entry.offset >= buffer.length || !hasProperUsageFlags(layoutBinding->type, apiBuffer.usage())) {
+                        generateAValidationError("Unexpected buffer length or type"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && (entry.offset % deviceLimits.minUniformBufferOffsetAlignment))
+                        || (isStorageBuffer && (entry.offset % deviceLimits.minStorageBufferOffsetAlignment))) {
+                        generateAValidationError("Buffer offset is not a multiple of the device buffer alignment"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if ((isUniformBuffer && entrySize > deviceLimits.maxUniformBufferBindingSize)
+                        || (isStorageBuffer && entrySize > deviceLimits.maxStorageBufferBindingSize)) {
+                        generateAValidationError("Buffer size is larger than the device limits"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (isStorageBuffer && entrySize % 4) {
+                        generateAValidationError("Storage buffer size is not multiple of 4"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!entrySize || entrySize > buffer.length || (layoutBinding->minBindingSize && layoutBinding->minBindingSize > entrySize)) {
+                        generateAValidationError("Buffer size is invalid"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
                 }
 
-                [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
+                if (stage != ShaderStage::Undefined) {
+                    [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
+                    if (bufferSizeArgumentBufferIndex)
+                        *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = entrySize;
+                }
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
-                if (bufferSizeArgumentBufferIndex)
-                    *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = entrySize;
+                stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(usageForBuffer(layoutBinding->type), entry.binding, apiBuffer));
             } else if (samplerIsPresent) {
                 auto* layoutBinding = hasBinding<WGPUSamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex);
                 if (!layoutBinding) {
@@ -911,7 +1004,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
 
                 id<MTLSamplerState> sampler = apiSampler.samplerState();
-                [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
+                if (stage != ShaderStage::Undefined)
+                    [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
                 auto it = bindGroupLayoutEntries.find(bindingIndex);
                 RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
@@ -923,48 +1017,54 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiTextureView = WebGPU::fromAPI(entry.textureView);
-                if (!apiTextureView.isValid()) {
-                    if (!apiTextureView.isDestroyed())
+                id<MTLTexture> texture = apiTextureView.texture();
+                if (!apiTextureView.isDestroyed()) {
+                    if (!apiTextureView.isValid()) {
                         generateAValidationError("Underlying texture is not valid"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (&apiTextureView.device() != this) {
-                    generateAValidationError("Underlying texture was created from a different device"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                auto textureUsage = apiTextureView.usage();
-                if ((textureEntry && !(textureUsage & WGPUTextureUsage_TextureBinding)) || (storageTextureEntry && !(textureUsage & WGPUTextureUsage_StorageBinding))) {
-                    generateAValidationError("Storage texture did not have storage usage or texture view did not have texture binding"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView.sampleCount())) {
-                    generateAValidationError("Bind group entry multisampled state does not match underlying texture"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!bindGroupLayout.isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView)) {
-                    generateAValidationError("Bind group entry sampleType does not match TextureView sampleType"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
-                    generateAValidationError("Bind group entry viewDimension does not match TextureView viewDimension"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
-                    generateAValidationError("Bind group storage texture entry format does not match TextureView format"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                if (storageTextureEntry && apiTextureView.texture().mipmapLevelCount != 1) {
-                    generateAValidationError("Storage textures must have a single mip level"_s);
-                    return BindGroup::createInvalid(*this);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (&apiTextureView.device() != this) {
+                        generateAValidationError("Underlying texture was created from a different device"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    auto textureUsage = apiTextureView.usage();
+                    if ((textureEntry && !(textureUsage & WGPUTextureUsage_TextureBinding)) || (storageTextureEntry && !(textureUsage & WGPUTextureUsage_StorageBinding))) {
+                        generateAValidationError("Storage texture did not have storage usage or texture view did not have texture binding"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView.sampleCount())) {
+                        generateAValidationError("Bind group entry multisampled state does not match underlying texture"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!bindGroupLayout.isAutoGenerated() && !validateTextureSampleType(textureEntry, apiTextureView, *this)) {
+                        generateAValidationError("Bind group entry sampleType does not match TextureView sampleType"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!validateTextureViewDimension(textureEntry, apiTextureView) || !validateTextureViewDimension(storageTextureEntry, apiTextureView)) {
+                        generateAValidationError("Bind group entry viewDimension does not match TextureView viewDimension"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (!validateStorageTextureViewFormat(storageTextureEntry, apiTextureView)) {
+                        generateAValidationError("Bind group storage texture entry format does not match TextureView format"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+                    if (storageTextureEntry && apiTextureView.texture().mipmapLevelCount != 1) {
+                        generateAValidationError("Storage textures must have a single mip level"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
+
+                    if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !hasFeature(WGPUFeatureName_Float32Filterable)))) {
+                        generateAValidationError("Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled"_s);
+                        return BindGroup::createInvalid(*this);
+                    }
                 }
 
-                id<MTLTexture> texture = apiTextureView.texture();
-                if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !hasFeature(WGPUFeatureName_Float32Filterable)))) {
-                    generateAValidationError("Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled"_s);
-                    return BindGroup::createInvalid(*this);
-                }
-                [argumentEncoder[stage] setTexture:texture atIndex:index];
+                if (stage != ShaderStage::Undefined)
+                    [argumentEncoder[stage] setTexture:texture atIndex:index];
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
+                ASSERT(texture.parentRelativeLevel == apiTextureView.baseMipLevel());
+                ASSERT(texture.parentRelativeSlice == apiTextureView.baseArrayLayer());
+                stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(textureEntry ? usageForTexture(*textureEntry) : (storageTextureEntry ? usageForStorageTexture(*storageTextureEntry) : BindGroupEntryUsage::ConstantTexture), entry.binding, apiTextureView));
             } else if (externalTextureIsPresent) {
                 if (!hasBinding<WGPUExternalTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
                     generateAValidationError("Expected external texture but it was not present in the bind group layout"_s);
@@ -972,20 +1072,27 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
-                [argumentEncoder[stage] setTexture:textureData.texture0 atIndex:index++];
-                [argumentEncoder[stage] setTexture:textureData.texture1 atIndex:index++];
                 ASSERT(textureData.texture0);
                 ASSERT(textureData.texture1);
-                if (textureData.texture0)
+                if (textureData.texture0) {
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture0);
-                if (textureData.texture1)
+                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                }
+                if (textureData.texture1) {
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture1);
+                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));
+                }
 
-                auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
-                *uvRemapAddress = textureData.uvRemappingMatrix;
+                if (stage != ShaderStage::Undefined) {
+                    [argumentEncoder[stage] setTexture:textureData.texture0 atIndex:index++];
+                    [argumentEncoder[stage] setTexture:textureData.texture1 atIndex:index++];
 
-                auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder[stage] constantDataAtIndex:index++]);
-                *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+                    auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
+                    *uvRemapAddress = textureData.uvRemappingMatrix;
+
+                    auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder[stage] constantDataAtIndex:index++]);
+                    *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+                }
             }
         }
 
@@ -996,13 +1103,15 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     }
 
     Vector<BindableResources> resources;
-    for (ShaderStage stage : stages) {
+    for (ShaderStage stage : stagesPlusUndefined) {
         for (size_t i = 0; i < maxResourceUsageValue; ++i) {
             auto renderStage = metalRenderStage(stage);
-            Vector<id<MTLResource>> &v = stageResources[renderStage][i];
+            auto &v = stageResources[renderStage][i];
+            auto &u = stageResourceUsages[renderStage][i];
             if (v.size()) {
                 resources.append(BindableResources {
                     .mtlResources = WTFMove(v),
+                    .resourceUsages = WTFMove(u),
                     .usage = static_cast<MTLResourceUsage>(i + 1),
                     .renderStages = renderStage
                 });
@@ -1014,15 +1123,27 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     argumentBuffer[ShaderStage::Fragment].label = bindGroupLayout.fragmentArgumentEncoder().label;
     argumentBuffer[ShaderStage::Compute].label = bindGroupLayout.computeArgumentEncoder().label;
 
-    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), *this);
+    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), *this);
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, Device& device)
+bool BindGroup::isValid() const
+{
+    return !!bindGroupLayout();
+}
+
+const BindGroupLayout* BindGroup::bindGroupLayout() const
+{
+    return m_bindGroupLayout.get();
+}
+
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, const BindGroupLayout& bindGroupLayout, DynamicBuffersContainer&& dynamicBuffers, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)
     , m_device(device)
     , m_resources(WTFMove(resources))
+    , m_bindGroupLayout(&bindGroupLayout)
+    , m_dynamicBuffers(WTFMove(dynamicBuffers))
 {
 }
 
@@ -1033,12 +1154,68 @@ BindGroup::BindGroup(Device& device)
 
 BindGroup::~BindGroup() = default;
 
+const BindGroup::BufferAndType* BindGroup::dynamicBuffer(uint32_t i) const
+{
+    ASSERT(i < m_dynamicBuffers.size());
+    return i < m_dynamicBuffers.size() ? &m_dynamicBuffers[i] : nullptr;
+}
+
 void BindGroup::setLabel(String&& label)
 {
     auto labelString = label;
     m_vertexArgumentBuffer.label = labelString;
     m_fragmentArgumentBuffer.label = labelString;
     m_computeArgumentBuffer.label = labelString;
+}
+
+bool BindGroup::allowedUsage(const OptionSet<BindGroupEntryUsage>& allowedUsage)
+{
+    if ((allowedUsage & BindGroupEntryUsage::Storage) && (allowedUsage != BindGroupEntryUsage::Storage))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::StorageTextureWriteOnly) && (allowedUsage != BindGroupEntryUsage::StorageTextureWriteOnly))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::StorageTextureReadWrite) && (allowedUsage != BindGroupEntryUsage::StorageTextureReadWrite))
+        return false;
+
+    if ((allowedUsage & BindGroupEntryUsage::Attachment) && (allowedUsage != BindGroupEntryUsage::Attachment))
+        return false;
+
+    return true;
+}
+
+NSString* BindGroup::usageName(const OptionSet<BindGroupEntryUsage>& allowedUsage)
+{
+    NSString* result = @"";
+    if (allowedUsage & BindGroupEntryUsage::Input)
+        result = [result stringByAppendingString:@"Input "];
+    if (allowedUsage & BindGroupEntryUsage::Constant)
+        result = [result stringByAppendingString:@"Constant "];
+    if (allowedUsage & BindGroupEntryUsage::Storage)
+        result = [result stringByAppendingString:@"Storage "];
+    if (allowedUsage & BindGroupEntryUsage::StorageRead)
+        result = [result stringByAppendingString:@"StorageRead "];
+    if (allowedUsage & BindGroupEntryUsage::Attachment)
+        result = [result stringByAppendingString:@"Attachment "];
+    if (allowedUsage & BindGroupEntryUsage::AttachmentRead)
+        result = [result stringByAppendingString:@"AttachmentRead "];
+    if (allowedUsage & BindGroupEntryUsage::ConstantTexture)
+        result = [result stringByAppendingString:@"ConstantTexture "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureWriteOnly)
+        result = [result stringByAppendingString:@"StorageTextureWriteOnly "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureRead)
+        result = [result stringByAppendingString:@"StorageTextureRead "];
+    if (allowedUsage & BindGroupEntryUsage::StorageTextureReadWrite)
+        result = [result stringByAppendingString:@"StorageTextureReadWrite "];
+
+    return result;
+}
+
+uint64_t BindGroup::makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect aspect)
+{
+    RELEASE_ASSERT(aspect);
+    return (static_cast<uint64_t>(aspect) - 1) | (static_cast<uint64_t>(baseMipLevel) << 1) | (static_cast<uint64_t>(baseArrayLayer) << 32);
 }
 
 } // namespace WebGPU

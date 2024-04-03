@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
     static bool isDeprecatedSystemColorKeyword(CSSValueID);
 
+    static bool containsColorSchemeDependentColor(const CSSPrimitiveValue&);
+
     enum class CSSColorType : uint8_t {
         Absolute = 1 << 0,
         Current = 1 << 1,

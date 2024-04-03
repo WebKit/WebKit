@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Error: assert_true: Selection should be collapsed before pointerup event expected true got false
+CONSOLE MESSAGE: Error: assert_true: Selection should be collapsed before mouseup event expected true got false
+first span.
+second span.
+link.
+
+Harness Error (FAIL), message = Error: assert_true: Selection should be collapsed before mouseup event expected true got false
+
+FAIL secondary click should set focus to clicked editable element and collapse selection around the clicked point assert_true: Selection should be collapsed after secondary button click expected true got false
+FAIL secondary click should move caret in an editable element assert_true: Selection should be collapsed after secondary button click expected true got false
+FAIL secondary click shouldn't move caret in an editable element if the default of mousedown event is prevented assert_equals: Selection should keep collapsed selection in the first <span> element expected Text node "first span." but got Text node "second span."
+FAIL secondary click shouldn't move caret in an editable element if the default of pointerdown event is prevented assert_equals: Selection should keep collapsed selection in the first <span> element expected Text node "first span." but got Text node "second span."
+FAIL Shift + secondary click should extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL Shift + secondary click in a link shouldn't extend the selection promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+FAIL secondary mouse button down should move caret, but its button up shouldn't move caret assert_true: Selection shouldn't be extended by pointer moves during pressing secondary button expected true got false
+

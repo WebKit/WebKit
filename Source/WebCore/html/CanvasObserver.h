@@ -38,7 +38,7 @@ public:
 
     virtual bool isStyleCanvasImage() const { return false; }
 
-    virtual void canvasChanged(CanvasBase&, const std::optional<FloatRect>& changedRect) = 0;
+    virtual void canvasChanged(CanvasBase&, const FloatRect& changedRect) = 0;
     virtual void canvasResized(CanvasBase&) = 0;
     virtual void canvasDestroyed(CanvasBase&) = 0;
 };

@@ -43,7 +43,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DeleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> dataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain> domains) -> (HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords)
     DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebKit::WebPageProxyIdentifier pageID)
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
-    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
+    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domains) -> ()
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensionRules(WebKit::UserContentControllerIdentifier identifier)
 #endif
@@ -72,6 +72,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     ResourceLoadDidReceiveChallenge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::AuthenticationChallenge challenge)
     ResourceLoadDidReceiveResponse(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse response)
     ResourceLoadDidCompleteWithError(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse response, WebCore::ResourceError error)
+
+    DidAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL resourceURL)
     
     TriggerBrowsingContextGroupSwitchForNavigation(WebKit::WebPageProxyIdentifier pageIdentifier, uint64_t navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, WebCore::RegistrableDomain responseDomain, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume) -> (bool success)
 
@@ -80,13 +82,17 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
-    GetWindowSceneIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneID)
+    GetWindowSceneAndBundleIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneIdentifier, String bundleIdentifier)
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    GetPaymentCoordinatorEmbeddingUserAgent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String userAgent)
 #endif
 
     DataTaskReceivedChallenge(WebKit::DataTaskIdentifier identifier, WebCore::AuthenticationChallenge challenge) -> (enum:uint8_t WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential credential)
     DataTaskWillPerformHTTPRedirection(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request) -> (bool allowed)
     DataTaskDidReceiveResponse(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response) -> (bool allowed)
-    DataTaskDidReceiveData(WebKit::DataTaskIdentifier identifier, IPC::DataReference data)
+    DataTaskDidReceiveData(WebKit::DataTaskIdentifier identifier, std::span<const uint8_t> data)
     DataTaskDidCompleteWithError(WebKit::DataTaskIdentifier identifier, WebCore::ResourceError error)
 
     OpenWindowFromServiceWorker(PAL::SessionID sessionID, String urlString, WebCore::SecurityOriginData serviceWorkerOrigin) -> (std::optional<WebCore::PageIdentifier> newPage)

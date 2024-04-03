@@ -106,8 +106,8 @@ bool ScrollingEffectsController::startKeyboardScroll(const KeyboardScroll& scrol
 
 void ScrollingEffectsController::finishKeyboardScroll(bool immediate)
 {
-    if (is<ScrollAnimationKeyboard>(m_currentAnimation))
-        downcast<ScrollAnimationKeyboard>(*m_currentAnimation).finishKeyboardScroll(immediate);
+    if (auto* animationKeyboard = dynamicDowncast<ScrollAnimationKeyboard>(m_currentAnimation.get()))
+        animationKeyboard->finishKeyboardScroll(immediate);
 }
 
 bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset)
@@ -125,13 +125,14 @@ bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint sta
 
 bool ScrollingEffectsController::retargetAnimatedScroll(FloatPoint newDestinationOffset)
 {
-    if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
+    auto* animationSmooth = dynamicDowncast<ScrollAnimationSmooth>(m_currentAnimation.get());
+    if (!animationSmooth)
         return false;
     
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " retargetAnimatedScroll to " << newDestinationOffset);
 
-    ASSERT(m_currentAnimation->isActive());
-    return downcast<ScrollAnimationSmooth>(*m_currentAnimation).retargetActiveAnimation(newDestinationOffset);
+    ASSERT(animationSmooth->isActive());
+    return animationSmooth->retargetActiveAnimation(newDestinationOffset);
 }
 
 bool ScrollingEffectsController::retargetAnimatedScrollBy(FloatSize offset)
@@ -290,14 +291,12 @@ float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis
 #if ENABLE(KINETIC_SCROLLING)
 bool ScrollingEffectsController::processWheelEventForKineticScrolling(const PlatformWheelEvent& event)
 {
-    if (is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
-        auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
+    if (auto* kineticAnimation = dynamicDowncast<ScrollAnimationKinetic>(m_currentAnimation.get())) {
+        m_previousKineticAnimationInfo.startTime = kineticAnimation->startTime();
+        m_previousKineticAnimationInfo.initialOffset = kineticAnimation->initialOffset();
+        m_previousKineticAnimationInfo.initialVelocity = kineticAnimation->initialVelocity();
 
-        m_previousKineticAnimationInfo.startTime = kineticAnimation.startTime();
-        m_previousKineticAnimationInfo.initialOffset = kineticAnimation.initialOffset();
-        m_previousKineticAnimationInfo.initialVelocity = kineticAnimation.initialVelocity();
-
-        m_currentAnimation->stop();
+        kineticAnimation->stop();
     }
 
     if (!event.hasPreciseScrollingDeltas()) {
@@ -580,12 +579,12 @@ FloatPoint ScrollingEffectsController::scrollOffset(ScrollAnimation&)
 
 void ScrollingEffectsController::startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
 {
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
+    m_client.deferWheelEventTestCompletionForReason(m_client.scrollingNodeIDForTesting(), reason);
 }
 
 void ScrollingEffectsController::stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason reason)
 {
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), reason);
+    m_client.removeWheelEventTestCompletionDeferralForReason(m_client.scrollingNodeIDForTesting(), reason);
 }
 
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding

@@ -6,7 +6,7 @@ layer at (0,0) size 785x3024
       RenderBlock {P} at (0,0) size 2000x18
         RenderText {#text} at (0,0) size 79x18
           text run at (0,0) width 79: "Got click at "
-        RenderInline {SPAN} at (0,0) size 122x18
+        RenderInline {SPAN} at (78,0) size 122x18
           RenderText {#text} at (78,0) size 122x18
             text run at (78,0) width 122: "clicked at 172, 117"
 layer at (158,103) size 28x28

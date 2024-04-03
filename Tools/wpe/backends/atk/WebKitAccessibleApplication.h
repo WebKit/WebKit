@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
+#if defined(USE_ATK) && USE_ATK
 
 #include <atk/atk.h>
 
@@ -59,4 +59,4 @@ void webkitAccessibleApplicationSetChild(WebKitAccessibleApplication*, AtkObject
 
 G_END_DECLS
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif

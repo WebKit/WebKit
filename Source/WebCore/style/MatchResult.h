@@ -42,6 +42,7 @@ struct MatchedProperties {
     ScopeOrdinal styleScopeOrdinal { ScopeOrdinal::Element };
     FromStyleAttribute fromStyleAttribute { FromStyleAttribute::No };
     CascadeLayerPriority cascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
+    IsStartingStyle isStartingStyle { IsStartingStyle::No };
 };
 
 struct MatchResult {
@@ -52,6 +53,7 @@ struct MatchResult {
 
     bool isForLink { false };
     bool isCacheable { true };
+    bool hasStartingStyle { false };
     Vector<MatchedProperties> userAgentDeclarations;
     Vector<MatchedProperties> userDeclarations;
     Vector<MatchedProperties> authorDeclarations;
@@ -68,7 +70,8 @@ inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
         && a.allowlistType == b.allowlistType
         && a.styleScopeOrdinal == b.styleScopeOrdinal
         && a.fromStyleAttribute == b.fromStyleAttribute
-        && a.cascadeLayerPriority == b.cascadeLayerPriority;
+        && a.cascadeLayerPriority == b.cascadeLayerPriority
+        && a.isStartingStyle == b.isStartingStyle;
 }
 
 inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
@@ -79,7 +82,8 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
         matchedProperties.allowlistType,
         matchedProperties.styleScopeOrdinal,
         matchedProperties.fromStyleAttribute,
-        matchedProperties.cascadeLayerPriority
+        matchedProperties.cascadeLayerPriority,
+        matchedProperties.isStartingStyle
     );
 }
 

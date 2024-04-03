@@ -1,0 +1,4 @@
+
+
+PASS Test worker MediaSource duration updates before and after HAVE_METADATA
+

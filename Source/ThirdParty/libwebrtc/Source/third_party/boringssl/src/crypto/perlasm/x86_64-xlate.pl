@@ -47,6 +47,7 @@
 #    (sorry about latter).
 # 6. Don't use [or hand-code with .byte] "rep ret." "ret" mnemonic is
 #    required to identify the spots, where to inject Win64 epilogue!
+#    But on the pros, it's then prefixed with rep automatically:-)
 # 7. Stick to explicit ip-relative addressing. If you have to use
 #    GOTPCREL addressing, stick to mov symbol@GOTPCREL(%rip),%r??.
 #    Both are recognized and translated to proper Win64 addressing
@@ -156,7 +157,7 @@ my %globals;
 		    $epilogue = "movq	8(%rsp),%rdi\n\t" .
 				"movq	16(%rsp),%rsi\n\t";
 		}
-	    	$epilogue . "ret";
+	    	$epilogue . ".byte	0xf3,0xc3";
 	    } elsif ($self->{op} eq "call" && !$elf && $current_segment eq ".init") {
 		".p2align\t3\n\t.quad";
 	    } else {
@@ -170,7 +171,7 @@ my %globals;
 		    $self->{op} = "mov	rdi,QWORD$PTR\[8+rsp\]\t;WIN64 epilogue\n\t".
 				  "mov	rsi,QWORD$PTR\[16+rsp\]\n\t";
 	    	}
-		$self->{op} .= "ret";
+		$self->{op} .= "DB\t0F3h,0C3h\t\t;repret";
 	    } elsif ($self->{op} =~ /^(pop|push)f/) {
 		$self->{op} .= $self->{sz};
 	    } elsif ($self->{op} eq "call" && $current_segment eq ".CRT\$XCU") {
@@ -1498,7 +1499,6 @@ default	rel
 \%define XMMWORD
 \%define YMMWORD
 \%define ZMMWORD
-\%define _CET_ENDBR
 
 \%ifdef BORINGSSL_PREFIX
 \%include "boringssl_prefix_symbols_nasm.inc"
@@ -1522,9 +1522,16 @@ if ($gas) {
         die "unknown target: $flavour";
     }
     print <<___;
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && $target
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && $target
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 ___
 }
 
@@ -1620,7 +1627,13 @@ print "\n$current_segment\tENDS\n"	if ($current_segment && $masm);
 if ($masm) {
     print "END\n";
 } elsif ($gas) {
-    print "#endif\n";
+    print <<___;
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",\%progbits
+#endif
+___
 } elsif ($nasm) {
     print <<___;
 \%else

@@ -25,7 +25,7 @@
 
 #include "WebKitAccessibleApplication.h"
 
-#if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
+#if defined(USE_ATK) && USE_ATK
 
 struct _WebKitAccessibleApplicationPrivate {
     AtkObject* child;
@@ -119,4 +119,4 @@ void webkitAccessibleApplicationSetChild(WebKitAccessibleApplication* accessible
     }
 }
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif

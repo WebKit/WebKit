@@ -66,7 +66,7 @@ bool MediaPlaybackTargetPickerMac::externalOutputDeviceAvailable()
 
 Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
 {
-    return WebCore::MediaPlaybackTargetCocoa::create(routePicker().outputContext());
+    return WebCore::MediaPlaybackTargetCocoa::create(MediaPlaybackTargetContextCocoa(routePicker().outputContext()));
 }
 
 AVPlaybackTargetPicker& MediaPlaybackTargetPickerMac::routePicker()

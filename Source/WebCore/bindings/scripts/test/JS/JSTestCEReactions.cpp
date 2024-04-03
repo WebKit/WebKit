@@ -186,12 +186,12 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCEReactionsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCEReactionsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestCEReactions::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestCEReactions::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestCEReactions_attributeWithCEReactionsGetter(JSGlobalObject& lexicalGlobalObject, JSTestCEReactions& thisObject)
@@ -463,7 +463,7 @@ void JSTestCEReactionsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     auto* jsTestCEReactions = static_cast<JSTestCEReactions*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestCEReactions->wrapped(), jsTestCEReactions);
+    uncacheWrapper(world, jsTestCEReactions->protectedWrapped().ptr(), jsTestCEReactions);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

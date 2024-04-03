@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(CAIRO)
+
 #include <wtf/glib/GRefPtr.h>
 
 #if USE(GTK4)
@@ -38,3 +40,5 @@ GRefPtr<GdkPixbuf> cairoSurfaceToGdkPixbuf(cairo_surface_t*);
 GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t*);
 #endif
 }
+
+#endif // USE(CAIRO)

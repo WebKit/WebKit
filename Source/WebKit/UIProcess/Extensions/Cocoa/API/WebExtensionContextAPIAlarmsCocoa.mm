@@ -37,6 +37,11 @@
 
 namespace WebKit {
 
+bool WebExtensionContext::isAlarmsMessageAllowed()
+{
+    return isLoaded() && hasPermission(_WKWebExtensionPermissionAlarms);
+}
+
 void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterval, Seconds repeatInterval)
 {
     m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [&](const WebExtensionAlarm& alarm) {
@@ -44,9 +49,9 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
     }));
 }
 
-void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>)>&& completionHandler)
+void WebExtensionContext::alarmsGet(const String& name, CompletionHandler<void(std::optional<WebExtensionAlarmParameters>&&)>&& completionHandler)
 {
-    if (auto* alarm = m_alarmMap.get(name))
+    if (RefPtr alarm = m_alarmMap.get(name))
         completionHandler(alarm->parameters());
     else
         completionHandler(std::nullopt);
@@ -78,8 +83,8 @@ void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionH
 void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)
 {
     constexpr auto type = WebExtensionEventListenerType::AlarmsOnAlarm;
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm.parameters()));
+    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }, alarm = Ref { alarm }] {
+        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchAlarmsEvent(alarm->parameters()));
     });
 }
 

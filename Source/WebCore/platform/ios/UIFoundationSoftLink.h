@@ -41,4 +41,8 @@ SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTableBlock)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UIFoundationSoftLinkAdditions.h>
+#endif
+
 #endif

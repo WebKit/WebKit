@@ -1,0 +1,3 @@
+
+PASS Selection range in an editing host should be collapsed where the host was after it's removed
+

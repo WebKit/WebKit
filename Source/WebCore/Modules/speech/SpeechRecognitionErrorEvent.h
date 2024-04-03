@@ -48,8 +48,6 @@ private:
     SpeechRecognitionErrorEvent(const AtomString&, Init&&, IsTrusted);
     SpeechRecognitionErrorEvent(const AtomString&, SpeechRecognitionErrorCode, const String&);
 
-    EventInterface eventInterface() const final;
-
     SpeechRecognitionErrorCode m_error;
     String m_message;
 

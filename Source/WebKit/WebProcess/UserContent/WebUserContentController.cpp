@@ -27,10 +27,10 @@
 #include "WebUserContentController.h"
 
 #include "ContentWorldShared.h"
-#include "DataReference.h"
 #include "FrameInfoData.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundleScriptWorld.h"
+#include "ScriptMessageHandlerIdentifier.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -181,7 +181,7 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
     }
 }
 
-void WebUserContentController::removeUserScript(ContentWorldIdentifier worldIdentifier, uint64_t userScriptIdentifier)
+void WebUserContentController::removeUserScript(ContentWorldIdentifier worldIdentifier, UserScriptIdentifier userScriptIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
@@ -224,7 +224,7 @@ void WebUserContentController::addUserStyleSheets(const Vector<WebUserStyleSheet
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
-void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier worldIdentifier, uint64_t userStyleSheetIdentifier)
+void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier worldIdentifier, UserStyleSheetIdentifier userStyleSheetIdentifier)
 {
     auto it = worldMap().find(worldIdentifier);
     if (it == worldMap().end()) {
@@ -258,7 +258,7 @@ void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorl
 #if ENABLE(USER_MESSAGE_HANDLERS)
 class WebUserMessageHandlerDescriptorProxy : public WebCore::UserMessageHandlerDescriptor {
 public:
-    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, uint64_t identifier)
+    static Ref<WebUserMessageHandlerDescriptorProxy> create(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
     {
         return adoptRef(*new WebUserMessageHandlerDescriptorProxy(controller, name, world, identifier));
     }
@@ -267,10 +267,10 @@ public:
     {
     }
 
-    uint64_t identifier() { return m_identifier; }
+    ScriptMessageHandlerIdentifier identifier() { return m_identifier; }
 
 private:
-    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, uint64_t identifier)
+    WebUserMessageHandlerDescriptorProxy(WebUserContentController* controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
         : WebCore::UserMessageHandlerDescriptor(name, world.coreWorld())
         , m_controller(controller)
         , m_identifier(identifier)
@@ -292,7 +292,7 @@ private:
         if (!webPage)
             return;
 
-        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& resultValue, const String& errorMessage) {
+        auto messageReplyHandler = [completionHandler = WTFMove(completionHandler)](std::span<const uint8_t> resultValue, const String& errorMessage) {
             if (!errorMessage.isNull()) {
                 completionHandler(nullptr, errorMessage);
                 return;
@@ -302,11 +302,11 @@ private:
             completionHandler(value.ptr(), { });
         };
 
-        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->wireBytes())), WTFMove(messageReplyHandler), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, value->wireBytes()), WTFMove(messageReplyHandler), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;
-    uint64_t m_identifier;
+    ScriptMessageHandlerIdentifier m_identifier;
 };
 #endif
 
@@ -328,7 +328,7 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
 #endif
 }
 
-void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdentifier worldIdentifier, uint64_t userScriptMessageHandlerIdentifier)
+void WebUserContentController::removeUserScriptMessageHandler(ContentWorldIdentifier worldIdentifier, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     auto it = worldMap().find(worldIdentifier);
@@ -380,15 +380,15 @@ void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const
 }
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier, const AtomString& name)
+void WebUserContentController::addUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier, const AtomString& name)
 {
-    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<std::pair<uint64_t, RefPtr<WebUserMessageHandlerDescriptorProxy>>> { }; }).iterator->value;
+    auto& messageHandlersInWorld = m_userMessageHandlers.ensure(&world, [] { return Vector<std::pair<ScriptMessageHandlerIdentifier, RefPtr<WebUserMessageHandlerDescriptorProxy>>> { }; }).iterator->value;
     if (messageHandlersInWorld.findIf([&](auto& pair) { return pair.first ==  userScriptMessageHandlerIdentifier; }) != notFound)
         return;
     messageHandlersInWorld.append(std::make_pair(userScriptMessageHandlerIdentifier, WebUserMessageHandlerDescriptorProxy::create(this, name, world, userScriptMessageHandlerIdentifier)));
 }
 
-void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, uint64_t userScriptMessageHandlerIdentifier)
+void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier userScriptMessageHandlerIdentifier)
 {
     auto it = m_userMessageHandlers.find(&world);
     if (it == m_userMessageHandlers.end())
@@ -433,7 +433,7 @@ void WebUserContentController::removeAllContentRuleLists()
 }
 #endif
 
-void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const std::optional<uint64_t>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
+void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const std::optional<UserScriptIdentifier>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)
 {
     if (immediately == InjectUserScriptImmediately::Yes) {
         Page::forEachPage([&] (auto& page) {
@@ -458,7 +458,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
         });
     }
 
-    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<std::optional<uint64_t>, WebCore::UserScript>>(); }).iterator->value;
+    auto& scriptsInWorld = m_userScripts.ensure(&world, [] { return Vector<std::pair<std::optional<UserScriptIdentifier>, WebCore::UserScript>>(); }).iterator->value;
     if (userScriptIdentifier && scriptsInWorld.findIf([&](auto& pair) { return pair.first == userScriptIdentifier; }) != notFound)
         return;
 
@@ -485,7 +485,7 @@ void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld
         m_userScripts.remove(it);
 }
 
-void WebUserContentController::removeUserScriptInternal(InjectedBundleScriptWorld& world, uint64_t userScriptIdentifier)
+void WebUserContentController::removeUserScriptInternal(InjectedBundleScriptWorld& world, UserScriptIdentifier userScriptIdentifier)
 {
     auto it = m_userScripts.find(&world);
     if (it == m_userScripts.end())
@@ -505,9 +505,9 @@ void WebUserContentController::removeUserScripts(InjectedBundleScriptWorld& worl
     m_userScripts.remove(&world);
 }
 
-void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, const std::optional<uint64_t>& userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
+void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWorld& world, const std::optional<UserStyleSheetIdentifier>& userStyleSheetIdentifier, UserStyleSheet&& userStyleSheet)
 {
-    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<std::optional<uint64_t>, WebCore::UserStyleSheet>>(); }).iterator->value;
+    auto& styleSheetsInWorld = m_userStyleSheets.ensure(&world, [] { return Vector<std::pair<std::optional<UserStyleSheetIdentifier>, WebCore::UserStyleSheet>>(); }).iterator->value;
     if (userStyleSheetIdentifier && styleSheetsInWorld.findIf([&](auto& pair) { return pair.first == userStyleSheetIdentifier; }) != notFound)
         return;
 
@@ -547,7 +547,7 @@ void WebUserContentController::removeUserStyleSheetWithURL(InjectedBundleScriptW
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 
-void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScriptWorld& world, uint64_t userStyleSheetIdentifier)
+void WebUserContentController::removeUserStyleSheetInternal(InjectedBundleScriptWorld& world, UserStyleSheetIdentifier userStyleSheetIdentifier)
 {
     auto it = m_userStyleSheets.find(&world);
     if (it == m_userStyleSheets.end())

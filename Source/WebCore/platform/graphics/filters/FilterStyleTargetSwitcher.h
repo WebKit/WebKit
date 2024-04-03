@@ -37,10 +37,10 @@ public:
 
 private:
     void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;
-    void endClipAndDrawSourceImage(GraphicsContext& destinationContext) override { endDrawSourceImage(destinationContext); }
+    void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace) override { endDrawSourceImage(destinationContext, colorSpace); }
 
     void beginDrawSourceImage(GraphicsContext& destinationContext) override;
-    void endDrawSourceImage(GraphicsContext& destinationContext) override;
+    void endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) override;
 
     FilterStyleVector m_filterStyles;
 };

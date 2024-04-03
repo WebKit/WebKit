@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class FETurbulence;
-enum class TurbulenceType;
+enum class TurbulenceType : uint8_t;
 
 class FETurbulenceSoftwareApplier final : public FilterEffectConcreteApplier<FETurbulence> {
     WTF_MAKE_FAST_ALLOCATED;

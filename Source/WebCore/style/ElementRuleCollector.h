@@ -24,6 +24,7 @@
 #include "MatchResult.h"
 #include "MediaQueryEvaluator.h"
 #include "PropertyAllowlist.h"
+#include "PseudoElementRequest.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StyleScopeOrdinal.h"
@@ -37,28 +38,6 @@ class ScopeRuleSets;
 struct MatchRequest;
 struct SelectorMatchingState;
 enum class CascadeLevel : uint8_t;
-
-class PseudoElementRequest {
-public:
-    PseudoElementRequest(PseudoId pseudoId, std::optional<StyleScrollbarState> scrollbarState = std::nullopt)
-        : pseudoId(pseudoId)
-        , scrollbarState(scrollbarState)
-    {
-    }
-
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
-        : pseudoId(pseudoId)
-        , nameIdentifier(nameIdentifier)
-    {
-        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
-    }
-
-    PseudoId pseudoId;
-    std::optional<StyleScrollbarState> scrollbarState;
-
-    // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString nameIdentifier;
-};
 
 struct MatchedRule {
     const RuleData* ruleData { nullptr };
@@ -83,7 +62,7 @@ public:
     bool matchesAnyAuthorRules();
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
-    void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
+    void setPseudoElementRequest(const std::optional<PseudoElementRequest>& request) { m_pseudoElementRequest = request; }
     void setMedium(const MQ::MediaQueryEvaluator& medium) { m_isPrintStyle = medium.isPrintMedia(); }
 
     bool hasAnyMatchingRules(const RuleSet&);
@@ -143,11 +122,12 @@ private:
     Ref<const RuleSet> m_authorStyle;
     RefPtr<const RuleSet> m_userStyle;
     RefPtr<const RuleSet> m_userAgentMediaQueryStyle;
+    RefPtr<const RuleSet> m_dynamicViewTransitionsStyle;
     SelectorMatchingState* m_selectorMatchingState;
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
-    PseudoElementRequest m_pseudoElementRequest { PseudoId::None };
+    std::optional<PseudoElementRequest> m_pseudoElementRequest { };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 
     Vector<MatchedRule, 64> m_matchedRules;

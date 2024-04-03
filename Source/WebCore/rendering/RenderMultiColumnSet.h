@@ -164,7 +164,7 @@ private:
 
     Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) const final;
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
     ASCIILiteral renderName() const override;
 

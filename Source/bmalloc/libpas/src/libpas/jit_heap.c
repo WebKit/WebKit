@@ -78,7 +78,7 @@ void* jit_heap_try_allocate(size_t size)
     void* result;
     if (verbose)
         pas_log("going to allocate in jit\n");
-    result = (void*)jit_try_allocate_common_primitive_impl(size, 1).begin;
+    result = (void*)jit_try_allocate_common_primitive_impl(size, 1, pas_compact_allocation_mode).begin;
     if (verbose)
         pas_log("done allocating in jit, returning %p\n", result);
     return result;

@@ -1,0 +1,13 @@
+half4 color_0;
+void f2_0();
+half4 main(float2 xy)
+{
+	f2_0();
+	false;
+	return half4(color_0);
+}
+void f2_0()
+{
+	color_0 = half4(1.0);
+	false;
+}

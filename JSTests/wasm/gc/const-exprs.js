@@ -221,13 +221,13 @@ async function testInvalidConstExprs() {
 }
 
 async function testConstExprGlobalOrdering() {
-  compile(`
+  instantiate(`
     (module
       (global i32 (i32.const 0))
       (global i32 (global.get 0)))
   `);
 
-  compile(`
+  instantiate(`
     (module
       (global i32 (i32.const 0))
       (global i32 (i32.const 1))
@@ -246,14 +246,13 @@ async function testConstExprGlobalOrdering() {
     assert.eq(m.exports.g.value, 2);
   }
 
-  compile(`
+  instantiate(`
     (module
       (global (import "m" "g") externref)
-      (table 10 externref (global.get 0))
-      )
-  `);
+      (table 10 externref (global.get 0)))
+  `, { m: { g: "foo" } });
 
-  compile(`
+  instantiate(`
     (module
       (global i32 (i32.const 0))
       (global i32 (i32.const 1))
@@ -262,7 +261,7 @@ async function testConstExprGlobalOrdering() {
       (global i32 (global.get 3)))
   `);
 
-  compile(`
+  instantiate(`
     (module
       (table (export "t") 64 funcref)
       (global i32 (i32.const 5))

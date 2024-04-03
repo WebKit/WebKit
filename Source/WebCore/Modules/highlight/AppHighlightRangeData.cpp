@@ -56,7 +56,7 @@ Ref<FragmentedSharedBuffer> AppHighlightRangeData::toSharedBuffer() const
 {
     WTF::Persistence::Encoder encoder;
     encoder << *this;
-    return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
+    return SharedBuffer::create(encoder.span());
 }
 
 } // namespace WebCore

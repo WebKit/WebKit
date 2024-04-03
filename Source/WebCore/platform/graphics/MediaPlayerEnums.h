@@ -122,6 +122,8 @@ public:
         VideoFullscreenModeNone = 0,
         VideoFullscreenModeStandard = 1 << 0,
         VideoFullscreenModePictureInPicture = 1 << 1,
+        VideoFullscreenModeInWindow = 1 << 2,
+        VideoFullscreenModeAllValidBitsMask = (VideoFullscreenModeStandard | VideoFullscreenModePictureInPicture | VideoFullscreenModeInWindow)
     };
     typedef uint32_t VideoFullscreenMode;
 };

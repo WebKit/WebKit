@@ -32,6 +32,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -94,10 +95,10 @@ private:
     void prepareForDisplay(CompletionHandler<void(bool)>&&);
 
     Ref<WebCore::WebGPU::CompositorIntegration> m_backing;
-    WebGPU::ObjectHeap& m_objectHeap;
+    WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
-    RemoteGPU& m_gpu;
+    WeakRef<RemoteGPU> m_gpu;
 };
 
 } // namespace WebKit

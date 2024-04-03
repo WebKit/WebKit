@@ -59,7 +59,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
     AXSubrole: AXToggle
 
 <input hidden="" aria-hidden="false" id="date-input" type="date">
-    AXRole: AXTextField
+    AXRole: AXDateTimeArea
     computedRoleString: textbox
 
 <input hidden="" aria-hidden="false" id="color-input" type="color">
@@ -105,10 +105,12 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <dt hidden="" aria-hidden="false" id="dt"></dt>
     AXRole: AXGroup
+    computedRoleString: term
     AXSubrole: AXTerm
 
 <dd hidden="" aria-hidden="false" id="dd"></dd>
     AXRole: AXGroup
+    computedRoleString: definition
     AXSubrole: AXDescription
 
 <dl hidden="" aria-hidden="false" id="dl"></dl>
@@ -191,6 +193,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
 
 <details hidden="" aria-hidden="false" id="details"></details>
     AXRole: AXGroup
+    computedRoleString: group
     AXSubrole: AXDetails
 
 <summary hidden="" aria-hidden="false" id="summary"></summary>

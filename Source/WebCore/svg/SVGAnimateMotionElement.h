@@ -59,6 +59,7 @@ private:
     void buildTransformForProgress(AffineTransform*, float percentage);
 
     void updateAnimationMode() override;
+    void childrenChanged(const ChildChange&) final;
 
     // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
     FloatPoint m_fromPoint;

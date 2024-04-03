@@ -38,14 +38,11 @@ WKContentMode contentMode(WebContentMode);
 WebContentMode webContentMode(WKContentMode);
 #endif
 
-class WebPagePreferencesLockdownModeObserver;
-
 }
 
 @interface WKWebpagePreferences () <WKObject> {
 @package
     API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
-    std::unique_ptr<WebKit::WebPagePreferencesLockdownModeObserver> _lockdownModeObserver;
 }
 
 @property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;

@@ -42,7 +42,7 @@ Ref<XRInputSourceEvent> XRInputSourceEvent::create(const AtomString& type, const
 }
 
 XRInputSourceEvent::XRInputSourceEvent(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
-    : Event(type, initializer, isTrusted)
+    : Event(EventInterfaceType::XRInputSourceEvent, type, initializer, isTrusted)
     , m_frame(initializer.frame)
     , m_inputSource(initializer.inputSource)
 {

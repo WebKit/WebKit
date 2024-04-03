@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SerializedCryptoKeyWrap.h"
 
-#include "CryptoAlgorithmAES_CTR.h"
+#include "CryptoAlgorithmAESCTR.h"
 #include "NotImplemented.h"
 
 namespace WebCore {

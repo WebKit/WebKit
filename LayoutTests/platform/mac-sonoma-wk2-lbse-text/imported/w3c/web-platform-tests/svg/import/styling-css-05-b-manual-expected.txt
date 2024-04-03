@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (135.78,72.09) size 210x135
+  RenderSVGTransformableContainer {g} at (135.78,72.09) size 208.44x134.81
+layer at (135.78,72.09) size 209x135
+  RenderSVGTransformableContainer {g} at (0,0) size 208.44x134.81
+layer at (140.77,72.09) size 198x35
+  RenderSVGText {text} at (4,0) size 200x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 199x35
+      chunk 1 (middle anchor) text run 1 at (140.78,100.00) startOffset 0 endOffset 13 width 198.44: "Good morning!"
+layer at (135.78,172.09) size 208x35
+  RenderSVGText {text} at (0,100) size 209x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 62x35
+      chunk 1 (middle anchor) text run 1 at (135.78,200.00) startOffset 0 endOffset 4 width 61.71: "Bon "
+    RenderSVGTSpan {tspan} at (61,0) size 140x35
+      RenderSVGInlineText {#text} at (61,0) size 139x35
+        chunk 1 (middle anchor) text run 1 at (197.50,200.00) startOffset 0 endOffset 10 width 138.38: "avant-midi"
+    RenderSVGInlineText {#text} at (200,0) size 9x35
+      chunk 1 (middle anchor) text run 1 at (335.88,200.00) startOffset 0 endOffset 1 width 8.33: "!"
+layer at (10,310.55) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+layer at (10,310.55) size 229x37
+  RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 230x37
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

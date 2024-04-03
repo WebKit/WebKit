@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -278,10 +278,10 @@ std::optional<HashSet<String>> parseGlyphName(StringView string)
 
             // walk backwards from the ; to ignore any whitespace
             auto inputEnd = buffer.position() - 1;
-            while (inputStart < inputEnd && isSVGSpace(*inputEnd))
+            while (inputStart < inputEnd && isASCIIWhitespace(*inputEnd))
                 --inputEnd;
 
-            values.add(String(inputStart, inputEnd - inputStart + 1));
+            values.add(String({ inputStart, static_cast<size_t>(inputEnd - inputStart + 1) }));
             skipOptionalSVGSpacesOrDelimiter(buffer, ',');
         }
         return values;
@@ -381,7 +381,7 @@ std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeStri
             if (auto range = parseUnicodeRange(StringParsingBuffer { inputStart, buffer.position() }))
                 rangeList.append(WTFMove(*range));
             else
-                stringList.add(String(inputStart, buffer.position() - inputStart));
+                stringList.add(String({ inputStart, buffer.position() }));
 
             if (buffer.atEnd())
                 break;

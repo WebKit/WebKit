@@ -30,6 +30,7 @@ AXFocusableAncestor: <AXStaticText>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXIntersectionWithSelectionRange: (null)
+AXVisibleCharacterRange: NSRange: {0, 162}
 AXElementBusy: 0
 AXPath: (null)
 

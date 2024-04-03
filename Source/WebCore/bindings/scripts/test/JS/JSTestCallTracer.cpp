@@ -207,12 +207,12 @@ void JSTestCallTracer::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestCallTracerConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    VM& vm = JSC::getVM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestCallTracerPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
-    return JSValue::encode(JSTestCallTracer::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
+    return JSValue::encode(JSTestCallTracer::getConstructor(vm, prototype->globalObject()));
 }
 
 static inline JSValue jsTestCallTracer_testAttributeInterfaceGetter(JSGlobalObject& lexicalGlobalObject, JSTestCallTracer& thisObject)
@@ -408,11 +408,11 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto nodeNullableArg = convert<IDLNullable<IDLInterface<Node>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "nodeNullableArg", "TestCallTracer", "testOperationWithNullableArgument", "Node"); });
+    RefPtr nodeNullableArg = convert<IDLNullable<IDLInterface<Node>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "nodeNullableArg", "TestCallTracer", "testOperationWithNullableArgument", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.hasActiveTestInterfaceCallTracer()))
-        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_s, { TestInterfaceCallTracer::processArgument(impl, nodeNullableArg) });
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithNullableArgument(WTFMove(nodeNullableArg)); })));
+        TestInterfaceCallTracer::recordAction(impl, "testOperationWithNullableArgument"_s, { TestInterfaceCallTracer::processArgument(impl, nodeNullableArg.get()) });
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.testOperationWithNullableArgument(nodeNullableArg.get()); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationWithNullableArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -535,7 +535,7 @@ void JSTestCallTracerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* con
 {
     auto* jsTestCallTracer = static_cast<JSTestCallTracer*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestCallTracer->wrapped(), jsTestCallTracer);
+    uncacheWrapper(world, jsTestCallTracer->protectedWrapped().ptr(), jsTestCallTracer);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

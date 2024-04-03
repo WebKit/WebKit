@@ -1,0 +1,15 @@
+7 instructions
+
+[immutable slots]
+i0 = 0
+i1 = 0x3F800000 (1.0)
+i2 = 0x40000000 (2.0)
+i3 = 0x40400000 (3.0)
+
+store_src_rg                   coords = src.rg
+init_lane_masks                CondMask = LoopMask = RetMask = true
+copy_2_immutables_unmasked     y = i0..1 [0, 0x3F800000 (1.0)]
+copy_2_slots_unmasked          $0..1 = y
+copy_constant                  $2 = 0
+copy_constant                  $3 = 0x3F800000 (1.0)
+load_src                       src.rgba = $0..3

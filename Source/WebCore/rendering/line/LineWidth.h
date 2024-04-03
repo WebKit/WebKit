@@ -36,16 +36,13 @@ namespace WebCore {
 class FloatingObject;
 class RenderBlockFlow;
 class RenderObject;
-class RenderRubyRun;
 class RenderStyle;
 
 struct LineSegment;
 
-enum IndentTextOrNot { DoNotIndentText, IndentText };
-
 class LineWidth {
 public:
-    LineWidth(RenderBlockFlow&, bool isFirstLine, IndentTextOrNot shouldIndentText);
+    LineWidth(RenderBlockFlow&, bool isFirstLine);
 
     bool fitsOnLine(bool ignoringTrailingSpace = false) const;
     bool fitsOnLineIncludingExtraWidth(float extra) const;
@@ -73,11 +70,9 @@ public:
         m_hasUncommittedReplaced = true;
     }
     void commit();
-    void applyOverhang(const RenderRubyRun&, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
-    IndentTextOrNot shouldIndentText() const { return m_shouldIndentText; }
-    
+
     bool isFirstLine() const { return m_isFirstLine; }
 
 private:
@@ -89,7 +84,6 @@ private:
     RenderBlockFlow& m_block;
     float m_uncommittedWidth { 0 };
     float m_committedWidth { 0 };
-    float m_overhangWidth { 0 }; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.
     float m_trailingWhitespaceWidth { 0 };
     float m_trailingCollapsedWhitespaceWidth { 0 };
     float m_left { 0 };
@@ -99,9 +93,6 @@ private:
     bool m_hasCommitted { false };
     bool m_hasCommittedReplaced { false };
     bool m_hasUncommittedReplaced { false };
-    IndentTextOrNot m_shouldIndentText;
 };
-
-IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, const RenderStyle&);
 
 } // namespace WebCore

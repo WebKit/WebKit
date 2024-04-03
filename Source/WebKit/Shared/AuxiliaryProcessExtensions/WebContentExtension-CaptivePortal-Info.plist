@@ -5,12 +5,12 @@
 	<key>EXAppExtensionAttributes</key>
 	<dict>
 		<key>EXExtensionPointIdentifier</key>
-		<string>com.apple.webkit.webcontent.captiveportal.extension</string>
+		<string>com.apple.web-browser-engine.webcontent</string>
 	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleExecutable</key>
-	<string>${PRODUCT_BUNDLE_EXECUTABLE}</string>
+	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleVersion</key>
 	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleName</key>

@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url, ServerTrustEvaluation serverTrustEvaluation)
+CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url, ServerTrustEvaluation serverTrustEvaluation, LocalhostAlias localhostAlias)
     : m_scheduler(scheduler)
     , m_streamID(streamID)
 {
@@ -43,7 +43,7 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
     m_curlHandle = makeUnique<CurlHandle>();
 
     url.setProtocol(url.protocolIs("wss"_s) ? "https"_s : "http"_s);
-    m_curlHandle->setUrl(WTFMove(url));
+    m_curlHandle->setURL(WTFMove(url), localhostAlias);
 
     if (serverTrustEvaluation == ServerTrustEvaluation::Disable)
         m_curlHandle->disableServerTrustEvaluation();

@@ -1,0 +1,41 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[START_DIR]/lottie-samples"
+    ],
+    "infra_step": true,
+    "name": "list lottie files",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/LICENSE@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie1.json@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie2.json@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie3.json@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "RECIPE CRASH (Uncaught exception)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@",
+      "The recipe has crashed at point 'Uncaught exception'!",
+      "",
+      "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[skia]/infra/bots/recipes/perf_skottiewasm_lottieweb.py\", line 130, in RunSteps",
+      "    raise Exception('Could not recognize the buildername %s' % buildername)",
+      "Exception('Could not recognize the buildername Perf-Debian10-none-GCE-CPU-AVX2-x86_64-Release-All-Unrecognized')"
+    ]
+  },
+  {
+    "failure": {
+      "humanReason": "Uncaught Exception: Exception('Could not recognize the buildername Perf-Debian10-none-GCE-CPU-AVX2-x86_64-Release-All-Unrecognized')"
+    },
+    "name": "$result"
+  }
+]

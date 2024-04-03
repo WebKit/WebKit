@@ -21,6 +21,7 @@
 #include "JSEventListener.h"
 
 #include "BeforeUnloadEvent.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
@@ -60,7 +61,8 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         m_jsFunction = JSC::Weak<JSC::JSObject>(function);
         m_isInitialized = true;
     }
-    static_cast<JSVMClientData*>(isolatedWorld.vm().clientData)->addClient(*this);
+    if (&isolatedWorld.vm() != commonVMOrNull())
+        static_cast<JSVMClientData*>(isolatedWorld.vm().clientData)->addClient(*this);
 }
 
 JSEventListener::~JSEventListener() = default;

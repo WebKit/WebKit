@@ -196,7 +196,7 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
     }
 
     auto* store = WEBKIT_USER_CONTENT_FILTER_STORE(g_task_get_source_object(task.get()));
-    store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8(sourceData, sourceSize), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+    store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8({ sourceData, sourceSize }), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 

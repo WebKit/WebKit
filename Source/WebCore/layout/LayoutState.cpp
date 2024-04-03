@@ -27,7 +27,6 @@
 #include "LayoutState.h"
 
 #include "BlockFormattingState.h"
-#include "FlexFormattingState.h"
 #include "InlineContentCache.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
@@ -45,6 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
 LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer)
     : m_rootContainer(rootContainer)
+    , m_securityOrigin(document.securityOrigin())
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -89,9 +89,7 @@ BoxGeometry& LayoutState::ensureGeometryForBoxSlow(const Box& layoutBox)
 bool LayoutState::hasFormattingState(const ElementBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    return m_blockFormattingStates.contains(&formattingContextRoot)
-        || m_tableFormattingStates.contains(&formattingContextRoot)
-        || m_flexFormattingStates.contains(&formattingContextRoot);
+    return m_blockFormattingStates.contains(&formattingContextRoot) || m_tableFormattingStates.contains(&formattingContextRoot);
 }
 
 FormattingState& LayoutState::formattingStateForFormattingContext(const ElementBox& formattingContextRoot) const
@@ -119,12 +117,6 @@ TableFormattingState& LayoutState::formattingStateForTableFormattingContext(cons
     return *m_tableFormattingStates.get(&tableFormattingContextRoot);
 }
 
-FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const
-{
-    ASSERT(flexFormattingContextRoot.establishesFlexFormattingContext());
-    return *m_flexFormattingStates.get(&flexFormattingContextRoot);
-}
-
 InlineContentCache& LayoutState::inlineContentCache(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
@@ -141,12 +133,6 @@ TableFormattingState& LayoutState::ensureTableFormattingState(const ElementBox& 
 {
     ASSERT(formattingContextRoot.establishesTableFormattingContext());
     return *m_tableFormattingStates.ensure(&formattingContextRoot, [&] { return makeUnique<TableFormattingState>(*this, formattingContextRoot); }).iterator->value;
-}
-
-FlexFormattingState& LayoutState::ensureFlexFormattingState(const ElementBox& formattingContextRoot)
-{
-    ASSERT(formattingContextRoot.establishesFlexFormattingContext());
-    return *m_flexFormattingStates.ensure(&formattingContextRoot, [&] { return makeUnique<FlexFormattingState>(*this); }).iterator->value;
 }
 
 void LayoutState::destroyBlockFormattingState(const ElementBox& formattingContextRoot)

@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 322x18
           text run at (0,0) width 322: "The black outline box should stretch from the left "
-        RenderInline {SPAN} at (0,0) size 28x18 [color=#0000FF]
+        RenderInline {SPAN} at (321,0) size 28x18 [color=#0000FF]
           RenderText {#text} at (321,0) size 28x18
             text run at (321,0) width 28: "blue"
         RenderText {#text} at (348,0) size 129x18
           text run at (348,0) width 129: " border, to the right "
-        RenderInline {SPAN} at (0,0) size 44x18 [color=#FFA500]
+        RenderInline {SPAN} at (476,0) size 44x18 [color=#FFA500]
           RenderText {#text} at (476,0) size 44x18
             text run at (476,0) width 44: "orange"
         RenderText {#text} at (519,0) size 50x18
@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 600x36
         RenderText {#text} at (0,0) size 192x18
           text run at (0,0) width 192: "ILorem ipsum dolor sit amet, "
-        RenderText {#text} at (427,0) size 512x36
+        RenderText {#text} at (0,0) size 512x36
           text run at (427,0) width 85: "irure dolor in"
           text run at (0,18) width 90: "reprehenderit."
 layer at (8,42) size 217x20
-  RenderInline (relative positioned) {SPAN} at (0,0) size 217x20 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
+  RenderInline (relative positioned) {SPAN} at (201,-1) size 217x20 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
     RenderText {#text} at (231,0) size 96x18
       text run at (231,0) width 96: "con a pariatur. "
     RenderText {#text} at (326,0) size 62x18

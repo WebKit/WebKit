@@ -65,7 +65,7 @@ InlineBoxPainter::~InlineBoxPainter() = default;
 void InlineBoxPainter::paint()
 {
     if (m_paintInfo.phase == PaintPhase::Outline || m_paintInfo.phase == PaintPhase::SelfOutline) {
-        if (renderer().style().visibility() != Visibility::Visible || !renderer().hasOutline() || m_isRootInlineBox)
+        if (renderer().style().usedVisibility() != Visibility::Visible || !renderer().hasOutline() || m_isRootInlineBox)
             return;
 
         auto& inlineFlow = downcast<RenderInline>(renderer());
@@ -147,7 +147,7 @@ static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox
 
 void InlineBoxPainter::paintMask()
 {
-    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Mask)
+    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().usedVisibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Mask)
         return;
 
     // Move x/y to our coordinates.
@@ -178,7 +178,7 @@ void InlineBoxPainter::paintMask()
 
     paintFillLayers(Color(), renderer().style().maskLayers(), paintRect, compositeOp);
 
-    bool hasBoxImage = maskBorder && maskBorder->canRender(&renderer(), renderer().style().effectiveZoom());
+    bool hasBoxImage = maskBorder && maskBorder->canRender(&renderer(), renderer().style().usedZoom());
     if (!hasBoxImage || !maskBorder->isLoaded(&renderer())) {
         if (pushTransparencyLayer)
             m_paintInfo.context().endTransparencyLayer();
@@ -217,7 +217,7 @@ void InlineBoxPainter::paintMask()
 
 void InlineBoxPainter::paintDecorations()
 {
-    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Foreground)
+    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().usedVisibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Foreground)
         return;
 
     if (!m_isRootInlineBox && !renderer().hasVisibleBoxDecorations())
@@ -253,7 +253,7 @@ void InlineBoxPainter::paintDecorations()
 
     const NinePieceImage& borderImage = renderer().style().borderImage();
     StyleImage* borderImageSource = borderImage.image();
-    bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), style.effectiveZoom());
+    bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), style.usedZoom());
     if (hasBorderImage && !borderImageSource->isLoaded(&renderer()))
         return; // Don't paint anything while we wait for the image to load.
 
@@ -305,7 +305,7 @@ void InlineBoxPainter::paintFillLayers(const Color& color, const FillLayer& fill
 void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
     auto* image = fillLayer.image();
-    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().effectiveZoom());
+    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().usedZoom());
     bool hasFillImageOrBorderRadious = hasFillImage || renderer().style().hasBorderRadius();
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
 

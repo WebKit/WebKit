@@ -38,8 +38,6 @@
 #import <wtf/CompletionHandler.h>
 
 NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification = @"_WKWebExtensionActionPropertiesDidChange";
-NSNotificationName const _WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification = @"_WKWebExtensionActionPopupWebViewContentSizeDidChange";
-NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification = @"_WKWebExtensionActionPopupWebViewDidClose";
 
 #if USE(APPKIT)
 using CocoaMenuItem = NSMenuItem;
@@ -51,12 +49,7 @@ using CocoaMenuItem = UIMenuElement;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (void)dealloc
-{
-    ASSERT(isMainRunLoop());
-
-    _webExtensionAction->~WebExtensionAction();
-}
+WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionAction, WebExtensionAction, _webExtensionAction);
 
 - (BOOL)isEqual:(id)object
 {
@@ -99,6 +92,16 @@ using CocoaMenuItem = UIMenuElement;
     return _webExtensionAction->badgeText();
 }
 
+- (BOOL)hasUnreadBadgeText
+{
+    return _webExtensionAction->hasUnreadBadgeText();
+}
+
+- (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
+{
+    return _webExtensionAction->setHasUnreadBadgeText(hasUnreadBadgeText);
+}
+
 - (BOOL)isEnabled
 {
     return _webExtensionAction->isEnabled();
@@ -114,14 +117,28 @@ using CocoaMenuItem = UIMenuElement;
     return _webExtensionAction->presentsPopup();
 }
 
+#if PLATFORM(IOS_FAMILY)
+- (UIViewController *)popupViewController
+{
+    return _webExtensionAction->popupViewController();
+}
+#endif
+
+#if PLATFORM(MAC)
+- (NSPopover *)popupPopover
+{
+    return _webExtensionAction->popupPopover();
+}
+#endif
+
 - (WKWebView *)popupWebView
 {
     return _webExtensionAction->popupWebView();
 }
 
-- (void)closePopupWebView
+- (void)closePopup
 {
-    _webExtensionAction->closePopupWebView();
+    _webExtensionAction->closePopup();
 }
 
 #pragma mark WKObject protocol implementation
@@ -163,6 +180,15 @@ using CocoaMenuItem = UIMenuElement;
     return nil;
 }
 
+- (BOOL)hasUnreadBadgeText
+{
+    return NO;
+}
+
+- (void)setHasUnreadBadgeText:(BOOL)hasUnreadBadgeText
+{
+}
+
 - (BOOL)isEnabled
 {
     return NO;
@@ -178,12 +204,26 @@ using CocoaMenuItem = UIMenuElement;
     return NO;
 }
 
+#if PLATFORM(IOS_FAMILY)
+- (UIViewController *)popupViewController
+{
+    return nil;
+}
+#endif
+
+#if PLATFORM(MAC)
+- (NSPopover *)popupPopover
+{
+    return nil;
+}
+#endif
+
 - (WKWebView *)popupWebView
 {
     return nil;
 }
 
-- (void)closePopupWebView
+- (void)closePopup
 {
 }
 

@@ -66,7 +66,7 @@ static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
     if (doAlpha) {
         auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
 
-        img->getHBITMAP(hCursor.get()); 
+        img->adapter().getHBITMAP(hCursor.get());
         HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
         SetBkMode(workingDC.get(), TRANSPARENT);
         SelectObject(workingDC.get(), hOldBitmap);
@@ -90,7 +90,7 @@ static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
         auto xorMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
         auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
 
-        img->getHBITMAP(hCursor.get()); 
+        img->adapter().getHBITMAP(hCursor.get());
         BITMAP cursor;
         GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
         auto andMask = adoptGDIObject(::CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, 0));
@@ -129,7 +129,7 @@ static Ref<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorN
 static Ref<SharedCursor> loadCursorByName(const char* name, int x, int y)
 {
     IntPoint hotSpot(x, y);
-    RefPtr<Image> cursorImage(Image::loadPlatformResource(name));
+    RefPtr<Image> cursorImage(ImageAdapter::loadPlatformResource(name));
     if (cursorImage && !cursorImage->isNull())
         return createSharedCursor(cursorImage.get(), hotSpot);
     return loadSharedCursor(0, IDC_ARROW);

@@ -1,0 +1,6 @@
+
+PASS eval with plain string throws (both block).
+FAIL eval with TrustedScript throws (script-src blocks). assert_throws_js: function "_ => {
+      eval(p.createScript('a="Hello transformed string"'));
+    }" did not throw
+

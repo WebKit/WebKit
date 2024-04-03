@@ -1,0 +1,10 @@
+
+PASS URL.parse(undefined, undefined)
+PASS URL.parse(aaa:b, undefined)
+PASS URL.parse(undefined, aaa:b)
+PASS URL.parse(aaa:/b, undefined)
+PASS URL.parse(undefined, aaa:/b)
+PASS URL.parse(https://test:test, undefined)
+PASS URL.parse(a, https://b/)
+PASS URL.parse() should return a unique object
+

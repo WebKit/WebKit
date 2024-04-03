@@ -50,7 +50,7 @@ InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoi
 
 void InlineContentPainter::paintEllipsis(size_t lineIndex)
 {
-    if (m_paintInfo.phase != PaintPhase::Foreground || root().style().visibility() != Visibility::Visible)
+    if (m_paintInfo.phase != PaintPhase::Foreground || root().style().usedVisibility() != Visibility::Visible)
         return;
 
     auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorModernPath { m_inlineContent, lineIndex } };
@@ -89,7 +89,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     }
 
     if (box.isText()) {
-        auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box); 
+        auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box);
         if (!hasVisibleDamage)
             return;
 

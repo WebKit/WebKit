@@ -36,7 +36,7 @@ class VkImageImageSiblingVk final : public ExternalImageSiblingVk
     // ExternalImageSiblingVk interface
     vk::ImageHelper *getImage() const override;
 
-    void release(RendererVk *renderer) override;
+    void release(vk::Renderer *renderer) override;
 
   private:
     angle::Result initImpl(DisplayVk *displayVk);

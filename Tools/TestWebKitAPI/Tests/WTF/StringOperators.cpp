@@ -266,12 +266,12 @@ TEST(WTF, ConcatenateCharacterArrayAndEmptyString)
     UChar ucharArray[] = { 't', 'e', 's', 't', '\0' };
     String concatenation16 = ucharArray + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation16.length());
-    ASSERT_TRUE(concatenation16 == String(ucharArray, 4));
+    ASSERT_TRUE(concatenation16 == String({ ucharArray, 4 }));
 
     LChar lcharArray[] = { 't', 'e', 's', 't' };
-    String concatenation8 = String(lcharArray, 4) + emptyString;
+    String concatenation8 = String({ lcharArray, 4 }) + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation8.length());
-    ASSERT_TRUE(concatenation8 == String(lcharArray, 4));
+    ASSERT_TRUE(concatenation8 == String({ lcharArray, 4 }));
 }
 
 } // namespace TestWebKitAPI

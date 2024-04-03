@@ -11,30 +11,30 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 6x11
             text run at (0,0) width 6: " "
             text run at (6,0) width 0: " "
-          RenderInline {B} at (0,0) size 30x11
+          RenderInline {B} at (0,11) size 30x11
             RenderText {#text} at (0,11) size 30x11
               text run at (0,11) width 30: "thead"
-          RenderText {#text} at (30,11) size 318x22
+          RenderText {#text} at (0,11) size 318x22
             text run at (30,11) width 78: " Row 1;      "
             text run at (108,11) width 0: " "
             text run at (0,22) width 318: "      background-color: cyan;     text-align: center;"
           RenderBR {BR} at (318,22) size 0x11
           RenderText {#text} at (0,33) size 0x11
             text run at (0,33) width 0: " "
-          RenderInline {B} at (0,0) size 30x11
+          RenderInline {B} at (0,44) size 30x11
             RenderText {#text} at (0,44) size 30x11
               text run at (0,44) width 30: "tbody"
-          RenderText {#text} at (30,44) size 312x22
+          RenderText {#text} at (0,44) size 312x22
             text run at (30,44) width 78: " Rows 2,3,4; "
             text run at (108,44) width 0: " "
             text run at (0,55) width 312: "      background-color: #9999ff;  text-align: right;"
           RenderBR {BR} at (312,55) size 0x11
           RenderText {#text} at (0,66) size 0x11
             text run at (0,66) width 0: " "
-          RenderInline {B} at (0,0) size 30x11
+          RenderInline {B} at (0,77) size 30x11
             RenderText {#text} at (0,77) size 30x11
               text run at (0,77) width 30: "tfoot"
-          RenderText {#text} at (30,77) size 318x22
+          RenderText {#text} at (0,77) size 318x22
             text run at (30,77) width 78: " Rows 5, 6;  "
             text run at (108,77) width 0: " "
             text run at (0,88) width 318: "      background-color: #ff99ff;  text-align: center;"
@@ -100,7 +100,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (6,6) size 38x17
                 text run at (6,6) width 38: "R5C2"
             RenderTableCell {TD} at (286,17) size 174x30 [border: (1px inset #808080)] [r=0 c=2 rs=2 cs=1]
-              RenderText {#text} at (6,6) size 51x17
+              RenderText {#text} at (6,23) size 51x17
                 text run at (6,6) width 51: "R5-6C3"
             RenderTableCell {TD} at (463,0) size 174x30 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (6,6) size 38x17

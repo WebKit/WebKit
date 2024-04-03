@@ -24,3 +24,11 @@ b/303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangle
 b/303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.tessellation_set_per_draw.vertex_tessellation_fragment.default_framebuffer* = SKIP
 b/303117970 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.triangles.tessellation_set_per_draw.vertex_tessellation_geometry_fragment.default_framebuffer* = SKIP
 b/303117970 SWIFTSHADER : dEQP-GLES31.functional.tessellation_geometry_interaction.point_size.vertex_set_eval_default = SKIP
+
+// Samsung Galaxy S22 (Xclipse)
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_color = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.default_framebuffer_discard = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.default_framebuffer = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.default_framebuffer = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.default_framebuffer = SKIP
+b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_two_samples.default_framebuffer = SKIP

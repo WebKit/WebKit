@@ -44,7 +44,7 @@ public:
 
 private:
     static ServiceWorkerRegistrationPushAPI* from(ServiceWorkerRegistration&);
-    static const char* supplementName();
+    static ASCIILiteral supplementName();
 
     ServiceWorkerRegistration& m_serviceWorkerRegistration;
     std::unique_ptr<PushManager> m_pushManager;

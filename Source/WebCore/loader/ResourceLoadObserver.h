@@ -69,7 +69,7 @@ public:
     virtual bool hasStatistics() const { return false; }
 
     virtual void setDomainsWithUserInteraction(HashSet<RegistrableDomain>&&) { }
-    virtual void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual bool hasCrossPageStorageAccess(const SubResourceDomain&, const TopFrameDomain&) const { return false; }
     virtual bool hasHadUserInteraction(const RegistrableDomain&) const { return false; }
 };

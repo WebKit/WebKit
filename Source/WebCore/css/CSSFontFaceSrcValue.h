@@ -118,6 +118,7 @@ public:
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
     void customSetReplacementURLForSubresources(const HashMap<String, String>&);
     void customClearReplacementURLForSubresources();
+    bool customMayDependOnBaseURL() const;
     bool equals(const CSSFontFaceSrcResourceValue&) const;
 
 private:

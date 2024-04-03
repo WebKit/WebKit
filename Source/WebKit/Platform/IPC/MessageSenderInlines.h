@@ -158,4 +158,22 @@ template<typename MessageType, typename C, typename U, typename V> inline AsyncR
     return sendWithAsyncReply(std::forward<MessageType>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), options);
 }
 
+template<typename MessageType> Ref<typename MessageType::Promise> inline MessageSender::sendWithPromisedReply(MessageType&& message)
+{
+    return sendWithPromisedReply(std::forward<MessageType>(message), messageSenderDestinationID(), { });
+}
+
+template<typename MessageType> Ref<typename MessageType::Promise> inline MessageSender::sendWithPromisedReply(MessageType&& message, uint64_t destinationID)
+{
+    return sendWithPromisedReply(std::forward<MessageType>(message), destinationID, { });
+}
+
+template<typename MessageType> Ref<typename MessageType::Promise> inline MessageSender::sendWithPromisedReply(MessageType&& message, uint64_t destinationID, OptionSet<SendOption> options)
+{
+    static_assert(!MessageType::isSync);
+    if (RefPtr connection = messageSenderConnection())
+        return connection->sendWithPromisedReply(std::forward<MessageType>(message), destinationID, options);
+    return MessageType::Promise::createAndReject(Error::NoMessageSenderConnection);
+}
+
 } // namespace IPC

@@ -38,14 +38,6 @@
 #include "JSCJSValueInlines.h"
 #include "OperandsInlines.h"
 
-#undef RELEASE_ASSERT
-#define RELEASE_ASSERT(assertion) do { \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        CRASH(); \
-    } \
-} while (0)
-
 namespace JSC { namespace DFG {
 
 class SSAConversionPhase : public Phase {

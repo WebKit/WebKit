@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-avifBool avifFillAlpha(const avifAlphaParams * const params)
+void avifFillAlpha(const avifAlphaParams * params)
 {
     if (params->dstDepth > 8) {
         const uint16_t maxChannel = (uint16_t)((1 << params->dstDepth) - 1);
@@ -28,10 +28,9 @@ avifBool avifFillAlpha(const avifAlphaParams * const params)
             }
         }
     }
-    return AVIF_TRUE;
 }
 
-avifBool avifReformatAlpha(const avifAlphaParams * const params)
+void avifReformatAlpha(const avifAlphaParams * params)
 {
     const int srcMaxChannel = (1 << params->srcDepth) - 1;
     const int dstMaxChannel = (1 << params->dstDepth) - 1;
@@ -45,17 +44,17 @@ avifBool avifReformatAlpha(const avifAlphaParams * const params)
             // no depth rescale, uint16_t -> uint16_t
 
             for (uint32_t j = 0; j < params->height; ++j) {
-                uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
+                const uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
                 uint8_t * dstRow = &params->dstPlane[params->dstOffsetBytes + (j * params->dstRowBytes)];
                 for (uint32_t i = 0; i < params->width; ++i) {
-                    *((uint16_t *)&dstRow[i * params->dstPixelBytes]) = *((uint16_t *)&srcRow[i * params->srcPixelBytes]);
+                    *((uint16_t *)&dstRow[i * params->dstPixelBytes]) = *((const uint16_t *)&srcRow[i * params->srcPixelBytes]);
                 }
             }
         } else {
             // no depth rescale, uint8_t -> uint8_t
 
             for (uint32_t j = 0; j < params->height; ++j) {
-                uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
+                const uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
                 uint8_t * dstRow = &params->dstPlane[params->dstOffsetBytes + (j * params->dstRowBytes)];
                 for (uint32_t i = 0; i < params->width; ++i) {
                     dstRow[i * params->dstPixelBytes] = srcRow[i * params->srcPixelBytes];
@@ -70,10 +69,10 @@ avifBool avifReformatAlpha(const avifAlphaParams * const params)
                 // depth rescale, uint16_t -> uint16_t
 
                 for (uint32_t j = 0; j < params->height; ++j) {
-                    uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
+                    const uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
                     uint8_t * dstRow = &params->dstPlane[params->dstOffsetBytes + (j * params->dstRowBytes)];
                     for (uint32_t i = 0; i < params->width; ++i) {
-                        int srcAlpha = *((uint16_t *)&srcRow[i * params->srcPixelBytes]);
+                        int srcAlpha = *((const uint16_t *)&srcRow[i * params->srcPixelBytes]);
                         float alphaF = (float)srcAlpha / srcMaxChannelF;
                         int dstAlpha = (int)(0.5f + (alphaF * dstMaxChannelF));
                         dstAlpha = AVIF_CLAMP(dstAlpha, 0, dstMaxChannel);
@@ -84,10 +83,10 @@ avifBool avifReformatAlpha(const avifAlphaParams * const params)
                 // depth rescale, uint16_t -> uint8_t
 
                 for (uint32_t j = 0; j < params->height; ++j) {
-                    uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
+                    const uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
                     uint8_t * dstRow = &params->dstPlane[params->dstOffsetBytes + (j * params->dstRowBytes)];
                     for (uint32_t i = 0; i < params->width; ++i) {
-                        int srcAlpha = *((uint16_t *)&srcRow[i * params->srcPixelBytes]);
+                        int srcAlpha = *((const uint16_t *)&srcRow[i * params->srcPixelBytes]);
                         float alphaF = (float)srcAlpha / srcMaxChannelF;
                         int dstAlpha = (int)(0.5f + (alphaF * dstMaxChannelF));
                         dstAlpha = AVIF_CLAMP(dstAlpha, 0, dstMaxChannel);
@@ -101,7 +100,7 @@ avifBool avifReformatAlpha(const avifAlphaParams * const params)
 
             // depth rescale, uint8_t -> uint16_t
             for (uint32_t j = 0; j < params->height; ++j) {
-                uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
+                const uint8_t * srcRow = &params->srcPlane[params->srcOffsetBytes + (j * params->srcRowBytes)];
                 uint8_t * dstRow = &params->dstPlane[params->dstOffsetBytes + (j * params->dstRowBytes)];
                 for (uint32_t i = 0; i < params->width; ++i) {
                     int srcAlpha = srcRow[i * params->srcPixelBytes];
@@ -113,8 +112,6 @@ avifBool avifReformatAlpha(const avifAlphaParams * const params)
             }
         }
     }
-
-    return AVIF_TRUE;
 }
 
 avifResult avifRGBImagePremultiplyAlpha(avifRGBImage * rgb)

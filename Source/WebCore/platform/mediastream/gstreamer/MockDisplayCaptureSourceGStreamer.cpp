@@ -30,11 +30,11 @@ namespace WebCore {
 
 CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
-    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { hashSalts }));
+    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, AtomString { device.label() }, MediaDeviceHashSalts { hashSalts }, pageIdentifier));
 
     if (constraints) {
         if (auto error = mockSource->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->badConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { error->invalidConstraint });
     }
 
     Ref<RealtimeMediaSource> source = adoptRef(*new MockDisplayCaptureSourceGStreamer(device, WTFMove(mockSource), WTFMove(hashSalts), pageIdentifier));
@@ -85,9 +85,9 @@ const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabi
 
         // FIXME: what should these be?
         // Currently mimicking the values for SCREEN-1 in MockRealtimeMediaSourceCenter.cpp::defaultDevices()
-        capabilities.setWidth(CapabilityRange(1, 1920));
-        capabilities.setHeight(CapabilityRange(1, 1080));
-        capabilities.setFrameRate(CapabilityRange(.01, 30.0));
+        capabilities.setWidth({ 1, 1920 });
+        capabilities.setHeight({ 1, 1080 });
+        capabilities.setFrameRate({ .01, 30.0 });
 
         m_capabilities = WTFMove(capabilities);
     }

@@ -27,6 +27,7 @@
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "Font.h"
 #include "FrameSelection.h"
@@ -71,30 +72,29 @@ RenderSearchField::~RenderSearchField()
 
 void RenderSearchField::willBeDestroyed()
 {
-    if (m_searchPopup) {
-        m_searchPopup->popupMenu()->disconnectClient();
-        m_searchPopup = nullptr;
-    }
+    if (RefPtr searchPopup = std::exchange(m_searchPopup, nullptr))
+        searchPopup->popupMenu()->disconnectClient();
 
     RenderTextControlSingleLine::willBeDestroyed();
 }
 
 inline HTMLElement* RenderSearchField::resultsButtonElement() const
 {
-    return inputElement().resultsButtonElement();
+    return protectedInputElement()->resultsButtonElement();
 }
 
 inline HTMLElement* RenderSearchField::cancelButtonElement() const
 {
-    return inputElement().cancelButtonElement();
+    return protectedInputElement()->cancelButtonElement();
 }
 
 void RenderSearchField::addSearchResult()
 {
-    if (inputElement().maxResults() <= 0)
+    Ref inputElement = this->inputElement();
+    if (inputElement->maxResults() <= 0)
         return;
 
-    String value = inputElement().value();
+    String value = inputElement->value();
     if (value.isEmpty())
         return;
 
@@ -107,10 +107,10 @@ void RenderSearchField::addSearchResult()
 
     RecentSearch recentSearch = { value, WallTime::now() };
     m_recentSearches.insert(0, recentSearch);
-    while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults())
+    while (static_cast<int>(m_recentSearches.size()) > inputElement->maxResults())
         m_recentSearches.removeLast();
 
-    const AtomString& name = autosaveName();
+    AtomString name = autosaveName();
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(*this);
 
@@ -145,25 +145,25 @@ void RenderSearchField::showPopup()
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
-    m_searchPopup->popupMenu()->show(absBounds, &view().frameView(), -1);
+    protectedSearchPopup()->protectedPopupMenu()->show(absBounds, &view().frameView(), -1);
 }
 
 void RenderSearchField::hidePopup()
 {
-    if (m_searchPopup)
-        m_searchPopup->popupMenu()->hide();
+    if (RefPtr searchPopup = m_searchPopup)
+        searchPopup->protectedPopupMenu()->hide();
 }
 
 LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
-    HTMLElement* resultsButton = resultsButtonElement();
-    if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
+    RefPtr resultsButton = resultsButtonElement();
+    if (auto* resultsRenderer = resultsButton ? resultsButton->renderBox() : nullptr) {
         resultsRenderer->updateLogicalHeight();
         nonContentHeight = std::max(nonContentHeight, resultsRenderer->borderAndPaddingLogicalHeight() + resultsRenderer->marginLogicalHeight());
         lineHeight = std::max(lineHeight, resultsRenderer->logicalHeight());
     }
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
+    RefPtr cancelButton = cancelButtonElement();
+    if (auto* cancelRenderer = cancelButton ? cancelButton->renderBox() : nullptr) {
         cancelRenderer->updateLogicalHeight();
         nonContentHeight = std::max(nonContentHeight, cancelRenderer->borderAndPaddingLogicalHeight() + cancelRenderer->marginLogicalHeight());
         lineHeight = std::max(lineHeight, cancelRenderer->logicalHeight());
@@ -191,7 +191,7 @@ void RenderSearchField::updateFromElement()
         updateCancelButtonVisibility();
 
     if (m_searchPopupIsVisible)
-        m_searchPopup->popupMenu()->updateFromElement();
+        protectedSearchPopup()->protectedPopupMenu()->updateFromElement();
 }
 
 void RenderSearchField::updateCancelButtonVisibility() const
@@ -202,7 +202,7 @@ void RenderSearchField::updateCancelButtonVisibility() const
 
     const RenderStyle& curStyle = cancelButtonRenderer->style();
     Visibility buttonVisibility = visibilityForCancelButton();
-    if (curStyle.visibility() == buttonVisibility)
+    if (curStyle.usedVisibility() == buttonVisibility)
         return;
 
     auto cancelButtonStyle = RenderStyle::clone(curStyle);
@@ -212,12 +212,12 @@ void RenderSearchField::updateCancelButtonVisibility() const
 
 Visibility RenderSearchField::visibilityForCancelButton() const
 {
-    return (style().visibility() == Visibility::Hidden || inputElement().value().isEmpty()) ? Visibility::Hidden : Visibility::Visible;
+    return (style().usedVisibility() == Visibility::Hidden || inputElement().value().isEmpty()) ? Visibility::Hidden : Visibility::Visible;
 }
 
 const AtomString& RenderSearchField::autosaveName() const
 {
-    return inputElement().attributeWithoutSynchronization(nameAttr);
+    return protectedInputElement()->attributeWithoutSynchronization(nameAttr);
 }
 
 // PopupMenuClient methods
@@ -235,11 +235,12 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
             }
         }
     } else {
-        inputElement().setValue(itemText(listIndex));
-        if (inputElement().document().settings().searchInputIncrementalAttributeAndSearchEventEnabled()
+        Ref input = inputElement();
+        input->setValue(itemText(listIndex));
+        if (input->document().settings().searchInputIncrementalAttributeAndSearchEventEnabled()
             && fireEvents)
-            inputElement().onSearch();
-        inputElement().select();
+            input->onSearch();
+        input->select();
     }
 }
 
@@ -287,7 +288,7 @@ PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
 
 PopupMenuStyle RenderSearchField::menuStyle() const
 {
-    return PopupMenuStyle(style().visitedDependentColorWithColorFilter(CSSPropertyColor), style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), style().fontCascade(), style().visibility() == Visibility::Visible,
+    return PopupMenuStyle(style().visitedDependentColorWithColorFilter(CSSPropertyColor), style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), style().fontCascade(), style().usedVisibility() == Visibility::Visible,
         style().display() == DisplayType::None, true, style().textIndent(), style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
 }
 
@@ -309,7 +310,8 @@ int RenderSearchField::clientInsetRight() const
 LayoutUnit RenderSearchField::clientPaddingLeft() const
 {
     LayoutUnit padding = paddingLeft();
-    if (RenderBox* box = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
+    RefPtr innerBlock = innerBlockElement();
+    if (auto* box = innerBlock ? innerBlock->renderBox() : nullptr)
         padding += box->x();
     return padding;
 }
@@ -317,8 +319,10 @@ LayoutUnit RenderSearchField::clientPaddingLeft() const
 LayoutUnit RenderSearchField::clientPaddingRight() const
 {
     LayoutUnit padding = paddingRight();
-    if (RenderBox* containerBox = containerElement() ? containerElement()->renderBox() : 0) {
-        if (RenderBox* innerBlockBox = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
+    RefPtr container = containerElement();
+    if (auto* containerBox = container ? container->renderBox() : nullptr) {
+        RefPtr innerBlock = innerBlockElement();
+        if (auto* innerBlockBox = innerBlock ? innerBlock->renderBox() : nullptr)
             padding += containerBox->width() - (innerBlockBox->x() + innerBlockBox->width());
     }
     return padding;
@@ -361,7 +365,7 @@ bool RenderSearchField::itemIsSelected(unsigned) const
 
 void RenderSearchField::setTextFromItem(unsigned listIndex)
 {
-    inputElement().setValue(itemText(listIndex));
+    protectedInputElement()->setValue(itemText(listIndex));
 }
 
 FontSelector* RenderSearchField::fontSelector() const
@@ -378,7 +382,7 @@ Ref<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea& scrollableArea
 {
     bool usesLegacyScrollbarStyle = style().usesLegacyScrollbarStyle();
     if (usesLegacyScrollbarStyle)
-        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &inputElement());
+        return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, protectedInputElement().ptr());
     return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);
 }
 

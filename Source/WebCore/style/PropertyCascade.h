@@ -28,7 +28,7 @@
 #include "CascadeLevel.h"
 #include "MatchResult.h"
 #include "WebAnimationTypes.h"
-#include <bitset>
+#include <wtf/BitSet.h>
 
 namespace WebCore {
 
@@ -39,15 +39,18 @@ namespace Style {
 class PropertyCascade {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using PropertyBitSet = WTF::BitSet<lastLowPriorityProperty + 1>;
+
     enum class PropertyType : uint8_t {
         NonInherited = 1 << 0,
         Inherited = 1 << 1,
         ExplicitlyInherited = 1 << 2,
-        VariableReference = 1 << 3,
-        AfterAnimation = 1 << 4,
-        AfterTransition = 1 << 5
+        AfterAnimation = 1 << 3,
+        AfterTransition = 1 << 4,
+        StartingStyle = 1 << 5,
     };
-    static constexpr OptionSet<PropertyType> allProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
+    static constexpr OptionSet<PropertyType> normalProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
+    static constexpr OptionSet<PropertyType> startingStyleProperties() { return normalProperties() | PropertyType::StartingStyle; }
 
     PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
@@ -63,7 +66,7 @@ public:
         std::array<CSSValue*, 3> cssValue; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
-    bool isEmpty() const { return m_propertyIsPresent.none() && !m_seenDeferredPropertyCount; }
+    bool isEmpty() const { return m_propertyIsPresent.isEmpty() && !m_seenDeferredPropertyCount; }
 
     bool hasNormalProperty(CSSPropertyID) const;
     const Property& normalProperty(CSSPropertyID) const;
@@ -79,6 +82,9 @@ public:
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
     const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
+
+    PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
+    const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
 
 private:
     void buildCascade();
@@ -124,7 +130,7 @@ private:
     // It could actually be 2 units smaller, but then we would have to subtract 'firstCSSProperty', which may not be worth it.
     // 'm_propertyIsPresent' is not used for deferred properties, so we only need to cover up to the last low priority one.
     std::array<Property, lastDeferredProperty + 1> m_properties;
-    std::bitset<lastLowPriorityProperty + 1> m_propertyIsPresent;
+    PropertyBitSet m_propertyIsPresent;
 
     static constexpr unsigned deferredPropertyCount = lastDeferredProperty - firstDeferredProperty + 1;
     std::array<unsigned, deferredPropertyCount> m_deferredPropertyIndices { };
@@ -140,7 +146,7 @@ private:
 inline bool PropertyCascade::hasNormalProperty(CSSPropertyID id) const
 {
     ASSERT(id < firstDeferredProperty);
-    return m_propertyIsPresent[id];
+    return m_propertyIsPresent.get(id);
 }
 
 inline const PropertyCascade::Property& PropertyCascade::normalProperty(CSSPropertyID id) const

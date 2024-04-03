@@ -30,8 +30,6 @@
 
 #include "ScalableImageDecoder.h"
 
-#if USE(WEBP)
-
 #include "webp/decode.h"
 #include "webp/demux.h"
 
@@ -70,5 +68,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

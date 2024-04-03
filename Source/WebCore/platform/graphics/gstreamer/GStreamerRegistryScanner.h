@@ -177,8 +177,9 @@ private:
 
     Vector<const char*> m_allAudioRtpExtensions { "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
         "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",
-        "urn:ietf:params:rtp-hdrext:sdes:mid",
-        "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
+        "urn:ietf:params:rtp-hdrext:sdes:mid"
+        // This extension triggers caps negotiation issues. See https://bugs.webkit.org/show_bug.cgi?id=271519.
+        // "urn:ietf:params:rtp-hdrext:ssrc-audio-level"
     };
     Vector<const char*> m_allVideoRtpExtensions { "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
         "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",

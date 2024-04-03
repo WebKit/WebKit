@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if USE(CAIRO)
+#if USE(CAIRO) || PLATFORM(GTK)
 
 #include <wtf/RefPtr.h>
 
@@ -70,4 +70,4 @@ struct DefaultRefDerefTraits<cairo_region_t> {
 
 } // namespace WTF
 
-#endif // USE(CAIRO)
+#endif // USE(CAIRO) || PLATFORM(GTK)

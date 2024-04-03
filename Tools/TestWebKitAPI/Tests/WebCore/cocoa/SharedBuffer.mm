@@ -28,6 +28,7 @@
 #import "SharedBufferTest.h"
 #import "Utilities.h"
 #import <WebCore/SharedBuffer.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 using namespace WebCore;
 
@@ -53,7 +54,7 @@ TEST_F(FragmentedSharedBufferTest, createNSDataArray)
         expectDataArraysEqual(nil, builder.get()->createNSDataArray().get());
 
         NSData *helloData = [NSData dataWithBytes:"hello" length:5];
-        builder.append((const char*)helloData.bytes, helloData.length);
+        builder.append(span(helloData));
         expectDataArraysEqual(@[ helloData ], builder.get()->createNSDataArray().get());
 
         NSData *worldData = [NSData dataWithBytes:"world" length:5];
@@ -73,7 +74,7 @@ TEST_F(FragmentedSharedBufferTest, createNSDataForDataSegment)
         SharedBufferBuilder builder;
 
         NSData *helloData = [NSData dataWithBytes:"hello" length:5];
-        builder.append((const char*)helloData.bytes, helloData.length);
+        builder.append(span(helloData));
 
         NSData *worldData = [NSData dataWithBytes:"world" length:5];
         builder.append((__bridge CFDataRef)worldData);

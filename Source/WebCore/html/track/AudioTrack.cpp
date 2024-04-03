@@ -68,14 +68,15 @@ AudioTrack::AudioTrack(ScriptExecutionContext* context, AudioTrackPrivate& track
     , m_enabled(trackPrivate.enabled())
     , m_configuration(AudioTrackConfiguration::create())
 {
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
+
     updateKindFromPrivate();
     updateConfigurationFromPrivate();
 }
 
 AudioTrack::~AudioTrack()
 {
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
 }
 
 void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
@@ -83,10 +84,11 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->clearClient();
+    removeClientFromTrackPrivateBase(Ref { m_private });
     m_private = trackPrivate;
     m_private->setEnabled(m_enabled);
-    m_private->setClient(*this);
+    addClientToTrackPrivateBase(*this, trackPrivate);
+
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif
@@ -107,12 +109,12 @@ void AudioTrack::setLanguage(const AtomString& language)
 
 bool AudioTrack::isValidKind(const AtomString& value) const
 {
-    return value == alternativeAtom()
-        || value == commentaryAtom()
-        || value == descriptionKeyword()
-        || value == mainAtom()
-        || value == mainDescKeyword()
-        || value == translationKeyword();
+    return value == "alternative"_s
+        || value == "commentary"_s
+        || value == "description"_s
+        || value == "main"_s
+        || value == "main-desc"_s
+        || value == "translation"_s;
 }
 
 void AudioTrack::setEnabled(bool enabled)
@@ -192,22 +194,22 @@ void AudioTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case AudioTrackPrivate::Kind::Alternative:
-        setKind(alternativeAtom());
+        setKind("alternative"_s);
         break;
     case AudioTrackPrivate::Kind::Description:
-        setKind(AudioTrack::descriptionKeyword());
+        setKind("description"_s);
         break;
     case AudioTrackPrivate::Kind::Main:
-        setKind(mainAtom());
+        setKind("main"_s);
         break;
     case AudioTrackPrivate::Kind::MainDesc:
-        setKind(AudioTrack::mainDescKeyword());
+        setKind("main-desc"_s);
         break;
     case AudioTrackPrivate::Kind::Translation:
-        setKind(AudioTrack::translationKeyword());
+        setKind("translation"_s);
         break;
     case AudioTrackPrivate::Kind::Commentary:
-        setKind(commentaryAtom());
+        setKind("commentary"_s);
         break;
     case AudioTrackPrivate::Kind::None:
         setKind(emptyAtom());

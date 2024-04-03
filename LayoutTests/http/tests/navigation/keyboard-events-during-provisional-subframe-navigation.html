@@ -21,7 +21,9 @@
 
             console.log("Pressing \"z\" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.");
             window.focus();
-            eventSender.keyDown("z", internals.accessKeyModifiers());
+            setTimeout(() => {
+                eventSender.keyDown("z", internals.accessKeyModifiers());
+            }, 50)
         });
     </script>
 </body>

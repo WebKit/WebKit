@@ -103,14 +103,14 @@ public:
 
     virtual void updateSnapOffsets() { };
     WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
-    void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
-    void clearSnapOffsets();
+    WEBCORE_EXPORT void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
+    WEBCORE_EXPORT void clearSnapOffsets();
     WEBCORE_EXPORT std::optional<unsigned> currentHorizontalSnapPointIndex() const;
     WEBCORE_EXPORT std::optional<unsigned> currentVerticalSnapPointIndex() const;
     WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
     WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 
-    void resnapAfterLayout();
+    WEBCORE_EXPORT void resnapAfterLayout();
     void doPostThumbMoveSnapping(ScrollbarOrientation);
 
     void stopKeyboardScrollAnimation();
@@ -152,8 +152,8 @@ public:
     WEBCORE_EXPORT virtual ScrollbarGutter scrollbarGutterStyle() const;
     virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
 
-    bool allowsHorizontalScrolling() const;
-    bool allowsVerticalScrolling() const;
+    WEBCORE_EXPORT bool allowsHorizontalScrolling() const;
+    WEBCORE_EXPORT bool allowsVerticalScrolling() const;
 
     WEBCORE_EXPORT String horizontalScrollbarStateForTesting() const;
     WEBCORE_EXPORT String verticalScrollbarStateForTesting() const;
@@ -183,7 +183,7 @@ public:
     // Force the contents to recompute their size (i.e. do layout).
     virtual void updateContentsSize() { }
 
-    enum class AvailableSizeChangeReason {
+    enum class AvailableSizeChangeReason : bool {
         ScrollbarsChanged,
         AreaSizeChanged
     };
@@ -200,7 +200,8 @@ public:
     void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
-    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
+    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    ScrollingNodeID scrollingNodeIDForTesting();
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;
     ScrollAnimator* existingScrollAnimator() const { return m_scrollAnimator.get(); }
@@ -304,7 +305,7 @@ public:
     bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
     void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
 
-    enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
+    enum class VisibleContentRectIncludesScrollbars : bool { No, Yes };
     enum VisibleContentRectBehavior {
         ContentsVisibleRect,
 #if PLATFORM(IOS_FAMILY)
@@ -437,7 +438,7 @@ protected:
     WEBCORE_EXPORT virtual void createScrollbarsController();
     WEBCORE_EXPORT void setScrollbarsController(std::unique_ptr<ScrollbarsController>&&);
 
-    LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> = std::nullopt) const;
+    WEBCORE_EXPORT LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> = std::nullopt) const;
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
@@ -482,6 +483,8 @@ private:
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };
     bool m_scrollShouldClearLatchedState { false };
+
+    Markable<ScrollingNodeID> m_scrollingNodeIDForTesting;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollableArea&);
