@@ -116,12 +116,14 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
 
 void LibWebRTCMediaEndpoint::suspend()
 {
+    stopLoggingStats();
     if (m_rtcSocketFactory)
         m_rtcSocketFactory->suspend();
 }
 
 void LibWebRTCMediaEndpoint::resume()
 {
+    startLoggingStats();
     if (m_rtcSocketFactory)
         m_rtcSocketFactory->resume();
 }
