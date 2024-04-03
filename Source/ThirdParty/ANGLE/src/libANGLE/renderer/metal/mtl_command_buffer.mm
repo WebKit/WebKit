@@ -1756,8 +1756,26 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilRefVal(uint32_t ref)
     return setStencilRefVals(ref, ref);
 }
 
-RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewport)
+RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &intialViewport,
+                                                        id<MTLRasterizationRateMap> map)
 {
+    auto viewport = intialViewport;
+    if (map)
+    {
+        auto adjustedOrigin =
+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.originX, (int)viewport.originY)
+                                       forLayer:0];
+        auto adjustedSize =
+            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(viewport.width, viewport.height)
+                                       forLayer:0];
+
+        viewport.originX      = std::max<double>(0, adjustedOrigin.x);
+        viewport.originY      = std::max<double>(0, adjustedOrigin.y);
+        MTLSize screenSize = [map screenSize];
+        viewport.width  = std::min<double>(screenSize.width, ceilf(adjustedSize.x));
+        viewport.height = std::min<double>(screenSize.height, ceilf(adjustedSize.y));
+    }
+
     if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
     {
         return *this;
@@ -2220,9 +2238,14 @@ void RenderCommandEncoder::popDebugGroup()
 }
 
 id<MTLRasterizationRateMap> RenderCommandEncoder::rasterizationRateMapForPass(id<MTLRasterizationRateMap> map,
-                                                                              id<MTLTexture>) const
+                                                                              id<MTLTexture> texture) const
 {
-    return map;
+    if (!mCachedRenderPassDescObjC.get())
+        return nil;
+
+    MTLSize size = [map physicalSizeForLayer:0];
+    id<MTLTexture> t = mCachedRenderPassDescObjC.get().colorAttachments[0].texture;
+    return t.width == size.width && t.height == size.height ? map : nil;
 }
 
 RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,

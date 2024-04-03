@@ -689,7 +689,7 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
     MTLScissorRect scissorRectMtl =
         GetScissorRect(params.dstScissorRect, params.dstTextureSize.height, params.dstFlipY);
 
-    cmdEncoder->setViewport(viewportMtl);
+    cmdEncoder->setViewport(viewportMtl, nil);
     cmdEncoder->setScissorRect(scissorRectMtl, nil);
 
     if (params.src)
@@ -1224,7 +1224,7 @@ angle::Result ClearUtils::setupClearWithDraw(const gl::Context *context,
 
     scissorRect = GetScissorRect(params.clearArea, params.dstTextureSize.height, params.flipY);
 
-    cmdEncoder->setViewport(viewport);
+    cmdEncoder->setViewport(viewport, nil);
     cmdEncoder->setScissorRect(scissorRect, nil);
 
     // uniform

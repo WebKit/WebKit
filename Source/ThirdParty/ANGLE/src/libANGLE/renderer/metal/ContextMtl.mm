@@ -2654,7 +2654,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                     mState.getBlendColor().blue, mState.getBlendColor().alpha);
                 break;
             case DIRTY_BIT_VIEWPORT:
-                mRenderEncoder.setViewport(mViewport);
+                mRenderEncoder.setViewport(mViewport, mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
                 break;
             case DIRTY_BIT_SCISSOR:
                 mRenderEncoder.setScissorRect(mScissorRect, mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
@@ -2683,7 +2683,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                 // Already handled.
                 break;
             case DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
-                if (getState().privateState().isVariableRasterizationRateEnabled())
+                if (getState().privateState().isVariableRasterizationRateEnabled() && mRasterizationRateMap)
                 {
                     mRenderEncoder.setRasterizationRateMap(mRenderEncoder.rasterizationRateMapForPass(mRasterizationRateMap, mRasterizationRateMapTexture));
                 }
