@@ -2856,5 +2856,3 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context
 # webkit.org/b/271865 REGRESSION (276749@main): [ MacOS WK1 ] 2X backdrop-filter tests are consistent failures 
 [ Sonoma+ ] css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties/backdrop-filter.html [ Failure ]
-
-webkit.org/b/271892 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe.html [ Failure ]
