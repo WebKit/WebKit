@@ -222,6 +222,9 @@ OTHER_LDFLAGS = $(inherited) -lsqlite3 -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DI
 
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=appletv*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=watch*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=xr*] = ;
 
 REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 // Needed for bincompat (rdar://117360317)

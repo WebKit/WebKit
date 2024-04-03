@@ -99,6 +99,9 @@ OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWe
 
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*] = -Wl,-delay_framework,CoreTelephony;
 OTHER_LDFLAGS_DELAY_INIT[sdk=iphone*17.*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=appletv*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=watch*] = ;
+OTHER_LDFLAGS_DELAY_INIT[sdk=xr*] = ;
 
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
