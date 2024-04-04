@@ -516,11 +516,14 @@ static ShaderModule::VertexOutputs parseVertexReturnType(const WGSL::Type& type)
     return vertexOutputs;
 }
 
-static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn)
+static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn, const std::optional<unsigned>& optionalLocation)
 {
     auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
-    if (!inputStruct)
+    if (!inputStruct) {
+        if (optionalLocation)
+            vertexStageIn.add(*optionalLocation, vertexFormatTypeForStructMember(&type));
         return;
+    }
 
     for (auto& member : inputStruct->structure.members()) {
         if (!member.location())
@@ -639,7 +642,7 @@ static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& funct
             continue;
 
         if (auto* inferredType = parameter.typeName().inferredType())
-            populateStageInMap(*inferredType, result);
+            populateStageInMap(*inferredType, result, parameter.location());
     }
 
     return result;
