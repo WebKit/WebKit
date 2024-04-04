@@ -15,12 +15,14 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/assorted-lengths.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/background-position-responsive.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/backgroundPosition.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/backgroundSize.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/baselineShift.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/borderImageWidth.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/borderRadius.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/borderWidth.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/box-shadow-responsive.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/boxShadow.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/clip.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/columnCount.html
@@ -31,11 +33,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/fontWeight.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/lineHeight.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/minHeight.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offset-path.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offsetDistance.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offsetRotate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/perspective.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/responsive-test.js
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/rotate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/rowGap.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/shapeMargin.html
@@ -52,3 +58,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/transform.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/translate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/verticalAlign.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/width.html
