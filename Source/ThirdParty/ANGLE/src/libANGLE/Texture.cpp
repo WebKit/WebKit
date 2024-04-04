@@ -130,6 +130,7 @@ TextureState::TextureState(TextureType type)
       mIsInternalIncompleteTexture(false),
       mHasBeenBoundAsImage(false),
       mHasBeenBoundAsAttachment(false),
+      mHasBeenBoundToMSRTTFramebuffer(false),
       mImmutableFormat(false),
       mImmutableLevels(0),
       mUsage(GL_NONE),
@@ -2548,6 +2549,15 @@ void Texture::onBufferContentsChange()
     mState.mInitState = InitState::MayNeedInit;
     signalDirtyState(DIRTY_BIT_IMPLEMENTATION);
     onStateChange(angle::SubjectMessage::ContentsChanged);
+}
+
+void Texture::onBindToMSRTTFramebuffer()
+{
+    if (!mState.mHasBeenBoundToMSRTTFramebuffer)
+    {
+        mDirtyBits.set(DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER);
+        mState.mHasBeenBoundToMSRTTFramebuffer = true;
+    }
 }
 
 GLenum Texture::getImplementationColorReadFormat(const Context *context) const

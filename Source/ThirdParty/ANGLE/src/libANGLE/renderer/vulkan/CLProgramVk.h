@@ -8,6 +8,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
@@ -44,12 +45,13 @@ class CLProgramVk : public CLProgramImpl
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)
+    static constexpr uint32_t kBinaryVersion = 2;
     struct ProgramBinaryOutputHeader
     {
-        uint32_t headerVersion{1};
+        uint32_t headerVersion{kBinaryVersion};
         cl_program_binary_type binaryType{CL_PROGRAM_BINARY_TYPE_NONE};
+        cl_build_status buildStatus{CL_BUILD_NONE};
     };
-    static constexpr uint32_t LatestSupportedBinaryVersion = 1;
 
     struct ScopedClspvContext : angle::NonCopyable
     {
@@ -193,6 +195,7 @@ class CLProgramVk : public CLProgramImpl
 
     const DeviceProgramData *getDeviceProgramData(const char *kernelName) const;
     const DeviceProgramData *getDeviceProgramData(const _cl_device_id *device) const;
+    CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
 
     bool buildInternal(const cl::DevicePtrs &devices,
                        std::string options,

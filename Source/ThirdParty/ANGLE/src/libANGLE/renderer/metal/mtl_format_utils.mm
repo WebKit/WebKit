@@ -195,7 +195,7 @@ angle::Result FormatTable::initialize(const DisplayMtl *display)
         const auto formatId = static_cast<angle::FormatID>(i);
 
         mPixelFormatTable[i].init(display, formatId);
-        mPixelFormatTable[i].caps = &mNativePixelFormatCapsTable[mPixelFormatTable[i].metalFormat];
+        mPixelFormatTable[i].caps = mNativePixelFormatCapsTable[mPixelFormatTable[i].metalFormat];
 
         if (mPixelFormatTable[i].actualFormatId != mPixelFormatTable[i].intendedFormatId)
         {

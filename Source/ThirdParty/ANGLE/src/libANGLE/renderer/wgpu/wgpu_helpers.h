@@ -32,6 +32,8 @@ struct TextureInfo
     uint32_t mipLevelCount;
 };
 
+wgpu::TextureDimension toWgpuTextureDimension(gl::TextureType glTextureType);
+
 class ImageHelper
 {
   public:
@@ -52,7 +54,6 @@ class ImageHelper
     LevelIndex toWgpuLevel(gl::LevelIndex levelIndexGl) const;
     gl::LevelIndex toGlLevel(LevelIndex levelIndexWgpu) const;
     wgpu::Texture &getTexture() { return mTexture; }
-    wgpu::Extent3D toWgpuExtent3D(const gl::Extents &size);
     TextureInfo getWgpuTextureInfo(const gl::ImageIndex &index);
     wgpu::TextureFormat toWgpuTextureFormat() const { return mTextureDescriptor.format; }
     const wgpu::TextureDescriptor &getTextureDescriptor() const { return mTextureDescriptor; }
@@ -60,7 +61,7 @@ class ImageHelper
 
   private:
     wgpu::Texture mTexture;
-    wgpu::TextureDescriptor mTextureDescriptor;
+    wgpu::TextureDescriptor mTextureDescriptor = {};
 
     gl::LevelIndex mFirstAllocatedLevel;
 

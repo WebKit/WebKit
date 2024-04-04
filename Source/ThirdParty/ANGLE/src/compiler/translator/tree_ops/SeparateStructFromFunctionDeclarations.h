@@ -25,9 +25,7 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-[[nodiscard]] bool SeparateStructFromFunctionDeclarations(TCompiler *compiler,
-                                                          TIntermBlock *root,
-                                                          TSymbolTable *symbolTable);
+[[nodiscard]] bool SeparateStructFromFunctionDeclarations(TCompiler &compiler, TIntermBlock &root);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SEPARATESTRUCTFROMFUNCTIONDECLARATIONS_H_

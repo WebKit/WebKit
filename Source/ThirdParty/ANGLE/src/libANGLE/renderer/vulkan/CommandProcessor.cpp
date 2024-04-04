@@ -255,7 +255,8 @@ void CommandProcessorTask::initRenderPassProcessCommands(
     ProtectionType protectionType,
     egl::ContextPriority priority,
     RenderPassCommandBufferHelper *commandBuffer,
-    const RenderPass *renderPass)
+    const RenderPass *renderPass,
+    VkFramebuffer framebufferOverride)
 {
     mTask                    = CustomTask::ProcessRenderPassCommands;
     mRenderPassCommandBuffer = commandBuffer;
@@ -263,6 +264,7 @@ void CommandProcessorTask::initRenderPassProcessCommands(
     mProtectionType          = protectionType;
 
     mRenderPass.setHandle(renderPass->getHandle());
+    mFramebufferOverride = framebufferOverride;
 }
 
 void CommandProcessorTask::copyPresentInfo(const VkPresentInfoKHR &other)
@@ -407,6 +409,7 @@ CommandProcessorTask &CommandProcessorTask::operator=(CommandProcessorTask &&rhs
     }
 
     std::swap(mRenderPass, rhs.mRenderPass);
+    std::swap(mFramebufferOverride, rhs.mFramebufferOverride);
     std::swap(mOutsideRenderPassCommandBuffer, rhs.mOutsideRenderPassCommandBuffer);
     std::swap(mRenderPassCommandBuffer, rhs.mRenderPassCommandBuffer);
     std::swap(mTask, rhs.mTask);
@@ -765,7 +768,7 @@ angle::Result CommandProcessor::processTask(CommandProcessorTask *task)
             RenderPassCommandBufferHelper *commandBuffer = task->getRenderPassCommandBuffer();
             ANGLE_TRY(mCommandQueue->flushRenderPassCommands(
                 this, task->getProtectionType(), task->getPriority(), task->getRenderPass(),
-                &commandBuffer));
+                task->getFramebufferOverride(), &commandBuffer));
 
             RenderPassCommandBufferHelper *originalCommandBuffer =
                 task->getRenderPassCommandBuffer();
@@ -974,6 +977,7 @@ angle::Result CommandProcessor::enqueueFlushRenderPassCommands(
     ProtectionType protectionType,
     egl::ContextPriority priority,
     const RenderPass &renderPass,
+    VkFramebuffer framebufferOverride,
     RenderPassCommandBufferHelper **renderPassCommands)
 {
     ANGLE_TRY(checkAndPopPendingError(context));
@@ -987,7 +991,8 @@ angle::Result CommandProcessor::enqueueFlushRenderPassCommands(
     SecondaryCommandMemoryAllocator *allocator = (*renderPassCommands)->detachAllocator();
 
     CommandProcessorTask task;
-    task.initRenderPassProcessCommands(protectionType, priority, *renderPassCommands, &renderPass);
+    task.initRenderPassProcessCommands(protectionType, priority, *renderPassCommands, &renderPass,
+                                       framebufferOverride);
     ANGLE_TRY(queueCommand(std::move(task)));
 
     ANGLE_TRY(mRenderer->getRenderPassCommandBufferHelper(context, commandPool, allocator,
@@ -1343,12 +1348,13 @@ angle::Result CommandQueue::flushRenderPassCommands(
     ProtectionType protectionType,
     egl::ContextPriority priority,
     const RenderPass &renderPass,
+    VkFramebuffer framebufferOverride,
     RenderPassCommandBufferHelper **renderPassCommands)
 {
     std::lock_guard<std::mutex> lock(mMutex);
     ANGLE_TRY(ensurePrimaryCommandBufferValid(context, protectionType, priority));
     CommandsState &state = mCommandsStateMap[priority][protectionType];
-    return (*renderPassCommands)->flushToPrimary(context, &state, &renderPass);
+    return (*renderPassCommands)->flushToPrimary(context, &state, renderPass, framebufferOverride);
 }
 
 angle::Result CommandQueue::submitCommands(Context *context,

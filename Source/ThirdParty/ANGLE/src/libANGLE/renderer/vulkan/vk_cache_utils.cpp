@@ -261,10 +261,15 @@ void UnpackAttachmentDesc(Context *context,
         ConvertImageLayoutToVkImageLayout(context, static_cast<ImageLayout>(ops.finalLayout));
 }
 
+struct AttachmentInfo
+{
+    bool usedAsInputAttachment;
+    bool isInvalidated;
+};
+
 void UnpackColorResolveAttachmentDesc(VkAttachmentDescription2 *desc,
                                       angle::FormatID formatID,
-                                      bool usedAsInputAttachment,
-                                      bool isInvalidated)
+                                      const AttachmentInfo &info)
 {
     *desc        = {};
     desc->sType  = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
@@ -283,8 +288,9 @@ void UnpackColorResolveAttachmentDesc(VkAttachmentDescription2 *desc,
     // storeOp should be STORE.  If the attachment is invalidated, it is set to DONT_CARE.
     desc->samples = VK_SAMPLE_COUNT_1_BIT;
     desc->loadOp =
-        usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    desc->storeOp = isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
+        info.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    desc->storeOp =
+        info.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
     desc->stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     desc->stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     desc->initialLayout  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -293,10 +299,8 @@ void UnpackColorResolveAttachmentDesc(VkAttachmentDescription2 *desc,
 
 void UnpackDepthStencilResolveAttachmentDesc(VkAttachmentDescription2 *desc,
                                              angle::FormatID formatID,
-                                             bool usedAsDepthInputAttachment,
-                                             bool usedAsStencilInputAttachment,
-                                             bool isDepthInvalidated,
-                                             bool isStencilInvalidated)
+                                             const AttachmentInfo &depthInfo,
+                                             const AttachmentInfo &stencilInfo)
 {
     // There cannot be simultaneous usages of the depth/stencil resolve image, as depth/stencil
     // resolve currently only comes from depth/stencil renderbuffers.
@@ -308,22 +312,22 @@ void UnpackDepthStencilResolveAttachmentDesc(VkAttachmentDescription2 *desc,
     const angle::Format &angleFormat = angle::Format::Get(formatID);
     ASSERT(angleFormat.depthBits != 0 || angleFormat.stencilBits != 0);
 
-    // Missing aspects are folded in is*Invalidated parameters, so no need to double check.
-    ASSERT(angleFormat.depthBits > 0 || isDepthInvalidated);
-    ASSERT(angleFormat.stencilBits > 0 || isStencilInvalidated);
+    // Missing aspects are folded in isInvalidate parameters, so no need to double check.
+    ASSERT(angleFormat.depthBits > 0 || depthInfo.isInvalidated);
+    ASSERT(angleFormat.stencilBits > 0 || stencilInfo.isInvalidated);
 
     // Similarly to color resolve attachments, sample count is 1, loadOp is LOAD or DONT_CARE based
     // on whether unresolve is required, and storeOp is STORE or DONT_CARE based on whether the
     // attachment is invalidated or the aspect exists.
     desc->samples = VK_SAMPLE_COUNT_1_BIT;
-    desc->loadOp =
-        usedAsDepthInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    desc->loadOp  = depthInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
+                                                    : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     desc->storeOp =
-        isDepthInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
-    desc->stencilLoadOp =
-        usedAsStencilInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        depthInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
+    desc->stencilLoadOp = stencilInfo.usedAsInputAttachment ? VK_ATTACHMENT_LOAD_OP_LOAD
+                                                            : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     desc->stencilStoreOp =
-        isStencilInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
+        stencilInfo.isInvalidated ? VK_ATTACHMENT_STORE_OP_DONT_CARE : VK_ATTACHMENT_STORE_OP_STORE;
     desc->initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
     desc->finalLayout   = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 }
@@ -1304,7 +1308,8 @@ enum class PipelineState
     RenderPassSrgbWriteControl,
     RenderPassHasFramebufferFetch,
     RenderPassIsRenderToTexture,
-    RenderPassResolveDepthStencil,
+    RenderPassResolveDepth,
+    RenderPassResolveStencil,
     RenderPassUnresolveDepth,
     RenderPassUnresolveStencil,
     RenderPassColorResolveMask,
@@ -1462,8 +1467,10 @@ using PipelineStateBitSet   = angle::BitSetArray<angle::EnumSize<PipelineState>(
         (*valuesOut)[PipelineState::RenderPassHasFramebufferFetch] =
             renderPass.hasFramebufferFetch();
         (*valuesOut)[PipelineState::RenderPassIsRenderToTexture] = renderPass.isRenderToTexture();
-        (*valuesOut)[PipelineState::RenderPassResolveDepthStencil] =
-            renderPass.hasDepthStencilResolveAttachment();
+        (*valuesOut)[PipelineState::RenderPassResolveDepth] =
+            renderPass.hasDepthResolveAttachment();
+        (*valuesOut)[PipelineState::RenderPassResolveStencil] =
+            renderPass.hasStencilResolveAttachment();
         (*valuesOut)[PipelineState::RenderPassUnresolveDepth] =
             renderPass.hasDepthUnresolveAttachment();
         (*valuesOut)[PipelineState::RenderPassUnresolveStencil] =
@@ -1614,7 +1621,8 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
         {PipelineState::RenderPassSrgbWriteControl, "rp_srgb"},
         {PipelineState::RenderPassHasFramebufferFetch, "rp_has_framebuffer_fetch"},
         {PipelineState::RenderPassIsRenderToTexture, "rp_is_msrtt"},
-        {PipelineState::RenderPassResolveDepthStencil, "rp_resolve_depth_stencil"},
+        {PipelineState::RenderPassResolveDepth, "rp_resolve_depth"},
+        {PipelineState::RenderPassResolveStencil, "rp_resolve_stencil"},
         {PipelineState::RenderPassUnresolveDepth, "rp_unresolve_depth"},
         {PipelineState::RenderPassUnresolveStencil, "rp_unresolve_stencil"},
         {PipelineState::RenderPassColorResolveMask, "rp_resolve_color"},
@@ -1680,7 +1688,8 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
         case PipelineState::RenderPassSrgbWriteControl:
         case PipelineState::RenderPassHasFramebufferFetch:
         case PipelineState::RenderPassIsRenderToTexture:
-        case PipelineState::RenderPassResolveDepthStencil:
+        case PipelineState::RenderPassResolveDepth:
+        case PipelineState::RenderPassResolveStencil:
         case PipelineState::RenderPassUnresolveDepth:
         case PipelineState::RenderPassUnresolveStencil:
         case PipelineState::PrimitiveRestartEnable:
@@ -2032,7 +2041,7 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
     out << "\\n";
 }
 
-[[maybe_unused]] void OutputAllPipelineState(ContextVk *contextVk,
+[[maybe_unused]] void OutputAllPipelineState(Context *context,
                                              std::ostream &out,
                                              const UnpackedPipelineState &pipeline,
                                              GraphicsPipelineSubset subset,
@@ -2062,7 +2071,7 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
 
         // Shaders state
         {PipelineState::ViewportNegativeOneToOne,
-         hasShaders && contextVk->getFeatures().supportsDepthClipControl.enabled},
+         hasShaders && context->getFeatures().supportsDepthClipControl.enabled},
         {PipelineState::DepthClampEnable, 0},
         {PipelineState::PolygonMode, hasShaders ? VK_POLYGON_MODE_FILL : 0},
         {PipelineState::CullMode, hasShaders ? VK_CULL_MODE_NONE : 0},
@@ -2100,7 +2109,8 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
         {PipelineState::RenderPassSrgbWriteControl, 0},
         {PipelineState::RenderPassHasFramebufferFetch, 0},
         {PipelineState::RenderPassIsRenderToTexture, 0},
-        {PipelineState::RenderPassResolveDepthStencil, 0},
+        {PipelineState::RenderPassResolveDepth, 0},
+        {PipelineState::RenderPassResolveStencil, 0},
         {PipelineState::RenderPassUnresolveDepth, 0},
         {PipelineState::RenderPassUnresolveStencil, 0},
         {PipelineState::RenderPassColorResolveMask, 0},
@@ -2146,7 +2156,7 @@ PipelineState GetPipelineState(size_t stateIndex, bool *isRangedOut, size_t *sub
 
 template <typename Hash>
 void DumpPipelineCacheGraph(
-    ContextVk *contextVk,
+    Context *context,
     const std::unordered_map<GraphicsPipelineDesc,
                              PipelineHelper,
                              Hash,
@@ -2154,7 +2164,7 @@ void DumpPipelineCacheGraph(
 {
     constexpr GraphicsPipelineSubset kSubset = GraphicsPipelineCacheTypeHelper<Hash>::kSubset;
 
-    std::ostream &out = contextVk->getPipelineCacheGraphStream();
+    std::ostream &out = context->getRenderer()->getPipelineCacheGraphStream();
 
     static std::atomic<uint32_t> sCacheSerial(0);
     angle::HashMap<GraphicsPipelineDesc, uint32_t, Hash,
@@ -2198,7 +2208,7 @@ void DumpPipelineCacheGraph(
     out << " subgraph cluster_" << subsetTag << cacheSerial << "{\n";
     out << "  label=\"Program " << cacheSerial << "\\n"
         << subsetDescription << "\\nCommon state:\\n";
-    OutputAllPipelineState(contextVk, out, pipelines[0], kSubset, commonState, true);
+    OutputAllPipelineState(context, out, pipelines[0], kSubset, commonState, true);
     out << "\";\n";
 
     descId = 0;
@@ -2250,7 +2260,7 @@ void DumpPipelineCacheGraph(
         out << "  p" << subsetTag << cacheSerial << "_" << descId << "[label=\"Pipeline " << descId
             << "\\n"
             << feedbackDesc << "\\n";
-        OutputAllPipelineState(contextVk, out, pipelines[descId], kSubset, nodeState, false);
+        OutputAllPipelineState(context, out, pipelines[descId], kSubset, nodeState, false);
         out << "\"]" << style << ";\n";
 
         descToId[desc] = descId++;
@@ -2366,9 +2376,9 @@ angle::Result InitializePipelineFromLibraries(Context *context,
     return angle::Result::Continue;
 }
 
-bool ShouldDumpPipelineCacheGraph(ContextVk *contextVk)
+bool ShouldDumpPipelineCacheGraph(Context *context)
 {
-    return kDumpPipelineCacheGraph && contextVk->isPipelineCacheGraphDumpEnabled();
+    return kDumpPipelineCacheGraph && context->getRenderer()->isPipelineCacheGraphDumpEnabled();
 }
 }  // anonymous namespace
 
@@ -2481,20 +2491,34 @@ void RenderPassDesc::removeColorUnresolveAttachment(size_t colorIndexGL)
     mColorUnresolveAttachmentMask.reset(colorIndexGL);
 }
 
-void RenderPassDesc::packDepthStencilResolveAttachment()
+void RenderPassDesc::packDepthResolveAttachment()
 {
     ASSERT(hasDepthStencilAttachment());
-    ASSERT(!hasDepthStencilResolveAttachment());
+    ASSERT(!hasDepthResolveAttachment());
 
-    mResolveDepthStencil = true;
+    mResolveDepth = true;
 }
 
-void RenderPassDesc::packDepthStencilUnresolveAttachment(bool unresolveDepth, bool unresolveStencil)
+void RenderPassDesc::packStencilResolveAttachment()
+{
+    ASSERT(hasDepthStencilAttachment());
+    ASSERT(!hasStencilResolveAttachment());
+
+    mResolveStencil = true;
+}
+
+void RenderPassDesc::packDepthUnresolveAttachment()
 {
     ASSERT(hasDepthStencilAttachment());
 
-    mUnresolveDepth   = unresolveDepth;
-    mUnresolveStencil = unresolveStencil;
+    mUnresolveDepth = true;
+}
+
+void RenderPassDesc::packStencilUnresolveAttachment()
+{
+    ASSERT(hasDepthStencilAttachment());
+
+    mUnresolveStencil = true;
 }
 
 void RenderPassDesc::removeDepthStencilUnresolveAttachment()
@@ -4444,10 +4468,12 @@ void PipelineHelper::destroy(VkDevice device)
     reset();
 }
 
-void PipelineHelper::release(ContextVk *contextVk)
+void PipelineHelper::release(Context *context)
 {
-    contextVk->getRenderer()->collectGarbage(mUse, &mPipeline);
-    contextVk->getRenderer()->collectGarbage(mUse, &mLinkedPipelineToRelease);
+    Renderer *renderer = context->getRenderer();
+
+    renderer->collectGarbage(mUse, &mPipeline);
+    renderer->collectGarbage(mUse, &mLinkedPipelineToRelease);
 
     // If there is a pending task, wait for it before release.
     if (mMonolithicPipelineCreationTask.isValid())
@@ -4455,8 +4481,8 @@ void PipelineHelper::release(ContextVk *contextVk)
         if (mMonolithicPipelineCreationTask.isPosted())
         {
             mMonolithicPipelineCreationTask.wait();
-            contextVk->getRenderer()->collectGarbage(
-                mUse, &mMonolithicPipelineCreationTask.getTask()->getPipeline());
+            renderer->collectGarbage(mUse,
+                                     &mMonolithicPipelineCreationTask.getTask()->getPipeline());
         }
         mMonolithicPipelineCreationTask.reset();
     }
@@ -4553,10 +4579,9 @@ FramebufferHelper &FramebufferHelper::operator=(FramebufferHelper &&other)
     return *this;
 }
 
-angle::Result FramebufferHelper::init(ContextVk *contextVk,
-                                      const VkFramebufferCreateInfo &createInfo)
+angle::Result FramebufferHelper::init(Context *context, const VkFramebufferCreateInfo &createInfo)
 {
-    ANGLE_VK_TRY(contextVk, mFramebuffer.init(contextVk->getDevice(), createInfo));
+    ANGLE_VK_TRY(context, mFramebuffer.init(context->getDevice(), createInfo));
     return angle::Result::Continue;
 }
 
@@ -6771,7 +6796,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         if (isYUVExternalFormat)
         {
             const vk::ExternalYuvFormatInfo &externalFormatInfo =
-                context->getRenderer()->mExternalFormatTable.getExternalFormatInfo(
+                context->getRenderer()->getExternalFormatTable()->getExternalFormatInfo(
                     attachmentFormatID);
             attachmentDescs[attachmentCount.get()].format =
                 externalFormatInfo.colorAttachmentFormat;
@@ -6808,6 +6833,19 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
 
         isDepthInvalidated   = ops[attachmentCount].isInvalidated;
         isStencilInvalidated = ops[attachmentCount].isStencilInvalidated;
+
+        ++attachmentCount;
+    }
+
+    // Pack fragment shading rate attachment, if any
+    if (desc.hasFragmentShadingAttachment())
+    {
+        vk::UnpackFragmentShadingRateAttachmentDesc(&attachmentDescs[attachmentCount.get()]);
+
+        fragmentShadingRateAttachmentRef.sType      = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
+        fragmentShadingRateAttachmentRef.attachment = attachmentCount.get();
+        fragmentShadingRateAttachmentRef.layout =
+            VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR;
 
         ++attachmentCount;
     }
@@ -6860,7 +6898,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         {
             vk::UnpackColorResolveAttachmentDesc(
                 &attachmentDescs[attachmentCount.get()], attachmentFormatID,
-                desc.hasColorUnresolveAttachment(colorIndexGL), isInvalidated);
+                {desc.hasColorUnresolveAttachment(colorIndexGL), isInvalidated});
         }
 
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -6868,7 +6906,7 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
         if (isYUVExternalFormat)
         {
             const vk::ExternalYuvFormatInfo &externalFormatInfo =
-                context->getRenderer()->mExternalFormatTable.getExternalFormatInfo(
+                context->getRenderer()->getExternalFormatTable()->getExternalFormatInfo(
                     attachmentFormatID);
             externalFormat.externalFormat        = externalFormatInfo.externalFormat;
             VkAttachmentDescription2 &attachment = attachmentDescs[attachmentCount.get()];
@@ -6915,21 +6953,8 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
 
         vk::UnpackDepthStencilResolveAttachmentDesc(
             &attachmentDescs[attachmentCount.get()], attachmentFormatID,
-            desc.hasDepthUnresolveAttachment(), desc.hasStencilUnresolveAttachment(),
-            isDepthInvalidated, isStencilInvalidated);
-
-        ++attachmentCount;
-    }
-
-    // Pack fragment shading rate attachment, if any
-    if (desc.hasFragmentShadingAttachment())
-    {
-        vk::UnpackFragmentShadingRateAttachmentDesc(&attachmentDescs[attachmentCount.get()]);
-
-        fragmentShadingRateAttachmentRef.sType      = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
-        fragmentShadingRateAttachmentRef.attachment = attachmentCount.get();
-        fragmentShadingRateAttachmentRef.layout =
-            VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR;
+            {desc.hasDepthUnresolveAttachment(), isDepthInvalidated},
+            {desc.hasStencilUnresolveAttachment(), isStencilInvalidated});
 
         ++attachmentCount;
     }
@@ -7091,16 +7116,16 @@ angle::Result RenderPassCache::MakeRenderPass(vk::Context *context,
 
 // GraphicsPipelineCache implementation.
 template <typename Hash>
-void GraphicsPipelineCache<Hash>::destroy(ContextVk *contextVk)
+void GraphicsPipelineCache<Hash>::destroy(vk::Context *context)
 {
-    if (vk::ShouldDumpPipelineCacheGraph(contextVk) && !mPayload.empty())
+    if (vk::ShouldDumpPipelineCacheGraph(context) && !mPayload.empty())
     {
-        vk::DumpPipelineCacheGraph<Hash>(contextVk, mPayload);
+        vk::DumpPipelineCacheGraph<Hash>(context, mPayload);
     }
 
-    accumulateCacheStats(contextVk->getRenderer());
+    accumulateCacheStats(context->getRenderer());
 
-    VkDevice device = contextVk->getDevice();
+    VkDevice device = context->getDevice();
 
     for (auto &item : mPayload)
     {
@@ -7112,17 +7137,17 @@ void GraphicsPipelineCache<Hash>::destroy(ContextVk *contextVk)
 }
 
 template <typename Hash>
-void GraphicsPipelineCache<Hash>::release(ContextVk *contextVk)
+void GraphicsPipelineCache<Hash>::release(vk::Context *context)
 {
-    if (vk::ShouldDumpPipelineCacheGraph(contextVk) && !mPayload.empty())
+    if (vk::ShouldDumpPipelineCacheGraph(context) && !mPayload.empty())
     {
-        vk::DumpPipelineCacheGraph<Hash>(contextVk, mPayload);
+        vk::DumpPipelineCacheGraph<Hash>(context, mPayload);
     }
 
     for (auto &item : mPayload)
     {
         vk::PipelineHelper &pipeline = item.second;
-        pipeline.release(contextVk);
+        pipeline.release(context);
     }
 
     mPayload.clear();
@@ -7241,9 +7266,9 @@ void GraphicsPipelineCache<Hash>::populate(const vk::GraphicsPipelineDesc &desc,
 
 // Instantiate the pipeline cache functions
 template void GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>::destroy(
-    ContextVk *contextVk);
+    vk::Context *context);
 template void GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>::release(
-    ContextVk *contextVk);
+    vk::Context *context);
 template angle::Result GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>::createPipeline(
     vk::Context *context,
     vk::PipelineCacheAccess *pipelineCache,
@@ -7270,9 +7295,9 @@ template void GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>::populate(
     vk::Pipeline &&pipeline);
 
 template void GraphicsPipelineCache<GraphicsPipelineDescVertexInputHash>::destroy(
-    ContextVk *contextVk);
+    vk::Context *context);
 template void GraphicsPipelineCache<GraphicsPipelineDescVertexInputHash>::release(
-    ContextVk *contextVk);
+    vk::Context *context);
 template angle::Result GraphicsPipelineCache<GraphicsPipelineDescVertexInputHash>::createPipeline(
     vk::Context *context,
     vk::PipelineCacheAccess *pipelineCache,
@@ -7288,8 +7313,8 @@ template void GraphicsPipelineCache<GraphicsPipelineDescVertexInputHash>::popula
     const vk::GraphicsPipelineDesc &desc,
     vk::Pipeline &&pipeline);
 
-template void GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::destroy(ContextVk *contextVk);
-template void GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::release(ContextVk *contextVk);
+template void GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::destroy(vk::Context *context);
+template void GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::release(vk::Context *context);
 template angle::Result GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::createPipeline(
     vk::Context *context,
     vk::PipelineCacheAccess *pipelineCache,
@@ -7306,9 +7331,9 @@ template void GraphicsPipelineCache<GraphicsPipelineDescShadersHash>::populate(
     vk::Pipeline &&pipeline);
 
 template void GraphicsPipelineCache<GraphicsPipelineDescFragmentOutputHash>::destroy(
-    ContextVk *contextVk);
+    vk::Context *context);
 template void GraphicsPipelineCache<GraphicsPipelineDescFragmentOutputHash>::release(
-    ContextVk *contextVk);
+    vk::Context *context);
 template angle::Result
 GraphicsPipelineCache<GraphicsPipelineDescFragmentOutputHash>::createPipeline(
     vk::Context *context,

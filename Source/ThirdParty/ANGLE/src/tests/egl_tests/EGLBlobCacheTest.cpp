@@ -149,6 +149,7 @@ class EGLBlobCacheTest : public ANGLETest<>
 TEST_P(EGLBlobCacheTest, Functional)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     EGLDisplay display = getEGLWindow()->getDisplay();
 
@@ -234,6 +235,7 @@ void main()
 TEST_P(EGLBlobCacheTest, NegativeAPI)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     EXPECT_TRUE(mHasBlobCache);
 
@@ -282,6 +284,7 @@ TEST_P(EGLBlobCacheTest, NegativeAPI)
 TEST_P(EGLBlobCacheTest, FragmentOutputLocationKey)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_blend_func_extended") ||
                        getClientMajorVersion() < 3);
@@ -344,6 +347,7 @@ void main() {
 TEST_P(EGLBlobCacheTest, ShaderCacheFunctional)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
@@ -404,6 +408,7 @@ void main()
 TEST_P(EGLBlobCacheTest, ThreadSafety)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
@@ -456,6 +461,7 @@ TEST_P(EGLBlobCacheTest, ThreadSafety)
 TEST_P(EGLBlobCacheTest, CacheCorruption)
 {
     ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::CacheCompiledShader));
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
 
     EGLDisplay display = getEGLWindow()->getDisplay();
 

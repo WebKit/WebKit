@@ -22,8 +22,6 @@ import time
 
 import angle_path_util
 
-# Currently we only support a single test package name.
-TEST_PACKAGE_NAME = 'com.android.angle.test'
 
 ANGLE_TRACE_TEST_SUITE = 'angle_trace_tests'
 
@@ -58,27 +56,14 @@ def _RemovePrefix(str, prefix):
     return str[len(prefix):]
 
 
-def _FindPackageName(apk_path):
-    aapt = _FindAapt()
-    badging = subprocess.check_output([aapt, 'dump', 'badging', apk_path]).decode()
-    package_name = next(
-        _RemovePrefix(item, 'name=').strip('\'')
-        for item in badging.split()
-        if item.startswith('name='))
-    logging.debug('Package name: %s' % package_name)
-    return package_name
-
-
 def _InitializeAndroid(apk_path):
     if _GetAdbRoot():
         # /data/local/tmp/ is not writable by apps.. So use the app path
-        _Global.temp_dir = '/data/data/' + TEST_PACKAGE_NAME + '/tmp/'
+        _Global.temp_dir = '/data/data/com.android.angle.test/tmp/'
     else:
         # /sdcard/ is slow (see https://crrev.com/c/3615081 for details)
         # logging will be fully-buffered, can be truncated on crashes
         _Global.temp_dir = '/sdcard/Download/'
-
-    assert _FindPackageName(apk_path) == TEST_PACKAGE_NAME
 
     apk_files = subprocess.check_output([_FindAapt(), 'list', apk_path]).decode().split()
     apk_so_libs = [posixpath.basename(f) for f in apk_files if f.endswith('.so')]
@@ -229,9 +214,9 @@ def _AddDeqpFiles(suite_name):
 
 
 def _GetDeviceApkPath():
-    pm_path = _AdbShell('pm path %s || true' % TEST_PACKAGE_NAME).decode().strip()
+    pm_path = _AdbShell('pm path com.android.angle.test || true').decode().strip()
     if not pm_path:
-        logging.debug('No installed path found for %s' % TEST_PACKAGE_NAME)
+        logging.debug('No installed path found for com.android.angle.test')
         return None
     device_apk_path = _RemovePrefix(pm_path, 'package:')
     logging.debug('Device APK path is %s' % device_apk_path)
@@ -264,8 +249,7 @@ def _CompareHashes(local_path, device_path):
 
     if _Global.use_run_as and device_path.startswith('/data'):
         # Use run-as for files that reside on /data, which aren't accessible without root
-        cmd = "run-as {TEST_PACKAGE_NAME} sh -c '{cmd}'".format(
-            TEST_PACKAGE_NAME=TEST_PACKAGE_NAME, cmd=cmd)
+        cmd = "run-as com.android.angle.test sh -c '{cmd}'".format(cmd=cmd)
 
     device_hash = _AdbShell(cmd).decode().strip()
     if not device_hash:
@@ -302,11 +286,10 @@ def _PrepareTestSuite(suite_name):
         'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.RECORD_AUDIO',
         'android.permission.WRITE_EXTERNAL_STORAGE'
     ]
-    _AdbShell('p=%s;'
-              'for q in %s;do pm grant "$p" "$q";done;' %
-              (TEST_PACKAGE_NAME, ' '.join(permissions)))
+    _AdbShell('for q in %s;do pm grant com.android.angle.test "$q";done;' %
+              (' '.join(permissions)))
 
-    _AdbShell('appops set %s MANAGE_EXTERNAL_STORAGE allow || true' % TEST_PACKAGE_NAME)
+    _AdbShell('appops set com.android.angle.test MANAGE_EXTERNAL_STORAGE allow || true')
 
     _AdbShell('mkdir -p /sdcard/chromium_tests_root/')
     _AdbShell('mkdir -p %s' % _Global.temp_dir)
@@ -336,8 +319,8 @@ def PrepareRestrictedTraces(traces):
     app_tmp_path = '/data/local/tmp/angle_traces/'
 
     if _Global.use_run_as:
-        _AdbShell('mkdir -p ' + app_tmp_path + ' && run-as ' + TEST_PACKAGE_NAME +
-                  ' mkdir -p angle_traces')
+        _AdbShell('mkdir -p ' + app_tmp_path +
+                  ' && run-as com.android.angle.test mkdir -p angle_traces')
     else:
         _AdbShell('mkdir -p ' + app_tmp_path + ' /data/data/com.android.angle.test/angle_traces/')
 
@@ -371,7 +354,7 @@ def PrepareRestrictedTraces(traces):
             logging.debug('_PushToAppDir: Pushing %s to %s' % (local_path, tmp_path))
             try:
                 _AdbRun(['push', local_path, tmp_path])
-                _AdbShell('run-as ' + TEST_PACKAGE_NAME + ' cp ' + tmp_path + ' ./angle_traces/')
+                _AdbShell('run-as com.android.angle.test cp ' + tmp_path + ' ./angle_traces/')
                 _AdbShell('rm ' + tmp_path)
             finally:
                 _RemoveDeviceFile(tmp_path)
@@ -460,8 +443,6 @@ def _SetCaptureProps(env, device_out_dir):
 
 
 def _RunInstrumentation(flags):
-    assert TEST_PACKAGE_NAME == 'com.android.angle.test'  # inlined below for readability
-
     with _TempDeviceFile() as temp_device_file:
         cmd = r'''
 am instrument -w \

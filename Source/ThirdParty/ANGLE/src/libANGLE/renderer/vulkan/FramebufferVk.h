@@ -119,15 +119,7 @@ class FramebufferVk : public FramebufferImpl
 
     const vk::RenderPassDesc &getRenderPassDesc() const { return mRenderPassDesc; }
 
-    void updateColorResolveAttachment(
-        uint32_t colorIndexGL,
-        vk::ImageOrBufferViewSubresourceSerial resolveImageViewSerial);
-
-    angle::Result getFramebuffer(ContextVk *contextVk,
-                                 vk::MaybeImagelessFramebuffer *framebufferOut,
-                                 RenderTargetVk *resolveRenderTargetIn,
-                                 const vk::ImageView *resolveImageViewIn,
-                                 const SwapchainResolveMode swapchainResolveMode);
+    angle::Result getFramebuffer(ContextVk *contextVk, vk::RenderPassFramebuffer *framebufferOut);
 
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
     angle::Result flushDeferredClears(ContextVk *contextVk);
@@ -135,8 +127,6 @@ class FramebufferVk : public FramebufferImpl
     void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
 
     bool updateLegacyDither(ContextVk *contextVk);
-
-    void removeColorResolveAttachment(uint32_t colorIndexGL);
 
     void setBackbuffer(WindowSurfaceVk *backbuffer) { mBackbuffer = backbuffer; }
     WindowSurfaceVk *getBackbuffer() const { return mBackbuffer; }
@@ -153,6 +143,13 @@ class FramebufferVk : public FramebufferImpl
     }
 
     bool isFoveationEnabled() { return mFoveationState.isFoveated(); }
+
+  private:
+    enum class ClearWithCommand
+    {
+        Always,
+        OptimizeWithLoadOp,
+    };
 
     enum class RenderTargetImage
     {
@@ -172,19 +169,23 @@ class FramebufferVk : public FramebufferImpl
         RenderTargetImage renderTargetImage;
     };
 
+    // Returns the attachments to be used to create a framebuffer.  The views returned in
+    // |unpackedAttachments| are not necessarily packed, but the render targets in
+    // |packedRenderTargetsInfoOut| are.  In particular, the resolve attachment views need to stay
+    // sparse to be placed in |RenderPassFramebuffer|, but the calling function will have to pack
+    // them to match the render buffers before creating a framebuffer.
     angle::Result getAttachmentsAndRenderTargets(
-        ContextVk *contextVk,
-        const vk::ImageView *resolveImageViewIn,
-        RenderTargetVk *resolveRenderTargetIn,
-        vk::FramebufferAttachmentsVector<VkImageView> *attachments,
-        vk::FramebufferAttachmentsVector<RenderTargetInfo> *renderTargetsInfoOut);
+        vk::Context *context,
+        vk::FramebufferAttachmentsVector<VkImageView> *unpackedAttachments,
+        vk::FramebufferAttachmentsVector<RenderTargetInfo> *packedRenderTargetsInfoOut);
 
-  private:
-    enum class ClearWithCommand
-    {
-        Always,
-        OptimizeWithLoadOp,
-    };
+    angle::Result createNewFramebuffer(
+        ContextVk *contextVk,
+        uint32_t framebufferWidth,
+        const uint32_t framebufferHeight,
+        const uint32_t framebufferLayers,
+        const vk::FramebufferAttachmentsVector<VkImageView> &unpackedAttachments,
+        const vk::FramebufferAttachmentsVector<RenderTargetInfo> &renderTargetsInfo);
 
     // The 'in' rectangles must be clipped to the scissor and FBO. The clipping is done in 'blit'.
     angle::Result blitWithCommand(ContextVk *contextVk,

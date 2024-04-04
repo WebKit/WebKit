@@ -280,6 +280,14 @@
             "issue": "http://anglebug.com/4836"
         },
         {
+            "name": "prefer_MSRTSS_flag_by_default",
+            "category": "Features",
+            "description": [
+                "Enable MSRTSS for each image initialization if available"
+            ],
+            "issue": "http://anglebug.com/8622"
+        },
+        {
             "name": "supports_multiview",
             "category": "Features",
             "description": [

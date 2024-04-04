@@ -24,7 +24,7 @@ class EGLBufferAgeTest : public ANGLETest<>
     {
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         mMajorVersion       = GetParam().majorVersion;
@@ -92,6 +92,14 @@ class EGLBufferAgeTest : public ANGLETest<>
     {
         EGLint age  = 0;
         bool result = eglQuerySurface(mDisplay, surface, EGL_BUFFER_AGE_EXT, &age);
+        EXPECT_TRUE(result);
+        return age;
+    }
+
+    EGLint queryAgeAttribKHR(EGLSurface surface) const
+    {
+        EGLAttribKHR age = 0;
+        bool result      = eglQuerySurface64KHR(mDisplay, surface, EGL_BUFFER_AGE_EXT, &age);
         EXPECT_TRUE(result);
         return age;
     }
@@ -180,6 +188,9 @@ TEST_P(EGLBufferAgeTest, QueryBufferAge)
 {
     ANGLE_SKIP_TEST_IF(!mExtensionSupported);
 
+    const bool lockSurface3ExtSupported =
+        IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_lock_surface3");
+
     EGLConfig config = EGL_NO_CONFIG_KHR;
     EXPECT_TRUE(chooseConfig(&config));
 
@@ -203,7 +214,17 @@ TEST_P(EGLBufferAgeTest, QueryBufferAge)
     EGLint expectedAge       = 0;
     for (uint32_t i = 0; i < loopcount; i++)
     {
-        EGLint age = queryAge(surface);
+        // Alternate between eglQuerySurface and eglQuerySurface64KHR
+        EGLint age = -1;
+        if (i % 2 == 0 || !lockSurface3ExtSupported)
+        {
+            age = queryAge(surface);
+        }
+        else
+        {
+            age = static_cast<EGLint>(queryAgeAttribKHR(surface));
+        }
+
         // Should start with zero age and then flip to buffer count - which we don't know.
         if ((expectedAge == 0) && (age > 0))
         {

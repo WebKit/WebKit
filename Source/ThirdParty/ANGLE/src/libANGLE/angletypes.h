@@ -957,10 +957,61 @@ ANGLE_INLINE ComponentTypeMask GetActiveComponentTypeMask(gl::AttributesMask act
     return ComponentTypeMask(activeAttribs << kMaxComponentTypeMaskIndex | activeAttribs);
 }
 
+ANGLE_INLINE DrawBufferMask GetComponentTypeMaskDiff(ComponentTypeMask mask1,
+                                                     ComponentTypeMask mask2)
+{
+    const uint32_t diff = static_cast<uint32_t>((mask1 ^ mask2).bits());
+    return DrawBufferMask(static_cast<uint8_t>(diff | (diff >> gl::kMaxComponentTypeMaskIndex)));
+}
+
 bool ValidateComponentTypeMasks(unsigned long outputTypes,
                                 unsigned long inputTypes,
                                 unsigned long outputMask,
                                 unsigned long inputMask);
+
+// Helpers for performing WebGL 2.0 clear validation
+// Extracted component type has always one of these four values:
+// * 0x10001 - float or normalized
+// * 0x00001 - int
+// * 0x10000 - unsigned int
+// * 0x00000 - unused or disabled
+
+// The following functions rely on these.
+static_assert(kComponentMasks[ComponentType::Float] == 0x10001);
+static_assert(kComponentMasks[ComponentType::Int] == 0x00001);
+static_assert(kComponentMasks[ComponentType::UnsignedInt] == 0x10000);
+
+// Used for clearBufferuiv
+ANGLE_INLINE bool IsComponentTypeFloatOrInt(ComponentTypeMask mask, size_t index)
+{
+    ASSERT(index <= kMaxComponentTypeMaskIndex);
+    // 0x10001 or 0x00001
+    return ((mask.bits() >> index) & 0x00001) != 0;
+}
+
+// Used for clearBufferiv
+ANGLE_INLINE bool IsComponentTypeFloatOrUnsignedInt(ComponentTypeMask mask, size_t index)
+{
+    ASSERT(index <= kMaxComponentTypeMaskIndex);
+    // 0x10001 or 0x10000
+    return ((mask.bits() >> index) & 0x10000) != 0;
+}
+
+// Used for clearBufferfv
+ANGLE_INLINE bool IsComponentTypeIntOrUnsignedInt(ComponentTypeMask mask, size_t index)
+{
+    ASSERT(index <= kMaxComponentTypeMaskIndex);
+    // 0x00001 or 0x10000; this expression is more efficient than two explicit comparisons
+    return ((((mask.bits() >> kMaxComponentTypeMaskIndex) ^ mask.bits()) >> index) & 1) != 0;
+}
+
+// Used for clear
+ANGLE_INLINE DrawBufferMask GetIntOrUnsignedIntDrawBufferMask(ComponentTypeMask mask)
+{
+    static_assert(DrawBufferMask::size() <= 8);
+    return DrawBufferMask(
+        static_cast<uint8_t>((mask.bits() >> kMaxComponentTypeMaskIndex) ^ mask.bits()));
+}
 
 enum class RenderToTextureImageIndex
 {

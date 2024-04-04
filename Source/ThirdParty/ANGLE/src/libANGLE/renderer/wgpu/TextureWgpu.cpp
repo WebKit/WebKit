@@ -10,6 +10,9 @@
 #include "libANGLE/renderer/wgpu/TextureWgpu.h"
 
 #include "common/debug.h"
+#include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/wgpu/ContextWgpu.h"
+#include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 
 namespace rx
 {
@@ -28,7 +31,9 @@ angle::Result TextureWgpu::setImage(const gl::Context *context,
                                     gl::Buffer *unpackBuffer,
                                     const uint8_t *pixels)
 {
-    return angle::Result::Continue;
+    // TODO(liza): Upload texture data.
+    UNIMPLEMENTED();
+    return setImageImpl(context, index, size);
 }
 
 angle::Result TextureWgpu::setSubImage(const gl::Context *context,
@@ -228,6 +233,50 @@ angle::Result TextureWgpu::initializeContents(const gl::Context *context,
                                               GLenum binding,
                                               const gl::ImageIndex &imageIndex)
 {
+    return angle::Result::Continue;
+}
+
+angle::Result TextureWgpu::setImageImpl(const gl::Context *context,
+                                        const gl::ImageIndex &index,
+                                        const gl::Extents &size)
+{
+    return redefineLevel(context, index, size);
+}
+
+angle::Result TextureWgpu::redefineLevel(const gl::Context *context,
+                                         const gl::ImageIndex &index,
+                                         const gl::Extents &size)
+{
+    bool levelWithinRange = false;
+    gl::LevelIndex levelIndexGL(index.getLevelIndex());
+    if (mImage && levelIndexGL >= mImage->getFirstAllocatedLevel() &&
+        levelIndexGL <
+            (mImage->getFirstAllocatedLevel() + mImage->getTextureDescriptor().mipLevelCount))
+    {
+        levelWithinRange      = true;
+        bool dimensionChanged = mImage->getTextureDescriptor().dimension !=
+                                gl_wgpu::getWgpuTextureDimension(index.getType());
+        if (dimensionChanged || size != wgpu_gl::getExtents(mImage->getTextureDescriptor().size))
+        {
+            mImage = nullptr;
+        }
+    }
+
+    if (size.empty())
+    {
+        return angle::Result::Continue;
+    }
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    DisplayWgpu *displayWgpu = contextWgpu->getDisplay();
+
+    if (mImage == nullptr && !levelWithinRange)
+    {
+        mImage                          = new webgpu::ImageHelper();
+        webgpu::TextureInfo textureInfo = mImage->getWgpuTextureInfo(index);
+        return mImage->initImage(displayWgpu->getDevice(), textureInfo.usage, textureInfo.dimension,
+                                 gl_wgpu::getExtent3D(size), wgpu::TextureFormat::RGBA8Sint,
+                                 textureInfo.mipLevelCount, 1, 0);
+    }
     return angle::Result::Continue;
 }
 

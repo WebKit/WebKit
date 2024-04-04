@@ -39,6 +39,12 @@
 // Consts
 namespace
 {
+#if defined(ANGLE_PLATFORM_ANDROID)
+constexpr const char *kDefaultPipelineCacheGraphDumpPath = "/data/local/tmp/angle_dumps/";
+#else
+constexpr const char *kDefaultPipelineCacheGraphDumpPath = "";
+#endif  // ANGLE_PLATFORM_ANDROID
+
 constexpr VkFormatFeatureFlags kInvalidFormatFeatureFlags = static_cast<VkFormatFeatureFlags>(-1);
 
 #if defined(ANGLE_EXPOSE_NON_CONFORMANT_EXTENSIONS_AND_VERSIONS)
@@ -1332,6 +1338,40 @@ ANGLE_INLINE gl::ShadingRate GetShadingRateFromVkExtent(const VkExtent2D &extent
 
     return gl::ShadingRate::Undefined;
 }
+
+void DumpPipelineCacheGraph(Renderer *renderer, const std::ostringstream &graph)
+{
+    std::string dumpPath = renderer->getPipelineCacheGraphDumpPath();
+    if (dumpPath.size() == 0)
+    {
+        WARN() << "No path supplied for pipeline cache graph dump!";
+        return;
+    }
+
+    static std::atomic<uint32_t> sContextIndex(0);
+    std::string filename = dumpPath;
+    filename += angle::GetExecutableName();
+    filename += std::to_string(sContextIndex.fetch_add(1));
+    filename += ".dump";
+
+    INFO() << "Dumping pipeline cache transition graph to: \"" << filename << "\"";
+
+    std::ofstream out = std::ofstream(filename, std::ofstream::binary);
+    if (!out.is_open())
+    {
+        ERR() << "Failed to open \"" << filename << "\"";
+    }
+
+    out << "digraph {\n" << " node [shape=box";
+    if (renderer->getFeatures().supportsPipelineCreationFeedback.enabled)
+    {
+        out << ",color=green";
+    }
+    out << "]\n";
+    out << graph.str();
+    out << "}\n";
+    out.close();
+}
 }  // namespace
 
 // OneOffCommandPool implementation.
@@ -1449,6 +1489,17 @@ Renderer::Renderer()
     // a number of places in the Vulkan backend that make this assumption.  This assertion is made
     // early to fail immediately on big-endian platforms.
     ASSERT(IsLittleEndian());
+
+    mDumpPipelineCacheGraph =
+        (angle::GetEnvironmentVarOrAndroidProperty("ANGLE_DUMP_PIPELINE_CACHE_GRAPH",
+                                                   "angle.dump_pipeline_cache_graph") == "1");
+
+    mPipelineCacheGraphDumpPath = angle::GetEnvironmentVarOrAndroidProperty(
+        "ANGLE_PIPELINE_CACHE_GRAPH_DUMP_PATH", "angle.pipeline_cache_graph_dump_path");
+    if (mPipelineCacheGraphDumpPath.size() == 0)
+    {
+        mPipelineCacheGraphDumpPath = kDefaultPipelineCacheGraphDumpPath;
+    }
 }
 
 Renderer::~Renderer() {}
@@ -1530,6 +1581,11 @@ void Renderer::onDestroy(vk::Context *context)
     {
         angle::CloseSystemLibrary(mLibVulkanLibrary);
         mLibVulkanLibrary = nullptr;
+    }
+
+    if (!mPipelineCacheGraph.str().empty())
+    {
+        DumpPipelineCacheGraph(this, mPipelineCacheGraph);
     }
 }
 
@@ -4237,14 +4293,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
                             mFeatures.supportsRenderpass2.enabled &&
                                 mDepthStencilResolveProperties.supportedDepthResolveModes != 0);
 
-    // http://issuetracker.google.com/329911999. Some Qualcomm devices show increased memory usage
-    // for images when MSRTSS is enabled, even if the image does not end up using this feature.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMultisampledRenderToSingleSampled,
         mFeatures.supportsRenderpass2.enabled && mFeatures.supportsDepthStencilResolve.enabled &&
             mMultisampledRenderToSingleSampledFeatures.multisampledRenderToSingleSampled ==
-                VK_TRUE &&
-            !isQualcomm);
+                VK_TRUE);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMultisampledRenderToSingleSampledGOOGLEX,
@@ -4253,6 +4306,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
             mFeatures.supportsDepthStencilResolve.enabled &&
             mMultisampledRenderToSingleSampledFeaturesGOOGLEX.multisampledRenderToSingleSampled ==
                 VK_TRUE);
+
+    // Preferring the MSRTSS flag is for texture initialization. If the MSRTSS is not used at first,
+    // it will be used (if available) when recreating the image if it is bound to an MSRTT
+    // framebuffer.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferMSRTSSFlagByDefault, isARM);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImage2dViewOf3d,
                             mImage2dViewOf3dFeatures.image2DViewOf3D == VK_TRUE);
@@ -5631,18 +5689,21 @@ angle::Result Renderer::flushRenderPassCommands(
     vk::ProtectionType protectionType,
     egl::ContextPriority priority,
     const vk::RenderPass &renderPass,
+    VkFramebuffer framebufferOverride,
     vk::RenderPassCommandBufferHelper **renderPassCommands)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::flushRenderPassCommands");
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.enqueueFlushRenderPassCommands(
-            context, protectionType, priority, renderPass, renderPassCommands));
+            context, protectionType, priority, renderPass, framebufferOverride,
+            renderPassCommands));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.flushRenderPassCommands(context, protectionType, priority,
-                                                        renderPass, renderPassCommands));
+                                                        renderPass, framebufferOverride,
+                                                        renderPassCommands));
     }
 
     return angle::Result::Continue;

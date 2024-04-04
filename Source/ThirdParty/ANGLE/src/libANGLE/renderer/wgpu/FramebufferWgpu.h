@@ -11,6 +11,8 @@
 #define LIBANGLE_RENDERER_WGPU_FRAMEBUFFERWGPU_H_
 
 #include "libANGLE/renderer/FramebufferImpl.h"
+#include "libANGLE/renderer/RenderTargetCache.h"
+#include "libANGLE/renderer/wgpu/RenderTargetWgpu.h"
 
 namespace rx
 {
@@ -75,6 +77,9 @@ class FramebufferWgpu : public FramebufferImpl
     angle::Result getSamplePosition(const gl::Context *context,
                                     size_t index,
                                     GLfloat *xy) const override;
+
+  private:
+    RenderTargetCache<RenderTargetWgpu> mRenderTargetCache;
 };
 
 }  // namespace rx

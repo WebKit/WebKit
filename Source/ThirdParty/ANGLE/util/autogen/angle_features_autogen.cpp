@@ -240,6 +240,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::PreferHostCachedForNonStaticBufferUsage, "preferHostCachedForNonStaticBufferUsage"},
     {Feature::PreferLinearFilterForYUV, "preferLinearFilterForYUV"},
     {Feature::PreferMonolithicPipelinesOverLibraries, "preferMonolithicPipelinesOverLibraries"},
+    {Feature::PreferMSRTSSFlagByDefault, "preferMSRTSSFlagByDefault"},
     {Feature::PreferSkippingInvalidateForEmulatedFormats, "preferSkippingInvalidateForEmulatedFormats"},
     {Feature::PreferSubmitAtFBOBoundary, "preferSubmitAtFBOBoundary"},
     {Feature::PreferSubmitOnAnySamplesPassedQueryEnd, "preferSubmitOnAnySamplesPassedQueryEnd"},

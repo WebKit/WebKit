@@ -296,6 +296,31 @@ angle::Result ContextMtl::finish(const gl::Context *context)
     return angle::Result::Continue;
 }
 
+ANGLE_INLINE angle::Result ContextMtl::resyncDrawFramebufferIfNeeded(const gl::Context *context)
+{
+    // Resync the draw framebuffer if
+    // - it has incompatible attachments; OR
+    // - it had incompatible attachments during the previous operation.
+    if (ANGLE_UNLIKELY(mIncompatibleAttachments.any() || mForceResyncDrawFramebuffer))
+    {
+        if (mIncompatibleAttachments.any())
+        {
+            ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                               "Resyncing the draw framebuffer because it has active attachments "
+                               "incompatible with the current program outputs.");
+        }
+
+        // Ensure sync on the next operation if the current state has incompatible attachments.
+        mForceResyncDrawFramebuffer = mIncompatibleAttachments.any();
+
+        FramebufferMtl *fbo = mtl::GetImpl(getState().getDrawFramebuffer());
+        ASSERT(fbo != nullptr);
+        return fbo->syncState(context, GL_DRAW_FRAMEBUFFER, gl::Framebuffer::DirtyBits(),
+                              gl::Command::Draw);
+    }
+    return angle::Result::Continue;
+}
+
 // Drawing methods.
 angle::Result ContextMtl::drawTriFanArraysWithBaseVertex(const gl::Context *context,
                                                          GLint first,
@@ -374,7 +399,7 @@ angle::Result ContextMtl::drawTriFanArrays(const gl::Context *context,
 {
     if (count <= 3 && baseInstance == 0)
     {
-        return drawArraysInstanced(context, gl::PrimitiveMode::Triangles, first, count, instances);
+        return drawArraysImpl(context, gl::PrimitiveMode::Triangles, first, count, instances, 0);
     }
     if (getDisplay()->getFeatures().hasBaseVertexInstancedDraw.enabled)
     {
@@ -510,6 +535,7 @@ angle::Result ContextMtl::drawArrays(const gl::Context *context,
                                      GLint first,
                                      GLsizei count)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     return drawArraysImpl(context, mode, first, count, 0, 0);
 }
 
@@ -522,6 +548,7 @@ angle::Result ContextMtl::drawArraysInstanced(const gl::Context *context,
     // Instanced draw calls with zero instances are skipped in the frontend.
     // The drawArraysImpl function would treat them as non-instanced.
     ASSERT(instances > 0);
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     return drawArraysImpl(context, mode, first, count, instances, 0);
 }
 
@@ -535,6 +562,7 @@ angle::Result ContextMtl::drawArraysInstancedBaseInstance(const gl::Context *con
     // Instanced draw calls with zero instances are skipped in the frontend.
     // The drawArraysImpl function would treat them as non-instanced.
     ASSERT(instanceCount > 0);
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     return drawArraysImpl(context, mode, first, count, instanceCount, baseInstance);
 }
 
@@ -581,17 +609,8 @@ angle::Result ContextMtl::drawTriFanElements(const gl::Context *context,
 
         return angle::Result::Continue;
     }  // if (count > 3)
-    if (baseVertex == 0 && baseInstance == 0)
-    {
-        return drawElementsInstanced(context, gl::PrimitiveMode::Triangles, count, type, indices,
-                                     instances);
-    }
-    else
-    {
-        return drawElementsInstancedBaseVertexBaseInstance(context, gl::PrimitiveMode::Triangles,
-                                                           count, type, indices, instances,
-                                                           baseVertex, baseInstance);
-    }
+    return drawElementsImpl(context, gl::PrimitiveMode::Triangles, count, type, indices, instances,
+                            baseVertex, baseInstance);
 }
 
 angle::Result ContextMtl::drawLineLoopElementsNonInstancedNoPrimitiveRestart(
@@ -660,17 +679,8 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
 
         return angle::Result::Continue;
     }  // if (count >= 2)
-    if (baseVertex == 0 && baseInstance == 0)
-    {
-        return drawElementsInstanced(context, gl::PrimitiveMode::Lines, count, type, indices,
-                                     instances);
-    }
-    else
-    {
-        return drawElementsInstancedBaseVertexBaseInstance(context, gl::PrimitiveMode::Lines, count,
-                                                           type, indices, instances, baseVertex,
-                                                           baseInstance);
-    }
+    return drawElementsImpl(context, gl::PrimitiveMode::Lines, count, type, indices, instances,
+                            baseVertex, baseInstance);
 }
 
 angle::Result ContextMtl::drawArraysProvokingVertexImpl(const gl::Context *context,
@@ -878,6 +888,7 @@ angle::Result ContextMtl::drawElements(const gl::Context *context,
                                        gl::DrawElementsType type,
                                        const void *indices)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
 }
 
@@ -899,6 +910,7 @@ angle::Result ContextMtl::drawElementsInstanced(const gl::Context *context,
                                                 const void *indices,
                                                 GLsizei instanceCount)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     // Instanced draw calls with zero instances are skipped in the frontend.
     // The drawElementsImpl function would treat them as non-instanced.
     ASSERT(instanceCount > 0);
@@ -913,6 +925,7 @@ angle::Result ContextMtl::drawElementsInstancedBaseVertex(const gl::Context *con
                                                           GLsizei instanceCount,
                                                           GLint baseVertex)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     // Instanced draw calls with zero instances are skipped in the frontend.
     // The drawElementsImpl function would treat them as non-instanced.
     ASSERT(instanceCount > 0);
@@ -928,6 +941,7 @@ angle::Result ContextMtl::drawElementsInstancedBaseVertexBaseInstance(const gl::
                                                                       GLint baseVertex,
                                                                       GLuint baseInstance)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     // Instanced draw calls with zero instances are skipped in the frontend.
     // The drawElementsImpl function would treat them as non-instanced.
     ASSERT(instances > 0);
@@ -943,6 +957,7 @@ angle::Result ContextMtl::drawRangeElements(const gl::Context *context,
                                             gl::DrawElementsType type,
                                             const void *indices)
 {
+    ANGLE_TRY(resyncDrawFramebufferIfNeeded(context));
     return drawElementsImpl(context, mode, count, type, indices, 0, 0, 0);
 }
 
@@ -1111,6 +1126,23 @@ angle::Result ContextMtl::pushDebugGroup(const gl::Context *context,
 angle::Result ContextMtl::popDebugGroup(const gl::Context *context)
 {
     return angle::Result::Continue;
+}
+
+void ContextMtl::updateIncompatibleAttachments(const gl::State &glState)
+{
+    const gl::ProgramExecutable *programExecutable = glState.getProgramExecutable();
+    gl::Framebuffer *drawFramebuffer               = glState.getDrawFramebuffer();
+    if (programExecutable == nullptr || drawFramebuffer == nullptr)
+    {
+        mIncompatibleAttachments.reset();
+        return;
+    }
+
+    // Cache a mask of incompatible attachments ignoring unused outputs and disabled draw buffers.
+    mIncompatibleAttachments =
+        gl::GetComponentTypeMaskDiff(drawFramebuffer->getDrawBufferTypeMask(),
+                                     programExecutable->getFragmentOutputsTypeMask()) &
+        drawFramebuffer->getDrawBufferMask() & programExecutable->getActiveOutputVariablesMask();
 }
 
 // State sync with dirty bits.
@@ -1294,6 +1326,7 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
             case gl::state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING:
                 break;
             case gl::state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING:
+                updateIncompatibleAttachments(glState);
                 updateDrawFrameBufferBinding(context);
                 break;
             case gl::state::DIRTY_BIT_RENDERBUFFER_BINDING:
@@ -1313,6 +1346,7 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
                 break;
             case gl::state::DIRTY_BIT_PROGRAM_EXECUTABLE:
             {
+                updateIncompatibleAttachments(glState);
                 const gl::ProgramExecutable *executable = mState.getProgramExecutable();
                 ASSERT(executable);
                 mExecutable = mtl::GetImpl(executable);
@@ -2259,7 +2293,14 @@ void ContextMtl::updateDrawFrameBufferBinding(const gl::Context *context)
 {
     const gl::State &glState = getState();
 
-    mDrawFramebuffer = mtl::GetImpl(glState.getDrawFramebuffer());
+    FramebufferMtl *newDrawFramebuffer = mtl::GetImpl(glState.getDrawFramebuffer());
+    if (newDrawFramebuffer != mDrawFramebuffer)
+    {
+        // Reset this flag if the framebuffer has changed to not sync it twice
+        mForceResyncDrawFramebuffer = false;
+    }
+
+    mDrawFramebuffer = newDrawFramebuffer;
 
     mDrawFramebuffer->onStartedDrawingToFrameBuffer(context);
 

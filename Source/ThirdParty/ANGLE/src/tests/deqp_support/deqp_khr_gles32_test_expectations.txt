@@ -24,8 +24,6 @@
 // Failures on older nvidia drivers
 5557 VULKAN WIN NVIDIA : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_PatchVerticesIn = FAIL
 5557 VULKAN WIN NVIDIA : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = FAIL
-// Expects separable program to fail but doesn't
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.xfb_captures_data_from_correct_stage = SKIP
 
 // Slow test
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_ordering = SKIP
@@ -114,7 +112,6 @@
 
 // Samsung Galaxy S22 (Xclipse)
 b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
-b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.single.xfb_captures_data_from_correct_stage = SKIP
 
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP

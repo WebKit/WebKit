@@ -2433,11 +2433,11 @@ bool ValidateClearBufferiv(const Context *context,
             }
             if (context->getExtensions().webglCompatibilityANGLE)
             {
-                constexpr GLenum validComponentTypes[] = {GL_INT};
-                if (!ValidateWebGLFramebufferAttachmentClearType(context, entryPoint, drawbuffer,
-                                                                 validComponentTypes,
-                                                                 ArraySize(validComponentTypes)))
+                const gl::ComponentTypeMask mask =
+                    context->getState().getDrawFramebuffer()->getDrawBufferTypeMask();
+                if (IsComponentTypeFloatOrUnsignedInt(mask, drawbuffer))
                 {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNoDefinedClearConversion);
                     return false;
                 }
             }
@@ -2494,11 +2494,11 @@ bool ValidateClearBufferuiv(const Context *context,
             }
             if (context->getExtensions().webglCompatibilityANGLE)
             {
-                constexpr GLenum validComponentTypes[] = {GL_UNSIGNED_INT};
-                if (!ValidateWebGLFramebufferAttachmentClearType(context, entryPoint, drawbuffer,
-                                                                 validComponentTypes,
-                                                                 ArraySize(validComponentTypes)))
+                const gl::ComponentTypeMask mask =
+                    context->getState().getDrawFramebuffer()->getDrawBufferTypeMask();
+                if (IsComponentTypeFloatOrInt(mask, drawbuffer))
                 {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNoDefinedClearConversion);
                     return false;
                 }
             }
@@ -2547,12 +2547,11 @@ bool ValidateClearBufferfv(const Context *context,
             }
             if (context->getExtensions().webglCompatibilityANGLE)
             {
-                constexpr GLenum validComponentTypes[] = {GL_FLOAT, GL_UNSIGNED_NORMALIZED,
-                                                          GL_SIGNED_NORMALIZED};
-                if (!ValidateWebGLFramebufferAttachmentClearType(context, entryPoint, drawbuffer,
-                                                                 validComponentTypes,
-                                                                 ArraySize(validComponentTypes)))
+                const gl::ComponentTypeMask mask =
+                    context->getState().getDrawFramebuffer()->getDrawBufferTypeMask();
+                if (IsComponentTypeIntOrUnsignedInt(mask, drawbuffer))
                 {
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNoDefinedClearConversion);
                     return false;
                 }
             }

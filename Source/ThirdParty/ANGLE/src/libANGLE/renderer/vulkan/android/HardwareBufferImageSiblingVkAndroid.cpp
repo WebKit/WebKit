@@ -371,7 +371,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         if (externalRenderTargetSupported)
         {
             angle::FormatID externalFormatID =
-                renderer->mExternalFormatTable.getOrAllocExternalFormatID(
+                renderer->getExternalFormatTable()->getOrAllocExternalFormatID(
                     bufferFormatProperties.externalFormat,
                     bufferFormatResolveProperties.colorAttachmentFormat,
                     bufferFormatProperties.formatFeatures);

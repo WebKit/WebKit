@@ -771,12 +771,6 @@ ANGLE_INLINE bool ValidateIntegerVertexFormat(const Context *context,
         context->getStateCache().getIntegerVertexAttribTypeValidation(type));
 }
 
-bool ValidateWebGLFramebufferAttachmentClearType(const Context *context,
-                                                 angle::EntryPoint entryPoint,
-                                                 GLint drawbuffer,
-                                                 const GLenum *validComponentTypes,
-                                                 size_t validComponentTypeCount);
-
 ANGLE_INLINE bool ValidateColorMasksForSharedExponentColorBuffers(const BlendStateExt &blendState,
                                                                   const Framebuffer *framebuffer)
 {
