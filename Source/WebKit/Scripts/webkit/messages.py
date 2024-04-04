@@ -137,9 +137,9 @@ def surround_in_condition(string, condition):
 
 def types_that_must_be_moved():
     return [
-        'IPC::Connection::Handle',
+        'IPC::ConnectionHandle',
         'IPC::Signal',
-        'IPC::StreamServerConnection::Handle',
+        'IPC::StreamServerConnectionHandle',
         'MachSendRight',
         'std::optional<WebKit::SharedVideoFrame>',
         'Vector<WebCore::SharedMemory::Handle>',
@@ -777,6 +777,7 @@ def headers_for_type(type):
         'IPC::AsyncReplyID': ['"Connection.h"'],
         'IPC::Signal': ['"IPCEvent.h"'],
         'IPC::Semaphore': ['"IPCSemaphore.h"'],
+        'IPC::StreamServerConnectionHandle': ['"StreamServerConnection.h"'],
         'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
         'MachSendRight': ['<wtf/MachSendRight.h>'],
@@ -878,6 +879,7 @@ def headers_for_type(type):
         'WebCore::MediaProducerMutedState': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaPromise::Result': ['<WebCore/MediaPromiseTypes.h>'],
         'WebCore::MediaSettingsRange': ['<WebCore/MediaSettingsRange.h>'],
+        'WebCore::MediaSourcePrivateEndOfStreamStatus': ['<WebCore/MediaSourcePrivate.h>'],
         'WebCore::MessagePortChannelProvider::HasActivity': ['<WebCore/MessagePortChannelProvider.h>'],
         'WebCore::ModalContainerControlType': ['<WebCore/ModalContainerTypes.h>'],
         'WebCore::ModalContainerDecision': ['<WebCore/ModalContainerTypes.h>'],
@@ -897,6 +899,7 @@ def headers_for_type(type):
         'WebCore::PixelFormat': ['<WebCore/ImageBufferBackend.h>'],
         'WebCore::PhotoCapabilitiesOrError': ['<WebCore/RealtimeMediaSource.h>'],
         'WebCore::PlatformTextTrackData': ['<WebCore/PlatformTextTrack.h>'],
+        'WebCore::PlatformEventModifier': ['<WebCore/PlatformEvent.h>'],
         'WebCore::PlatformWheelEventPhase': ['<WebCore/PlatformWheelEvent.h>'],
         'WebCore::PlaybackSessionModelPlaybackState': ['<WebCore/PlaybackSessionModel.h>'],
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],

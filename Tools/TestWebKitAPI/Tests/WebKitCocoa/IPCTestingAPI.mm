@@ -604,7 +604,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     NSDictionary *expectedMouseEventButtonDictionary = @{
         @"isOptionSet" : @NO,
         @"size" : @1,
-        @"validValues" : @[@1, @2, @254]
+        @"validValues" : @[@0, @1, @2, @254]
     };
     EXPECT_TRUE([enumInfo[@"WebKit::WebMouseEventButton"] isEqualToDictionary:expectedMouseEventButtonDictionary]);
 
@@ -679,7 +679,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
-    EXPECT_LT(typesNeedingDescriptions.count, 50u); // FIXME: This should eventually be 0.
+    EXPECT_LT(typesNeedingDescriptions.count, 35u); // FIXME: This should eventually be 0.
 
     for (NSString *type in typesNeedingDescriptions) {
         // These are the last two types in the WebKit namespace with non-generated serializers.

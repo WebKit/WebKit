@@ -26,7 +26,7 @@ namespace WebCore {
 
 class SVGUnitTypes final : public RefCounted<SVGUnitTypes> {
 public:
-    enum SVGUnitType {
+    enum SVGUnitType : uint8_t {
         SVG_UNIT_TYPE_UNKNOWN               = 0,
         SVG_UNIT_TYPE_USERSPACEONUSE        = 1,
         SVG_UNIT_TYPE_OBJECTBOUNDINGBOX     = 2
@@ -66,17 +66,3 @@ struct SVGPropertyTraits<SVGUnitTypes::SVGUnitType> {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SVGUnitTypes::SVGUnitType> {
-    using values = EnumValues<
-        WebCore::SVGUnitTypes::SVGUnitType,
-
-        WebCore::SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN,
-        WebCore::SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE,
-        WebCore::SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
-    >;
-};
-
-} // namespace WTF

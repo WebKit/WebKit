@@ -31,7 +31,7 @@ messages -> RemoteMediaSourceProxy NotRefCounted {
     BufferedChanged(WebCore::PlatformTimeRanges buffered)
     SetMediaPlayerReadyState(enum:uint8_t WebCore::MediaPlayerReadyState readyState)
     SetTimeFudgeFactor(MediaTime fudgeFactor)
-    MarkEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status)
+    MarkEndOfStream(enum:uint8_t WebCore::MediaSourcePrivateEndOfStreamStatus status)
     UnmarkEndOfStream()
 }
 

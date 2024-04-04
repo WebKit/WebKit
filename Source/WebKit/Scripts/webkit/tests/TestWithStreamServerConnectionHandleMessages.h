@@ -42,14 +42,14 @@ static inline IPC::ReceiverName messageReceiverName()
 
 class SendStreamServerConnection {
 public:
-    using Arguments = std::tuple<IPC::StreamServerConnection::Handle>;
+    using Arguments = std::tuple<IPC::StreamServerConnectionHandle>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    explicit SendStreamServerConnection(IPC::StreamServerConnection::Handle&& handle)
+    explicit SendStreamServerConnection(IPC::StreamServerConnectionHandle&& handle)
         : m_arguments(WTFMove(handle))
     {
     }
@@ -60,7 +60,7 @@ public:
     }
 
 private:
-    std::tuple<IPC::StreamServerConnection::Handle&&> m_arguments;
+    std::tuple<IPC::StreamServerConnectionHandle&&> m_arguments;
 };
 
 } // namespace TestWithStreamServerConnectionHandle

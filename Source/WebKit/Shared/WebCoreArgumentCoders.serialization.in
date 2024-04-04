@@ -2846,7 +2846,7 @@ class WebCore::TransformOperations {
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
     WebCore::Color color();
-    WebCore::SourceBrush::OptionalPatternGradient patternGradient();
+    std::variant<std::monostate, WebCore::SourceBrushLogicalGradient, Ref<WebCore::Pattern>> patternGradient();
 }
 
 header: <WebCore/ThreadSafeDataBuffer.h>
@@ -4107,6 +4107,7 @@ enum class WebCore::CDMSessionType : uint8_t {
 };
 using WebCore::CDMInstanceSession::LicenseType = WebCore::CDMSessionType;
 using WebCore::CDMInstanceSession::Message = std::pair<WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>>
+using WebCore::CDMInstanceSession::KeyStatusVector = Vector<std::pair<Ref<WebCore::SharedBuffer>, WebCore::CDMKeyStatus>>;
 
 struct WebCore::CDMRestrictions {
     bool distinctiveIdentifierDenied;
@@ -4727,11 +4728,14 @@ header: <WebCore/GraphicsTypes.h>
     DictationAlternatives
 };
 
-header: <WebCore/GraphicsTypes.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
     WebCore::DocumentMarkerLineStyleMode mode;
     WebCore::Color color;
 };
+
+header: <WebCore/GraphicsTypesGL.h>
+using PlatformGLObject = GCGLuint
+using GCGLuint = unsigned
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
 
@@ -8040,4 +8044,26 @@ enum class WebCore::PlatformMediaError : uint8_t {
     DecoderCreationError,
     NotSupportedError,
     NetworkError,
+};
+
+#if USE(CG)
+using WebCore::DashArray = Vector<CGFloat>;
+#endif
+#if USE(CAIRO)
+using WebCore::DashArray = Vector<double>;
+#endif
+#if !USE(CG) && !USE(CAIRO)
+using WebCore::DashArray = Vector<float>;
+#endif
+
+[WebKitPlatform] enum class WebCore::NotificationDirection : uint8_t {
+    Auto,
+    Ltr,
+    Rtl
+};
+
+[Nested] enum class WebCore::SVGUnitTypes::SVGUnitType : uint8_t {
+    SVG_UNIT_TYPE_UNKNOWN
+    SVG_UNIT_TYPE_USERSPACEONUSE
+    SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
 };

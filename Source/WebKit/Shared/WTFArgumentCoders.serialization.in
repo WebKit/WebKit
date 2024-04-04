@@ -230,3 +230,5 @@ enum class WTFLogLevel : uint8_t {
     Info,
     Debug
 };
+
+using FileSystem::Salt = std::array<uint8_t, 8>;

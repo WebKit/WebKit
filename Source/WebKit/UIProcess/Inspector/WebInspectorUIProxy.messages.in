@@ -22,7 +22,7 @@
 
 messages -> WebInspectorUIProxy {
     OpenLocalInspectorFrontend(bool canAttach, bool underTest)
-    SetFrontendConnection(IPC::Connection::Handle connectionHandle)
+    SetFrontendConnection(IPC::ConnectionHandle connectionHandle)
 
     SendMessageToBackend(String message)
 
