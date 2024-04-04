@@ -148,7 +148,9 @@ public:
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
     const MediaStreamTrackPrivate& privateTrack() const { return m_private.get(); }
 
+#if ENABLE(WEB_AUDIO)
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
+#endif
 
     MediaProducerMediaStateFlags mediaState() const;
 
