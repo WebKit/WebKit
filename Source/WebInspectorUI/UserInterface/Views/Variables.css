@@ -37,6 +37,8 @@
     --text-color: black;
     --text-color-transparent: hsla(0, 0%, 0%, 0.4);
 
+    --text-color-light: hsl(0, 0%, 95%);
+
     --text-color-active: black;
 
     --text-color-secondary: hsl(0, 0%, 50%);
