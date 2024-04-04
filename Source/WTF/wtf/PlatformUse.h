@@ -440,8 +440,7 @@
 #define USE_SANDBOX_VERSION_3 1
 #endif
 
-// We already enable ExtensionKit when building with the internal SDK. Also enable it in Open Source builds.
-#if !defined(USE_EXTENSIONKIT) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400 && !USE(APPLE_INTERNAL_SDK)
+#if !defined(USE_EXTENSIONKIT) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400
 #define USE_EXTENSIONKIT 1
 #endif
 
