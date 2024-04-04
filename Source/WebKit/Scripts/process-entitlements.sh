@@ -193,6 +193,19 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.enable-state-flags:2 string local:WebContentProcessLaunched
 }
 
+function notify_entitlements()
+{
+    plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
+    plistbuddy Add :com.apple.private.darwin-notification.introspect array
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:0 string com.apple.language.changed
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:1 string com.apple.mediaaccessibility.captionAppearanceSettingsChanged
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:2 string com.apple.powerlog.state_changed
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:3 string com.apple.system.logging.prefschanged
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:4 string com.apple.system.lowpowermode
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:5 string com.apple.system.timezone
+    plistbuddy Add :com.apple.private.darwin-notification.introspect:6 string com.apple.zoomwindow
+}
+
 function mac_process_webcontent_shared_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
@@ -217,7 +230,7 @@ function mac_process_webcontent_shared_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" > 140000 ))
         then
-            plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
+            notify_entitlements
         fi
 
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
@@ -371,7 +384,6 @@ function ios_family_process_webcontent_shared_entitlements()
     plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
     plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
-    plistbuddy Add :com.apple.developer.web-browser-engine.restrict.notifyd bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
     plistbuddy Add :com.apple.pac.shared_region_id string WebContent
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
@@ -394,6 +406,8 @@ if [[ "${PRODUCT_NAME}" != WebContentExtension && "${PRODUCT_NAME}" != WebConten
 fi
     plistbuddy add :com.apple.coreaudio.LoadDecodersInProcess bool YES
     plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
+
+    notify_entitlements
     webcontent_sandbox_entitlements
 }
 
