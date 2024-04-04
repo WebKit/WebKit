@@ -102,11 +102,11 @@ public:
     SkPaint createFillPaint() const;
     SkPaint createStrokePaint() const;
 
-private:
-    bool makeGLContextCurrentIfNeeded() const;
-
     void setupFillSource(SkPaint&) const;
     void setupStrokeSource(SkPaint&) const;
+
+private:
+    bool makeGLContextCurrentIfNeeded() const;
 
     class SkiaState {
     public:
