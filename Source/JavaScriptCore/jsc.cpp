@@ -122,6 +122,7 @@
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/cocoa/CrashReporter.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -3463,14 +3464,6 @@ static void startTimeoutThreadIfNeeded(VM& vm)
 
 int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 {
-#if OS(DARWIN) && CPU(ARM_THUMB2)
-    // Enabled IEEE754 denormal support.
-    fenv_t env;
-    fegetenv( &env );
-    env.__fpscr &= ~0x01000000u;
-    fesetenv( &env );
-#endif
-
 #if USE(TZONE_MALLOC)
     const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
     WTF_TZONE_INIT(boothash);
@@ -3516,6 +3509,14 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
     WTF::initialize();
 #if PLATFORM(COCOA)
     WTF::disableForwardingVPrintfStdErrToOSLog();
+
+    if (getenv("JSCTEST_CrashReportArgV")) {
+        StringPrintStream out;
+        CommaPrinter space(" ");
+        for (int i = 0; i < argc; ++i)
+            out.print(space, argv[i]);
+        WTF::setCrashLogMessage(out.toCString().data());
+    }
 #endif
 
 #if OS(UNIX)
