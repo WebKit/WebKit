@@ -1766,15 +1766,10 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 #endif
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-- (void)_removeTextIndicatorStyleForID:(NSUUID *)nsuuid
+- (void)_removeTextIndicatorStyleForID:(NSUUID *)uuid
 {
 #if PLATFORM(IOS_FAMILY)
-    [_contentView removeTextIndicatorStyleForID:nsuuid];
-#elif PLATFORM(MAC)
-    auto uuid = WTF::UUID::fromNSUUID(nsuuid);
-    if (!uuid)
-        return;
-    _impl->removeTextIndicatorStyleForID(*uuid);
+    [_contentView removeTextIndicatorStyleForID:uuid];
 #endif
 }
 #endif

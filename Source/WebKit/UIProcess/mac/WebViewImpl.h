@@ -70,7 +70,6 @@ OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
-OBJC_CLASS WKTextIndicatorStyleManager;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
@@ -733,9 +732,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&);
 
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementDataEditAction);
-
-    void addTextIndicatorStyleForID(WTF::UUID);
-    void removeTextIndicatorStyleForID(WTF::UUID);
 #endif
 
 private:
@@ -960,10 +956,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
 #if ENABLE(DRAG_SUPPORT)
     NSInteger m_initialNumberOfValidItemsForDrop { 0 };
-#endif
-
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-    RetainPtr<WKTextIndicatorStyleManager> m_textIndicatorStyleManager;
 #endif
 
 #if HAVE(NSSCROLLVIEW_SEPARATOR_TRACKING_ADAPTER)

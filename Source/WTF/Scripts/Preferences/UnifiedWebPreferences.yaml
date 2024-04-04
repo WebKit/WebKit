@@ -6485,11 +6485,11 @@ TextIndicatorStylingEnabled:
   condition: ENABLE(UNIFIED_TEXT_REPLACEMENT)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 TextInteractionEnabled:
   type: bool
