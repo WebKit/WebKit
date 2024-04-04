@@ -212,10 +212,6 @@
 
 #if USE(BROWSERENGINEKIT)
 
-// FIXME: Replace this with linker flags in WebKit.xcconfig once BrowserEngineKit
-// is available everywhere we require it.
-asm(".linker_option \"-framework\", \"BrowserEngineKit\"");
-
 @interface WKUITextSelectionRect : UITextSelectionRect
 + (instancetype)selectionRectWithCGRect:(CGRect)rect;
 @end
