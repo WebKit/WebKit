@@ -51,9 +51,13 @@ public:
     bool hasOverflowed() const { return m_length > String::MaxLength; }
     bool crashesOnOverflow() const { return m_shouldCrashOnOverflow; }
 
-    WTF_EXPORT_PRIVATE void appendCharacters(const UChar*, unsigned);
-    WTF_EXPORT_PRIVATE void appendCharacters(const LChar*, unsigned);
-    void appendCharacters(const char* characters, unsigned length) { appendCharacters(reinterpret_cast<const LChar*>(characters), length); }
+    WTF_EXPORT_PRIVATE void appendCharacters(std::span<const UChar>);
+    WTF_EXPORT_PRIVATE void appendCharacters(std::span<const LChar>);
+
+    // FIXME: Port callers to pass a span and remove these overloads.
+    void appendCharacters(const char* characters, size_t length) { appendCharacters({ reinterpret_cast<const LChar*>(characters), length }); }
+    void appendCharacters(const UChar* characters, size_t length) { appendCharacters({ characters, length }); }
+    void appendCharacters(const LChar* characters, size_t length) { appendCharacters({ characters, length }); }
 
     template<typename... StringTypes> void append(StringTypes...);
 
@@ -326,7 +330,7 @@ template<typename CharacterType> bool equal(const StringBuilder& builder, const 
 template<> struct IntegerToStringConversionTrait<StringBuilder> {
     using ReturnType = void;
     using AdditionalArgumentType = StringBuilder;
-    static void flush(const LChar* characters, unsigned length, StringBuilder* builder) { builder->appendCharacters(characters, length); }
+    static void flush(std::span<const LChar> characters, StringBuilder* builder) { builder->appendCharacters(characters); }
 };
 
 } // namespace WTF

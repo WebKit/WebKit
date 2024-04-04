@@ -46,7 +46,7 @@ WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const UChar>, bool* ok = nu
 WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const LChar>, size_t& parsedLength);
 WTF_EXPORT_PRIVATE float charactersToFloat(std::span<const UChar>, size_t& parsedLength);
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t);
+template<bool isSpecialCharacter(UChar), typename CharacterType, std::size_t Extent> bool containsOnly(std::span<const CharacterType, Extent>);
 
 enum class TrailingZerosPolicy : bool { Keep, Truncate };
 
@@ -371,7 +371,7 @@ template<> struct VectorTraits<String> : VectorTraitsBase<false, void> {
 template<> struct IntegerToStringConversionTrait<String> {
     using ReturnType = String;
     using AdditionalArgumentType = void;
-    static String flush(const LChar* characters, unsigned length, void*) { return std::span { characters, length }; }
+    static String flush(std::span<const LChar> characters, void*) { return characters; }
 };
 
 #ifdef __OBJC__

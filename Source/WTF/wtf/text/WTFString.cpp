@@ -381,35 +381,29 @@ CString String::ascii() const
     // Printable ASCII characters 32..127 and the null character are
     // preserved, characters outside of this range are converted to '?'.
 
-    unsigned length = this->length();
-    if (!length) { 
+    if (isEmpty()) {
         char* characterBuffer;
-        return CString::newUninitialized(length, characterBuffer);
+        return CString::newUninitialized(0, characterBuffer);
     }
 
     if (this->is8Bit()) {
-        const LChar* characters = this->characters8();
+        auto characters = this->span8();
 
         char* characterBuffer;
-        CString result = CString::newUninitialized(length, characterBuffer);
+        CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
-        for (unsigned i = 0; i < length; ++i) {
-            LChar ch = characters[i];
-            characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
-        }
+        for (auto character : characters)
+            *characterBuffer++ = character && (character < 0x20 || character > 0x7f) ? '?' : character;
 
         return result;        
     }
 
-    const UChar* characters = this->characters16();
-
+    auto characters = span16();
     char* characterBuffer;
-    CString result = CString::newUninitialized(length, characterBuffer);
+    CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
-    for (unsigned i = 0; i < length; ++i) {
-        UChar ch = characters[i];
-        characterBuffer[i] = ch && (ch < 0x20 || ch > 0x7f) ? '?' : ch;
-    }
+    for (auto character : characters)
+        *characterBuffer++ = character && (character < 0x20 || character > 0x7f) ? '?' : character;
 
     return result;
 }
@@ -419,23 +413,18 @@ CString String::latin1() const
     // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
     // preserved, characters outside of this range are converted to '?'.
 
-    unsigned length = this->length();
-
-    if (!length)
+    if (isEmpty())
         return CString("", 0);
 
     if (is8Bit())
-        return CString(this->characters8(), length);
+        return CString(this->span8());
 
-    const UChar* characters = this->characters16();
-
+    auto characters = this->span16();
     char* characterBuffer;
-    CString result = CString::newUninitialized(length, characterBuffer);
+    CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
-    for (unsigned i = 0; i < length; ++i) {
-        UChar ch = characters[i];
-        characterBuffer[i] = !isLatin1(ch) ? '?' : ch;
-    }
+    for (auto character : characters)
+        *characterBuffer++ = !isLatin1(character) ? '?' : character;
 
     return result;
 }
@@ -497,7 +486,7 @@ String fromUTF8Impl(std::span<const LChar> string)
     if (!function(stringCurrent, reinterpret_cast<const char*>(string.data() + string.size()), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
         return String();
 
-    unsigned utf16Length = bufferCurrent - bufferStart;
+    size_t utf16Length = bufferCurrent - bufferStart;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= string.size());
     return StringImpl::create(std::span { bufferStart, utf16Length });
 }

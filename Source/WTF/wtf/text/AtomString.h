@@ -30,8 +30,12 @@ class AtomString final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AtomString();
-    AtomString(const LChar*, unsigned length);
-    AtomString(const UChar*, unsigned length);
+    AtomString(std::span<const LChar>);
+    AtomString(std::span<const UChar>);
+
+    // FIXME: Update call sites to pass in a std::span and drop these constructors.
+    AtomString(const LChar* characters, size_t length) : AtomString(std::span { characters, length }) { }
+    AtomString(const UChar* characters, size_t length) : AtomString(std::span { characters, length }) { }
 
     ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
 
@@ -176,13 +180,13 @@ inline AtomString::AtomString(const char* string)
 {
 }
 
-inline AtomString::AtomString(const LChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(std::span { string, length }))
+inline AtomString::AtomString(std::span<const LChar> string)
+    : m_string(AtomStringImpl::add(string))
 {
 }
 
-inline AtomString::AtomString(const UChar* string, unsigned length)
-    : m_string(AtomStringImpl::add(std::span { string, length }))
+inline AtomString::AtomString(std::span<const UChar> string)
+    : m_string(AtomStringImpl::add(string))
 {
 }
 
@@ -343,7 +347,7 @@ ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const AtomStrin
 template<> struct IntegerToStringConversionTrait<AtomString> {
     using ReturnType = AtomString;
     using AdditionalArgumentType = void;
-    static AtomString flush(LChar* characters, unsigned length, void*) { return { characters, length }; }
+    static AtomString flush(std::span<const LChar> characters, void*) { return characters; }
 };
 
 } // namespace WTF

@@ -613,8 +613,8 @@ inline bool StringView::contains(CodeUnitMatchFunction&& function) const
 template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() const
 {
     if (is8Bit())
-        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
-    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(span8());
+    return WTF::containsOnly<isSpecialCharacter>(span16());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
