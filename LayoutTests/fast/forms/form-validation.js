@@ -9,13 +9,13 @@ function getValidationBubbleContents()
 function getValidationBubble()
 {
     return new Promise((resolve) => {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             setTimeout(() => {
                 testRunner.runUIScript(getValidationBubbleContents(), function(result) {
                     resolve(JSON.parse(result).validationBubble);
                 });
             }, 0);
-        }, 0);
+        });
     });
 }
 
