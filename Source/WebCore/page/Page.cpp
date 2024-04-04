@@ -245,6 +245,19 @@ void Page::updateValidationBubbleStateIfNeeded()
         client->updateValidationBubbleStateIfNeeded();
 }
 
+void Page::scheduleValidationMessageUpdate(ValidatedFormListedElement& element, HTMLElement& anchor)
+{
+    m_validationMessageUpdates.append({ element, anchor });
+}
+
+void Page::updateValidationMessages()
+{
+    for (auto& item : std::exchange(m_validationMessageUpdates, { })) {
+        if (RefPtr anchor = item.second.get())
+            item.first->updateVisibleValidationMessage(*anchor);
+    }
+}
+
 static void networkStateChanged(bool isOnLine)
 {
     Vector<WeakPtr<LocalFrame>> frames;
@@ -1986,6 +1999,8 @@ void Page::doAfterUpdateRendering()
 #if ENABLE(IMAGE_ANALYSIS)
     updateElementsWithTextRecognitionResults();
 #endif
+
+    updateValidationMessages();
 
     prioritizeVisibleResources();
 
