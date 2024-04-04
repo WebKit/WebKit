@@ -33,10 +33,6 @@ public:
     AtomString(std::span<const LChar>);
     AtomString(std::span<const UChar>);
 
-    // FIXME: Update call sites to pass in a std::span and drop these constructors.
-    AtomString(const LChar* characters, size_t length) : AtomString(std::span { characters, length }) { }
-    AtomString(const UChar* characters, size_t length) : AtomString(std::span { characters, length }) { }
-
     ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
 
     AtomString(AtomStringImpl*);
@@ -126,7 +122,7 @@ public:
 
 #if OS(WINDOWS)
     AtomString(const wchar_t* characters, unsigned length)
-        : AtomString(ucharFrom(characters), length) { }
+        : AtomString({ ucharFrom(characters), length }) { }
 
     AtomString(const wchar_t* characters)
         : AtomString(characters, characters ? wcslen(characters) : 0) { }

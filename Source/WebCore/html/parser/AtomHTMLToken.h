@@ -253,7 +253,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         if (LIKELY(token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().impl(), token.name().data(), 4)))
             m_name = HTMLNames::htmlTag->localName();
         else
-            m_name = AtomString(token.name().data(), token.name().size());
+            m_name = AtomString(token.name().span());
         m_doctypeData = token.releaseDoctypeData();
         return;
     case Type::EndOfFile:
@@ -263,7 +263,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         m_selfClosing = token.selfClosing();
         m_tagName = findTagName(token.name());
         if (UNLIKELY(m_tagName == TagName::Unknown))
-            m_name = AtomString(token.name().data(), token.name().size());
+            m_name = AtomString(token.name().span());
         initializeAttributes(token.attributes());
         return;
     case Type::Comment: {

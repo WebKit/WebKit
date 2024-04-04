@@ -659,8 +659,8 @@ inline String StringView::toString() const
 inline AtomString StringView::toAtomString() const
 {
     if (is8Bit())
-        return AtomString(characters8(), m_length);
-    return AtomString(characters16(), m_length);
+        return span8();
+    return span16();
 }
 
 inline AtomString StringView::toExistingAtomString() const
