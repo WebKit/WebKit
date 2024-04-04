@@ -1,0 +1,9 @@
+
+
+PASS invoking (as foo-bar) on audio does nothing
+PASS invoking (as showpopover) on audio does nothing
+PASS invoking (as showmodal) on audio does nothing
+PASS invoking (as showpicker) on audio does nothing
+PASS invoking (as open) on audio does nothing
+PASS invoking (as close) on audio does nothing
+

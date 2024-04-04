@@ -4034,6 +4034,39 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-fullscreen-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-audio-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-audio-invalid-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-invalid-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-invalid-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-invalid-behavior.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-video-behavior.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html": [
         "slow"
     ],

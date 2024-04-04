@@ -23,6 +23,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-fullscreen-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-generic-eventtarget-crash.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-audio-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-audio-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-invalid-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-dialog-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-invalid-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-video-behavior.tentative.html
