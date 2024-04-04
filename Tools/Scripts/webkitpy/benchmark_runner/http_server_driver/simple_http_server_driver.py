@@ -29,7 +29,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         self._ensure_http_server_dependencies()
 
     def serve(self, web_root):
-        _log.info('Launching an http server')
+        _log.info('Launching an {} http server'.format(self._server_type))
         http_server_file = 'http_server/{}_http_server.py'.format(self._server_type)
         http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), http_server_file)
         extra_args = []

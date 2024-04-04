@@ -36,6 +36,14 @@ class ServerControl(Resource):
         return 'OK'
 
 
+class StaticFileWithHeader(static.File):
+
+    def render_GET(self, request):
+        request.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
+        request.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+        return super().render_GET(request)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='python twisted_http_server.py web_root')
     parser.add_argument('web_root')
@@ -43,7 +51,7 @@ if __name__ == '__main__':
     parser.add_argument('--interface', default='')
     parser.add_argument('--log-path', default='/tmp/run-benchmark-http.log')
     args = parser.parse_args()
-    web_root = static.File(args.web_root)
+    web_root = StaticFileWithHeader(args.web_root)
     serverControl = ServerControl()
     web_root.putChild('shutdown'.encode('utf-8'), serverControl)
     web_root.putChild('report'.encode('utf-8'), serverControl)
