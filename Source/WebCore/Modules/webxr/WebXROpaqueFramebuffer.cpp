@@ -320,6 +320,10 @@ void WebXROpaqueFramebuffer::blitSharedToLayered(GraphicsContextGL& gl)
 
         gl.blitFramebuffer(horizontalOffset, verticalOffset, horizontalOffset + adjustedWidth, verticalOffset + adjustedHeight, 0, 0, adjustedWidth, adjustedHeight, buffers, GL::NEAREST);
 
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=272104 - [WebXR] Compositor expects reverse-Z values
+        gl.clearDepth(FLT_MIN);
+        gl.clear(GL::DEPTH_BUFFER_BIT | GL::STENCIL_BUFFER_BIT);
+
         phyiscalSize = m_rightPhysicalSize;
         viewport = m_rightViewport;
     }
