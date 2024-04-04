@@ -43,6 +43,8 @@ class StreamServerConnection;
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
+
 namespace WebGPU {
 class ObjectHeap;
 struct CanvasConfiguration;
@@ -51,9 +53,9 @@ struct CanvasConfiguration;
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePresentationContext> create(WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemotePresentationContext> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemotePresentationContext(presentationContext, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemotePresentationContext(gpuConnectionToWebProcess, presentationContext, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemotePresentationContext();
@@ -63,7 +65,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePresentationContext(WebCore::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemotePresentationContext(GPUConnectionToWebProcess&, WebCore::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemotePresentationContext(const RemotePresentationContext&) = delete;
     RemotePresentationContext(RemotePresentationContext&&) = delete;
@@ -83,6 +85,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit

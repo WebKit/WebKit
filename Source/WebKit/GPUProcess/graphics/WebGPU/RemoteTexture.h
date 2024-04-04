@@ -43,6 +43,8 @@ class StreamServerConnection;
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
+
 namespace WebGPU {
 class ObjectHeap;
 struct TextureViewDescriptor;
@@ -51,9 +53,9 @@ struct TextureViewDescriptor;
 class RemoteTexture final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteTexture> create(WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteTexture> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::Texture& texture, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
-        return adoptRef(*new RemoteTexture(texture, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteTexture(gpuConnectionToWebProcess, texture, objectHeap, WTFMove(streamConnection), identifier));
     }
 
     virtual ~RemoteTexture();
@@ -63,7 +65,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteTexture(WebCore::WebGPU::Texture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteTexture(GPUConnectionToWebProcess&, WebCore::WebGPU::Texture&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteTexture(const RemoteTexture&) = delete;
     RemoteTexture(RemoteTexture&&) = delete;
@@ -85,6 +87,7 @@ private:
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 
 } // namespace WebKit
