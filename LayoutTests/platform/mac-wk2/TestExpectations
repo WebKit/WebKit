@@ -1777,7 +1777,7 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 
 # rdar://106116843 ([UI-side compositing] two fast/scrolling/mac/scrollbars overlay-scrollbar-reveal tests time out)
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html [ Failure ]
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure ]
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure Timeout ]
 
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
