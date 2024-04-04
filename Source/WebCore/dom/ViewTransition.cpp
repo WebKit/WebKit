@@ -223,6 +223,7 @@ void ViewTransition::setupViewTransition()
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
+            m_updateCallbackTimeout = nullptr;
             switch (m_updateCallbackDone.first->status()) {
             case DOMPromise::Status::Fulfilled:
                 activateViewTransition();
@@ -238,7 +239,14 @@ void ViewTransition::setupViewTransition()
             }
         });
 
-        // FIXME: Handle timeout.
+        m_updateCallbackTimeout = protectedDocument()->checkedEventLoop()->scheduleTask(4_s, TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (m_phase == ViewTransitionPhase::Done)
+                return;
+            skipViewTransition(Exception { ExceptionCode::TimeoutError, "View transition update callback timed out."_s });
+        });
     });
 }
 

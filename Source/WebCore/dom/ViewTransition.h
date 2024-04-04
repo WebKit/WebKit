@@ -172,8 +172,7 @@ private:
     PromiseAndWrapper m_ready;
     PromiseAndWrapper m_updateCallbackDone;
     PromiseAndWrapper m_finished;
-
-    FloatSize m_initialSnapshotContainingBlockSize;
+    EventLoopTimerHandle m_updateCallbackTimeout;
 };
 
 }
