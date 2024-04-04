@@ -134,21 +134,18 @@ SkiaHarfBuzzFont::~SkiaHarfBuzzFont()
     FontCache::forCurrentThread().harfBuzzFontCache().remove(m_uniqueID);
 }
 
-static inline hb_position_t floatToHarfBuzzPosition(float value)
+static inline hb_position_t skScalarToHarfBuzzPosition(SkScalar value)
 {
-    return static_cast<hb_position_t>(value * (1 << 16));
-}
-
-static inline hb_position_t doubleToHarfBuzzPosition(double value)
-{
-    return static_cast<hb_position_t>(value * (1 << 16));
+    static constexpr int hbPosition = 1 << 16;
+    return clampTo<int>(value * hbPosition);
 }
 
 hb_font_t* SkiaHarfBuzzFont::scaledFont(const FontPlatformData& fontPlatformData)
 {
-    auto scale = floatToHarfBuzzPosition(fontPlatformData.size());
+    float size = fontPlatformData.size();
+    auto scale = skScalarToHarfBuzzPosition(size);
     hb_font_set_scale(m_font.get(), scale, scale);
-    hb_font_set_ptem(m_font.get(), fontPlatformData.size());
+    hb_font_set_ptem(m_font.get(), size);
     m_scaledFont = fontPlatformData.skFont();
     return m_font.get();
 }
@@ -173,7 +170,7 @@ hb_position_t SkiaHarfBuzzFont::glyphWidth(hb_codepoint_t glyph)
     m_scaledFont.getWidths(&glyphID, 1, &width);
     if (!m_scaledFont.isSubpixel())
         width = SkScalarRoundToInt(width);
-    return floatToHarfBuzzPosition(SkScalarToFloat(width));
+    return skScalarToHarfBuzzPosition(width);
 }
 
 void SkiaHarfBuzzFont::glyphWidths(unsigned count, const hb_codepoint_t* glyphs, unsigned glyphStride, hb_position_t* advances, unsigned advanceStride)
@@ -192,7 +189,7 @@ void SkiaHarfBuzzFont::glyphWidths(unsigned count, const hb_codepoint_t* glyphs,
     }
 
     for (unsigned i = 0; i < count; ++i) {
-        *advances = floatToHarfBuzzPosition(SkScalarToFloat(widths[i]));
+        *advances = skScalarToHarfBuzzPosition(widths[i]);
         advances = reinterpret_cast<hb_position_t*>(reinterpret_cast<uint8_t*>(advances) + advanceStride);
     }
 }
@@ -205,10 +202,10 @@ void SkiaHarfBuzzFont::glyphExtents(hb_codepoint_t glyph, hb_glyph_extents_t* ex
     if (!m_scaledFont.isSubpixel())
         bounds.set(bounds.roundOut());
 
-    extents->x_bearing = doubleToHarfBuzzPosition(SkScalarToDouble(bounds.fLeft));
-    extents->y_bearing = doubleToHarfBuzzPosition(SkScalarToDouble(-bounds.fTop));
-    extents->width = doubleToHarfBuzzPosition(SkScalarToDouble(bounds.width()));
-    extents->height = doubleToHarfBuzzPosition(SkScalarToDouble(-bounds.height()));
+    extents->x_bearing = skScalarToHarfBuzzPosition(bounds.fLeft);
+    extents->y_bearing = skScalarToHarfBuzzPosition(-bounds.fTop);
+    extents->width = skScalarToHarfBuzzPosition(bounds.width());
+    extents->height = skScalarToHarfBuzzPosition(-bounds.height());
 }
 
 } // namespace WebCore
