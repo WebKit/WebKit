@@ -68,6 +68,18 @@
     return IMPL->clientY();
 }
 
+- (int)pageX
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->pageX();
+}
+
+- (int)pageY
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->pageY();
+}
+
 - (BOOL)ctrlKey
 {
     WebCore::JSMainThreadNullState state;

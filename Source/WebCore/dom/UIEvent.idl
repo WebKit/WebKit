@@ -31,7 +31,5 @@
 
     readonly attribute long layerX;
     readonly attribute long layerY;
-    readonly attribute long pageX;
-    readonly attribute long pageY;
     readonly attribute unsigned long which;
 };

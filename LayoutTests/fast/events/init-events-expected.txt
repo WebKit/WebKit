@@ -33,8 +33,6 @@ PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, fals
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').charCode is 0
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').layerX is 0
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').layerY is 0
-PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').pageX is 0
-PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').pageY is 0
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').which is 0
 PASS testInitEvent('Message', '"a", false, false, "b", "c", "d", window, []').type is 'a'
 PASS testInitEvent('Message', 'null, false, false, "b", "c", "d", window, []').type is 'null'
@@ -136,8 +134,6 @@ PASS 'keyCode' in testInitEvent('Text', '"a", false, false, window, "b"') is fal
 PASS 'charCode' in testInitEvent('Text', '"a", false, false, window, "b"') is false
 PASS testInitEvent('Text', '"a", false, false, window, "b"').layerX is 0
 PASS testInitEvent('Text', '"a", false, false, window, "b"').layerY is 0
-PASS testInitEvent('Text', '"a", false, false, window, "b"').pageX is 0
-PASS testInitEvent('Text', '"a", false, false, window, "b"').pageY is 0
 PASS testInitEvent('Text', '"a", false, false, window, "b"').which is 0
 PASS testInitEvent('UI', '"a", false, false, window, 1001').type is 'a'
 PASS testInitEvent('UI', 'null, false, false, window, 1001').type is 'null'
@@ -152,8 +148,6 @@ PASS 'keyCode' in testInitEvent('UI', '"a", false, false, window, 1001') is fals
 PASS 'charCode' in testInitEvent('UI', '"a", false, false, window, 1001') is false
 PASS testInitEvent('UI', '"a", false, false, window, 1001').layerX is 0
 PASS testInitEvent('UI', '"a", false, false, window, 1001').layerY is 0
-PASS testInitEvent('UI', '"a", false, false, window, 1001').pageX is 0
-PASS testInitEvent('UI', '"a", false, false, window, 1001').pageY is 0
 PASS testInitEvent('UI', '"a", false, false, window, 1001').which is 0
 PASS successfullyParsed is true
 

@@ -84,14 +84,12 @@
 
 - (int)pageX
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->pageX();
+    return 0;
 }
 
 - (int)pageY
 {
-    WebCore::JSMainThreadNullState state;
-    return IMPL->pageY();
+    return 0;
 }
 
 - (int)which

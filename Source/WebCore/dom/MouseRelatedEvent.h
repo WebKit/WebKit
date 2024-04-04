@@ -50,6 +50,8 @@ public:
     const IntPoint& screenLocation() const { return m_screenLocation; }
     int clientX() const { return m_clientLocation.x(); }
     int clientY() const { return m_clientLocation.y(); }
+    int pageX() const { return m_pageLocation.x(); }
+    int pageY() const { return m_pageLocation.y(); }
     double movementX() const { return m_movementX; }
     double movementY() const { return m_movementY; }
 
@@ -60,8 +62,6 @@ public:
     WEBCORE_EXPORT int offsetY();
     bool isSimulated() const { return m_isSimulated; }
     void setIsSimulated(bool value) { m_isSimulated = value; }
-    int pageX() const final;
-    int pageY() const final;
     WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,

@@ -58,9 +58,6 @@ public:
     virtual int layerX();
     virtual int layerY();
 
-    virtual int pageX() const;
-    virtual int pageY() const;
-
     virtual unsigned which() const;
 
 protected:

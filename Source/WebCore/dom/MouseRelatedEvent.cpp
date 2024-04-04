@@ -259,14 +259,4 @@ int MouseRelatedEvent::offsetY()
     return roundToInt(m_offsetLocation.y());
 }
 
-int MouseRelatedEvent::pageX() const
-{
-    return m_pageLocation.x();
-}
-
-int MouseRelatedEvent::pageY() const
-{
-    return m_pageLocation.y();
-}
-
 } // namespace WebCore
