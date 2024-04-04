@@ -3,19 +3,23 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 function main() {
+    input.addEventListener('focusin', inputFocus, {once: true});
+    dialog.addEventListener('focus', dialogChange, {once: true});
+    dialog.addEventListener('blur', dialogChange, {once: true});
     input.focus();
     input.stepUp(1);
     document.body.innerHTML = 'PASS';
 }
+
 function inputFocus() {
-    x1.show();
+    dialog.show();
 }
 function dialogChange() {
-    x1.close();
+    dialog.close();
     input.type = "range";
 }
 </script>
 <body onload="main()">
-<dialog id="x1" tabindex="0" onfocus="dialogChange()" onblur="dialogChange()">
+<dialog id="dialog" tabindex="0">
 </dialog>
-<input id="input" onfocusin="inputFocus()" type="time">
+<input id="input" type="time">
