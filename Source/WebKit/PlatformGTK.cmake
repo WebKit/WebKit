@@ -458,12 +458,12 @@ file(WRITE ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     "</gresources>\n"
 )
 
-add_custom_command(
-    OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    DEPENDS ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    DEPFILE ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebKit/Resources/gtk --target=${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c --dependency-file=${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    VERBATIM
+GLIB_COMPILE_RESOURCES(
+    OUTPUT        ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
+    SOURCE_XML    ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
+    RESOURCE_DIRS ${CMAKE_SOURCE_DIR}/Source/WebCore/Resources
+                  ${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources
+                  ${CMAKE_SOURCE_DIR}/Source/WebKit/Resources/gtk
 )
 
 if (ENABLE_WAYLAND_TARGET)

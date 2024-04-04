@@ -357,12 +357,11 @@ file(WRITE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     "</gresources>\n"
 )
 
-add_custom_command(
-    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    DEPENDS ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    DEPFILE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c --dependency-file=${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    VERBATIM
+GLIB_COMPILE_RESOURCES(
+    OUTPUT        ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
+    SOURCE_XML    ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
+    RESOURCE_DIRS ${CMAKE_SOURCE_DIR}/Source/WebCore/Resources
+                  ${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
