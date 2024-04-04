@@ -1087,6 +1087,7 @@ typedef struct WGPUSwapChainDescriptor {
 #ifdef __cplusplus
     Vector<WGPUTextureFormat> viewFormats;
 #endif
+    bool reportValidationErrors;
 } WGPUSwapChainDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUTextureBindingLayout {

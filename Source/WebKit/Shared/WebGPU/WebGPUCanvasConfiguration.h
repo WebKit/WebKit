@@ -46,6 +46,7 @@ struct CanvasConfiguration {
     Vector<WebCore::WebGPU::TextureFormat> viewFormats;
     WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
     WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode { WebCore::WebGPU::CanvasAlphaMode::Opaque };
+    bool reportValidationErrors { true };
 };
 
 } // namespace WebKit::WebGPU

@@ -54,7 +54,7 @@ void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& co
 }
 
 #if PLATFORM(COCOA)
-Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height)
+Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& colorSpace, WebCore::AlphaPremultiplication alphaMode)
 {
     m_renderBuffers.clear();
 
@@ -66,9 +66,10 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     constexpr int max2DTextureSize = 16384;
     width = std::max(1, std::min(max2DTextureSize, width));
     height = std::max(1, std::min(max2DTextureSize, height));
-    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()))
+    auto colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::BGRX : IOSurface::Format::BGRA;
+    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
-    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), WebCore::DestinationColorSpace::SRGB()))
+    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
 
     {

@@ -69,9 +69,9 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 }
 
 #if PLATFORM(COCOA)
-void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    callback(m_backing->recreateRenderBuffers(width, height));
+    callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode));
 }
 #endif
 

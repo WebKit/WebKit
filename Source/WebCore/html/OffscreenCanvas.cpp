@@ -167,11 +167,13 @@ void OffscreenCanvas::setHeight(unsigned newHeight)
 
 void OffscreenCanvas::setSize(const IntSize& newSize)
 {
+    auto oldWidth = width();
+    auto oldHeight = height();
     CanvasBase::setSize(newSize);
     reset();
 
     if (RefPtr context = dynamicDowncast<GPUBasedCanvasRenderingContext>(m_context.get()))
-        context->reshape(width(), height());
+        context->reshape(width(), height(), oldWidth, oldHeight);
 }
 
 #if ENABLE(WEBGL)
@@ -344,6 +346,15 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         return { ImageBitmap::create(buffer.releaseNonNull(), originClean()) };
     }
 #endif
+
+    if (auto* context = dynamicDowncast<GPUCanvasContext>(*m_context)) {
+        auto buffer = allocateImageBuffer();
+        if (!buffer)
+            return { RefPtr<ImageBitmap> { nullptr } };
+
+        Ref<ImageBuffer> bufferRef = buffer.releaseNonNull();
+        return context->getCurrentTextureAsImageBitmap(bufferRef, originClean());
+    }
 
     return Exception { ExceptionCode::NotSupportedError };
 }

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct GPUCanvasConfiguration {
-    WebGPU::CanvasConfiguration convertToBacking() const
+    WebGPU::CanvasConfiguration convertToBacking(bool reportValidationErrors) const
     {
         ASSERT(device);
         return {
@@ -48,6 +48,7 @@ struct GPUCanvasConfiguration {
             }),
             WebCore::convertToBacking(colorSpace),
             WebCore::convertToBacking(alphaMode),
+            reportValidationErrors,
         };
     }
 

@@ -72,6 +72,11 @@ void RemotePresentationContext::unconfigure()
     m_backing->unconfigure();
 }
 
+void RemotePresentationContext::present()
+{
+    m_backing->present();
+}
+
 void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
 {
     auto texture = m_backing->getCurrentTexture();

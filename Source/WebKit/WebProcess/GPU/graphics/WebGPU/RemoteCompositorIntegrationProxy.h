@@ -88,7 +88,7 @@ private:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication) override;
 #endif
 
     void prepareForDisplay(CompletionHandler<void()>&&) override;

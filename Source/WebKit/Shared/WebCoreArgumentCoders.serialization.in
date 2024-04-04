@@ -6494,7 +6494,8 @@ enum class WebCore::WebGPU::PowerPreference : bool
 
 header: <WebCore/WebGPUPredefinedColorSpace.h>
 enum class WebCore::WebGPU::PredefinedColorSpace : uint8_t {
-    SRGB
+    SRGB,
+    DisplayP3
 };
 
 struct WebCore::CookieStoreGetOptions {

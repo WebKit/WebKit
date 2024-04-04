@@ -814,9 +814,12 @@ WebGLTexture::TextureExtensionFlag WebGLRenderingContextBase::textureExtensionFl
     return static_cast<WebGLTexture::TextureExtensionFlag>((m_oesTextureFloatLinear ? WebGLTexture::TextureExtensionFloatLinearEnabled : 0) | (m_oesTextureHalfFloatLinear ? WebGLTexture::TextureExtensionHalfFloatLinearEnabled : 0));
 }
 
-void WebGLRenderingContextBase::reshape(int width, int height)
+void WebGLRenderingContextBase::reshape(int width, int height, int oldWidth, int oldHeight)
 {
     if (isContextLost())
+        return;
+
+    if (width == oldWidth && height == oldHeight)
         return;
 
     // This is an approximation because at WebGLRenderingContext level we don't
