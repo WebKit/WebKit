@@ -462,17 +462,11 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     layoutInlineAndFloatContent();
 
     auto computePlacedInlineItemRange = [&] {
-        lineContent.range = { needsLayoutRange.start, needsLayoutRange.start };
-
-        if (!placedInlineItemCount)
+        lineContent.range = { needsLayoutRange.start, { needsLayoutRange.startIndex() + placedInlineItemCount, { } } };
+        if (!placedInlineItemCount || placedInlineItemCount == m_placedFloats.size() || !lineContent.partialTrailingContentLength)
             return;
 
-        if (placedInlineItemCount == m_placedFloats.size() || !lineContent.partialTrailingContentLength) {
-            lineContent.range.end = { needsLayoutRange.startIndex() + placedInlineItemCount, { } };
-            return;
-        }
-
-        auto trailingInlineItemIndex = needsLayoutRange.startIndex() + placedInlineItemCount - 1;
+        auto trailingInlineItemIndex = lineContent.range.end.index - 1;
         auto overflowingInlineTextItemLength = downcast<InlineTextItem>(m_inlineItemList[trailingInlineItemIndex]).length();
         ASSERT(lineContent.partialTrailingContentLength && lineContent.partialTrailingContentLength < overflowingInlineTextItemLength);
         lineContent.range.end = { trailingInlineItemIndex, overflowingInlineTextItemLength - lineContent.partialTrailingContentLength };

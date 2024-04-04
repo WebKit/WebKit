@@ -400,8 +400,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
                 return { };
 
-            // PolygonShape gets confused when passing in 0px height interval at vertices.
-            auto segment = shape->getExcludedInterval(positionInShape, std::max(candidateHeight, 1_lu));
+            auto segment = shape->getExcludedInterval(positionInShape, candidateHeight);
             if (!segment.isValid)
                 return { };
 
