@@ -75,8 +75,8 @@ long long fileSizeAtPath(NSString *path)
 
 TEST(IndexedDB, CheckpointsWALAutomatically)
 {
-    auto handler = adoptNS([[IDBCheckpointWALMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr handler = adoptNS([[IDBCheckpointWALMessageHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     [configuration.get().websiteDataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -86,29 +86,29 @@ TEST(IndexedDB, CheckpointsWALAutomatically)
 
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBCheckpointWAL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBCheckpointWAL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request.get()];
     TestWebKitAPI::Util::run([handler receivedScriptMessagePointer]);
     EXPECT_STREQ([[[handler lastScriptMessage] body] UTF8String], "Success");
 
-    NSURL *originURL = [NSURL URLWithString:@"file://"];
-    __block NSString *indexedDBDirectoryString = nil;
-    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL topOrigin:originURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    RetainPtr originURL = [NSURL URLWithString:@"file://"];
+    __block RetainPtr<NSString> indexedDBDirectoryString;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL.get() topOrigin:originURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         indexedDBDirectoryString = result;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    NSURL *indexedDBDirectory = [NSURL fileURLWithPath:indexedDBDirectoryString isDirectory:YES];
-    NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("test-wal-checkpoint"_s);
-    NSURL *indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:databaseHash];
-    NSURL *indexedDBDatabaseFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
-    NSURL *indexedDBDatabaseWAL = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];
+    RetainPtr indexedDBDirectory = [NSURL fileURLWithPath:indexedDBDirectoryString.get() isDirectory:YES];
+    String databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("test-wal-checkpoint"_s);
+    RetainPtr indexedDBDatabaseDirectory = [indexedDBDirectory URLByAppendingPathComponent:databaseHash];
+    RetainPtr indexedDBDatabaseFile = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+    RetainPtr indexedDBDatabaseWAL = [indexedDBDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];
 
     // We inserted a single 5 MB row, which is greater than the WAL auto-checkpoint
     // threshold of 4MB, so the WAL should be of minimal size now.
-    EXPECT_LT(fileSizeAtPath(indexedDBDatabaseWAL.path), 128 * 1024);
+    EXPECT_LT(fileSizeAtPath(indexedDBDatabaseWAL.get().path), 128 * 1024);
 
     // Since the single 5 MB row was checkpointed to the main DB file, it should be at least that large.
-    EXPECT_GT(fileSizeAtPath(indexedDBDatabaseFile.path), 5 * 1024 * 1024);
+    EXPECT_GT(fileSizeAtPath(indexedDBDatabaseFile.get().path), 5 * 1024 * 1024);
 }
