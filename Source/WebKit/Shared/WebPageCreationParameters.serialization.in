@@ -56,7 +56,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool suppressScrollbarAnimations;
 
-    WebCore::Pagination::Mode paginationMode;
+    WebCore::PaginationMode paginationMode;
     bool paginationBehavesLikeColumns;
     double pageLength;
     double gapBetweenPages;

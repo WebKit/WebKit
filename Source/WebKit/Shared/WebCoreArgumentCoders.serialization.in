@@ -2742,14 +2742,14 @@ header: <WebCore/KeyboardScroll.h>
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
-    [NotSerialized] WebCore::TransformOperation::Type type();
+    [NotSerialized] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::TranslateTransformOperation {
     WebCore::Length x();
     WebCore::Length y();
     WebCore::Length z();
-    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::RotateTransformOperation {
@@ -2757,20 +2757,20 @@ header: <WebCore/KeyboardScroll.h>
     double y();
     double z();
     double angle();
-    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::ScaleTransformOperation {
     double x();
     double y();
     double z();
-    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::SkewTransformOperation {
     double angleX();
     double angleY();
-    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::PerspectiveTransformOperation {
@@ -7459,7 +7459,7 @@ header: <WebCore/Font.h>
 };
 
 [CreateUsing=fromIPCData] class WebCore::Cursor {
-    std::variant<WebCore::Cursor::Type, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
+    std::variant<WebCore::PlatformCursorType, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
 };
 
 header: <WebCore/DOMCacheEngine.h>
@@ -8068,3 +8068,14 @@ using WebCore::DashArray = Vector<float>;
     SVG_UNIT_TYPE_USERSPACEONUSE
     SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
 };
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+header: <WebCore/InspectorFrontendClient.h>
+using Inspector::ExtensionTabID = String
+#endif
+
+using WebCore::ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>
+using WebCore::IDBKeyPath = std::variant<String, Vector<String>>;
+using WebCore::ServiceWorkerOrClientData = std::variant<WebCore::ServiceWorkerData, WebCore::ServiceWorkerClientData>
+using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
+enum class WebCore::CrossOriginMode : bool

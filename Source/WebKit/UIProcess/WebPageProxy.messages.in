@@ -213,7 +213,7 @@ messages -> WebPageProxy {
     LogDiagnosticMessageWithResultFromWebProcess(String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithValueFromWebProcess(String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess(String message, String description, enum:bool WebCore::ShouldSample shouldSample)
-    LogDiagnosticMessageWithValueDictionaryFromWebProcess(String message, String description, WebCore::DiagnosticLoggingClient::ValueDictionary value, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValueDictionaryFromWebProcess(String message, String description, struct WebCore::DiagnosticLoggingDictionary value, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithDomainFromWebProcess(String message, WebCore::DiagnosticLoggingDomain domain)
 
     # Performance logging

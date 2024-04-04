@@ -320,7 +320,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 
-    SetPaginationMode(WebCore::Pagination::Mode mode)
+    SetPaginationMode(enum:uint8_t WebCore::PaginationMode mode)
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
     SetGapBetweenPages(double gap)

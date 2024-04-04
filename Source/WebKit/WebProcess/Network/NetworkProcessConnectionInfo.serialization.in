@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [RValue] struct WebKit::NetworkProcessConnectionInfo {
-    IPC::Connection::Handle connection;
+    IPC::ConnectionHandle connection;
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
     std::optional<WebKit::CoreIPCAuditToken> auditToken;

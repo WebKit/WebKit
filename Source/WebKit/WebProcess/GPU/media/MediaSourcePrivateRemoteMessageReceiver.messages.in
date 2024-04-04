@@ -27,7 +27,7 @@
 
 messages -> MediaSourcePrivateRemoteMessageReceiver NotRefCounted {
     ProxyWaitForTarget(struct WebCore::SeekTarget target) -> (Expected<MediaTime, WebCore::PlatformMediaError> seekedTime);
-    ProxySeekToTime(MediaTime time) -> (WebCore::MediaPromise::Result result);
+    ProxySeekToTime(MediaTime time) -> (Expected<void, WebCore::PlatformMediaError> result);
     MediaSourcePrivateShuttingDown() -> ();
 }
 

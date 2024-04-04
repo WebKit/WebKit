@@ -675,17 +675,30 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"long long",
         @"GCGLint",
         @"GCGLenum",
+        @"OSStatus",
     ]];
 
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
-    EXPECT_LT(typesNeedingDescriptions.count, 35u); // FIXME: This should eventually be 0.
 
-    for (NSString *type in typesNeedingDescriptions) {
-        // These are the last two types in the WebKit namespace with non-generated serializers.
-        if ([type isEqualToString:@"WebKit::RemoteObjectInvocation"] || [type isEqualToString:@"WebKit::ObjCObjectGraph"])
-            continue;
-        EXPECT_FALSE([type containsString:@"WebKit"]);
+    NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
+        @"CTFontDescriptorOptions",
+        @"NSObject<NSSecureCoding>",
+        @"WKDDActionContext",
+        @"PKSecureElementPass",
+        @"WebKit::ObjCObjectGraph",
+        @"GCGLErrorCodeSet",
+        @"NSURLRequest",
+        @"CGDisplayChangeSummaryFlags",
+        @"MachSendRight",
+        @"CGBitmapInfo",
+        @"WebCore::ContextMenuAction",
+        @"WebKit::RemoteObjectInvocation",
+        @"NSParagraphStyle"
+    ]];
+    if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
+        EXPECT_TRUE(false);
+        WTFLogAlways("%@", typesNeedingDescriptions);
     }
 }
 
