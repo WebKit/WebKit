@@ -15,8 +15,11 @@ if (window.testRunner) {
 <script>
 window.open("http://A=a&B=b", "_top");
 window.setTimeout(function() {
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.testRunner) {
+        testRunner.flushConsoleLogs(function() {
+            testRunner.notifyDone();
+        });
+    }
 }, 0);
 </script>
 </body>

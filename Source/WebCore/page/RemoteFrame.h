@@ -80,6 +80,7 @@ private:
     void changeLocation(FrameLoadRequest&&) final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
+    void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
 
     FrameView* virtualView() const final;
     void disconnectView() final;

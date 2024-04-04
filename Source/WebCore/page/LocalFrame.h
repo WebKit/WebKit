@@ -336,6 +336,7 @@ private:
     const Frame* opener() const final;
     Frame* opener();
     FrameLoaderClient& loaderClient() final;
+    void documentURLForConsoleLog(CompletionHandler<void(const URL&)>&&) final;
 
     WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 
