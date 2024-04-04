@@ -87,6 +87,8 @@ void TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread(Composit
     {
         Locker locker { m_lock };
         m_compositor = compositor;
+        if (m_targetLayer)
+            m_targetLayer->setContentsLayer(nullptr);
         m_targetLayer = targetLayer;
     }
 }
@@ -105,6 +107,8 @@ void TextureMapperPlatformLayerProxyDMABuf::invalidate()
     m_layers = { };
 
     m_compositor = nullptr;
+    if (m_targetLayer)
+        m_targetLayer->setContentsLayer(nullptr);
     m_targetLayer = nullptr;
 }
 
