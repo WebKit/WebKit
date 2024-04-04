@@ -1,0 +1,17 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/ServiceExtensions.framework/ServiceExtensions
+swift-abi-version: 7
+reexported-libraries:
+-       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+        libraries: [/System/Library/Frameworks/BrowserEngineKit.framework/BrowserEngineKit, /System/Library/PrivateFrameworks/ServiceExtensionsCore.framework/ServiceExtensionsCore]
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
+install-name: /System/Library/PrivateFrameworks/ServiceExtensionsCore.framework/ServiceExtensionsCore
+swift-abi-version: 7
+exports: []
+...

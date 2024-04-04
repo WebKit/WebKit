@@ -2,6 +2,6 @@
 tbd-version: 4
 targets: [arm64-ios, arm64e-ios]
 install-name: /System/Library/PrivateFrameworks/URLFormatting.framework/URLFormatting
-current-version: 235
+current-version: 240.13
 exports: []
 ...

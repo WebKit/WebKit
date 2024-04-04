@@ -1,0 +1,17 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/ServiceExtensions.framework/ServiceExtensions
+swift-abi-version: 7
+reexported-libraries:
+-       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        libraries: [/System/Library/Frameworks/BrowserEngineKit.framework/BrowserEngineKit, /System/Library/PrivateFrameworks/ServiceExtensionsCore.framework/ServiceExtensionsCore]
+exports: []
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+install-name: /System/Library/PrivateFrameworks/ServiceExtensionsCore.framework/ServiceExtensionsCore
+swift-abi-version: 7
+exports: []
+...

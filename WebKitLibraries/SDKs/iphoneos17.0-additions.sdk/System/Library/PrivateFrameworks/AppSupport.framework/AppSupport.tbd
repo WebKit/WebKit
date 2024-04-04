@@ -8,6 +8,7 @@ reexported-libraries:
         libraries: [/System/Library/PrivateFrameworks/CorePhoneNumbers.framework/CorePhoneNumbers]
 exports:
 -       targets: [armv7-ios, armv7s-ios, arm64-ios, arm64e-ios]
+        symbols: [_CPCopyBundleIdentifierAndTeamFromAuditToken]
         objc-classes: [CPNetworkObserver]
 ...
 --- !tapi-tbd

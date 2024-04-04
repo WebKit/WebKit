@@ -2,7 +2,7 @@
 tbd-version: 4
 targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
 install-name: /System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices
-current-version: 858.0.6
+current-version: 874.102.1
 exports:
 -       targets: [i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator]
         symbols: [_RBSProcessTimeLimitationNone]
