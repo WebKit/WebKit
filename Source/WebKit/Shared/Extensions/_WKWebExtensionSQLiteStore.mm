@@ -235,14 +235,6 @@ using namespace WebKit;
     return [self _openDatabase:databaseURL withAccessType:SQLiteDatabaseAccessTypeReadWriteCreate deleteDatabaseFileOnError:NO];
 }
 
-- (void)_deleteExtensionStorageFolderIfEmpty
-{
-    dispatch_assert_queue(_databaseQueue);
-    ASSERT(!_useInMemoryDatabase);
-
-    FileSystem::deleteEmptyDirectory(_directory.path);
-}
-
 - (NSString *)_deleteDatabaseIfEmpty
 {
     dispatch_assert_queue(_databaseQueue);
@@ -269,9 +261,6 @@ using namespace WebKit;
         return databaseCloseErrorMessage;
 
     NSString *deleteDatabaseFileErrorMessage = [self _deleteDatabaseFileAtURL:self._databaseURL reopenDatabase:NO];
-
-    // We don't tell the extension if we fail to delete the enclosing folder since it only cares whether the database itself was deleted.
-    [self _deleteExtensionStorageFolderIfEmpty];
 
     // An error from closing the database takes precedence over an error deleting the database file.
     return databaseCloseErrorMessage.length ? databaseCloseErrorMessage : deleteDatabaseFileErrorMessage;

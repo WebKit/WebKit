@@ -3284,7 +3284,7 @@ void WebExtensionContext::determineInstallReasonDuringLoad()
     auto *currentBundleHash = extension().bundleHash();
     m_state.get()[lastSeenBundleHashStateKey] = currentBundleHash;
 
-    bool extensionDidChange = ![lastSeenBundleHash isEqualToData:currentBundleHash];
+    bool extensionDidChange = lastSeenBundleHash && currentBundleHash && ![lastSeenBundleHash isEqualToData:currentBundleHash];
 
     m_shouldFireStartupEvent = extensionController()->isFreshlyCreated();
 
