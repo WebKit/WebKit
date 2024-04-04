@@ -163,6 +163,8 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
+    bool isLockdownSafeFontParserEnabled() const { return m_preferences.isLockdownSafeFontParserEnabled; }
+
     bool allowTestOnlyIPC() const { return m_preferences.allowTestOnlyIPC; }
 
     Logger& logger();

@@ -333,7 +333,8 @@ GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUProcess()
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         preferences->useCGDisplayListsForDOMRendering(),
 #endif
-        allowTestOnlyIPC()
+        allowTestOnlyIPC(),
+        preferences->lockdownFontParserEnabled()
     };
 }
 #endif

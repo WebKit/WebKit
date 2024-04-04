@@ -54,10 +54,6 @@ header: <WebCore/FontCustomPlatformData.h>
     String itemInCollection;
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier;
 };
-
-[CreateUsing=tryMakeFromSerializationData, RefCounted] struct WebCore::FontCustomPlatformData {
-    WebCore::FontCustomPlatformSerializedData serializedData()
-};
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

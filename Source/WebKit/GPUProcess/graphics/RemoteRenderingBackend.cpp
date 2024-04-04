@@ -364,11 +364,25 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
     m_remoteResourceCache.cacheFont(WTFMove(font));
 }
 
+#if PLATFORM(COCOA)
+void RemoteRenderingBackend::cacheFontCustomPlatformData(WebCore::FontCustomPlatformSerializedData&& fontCustomPlatformSerializedData)
+{
+    ASSERT(!RunLoop::isMain());
+
+    // FIXME: (rdar://124235570) use this->shoulUsedLockdownFontParser instead of hard-coded 'false' at tryMakeFromSerializationData after we deprecate lockdown mode fonts allowed (trusted) list.
+    constexpr bool shouldUseLockdownFontParser { false };
+    auto customPlatformData = FontCustomPlatformData::tryMakeFromSerializationData(WTFMove(fontCustomPlatformSerializedData), shouldUseLockdownFontParser);
+    MESSAGE_CHECK(customPlatformData.has_value(), "cacheFontCustomPlatformData couldn't deserialize FontCustomPlatformData"_s);
+
+    m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData.value()));
+}
+#else
 void RemoteRenderingBackend::cacheFontCustomPlatformData(Ref<FontCustomPlatformData>&& customPlatformData)
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.cacheFontCustomPlatformData(WTFMove(customPlatformData));
 }
+#endif
 
 void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
 {
@@ -596,6 +610,11 @@ void RemoteRenderingBackend::terminateWebProcess(ASCIILiteral message)
         RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), message.characters());
         m_gpuConnectionToWebProcess->terminateWebProcess();
     }
+}
+
+bool RemoteRenderingBackend::shouldUseLockdownFontParser() const
+{
+    return m_gpuConnectionToWebProcess->isLockdownSafeFontParserEnabled() && m_gpuConnectionToWebProcess->isLockdownModeEnabled();
 }
 
 } // namespace WebKit
