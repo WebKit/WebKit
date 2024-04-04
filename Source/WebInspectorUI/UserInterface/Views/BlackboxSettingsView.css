@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,4 +112,16 @@
     width: 15px;
     height: 15px;
     margin-inline-start: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+    @media (prefers-contrast: more) {
+        .settings-view.blackbox > table > tbody td.url {
+            background-color: var(--background-color-content);
+        }
+
+        .settings-view.blackbox > table > tbody td:not(.remove-blackbox) {
+            border: 1px solid hsl(0, 0%, 70%, 0.8);
+        }
+    }
 }

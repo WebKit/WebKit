@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016-2020 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Frances Cornwall <frances_c@cox.net>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,4 +158,22 @@
 .content-view.tab.settings > .settings-view > .container.reference > a > .go-to-arrow {
     margin: 0;
     vertical-align: -0.25em;
+}
+
+@media (prefers-color-scheme: dark) {
+    @media (prefers-contrast: more) {
+        .content-view.tab.settings > .settings-view > .container.reference > a {
+            color: hsl(0, 0%, 95%);
+        }
+
+        .content-view.tab.settings > .settings-view {
+            --background-color-content: hsl(0, 0%, 14%);
+            background-color: var(--background-color-content);
+        }
+
+        .content-view.tab.settings .navigation-bar {
+            --background-color-content: hsl(0, 0%, 17%);
+            background-color: var(--background-color-content);
+        }
+    }
 }
