@@ -605,10 +605,12 @@ bool MediaStreamTrack::virtualHasPendingActivity() const
     return !m_ended;
 }
 
+#if ENABLE(WEB_AUDIO)
 RefPtr<WebAudioSourceProvider> MediaStreamTrack::createAudioSourceProvider()
 {
     return m_private->createAudioSourceProvider();
 }
+#endif
 
 bool MediaStreamTrack::isCapturingAudio() const
 {
