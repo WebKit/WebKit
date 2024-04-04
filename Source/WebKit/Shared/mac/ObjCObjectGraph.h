@@ -33,6 +33,19 @@ typedef struct objc_object* id;
 
 namespace WebKit {
 
+enum class ObjCType : uint8_t {
+    Null,
+
+    NSArray,
+    NSData,
+    NSDate,
+    NSDictionary,
+    NSNumber,
+    NSString,
+
+    WKBrowsingContextHandle,
+};
+
 class ObjCObjectGraph : public API::ObjectImpl<API::Object::Type::ObjCObjectGraph> {
 public:
     static Ref<ObjCObjectGraph> create(id rootObject)

@@ -32,7 +32,6 @@
 #import "UserData.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import <wtf/EnumTraits.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
@@ -93,19 +92,6 @@ RetainPtr<id> ObjCObjectGraph::transform(id object, const Transformer& transform
 
     return transformGraph(object, transformer);
 }
-
-enum class ObjCType : uint8_t {
-    Null,
-
-    NSArray,
-    NSData,
-    NSDate,
-    NSDictionary,
-    NSNumber,
-    NSString,
-
-    WKBrowsingContextHandle,
-};
 
 static std::optional<ObjCType> typeFromObject(id object)
 {
@@ -326,21 +312,3 @@ void ArgumentCoder<WebKit::ObjCObjectGraph>::encode(IPC::Encoder& encoder, const
 }
 
 } // namespace IPC
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::ObjCType> {
-    using values = EnumValues<
-        WebKit::ObjCType,
-        WebKit::ObjCType::Null,
-        WebKit::ObjCType::NSArray,
-        WebKit::ObjCType::NSData,
-        WebKit::ObjCType::NSDate,
-        WebKit::ObjCType::NSDictionary,
-        WebKit::ObjCType::NSNumber,
-        WebKit::ObjCType::NSString,
-        WebKit::ObjCType::WKBrowsingContextHandle
-    >;
-};
-
-} // namespace WTF

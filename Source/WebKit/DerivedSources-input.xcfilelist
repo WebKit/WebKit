@@ -472,6 +472,7 @@ $(PROJECT_DIR)/Shared/ios/InteractionInformationAtPosition.serialization.in
 $(PROJECT_DIR)/Shared/ios/InteractionInformationRequest.serialization.in
 $(PROJECT_DIR)/Shared/ios/WebAutocorrectionContext.serialization.in
 $(PROJECT_DIR)/Shared/ios/WebAutocorrectionData.serialization.in
+$(PROJECT_DIR)/Shared/mac/ObjCObjectGraph.serialization.in
 $(PROJECT_DIR)/Shared/mac/PDFContextMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/mac/SecItemRequestData.serialization.in
 $(PROJECT_DIR)/Shared/mac/SecItemResponseData.serialization.in
