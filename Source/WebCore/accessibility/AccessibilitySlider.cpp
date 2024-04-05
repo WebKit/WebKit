@@ -42,12 +42,12 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilitySlider::AccessibilitySlider(RenderObject* renderer)
+AccessibilitySlider::AccessibilitySlider(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
 
-Ref<AccessibilitySlider> AccessibilitySlider::create(RenderObject* renderer)
+Ref<AccessibilitySlider> AccessibilitySlider::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilitySlider(renderer));
 }

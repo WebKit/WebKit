@@ -736,7 +736,7 @@ private:
 #endif
 
     // Object creation.
-    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
+    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject&);
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.

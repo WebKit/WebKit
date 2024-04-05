@@ -36,7 +36,7 @@ namespace WebCore {
     
 using namespace HTMLNames;
     
-AccessibilityTreeItem::AccessibilityTreeItem(RenderObject* renderer)
+AccessibilityTreeItem::AccessibilityTreeItem(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
@@ -48,7 +48,7 @@ AccessibilityTreeItem::AccessibilityTreeItem(Node& node)
 
 AccessibilityTreeItem::~AccessibilityTreeItem() = default;
     
-Ref<AccessibilityTreeItem> AccessibilityTreeItem::create(RenderObject* renderer)
+Ref<AccessibilityTreeItem> AccessibilityTreeItem::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityTreeItem(renderer));
 }

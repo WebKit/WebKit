@@ -41,14 +41,14 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityMediaObject::AccessibilityMediaObject(RenderObject* renderer)
+AccessibilityMediaObject::AccessibilityMediaObject(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
 
 AccessibilityMediaObject::~AccessibilityMediaObject() = default;
 
-Ref<AccessibilityMediaObject> AccessibilityMediaObject::create(RenderObject* renderer)
+Ref<AccessibilityMediaObject> AccessibilityMediaObject::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityMediaObject(renderer));
 }
@@ -89,7 +89,7 @@ void AccessibilityMediaObject::mediaSeek(AXSeekDirection direction)
     double duration = element->duration();
     double timeDelta = ceil(duration * seekStep);
 
-    double time = direction == AXSeekForward ? std::min(current + timeDelta, duration) : std::max(current - timeDelta, 0.0);
+    double time = direction == AXSeekDirection::Forward ? std::min(current + timeDelta, duration) : std::max(current - timeDelta, 0.0);
     element->setCurrentTime(time);
 }
 
@@ -104,12 +104,12 @@ void AccessibilityMediaObject::toggleMute()
 
 void AccessibilityMediaObject::increment()
 {
-    mediaSeek(AXSeekForward);
+    mediaSeek(AXSeekDirection::Forward);
 }
 
 void AccessibilityMediaObject::decrement()
 {
-    mediaSeek(AXSeekBackward);
+    mediaSeek(AXSeekDirection::Backward);
 }
 
 bool AccessibilityMediaObject::press()

@@ -54,7 +54,7 @@ class VisibleSelection;
 
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityRenderObject> create(RenderObject*);
+    static Ref<AccessibilityRenderObject> create(RenderObject&);
     virtual ~AccessibilityRenderObject();
     
     FloatRect frameRect() const final;
@@ -139,7 +139,7 @@ public:
     void labelText(Vector<AccessibilityText>&) const override;
 
 protected:
-    explicit AccessibilityRenderObject(RenderObject*);
+    explicit AccessibilityRenderObject(RenderObject&);
     explicit AccessibilityRenderObject(Node&);
     void detachRemoteParts(AccessibilityDetachmentType) override;
     ScrollableArea* getScrollableAreaIfScrollable() const override;

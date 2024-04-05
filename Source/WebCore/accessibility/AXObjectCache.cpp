@@ -608,49 +608,49 @@ bool nodeHasCellRole(Node* node)
     return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
 }
 
-static bool isSimpleImage(const RenderObject& renderer)
+static RenderImage* toSimpleImage(RenderObject& renderer)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
     if (!renderImage)
-        return false;
+        return nullptr;
 
     // Exclude ImageButtons because they are treated as buttons, not as images.
     RefPtr node = renderer.node();
     if (is<HTMLInputElement>(node))
-        return false;
+        return nullptr;
 
     // ImageMaps are not simple images.
     if (renderImage->imageMap())
-        return false;
+        return nullptr;
 
     if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(node); imgElement && imgElement->hasAttributeWithoutSynchronization(usemapAttr))
-        return false;
+        return nullptr;
 
 #if ENABLE(VIDEO)
     // Exclude video and audio elements.
     if (is<HTMLMediaElement>(node))
-        return false;
+        return nullptr;
 #endif // ENABLE(VIDEO)
 
-    return true;
+    return renderImage.get();
 }
 
-static bool isAccessibilityList(Node* node)
+static bool isAccessibilityList(Node& node)
 {
     // If the node is aria role="list" or the aria role is empty and it's a
     // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
-    return (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
-        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag) || node->hasTagName(menuTag)))));
+    return ((nodeHasRole(&node, "list"_s) || nodeHasRole(&node, "directory"_s))
+        || (nodeHasRole(&node, nullAtom()) && (node.hasTagName(ulTag) || node.hasTagName(olTag) || node.hasTagName(dlTag) || node.hasTagName(menuTag))));
 }
 
-static bool isAccessibilityTree(Node* node)
+static bool isAccessibilityTree(Node& node)
 {
-    return nodeHasRole(node, "tree"_s);
+    return nodeHasRole(&node, "tree"_s);
 }
 
-static bool isAccessibilityTreeItem(Node* node)
+static bool isAccessibilityTreeItem(Node& node)
 {
-    return nodeHasRole(node, "treeitem"_s);
+    return nodeHasRole(&node, "treeitem"_s);
 }
 
 static bool isAccessibilityTable(Node* node)
@@ -668,65 +668,63 @@ static bool isAccessibilityTableCell(Node* node)
     return is<HTMLTableCellElement>(node);
 }
 
-static bool isAccessibilityARIATable(Node* node)
+static bool isAccessibilityARIATable(Node& node)
 {
-    return nodeHasTableRole(node);
+    return nodeHasTableRole(&node);
 }
 
-static bool isAccessibilityARIAGridRow(Node* node)
+static bool isAccessibilityARIAGridRow(Node& node)
 {
-    return nodeHasRole(node, "row"_s);
+    return nodeHasRole(&node, "row"_s);
 }
 
-static bool isAccessibilityARIAGridCell(Node* node)
+static bool isAccessibilityARIAGridCell(Node& node)
 {
-    return nodeHasCellRole(node);
+    return nodeHasCellRole(&node);
 }
 
-// FIXME: This can take a reference, and therefore all *::create methods within can too.
-Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
+Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject& renderer)
 {
-    // FIXME: How could renderer->node() ever not be an Element?
-    Node* node = renderer->node();
+    RefPtr node = renderer.node();
+    if (node) {
+        if (isAccessibilityList(*node))
+            return AccessibilityList::create(renderer);
 
-    if (isAccessibilityList(node))
-        return AccessibilityList::create(renderer);
+        if (isAccessibilityARIATable(*node))
+            return AccessibilityARIATable::create(renderer);
+        if (isAccessibilityARIAGridRow(*node))
+            return AccessibilityARIAGridRow::create(renderer);
+        if (isAccessibilityARIAGridCell(*node))
+            return AccessibilityARIAGridCell::create(renderer);
 
-    if (isAccessibilityARIATable(node))
-        return AccessibilityARIATable::create(renderer);
-    if (isAccessibilityARIAGridRow(node))
-        return AccessibilityARIAGridRow::create(renderer);
-    if (isAccessibilityARIAGridCell(node))
-        return AccessibilityARIAGridCell::create(renderer);
+        if (isAccessibilityTree(*node))
+            return AccessibilityTree::create(renderer);
+        if (isAccessibilityTreeItem(*node))
+            return AccessibilityTreeItem::create(renderer);
 
-    // aria tree
-    if (isAccessibilityTree(node))
-        return AccessibilityTree::create(renderer);
-    if (isAccessibilityTreeItem(node))
-        return AccessibilityTreeItem::create(renderer);
-
-    if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom()))
-        return AccessibilityLabel::create(renderer);
+        if (is<HTMLLabelElement>(*node) && nodeHasRole(node.get(), nullAtom()))
+            return AccessibilityLabel::create(renderer);
 
 #if PLATFORM(IOS_FAMILY)
-    if (is<HTMLMediaElement>(node) && nodeHasRole(node, nullAtom()))
-        return AccessibilityMediaObject::create(renderer);
+        if (is<HTMLMediaElement>(*node) && nodeHasRole(node.get(), nullAtom()))
+            return AccessibilityMediaObject::create(renderer);
 #endif
+    }
 
-    if (renderer->isRenderOrLegacyRenderSVGRoot())
+    if (renderer.isRenderOrLegacyRenderSVGRoot())
         return AccessibilitySVGRoot::create(renderer, this);
 
     if (is<SVGElement>(node))
         return AccessibilitySVGElement::create(renderer, this);
 
-    if (isSimpleImage(*renderer))
-        return AXImage::create(downcast<RenderImage>(renderer));
+    if (auto* renderImage = toSimpleImage(renderer))
+        return AXImage::create(*renderImage);
 
 #if ENABLE(MATHML)
     // The mfenced element creates anonymous RenderMathMLOperators which should be treated
     // as MathML elements and assigned the MathElementRole so that platform logic regarding
     // inclusion and role mapping is not bypassed.
-    bool isAnonymousOperator = renderer->isAnonymous() && is<RenderMathMLOperator>(*renderer);
+    bool isAnonymousOperator = renderer.isAnonymous() && is<RenderMathMLOperator>(renderer);
     if (isAnonymousOperator || is<MathMLElement>(node))
         return AccessibilityMathMLElement::create(renderer, isAnonymousOperator);
 #endif
@@ -734,14 +732,14 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
     if (is<RenderListBox>(renderer))
         return AccessibilityListBox::create(renderer);
     if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
-        return AccessibilityMenuList::create(renderMenuList);
+        return AccessibilityMenuList::create(*renderMenuList);
 
     // standard tables
-    if ((is<RenderTable>(renderer) && !renderer->isAnonymous()) || isAccessibilityTable(node))
+    if ((is<RenderTable>(renderer) && !renderer.isAnonymous()) || isAccessibilityTable(node.get()))
         return AccessibilityTable::create(renderer);
-    if ((is<RenderTableRow>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableRow(node))
+    if ((is<RenderTableRow>(renderer) && !renderer.isAnonymous()) || isAccessibilityTableRow(node.get()))
         return AccessibilityTableRow::create(renderer);
-    if ((is<RenderTableCell>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableCell(node))
+    if ((is<RenderTableCell>(renderer) && !renderer.isAnonymous()) || isAccessibilityTableCell(node.get()))
         return AccessibilityTableCell::create(renderer);
 
     // Progress indicator.
@@ -751,7 +749,7 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (auto* renderAttachment = dynamicDowncast<RenderAttachment>(renderer))
-        return AccessibilityAttachment::create(renderAttachment);
+        return AccessibilityAttachment::create(*renderAttachment);
 #endif
 
     // input type=range
@@ -763,7 +761,7 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
 
 static Ref<AccessibilityObject> createFromNode(Node& node)
 {
-    if (isAccessibilityList(&node))
+    if (isAccessibilityList(node))
         return AccessibilityList::create(node);
     if (isAccessibilityTable(&node))
         return AccessibilityTable::create(node);
@@ -771,15 +769,15 @@ static Ref<AccessibilityObject> createFromNode(Node& node)
         return AccessibilityTableRow::create(node);
     if (isAccessibilityTableCell(&node))
         return AccessibilityTableCell::create(node);
-    if (isAccessibilityTree(&node))
+    if (isAccessibilityTree(node))
         return AccessibilityTree::create(node);
-    if (isAccessibilityTreeItem(&node))
+    if (isAccessibilityTreeItem(node))
         return AccessibilityTreeItem::create(node);
-    if (isAccessibilityARIATable(&node))
+    if (isAccessibilityARIATable(node))
         return AccessibilityARIATable::create(node);
-    if (isAccessibilityARIAGridRow(&node))
+    if (isAccessibilityARIAGridRow(node))
         return AccessibilityARIAGridRow::create(node);
-    if (isAccessibilityARIAGridCell(&node))
+    if (isAccessibilityARIAGridCell(node))
         return AccessibilityARIAGridCell::create(node);
     return AccessibilityNodeObject::create(node);
 }
@@ -909,7 +907,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
     if (renderer.beingDestroyed())
         return nullptr;
 
-    Ref object = createObjectFromRenderer(&renderer);
+    Ref object = createObjectFromRenderer(renderer);
 
     // Will crash later if we have two objects for the same renderer.
     ASSERT(!get(renderer));

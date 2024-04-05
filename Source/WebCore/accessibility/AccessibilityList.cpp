@@ -41,7 +41,7 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityList::AccessibilityList(RenderObject* renderer)
+AccessibilityList::AccessibilityList(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
@@ -53,7 +53,7 @@ AccessibilityList::AccessibilityList(Node& node)
 
 AccessibilityList::~AccessibilityList() = default;
 
-Ref<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
+Ref<AccessibilityList> AccessibilityList::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityList(renderer));
 }

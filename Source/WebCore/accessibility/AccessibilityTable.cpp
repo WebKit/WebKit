@@ -54,7 +54,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTable::AccessibilityTable(RenderObject* renderer)
+AccessibilityTable::AccessibilityTable(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
     , m_headerContainer(nullptr)
     , m_isExposable(true)
@@ -76,7 +76,7 @@ void AccessibilityTable::init()
     m_isExposable = computeIsTableExposableThroughAccessibility();
 }
 
-Ref<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
+Ref<AccessibilityTable> AccessibilityTable::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityTable(renderer));
 }

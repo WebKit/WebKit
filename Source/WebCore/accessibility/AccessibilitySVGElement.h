@@ -33,11 +33,11 @@ namespace WebCore {
 
 class AccessibilitySVGElement : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySVGElement> create(RenderObject*, AXObjectCache*);
+    static Ref<AccessibilitySVGElement> create(RenderObject&, AXObjectCache*);
     virtual ~AccessibilitySVGElement();
 
 protected:
-    explicit AccessibilitySVGElement(RenderObject*, AXObjectCache*);
+    explicit AccessibilitySVGElement(RenderObject&, AXObjectCache*);
     AXObjectCache* axObjectCache() const override { return m_axObjectCache.get(); }
     AccessibilityRole determineAriaRoleAttribute() const final;
 

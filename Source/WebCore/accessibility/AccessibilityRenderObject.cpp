@@ -126,12 +126,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
-    : AccessibilityNodeObject(renderer->node())
+AccessibilityRenderObject::AccessibilityRenderObject(RenderObject& renderer)
+    : AccessibilityNodeObject(renderer.node())
     , m_renderer(renderer)
 {
 #if ASSERT_ENABLED
-    m_renderer->setHasAXObject(true);
+    renderer.setHasAXObject(true);
 #endif
 }
 
@@ -147,7 +147,7 @@ AccessibilityRenderObject::~AccessibilityRenderObject()
     ASSERT(isDetached());
 }
 
-Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject* renderer)
+Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityRenderObject(renderer));
 }

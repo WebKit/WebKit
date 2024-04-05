@@ -36,7 +36,7 @@ class AccessibilityTable;
 
 class AccessibilityTableRow : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityTableRow> create(RenderObject*);
+    static Ref<AccessibilityTableRow> create(RenderObject&);
     static Ref<AccessibilityTableRow> create(Node&);
     virtual ~AccessibilityTableRow();
 
@@ -57,7 +57,7 @@ public:
     int axRowIndex() const override;
 
 protected:
-    explicit AccessibilityTableRow(RenderObject*);
+    explicit AccessibilityTableRow(RenderObject&);
     explicit AccessibilityTableRow(Node&);
 
     AccessibilityRole determineAccessibilityRole() final;
