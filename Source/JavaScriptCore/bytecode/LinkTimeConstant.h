@@ -86,8 +86,10 @@ class JSGlobalObject;
     v(moveFunctionToRealm, nullptr) \
     v(isConstructor, nullptr) \
     v(sameValue, nullptr) \
+    v(regExpProtoDotAllGetter, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
     v(regExpProtoGlobalGetter, nullptr) \
+    v(regExpProtoHasIndicesGetter, nullptr) \
     v(regExpProtoIgnoreCaseGetter, nullptr) \
     v(regExpProtoMultilineGetter, nullptr) \
     v(regExpProtoSourceGetter, nullptr) \

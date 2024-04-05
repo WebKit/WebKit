@@ -52,15 +52,6 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
-test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.match/get-flags-err.js:
-  default: 'Test262Error: Expected a CustomError but got a Test262Error'
-  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
-test/built-ins/RegExp/prototype/Symbol.match/get-unicode-error.js:
-  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/prototype/Symbol.replace/flags-tostring-error.js:
   default: 'Test262Error: Expected a CustomError but got a Test262Error'
   strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
