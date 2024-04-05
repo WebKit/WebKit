@@ -351,6 +351,7 @@ public:
     void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
 
     // SIMD
+    bool usesSIMD() { return m_info.usesSIMD(m_functionIndex); }
     void notifyFunctionUsesSIMD() { ASSERT(m_info.usesSIMD(m_functionIndex)); }
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset);
