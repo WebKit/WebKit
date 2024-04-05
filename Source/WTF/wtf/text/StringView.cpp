@@ -593,6 +593,13 @@ void StringView::setUnderlyingStringImpl(const StringView&)
 
 #endif // not CHECK_STRINGVIEW_LIFETIME
 
+#ifndef NDEBUG
+void StringView::show() const
+{
+    toStringWithoutCopying().show();
+}
+#endif
+
 #if !defined(NDEBUG)
 namespace Detail {
 std::atomic<int> wtfStringCopyCount;

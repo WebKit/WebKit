@@ -203,6 +203,10 @@ public:
 
     struct UnderlyingString;
 
+#ifndef NDEBUG
+    WTF_EXPORT_PRIVATE void show() const;
+#endif
+
 private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
     explicit StringView(const char*);
