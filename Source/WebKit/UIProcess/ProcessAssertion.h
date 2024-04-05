@@ -65,6 +65,7 @@ enum class ProcessAssertionType : uint8_t {
     UnboundedNetworking,
     Foreground,
     MediaPlayback,
+    FinishTaskCanSleep,
     FinishTaskInterruptable,
     BoostedJetsam,
 };

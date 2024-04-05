@@ -342,6 +342,8 @@ static ASCIILiteral runningBoardNameForAssertionType(ProcessAssertionType assert
         return "Foreground"_s;
     case ProcessAssertionType::MediaPlayback:
         return "MediaPlayback"_s;
+    case ProcessAssertionType::FinishTaskCanSleep:
+        return "FinishTaskCanSleep"_s;
     case ProcessAssertionType::FinishTaskInterruptable:
         return "FinishTaskInterruptable"_s;
     case ProcessAssertionType::BoostedJetsam:
@@ -359,6 +361,7 @@ static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType asse
     case ProcessAssertionType::MediaPlayback:
     case ProcessAssertionType::BoostedJetsam:
         return "com.apple.webkit"_s;
+    case ProcessAssertionType::FinishTaskCanSleep:
     case ProcessAssertionType::FinishTaskInterruptable:
         return "com.apple.common"_s;
     }
