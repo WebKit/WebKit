@@ -720,6 +720,9 @@ bool ShaderModule::hasOverride(const String& name) const
 
 const ShaderModule::VertexStageIn* ShaderModule::stageInTypesForEntryPoint(const String& entryPoint) const
 {
+    if (!entryPoint.length())
+        return nullptr;
+
     if (auto it = m_stageInTypesForEntryPoint.find(entryPoint); it != m_stageInTypesForEntryPoint.end())
         return &it->value;
 
