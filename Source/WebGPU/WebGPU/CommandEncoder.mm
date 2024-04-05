@@ -1715,12 +1715,13 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     }
 
     buffer.setCommandEncoder(*this);
-    if (buffer.isDestroyed() || !size)
+    auto range = NSMakeRange(static_cast<NSUInteger>(offset), static_cast<NSUInteger>(size));
+    if (buffer.isDestroyed() || !size || NSMaxRange(range) > buffer.buffer().length)
         return;
 
     ensureBlitCommandEncoder();
 
-    [m_blitCommandEncoder fillBuffer:buffer.buffer() range:NSMakeRange(static_cast<NSUInteger>(offset), static_cast<NSUInteger>(size)) value:0];
+    [m_blitCommandEncoder fillBuffer:buffer.buffer() range:range value:0];
 }
 
 void CommandEncoder::setLastError(NSString* errorString)
