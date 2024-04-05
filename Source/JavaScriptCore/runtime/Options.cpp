@@ -1398,7 +1398,7 @@ bool canUseHandlerIC()
 #endif
 }
 
-bool canUseWebAssemblyFastMemory()
+bool hasCapacityToUseLargeGigacage()
 {
     // Gigacage::hasCapacityToUseLargeGigacage is determined based on EFFECTIVE_ADDRESS_WIDTH.
     // If we have enough address range to potentially use a large gigacage,

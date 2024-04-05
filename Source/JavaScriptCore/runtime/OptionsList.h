@@ -45,8 +45,8 @@ namespace JSC {
 #endif
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
-bool canUseWebAssemblyFastMemory();
 bool canUseHandlerIC();
+bool hasCapacityToUseLargeGigacage();
 
 // How do JSC VM options work?
 // ===========================
@@ -510,13 +510,12 @@ bool canUseHandlerIC();
     v(Int32, thresholdForOMGOptimizeSoon, 500, Normal, nullptr) \
     v(Int32, omgTierUpCounterIncrementForLoop, 1, Normal, "The amount the tier up counter is incremented on each loop backedge.") \
     v(Int32, omgTierUpCounterIncrementForEntry, 15, Normal, "The amount the tier up counter is incremented on each function entry.") \
-    /* FIXME: enable fast memories on iOS and pre-allocate them. https://bugs.webkit.org/show_bug.cgi?id=170774 */ \
-    v(Bool, useWebAssemblyFastMemory, canUseWebAssemblyFastMemory(), Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
+    v(Bool, useWebAssemblyFastMemory, true, Normal, "If true, we will try to use a 32-bit address space with a signal handler to bounds check wasm memory.") \
     v(Bool, logWebAssemblyMemory, false, Normal, nullptr) \
     v(Unsigned, webAssemblyFastMemoryRedzonePages, 128, Normal, "WebAssembly fast memories use 4GiB virtual allocations, plus a redzone (counted as multiple of 64KiB WebAssembly pages) at the end to catch reg+imm accesses which exceed 32-bit, anything beyond the redzone is explicitly bounds-checked") \
     v(Bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
     v(Bool, crashOnFailedWebAssemblyValidate, false, Normal, "If true, we will crash if we can't validate a wasm module instead of throwing an exception.") \
-    v(Unsigned, maxNumWebAssemblyFastMemories, 4, Normal, nullptr) \
+    v(Unsigned, maxNumWebAssemblyFastMemories, hasCapacityToUseLargeGigacage() ? 8 : 3, Normal, nullptr) \
     v(Bool, verboseBBQJITAllocation, false, Normal, "Logs extra information about register allocation during BBQ JIT") \
     v(Bool, verboseBBQJITInstructions, false, Normal, "Logs instruction information during BBQ JIT") \
     v(Bool, useWasmLLInt, true, Normal, nullptr) \
