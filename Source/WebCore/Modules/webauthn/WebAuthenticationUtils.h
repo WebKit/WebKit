@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AttestationConveyancePreference.h"
+#include "AuthenticatorTransport.h"
 #include "BufferSource.h"
 #include "CBORValue.h"
 #include "SecurityOrigin.h"
