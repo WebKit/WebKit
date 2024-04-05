@@ -88,6 +88,7 @@
 #include <WebCore/VoidCallback.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Algorithms.h>
+#include <wtf/Scope.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #include "PDFKitSoftLink.h"
@@ -2016,28 +2017,33 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     m_lastMouseEvent = event;
 
-    auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
-    auto pageIndex = pageIndexForDocumentPoint(pointInDocumentSpace);
-    if (!pageIndex)
-        return false;
+    // Even if the mouse event isn't handled (e.g. because the event is over a page we shouldn't
+    // display in Single Page mode), we should stop tracking selections (and soon autoscrolling) on MouseUp.
+    auto stopSelectionTrackingIfNeeded = makeScopeExit([this, isMouseUp = event.type() == WebEventType::MouseUp] {
+        if (isMouseUp)
+            stopTrackingSelection();
+    });
 
-    if (!shouldDisplayPage(*pageIndex)) {
+    auto pointInDocumentSpace = convertDown<FloatPoint>(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, lastKnownMousePositionInView());
+    auto pageIndex = m_documentLayout.nearestPageIndexForDocumentPoint(pointInDocumentSpace);
+
+    if (!shouldDisplayPage(pageIndex)) {
         notifyCursorChanged(toWebCoreCursorType({ }));
         return false;
     }
 
-    auto pointInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, *pageIndex);
+    auto pointInPageSpace = convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex);
 
     auto mouseEventButton = event.button();
     auto mouseEventType = event.type();
     // Context menu events always call handleContextMenuEvent as well.
     if (mouseEventType == WebEventType::MouseDown && isContextMenuEvent(event)) {
-        beginTrackingSelection(*pageIndex, pointInPageSpace, event);
+        beginTrackingSelection(pageIndex, pointInPageSpace, event);
         return true;
     }
 
 #if ENABLE(UNIFIED_PDF_DATA_DETECTION)
-    if (dataDetectorOverlayController().handleMouseEvent(event, *pageIndex))
+    if (dataDetectorOverlayController().handleMouseEvent(event, pageIndex))
         return true;
 #endif
 
@@ -2067,7 +2073,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
             }
 
             if (m_selectionTrackingData.isActivelyTrackingSelection)
-                continueTrackingSelection(*pageIndex, pointInPageSpace, IsDraggingSelection::Yes);
+                continueTrackingSelection(pageIndex, pointInPageSpace, IsDraggingSelection::Yes);
 
             return true;
         }
@@ -2097,15 +2103,13 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
                 }
             }
 
-            beginTrackingSelection(*pageIndex, pointInPageSpace, event);
+            beginTrackingSelection(pageIndex, pointInPageSpace, event);
             return false;
         }
         default:
             return false;
         }
     case WebEventType::MouseUp:
-        stopTrackingSelection();
-
         switch (mouseEventButton) {
         case WebMouseEventButton::Left:
             if (RetainPtr trackedAnnotation = m_annotationTrackingState.trackedAnnotation(); trackedAnnotation && ![trackedAnnotation isKindOfClass:getPDFAnnotationTextWidgetClass()]) {
@@ -2117,7 +2121,7 @@ bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 
 #if PLATFORM(MAC)
                 if (RetainPtr pdfAction = [trackedAnnotation action])
-                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex.value());
+                    handlePDFActionForAnnotation(trackedAnnotation.get(), pageIndex);
 #endif
             }
 
