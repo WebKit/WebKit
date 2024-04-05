@@ -922,6 +922,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->titleUIElement())
         [additional addObject:NSAccessibilityTitleUIElementAttribute];
 
+    if (backingObject->isColumnHeader() || backingObject->isRowHeader())
+        [additional addObject:NSAccessibilitySortDirectionAttribute];
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (AXObjectCache::isIsolatedTreeEnabled())
         [additional addObject:NSAccessibilityRelativeFrameAttribute];
