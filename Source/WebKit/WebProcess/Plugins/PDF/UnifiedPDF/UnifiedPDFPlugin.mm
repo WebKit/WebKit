@@ -868,7 +868,7 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
         // FIXME: Also test is m_currentSelection is not empty.
         haveSelection = true;
         if (RefPtr page = this->page())
-            isVisibleAndActive = isSelectionActiveAfterContextMenuInteraction() && page->isVisibleAndActive();
+            isVisibleAndActive = page->isVisibleAndActive();
     }
 
     auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
@@ -2158,7 +2158,6 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
         if (selectedItemTag)
             performContextMenuAction(toContextMenuItemTag(selectedItemTag.value()), eventPosition);
         stopTrackingSelection();
-        repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::HandledContextMenuEvent);
     });
 
     return true;
@@ -2827,8 +2826,6 @@ void UnifiedPDFPlugin::beginTrackingSelection(PDFDocumentLayout::PageIndex pageI
     m_selectionTrackingData.shouldExtendCurrentSelection = modifiers.contains(WebEventModifier::ShiftKey);
     m_selectionTrackingData.selectionToExtendWith = nullptr;
 
-    repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason::BeganTrackingSelection);
-
     // Context menu events can only generate a word selection under the event, so we bail out of the rest of our selection tracking logic.
     if (isContextMenuEvent(event))
         return updateCurrentSelectionForContextMenuEventIfNeeded();
@@ -2935,13 +2932,6 @@ Vector<FloatRect> UnifiedPDFPlugin::boundsForSelection(const PDFSelection *selec
 void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason reason, const Vector<FloatRect>& additionalDocumentRectsToRepaint)
 {
     switch (reason) {
-    case ActiveStateChangeReason::HandledContextMenuEvent:
-        m_selectionTrackingData.lastHandledEventWasContextMenuEvent = true;
-        break;
-    case ActiveStateChangeReason::BeganTrackingSelection:
-        if (!std::exchange(m_selectionTrackingData.lastHandledEventWasContextMenuEvent, false))
-            return;
-        break;
     case ActiveStateChangeReason::WindowActivityChanged:
         if (!m_currentSelection || [m_currentSelection isEmpty])
             return;
@@ -2956,11 +2946,6 @@ void UnifiedPDFPlugin::repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateCh
     selectionDocumentRectsToRepaint.appendVector(additionalDocumentRectsToRepaint);
 
     setNeedsRepaintInDocumentRects(RepaintRequirement::Selection, selectionDocumentRectsToRepaint);
-}
-
-bool UnifiedPDFPlugin::isSelectionActiveAfterContextMenuInteraction() const
-{
-    return !m_selectionTrackingData.lastHandledEventWasContextMenuEvent;
 }
 
 RetainPtr<PDFSelection> UnifiedPDFPlugin::protectedCurrentSelection() const
