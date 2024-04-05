@@ -200,6 +200,53 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     return rawKey;
 }
 
+String toString(AuthenticatorTransport transport)
+{
+    switch (transport) {
+    case AuthenticatorTransport::Usb:
+        return authenticatorTransportUsb;
+        break;
+    case AuthenticatorTransport::Nfc:
+        return authenticatorTransportNfc;
+        break;
+    case AuthenticatorTransport::Ble:
+        return authenticatorTransportBle;
+        break;
+    case AuthenticatorTransport::Internal:
+        return authenticatorTransportInternal;
+        break;
+    case AuthenticatorTransport::Cable:
+        return authenticatorTransportCable;
+    case AuthenticatorTransport::Hybrid:
+        return authenticatorTransportHybrid;
+    case AuthenticatorTransport::SmartCard:
+        return authenticatorTransportSmartCard;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
+std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport)
+{
+    if (transport == authenticatorTransportUsb)
+        return AuthenticatorTransport::Usb;
+    if (transport == authenticatorTransportNfc)
+        return AuthenticatorTransport::Nfc;
+    if (transport == authenticatorTransportBle)
+        return AuthenticatorTransport::Ble;
+    if (transport == authenticatorTransportInternal)
+        return AuthenticatorTransport::Internal;
+    if (transport == authenticatorTransportCable)
+        return AuthenticatorTransport::Cable;
+    if (transport == authenticatorTransportHybrid)
+        return AuthenticatorTransport::Hybrid;
+    if (transport == authenticatorTransportSmartCard)
+        return AuthenticatorTransport::SmartCard;
+    return std::nullopt;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)
