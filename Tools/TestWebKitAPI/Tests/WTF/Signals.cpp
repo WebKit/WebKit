@@ -28,7 +28,7 @@
 #include <type_traits>
 #include <wtf/DataLog.h>
 #include <wtf/Threading.h>
-#include <wtf/threads/Signals.h>
+#include <wtf/WTFConfig.h>
 #if OS(UNIX)
 #include <signal.h>
 #else
@@ -47,18 +47,14 @@ public:
 TEST(Signals, SignalsWorkOnExit)
 {
     static bool handlerRan = false;
-    uint32_t key = 0;
-    int mask = 0;
-    initializeSignalHandling(key, mask);
     addSignalHandler(Signal::Usr, [] (Signal signal, SigInfo&, PlatformRegisters&) -> SignalAction {
         RELEASE_ASSERT(signal == Signal::Usr);
 
-        dataLogLn("here");
         handlerRan = true;
         return SignalAction::Handled;
     });
     activateSignalHandlersFor(Signal::Usr);
-    finalizeSignalHandlers();
+    WTF::Config::finalize();
 
     Atomic<bool> receiverShouldKeepRunning(true);
     Ref<Thread> receiverThread = (Thread::create("ThreadMessage receiver",
@@ -82,12 +78,6 @@ TEST(Signals, SignalsWorkOnExit)
 TEST(Signals, SignalsAccessFault)
 {
     static bool handlerRan = false;
-    uint32_t key = 0;
-    int mask = 0;
-#if HAVE(MACH_EXCEPTIONS)
-    mask |= toMachMask(Signal::AccessFault);
-#endif // HAVE(MACH_EXCEPTIONS)
-    initializeSignalHandling(key, mask);
     addSignalHandler(Signal::AccessFault, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& context) -> SignalAction {
         RELEASE_ASSERT(signal == Signal::AccessFault);
 
@@ -105,7 +95,7 @@ TEST(Signals, SignalsAccessFault)
         return SignalAction::Handled;
     });
     activateSignalHandlersFor(Signal::AccessFault);
-    finalizeSignalHandlers();
+    WTF::Config::finalize();
 
     // Allocate a page of memory
     char* ptr = bitwise_cast<char*>(Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, 4096));
