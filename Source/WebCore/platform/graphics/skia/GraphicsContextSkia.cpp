@@ -274,6 +274,7 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
     }
 
     SkPaint paint = createFillPaint();
+    paint.setAlphaf(alpha());
     paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
     paint.setImageFilter(createDropShadowFilterIfNeeded(ShadowStyle::Outset));
     m_canvas.drawImageRect(image, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, { });
@@ -418,7 +419,7 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
             // Fast path: identity CTM doesn't need the transform compensation
             AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
             if (ctm.isIdentity())
-                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+                return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
 
             // Ignoring the CTM is practically equal as applying the inverse of
             // the CTM when post-processing the drop shadow.
@@ -426,16 +427,16 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
                 SkPoint3 p = SkPoint3::Make(offset.width(), offset.height(), 0);
                 inverse->mapHomogeneousPoints(&p, &p, 1);
                 sigma = inverse->mapRadius(sigma);
-                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+                return SkImageFilters::DropShadow(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
             }
 
             return nullptr;
         }
 
-        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor.colorWithAlphaMultipliedBy(state.alpha()), nullptr);
+        return SkImageFilters::DropShadow(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
     case ShadowStyle::Inset: {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
-        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor.colorWithAlphaMultipliedBy(state.alpha()), SkBlendMode::kSrcIn), dropShadow);
+        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor, SkBlendMode::kSrcIn), dropShadow);
     }
     }
 
@@ -454,9 +455,10 @@ SkPaint GraphicsContextSkia::createFillPaint() const
 
 void GraphicsContextSkia::setupFillSource(SkPaint& paint) const
 {
-    if (auto fillPattern = fillBrush().pattern())
+    if (auto fillPattern = fillBrush().pattern()) {
         paint.setShader(fillPattern->createPlatformPattern({ }, toSkSamplingOptions(imageInterpolationQuality())));
-    else if (auto fillGradient = fillBrush().gradient())
+        paint.setAlphaf(alpha());
+    } else if (auto fillGradient = fillBrush().gradient())
         paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
     else
         paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
