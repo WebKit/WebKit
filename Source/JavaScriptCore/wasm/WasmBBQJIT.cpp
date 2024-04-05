@@ -8250,6 +8250,8 @@ public:
 
     // SIMD
 
+    bool usesSIMD() { return m_usesSIMD; }
+
     void notifyFunctionUsesSIMD()
     {
         m_usesSIMD = true;
