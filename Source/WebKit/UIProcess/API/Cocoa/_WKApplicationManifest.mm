@@ -243,6 +243,22 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 #if ENABLE(APPLICATION_MANIFEST)
 
+- (instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
+{
+    if (!(self = [super init]))
+        return nil;
+
+    RetainPtr jsonString = adoptNS([[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+    if (!jsonString)
+        return nil;
+
+    // FIXME: Return nil if jsonString cannot be deserialized into JSON object.
+    auto manifest = WebCore::ApplicationManifestParser::parse(jsonString.get(), URL(manifestURL), URL(documentURL));
+    API::Object::constructInWrapper<API::ApplicationManifest>(self, manifest);
+
+    return self;
+}
+
 + (BOOL)supportsSecureCoding
 {
     return YES;
@@ -464,6 +480,15 @@ static NSString *nullableNSString(const WTF::String& string)
 }
 
 #else // ENABLE(APPLICATION_MANIFEST)
+
+- (instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
+{
+    UNUSED_PARAM(jsonData);
+    UNUSED_PARAM(manifestURL);
+    UNUSED_PARAM(documentURL);
+
+    return nil;
+}
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
