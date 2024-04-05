@@ -5631,6 +5631,7 @@
         "web-platform-tests/css/selectors/sharing-in-svg-use-ref.html",
         "web-platform-tests/css/selectors/visited-inheritance-ref.html",
         "web-platform-tests/css/selectors/xml-class-selector-ref.xml",
+        "web-platform-tests/css/support/red-rect.svg",
         "web-platform-tests/cssom-view/iframe.html",
         "web-platform-tests/cssom/support/xmlss-pi.xhtml",
         "web-platform-tests/dom/abort/crashtests/timeout-close.html",
