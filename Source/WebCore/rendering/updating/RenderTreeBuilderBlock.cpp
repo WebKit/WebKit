@@ -274,16 +274,16 @@ void RenderTreeBuilder::Block::removeLeftoverAnonymousBlock(RenderBlock& anonymo
     m_builder.removeFloatingObjects(anonymousBlock);
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(anonymousBlock, *parent);
-    auto toBeDestroyed = m_builder.detachFromRenderElement(*parent, anonymousBlock);
+    auto toBeDestroyed = m_builder.detachFromRenderElement(*parent, anonymousBlock, WillBeDestroyed::Yes);
     // anonymousBlock is dead here.
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, RenderObject& oldChild, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
     if (parent.renderTreeBeingDestroyed())
-        return m_builder.detachFromRenderElement(parent, oldChild);
+        return m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
@@ -291,7 +291,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
     WeakPtr next = oldChild.nextSibling();
     bool canMergeAnonymousBlocks = canCollapseAnonymousBlock == CanCollapseAnonymousBlock::Yes && canMergeContiguousAnonymousBlocks(oldChild, prev.get(), next.get());
 
-    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild);
+    auto takenChild = m_builder.detachFromRenderElement(parent, oldChild, willBeDestroyed);
 
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
@@ -309,7 +309,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
             ASSERT(!inlineChildrenBlock.continuation());
             // Cache this value as it might get changed in setStyle() call.
             inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Block));
-            auto blockToMove = m_builder.detachFromRenderElement(parent, inlineChildrenBlock);
+            auto blockToMove = m_builder.detachFromRenderElement(parent, inlineChildrenBlock, WillBeDestroyed::No);
 
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
@@ -372,20 +372,20 @@ void RenderTreeBuilder::Block::dropAnonymousBoxChild(RenderBlock& parent, Render
 
     // FIXME: This should really just be a moveAllChilrenTo (see webkit.org/b/182495)
     moveAllChildrenToInternal(child, parent);
-    auto toBeDeleted = m_builder.detachFromRenderElement(parent, child);
+    auto toBeDeleted = m_builder.detachFromRenderElement(parent, child, WillBeDestroyed::Yes);
 
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlockFlow& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     if (!parent.renderTreeBeingDestroyed()) {
         auto* fragmentedFlow = parent.multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &child)
             m_builder.multiColumnBuilder().multiColumnRelativeWillBeRemoved(*fragmentedFlow, child, canCollapseAnonymousBlock);
     }
-    return detach(static_cast<RenderBlock&>(parent), child, canCollapseAnonymousBlock);
+    return detach(static_cast<RenderBlock&>(parent), child, willBeDestroyed, canCollapseAnonymousBlock);
 }
 
 }
