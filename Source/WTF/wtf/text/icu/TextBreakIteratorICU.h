@@ -178,7 +178,7 @@ private:
         UErrorCode status = U_ZERO_ERROR;
         int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
         if (U_SUCCESS(status))
-            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
         if (needsToGrowToProduceBuffer(status)) {
             scratchBuffer.grow(lengthNeeded + 1);
             memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
@@ -186,7 +186,7 @@ private:
             int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
             if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
                 return locale;
-            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+            return AtomString::fromUTF8(scratchBuffer.subspan(0, lengthNeeded));
         }
         return locale;
     }

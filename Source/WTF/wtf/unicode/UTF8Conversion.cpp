@@ -152,12 +152,13 @@ ComputeUTFLengthsResult computeUTFLengths(const char* sourceStart, const char* s
     return { result, sourceOffset, lengthUTF16, isASCII(orAllData) };
 }
 
-unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
+unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(std::span<const char> span, unsigned& dataLength, unsigned& utf16Length)
 {
     StringHasher stringHasher;
     utf16Length = 0;
     size_t inputOffset = 0;
-    size_t inputLength = dataEnd - data;
+    auto* data = span.data();
+    size_t inputLength = span.size();
     while (inputOffset < inputLength) {
         char32_t character;
         U8_NEXT(data, inputOffset, inputLength, character);

@@ -329,12 +329,12 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(std::span<const LChar> characters)
     return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
 }
 
-Ref<AtomStringImpl> AtomStringImpl::addLiteral(const char* characters, unsigned length)
+Ref<AtomStringImpl> AtomStringImpl::addLiteral(std::span<const LChar> characters)
 {
-    ASSERT(characters);
-    ASSERT(length);
+    ASSERT(characters.data());
+    ASSERT(!characters.empty());
 
-    LCharBuffer buffer { std::span { reinterpret_cast<const LChar*>(characters), length } };
+    LCharBuffer buffer { characters };
     return addToStringTable<LCharBuffer, BufferFromStaticDataTranslator<LChar>>(buffer);
 }
 
@@ -496,11 +496,11 @@ RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)
     return nullptr;
 }
 
-RefPtr<AtomStringImpl> AtomStringImpl::addUTF8(const char* charactersStart, const char* charactersEnd)
+RefPtr<AtomStringImpl> AtomStringImpl::addUTF8(std::span<const char> characters)
 {
     HashAndUTF8Characters buffer;
-    buffer.characters = charactersStart;
-    buffer.hash = calculateStringHashAndLengthFromUTF8MaskingTop8Bits(charactersStart, charactersEnd, buffer.length, buffer.utf16Length);
+    buffer.characters = characters.data();
+    buffer.hash = calculateStringHashAndLengthFromUTF8MaskingTop8Bits(characters, buffer.length, buffer.utf16Length);
 
     if (!buffer.hash)
         return nullptr;
