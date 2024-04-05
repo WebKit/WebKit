@@ -1,0 +1,8 @@
+
+FAIL Animate from neutral keyframe with color-mix to legacy rgb assert_true: Actual value oklab(0.5981807 1.7931633e-7 3.4984055e-8) not recognized as an oklab color expected true got false
+FAIL Animate from legacy rgb to neutral keyframe with color-mix assert_true: Actual value oklab(0.5981807 1.7931633e-7 3.4984055e-8) not recognized as an oklab color expected true got false
+FAIL Animate from neutral keyframe with color-mix to srgb assert_true: Actual value oklab(0.5981807 1.7931633e-7 3.4984055e-8) not recognized as an oklab color expected true got false
+FAIL Animate from srgb to neutral keyframe with color-mix assert_true: Actual value oklab(0.5981807 1.7931633e-7 3.4984055e-8) not recognized as an oklab color expected true got false
+FAIL Animate from color-mix with transparency to legacy rgba assert_true: Actual value oklab(0.5981807 1.7931633e-7 3.4984055e-8) not recognized as an oklab color expected true got false
+FAIL Animate from legacy rgba to color-mix with transparency assert_true: Actual value oklab(1 0 5.9604645e-8 / 0.7490196) not recognized as an oklab color expected true got false
+
