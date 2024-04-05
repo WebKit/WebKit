@@ -27,6 +27,7 @@
 #import "SerializedCryptoKeyWrap.h"
 
 #import "CommonCryptoUtilities.h"
+#import "CryptoKey.h"
 #import "LocalizedStrings.h"
 #import <CommonCrypto/CommonSymmetricKeywrap.h>
 #import <crt_externs.h>
@@ -60,7 +61,11 @@ const NSString* wrappedKEKKey = @"wrappedKEK";
 const NSString* encryptedKeyKey = @"encryptedKey";
 const NSString* tagKey = @"tag";
 
-const size_t masterKeySizeInBytes = 16;
+constexpr size_t masterKeySizeInBytes = 16;
+constexpr size_t kekSizeInBytes = 16;
+constexpr size_t expectedTagLengthAES = 16;
+// https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.1
+constexpr size_t wrappedKekSize = kekSizeInBytes + 8;
 
 static NSString* masterKeyAccountNameForCurrentApplication()
 {
@@ -211,7 +216,7 @@ bool deleteDefaultWebCryptoMasterKey()
 
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
-    Vector<uint8_t> kek(16);
+    Vector<uint8_t> kek(kekSizeInBytes);
     auto rc = CCRandomGenerateBytes(kek.data(), kek.size());
     RELEASE_ASSERT(rc == kCCSuccess);
 
@@ -225,9 +230,8 @@ bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint
     wrappedKEK.shrink(wrappedKEKSize);
 
     Vector<uint8_t> encryptedKey(key.size());
-    constexpr size_t maxTagLength = 16;
-    size_t tagLength = maxTagLength;
-    uint8_t tag[maxTagLength];
+    size_t tagLength = expectedTagLengthAES;
+    uint8_t tag[expectedTagLengthAES];
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
@@ -240,7 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (status != kCCSuccess)
         return false;
-    RELEASE_ASSERT(tagLength == 16);
+    RELEASE_ASSERT(tagLength == expectedTagLengthAES);
 
     auto dictionary = @{
         versionKey: [NSNumber numberWithUnsignedInteger:currentSerializationVersion],
@@ -257,9 +261,86 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return true;
 }
 
+template<size_t size>
+static std::optional<std::array<uint8_t, size>> createArrayFromData(NSData * data)
+{
+    if (size != data.length)
+        return std::nullopt;
+    std::array<uint8_t, size> rv { };
+    [data getBytes:rv.data() length:size];
+    return rv;
+}
+
+std::optional<struct WebCore::WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& serializedKey)
+{
+    NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:[NSData dataWithBytesNoCopy:(void*)serializedKey.data() length:serializedKey.size() freeWhenDone:NO] options:NSPropertyListBinaryFormat_v1_0 format:nullptr error:nullptr];
+    if (!dictionary)
+        return std::nullopt;
+
+    id versionObject = [dictionary objectForKey:versionKey];
+    if (![versionObject isKindOfClass:[NSNumber class]])
+        return std::nullopt;
+    if ([versionObject unsignedIntegerValue] > currentSerializationVersion)
+        return std::nullopt;
+
+    id wrappedKEKObject = [dictionary objectForKey:wrappedKEKKey];
+    if (![wrappedKEKObject isKindOfClass:[NSData class]])
+        return std::nullopt;
+    auto wrappedKEK = createArrayFromData<wrappedKekSize>(wrappedKEKObject);
+    if (!wrappedKEK)
+        return std::nullopt;
+
+    id encryptedKeyObject = [dictionary objectForKey:encryptedKeyKey];
+    if (![encryptedKeyObject isKindOfClass:[NSData class]])
+        return std::nullopt;
+    Vector<uint8_t> encryptedKey = vectorFromNSData(encryptedKeyObject);
+
+    id tagObject = [dictionary objectForKey:tagKey];
+    if (![tagObject isKindOfClass:[NSData class]])
+        return std::nullopt;
+    auto tag = createArrayFromData<expectedTagLengthAES>(tagObject);
+    if (!tag)
+        return std::nullopt;
+    struct WebCore::WrappedCryptoKey k = { *wrappedKEK, encryptedKey, *tag };
+    return k;
+}
+
+std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>& masterKey, const struct WebCore::WrappedCryptoKey& wrappedKey)
+{
+    if (wrappedKey.wrappedKEK.size() != wrappedKekSize || wrappedKey.tag.size() != expectedTagLengthAES || masterKey.isEmpty())
+        return std::nullopt;
+    auto wrappedKEK = wrappedKey.wrappedKEK;
+    auto encryptedKey = wrappedKey.encryptedKey.span();
+    auto tag = wrappedKey.tag;
+
+    Vector<uint8_t> kek(CCSymmetricUnwrappedSize(kCCWRAPAES, wrappedKEK.size()));
+    size_t kekSize = kek.size();
+    CCCryptorStatus status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, masterKey.data(), masterKey.size(), wrappedKEK.data(), wrappedKEK.size(), kek.data(), &kekSize);
+    if (status != kCCSuccess)
+        return std::nullopt;
+    kek.shrink(kekSize);
+    size_t tagLength = expectedTagLengthAES;
+    uint8_t actualTag[expectedTagLengthAES];
+    Vector<uint8_t> key(encryptedKey.size());
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES128, kek.data(), kek.size(),
+        nullptr, 0, // iv
+        nullptr, 0, // auth data
+        encryptedKey.data(), encryptedKey.size(),
+        key.data(),
+        actualTag, &tagLength);
+ALLOW_DEPRECATED_DECLARATIONS_END
+    if (status != kCCSuccess)
+        return std::nullopt;
+    RELEASE_ASSERT(tagLength == expectedTagLengthAES);
+    if (constantTimeMemcmp(tag.data(), actualTag, tagLength))
+        return std::nullopt;
+    return key;
+}
+
 bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
-    NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:[NSData dataWithBytesNoCopy:(void*)wrappedKey.data() length:wrappedKey.size() freeWhenDone:NO] options:0 format:nullptr error:nullptr];
+    NSDictionary* dictionary = [NSPropertyListSerialization propertyListWithData:[NSData dataWithBytesNoCopy:(void*)wrappedKey.data() length:wrappedKey.size() freeWhenDone:NO] options:NSPropertyListBinaryFormat_v1_0 format:nullptr error:nullptr];
     if (!dictionary)
         return false;
 
@@ -283,7 +364,7 @@ bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<ui
     if (![tagObject isKindOfClass:[NSData class]])
         return false;
     Vector<uint8_t> tag = vectorFromNSData(tagObject);
-    if (tag.size() != 16)
+    if (tag.size() != expectedTagLengthAES)
         return false;
 
     Vector<uint8_t> kek(CCSymmetricUnwrappedSize(kCCWRAPAES, wrappedKEK.size()));
@@ -293,9 +374,8 @@ bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<ui
         return false;
     kek.shrink(kekSize);
 
-    constexpr size_t maxTagLength = 16;
-    size_t tagLength = maxTagLength;
-    uint8_t actualTag[maxTagLength];
+    size_t tagLength = expectedTagLengthAES;
+    uint8_t actualTag[expectedTagLengthAES];
 
     key.resize(encryptedKey.size());
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -309,7 +389,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (status != kCCSuccess)
         return false;
-    RELEASE_ASSERT(tagLength == 16);
+    RELEASE_ASSERT(tagLength == expectedTagLengthAES);
 
     if (constantTimeMemcmp(tag.data(), actualTag, tagLength))
         return false;

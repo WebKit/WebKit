@@ -7234,3 +7234,10 @@ enum class WebCore::PredefinedColorSpace : uint8_t {
     , DisplayP3
 #endif
 };
+
+header: <WebCore/CryptoKey.h>
+[CustomHeader] struct WebCore::WrappedCryptoKey {
+    std::array<uint8_t, 24> wrappedKEK;
+    Vector<uint8_t> encryptedKey;
+    std::array<uint8_t, 16> tag;
+};

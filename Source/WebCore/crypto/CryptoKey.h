@@ -90,6 +90,12 @@ inline auto CryptoKey::type() const -> Type
 
 WebCoreOpaqueRoot root(CryptoKey*);
 
+struct WrappedCryptoKey {
+    std::array<uint8_t, 24> wrappedKEK;
+    Vector<uint8_t> encryptedKey;
+    std::array<uint8_t, 16> tag;
+};
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(ToClassName, KeyClass) \

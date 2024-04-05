@@ -179,6 +179,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/CompositionHighlight.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
+#include <WebCore/CryptoKey.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -11030,7 +11031,7 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<v
     completionHandler(succeeded, WTFMove(wrappedKey));
 }
 
-void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
+void WebPageProxy::unwrapCryptoKey(const struct WebCore::WrappedCryptoKey& wrappedKey, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
 {
     PageClientProtector protector(pageClient());
 
@@ -11039,9 +11040,12 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
         masterKey = Vector(keyData->dataReference());
 
-    Vector<uint8_t> key;
-    bool succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
-    completionHandler(succeeded, WTFMove(key));
+    auto key = WebCore::unwrapCryptoKey(masterKey, wrappedKey);
+    if (!key) {
+        completionHandler(false, { });
+        return;
+    }
+    completionHandler(true, WTFMove(*key));
 }
 
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)

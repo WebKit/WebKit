@@ -280,6 +280,7 @@ struct ViewportAttributes;
 struct ViewportArguments;
 struct WheelEventHandlingResult;
 struct WindowFeatures;
+struct WrappedCryptoKey;
 
 template<typename> class ProcessQualified;
 template<typename> class RectEdges;
@@ -1689,7 +1690,7 @@ public:
 #endif
 
     void wrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
-    void unwrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
+    void unwrapCryptoKey(const WebCore::WrappedCryptoKey&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&&);
 
