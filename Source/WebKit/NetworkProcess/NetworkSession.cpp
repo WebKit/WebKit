@@ -727,9 +727,6 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
         return;
     }
 
-    if (auto* connection = m_networkProcess->webProcessConnection(webProcessIdentifier))
-        connection->addAllowedFirstPartyForCookies(firstPartyForCookies);
-
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
 }
 

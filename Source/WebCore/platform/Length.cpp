@@ -362,14 +362,20 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
     if (context.compositeOperation != CompositeOperation::Replace)
         return makeCalculated(CalcOperator::Add, from, to);
 
+    if (from.isIntrinsicOrAuto() || to.isIntrinsicOrAuto()) {
+        ASSERT(context.isDiscrete);
+        ASSERT(!context.progress || context.progress == 1);
+        return context.progress ? to : from;
+    }
+
+    if (from.isRelative() || to.isRelative())
+        return { 0, LengthType::Fixed };
+
     if (!to.isCalculated() && !from.isPercent() && (context.progress == 1 || from.isZero()))
         return blend(Length(0, to.type()), to, context);
 
     if (!from.isCalculated() && !to.isPercent() && (!context.progress || to.isZero()))
         return blend(from, Length(0, from.type()), context);
-
-    if (from.isIntrinsicOrAuto() || to.isIntrinsicOrAuto() || from.isRelative() || to.isRelative())
-        return { 0, LengthType::Fixed };
 
     auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRange::All));

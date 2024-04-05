@@ -36,7 +36,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class RegistrableDomain;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -92,8 +91,6 @@ public:
     void allCookiesDeleted();
 #endif
     void updateCachedCookiesEnabled();
-
-    void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
 
 private:
     NetworkProcessConnection(IPC::Connection::Identifier, WebCore::HTTPCookieAcceptPolicy);

@@ -304,6 +304,7 @@ typedef NSString *ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTranspo
 @end
 
 @interface ASAuthorizationSecurityKeyPublicKeyCredentialRegistration : NSObject <ASAuthorizationPublicKeyCredentialRegistration>
+@property (nonatomic, readonly) NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport> *transports;
 @end
 
 typedef NSInteger ASCOSEAlgorithmIdentifier NS_TYPED_EXTENSIBLE_ENUM;

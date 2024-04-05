@@ -68,6 +68,8 @@ WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, cons
 
 WEBCORE_EXPORT String toString(AuthenticatorTransport);
 
+WEBCORE_EXPORT std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport);
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

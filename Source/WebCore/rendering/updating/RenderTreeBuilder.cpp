@@ -160,7 +160,7 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
 {
     RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
-    auto toDestroy = detach(*renderer.parent(), renderer, canCollapseAnonymousBlock);
+    auto toDestroy = detach(*renderer.parent(), renderer, WillBeDestroyed::Yes, canCollapseAnonymousBlock);
 
     if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer))
         firstLetterBuilder().cleanupOnDestroy(*textFragment);
@@ -342,36 +342,36 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
     attachInternal(parent, WTFMove(child), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
+RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
-        return formControlsBuilder().detach(*menuList, child);
+        return formControlsBuilder().detach(*menuList, child, willBeDestroyed);
 
     if (auto* button = dynamicDowncast<RenderButton>(parent))
-        return formControlsBuilder().detach(*button, child);
+        return formControlsBuilder().detach(*button, child, willBeDestroyed);
 
     if (auto* grid = dynamicDowncast<RenderGrid>(parent))
-        return detachFromRenderGrid(*grid, child);
+        return detachFromRenderGrid(*grid, child, willBeDestroyed);
 
     if (auto* text = dynamicDowncast<RenderSVGText>(parent))
-        return svgBuilder().detach(*text, child);
+        return svgBuilder().detach(*text, child, willBeDestroyed);
 
     if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent))
-        return svgBuilder().detach(*svgInline, child);
+        return svgBuilder().detach(*svgInline, child, willBeDestroyed);
 
     if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent))
-        return svgBuilder().detach(*container, child);
+        return svgBuilder().detach(*container, child, willBeDestroyed);
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
-        return svgBuilder().detach(*svgRoot, child);
+        return svgBuilder().detach(*svgRoot, child, willBeDestroyed);
 
     if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
-        return blockBuilder().detach(*blockFlow, child, canCollapseAnonymousBlock);
+        return blockBuilder().detach(*blockFlow, child, willBeDestroyed, canCollapseAnonymousBlock);
 
     if (auto* block = dynamicDowncast<RenderBlock>(parent))
-        return blockBuilder().detach(*block, child, canCollapseAnonymousBlock);
+        return blockBuilder().detach(*block, child, willBeDestroyed, canCollapseAnonymousBlock);
 
-    return detachFromRenderElement(parent, child);
+    return detachFromRenderElement(parent, child, willBeDestroyed);
 }
 
 void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -446,7 +446,7 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && (to.isRenderBlock() || to.isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        auto childToMove = detachFromRenderElement(from, child);
+        auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No);
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
         auto internalMoveScope = SetForScope { m_internalMovesType, RenderObject::IsInternalMove::Yes };
@@ -742,7 +742,7 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
     auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
     auto& block = *newBlock;
     attachToRenderElementInternal(*parent, WTFMove(newBlock), &child);
-    auto thisToMove = detachFromRenderElement(*parent, child);
+    auto thisToMove = detachFromRenderElement(*parent, child, WillBeDestroyed::No);
     attachToRenderElementInternal(block, WTFMove(thisToMove));
 }
 
@@ -890,9 +890,9 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         multiColumnBuilder().updateAfterDescendants(*blockFlow);
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child)
+RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
 {
-    auto takenChild = blockBuilder().detach(parent, child);
+    auto takenChild = blockBuilder().detach(parent, child, willBeDestroyed);
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are removed.
     if (child.isOutOfFlowPositioned())

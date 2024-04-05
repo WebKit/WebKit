@@ -340,11 +340,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_builtInNotificationsEnabled = parameters.builtInNotificationsEnabled;
 #endif
 
-    for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies) {
-        if (RefPtr connection = webProcessConnection(processIdentifier))
-            connection->addAllowedFirstPartyForCookies(domain);
+    for (auto [processIdentifier, domain] : parameters.allowedFirstPartiesForCookies)
         addAllowedFirstPartyForCookies(processIdentifier, WTFMove(domain), LoadedWebArchive::No, [] { });
-    }
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -437,14 +434,23 @@ void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier pro
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
 {
-    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
-        RegistrableDomain firstPartyDomain(firstParty);
-        return allowsFirstPartyForCookies(processIdentifier, firstPartyDomain);
-    });
+    // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
+    // we should set it to be the inherited origin then remove this exception.
+    if (firstParty.isAboutBlank())
+        return true;
+
+    if (firstParty.isNull())
+        return true; // FIXME: This shouldn't be allowed.
+
+    return allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
 }
 
 bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
 {
+    // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
+    if (firstPartyDomain.isEmpty())
+        return true;
+
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
         return false;
@@ -460,7 +466,14 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
         return true;
 
     auto& set = iterator->value.second;
-    return AuxiliaryProcess::allowsFirstPartyForCookies(firstPartyDomain, set);
+    if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    auto result = set.contains(firstPartyDomain);
+    ASSERT(result);
+    return result;
 }
 
 void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDataStoreParameters& parameters)

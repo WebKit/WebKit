@@ -501,8 +501,6 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void processPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
-    void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&);
-
     Logger& logger();
 
     void resetState();

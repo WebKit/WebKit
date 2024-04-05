@@ -124,7 +124,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     LogOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType, int32_t pid)
 #endif
 
-    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
