@@ -42,8 +42,8 @@ static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
 
 namespace WebCore {
 
-TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL(bool disableBufferInvalidation)
-    : m_disableBufferInvalidation(disableBufferInvalidation)
+TextureMapperPlatformLayerProxyGL::TextureMapperPlatformLayerProxyGL(ContentType contentType)
+    : TextureMapperPlatformLayerProxy(contentType)
 {
 }
 
@@ -104,7 +104,7 @@ void TextureMapperPlatformLayerProxyGL::invalidate()
             m_targetLayer = nullptr;
         }
 
-        if (!m_disableBufferInvalidation) {
+        if (contentType() != ContentType::HolePunch) {
             m_currentBuffer = nullptr;
             m_pendingBuffer = nullptr;
             m_releaseUnusedBuffersTimer = nullptr;

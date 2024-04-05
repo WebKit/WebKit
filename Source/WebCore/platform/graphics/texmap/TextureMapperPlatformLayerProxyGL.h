@@ -44,7 +44,7 @@ namespace WebCore {
 class TextureMapperPlatformLayerProxyGL final : public TextureMapperPlatformLayerProxy {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    TextureMapperPlatformLayerProxyGL(bool disableBufferInvalidation = false);
+    explicit TextureMapperPlatformLayerProxyGL(ContentType);
     virtual ~TextureMapperPlatformLayerProxyGL();
 
     bool isGLBased() const override { return true; }

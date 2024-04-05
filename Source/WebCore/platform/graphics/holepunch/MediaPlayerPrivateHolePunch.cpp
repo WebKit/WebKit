@@ -36,9 +36,9 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
     , m_readyTimer(RunLoop::main(), this, &MediaPlayerPrivateHolePunch::notifyReadyState)
     , m_networkState(MediaPlayer::NetworkState::Empty)
 #if USE(NICOSIA)
-    , m_nicosiaLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyGL(true))))
+    , m_nicosiaLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyGL(WebCore::TextureMapperPlatformLayerProxy::ContentType::HolePunch))))
 #else
-    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL))
+    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::HolePunch)))
 #endif
 {
     pushNextHolePunchBuffer();
