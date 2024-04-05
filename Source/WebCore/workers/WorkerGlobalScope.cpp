@@ -56,6 +56,7 @@
 #include "SocketProvider.h"
 #include "URLKeepingBlobAlive.h"
 #include "ViolationReportType.h"
+#include "WindowOrWorkerGlobalScopeTrustedTypes.h"
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerClient.h"
 #include "WorkerFileSystemStorageConnection.h"
@@ -158,7 +159,7 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-    removeSupplement("WorkerGlobalScopeTrustedTypes"_s);
+    removeSupplement(WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName());
 
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
