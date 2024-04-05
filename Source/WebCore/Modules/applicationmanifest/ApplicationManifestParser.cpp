@@ -41,13 +41,34 @@ namespace WebCore {
 ApplicationManifest ApplicationManifestParser::parse(Document& document, const String& source, const URL& manifestURL, const URL& documentURL)
 {
     ApplicationManifestParser parser { &document };
-    return parser.parseManifest(source, manifestURL, documentURL);
+    auto object = parser.createJSONObject(source);
+    if (!object)
+        object = JSON::Object::create();
+
+    return parser.parseManifest(*object, source, manifestURL, documentURL);
 }
 
 ApplicationManifest ApplicationManifestParser::parse(const String& source, const URL& manifestURL, const URL& documentURL)
 {
     ApplicationManifestParser parser { nullptr };
-    return parser.parseManifest(source, manifestURL, documentURL);
+    auto object = parser.createJSONObject(source);
+    if (!object)
+        object = JSON::Object::create();
+
+    return parser.parseManifest(*object, source, manifestURL, documentURL);
+}
+
+std::optional<ApplicationManifest> ApplicationManifestParser::parseWithValidation(const String& source, const URL& manifestURL, const URL& documentURL)
+{
+    if (!manifestURL.isValid() || !documentURL.isValid())
+        return std::nullopt;
+
+    ApplicationManifestParser parser { nullptr };
+    auto object = parser.createJSONObject(source);
+    if (!object)
+        return std::nullopt;
+
+    return parser.parseManifest(*object, source, manifestURL, documentURL);
 }
 
 ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document> document)
@@ -55,44 +76,48 @@ ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document> document)
 {
 }
 
-ApplicationManifest ApplicationManifestParser::parseManifest(const String& text, const URL& manifestURL, const URL& documentURL)
+RefPtr<JSON::Object> ApplicationManifestParser::createJSONObject(const String& text)
 {
-    m_manifestURL = manifestURL;
-
     auto jsonValue = JSON::Value::parseJSON(text);
     if (!jsonValue) {
         logDeveloperWarning("The manifest is not valid JSON data."_s);
-        jsonValue = JSON::Object::create();
+        return nullptr;
     }
 
-    auto manifest = jsonValue->asObject();
-    if (!manifest) {
+    auto jsontObject = jsonValue->asObject();
+    if (!jsontObject) {
         logDeveloperWarning("The manifest is not a JSON value of type \"object\"."_s);
-        manifest = JSON::Object::create();
+        return nullptr;
     }
 
+    return jsontObject;
+}
+
+ApplicationManifest ApplicationManifestParser::parseManifest(const JSON::Object& manifest, const String& text, const URL& manifestURL, const URL& documentURL)
+{
+    m_manifestURL = manifestURL;
     ApplicationManifest parsedManifest;
 
     parsedManifest.rawJSON = text;
     parsedManifest.manifestURL = manifestURL;
-    parsedManifest.startURL = parseStartURL(*manifest, documentURL);
-    parsedManifest.display = parseDisplay(*manifest);
-    parsedManifest.name = parseName(*manifest);
-    parsedManifest.description = parseDescription(*manifest);
-    parsedManifest.shortName = parseShortName(*manifest);
-    if (auto parsedScope = parseScope(*manifest, documentURL, parsedManifest.startURL))
+    parsedManifest.startURL = parseStartURL(manifest, documentURL);
+    parsedManifest.display = parseDisplay(manifest);
+    parsedManifest.name = parseName(manifest);
+    parsedManifest.description = parseDescription(manifest);
+    parsedManifest.shortName = parseShortName(manifest);
+    if (auto parsedScope = parseScope(manifest, documentURL, parsedManifest.startURL))
         parsedManifest.scope = WTFMove(*parsedScope);
     else {
         parsedManifest.scope = URL { parsedManifest.startURL, "./"_s };
         parsedManifest.isDefaultScope = true;
     }
-    parsedManifest.backgroundColor = parseColor(*manifest, "background_color"_s);
-    parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
-    parsedManifest.categories = parseCategories(*manifest);
-    parsedManifest.icons = parseIcons(*manifest);
-    parsedManifest.shortcuts = parseShortcuts(*manifest);
-    parsedManifest.id = parseId(*manifest, parsedManifest.startURL);
-    parsedManifest.orientation = parseOrientation(*manifest);
+    parsedManifest.backgroundColor = parseColor(manifest, "background_color"_s);
+    parsedManifest.themeColor = parseColor(manifest, "theme_color"_s);
+    parsedManifest.categories = parseCategories(manifest);
+    parsedManifest.icons = parseIcons(manifest);
+    parsedManifest.shortcuts = parseShortcuts(manifest);
+    parsedManifest.id = parseId(manifest, parsedManifest.startURL);
+    parsedManifest.orientation = parseOrientation(manifest);
 
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
