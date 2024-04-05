@@ -3883,14 +3883,6 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayOutOfBounds(Node* node, GPRRe
 #endif
 }
 
-void SpeculativeJIT::emitTypedArrayBoundsCheck(Node* node, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR, GPRReg scratch2GPR)
-{
-    Jump jump = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR, scratchGPR, scratch2GPR);
-    if (!jump.isSet())
-        return;
-    speculationCheck(OutOfBounds, JSValueRegs(), nullptr, jump);
-}
-
 JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsDetachedIfOutOfBounds(Node* node, GPRReg base, Jump outOfBounds)
 {
     Jump done;
@@ -3940,7 +3932,7 @@ void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg
     }
 }
 
-void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRegs, TypedArrayType type, bool canSpeculate, bool shouldBox, FPRReg resultFPR)
+void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRegs, TypedArrayType type, bool canSpeculate, bool shouldBox, FPRReg resultFPR, Jump outOfBounds)
 {
     bool isUInt32 = elementSize(type) == 4 && !JSC::isSigned(type);
     if (isUInt32)
@@ -3956,6 +3948,8 @@ void SpeculativeJIT::setIntTypedArrayLoadResult(Node* node, JSValueRegs resultRe
             boxDouble(resultFPR, resultRegs);
         } else
             boxInt32(resultRegs.payloadGPR(), resultRegs);
+        if (outOfBounds.isSet())
+            outOfBounds.link(this);
         jsValueResult(resultRegs, node);
         return;
     }
@@ -4019,14 +4013,28 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
 #endif
 
     JSValueRegs resultRegs;
-    DataFormat format;
-    std::tie(resultRegs, format, std::ignore) = prefix(DataFormatInt32);
+    DataFormat format = DataFormatInt32;
+    if (node->arrayMode().isOutOfBounds())
+        format = DataFormatJS;
+    std::tie(resultRegs, format, std::ignore) = prefix(format);
     bool shouldBox = format == DataFormatJS;
 
-    emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+    if (node->arrayMode().isOutOfBounds()) {
+        ASSERT(shouldBox);
+        moveTrustedValue(jsUndefined(), resultRegs);
+    }
+
+    Jump jump = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+    if (jump.isSet()) {
+        if (!node->arrayMode().isOutOfBounds()) {
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, jump);
+            jump = { };
+        }
+    }
+
     loadFromIntTypedArray(storageReg, propertyReg, resultRegs.payloadGPR(), type);
     constexpr bool canSpeculate = true;
-    setIntTypedArrayLoadResult(node, resultRegs, type, canSpeculate, shouldBox, resultFPR);
+    setIntTypedArrayLoadResult(node, resultRegs, type, canSpeculate, shouldBox, resultFPR, jump);
 }
 
 bool SpeculativeJIT::getIntTypedArrayStoreOperand(
@@ -4289,10 +4297,22 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
 #endif
 
     JSValueRegs resultRegs;
-    DataFormat format;
-    std::tie(resultRegs, format, std::ignore) = prefix(DataFormatDouble);
+    DataFormat format = DataFormatDouble;
+    if (node->arrayMode().isOutOfBounds())
+        format = DataFormatJS;
+    std::tie(resultRegs, format, std::ignore) = prefix(format);
 
-    emitTypedArrayBoundsCheck(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+    if (node->arrayMode().isOutOfBounds())
+        moveTrustedValue(jsUndefined(), resultRegs);
+
+    Jump jump = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+    if (jump.isSet()) {
+        if (!node->arrayMode().isOutOfBounds()) {
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, jump);
+            jump = { };
+        }
+    }
+
     switch (elementSize(type)) {
     case 4:
         loadFloat(BaseIndex(storageReg, propertyReg, TimesFour), resultReg);
@@ -4309,6 +4329,8 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     if (format == DataFormatJS) {
         purifyNaN(resultReg);
         boxDouble(resultReg, resultRegs);
+        if (jump.isSet())
+            jump.link(this);
         jsValueResult(resultRegs, node);
     } else {
         ASSERT(format == DataFormatDouble);
