@@ -1425,8 +1425,10 @@ op :op_put_by_val_return_location
 op :op_iterator_open_return_location
 op :op_iterator_next_return_location
 op :op_call_direct_eval_slow_return_location
+op :wasm_function_prologue_trampoline
 op :wasm_function_prologue
 op :wasm_function_prologue_simd
+op :js_to_wasm_wrapper_entry
 
 op :js_trampoline_op_call
 op :js_trampoline_op_call_ignore_result

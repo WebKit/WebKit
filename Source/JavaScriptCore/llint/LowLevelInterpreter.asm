@@ -270,6 +270,7 @@ const NativeToJITGatePtrTag = constexpr NativeToJITGatePtrTag
 const ExceptionHandlerPtrTag = constexpr ExceptionHandlerPtrTag
 const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
+const LLintToWasmEntryPtrTag = constexpr LLintToWasmEntryPtrTag
 const NoPtrTag = constexpr NoPtrTag
  
 # VMTraps data
@@ -702,6 +703,11 @@ end
 #             call _cProbeCallbackFunction # to do whatever you want.
 #         end
 #     )
+#
+#     LLIntSlowPaths.h
+#     extern "C" __attribute__((__used__)) __attribute__((visibility("hidden"))) void cProbeCallbackFunction(uint64_t i);
+#     LLIntSlowPaths.cpp:
+#     extern "C" void cProbeCallbackFunction(uint64_t i) {}
 #
 if X86_64 or ARM64 or ARM64E or ARMv7
     macro probe(action)
@@ -2738,6 +2744,14 @@ _wasmLLIntPCRangeEnd:
 else
 
 # These need to be defined even when WebAssembly is disabled
+op(js_to_wasm_wrapper_entry, macro ()
+    crash()
+end)
+
+op(wasm_function_prologue_trampoline, macro ()
+    crash()
+end)
+
 op(wasm_function_prologue, macro ()
     crash()
 end)

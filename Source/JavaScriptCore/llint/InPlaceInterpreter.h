@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmCallee.h"
+
 extern "C" void ipint_entry();
 extern "C" void ipint_entry_simd();
 extern "C" void ipint_catch_entry();

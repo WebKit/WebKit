@@ -63,6 +63,7 @@ using PtrTag = WTF::PtrTag;
     /* Callee:JIT Caller:Native */ \
     v(NativeToJITGatePtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(YarrEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
+    v(LLintToWasmEntryPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     v(CSSSelectorPtrTag, PtrTagCalleeType::JIT, PtrTagCallerType::Native) \
     /* Callee:Native Caller:JIT */ \
     v(OperationPtrTag, PtrTagCalleeType::Native, PtrTagCallerType::JIT) \

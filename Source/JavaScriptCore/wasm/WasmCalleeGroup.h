@@ -202,7 +202,7 @@ private:
 #endif
     RefPtr<IPIntCallees> m_ipintCallees;
     RefPtr<LLIntCallees> m_llintCallees;
-    HashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
+    HashMap<uint32_t, RefPtr<JITCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<RefPtr<Wasm::Callee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;

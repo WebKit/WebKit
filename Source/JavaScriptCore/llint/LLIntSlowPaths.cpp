@@ -440,6 +440,19 @@ static UGPRPair entryOSR(CodeBlock* codeBlock, const char*, EntryKind)
 }
 #endif // ENABLE(JIT)
 
+#if LLINT_TRACING
+extern "C" void logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)
+{
+    if (!Options::traceLLIntExecution())
+        return;
+    dataLogLn("logWasmPrologue ", i, " ", RawPointer(fp), " ", RawPointer(sp));
+    dataLogLn("FP[+Callee] ", RawHex(fp[static_cast<int>(CallFrameSlot::callee)]));
+    dataLogLn("FP[+CodeBlock] ", RawHex(fp[static_cast<int>(CallFrameSlot::codeBlock)]));
+    dataLogLn("FP[+returnpc] ", RawHex(fp[static_cast<int>(OBJECT_OFFSETOF(CallerFrameAndPC, returnPC) / 8)]));
+    dataLogLn("FP[+callerFrame] ", RawHex(fp[static_cast<int>(OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame) / 8)]));
+}
+#endif
+
 LLINT_SLOW_PATH_DECL(entry_osr)
 {
     UNUSED_PARAM(pc);

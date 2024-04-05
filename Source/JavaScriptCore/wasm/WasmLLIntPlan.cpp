@@ -34,9 +34,11 @@
 #include "JITCompilation.h"
 #include "JITOpaqueByproducts.h"
 #include "JSToWasm.h"
+#include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "WasmCallee.h"
+#include "WasmCallingConvention.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/GraphNodeWorklist.h>
@@ -117,8 +119,7 @@ void LLIntPlan::didCompleteCompilation()
         // LLInt entrypoint thunks generation
         CCallHelpers jit;
         m_calleesVector.resize(functionCount);
-        Vector<CCallHelpers::Label> entrypoints(functionCount);
-        Vector<CCallHelpers::Jump> jumps(functionCount);
+
         for (unsigned i = 0; i < functionCount; ++i) {
             size_t functionIndexSpace = i + m_moduleInformation->importFunctionCount();
 
@@ -127,46 +128,56 @@ void LLIntPlan::didCompleteCompilation()
 
             m_calleesVector[i] = LLIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
             ASSERT(!m_calleesVector[i]->entrypoint());
-            entrypoints[i] = jit.label();
-            if (m_moduleInformation->usesSIMD(i))
-                JIT_COMMENT(jit, "SIMD function entrypoint");
-            JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
-            {
-                CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.loadPtr(calleeSlot.withOffset(PayloadOffset), GPRInfo::nonPreservedNonArgumentGPR0);
-                auto good = jit.branchPtr(MacroAssembler::Equal, GPRInfo::nonPreservedNonArgumentGPR0,
-                    MacroAssembler::TrustedImmPtr(reinterpret_cast<uint64_t>(CalleeBits::boxNativeCallee(m_calleesVector[i].ptr()))));
-                jit.breakpoint();
-                good.link(&jit);
+        }
+
+        if (LIKELY(Options::useJIT())) {
+            Vector<CCallHelpers::Label> entrypoints(functionCount);
+            Vector<CCallHelpers::Jump> jumps(functionCount);
+            for (unsigned i = 0; i < functionCount; ++i) {
+                entrypoints[i] = jit.label();
+                if (m_moduleInformation->usesSIMD(i))
+                    JIT_COMMENT(jit, "SIMD function entrypoint");
+                JIT_COMMENT(jit, "Entrypoint for function[", i, "]");
+                {
+                    CCallHelpers::Address calleeSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+                    jit.loadPtr(calleeSlot.withOffset(PayloadOffset), GPRInfo::nonPreservedNonArgumentGPR0);
+                    auto good = jit.branchPtr(MacroAssembler::Equal, GPRInfo::nonPreservedNonArgumentGPR0,
+                        MacroAssembler::TrustedImmPtr(reinterpret_cast<uint64_t>(CalleeBits::boxNativeCallee(m_calleesVector[i].ptr()))));
+                    jit.breakpoint();
+                    good.link(&jit);
+                }
+                jumps[i] = jit.jump();
             }
-            jumps[i] = jit.jump();
-        }
 
-        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
-        if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-            Base::fail("Out of executable memory in Wasm LLInt entry thunks"_s);
-            return;
-        }
+            LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
+            if (UNLIKELY(linkBuffer.didFailToAllocate())) {
+                Base::fail("Out of executable memory in Wasm LLInt entry thunks"_s);
+                return;
+            }
 
-        for (unsigned i = 0; i < functionCount; ++i) {
-            m_calleesVector[i]->setEntrypoint(linkBuffer.locationOf<WasmEntryPtrTag>(entrypoints[i]));
-            if (m_moduleInformation->usesSIMD(i))
-                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunkSIMD().code()));
-            else
-                linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
-        }
+            for (unsigned i = 0; i < functionCount; ++i) {
+                m_calleesVector[i]->setEntrypoint(linkBuffer.locationOf<WasmEntryPtrTag>(entrypoints[i]));
+                if (m_moduleInformation->usesSIMD(i))
+                    linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunkSIMD().code()));
+                else
+                    linkBuffer.link<JITThunkPtrTag>(jumps[i], CodeLocationLabel<JITThunkPtrTag>(LLInt::wasmFunctionEntryThunk().code()));
+            }
 
-        m_entryThunks = FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "Wasm LLInt entry thunks");
+            m_entryThunks = FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "Wasm LLInt entry thunks");
+        } else {
+            for (unsigned i = 0; i < functionCount; ++i)
+                m_calleesVector[i]->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
+        }
         m_callees = m_calleesVector.data();
-        if (!m_moduleInformation->clobberingTailCalls().isEmpty())
-            computeTransitiveTailCalls();
     }
 #endif
+
+    if (!m_moduleInformation->clobberingTailCalls().isEmpty())
+        computeTransitiveTailCalls();
 
     if (m_compilerMode == CompilerMode::Validation)
         return;
 
-#if ENABLE(JIT)
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
@@ -175,7 +186,16 @@ void LLIntPlan::didCompleteCompilation()
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
-            Ref<JSEntrypointCallee> callee = JSEntrypointCallee::create();
+
+#if ENABLE(JIT)
+            if (!LIKELY(Options::useJIT())) {
+#endif
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                return;
+#if ENABLE(JIT)
+            }
+
+            Ref<JITCallee> callee = JSEntrypointCallee::create();
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), m_callees[functionIndex].ptr(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
@@ -192,9 +212,9 @@ void LLIntPlan::didCompleteCompilation()
 
             auto result = m_jsEntrypointCallees.add(functionIndex, WTFMove(callee));
             ASSERT_UNUSED(result, result.isNewEntry);
+#endif
         }
     }
-#endif
 
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked) {

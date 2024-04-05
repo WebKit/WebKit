@@ -29,7 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InPlaceInterpreter.h"
+#include "LLIntData.h"
 #include "LLIntExceptions.h"
+#include "LLIntThunks.h"
 #include "NativeCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
