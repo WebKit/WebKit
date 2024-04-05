@@ -1012,6 +1012,87 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
     return JSValue::encode(target);
 }
 
+JSC_DEFINE_HOST_FUNCTION(globalFuncCloneObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue sourceValue = callFrame->thisValue();
+    if (sourceValue.isUndefinedOrNull())
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyObject(globalObject)));
+
+    JSObject* source = sourceValue.toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!source->staticPropertiesReified()) {
+        source->reifyAllStaticProperties(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    Structure* sourceStructure = source->structure();
+    if (LIKELY(sourceStructure->canPerformFastPropertyEnumerationCommon())) {
+        if (auto* cloned = tryCreateObjectViaCloning(vm, globalObject, source))
+            return JSValue::encode(cloned);
+    }
+
+    JSObject* target = constructEmptyObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (LIKELY(canPerformFastPropertyEnumerationForCopyDataProperties(sourceStructure))) {
+        Vector<RefPtr<UniquedStringImpl>, 8> properties;
+        MarkedArgumentBuffer values;
+
+        // FIXME: It doesn't seem like we should have to do this in two phases, but
+        // we're running into crashes where it appears that source is transitioning
+        // under us, and even ends up in a state where it has a null butterfly. My
+        // leading hypothesis here is that we fire some value replacement watchpoint
+        // that ends up transitioning the structure underneath us.
+        // https://bugs.webkit.org/show_bug.cgi?id=187837
+
+        source->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) ALWAYS_INLINE_LAMBDA {
+            PropertyName propertyName(entry.key());
+            if (propertyName.isPrivateName())
+                return true;
+
+            if (entry.attributes() & PropertyAttribute::DontEnum)
+                return true;
+
+            properties.append(entry.key());
+            values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+            return true;
+        });
+        RETURN_IF_EXCEPTION(scope, { });
+
+        target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
+        return JSValue::encode(target);
+    }
+
+    PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
+    source->methodTable()->getOwnPropertyNames(source, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (const auto& propertyName : propertyNames) {
+        PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
+        bool hasProperty = source->methodTable()->getOwnPropertySlot(source, globalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!hasProperty)
+            continue;
+        if (slot.attributes() & PropertyAttribute::DontEnum)
+            continue;
+
+        JSValue value;
+        if (LIKELY(!slot.isTaintedByOpaqueObject()))
+            value = slot.getValue(globalObject, propertyName);
+        else
+            value = source->get(globalObject, propertyName);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        target->putDirectMayBeIndex(globalObject, propertyName, value);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return JSValue::encode(target);
+}
+
 JSC_DEFINE_HOST_FUNCTION(globalFuncHandleNegativeProxyHasTrapResult, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();

@@ -184,6 +184,7 @@ namespace JSC {
     macro(handleProxyGetTrapResult) \
     macro(importModule) \
     macro(copyDataProperties) \
+    macro(cloneObject) \
     macro(meta) \
     macro(webAssemblyCompileStreamingInternal) \
     macro(webAssemblyInstantiateStreamingInternal) \

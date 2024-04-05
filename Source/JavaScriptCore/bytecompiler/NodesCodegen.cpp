@@ -550,6 +550,16 @@ RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, Regist
             return nullptr;
         return generator.emitNewObject(generator.finalDestination(dst));
     }
+
+    // Only one element and it is spread.
+    if (!m_list->m_next && m_list->m_node->m_type & PropertyNode::Spread) {
+        RefPtr<RegisterID> function = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::cloneObject);
+        RefPtr<RegisterID> src = generator.emitNode(static_cast<ObjectSpreadExpressionNode*>(m_list->m_node->m_assign)->expression());
+        CallArguments args(generator, nullptr, 0);
+        generator.move(args.thisRegister(), src.get());
+        return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), NoExpectedFunction, args, position(), position(), position(), DebuggableCall::No);
+    }
+
     RefPtr<RegisterID> newObj = generator.emitNewObject(generator.tempDestination(dst));
     generator.emitNode(newObj.get(), m_list);
     return generator.move(dst, newObj.get());

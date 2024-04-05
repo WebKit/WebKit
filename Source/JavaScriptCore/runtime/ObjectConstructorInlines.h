@@ -63,6 +63,79 @@ ALWAYS_INLINE void objectAssignIndexedPropertiesFast(JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, void());
 }
 
+ALWAYS_INLINE bool checkStrucureForClone(Structure* structure)
+{
+    static constexpr bool verbose = false;
+
+    if (structure->typeInfo().type() != FinalObjectType) {
+        dataLogLnIf(verbose, "target is not final object");
+        return false;
+    }
+
+    if (structure->isDictionary()) {
+        dataLogLnIf(verbose, "target is dictionary");
+        return false;
+    }
+
+    if (hasIndexedProperties(structure->indexingType())) {
+        dataLogLnIf(verbose, "target has indexing mode");
+        return false;
+    }
+
+    if (structure->mayBePrototype()) {
+        dataLogLnIf(verbose, "target may be prototype");
+        return false;
+    }
+
+    if (structure->didPreventExtensions()) {
+        dataLogLnIf(verbose, "target has didPreventExtensions");
+        return false;
+    }
+
+    if (structure->hasBeenFlattenedBefore()) {
+        dataLogLnIf(verbose, "target has flattened before");
+        return false;
+    }
+
+    if (structure->hasBeenDictionary()) {
+        dataLogLnIf(verbose, "target has been dictionary");
+        return false;
+    }
+
+    if (structure->isBrandedStructure()) {
+        dataLogLnIf(verbose, "target has isBrandedStructure");
+        return false;
+    }
+
+    if (structure->hasPolyProto()) {
+        dataLogLnIf(verbose, "target has PolyProto");
+        return false;
+    }
+
+    if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto()) {
+        dataLogLnIf(verbose, "target has non-writable properties");
+        return false;
+    }
+
+    if (structure->hasNonEnumerableProperties()) {
+        dataLogLnIf(verbose, "target has non-enumerable properties");
+        return false;
+    }
+
+    if (structure->hasNonConfigurableProperties()) {
+        dataLogLnIf(verbose, "target has non-configurable properties");
+        return false;
+    }
+
+    if (!structure->isQuickPropertyAccessAllowedForEnumeration()) {
+        dataLogLnIf(verbose, "target has symbol properties (right now we disable this optimization in this case since we cannot detect private symbol properties)");
+        return false;
+    }
+
+    return true;
+}
+
+
 ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* source)
 {
     static constexpr bool verbose = false;
@@ -77,76 +150,7 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         return false;
     }
 
-    auto checkStrucure = [&](Structure* structure) ALWAYS_INLINE_LAMBDA {
-        if (structure->typeInfo().type() != FinalObjectType) {
-            dataLogLnIf(verbose, "target is not final object");
-            return false;
-        }
-
-        if (structure->isDictionary()) {
-            dataLogLnIf(verbose, "target is dictionary");
-            return false;
-        }
-
-        if (hasIndexedProperties(structure->indexingType())) {
-            dataLogLnIf(verbose, "target has indexing mode");
-            return false;
-        }
-
-        if (structure->mayBePrototype()) {
-            dataLogLnIf(verbose, "target may be prototype");
-            return false;
-        }
-
-        if (structure->didPreventExtensions()) {
-            dataLogLnIf(verbose, "target has didPreventExtensions");
-            return false;
-        }
-
-        if (structure->hasBeenFlattenedBefore()) {
-            dataLogLnIf(verbose, "target has flattened before");
-            return false;
-        }
-
-        if (structure->hasBeenDictionary()) {
-            dataLogLnIf(verbose, "target has been dictionary");
-            return false;
-        }
-
-        if (structure->isBrandedStructure()) {
-            dataLogLnIf(verbose, "target has isBrandedStructure");
-            return false;
-        }
-
-        if (structure->hasPolyProto()) {
-            dataLogLnIf(verbose, "target has PolyProto");
-            return false;
-        }
-
-        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto()) {
-            dataLogLnIf(verbose, "target has non-writable properties");
-            return false;
-        }
-
-        if (structure->hasNonEnumerableProperties()) {
-            dataLogLnIf(verbose, "target has non-enumerable properties");
-            return false;
-        }
-
-        if (structure->hasNonConfigurableProperties()) {
-            dataLogLnIf(verbose, "target has non-configurable properties");
-            return false;
-        }
-
-        if (!structure->isQuickPropertyAccessAllowedForEnumeration()) {
-            dataLogLnIf(verbose, "target has symbol properties (right now we disable this optimization in this case since we cannot detect private symbol properties)");
-            return false;
-        }
-
-        return true;
-    };
-
-    if (!checkStrucure(targetStructure))
+    if (!checkStrucureForClone(targetStructure))
         return false;
 
     if (targetStructure->transitionWatchpointSetIsStillValid()) {
@@ -174,7 +178,7 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         }
     }
 
-    if (!checkStrucure(sourceStructure))
+    if (!checkStrucureForClone(sourceStructure))
         return false;
 
     if (!sourceStructure->didTransition()) {
@@ -212,6 +216,59 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
     vm.writeBarrier(target);
 
     return true;
+}
+
+ALWAYS_INLINE JSObject* tryCreateObjectViaCloning(VM& vm, JSGlobalObject* globalObject, JSObject* source)
+{
+    static constexpr bool verbose = false;
+
+    Structure* sourceStructure = source->structure();
+
+    ASSERT(sourceStructure->canPerformFastPropertyEnumerationCommon());
+
+    // If the sourceStructure is frozen, we retrieve the last one before freezing.
+    if (sourceStructure->transitionKind() == TransitionKind::Freeze) {
+        dataLogLnIf(verbose, "source was frozen. Let's look into the previous structure");
+        sourceStructure = sourceStructure->previousID();
+        if (!sourceStructure)
+            return nullptr;
+
+        dataLogLnIf(verbose, "source should have ArrayStorage since it was frozen. Let's see whether it is empty and we can quickly get the previous structure without ArrayStorage.");
+        if (sourceStructure->transitionKind() == TransitionKind::AllocateArrayStorage && !source->canHaveExistingOwnIndexedProperties()) {
+            sourceStructure = sourceStructure->previousID();
+            if (!sourceStructure)
+                return nullptr;
+        }
+    }
+
+    if (!checkStrucureForClone(sourceStructure))
+        return nullptr;
+
+    if (!sourceStructure->didTransition()) {
+        dataLogLnIf(verbose, "source didn't do some transition, indicating pure empty structure, not trying to use the fast path since we would like to see target as transitioned before at final form");
+        return nullptr;
+    }
+
+    if (globalObject != sourceStructure->globalObject()) {
+        dataLogLnIf(verbose, "source and target has different globalObject");
+        return nullptr;
+    }
+
+    dataLogLnIf(verbose, "Use fast cloning!");
+
+    DeferGC deferGC(vm);
+
+    unsigned propertyCapacity = sourceStructure->outOfLineCapacity();
+    Butterfly* newButterfly = nullptr;
+    if (propertyCapacity) {
+        newButterfly = Butterfly::createUninitialized(vm, nullptr, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
+        gcSafeMemcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
+    }
+    JSFinalObject* target = JSFinalObject::createWithButterfly(vm, sourceStructure, newButterfly);
+    gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
+    vm.writeBarrier(target);
+
+    return target;
 }
 
 ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSFinalObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
