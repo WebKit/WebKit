@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText()
+
+    if (window.IPC) {
+        [streamConnection, streamConnectionHandle] = IPC.createStreamClientConnection(14);
+        streamConnection.open();
+        IPC.sendMessage(
+            'GPU',
+            0,
+            IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+            [
+                {type: 'uint64_t', value: 1872},
+                {type: 'uint64_t', value: IPC.webPageProxyID},
+                {type: 'uint64_t', value: IPC.pageID},
+                {type: 'StreamServerConnectionHandle', value: streamConnectionHandle}
+            ]
+            );
+        streamConnection.sendMessage(
+            1872,
+            IPC.messages.RemoteRenderingBackend_CacheGradient.name,
+            0.1,
+            [
+                {type: 'uint8_t',value: 1},
+                {type: 'float',value: 20.91822109052055},
+                {type: 'float',value: 199.65170247825378},
+                {type: 'float',value: -631},
+                {type: 'float',value: 870.2870187910883},
+                {type: 'float',value: 4238675097},
+                {type: 'float',value: -671},
+                {type: 'float',value: 613},
+                {type: 'uint8_t',value: 6},
+                {type: 'uint8_t',value: 1},
+                {type: 'uint8_t',value: 1},
+                {type: 'Vector',value:
+                [
+                    [
+                        {type: 'float',value: 4167777921},
+                        {type: 'bool',value: 0}
+                    ],
+                    [
+                        {type: 'float',value: 864.3565721604522},
+                        {type: 'bool',value: 1},
+                        {type: 'bool',value: 1},
+                        {type: 'bool',value: 0},
+                        {type: 'uint8_t',value: 0},
+                        {type: 'uint32_t',value: 1022}
+                    ]
+                ]
+                },
+                {type: 'bool',value: 0}
+            ]
+        );
+    } else {
+        testRunner.notifyDone();
+    }
+</script>
+</body>

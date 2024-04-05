@@ -51,6 +51,7 @@ extern "C" {
     M(ContentObservation) \
     M(ContextMenu) \
     M(DisplayLink) \
+    M(DisplayLists) \
     M(DiskPersistency) \
     M(DragAndDrop) \
     M(EME) \
