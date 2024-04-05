@@ -30,18 +30,18 @@ namespace WebCore {
 static_assert(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), "SpaceSplitStringDataTail is aligned to WordSize");
 
 template <typename CharacterType, typename TokenProcessor>
-static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const CharacterType* characters, unsigned length)
+static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, std::span<const CharacterType> characters)
 {
     for (unsigned start = 0; ; ) {
-        while (start < length && isASCIIWhitespace(characters[start]))
+        while (start < characters.size() && isASCIIWhitespace(characters[start]))
             ++start;
-        if (start >= length)
+        if (start >= characters.size())
             break;
         unsigned end = start + 1;
-        while (end < length && !isASCIIWhitespace(characters[end]))
+        while (end < characters.size() && !isASCIIWhitespace(characters[end]))
             ++end;
 
-        if (!tokenProcessor.processToken(characters + start, end - start))
+        if (!tokenProcessor.processToken(characters.subspan(start, end - start)))
             return;
 
         start = end + 1;
@@ -54,9 +54,9 @@ static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, Stri
     ASSERT(!string.isNull());
 
     if (string.is8Bit())
-        tokenizeSpaceSplitString(tokenProcessor, string.characters8(), string.length());
+        tokenizeSpaceSplitString(tokenProcessor, string.span8());
     else
-        tokenizeSpaceSplitString(tokenProcessor, string.characters16(), string.length());
+        tokenizeSpaceSplitString(tokenProcessor, string.span16());
 }
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
@@ -109,9 +109,9 @@ public:
     }
 
     template <typename TokenCharacterType>
-    bool processToken(const TokenCharacterType* characters, unsigned length)
+    bool processToken(std::span<const TokenCharacterType> characters)
     {
-        if (length == m_referenceLength && equal(characters, m_referenceCharacters, length)) {
+        if (characters.size() == m_referenceLength && equal(characters.data(), m_referenceCharacters, characters.size())) {
             m_referenceStringWasFound = true;
             return false;
         }
@@ -149,7 +149,7 @@ class TokenCounter {
 public:
     TokenCounter() : m_tokenCount(0) { }
 
-    template<typename CharacterType> bool processToken(const CharacterType*, unsigned)
+    template<typename CharacterType> bool processToken(std::span<const CharacterType>)
     {
         ++m_tokenCount;
         return true;
@@ -169,12 +169,12 @@ public:
         , m_memoryBucket(memory)
     { }
 
-    template<typename CharacterType> bool processToken(const CharacterType* characters, unsigned length)
+    template<typename CharacterType> bool processToken(std::span<const CharacterType> characters)
     {
-        if (length == m_keyString.length())
+        if (characters.size() == m_keyString.length())
             new (NotNull, m_memoryBucket) AtomString(m_keyString);
         else
-            new (NotNull, m_memoryBucket) AtomString(characters, length);
+            new (NotNull, m_memoryBucket) AtomString(characters);
         ++m_memoryBucket;
         return true;
     }

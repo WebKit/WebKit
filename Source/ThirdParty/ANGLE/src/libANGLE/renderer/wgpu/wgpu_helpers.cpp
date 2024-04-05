@@ -62,38 +62,10 @@ gl::LevelIndex ImageHelper::toGlLevel(LevelIndex levelIndexWgpu) const
     return wgpu_gl::getLevelIndex(levelIndexWgpu, mFirstAllocatedLevel);
 }
 
-wgpu::Extent3D ImageHelper::toWgpuExtent3D(const gl::Extents &size)
-{
-    wgpu::Extent3D new_size;
-    new_size.width              = size.width;
-    new_size.height             = size.height;
-    new_size.depthOrArrayLayers = size.depth;
-    return new_size;
-}
-
 TextureInfo ImageHelper::getWgpuTextureInfo(const gl::ImageIndex &index)
 {
     TextureInfo textureInfo;
-    switch (index.getType())
-    {
-        case gl::TextureType::_2D:
-        case gl::TextureType::_2DMultisample:
-        case gl::TextureType::Rectangle:
-        case gl::TextureType::External:
-        case gl::TextureType::Buffer:
-            textureInfo.dimension = wgpu::TextureDimension::e2D;
-            break;
-        case gl::TextureType::_2DArray:
-        case gl::TextureType::_2DMultisampleArray:
-        case gl::TextureType::_3D:
-        case gl::TextureType::CubeMap:
-        case gl::TextureType::CubeMapArray:
-        case gl::TextureType::VideoImage:
-            textureInfo.dimension = wgpu::TextureDimension::e3D;
-            break;
-        default:
-            break;
-    }
+    textureInfo.dimension     = gl_wgpu::getWgpuTextureDimension(index.getType());
     textureInfo.mipLevelCount = index.getLayerCount();
     return textureInfo;
 }

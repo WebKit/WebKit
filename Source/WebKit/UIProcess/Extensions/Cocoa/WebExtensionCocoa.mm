@@ -48,12 +48,12 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSImageSPI.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -264,11 +264,8 @@ Ref<API::Data> WebExtension::serializeLocalization()
     return API::Data::createWithoutCopying(encodeJSONData(m_localization.get().localizationDictionary));
 }
 
-#if PLATFORM(MAC)
-
-SecStaticCodeRef WebExtension::bundleStaticCode()
+SecStaticCodeRef WebExtension::bundleStaticCode() const
 {
-#if USE(APPLE_INTERNAL_SDK)
     if (!m_bundle)
         return nullptr;
 
@@ -276,7 +273,7 @@ SecStaticCodeRef WebExtension::bundleStaticCode()
         return m_bundleStaticCode.get();
 
     SecStaticCodeRef staticCodeRef;
-    OSStatus error = SecStaticCodeCreateWithPath((__bridge CFURLRef)m_bundle.get().bundleURL, kSecCSDefaultFlags, &staticCodeRef);
+    OSStatus error = SecStaticCodeCreateWithPath(bridge_cast(m_bundle.get().bundleURL), kSecCSDefaultFlags, &staticCodeRef);
     if (error != noErr || !staticCodeRef) {
         if (staticCodeRef)
             CFRelease(staticCodeRef);
@@ -286,21 +283,39 @@ SecStaticCodeRef WebExtension::bundleStaticCode()
     m_bundleStaticCode = adoptCF(staticCodeRef);
 
     return m_bundleStaticCode.get();
-#else
-    return nullptr;
-#endif
 }
 
+NSData *WebExtension::bundleHash() const
+{
+    auto staticCode = bundleStaticCode();
+    if (!staticCode)
+        return nil;
+
+    CFDictionaryRef codeSigningDictionary = nil;
+    OSStatus error = SecCodeCopySigningInformation(staticCode, kSecCSDefaultFlags, &codeSigningDictionary);
+    if (error != noErr || !codeSigningDictionary) {
+        if (codeSigningDictionary)
+            CFRelease(codeSigningDictionary);
+        return nil;
+    }
+
+    auto *result = bridge_cast(checked_cf_cast<CFDataRef>(CFDictionaryGetValue(codeSigningDictionary, kSecCodeInfoUnique)));
+    CFRelease(codeSigningDictionary);
+
+    return result;
+}
+
+#if PLATFORM(MAC)
 bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData, NSError **outError)
 {
     ASSERT([resourceURL isFileURL]);
     ASSERT(resourceData);
 
-#if USE(APPLE_INTERNAL_SDK)
     if (!m_bundle)
         return true;
 
-    if (!bundleStaticCode())
+    auto staticCode = bundleStaticCode();
+    if (!staticCode)
         return false;
 
     NSURL *bundleSupportFilesURL = CFBridgingRelease(CFBundleCopySupportFilesDirectoryURL(m_bundle.get()._cfBundle));
@@ -309,17 +324,13 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
     ASSERT([resourceURLString hasPrefix:bundleSupportFilesURLString]);
 
     NSString *relativePathToResource = [resourceURLString substringFromIndex:bundleSupportFilesURLString.length].stringByRemovingPercentEncoding;
-    OSStatus result = SecCodeValidateFileResource(bundleStaticCode(), (__bridge CFStringRef)relativePathToResource, (__bridge CFDataRef)resourceData, kSecCSDefaultFlags);
+    OSStatus result = SecCodeValidateFileResource(staticCode, bridge_cast(relativePathToResource), bridge_cast(resourceData), kSecCSDefaultFlags);
 
     if (outError && result != noErr)
         *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:result userInfo:nil];
 
     return result == noErr;
-#else
-    return true;
-#endif
 }
-
 #endif // PLATFORM(MAC)
 
 bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pageURL)
@@ -1112,7 +1123,7 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath)
 
         return result;
 #else
-        CGSVGDocumentRef document = CGSVGDocumentCreateFromData((__bridge CFDataRef)imageData, nullptr);
+        CGSVGDocumentRef document = CGSVGDocumentCreateFromData(bridge_cast(imageData), nullptr);
         if (!document)
             return nil;
 

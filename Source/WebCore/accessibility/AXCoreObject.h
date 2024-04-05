@@ -737,6 +737,7 @@ struct TextUnderElementMode {
     Children childrenInclusion;
     bool includeFocusableContent;
     bool considerHiddenState { true };
+    bool inHiddenSubtree { false };
     Node* ignoredChildNode;
 
     TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)
@@ -744,6 +745,8 @@ struct TextUnderElementMode {
         , includeFocusableContent(includeFocusable)
         , ignoredChildNode(ignoredChild)
     { }
+
+    bool isHidden() { return considerHiddenState && inHiddenSubtree; }
 };
 
 enum class AccessibilityVisiblePositionForBounds {

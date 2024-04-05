@@ -257,11 +257,11 @@ Program::Program(Context &context,
     {
         // This program has to be retained until the notify callback is called.
         retain();
-        mCallback = CallbackData(pfnNotify, userData);
+        *mCallback = CallbackData(pfnNotify, userData);
     }
     else
     {
-        mCallback = CallbackData();
+        *mCallback = CallbackData();
     }
     ANGLE_CL_IMPL_TRY(context.getImpl().linkProgram(*this, mDevices, options, inputPrograms,
                                                     pfnNotify != nullptr ? this : nullptr, &mImpl));

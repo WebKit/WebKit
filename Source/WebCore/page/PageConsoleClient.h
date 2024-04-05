@@ -48,7 +48,7 @@ namespace WebCore {
 class Document;
 class Page;
 
-class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr {
+class WEBCORE_EXPORT PageConsoleClient final : public JSC::ConsoleClient, public CanMakeCheckedPtr<PageConsoleClient> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageConsoleClient(Page&);

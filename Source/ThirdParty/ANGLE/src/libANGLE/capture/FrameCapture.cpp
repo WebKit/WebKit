@@ -51,6 +51,7 @@
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/validationEGL.h"
 #include "third_party/ceval/ceval.h"
 
@@ -6816,11 +6817,17 @@ void FrameCaptureShared::determineMemoryProtectionSupport(gl::Context *context)
     angle::GetSystemInfo(&info);
     bool isDeviceDenyListed = false;
 
-    if (denyList.find(info.machineManufacturer) != denyList.end())
+    if (rx::GetAndroidSDKVersion() < 34)
     {
-        const std::vector<std::string> &models = denyList[info.machineManufacturer];
-        isDeviceDenyListed =
-            std::find(models.begin(), models.end(), info.machineModelName) != models.end();
+        // Before Android 14, there was a bug in Mali based Pixel preventing mprotect
+        // on Vulkan surfaces. (https://b.corp.google.com/issues/269535398)
+        // Check the denylist in this case.
+        if (denyList.find(info.machineManufacturer) != denyList.end())
+        {
+            const std::vector<std::string> &models = denyList[info.machineManufacturer];
+            isDeviceDenyListed =
+                std::find(models.begin(), models.end(), info.machineModelName) != models.end();
+        }
     }
 
     if (isDeviceDenyListed)

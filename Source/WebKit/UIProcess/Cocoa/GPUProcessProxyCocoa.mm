@@ -33,6 +33,7 @@
 #include "GPUProcessMessages.h"
 #include "MediaPermissionUtilities.h"
 #include "WebProcessProxy.h"
+#include <wtf/cocoa/SpanCocoa.h>
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 #include <pal/spi/mac/PowerLogSPI.h>
@@ -97,8 +98,7 @@ void GPUProcessProxy::sendBookmarkDataForCacheDirectory()
     auto url = adoptNS([[NSURL alloc] initFileURLWithPath:@"Caches/com.apple.WebKit.GPU/" relativeToURL:directoryURL]);
     error = nil;
     NSData* bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark includingResourceValuesForKeys:nil relativeToURL:nil error:&error];
-    std::span<const uint8_t> bookmarkData(reinterpret_cast<const uint8_t*>([bookmark bytes]), [bookmark length]);
-    send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(WTFMove(bookmarkData)), 0);
+    send(Messages::GPUProcess::ResolveBookmarkDataForCacheDirectory(span(bookmark)), 0);
 }
 #endif
 

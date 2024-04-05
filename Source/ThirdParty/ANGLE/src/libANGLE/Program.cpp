@@ -969,7 +969,9 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
     setupExecutableForLink(context);
 
     mProgramHash              = {0};
-    MemoryProgramCache *cache = context->getMemoryProgramCache();
+    MemoryProgramCache *cache = (context->getFrontendFeatures().disableProgramCaching.enabled)
+                                    ? nullptr
+                                    : context->getMemoryProgramCache();
 
     // TODO: http://anglebug.com/4530: Enable program caching for separable programs
     if (cache && !isSeparable())
@@ -2331,11 +2333,17 @@ void Program::postResolveLink(const Context *context)
 
 void Program::cacheProgramBinary(const gl::Context *context)
 {
+    if (context->getFrontendFeatures().disableProgramCaching.enabled)
+    {
+        // Program caching is disabled, nothing to do.
+        return;
+    }
+
     // Save to the program cache.
     std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
     MemoryProgramCache *cache = context->getMemoryProgramCache();
     // TODO: http://anglebug.com/4530: Enable program caching for separable programs
-    if (cache && !isSeparable() && !context->getFrontendFeatures().disableProgramCaching.enabled &&
+    if (cache && !isSeparable() &&
         (mState.mExecutable->mLinkedTransformFeedbackVaryings.empty() ||
          !context->getFrontendFeatures().disableProgramCachingForTransformFeedback.enabled))
     {

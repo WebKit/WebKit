@@ -163,10 +163,11 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
 
         if (auto imageElement = dynamicDowncast<HTMLImageElement>(element)) {
             // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
-            return imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(), HTMLImageElement::IgnoreTouchCallout::Yes);
+            auto* imageRenderer = imageElement->renderer();
+            return imageRenderer && imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(&imageRenderer->style()), HTMLImageElement::IgnoreTouchCallout::Yes);
         }
         bool hasRenderer = element.renderer();
-        auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
+        auto willRespondToMouseClickEvents = hasRenderer && element.willRespondToMouseClickEvents(&element.renderer()->style());
         if (willRespondToMouseClickEvents || !hasRenderer || hadRenderer == ElementHadRenderer::No)
             return willRespondToMouseClickEvents;
 
@@ -174,7 +175,8 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
         for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
             if (!descendant.element())
                 continue;
-            if (descendant.element()->willRespondToMouseClickEvents())
+            auto& element = *descendant.element();
+            if (element.renderer() && element.willRespondToMouseClickEvents(&element.renderer()->style()))
                 return true;
         }
         return false;

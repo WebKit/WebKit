@@ -119,7 +119,7 @@ public:
 
         Ref document = protectedDocument();
         for (auto& attribute : attributes) {
-            auto knownAttributeName = AtomString::lookUp(attribute.name.data(), attribute.name.size());
+            auto knownAttributeName = AtomString::lookUp(attribute.name.span());
             processAttribute(knownAttributeName, attribute.value.span(), pictureState);
         }
 
@@ -537,7 +537,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
 
     while (auto token = m_tokenizer.nextToken(m_source)) {
         if (token->type() == HTMLToken::Type::StartTag)
-            m_tokenizer.updateStateFor(AtomString::lookUp(token->name().data(), token->name().size()));
+            m_tokenizer.updateStateFor(AtomString::lookUp(token->name().span()));
         m_scanner.scan(*token, requests, document);
     }
 

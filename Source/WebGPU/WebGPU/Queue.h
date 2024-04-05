@@ -43,6 +43,7 @@ class Buffer;
 class CommandBuffer;
 class Device;
 class Texture;
+class TextureView;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
@@ -64,7 +65,7 @@ public:
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, void* data, size_t);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, void* data, size_t);
-    void writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
+    void writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void setLabel(String&&);
 
     void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
@@ -73,11 +74,13 @@ public:
     void makeInvalid();
 
     const Device& device() const;
-    void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
+    void clearTextureIfNeeded(const WGPUImageCopyTexture&, NSUInteger);
     id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
     void commitMTLCommandBuffer(id<MTLCommandBuffer>);
     void setEncoderForBuffer(id<MTLCommandBuffer>, id<MTLCommandEncoder>);
     id<MTLCommandEncoder> encoderForBuffer(id<MTLCommandBuffer>) const;
+    void clearTextureViewIfNeeded(TextureView&);
+    static bool writeWillCompletelyClear(WGPUTextureDimension, uint32_t widthForMetal, uint32_t logicalSizeWidth, uint32_t heightForMetal, uint32_t logicalSizeHeight, uint32_t depthForMetal, uint32_t logicalSizeDepthOrArrayLayers);
 
 private:
     Queue(id<MTLCommandQueue>, Device&);

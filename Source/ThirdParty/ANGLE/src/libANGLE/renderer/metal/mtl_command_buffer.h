@@ -416,7 +416,8 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &setStencilRefVals(uint32_t frontRef, uint32_t backRef);
     RenderCommandEncoder &setStencilRefVal(uint32_t ref);
 
-    RenderCommandEncoder &setViewport(const MTLViewport &viewport);
+    RenderCommandEncoder &setViewport(const MTLViewport &viewport,
+                                      id<MTLRasterizationRateMap> map);
     RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect,
                                          id<MTLRasterizationRateMap> map);
 

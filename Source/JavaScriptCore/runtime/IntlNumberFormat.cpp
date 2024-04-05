@@ -118,14 +118,13 @@ static inline unsigned computeCurrencySortKey(const String& currency)
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 
-static inline unsigned computeCurrencySortKey(const char* currency)
+static inline unsigned computeCurrencySortKey(const std::array<const char, 3>& currency)
 {
-    ASSERT(strlen(currency) == 3);
-    ASSERT(containsOnly<isASCIIUpper>(currency, 3));
+    ASSERT(containsOnly<isASCIIUpper>(std::span { currency }));
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 
-static unsigned extractCurrencySortKey(std::pair<const char*, unsigned>* currencyMinorUnit)
+static unsigned extractCurrencySortKey(std::pair<std::array<const char, 3>, unsigned>* currencyMinorUnit)
 {
     return computeCurrencySortKey(currencyMinorUnit->first);
 }
@@ -135,35 +134,35 @@ static unsigned computeCurrencyDigits(const String& currency)
     // 11.1.1 The abstract operation CurrencyDigits (currency)
     // "If the ISO 4217 currency and funds code list contains currency as an alphabetic code,
     // then return the minor unit value corresponding to the currency from the list; else return 2.
-    static constexpr std::pair<const char*, unsigned> currencyMinorUnits[] = {
-        { "BHD", 3 },
-        { "BIF", 0 },
-        { "BYR", 0 },
-        { "CLF", 4 },
-        { "CLP", 0 },
-        { "DJF", 0 },
-        { "GNF", 0 },
-        { "IQD", 3 },
-        { "ISK", 0 },
-        { "JOD", 3 },
-        { "JPY", 0 },
-        { "KMF", 0 },
-        { "KRW", 0 },
-        { "KWD", 3 },
-        { "LYD", 3 },
-        { "OMR", 3 },
-        { "PYG", 0 },
-        { "RWF", 0 },
-        { "TND", 3 },
-        { "UGX", 0 },
-        { "UYI", 0 },
-        { "VND", 0 },
-        { "VUV", 0 },
-        { "XAF", 0 },
-        { "XOF", 0 },
-        { "XPF", 0 }
+    static constexpr std::pair<std::array<const char, 3>, unsigned> currencyMinorUnits[] = {
+        { { 'B', 'H', 'D' }, 3 },
+        { { 'B', 'I', 'F' }, 0 },
+        { { 'B', 'Y', 'R' }, 0 },
+        { { 'C', 'L', 'F' }, 4 },
+        { { 'C', 'L', 'P' }, 0 },
+        { { 'D', 'J', 'F' }, 0 },
+        { { 'G', 'N', 'F' }, 0 },
+        { { 'I', 'Q', 'D' }, 3 },
+        { { 'I', 'S', 'K' }, 0 },
+        { { 'J', 'O', 'D' }, 3 },
+        { { 'J', 'P', 'Y' }, 0 },
+        { { 'K', 'M', 'F' }, 0 },
+        { { 'K', 'R', 'W' }, 0 },
+        { { 'K', 'W', 'D' }, 3 },
+        { { 'L', 'Y', 'D' }, 3 },
+        { { 'O', 'M', 'R' }, 3 },
+        { { 'P', 'Y', 'G' }, 0 },
+        { { 'R', 'W', 'F' }, 0 },
+        { { 'T', 'N', 'D' }, 3 },
+        { { 'U', 'G', 'X' }, 0 },
+        { { 'U', 'Y', 'I' }, 0 },
+        { { 'V', 'N', 'D' }, 0 },
+        { { 'V', 'U', 'V' }, 0 },
+        { { 'X', 'A', 'F' }, 0 },
+        { { 'X', 'O', 'F' }, 0 },
+        { { 'X', 'P', 'F' }, 0 }
     };
-    auto* currencyMinorUnit = tryBinarySearch<std::pair<const char*, unsigned>>(currencyMinorUnits, std::size(currencyMinorUnits), computeCurrencySortKey(currency), extractCurrencySortKey);
+    auto* currencyMinorUnit = tryBinarySearch<std::pair<std::array<const char, 3>, unsigned>>(currencyMinorUnits, std::size(currencyMinorUnits), computeCurrencySortKey(currency), extractCurrencySortKey);
     if (currencyMinorUnit)
         return currencyMinorUnit->second;
     return 2;

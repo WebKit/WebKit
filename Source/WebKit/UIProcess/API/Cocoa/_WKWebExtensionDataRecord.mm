@@ -32,6 +32,8 @@
 
 #import "_WKWebExtensionDataTypeInternal.h"
 
+NSErrorDomain const _WKWebExtensionDataRecordErrorDomain = @"_WKWebExtensionDataRecordErrorDomain";
+
 @implementation _WKWebExtensionDataRecord
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -75,6 +77,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionDataRecord, WebExtensionDat
     return _webExtensionDataRecord->sizeOfTypes(WebKit::toWebExtensionDataTypes(dataTypes));
 }
 
+- (NSArray<NSError *> *)errors
+{
+    return _webExtensionDataRecord->errors();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -114,6 +121,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionDataRecord, WebExtensionDat
     return 0;
 }
 
+- (NSArray<NSError *> *)errors
+{
+    return nil;
+}
+
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
 @end
@@ -142,6 +154,12 @@ Vector<Ref<WebExtensionDataRecord>> toWebExtensionDataRecords(NSArray *records)
 NSArray *toAPI(const Vector<Ref<WebExtensionDataRecord>>& records)
 {
     return createNSArray(records).get();
+}
+
+NSError *createDataRecordError(_WKWebExtensionDataRecordError error, NSString *debugDescription)
+{
+    NSDictionary *userInfo = debugDescription ? @{ NSDebugDescriptionErrorKey: debugDescription } : @{ };
+    return [NSError errorWithDomain:_WKWebExtensionDataRecordErrorDomain code:error userInfo:userInfo];
 }
 
 } // namespace WebKit

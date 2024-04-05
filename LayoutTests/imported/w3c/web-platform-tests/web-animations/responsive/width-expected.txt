@@ -1,0 +1,6 @@
+
+PASS width responsive to style changes
+PASS width clamped to 0px on keyframes
+FAIL width responsive to inherited changes from keyword assert_equals: expected "20px" but got "0px"
+PASS width responsive to inherited changes from length
+

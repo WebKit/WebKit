@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-AccessibilityMathMLElement::AccessibilityMathMLElement(RenderObject* renderer, bool isAnonymousOperator)
+AccessibilityMathMLElement::AccessibilityMathMLElement(RenderObject& renderer, bool isAnonymousOperator)
     : AccessibilityRenderObject(renderer)
     , m_isAnonymousOperator(isAnonymousOperator)
 {
@@ -44,7 +44,7 @@ AccessibilityMathMLElement::AccessibilityMathMLElement(RenderObject* renderer, b
 
 AccessibilityMathMLElement::~AccessibilityMathMLElement() = default;
 
-Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(RenderObject* renderer, bool isAnonymousOperator)
+Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(RenderObject& renderer, bool isAnonymousOperator)
 {
     return adoptRef(*new AccessibilityMathMLElement(renderer, isAnonymousOperator));
 }
@@ -68,7 +68,7 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
 
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
-    if (m_isAnonymousOperator) {
+    if (m_isAnonymousOperator && !mode.isHidden()) {
         UChar operatorChar = downcast<RenderMathMLOperator>(*m_renderer).textContent();
         return operatorChar ? String(span(operatorChar)) : String();
     }

@@ -10,12 +10,10 @@ macro(WEBKIT_BUILD_PDFJS_GRESOURCES _derived_sources_dir)
         VERBATIM
     )
 
-    add_custom_command(
-        OUTPUT ${_derived_sources_dir}/PdfJSGResourceBundle.c ${_derived_sources_dir}/PdfJSGResourceBundle.deps
-        DEPENDS ${_derived_sources_dir}/PdfJSGResourceBundle.xml
-        DEPFILE ${_derived_sources_dir}/PdfJSGResourceBundle.deps
-        COMMAND glib-compile-resources --generate --sourcedir=${THIRDPARTY_DIR}/pdfjs --target=${_derived_sources_dir}/PdfJSGResourceBundle.c --dependency-file=${_derived_sources_dir}/PdfJSGResourceBundle.deps ${_derived_sources_dir}/PdfJSGResourceBundle.xml
-        VERBATIM
+    GLIB_COMPILE_RESOURCES(
+        OUTPUT        ${_derived_sources_dir}/PdfJSGResourceBundle.c
+        SOURCE_XML    ${_derived_sources_dir}/PdfJSGResourceBundle.xml
+        RESOURCE_DIRS ${THIRDPARTY_DIR}/pdfjs
     )
 
     add_custom_command(
@@ -26,11 +24,9 @@ macro(WEBKIT_BUILD_PDFJS_GRESOURCES _derived_sources_dir)
         VERBATIM
     )
 
-    add_custom_command(
-        OUTPUT ${_derived_sources_dir}/PdfJSGResourceBundleExtras.c ${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps
-        DEPENDS ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
-        DEPFILE ${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps
-        COMMAND glib-compile-resources --generate --sourcedir=${WEBCORE_DIR}/Modules/pdfjs-extras --target=${_derived_sources_dir}/PdfJSGResourceBundleExtras.c --dependency-file=${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
-        VERBATIM
+    GLIB_COMPILE_RESOURCES(
+        OUTPUT        ${_derived_sources_dir}/PdfJSGResourceBundleExtras.c
+        SOURCE_XML    ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
+        RESOURCE_DIRS ${WEBCORE_DIR}/Modules/pdfjs-extras
     )
 endmacro()

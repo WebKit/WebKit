@@ -3773,11 +3773,13 @@ void SpeculativeJIT::compile(Node* node)
             scratch2.emplace(this);
             scratch2GPR = scratch2->gpr();
         }
-        
-        emitTypedArrayBoundsCheck(node, baseGPR, indexGPR, scratchGPR, scratch2GPR);
-        
+
+        Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR, scratchGPR, scratch2GPR);
+        if (outOfBounds.isSet())
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
+
         GPRTemporary args[2];
-        
+
         bool ok = true;
         for (unsigned i = numExtraArgs; i--;) {
             if (!getIntTypedArrayStoreOperandForAtomics(args[i], indexGPR, argEdges[i])) {
@@ -3906,7 +3908,7 @@ void SpeculativeJIT::compile(Node* node)
         }
         constexpr bool canSpeculate = false;
         constexpr bool shouldBox = false;
-        setIntTypedArrayLoadResult(node, JSValueRegs(resultGPR), type, canSpeculate, shouldBox, resultFPR);
+        setIntTypedArrayLoadResult(node, JSValueRegs(resultGPR), type, canSpeculate, shouldBox, resultFPR, { });
         break;
     }
         

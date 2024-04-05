@@ -23,7 +23,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 class WebKit::ContextMenuContextData {
-    WebCore::ContextMenuContext::Type type();
+    WebCore::ContextMenuContextType type();
     WebCore::IntPoint menuLocation();
     Vector<WebKit::WebContextMenuItemData> menuItems();
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData();

@@ -22,5 +22,5 @@
 
 # Tests Stream receiver attribute.
 messages -> TestWithStreamServerConnectionHandle  {
-    void SendStreamServerConnection(IPC::StreamServerConnection::Handle handle)
+    void SendStreamServerConnection(IPC::StreamServerConnectionHandle handle)
 }

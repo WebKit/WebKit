@@ -37,7 +37,7 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject* renderer)
+AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject& renderer)
     : AccessibilityTableCell(renderer)
 {
 }
@@ -49,7 +49,7 @@ AccessibilityARIAGridCell::AccessibilityARIAGridCell(Node& node)
 
 AccessibilityARIAGridCell::~AccessibilityARIAGridCell() = default;
 
-Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* renderer)
+Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityARIAGridCell(renderer));
 }

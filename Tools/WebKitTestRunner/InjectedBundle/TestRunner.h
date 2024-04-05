@@ -583,6 +583,8 @@ public:
     void takeViewPortSnapshot(JSValueRef callback);
     void viewPortSnapshotTaken(WKStringRef);
 
+    void flushConsoleLogs(JSValueRef callback);
+
     // Reporting API
     void generateTestReport(JSStringRef message, JSStringRef group);
 

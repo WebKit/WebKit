@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/color-mix-crashtest.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/get-computed-timing-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/infinite-active-duration.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/crashtests/partially-overlapping-animations-one-not-current-001.html

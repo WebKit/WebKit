@@ -20,6 +20,7 @@ angle_perf_tests_sources = [
   "perf_tests/InterleavedAttributeData.cpp",
   "perf_tests/LinkProgramPerfTest.cpp",
   "perf_tests/MapBufferRange.cpp",
+  "perf_tests/MultisampleResolvePerf.cpp",
   "perf_tests/MultisampledRenderToTexturePerf.cpp",
   "perf_tests/MultisampledSwapchainResolve.cpp",
   "perf_tests/MultiviewPerf.cpp",

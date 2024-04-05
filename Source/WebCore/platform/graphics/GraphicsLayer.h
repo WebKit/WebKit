@@ -77,7 +77,10 @@ class TransformationMatrix;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 struct AcceleratedEffectValues;
+String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty);
 #endif
+
+String animatedPropertyIDAsString(AnimatedProperty);
 
 namespace DisplayList {
 enum class AsTextFlag : uint8_t;

@@ -102,7 +102,7 @@ static inline AtomString convertPropertyNameToAttributeName(const StringImpl& na
         } else
             buffer.append(character);
     }
-    return AtomString(buffer.data(), buffer.size());
+    return AtomString(buffer.span());
 }
 
 static AtomString convertPropertyNameToAttributeName(const String& name)

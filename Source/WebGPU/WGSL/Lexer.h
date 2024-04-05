@@ -79,9 +79,6 @@ private:
     void skipLineComment();
     bool skipWhitespaceAndComments();
 
-    static bool isIdentifierStart(T character) { return isASCIIAlpha(character) || character == '_'; }
-    static bool isIdentifierContinue(T character) { return isASCIIAlphanumeric(character) || character == '_'; }
-
     T m_current;
     const T* m_code;
     const T* m_codeEnd;

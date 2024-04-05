@@ -181,16 +181,19 @@ TEST(ElementTargeting, NearbyOutOfFlowElements)
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-2"];
 
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
-    EXPECT_EQ([elements count], 4U);
+    EXPECT_EQ([elements count], 5U);
     EXPECT_TRUE([elements objectAtIndex:0].underPoint);
-    EXPECT_FALSE([elements objectAtIndex:1].underPoint);
+    EXPECT_TRUE([elements objectAtIndex:1].underPoint);
     EXPECT_FALSE([elements objectAtIndex:2].underPoint);
     EXPECT_FALSE([elements objectAtIndex:3].underPoint);
+    EXPECT_FALSE([elements objectAtIndex:4].underPoint);
+    // The two elements that are directly hit-tested should take precedence over nearby elements.
     EXPECT_WK_STREQ(".fixed.container", [elements firstObject].selectors.firstObject);
+    EXPECT_WK_STREQ(".box", [elements objectAtIndex:1].selectors.firstObject);
     __auto_type nextThreeSelectors = [NSSet setWithArray:@[
-        [elements objectAtIndex:1].selectors.firstObject,
         [elements objectAtIndex:2].selectors.firstObject,
         [elements objectAtIndex:3].selectors.firstObject,
+        [elements objectAtIndex:4].selectors.firstObject,
     ]];
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.top-right"]);
     EXPECT_TRUE([nextThreeSelectors containsObject:@".absolute.bottom-left"]);
@@ -231,11 +234,13 @@ TEST(ElementTargeting, AdjustVisibilityForUnparentedElement)
 
     RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
     setOverlaysParented(false);
+    [webView targetedElementInfoAt:CGPointMake(100, 100)];
     [webView adjustVisibilityForTargets:elements.get()];
     setOverlaysParented(true);
 
     elements = [webView targetedElementInfoAt:CGPointMake(100, 100)];
     setOverlaysParented(false);
+    [webView targetedElementInfoAt:CGPointMake(100, 100)];
     [webView adjustVisibilityForTargets:elements.get()];
     setOverlaysParented(true);
 

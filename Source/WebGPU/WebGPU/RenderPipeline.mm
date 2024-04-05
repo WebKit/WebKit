@@ -1255,6 +1255,24 @@ static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &devic
     return nil;
 }
 
+static NSString* errorValidatingVertexStageIn(const ShaderModule::VertexStageIn* stageIn, const Device& device)
+{
+    if (!stageIn)
+        return nil;
+
+    auto maxVertexAttributeLocation = device.limits().maxVertexAttributes;
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> shaderLocations;
+    for (auto shaderLocation : stageIn->keys()) {
+        if (shaderLocation >= maxVertexAttributeLocation)
+            return [NSString stringWithFormat:@"Shader location %u exceeds the maximum allowed value of %u", shaderLocation, maxVertexAttributeLocation];
+        if (shaderLocations.contains(shaderLocation))
+            return [NSString stringWithFormat:@"Shader location %u appears twice", shaderLocation];
+        shaderLocations.add(shaderLocation);
+    }
+
+    return nil;
+}
+
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
@@ -1293,6 +1311,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
         const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule.defaultVertexEntryPoint();
+        vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
+        if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
+            return returnInvalidRenderPipeline(*this, isAsync, error);
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label, descriptor.vertex.constantCount, descriptor.vertex.constants);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex library failed creation"_s);
@@ -1306,7 +1327,6 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
-        vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
         vertexOutputs = vertexModule.vertexReturnTypeForEntryPoint(vertexEntryPoint);
     }
 

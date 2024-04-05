@@ -74,14 +74,14 @@ std::optional<bool> VideoTrackPrivateWebM::defaultEnabled() const
 AtomString VideoTrackPrivateWebM::label() const
 {
     if (m_label.isNull())
-        m_label = m_track.name.is_present() ? AtomString::fromUTF8(m_track.name.value().data(), m_track.name.value().length()) : emptyAtom();
+        m_label = m_track.name.is_present() ? AtomString::fromUTF8(m_track.name.value()) : emptyAtom();
     return m_label;
 }
 
 AtomString VideoTrackPrivateWebM::language() const
 {
     if (m_language.isNull())
-        m_language = m_track.language.is_present() ? AtomString::fromUTF8(m_track.language.value().data(), m_track.language.value().length()) : emptyAtom();
+        m_language = m_track.language.is_present() ? AtomString::fromUTF8(m_track.language.value()) : emptyAtom();
     return m_language;
 }
 

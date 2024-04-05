@@ -324,9 +324,7 @@ private:
         Line,
     };
 
-    enum class ActiveStateChangeReason : uint8_t {
-        HandledContextMenuEvent,
-        BeganTrackingSelection,
+    enum class ActiveStateChangeReason : bool {
         SetCurrentSelection,
         WindowActivityChanged,
     };
@@ -344,7 +342,6 @@ private:
     void setCurrentSelection(RetainPtr<PDFSelection>&&);
     RetainPtr<PDFSelection> protectedCurrentSelection() const;
     void repaintOnSelectionActiveStateChangeIfNeeded(ActiveStateChangeReason, const Vector<WebCore::FloatRect>& additionalDocumentRectsToRepaint = { });
-    bool isSelectionActiveAfterContextMenuInteraction() const;
 
     String selectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
@@ -535,7 +532,6 @@ private:
         bool isActivelyTrackingSelection { false };
         bool shouldExtendCurrentSelection { false };
         bool shouldMakeMarqueeSelection { false };
-        bool lastHandledEventWasContextMenuEvent { false };
         bool cursorIsFrozenForSelectionDrag { false };
         SelectionGranularity granularity { SelectionGranularity::Character };
         PDFDocumentLayout::PageIndex startPageIndex;

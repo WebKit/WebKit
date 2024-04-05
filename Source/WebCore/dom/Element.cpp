@@ -579,7 +579,6 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
 {
     switch (type) {
     case CloningOperation::OnlySelf:
-        return cloneElementWithoutChildren(targetDocument);
     case CloningOperation::SelfWithTemplateContent: {
         Ref clone = cloneElementWithoutChildren(targetDocument);
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };

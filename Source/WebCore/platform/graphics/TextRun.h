@@ -40,7 +40,7 @@ class Font;
 
 struct GlyphData;
 
-class TextRun : public CanMakeCheckedPtr {
+class TextRun : public CanMakeCheckedPtr<TextRun> {
     WTF_MAKE_FAST_ALLOCATED;
     friend void add(Hasher&, const TextRun&);
 public:

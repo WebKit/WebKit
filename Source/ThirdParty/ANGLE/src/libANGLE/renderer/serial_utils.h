@@ -116,7 +116,7 @@ class Serial final
 };
 
 // Defines class to track the queue serial that can be load/store from multiple threads atomically.
-class AtomicQueueSerial final
+class alignas(8) AtomicQueueSerial final
 {
   public:
     AtomicQueueSerial &operator=(const Serial &other)
@@ -129,7 +129,6 @@ class AtomicQueueSerial final
   private:
     static constexpr uint64_t kInvalid = 0;
     std::atomic<uint64_t> mValue       = kInvalid;
-    static_assert(decltype(mValue)::is_always_lock_free, "Must always be lock free");
 };
 
 // Used as default/initial serial

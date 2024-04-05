@@ -37,6 +37,7 @@ struct GPUProcessPreferencesForWebProcess {
     bool isDynamicContentScalingEnabled { false };
 #endif
     bool allowTestOnlyIPC { false };
+    bool isLockdownSafeFontParserEnabled { false };
 
     friend bool operator==(const GPUProcessPreferencesForWebProcess&, const GPUProcessPreferencesForWebProcess&) = default;
 };

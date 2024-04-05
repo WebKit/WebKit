@@ -125,10 +125,10 @@ RefPtr<FontCustomPlatformData> FontCustomPlatformData::createMemorySafe(SharedBu
     return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
 }
 
-std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data)
+std::optional<Ref<FontCustomPlatformData>> FontCustomPlatformData::tryMakeFromSerializationData(FontCustomPlatformSerializedData&& data, bool shouldUseLockdownFontParser )
 {
     auto buffer = SharedBuffer::create(WTFMove(data.fontFaceData));
-    RefPtr fontCustomPlatformData = FontCustomPlatformData::create(buffer, data.itemInCollection);
+    RefPtr fontCustomPlatformData = shouldUseLockdownFontParser ? FontCustomPlatformData::createMemorySafe(buffer, data.itemInCollection) : FontCustomPlatformData::create(buffer, data.itemInCollection);
     if (!fontCustomPlatformData)
         return std::nullopt;
     fontCustomPlatformData->m_renderingResourceIdentifier = data.renderingResourceIdentifier;

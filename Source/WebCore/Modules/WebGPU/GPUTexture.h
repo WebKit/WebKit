@@ -57,6 +57,7 @@ public:
     ExceptionOr<Ref<GPUTextureView>> createView(const std::optional<GPUTextureViewDescriptor>&) const;
 
     void destroy();
+    bool isDestroyed() const;
 
     WebGPU::Texture& backing() { return m_backing; }
     const WebGPU::Texture& backing() const { return m_backing; }
@@ -89,6 +90,7 @@ private:
     const GPUTextureDimension m_dimension;
     const GPUFlagsConstant m_usage;
     Ref<const GPUDevice> m_device;
+    bool m_isDestroyed { false };
 };
 
 }

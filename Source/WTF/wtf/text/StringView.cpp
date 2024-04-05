@@ -302,7 +302,7 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
             return makeAtomString(asASCIILowercase(std::span { input, length }));
     }
     // Fast path when the StringView is already all lowercase.
-    return AtomString(input, length);
+    return std::span { input, length };
 }
 
 AtomString StringView::convertToASCIILowercaseAtom() const
@@ -592,6 +592,13 @@ void StringView::setUnderlyingStringImpl(const StringView&)
 }
 
 #endif // not CHECK_STRINGVIEW_LIFETIME
+
+#ifndef NDEBUG
+void StringView::show() const
+{
+    toStringWithoutCopying().show();
+}
+#endif
 
 #if !defined(NDEBUG)
 namespace Detail {

@@ -427,6 +427,8 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> TypeChecker::check()
 {
+    ContextScope moduleScope(this);
+
     Base::visit(m_shaderModule);
 
     if (shouldDumpInferredTypes) {

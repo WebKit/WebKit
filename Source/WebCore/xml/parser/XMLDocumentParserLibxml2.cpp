@@ -699,7 +699,7 @@ static inline String toString(const xmlChar* string)
 
 static inline AtomString toAtomString(const xmlChar* string, size_t size)
 {
-    return AtomString::fromUTF8(reinterpret_cast<const char*>(string), size);
+    return AtomString::fromUTF8({ reinterpret_cast<const char*>(string), size });
 }
 
 static inline AtomString toAtomString(const xmlChar* string)

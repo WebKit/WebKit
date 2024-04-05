@@ -2141,7 +2141,7 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
     }
 }
 
-NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth)
+NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth, uint32_t sampleCount)
 {
     NSUInteger blockSize = Texture::texelBlockSize(format);
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
@@ -2150,7 +2150,7 @@ NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth)
         return 0;
     }
 
-    return (blockSize * textureWidth) / blockWidth;
+    return sampleCount * ((blockSize * textureWidth) / blockWidth);
 }
 
 uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
@@ -2988,7 +2988,7 @@ void Texture::makeCanvasBacking()
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_commandEncoder = commandEncoder;
-    if (isDestroyed())
+    if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
 
@@ -3192,6 +3192,12 @@ const char* Texture::formatToString(WGPUTextureFormat format)
         return "invalid format";
     }
 }
+
+bool Texture::isCanvasBacking() const
+{
+    return m_canvasBacking;
+}
+
 void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
@@ -3202,7 +3208,7 @@ void Texture::destroy()
         if (view.get())
             view->destroy();
     }
-    if (m_commandEncoder)
+    if (!m_canvasBacking && m_commandEncoder)
         m_commandEncoder.get()->makeSubmitInvalid();
     m_commandEncoder = nullptr;
 
@@ -3567,7 +3573,7 @@ bool Texture::isValidDepthStencilCopyDestination(WGPUTextureFormat format, WGPUT
     }
 }
 
-bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
+NSString* Texture::errorValidatingTextureCopyRange(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
 {
     // https://gpuweb.github.io/gpuweb/#validating-texture-copy-range
 
@@ -3578,24 +3584,26 @@ bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyText
     auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
 
     auto endX = checkedSum<uint32_t>(imageCopyTexture.origin.x, copySize.width);
-    if (endX.hasOverflowed() || endX.value() > subresourceSize.width)
-        return false;
+    if (endX.hasOverflowed() || endX.value() > subresourceSize.width) {
+        NSString* s = [NSString stringWithFormat:@"endX(%u) > subresourceSize.width(%u)", endX.hasOverflowed() ? UINT32_MAX : endX.value(), subresourceSize.width];
+        return s;
+    }
 
     auto endY = checkedSum<uint32_t>(imageCopyTexture.origin.y, copySize.height);
     if (endY.hasOverflowed() || endY.value() > subresourceSize.height)
-        return false;
+        return [NSString stringWithFormat:@"endY(%u) > subresourceSize.height(%u)", endY.hasOverflowed() ? UINT32_MAX : endY.value(), subresourceSize.height];
 
     auto endZ = checkedSum<uint32_t>(imageCopyTexture.origin.z, copySize.depthOrArrayLayers);
     if (endZ.hasOverflowed() || endZ.value() > subresourceSize.depthOrArrayLayers)
-        return false;
+        return [NSString stringWithFormat:@"endZ(%u) > subresourceSize.depthOrArrayLayers(%u)", endZ.hasOverflowed() ? UINT32_MAX : endZ.value(), subresourceSize.depthOrArrayLayers];
 
     if (copySize.width % blockWidth)
-        return false;
+        return [NSString stringWithFormat:@"copySize.width(%u) is not divisible by blockWidth(%u)", copySize.width, blockWidth];
 
     if (copySize.height % blockHeight)
-        return false;
+        return [NSString stringWithFormat:@"copySize.height(%u) is not divisible by blockHeight(%u)", copySize.height, blockHeight];
 
-    return true;
+    return nil;
 }
 
 bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uint64_t byteSize, WGPUTextureFormat format, WGPUExtent3D copyExtent)
@@ -3670,8 +3678,14 @@ bool Texture::previouslyCleared(uint32_t mipLevel, uint32_t slice) const
     return false;
 }
 
-void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
+void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool setCleared)
 {
+    if (!setCleared) {
+        if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end())
+            it->value.remove(slice);
+        return;
+    }
+
     if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end()) {
         it->value.add(slice);
         return;

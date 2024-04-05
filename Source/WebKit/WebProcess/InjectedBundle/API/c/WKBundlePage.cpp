@@ -820,6 +820,13 @@ void WKBundlePagePostMessage(WKBundlePageRef pageRef, WKStringRef messageNameRef
     WebKit::toImpl(pageRef)->postMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));
 }
 
+void WKBundlePagePostMessageWithAsyncReply(WKBundlePageRef page, WKStringRef messageName, WKTypeRef messageBody, WKBundlePageMessageReplyCallback replyCallback, void* context)
+{
+    WebKit::toImpl(page)->postMessageWithAsyncReply(WebKit::toWTFString(messageName), WebKit::toImpl(messageBody), [replyCallback, context] (API::Object* reply) mutable {
+        replyCallback(WebKit::toAPI(reply), context);
+    });
+}
+
 void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     WebKit::toImpl(pageRef)->postMessageIgnoringFullySynchronousMode(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));

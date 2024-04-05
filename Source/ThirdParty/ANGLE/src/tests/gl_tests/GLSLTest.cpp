@@ -6732,7 +6732,34 @@ void main()
     gl_FragColor = vec4(f(us), 0, 0, 1);
 })";
 
-    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_NE(fs, 0u);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that structs with samplers are not allowed in interface blocks.  This is forbidden per
+// GLES3:
+//
+// > Types and declarators are the same as for other uniform variable declarations outside blocks,
+// > with these exceptions:
+// > * opaque types are not allowed
+TEST_P(GLSLTest_ES3, StructWithSamplersDisallowedInInterfaceBlock)
+{
+    const char kFS[] = R"(#version 300 es
+precision mediump float;
+struct S { sampler2D samp; bool b; };
+
+layout(std140) uniform Buffer { S s; } buffer;
+
+out vec4 color;
+
+void main()
+{
+    color = texture(buffer.s.samp, vec2(0));
+})";
+
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(fs, 0u);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -18446,6 +18473,116 @@ void main() {
     EXPECT_EQ(0u, shader);
 }
 
+// Same as TooManyFieldsInStruct, but with samplers in the struct.
+TEST_P(GLSLTest_ES3, TooManySamplerFieldsInStruct)
+{
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision highp float;
+struct TooManyFields
+{
+)";
+    for (uint32_t i = 0; i < (1 << 16); ++i)
+    {
+        fs << "    sampler2D field" << i << ";\n";
+    }
+    fs << R"(};
+uniform TooManyFields s;
+out vec4 color;
+void main() {
+    color = texture(s.field0, vec2(0));
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    EXPECT_EQ(0u, shader);
+}
+
+// More complex variation of ManySamplerFieldsInStruct.  This one compiles fine.
+TEST_P(GLSLTest_ES3, ManySamplerFieldsInStructComplex)
+{
+    // D3D and OpenGL may be more restrictive about this many samplers.
+    ANGLE_SKIP_TEST_IF(IsD3D() || IsOpenGL());
+
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision highp float;
+
+struct X {
+    mediump sampler2D a[0xf00];
+    mediump sampler2D b[0xf00];
+    mediump sampler2D c[0xf000];
+    mediump sampler2D d[0xf00];
+};
+
+struct Y {
+  X s1;
+  mediump sampler2D a[0xf00];
+  mediump sampler2D b[0xf000];
+  mediump sampler2D c[0x14000];
+};
+
+struct S {
+    Y s1;
+};
+
+struct structBuffer { S s; };
+
+uniform structBuffer b;
+
+out vec4 color;
+void main()
+{
+    color = texture(b.s.s1.s1.c[0], vec2(0));
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    EXPECT_NE(0u, shader);
+}
+
+// Make sure a large array of samplers works.
+TEST_P(GLSLTest, ManySamplers)
+{
+    // D3D and OpenGL may be more restrictive about this many samplers.
+    ANGLE_SKIP_TEST_IF(IsD3D() || IsOpenGL());
+
+    std::ostringstream fs;
+    fs << R"(precision highp float;
+
+uniform mediump sampler2D c[0x12000];
+
+void main()
+{
+    gl_FragColor = texture2D(c[0], vec2(0));
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    EXPECT_NE(0u, shader);
+}
+
+// Make sure a large array of samplers works when declared in a struct.
+TEST_P(GLSLTest, ManySamplersInStruct)
+{
+    // D3D and OpenGL may be more restrictive about this many samplers.
+    ANGLE_SKIP_TEST_IF(IsD3D() || IsOpenGL());
+
+    std::ostringstream fs;
+    fs << R"(precision highp float;
+
+struct X {
+    mediump sampler2D c[0x12000];
+};
+
+uniform X x;
+
+void main()
+{
+    gl_FragColor = texture2D(x.c[0], vec2(0));
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    EXPECT_NE(0u, shader);
+}
+
 // Test that passing large arrays to functions are compiled correctly.  Regression test for the
 // SPIR-V generator that made a copy of the array to pass to the function, by decomposing and
 // reconstructing it (in the absence of OpCopyLogical), but the reconstruction instruction has a
@@ -18863,6 +19000,36 @@ void main()
     {
         gl_FragColor = vec4(0, 1, 0, 1);
     }
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);
+    glUseProgram(program);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that struct declarations are introduced into the correct scope.
+TEST_P(GLSLTest, NestedReturnedStructs)
+{
+    const char kFragmentShader[] = R"(precision mediump float;
+struct Foo { float v; } foo(float bar);
+
+void main()
+{
+    gl_FragColor = vec4(1, 0, 0, 1);
+    float v = foo(foo(0.5).v).v;
+    if (v == 0.5)
+    {
+        gl_FragColor = vec4(0, 1, 0, 1);
+    }
+}
+
+Foo foo(float bar)
+{
+    Foo f;
+    f.v = bar;
+    return f;
 })";
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFragmentShader);

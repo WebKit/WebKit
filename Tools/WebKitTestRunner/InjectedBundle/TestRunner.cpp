@@ -2409,6 +2409,11 @@ void TestRunner::viewPortSnapshotTaken(WKStringRef value)
     m_takeViewPortSnapshot = false;
 }
 
+void TestRunner::flushConsoleLogs(JSValueRef callback)
+{
+    postMessageWithAsyncReply("FlushConsoleLogs", callback);
+}
+
 void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
 {
     _WKBundleFrameGenerateTestReport(mainFrame(), toWK(message).get(), toWK(group).get());

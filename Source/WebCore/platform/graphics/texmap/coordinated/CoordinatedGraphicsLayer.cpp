@@ -1516,6 +1516,16 @@ double CoordinatedGraphicsLayer::backingStoreMemoryEstimate() const
     return 0.0;
 }
 
+Vector<std::pair<String, double>> CoordinatedGraphicsLayer::acceleratedAnimationsForTesting(const Settings&) const
+{
+    Vector<std::pair<String, double>> animations;
+
+    for (auto& animation : m_animations.animations())
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == Nicosia::Animation::AnimationState::Playing ? 1 : 0 });
+
+    return animations;
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(WebCore::CoordinatedAnimatedBackingStoreClient, type() == Nicosia::AnimatedBackingStoreClient::Type::Coordinated)

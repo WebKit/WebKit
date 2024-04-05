@@ -24,11 +24,14 @@ using LevelIndex = gl::LevelIndexWrapper<uint32_t>;
 namespace wgpu_gl
 {
 gl::LevelIndex getLevelIndex(webgpu::LevelIndex levelWgpu, gl::LevelIndex baseLevel);
+gl::Extents getExtents(wgpu::Extent3D wgpuExtent);
 }  // namespace wgpu_gl
 
 namespace gl_wgpu
 {
 webgpu::LevelIndex getLevelIndex(gl::LevelIndex levelGl, gl::LevelIndex baseLevel);
+wgpu::TextureDimension getWgpuTextureDimension(gl::TextureType glTextureType);
+wgpu::Extent3D getExtent3D(const gl::Extents &glExtent);
 }  // namespace gl_wgpu
 
 #endif  // LIBANGLE_RENDERER_WGPU_WGPU_UTILS_H_

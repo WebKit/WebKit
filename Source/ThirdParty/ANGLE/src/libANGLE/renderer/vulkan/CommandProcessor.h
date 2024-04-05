@@ -149,7 +149,8 @@ class CommandProcessorTask
     void initRenderPassProcessCommands(ProtectionType protectionType,
                                        egl::ContextPriority priority,
                                        RenderPassCommandBufferHelper *commandBuffer,
-                                       const RenderPass *renderPass);
+                                       const RenderPass *renderPass,
+                                       VkFramebuffer framebufferOverride);
 
     void initPresent(egl::ContextPriority priority,
                      const VkPresentInfoKHR &presentInfo,
@@ -195,6 +196,7 @@ class CommandProcessorTask
     const VkPresentInfoKHR &getPresentInfo() const { return mPresentInfo; }
     SwapchainStatus *getSwapchainStatus() const { return mSwapchainStatus; }
     const RenderPass &getRenderPass() const { return mRenderPass; }
+    VkFramebuffer getFramebufferOverride() const { return mFramebufferOverride; }
     OutsideRenderPassCommandBufferHelper *getOutsideRenderPassCommandBuffer() const
     {
         return mOutsideRenderPassCommandBuffer;
@@ -217,6 +219,7 @@ class CommandProcessorTask
     OutsideRenderPassCommandBufferHelper *mOutsideRenderPassCommandBuffer;
     RenderPassCommandBufferHelper *mRenderPassCommandBuffer;
     RenderPass mRenderPass;
+    VkFramebuffer mFramebufferOverride;
 
     // Flush data
     VkSemaphore mSemaphore;
@@ -455,6 +458,7 @@ class CommandQueue : angle::NonCopyable
                                           ProtectionType protectionType,
                                           egl::ContextPriority priority,
                                           const RenderPass &renderPass,
+                                          VkFramebuffer framebufferOverride,
                                           RenderPassCommandBufferHelper **renderPassCommands);
 
     const angle::VulkanPerfCounters getPerfCounters() const;
@@ -599,6 +603,7 @@ class CommandProcessor : public Context
         ProtectionType protectionType,
         egl::ContextPriority priority,
         const RenderPass &renderPass,
+        VkFramebuffer framebufferOverride,
         RenderPassCommandBufferHelper **renderPassCommands);
 
     // Wait until the desired serial has been submitted.

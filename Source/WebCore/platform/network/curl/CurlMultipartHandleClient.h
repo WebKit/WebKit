@@ -29,8 +29,13 @@
 
 namespace WebCore {
 
-class CurlMultipartHandleClient : public CanMakeThreadSafeCheckedPtr {
+class CurlMultipartHandleClient {
 public:
+    // CheckedPtr interface
+    virtual uint32_t ptrCount() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
+
     virtual void didReceiveHeaderFromMultipart(Vector<String>&&) = 0;
     virtual void didReceiveDataFromMultipart(std::span<const uint8_t>) = 0;
     virtual void didCompleteFromMultipart() = 0;

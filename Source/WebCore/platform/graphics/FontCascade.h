@@ -33,6 +33,7 @@
 #include "TextSpacing.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CharacterProperties.h>
@@ -107,7 +108,8 @@ public:
     void operator()(TextLayout*) const;
 };
 
-class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr {
+class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr<FontCascade> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);

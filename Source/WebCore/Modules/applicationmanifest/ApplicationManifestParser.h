@@ -40,11 +40,13 @@ class ApplicationManifestParser {
 public:
     WEBCORE_EXPORT static ApplicationManifest parse(Document&, const String&, const URL& manifestURL, const URL& documentURL);
     WEBCORE_EXPORT static ApplicationManifest parse(const String&, const URL& manifestURL, const URL& documentURL);
+    WEBCORE_EXPORT static std::optional<ApplicationManifest> parseWithValidation(const String&, const URL& manifestURL, const URL& documentURL);
 
 private:
     ApplicationManifestParser(RefPtr<Document>);
-    ApplicationManifest parseManifest(const String&, const URL&, const URL&);
+    ApplicationManifest parseManifest(const JSON::Object&, const String&, const URL&, const URL&);
 
+    RefPtr<JSON::Object> createJSONObject(const String&);
     URL parseStartURL(const JSON::Object&, const URL&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);

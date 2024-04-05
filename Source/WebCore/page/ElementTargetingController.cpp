@@ -62,9 +62,11 @@ static constexpr auto maximumAreaRatioForTrackingAdjustmentAreas = 0.25;
 static constexpr auto marginForTrackingAdjustmentRects = 5;
 static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
+static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
+    , m_recentAdjustmentClientRectsCleanUpTimer { *this, &ElementTargetingController::cleanUpAdjustmentClientRects, adjustmentClientRectCleanUpDelay }
 {
 }
 
@@ -394,7 +396,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
 
     auto addOutOfFlowTargetClientRectIfNeeded = [&](Element& element) {
         if (auto rect = inflatedClientRectForAdjustmentRegionTracking(element, viewportArea))
-            m_pendingAdjustmentClientRects.add(element.identifier(), *rect);
+            m_recentAdjustmentClientRects.set(element.identifier(), *rect);
     };
 
     auto computeViewportAreaRatio = [&](IntRect boundingBox) {
@@ -448,7 +450,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     if (targets.isEmpty())
         return { };
 
-    m_pendingAdjustmentClientRects.clear();
+    m_recentAdjustmentClientRectsCleanUpTimer.restart();
 
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
@@ -561,13 +563,12 @@ bool ElementTargetingController::adjustVisibility(const Vector<std::pair<Element
 
     Region newAdjustmentRegion;
     for (auto [elementID, documentID] : identifiers) {
-        if (auto rect = m_pendingAdjustmentClientRects.get(elementID); !rect.isEmpty())
+        if (auto rect = m_recentAdjustmentClientRects.get(elementID); !rect.isEmpty())
             newAdjustmentRegion.unite(rect);
     }
 
     m_repeatedAdjustmentClientRegion.unite(intersect(m_adjustmentClientRegion, newAdjustmentRegion));
     m_adjustmentClientRegion.unite(newAdjustmentRegion);
-    m_pendingAdjustmentClientRects.clear();
 
     Vector<Ref<Element>> elements;
     elements.reserveInitialCapacity(identifiers.size());
@@ -799,10 +800,11 @@ void ElementTargetingController::reset()
     m_adjustmentClientRegion = { };
     m_repeatedAdjustmentClientRegion = { };
     m_viewportSizeForVisibilityAdjustment = { };
-    m_pendingAdjustmentClientRects = { };
     m_adjustedElements = { };
     m_remainingVisibilityAdjustmentSelectors = { };
     m_startTimeForSelectorBasedVisibilityAdjustment = { };
+    m_recentAdjustmentClientRectsCleanUpTimer.stop();
+    cleanUpAdjustmentClientRects();
 }
 
 bool ElementTargetingController::resetVisibilityAdjustments(const Vector<std::pair<ElementIdentifier, ScriptExecutionContextIdentifier>>& identifiers)
@@ -929,6 +931,11 @@ uint64_t ElementTargetingController::numberOfVisibilityAdjustmentRects() const
     }
 
     return numberOfRects;
+}
+
+void ElementTargetingController::cleanUpAdjustmentClientRects()
+{
+    m_recentAdjustmentClientRects = { };
 }
 
 } // namespace WebCore

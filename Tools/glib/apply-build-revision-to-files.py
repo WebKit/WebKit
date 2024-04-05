@@ -67,7 +67,7 @@ def main(args):
         file = Path(in_file)
         if file.name == "BuildRevision.h":
             with open("Source/WebKit/Shared/glib/BuildRevision.h.in") as template:
-                data = template.read()
+                template = template.read()
         elif file.suffix == '.pc':
             # Restore a valid BUILD_REVISION template.
             lines = []
@@ -76,13 +76,20 @@ def main(args):
                     if line.startswith("revision"):
                         line = "revision=@BUILD_REVISION@\n"
                     lines.append(line)
-            data = "".join(lines)
+            template = "".join(lines)
         else:
             print(f"Support for expanding @BUILD_REVISION@ in {file!s} is missing.")
             return 1
 
-        with file.open('w') as fd:
-            fd.write(data.replace('@BUILD_REVISION@', build_revision))
+        new_contents = template.replace('@BUILD_REVISION@', build_revision)
+        # Only write the new contents to the output file if there are any changes.
+        # Otherwise, the file would become 'dirty' and all dependents would be
+        # recompiled unnecessarily.
+        with file.open() as fd:
+            old_contents = fd.read()
+        if old_contents != new_contents:
+            with file.open('w') as fd:
+                fd.write(new_contents)
 
     return 0
 

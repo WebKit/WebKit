@@ -29,6 +29,7 @@
 #include "PlatformScreen.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,7 +38,8 @@ class DisplayRefreshMonitorFactory;
 
 struct DisplayUpdate;
 
-class DisplayRefreshMonitorClient : public CanMakeCheckedPtr {
+class DisplayRefreshMonitorClient : public CanMakeCheckedPtr<DisplayRefreshMonitorClient> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DisplayRefreshMonitorClient();
     virtual ~DisplayRefreshMonitorClient();

@@ -71,7 +71,11 @@ struct TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData {
     std::array<EGLImageKHR, DMABufFormat::c_maxPlanes> image { EGL_NO_IMAGE_KHR, EGL_NO_IMAGE_KHR, EGL_NO_IMAGE_KHR, EGL_NO_IMAGE_KHR };
 };
 
-TextureMapperPlatformLayerProxyDMABuf::TextureMapperPlatformLayerProxyDMABuf() = default;
+TextureMapperPlatformLayerProxyDMABuf::TextureMapperPlatformLayerProxyDMABuf(ContentType contentType)
+    : TextureMapperPlatformLayerProxy(contentType)
+{
+}
+
 TextureMapperPlatformLayerProxyDMABuf::~TextureMapperPlatformLayerProxyDMABuf() = default;
 
 void TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread(Compositor* compositor, TextureMapperLayer* targetLayer)
@@ -87,6 +91,8 @@ void TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread(Composit
     {
         Locker locker { m_lock };
         m_compositor = compositor;
+        if (m_targetLayer)
+            m_targetLayer->setContentsLayer(nullptr);
         m_targetLayer = targetLayer;
     }
 }
@@ -105,6 +111,8 @@ void TextureMapperPlatformLayerProxyDMABuf::invalidate()
     m_layers = { };
 
     m_compositor = nullptr;
+    if (m_targetLayer)
+        m_targetLayer->setContentsLayer(nullptr);
     m_targetLayer = nullptr;
 }
 

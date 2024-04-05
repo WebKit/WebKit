@@ -714,17 +714,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
+        kwargs['timeout'] = 20 * 60 * 60
         if 'sigtermTime' not in kwargs:
             kwargs['sigtermTime'] = 10
         super().__init__(*args, **kwargs)
-
-    def buildCommandKwargs(self, warnings):
-        kwargs = super().buildCommandKwargs(warnings)
-        if self.getProperty('platform') in ('gtk', 'wpe'):
-            kwargs['timeout'] = 20 * 60 * 60
-        else:
-            kwargs['timeout'] = 10 * 60 * 60
-        return kwargs
 
     def run(self):
         self.env[RESULTS_SERVER_API_KEY] = os.getenv(RESULTS_SERVER_API_KEY)

@@ -84,7 +84,7 @@ struct Format : public FormatBase
     }
     bool isPVRTC() const;
 
-    const FormatCaps &getCaps() const { return *caps; }
+    const FormatCaps &getCaps() const { return caps; }
 
     // Need conversion between source format and this format?
     bool needConversion(angle::FormatID srcFormatId) const;
@@ -94,7 +94,7 @@ struct Format : public FormatBase
     LoadFunctionMap textureLoadFunctions       = nullptr;
     InitializeTextureDataFunction initFunction = nullptr;
 
-    const FormatCaps *caps = nullptr;
+    FormatCaps caps;
 
     bool swizzled = false;
     std::array<GLenum, 4> swizzle;

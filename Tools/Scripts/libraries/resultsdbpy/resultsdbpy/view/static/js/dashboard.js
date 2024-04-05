@@ -101,7 +101,7 @@ class Dashboard {
                 else if (state.tiles) {
                     let parameters = {...this.parameters};
                     parameters.suite = [this.suite];
-                    DOM.inject(element, `<div style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); grid-template-rows: masonry;">
+                    DOM.inject(element, `<div style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-template-rows: masonry;">
                         ${state.tiles.map(tile => {
                             let queueParameters = {...parameters};
                             const configParameters = tile.configuration.toParams();
@@ -303,7 +303,7 @@ class Dashboard {
                     // Never declare version or version_name redundent
                     if (member == 'version' || member == 'version_name')
                         continue
-                    if (uniqueParameters[member].size <= 1)
+                    if (!uniqueParameters[member].size || (uniqueParameters[member].size == 1 && [true, false].indexOf(uniqueParameters[member].values().next().value) < 0))
                         this.redundentParameters.add(member);
                 }
 

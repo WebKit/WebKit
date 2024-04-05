@@ -238,6 +238,11 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     ASSERT(length);
     auto text = inlineTextBox.content();
 
+    if (UNLIKELY(!textWidth)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     if (inlineTextBox.canUseSimpleFontCodePath()) {
 
         auto findBreakingPositionInSimpleText = [&] {
@@ -500,10 +505,10 @@ TextDirection TextUtil::directionForTextContent(StringView content)
 TextRun TextUtil::ellipsisTextRun(bool isHorizontal)
 {
     if (isHorizontal) {
-        static MainThreadNeverDestroyed<const AtomString> horizontalEllipsisStr(&horizontalEllipsis, 1);
+        static MainThreadNeverDestroyed<const AtomString> horizontalEllipsisStr(span(horizontalEllipsis));
         return TextRun { horizontalEllipsisStr->string() };
     }
-    static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(&verticalEllipsis, 1);
+    static MainThreadNeverDestroyed<const AtomString> verticalEllipsisStr(span(verticalEllipsis));
     return TextRun { verticalEllipsisStr->string() };
 }
 

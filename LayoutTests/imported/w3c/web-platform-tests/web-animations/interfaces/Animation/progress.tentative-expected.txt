@@ -1,0 +1,8 @@
+
+FAIL progress of a newly created animation without an effect is unresolved assert_equals: progress is unresolved expected (object) null but got (undefined) undefined
+FAIL progress of an animation whose currentTime is unresolved is unresolved. assert_equals: progress is unresolved expected (object) null but got (undefined) undefined
+FAIL progress of an animation whose effect's endTime is zero is zero if its currentTime is negative. assert_approx_equals: progress is zero expected a number but got a "undefined"
+FAIL progress of an animation whose effect's endTime is zero is one if its currentTime is non-negative. assert_approx_equals: progress is one expected a number but got a "undefined"
+FAIL progress of an animation whose effect's endTime is infinity is zero. assert_approx_equals: progress is zero expected a number but got a "undefined"
+FAIL progress of an animation is calculated by currentTime / effect endTime. assert_approx_equals: progress is zero expected a number but got a "undefined"
+

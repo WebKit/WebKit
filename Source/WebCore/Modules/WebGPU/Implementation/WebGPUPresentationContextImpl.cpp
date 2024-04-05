@@ -49,6 +49,12 @@ PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surfac
 
 PresentationContextImpl::~PresentationContextImpl() = default;
 
+void PresentationContextImpl::setSize(uint32_t width, uint32_t height)
+{
+    m_width = width;
+    m_height = height;
+}
+
 bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     m_swapChain = nullptr;
@@ -56,16 +62,17 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
     m_format = canvasConfiguration.format;
 
     WGPUSwapChainDescriptor backingDescriptor {
-        nullptr,
-        nullptr,
-        m_convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
-        m_convertToBackingContext->convertToBacking(canvasConfiguration.format),
-        m_width,
-        m_height,
-        WGPUPresentMode_Immediate,
-        canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
+        .nextInChain = nullptr,
+        .label = nullptr,
+        .usage = m_convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
+        .format = m_convertToBackingContext->convertToBacking(canvasConfiguration.format),
+        .width = m_width,
+        .height = m_height,
+        .presentMode = WGPUPresentMode_Immediate,
+        .viewFormats = canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
             return convertToBackingContext.convertToBacking(colorFormat);
-        })
+        }),
+        .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
     m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing.get(), &backingDescriptor));
@@ -95,13 +102,13 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
         auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get());
         if (!texturePtr)
             return nullptr;
+
         m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, m_format, TextureDimension::_2d, m_convertToBackingContext);
     }
-
     return m_currentTexture;
 }
 
-void PresentationContextImpl::present()
+void PresentationContextImpl::present(bool)
 {
     if (auto* surface = m_swapChain.get())
         wgpuSwapChainPresent(surface);

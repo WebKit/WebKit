@@ -172,7 +172,7 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor : public CanMakeCheckedPtr {
+class Editor : public CanMakeCheckedPtr<Editor> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Editor(Document&);

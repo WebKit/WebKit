@@ -158,10 +158,12 @@ class alignas(4) RenderPassDesc final
     void packColorUnresolveAttachment(size_t colorIndexGL);
     void removeColorUnresolveAttachment(size_t colorIndexGL);
     // Indicate that a depth/stencil attachment should have a corresponding resolve attachment.
-    void packDepthStencilResolveAttachment();
+    void packDepthResolveAttachment();
+    void packStencilResolveAttachment();
     // Indicate that a depth/stencil attachment should take its data from the resolve attachment
     // initially.
-    void packDepthStencilUnresolveAttachment(bool unresolveDepth, bool unresolveStencil);
+    void packDepthUnresolveAttachment();
+    void packStencilUnresolveAttachment();
     void removeDepthStencilUnresolveAttachment();
 
     void setWriteControlMode(gl::SrgbWriteControlMode mode);
@@ -190,7 +192,9 @@ class alignas(4) RenderPassDesc final
     {
         return mColorUnresolveAttachmentMask.test(colorIndexGL);
     }
-    bool hasDepthStencilResolveAttachment() const { return mResolveDepthStencil; }
+    bool hasDepthStencilResolveAttachment() const { return mResolveDepth || mResolveStencil; }
+    bool hasDepthResolveAttachment() const { return mResolveDepth; }
+    bool hasStencilResolveAttachment() const { return mResolveStencil; }
     bool hasDepthStencilUnresolveAttachment() const { return mUnresolveDepth || mUnresolveStencil; }
     bool hasDepthUnresolveAttachment() const { return mUnresolveDepth; }
     bool hasStencilUnresolveAttachment() const { return mUnresolveStencil; }
@@ -247,9 +251,12 @@ class alignas(4) RenderPassDesc final
     // Framebuffer fetch
     uint8_t mHasFramebufferFetch : 1;
 
+    // Depth/stencil resolve
+    uint8_t mResolveDepth : 1;
+    uint8_t mResolveStencil : 1;
+
     // Multisampled render to texture
     uint8_t mIsRenderToTexture : 1;
-    uint8_t mResolveDepthStencil : 1;
     uint8_t mUnresolveDepth : 1;
     uint8_t mUnresolveStencil : 1;
 
@@ -263,7 +270,7 @@ class alignas(4) RenderPassDesc final
     uint8_t mHasFragmentShadingAttachment : 1;
 
     // Available space for expansion.
-    uint8_t mPadding2 : 7;
+    uint8_t mPadding2 : 6;
 
     // Whether each color attachment has a corresponding resolve attachment.  Color resolve
     // attachments can be used to optimize resolve through glBlitFramebuffer() as well as support
@@ -1398,7 +1405,7 @@ class PipelineHelper final : public Resource
     inline explicit PipelineHelper(Pipeline &&pipeline, CacheLookUpFeedback feedback);
 
     void destroy(VkDevice device);
-    void release(ContextVk *contextVk);
+    void release(Context *context);
 
     bool valid() const { return mPipeline.valid(); }
     const Pipeline &getPipeline() const { return mPipeline; }
@@ -1486,7 +1493,7 @@ class FramebufferHelper : public Resource
     FramebufferHelper(FramebufferHelper &&other);
     FramebufferHelper &operator=(FramebufferHelper &&other);
 
-    angle::Result init(ContextVk *contextVk, const VkFramebufferCreateInfo &createInfo);
+    angle::Result init(Context *context, const VkFramebufferCreateInfo &createInfo);
     void destroy(Renderer *renderer);
     void release(ContextVk *contextVk);
 
@@ -2457,8 +2464,8 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
     GraphicsPipelineCache() = default;
     ~GraphicsPipelineCache() override { ASSERT(mPayload.empty()); }
 
-    void destroy(ContextVk *contextVk);
-    void release(ContextVk *contextVk);
+    void destroy(vk::Context *context);
+    void release(vk::Context *context);
 
     void populate(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
 

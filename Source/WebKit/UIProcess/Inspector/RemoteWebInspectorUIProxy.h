@@ -30,6 +30,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorFrontendClient.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -64,7 +65,8 @@ class WebView;
 class WebInspectorUIExtensionControllerProxy;
 #endif
 
-class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspectorUIProxyClient>, public CanMakeCheckedPtr {
+class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspectorUIProxyClient>, public CanMakeCheckedPtr<RemoteWebInspectorUIProxyClient> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RemoteWebInspectorUIProxyClient() { }
     virtual void sendMessageToBackend(const String& message) = 0;

@@ -36,14 +36,14 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityLabel::AccessibilityLabel(RenderObject* renderer)
+AccessibilityLabel::AccessibilityLabel(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
 
 AccessibilityLabel::~AccessibilityLabel() = default;
 
-Ref<AccessibilityLabel> AccessibilityLabel::create(RenderObject* renderer)
+Ref<AccessibilityLabel> AccessibilityLabel::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityLabel(renderer));
 }

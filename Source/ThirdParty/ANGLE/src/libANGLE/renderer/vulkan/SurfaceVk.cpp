@@ -963,7 +963,6 @@ SwapchainImage::SwapchainImage(SwapchainImage &&other)
       imageViews(std::move(other.imageViews)),
       framebuffer(std::move(other.framebuffer)),
       fetchFramebuffer(std::move(other.fetchFramebuffer)),
-      framebufferResolveMS(std::move(other.framebufferResolveMS)),
       frameNumber(other.frameNumber)
 {}
 
@@ -1766,10 +1765,17 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     {
         SwapchainImage &member = mSwapchainImages[imageIndex];
 
+        // Convert swapchain create flags to image create flags
+        const VkImageCreateFlags createFlags =
+            (swapchainInfo.flags & VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR) != 0
+                ? VK_IMAGE_CREATE_PROTECTED_BIT
+                : 0;
+
         ASSERT(member.image);
         member.image->init2DWeakReference(
             context, swapchainImages[imageIndex], extents, Is90DegreeRotation(getPreTransform()),
-            getIntendedFormatID(renderer), getActualFormatID(renderer), 0, 1, robustInit);
+            getIntendedFormatID(renderer), getActualFormatID(renderer), createFlags,
+            imageUsageFlags, 1, robustInit);
         member.imageViews.init(renderer);
         member.frameNumber = 0;
     }
@@ -1930,10 +1936,6 @@ void WindowSurfaceVk::releaseSwapchainImages(ContextVk *contextVk)
         {
             contextVk->addGarbage(&swapchainImage.fetchFramebuffer);
         }
-        if (swapchainImage.framebufferResolveMS.valid())
-        {
-            contextVk->addGarbage(&swapchainImage.framebufferResolveMS);
-        }
     }
 
     mSwapchainImages.clear();
@@ -1977,10 +1979,6 @@ void WindowSurfaceVk::destroySwapChainImages(DisplayVk *displayVk)
         if (swapchainImage.fetchFramebuffer.valid())
         {
             swapchainImage.fetchFramebuffer.destroy(device);
-        }
-        if (swapchainImage.framebufferResolveMS.valid())
-        {
-            swapchainImage.framebufferResolveMS.destroy(device);
         }
     }
 
@@ -2091,17 +2089,14 @@ angle::Result WindowSurfaceVk::computePresentOutOfDate(vk::Context *context,
     return angle::Result::Continue;
 }
 
-vk::Framebuffer &WindowSurfaceVk::chooseFramebuffer(const SwapchainResolveMode swapchainResolveMode)
+vk::Framebuffer &WindowSurfaceVk::chooseFramebuffer()
 {
     if (isMultiSampled())
     {
-        return swapchainResolveMode == SwapchainResolveMode::Enabled
-                   ? mSwapchainImages[mCurrentSwapchainImageIndex].framebufferResolveMS
-                   : mFramebufferMS;
+        return mFramebufferMS;
     }
 
     // Choose which framebuffer to use based on fetch, so it will have a matching renderpass
-    ASSERT(swapchainResolveMode == SwapchainResolveMode::Disabled);
     return mFramebufferFetchMode == FramebufferFetchMode::Enabled
                ? mSwapchainImages[mCurrentSwapchainImageIndex].fetchFramebuffer
                : mSwapchainImages[mCurrentSwapchainImageIndex].framebuffer;
@@ -2113,7 +2108,7 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     vk::Renderer *renderer = contextVk->getRenderer();
 
     SwapchainImage &image               = mSwapchainImages[mCurrentSwapchainImageIndex];
-    vk::Framebuffer &currentFramebuffer = chooseFramebuffer(SwapchainResolveMode::Disabled);
+    vk::Framebuffer &currentFramebuffer = chooseFramebuffer();
 
     // Make sure deferred clears are applied, if any.
     if (mColorImageMS.valid())
@@ -2145,11 +2140,12 @@ angle::Result WindowSurfaceVk::prePresentSubmit(ContextVk *contextVk,
     // swapchain image. MSAA resolve and overlay will insert another renderpass which disqualifies
     // the optimization.
     bool imageResolved = false;
-    if (currentFramebuffer.valid())
+    if (currentFramebuffer.valid() &&
+        contextVk->hasStartedRenderPassWithSwapchainFramebuffer(currentFramebuffer))
     {
-        ANGLE_TRY(contextVk->optimizeRenderPassForPresent(
-            currentFramebuffer.getHandle(), &image.imageViews, image.image.get(), &mColorImageMS,
-            mSwapchainPresentMode, &imageResolved));
+        ANGLE_TRY(contextVk->optimizeRenderPassForPresent(&image.imageViews, image.image.get(),
+                                                          &mColorImageMS, mSwapchainPresentMode,
+                                                          &imageResolved));
     }
 
     // Because the color attachment defers layout changes until endRenderPass time, we must call
@@ -2943,12 +2939,10 @@ EGLint WindowSurfaceVk::getSwapBehavior() const
     return EGL_BUFFER_DESTROYED;
 }
 
-angle::Result WindowSurfaceVk::getCurrentFramebuffer(
-    ContextVk *contextVk,
-    FramebufferFetchMode fetchMode,
-    const vk::RenderPass &compatibleRenderPass,
-    const SwapchainResolveMode swapchainResolveMode,
-    vk::MaybeImagelessFramebuffer *framebufferOut)
+angle::Result WindowSurfaceVk::getCurrentFramebuffer(ContextVk *contextVk,
+                                                     FramebufferFetchMode fetchMode,
+                                                     const vk::RenderPass &compatibleRenderPass,
+                                                     vk::Framebuffer *framebufferOut)
 {
     // FramebufferVk dirty-bit processing should ensure that a new image was acquired.
     ASSERT(!needsAcquireImageOrProcessResult());
@@ -2956,20 +2950,20 @@ angle::Result WindowSurfaceVk::getCurrentFramebuffer(
     // Track the new fetch mode
     mFramebufferFetchMode = fetchMode;
 
-    vk::Framebuffer &currentFramebuffer = chooseFramebuffer(swapchainResolveMode);
-    if (currentFramebuffer.valid())
+    SwapchainImage &swapchainImage = mSwapchainImages[mCurrentSwapchainImageIndex];
+
+    vk::Framebuffer *currentFramebuffer = &chooseFramebuffer();
+    if (currentFramebuffer->valid())
     {
         // Validation layers should detect if the render pass is really compatible.
-        framebufferOut->setHandle(currentFramebuffer.getHandle());
+        framebufferOut->setHandle(currentFramebuffer->getHandle());
         return angle::Result::Continue;
     }
 
-    VkFramebufferCreateInfo framebufferInfo = {};
-    uint32_t attachmentCount                = mDepthStencilImage.valid() ? 2u : 1u;
+    const gl::Extents rotatedExtents = mColorRenderTarget.getRotatedExtents();
+    const uint32_t attachmentCount   = 1 + (mDepthStencilImage.valid() ? 1 : 0);
 
-    const gl::Extents rotatedExtents      = mColorRenderTarget.getRotatedExtents();
     std::array<VkImageView, 3> imageViews = {};
-
     if (mDepthStencilImage.valid())
     {
         const vk::ImageView *imageView = nullptr;
@@ -2977,66 +2971,34 @@ angle::Result WindowSurfaceVk::getCurrentFramebuffer(
         imageViews[1] = imageView->getHandle();
     }
 
-    framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    framebufferInfo.flags           = 0;
-    framebufferInfo.renderPass      = compatibleRenderPass.getHandle();
-    framebufferInfo.attachmentCount = attachmentCount;
-    framebufferInfo.pAttachments    = imageViews.data();
-    framebufferInfo.width           = static_cast<uint32_t>(rotatedExtents.width);
-    framebufferInfo.height          = static_cast<uint32_t>(rotatedExtents.height);
-    framebufferInfo.layers          = 1;
-
     if (isMultiSampled())
     {
         const vk::ImageView *imageView = nullptr;
         ANGLE_TRY(mColorRenderTarget.getImageView(contextVk, &imageView));
         imageViews[0] = imageView->getHandle();
-
-        if (swapchainResolveMode == SwapchainResolveMode::Enabled)
-        {
-            SwapchainImage &swapchainImage = mSwapchainImages[mCurrentSwapchainImageIndex];
-
-            framebufferInfo.attachmentCount = attachmentCount + 1;
-
-            ANGLE_TRY(swapchainImage.imageViews.getLevelLayerDrawImageView(
-                contextVk, *swapchainImage.image, vk::LevelIndex(0), 0,
-                gl::SrgbWriteControlMode::Default, &imageView));
-            imageViews[attachmentCount] = imageView->getHandle();
-
-            ANGLE_VK_TRY(contextVk, swapchainImage.framebufferResolveMS.init(contextVk->getDevice(),
-                                                                             framebufferInfo));
-        }
-        else
-        {
-            // If multisampled, there is only a single color image and framebuffer.
-            ANGLE_VK_TRY(contextVk, mFramebufferMS.init(contextVk->getDevice(), framebufferInfo));
-        }
     }
     else
     {
-        SwapchainImage &swapchainImage = mSwapchainImages[mCurrentSwapchainImageIndex];
-
         const vk::ImageView *imageView = nullptr;
         ANGLE_TRY(swapchainImage.imageViews.getLevelLayerDrawImageView(
             contextVk, *swapchainImage.image, vk::LevelIndex(0), 0,
             gl::SrgbWriteControlMode::Default, &imageView));
-
         imageViews[0] = imageView->getHandle();
-
-        if (fetchMode == FramebufferFetchMode::Enabled)
-        {
-            ANGLE_VK_TRY(contextVk, swapchainImage.fetchFramebuffer.init(contextVk->getDevice(),
-                                                                         framebufferInfo));
-        }
-        else
-        {
-            ANGLE_VK_TRY(contextVk,
-                         swapchainImage.framebuffer.init(contextVk->getDevice(), framebufferInfo));
-        }
     }
 
-    ASSERT(currentFramebuffer.valid());
-    framebufferOut->setHandle(currentFramebuffer.getHandle());
+    VkFramebufferCreateInfo framebufferInfo = {};
+    framebufferInfo.sType                   = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    framebufferInfo.flags                   = 0;
+    framebufferInfo.renderPass              = compatibleRenderPass.getHandle();
+    framebufferInfo.attachmentCount         = attachmentCount;
+    framebufferInfo.pAttachments            = imageViews.data();
+    framebufferInfo.width                   = static_cast<uint32_t>(rotatedExtents.width);
+    framebufferInfo.height                  = static_cast<uint32_t>(rotatedExtents.height);
+    framebufferInfo.layers                  = 1;
+
+    ANGLE_VK_TRY(contextVk, currentFramebuffer->init(contextVk->getDevice(), framebufferInfo));
+
+    framebufferOut->setHandle(currentFramebuffer->getHandle());
     return angle::Result::Continue;
 }
 
@@ -3167,16 +3129,18 @@ egl::Error WindowSurfaceVk::setAutoRefreshEnabled(bool enabled)
 
 egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age)
 {
+    ContextVk *contextVk = vk::GetImpl(context);
+
     ANGLE_TRACE_EVENT0("gpu.angle", "getBufferAge");
 
-    if (needsAcquireImageOrProcessResult())
+    ASSERT(!mAcquireOperation.needToAcquireNextSwapchainImage);
+
+    // If the result of vkAcquireNextImageKHR is not yet processed, do so now.
+    if (NeedToProcessAcquireNextImageResult(mAcquireOperation.unlockedTryAcquireResult))
     {
-        // Acquire the current image if needed.
-        egl::Error result =
-            angle::ToEGL(doDeferredAcquireNextImage(context, false), EGL_BAD_SURFACE);
-        if (result.isError())
+        if (postProcessUnlockedTryAcquire(contextVk) != VK_SUCCESS)
         {
-            return result;
+            return egl::EglBadSurface();
         }
     }
 
@@ -3188,13 +3152,28 @@ egl::Error WindowSurfaceVk::getBufferAge(const gl::Context *context, EGLint *age
 
     if (mBufferAgeQueryFrameNumber == 0)
     {
-        ANGLE_VK_PERF_WARNING(vk::GetImpl(context), GL_DEBUG_SEVERITY_LOW,
+        ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
                               "Querying age of a surface will make it retain its content");
 
         mBufferAgeQueryFrameNumber = mFrameCount;
     }
+
     if (age != nullptr)
     {
+        if (mState.swapBehavior == EGL_BUFFER_PRESERVED)
+        {
+            // EGL_EXT_buffer_age
+            //
+            // 1) What are the semantics if EGL_BUFFER_PRESERVED is in use
+            //
+            //     RESOLVED: The age will always be 1 in this case.
+
+            // Note: if the query is made before the 1st swap then age needs to be 0
+            *age = (mFrameCount == 1) ? 0 : 1;
+
+            return egl::NoError();
+        }
+
         uint64_t frameNumber = mSwapchainImages[mCurrentSwapchainImageIndex].frameNumber;
         if (frameNumber < mBufferAgeQueryFrameNumber)
         {

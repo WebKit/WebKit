@@ -60,13 +60,13 @@ public:
         return add(string.releaseNonNull());
     }
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const StaticStringImpl*);
-    ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.characters(), literal.length()); }
+    ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.span8()); }
 
     // Not using the add() naming to encourage developers to call add(ASCIILiteral) when they have a string literal.
     ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(WTF::span8(s)) : nullptr; }
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
-    static RefPtr<AtomStringImpl> addUTF8(const char* start, const char* end);
+    static RefPtr<AtomStringImpl> addUTF8(std::span<const char> start);
 
 #if USE(CF)
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(CFStringRef);
@@ -105,7 +105,7 @@ private:
         return addSlowCase(WTFMove(string));
     }
 
-    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(const char* characters, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(std::span<const LChar>);
 
     ALWAYS_INLINE static Ref<AtomStringImpl> add(AtomStringTable& stringTable, StringImpl& string)
     {

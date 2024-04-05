@@ -445,8 +445,7 @@
        (iokit-property "IORegistryEntryPropertyKeys"))
 
 (deny mach-lookup (with no-report)
-    (global-name "com.apple.runningboard")
-)
+    (global-name "com.apple.runningboard"))
 
 (allow system-sched
        (require-entitlement "com.apple.private.kernel.override-cpumon"))
@@ -467,35 +466,31 @@
         (literal "/private/var/run/syslog")))
 
 (define (notifyd-message-numbers) (message-number 1002 1011 1012 1016 1017 1018 1021 1025 1026 1028 1029 1030 1031 1032))
-
-(allow mach-lookup (global-name "com.apple.system.notification_center")
-    (apply-message-filter
-        (deny mach-message-send)
-        (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (notifyd-message-numbers))))
-
-(allow ipc-posix-shm-read*
-    (ipc-posix-name "apple.shm.notification_center"))
-
-#if ENABLE(NOTIFY_BLOCKING)
-(with-filter (state-flag "EnableExperimentalSandbox")
+(define (allow-notifyd)
+    (allow ipc-posix-shm-read* (ipc-posix-name "apple.shm.notification_center"))
     (allow mach-lookup (global-name "com.apple.system.notification_center")
         (apply-message-filter
             (deny mach-message-send)
             (deny mach-message-send (with no-report) (message-number 1023))
-            (deny mach-message-send (with telemetry-backtrace) (notifyd-message-numbers)))))
+            (allow mach-message-send (notifyd-message-numbers)))))
+
+#if ENABLE(NOTIFY_BLOCKING)
+(with-filter (require-not (notify-blocking))
+    (allow-notifyd))
+#else
+(allow-notifyd)
 #endif
 
 (managed-configuration-read-public)
 
 (deny system-info (with no-report)
-      (info-type "net.link.addr"))
+    (info-type "net.link.addr"))
 
 (allow file-read*
-       (subpath "/private/var/db/datadetectors/sys"))
+    (subpath "/private/var/db/datadetectors/sys"))
 
 (allow-well-known-system-group-container-subpath-read
-       "/systemgroup.com.apple.icloud.findmydevice.managed/Library")
+    "/systemgroup.com.apple.icloud.findmydevice.managed/Library")
 
 (allow mach-task-name (target self))
 

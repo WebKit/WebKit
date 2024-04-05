@@ -402,6 +402,21 @@ const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
     return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);
 }
 
+bool BoxTree::hasRendererForLayoutBox(const Layout::Box& box) const
+{
+    if (&box == &rootLayoutBox())
+        return true;
+
+    if (m_boxToRendererMap.isEmpty()) {
+        for (auto& renderer : m_renderers) {
+            if (renderer->layoutBox() == &box)
+                return true;
+        }
+        return false;
+    }
+    return m_boxToRendererMap.contains(&box);
+}
+
 Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
 {
     return m_rootRenderer.view().initialContainingBlock();

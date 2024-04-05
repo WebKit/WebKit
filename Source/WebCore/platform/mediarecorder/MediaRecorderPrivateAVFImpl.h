@@ -29,6 +29,7 @@
 #include "CAAudioStreamDescription.h"
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
+#include <wtf/CheckedRef.h>
 
 using CVPixelBufferRef = struct __CVBuffer*;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;

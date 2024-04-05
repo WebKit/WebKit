@@ -273,6 +273,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/4836"
     };
 
+    FeatureInfo preferMSRTSSFlagByDefault = {
+        "preferMSRTSSFlagByDefault",
+        FeatureCategory::VulkanFeatures,
+        "Enable MSRTSS for each image initialization if available",
+        &members, "http://anglebug.com/8622"
+    };
+
     FeatureInfo supportsMultiview = {
         "supportsMultiview",
         FeatureCategory::VulkanFeatures,

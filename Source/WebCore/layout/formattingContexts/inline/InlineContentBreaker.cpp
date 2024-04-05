@@ -684,7 +684,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
     }
     // Only non-whitespace text runs with same style.
     auto& fontCascade = style.fontCascade();
-    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+    auto hyphenWidth = std::max(fontCascade.width(TextRun { StringView { style.hyphenString() } }), 0.f);
     auto availableWidthExcludingHyphen = lineStatus.availableWidth - hyphenWidth;
     if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.size()))
         return { };

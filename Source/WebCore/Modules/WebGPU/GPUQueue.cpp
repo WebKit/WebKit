@@ -103,7 +103,7 @@ ExceptionOr<void> GPUQueue::writeBuffer(
     if (dataOffset > dataSize || dataOffset + contentSize > dataSize || (contentSize % 4))
         return Exception { ExceptionCode::OperationError };
 
-    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.data(), dataSize, dataOffset, contentSize);
+    m_backing->writeBuffer(buffer.backing(), bufferOffset, data.span(), dataOffset, contentSize);
     return { };
 }
 

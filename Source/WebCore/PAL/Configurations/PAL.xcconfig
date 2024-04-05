@@ -110,3 +110,7 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=watchos10*] = ;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watchsimulator10*] = ;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=xros1*] = ;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=xrsimulator1*] = ;
+
+// Only for watchsimulator. Other platforms don't trigger Swift module builds for i386.
+EXCLUDED_ARCHS = $(EXCLUDED_ARCHS_$(WK_PLATFORM_NAME));
+EXCLUDED_ARCHS_watchsimulator = i386;

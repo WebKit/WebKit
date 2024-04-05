@@ -1,4 +1,5 @@
 # Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2024 Igalia, S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,8 +21,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(SOUP)
-
 enum class WebCore::SoupNetworkProxySettingsMode : uint8_t {
     Default,
     NoProxy,
@@ -29,4 +28,9 @@ enum class WebCore::SoupNetworkProxySettingsMode : uint8_t {
     Auto
 };
 
-#endif // USE(SOUP)
+struct WebCore::SoupNetworkProxySettings {
+    WebCore::SoupNetworkProxySettingsMode mode;
+    CString defaultProxyURL;
+    GUniquePtr<char*> ignoreHosts;
+    HashMap<CString, CString> proxyMap;
+}

@@ -68,7 +68,7 @@ index a636c5e7773d4186fc58a665b1a4e6c0cf7cc345..d1624a7c49f745f41ef6d381151e8ae9
              "name": "allow_inline_const_vertex_data",
              "category": "Features",
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index aeb978aeb1057133e734561f9fcf435d1f403b63..cca12812bef72b3ab2d51e8870ff261394f0889c 100755
+index 59d62d8bd8980bc985448ec7ed365d9ca9efbb5c..9fc1fb9c89ca78b9540ac7b89ac9017859984290 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -988,6 +988,7 @@ FORMAT_DICT = {
@@ -402,10 +402,10 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 701945733b8d2c8cdcb14b6386c96765b97e8222..6da776f183f47c628ad975a5fca16a52a1c6f842 100644
+index cef3451dea9021fc1441c1d78d8dd4450e8ebea1..b172639f572f3b646c21b8f8e9571e174c6f8e18 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9905,6 +9905,14 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9906,6 +9906,14 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -713,7 +713,7 @@ index 08b431099786e24e6b27a6539812e520c92436bb..3902781af7459dc8a880bd44f957df36
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index c86b0c1c61a77efa4d24752c8a37331d1e5bae6a..e5f714c3a300d363da66100345813264ef236428 100644
+index 2eab2f1f9c1c55b7b7156a754e470ce32d5e0ffd..afcdb0a6c143fc7e8ab8817378a34e328c113837 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
 @@ -272,6 +272,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
@@ -727,7 +727,7 @@ index c86b0c1c61a77efa4d24752c8a37331d1e5bae6a..e5f714c3a300d363da66100345813264
      // override mtl::ErrorHandler
      void handleError(GLenum error,
                       const char *message,
-@@ -548,6 +552,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -554,6 +558,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
          DIRTY_BIT_RENDER_PIPELINE,
          DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
          DIRTY_BIT_RASTERIZER_DISCARD,
@@ -735,7 +735,7 @@ index c86b0c1c61a77efa4d24752c8a37331d1e5bae6a..e5f714c3a300d363da66100345813264
  
          DIRTY_BIT_INVALID,
          DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-@@ -638,6 +643,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -648,6 +653,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
      IncompleteTextureSet mIncompleteTextures;
      ProvokingVertexHelper mProvokingVertexHelper;
  
@@ -746,7 +746,7 @@ index c86b0c1c61a77efa4d24752c8a37331d1e5bae6a..e5f714c3a300d363da66100345813264
  };
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b2221a5e5 100644
+index 7814194df88c4fc9c145b8f3738bfa5bdc07b73e..ea771b5e11cc6fef8170739f4d352483b082ba74 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -263,6 +263,8 @@ void ContextMtl::onDestroy(const gl::Context *context)
@@ -758,7 +758,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
  
      mContextDevice.reset();
  }
-@@ -1069,6 +1071,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
+@@ -1084,6 +1086,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -772,7 +772,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -1391,6 +1400,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
+@@ -1425,6 +1434,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
              case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                  mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                  break;
@@ -782,7 +782,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
              default:
                  break;
          }
-@@ -1641,6 +1653,36 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
+@@ -1675,6 +1687,36 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
      return angle::Result::Stop;
  }
  
@@ -819,7 +819,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
  // override mtl::ErrorHandler
  void ContextMtl::handleError(GLenum glErrorCode,
                               const char *message,
-@@ -2488,8 +2530,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2529,8 +2571,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -844,7 +844,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
      }
      return angle::Result::Continue;
  }
-@@ -2601,7 +2657,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+@@ -2642,7 +2698,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
                  mRenderEncoder.setViewport(mViewport);
                  break;
              case DIRTY_BIT_SCISSOR:
@@ -853,7 +853,7 @@ index 421bf0b9528c607f0348987c84b3f5f33492b3c1..9e43f73cb953ada5dfe080cec699c81b
                  break;
              case DIRTY_BIT_DRAW_FRAMEBUFFER:
                  // Already handled.
-@@ -2626,6 +2682,12 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+@@ -2667,6 +2723,12 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
              case DIRTY_BIT_RASTERIZER_DISCARD:
                  // Already handled.
                  break;
@@ -954,10 +954,10 @@ index 2e128f005c3fe9c8e6514b85a23b74c4b7ca0363..5b5bc482d4102314e3f12580132df6d7
  {
      return angle::IsAMD(mMetalDeviceVendorId);
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index cddd61c2d44d14f11318a837986f658bcfb7f24e..f12b9622e0f71eb9ad7fe886e87462e4c941156f 100644
+index b58d7f9d67932bb582c149623aca5054c53333e7..c61d5f65d4e9b6cc85eae02d42f751813e7f796a 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -1635,8 +1635,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -1685,8 +1685,13 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -1572,10 +1572,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 030ce86b5f6cf8731b1ad20b66b8256c9da37a5e..91026773422624371bb1dd78fc90466be3383a58 100644
+index b764ae703b2fe3258f7b7d304578bc9c1693602f..7214c5925861bb5c8f6b250b9122e8975e0d1175 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5989,6 +5989,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5913,6 +5913,13 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                                  mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
                              }
                              break;
@@ -1590,7 +1590,7 @@ index 030ce86b5f6cf8731b1ad20b66b8256c9da37a5e..91026773422624371bb1dd78fc90466b
                              UNREACHABLE();
                      }
 diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index 5d7c111136ec252797dc54b1ab504960b5794bbd..0f45f11617e499995f68ed803ef71ed0c0550c2c 100644
+index e598b74be6f88d30502d3f7b9dab159f10ca3eed..56f5da80651018288fae595d7244b460d7474cb3 100644
 --- a/src/libANGLE/validationEGL.cpp
 +++ b/src/libANGLE/validationEGL.cpp
 @@ -3483,12 +3483,11 @@ bool ValidateCreateImage(const ValidationContext *val,
@@ -1611,7 +1611,7 @@ index 5d7c111136ec252797dc54b1ab504960b5794bbd..0f45f11617e499995f68ed803ef71ed0
                   }
                   break;
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index 9e15a88ee4723d239b3f3f71a8ed63745aba87a5..e379b948d7bc815507fa019075a77fd14c796703 100644
+index 80b11ea1e587834cde10192f7c49d27152344c5e..cd0c7e2fd0295e9a041d64b290dbb7326fda50c3 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -685,6 +685,10 @@ bool ValidCap(const PrivateState &state, ErrorSet *errors, GLenum cap, bool quer
@@ -1625,7 +1625,7 @@ index 9e15a88ee4723d239b3f3f71a8ed63745aba87a5..e379b948d7bc815507fa019075a77fd1
          default:
              break;
      }
-@@ -6346,6 +6350,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
+@@ -6340,6 +6344,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
      return true;
  }
  
@@ -1917,7 +1917,7 @@ index 1d97825639c15db5a79b539d29c44801c138a71e..0f85476b8c8b5af8d6ffbafa27061a7a
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index aa595415ad4eb534235b907e98ff4aa6a3f4782a..6907f8e4c2f6f1c852c9baf681108310bd531218 100644
+index 9fa36a57ee5acd2486a536340de434a3df3d665f..09e9df57640275c0def595cbb289bd89567b64a7 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -197,6 +197,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -1929,7 +1929,7 @@ index aa595415ad4eb534235b907e98ff4aa6a3f4782a..6907f8e4c2f6f1c852c9baf681108310
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 75aa935b26fddd8a071ea01de41ae698a7fb287a..af2692838319b03f1a749d2b25c6dab869e3bc9a 100644
+index fe6782b15a65ad0af8b90d9457e8f9b1d617cb35..12f114e8780833d0ddf28b5cfdc3cffdbd5bcf1d 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -197,6 +197,7 @@ enum class Feature

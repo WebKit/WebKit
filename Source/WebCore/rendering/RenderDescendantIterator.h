@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,8 +70,51 @@ private:
     const RenderElement& m_root;
 };
 
+template <typename T>
+class RenderDescendantPostOrderIterator : public RenderPostOrderIterator<T> {
+public:
+    RenderDescendantPostOrderIterator(const RenderElement& root);
+    RenderDescendantPostOrderIterator(const RenderElement& root, T* current);
+    RenderDescendantPostOrderIterator& operator++();
+};
+
+template <typename T>
+class RenderDescendantPostOrderConstIterator : public RenderPostOrderConstIterator<T> {
+public:
+    RenderDescendantPostOrderConstIterator(const RenderElement& root);
+    RenderDescendantPostOrderConstIterator(const RenderElement& root, const T* current);
+    RenderDescendantPostOrderConstIterator& operator++();
+};
+
+template <typename T>
+class RenderDescendantPostOrderIteratorAdapter {
+public:
+    RenderDescendantPostOrderIteratorAdapter(RenderElement& root);
+    RenderDescendantPostOrderIterator<T> begin();
+    RenderDescendantPostOrderIterator<T> end();
+    RenderDescendantPostOrderIterator<T> at(T&);
+
+private:
+    RenderElement& m_root;
+};
+
+template <typename T>
+class RenderDescendantPostOrderConstIteratorAdapter {
+public:
+    RenderDescendantPostOrderConstIteratorAdapter(const RenderElement& root);
+    RenderDescendantPostOrderConstIterator<T> begin() const;
+    RenderDescendantPostOrderConstIterator<T> end() const;
+    RenderDescendantPostOrderConstIterator<T> at(const T&) const;
+
+private:
+    const RenderElement& m_root;
+};
+
 template <typename T> RenderDescendantIteratorAdapter<T> descendantsOfType(RenderElement&);
 template <typename T> RenderDescendantConstIteratorAdapter<T> descendantsOfType(const RenderElement&);
+
+template <typename T> RenderDescendantPostOrderIteratorAdapter<T> descendantsOfTypePostOrder(RenderElement&);
+template <typename T> RenderDescendantPostOrderConstIteratorAdapter<T> descendantsOfTypePostOrder(const RenderElement&);
 
 // RenderDescendantIterator
 
@@ -164,6 +208,98 @@ inline RenderDescendantConstIterator<T> RenderDescendantConstIteratorAdapter<T>:
     return RenderDescendantConstIterator<T>(m_root, &current);
 }
 
+// RenderDescendantPostOrderIterator
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T>::RenderDescendantPostOrderIterator(const RenderElement& root)
+    : RenderPostOrderIterator<T>(&root)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T>::RenderDescendantPostOrderIterator(const RenderElement& root, T* current)
+    : RenderPostOrderIterator<T>(&root, current)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T>& RenderDescendantPostOrderIterator<T>::operator++()
+{
+    return static_cast<RenderDescendantPostOrderIterator<T>&>(RenderPostOrderIterator<T>::traverseNext());
+}
+
+// RenderDescendantPostOrderConstIterator
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T>::RenderDescendantPostOrderConstIterator(const RenderElement& root)
+    : RenderPostOrderConstIterator<T>(&root)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T>::RenderDescendantPostOrderConstIterator(const RenderElement& root, const T* current)
+    : RenderPostOrderConstIterator<T>(&root, current)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T>& RenderDescendantPostOrderConstIterator<T>::operator++()
+{
+    return static_cast<RenderDescendantPostOrderConstIterator<T>&>(RenderPostOrderConstIterator<T>::traverseNext());
+}
+
+// RenderDescendantPostOrderIteratorAdapter
+
+template <typename T>
+inline RenderDescendantPostOrderIteratorAdapter<T>::RenderDescendantPostOrderIteratorAdapter(RenderElement& root)
+    : m_root(root)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T> RenderDescendantPostOrderIteratorAdapter<T>::begin()
+{
+    return RenderDescendantPostOrderIterator<T>(m_root, RenderPostOrderTraversal::firstWithin<T>(m_root));
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T> RenderDescendantPostOrderIteratorAdapter<T>::end()
+{
+    return RenderDescendantPostOrderIterator<T>(m_root);
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIterator<T> RenderDescendantPostOrderIteratorAdapter<T>::at(T& current)
+{
+    return RenderDescendantPostOrderIterator<T>(m_root, &current);
+}
+
+// RenderDescendantPostOrderConstIteratorAdapter
+
+template <typename T>
+inline RenderDescendantPostOrderConstIteratorAdapter<T>::RenderDescendantPostOrderConstIteratorAdapter(const RenderElement& root)
+    : m_root(root)
+{
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T> RenderDescendantPostOrderConstIteratorAdapter<T>::begin() const
+{
+    return RenderDescendantPostOrderConstIterator<T>(m_root, RenderPostOrderTraversal::firstWithin<T>(m_root));
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T> RenderDescendantPostOrderConstIteratorAdapter<T>::end() const
+{
+    return RenderDescendantPostOrderConstIterator<T>(m_root);
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIterator<T> RenderDescendantPostOrderConstIteratorAdapter<T>::at(const T& current) const
+{
+    return RenderDescendantPostOrderConstIterator<T>(m_root, &current);
+}
+
 // Standalone functions
 
 template <typename T>
@@ -176,6 +312,18 @@ template <typename T>
 inline RenderDescendantConstIteratorAdapter<T> descendantsOfType(const RenderElement& root)
 {
     return RenderDescendantConstIteratorAdapter<T>(root);
+}
+
+template <typename T>
+inline RenderDescendantPostOrderIteratorAdapter<T> descendantsOfTypePostOrder(RenderElement& root)
+{
+    return RenderDescendantPostOrderIteratorAdapter<T>(root);
+}
+
+template <typename T>
+inline RenderDescendantPostOrderConstIteratorAdapter<T> descendantsOfTypePostOrder(const RenderElement& root)
+{
+    return RenderDescendantPostOrderConstIteratorAdapter<T>(root);
 }
 
 } // namespace WebCore

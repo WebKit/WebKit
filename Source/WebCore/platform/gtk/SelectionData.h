@@ -52,8 +52,8 @@ public:
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     void clearURIList() { m_uriList = emptyString(); }
 
-    void setImage(Image* newImage) { m_image = newImage; }
-    Image* image() const { return m_image.get(); }
+    void setImage(RefPtr<Image>&& newImage) { m_image = WTFMove(newImage); }
+    const RefPtr<Image>& image() const { return m_image; }
     bool hasImage() const { return m_image; }
     void clearImage() { m_image = nullptr; }
 
@@ -66,12 +66,15 @@ public:
     void clearBuffers() { m_buffers.clear(); }
 
     void setCustomData(Ref<SharedBuffer>&& buffer) { m_customData = WTFMove(buffer); }
-    SharedBuffer* customData() const { return m_customData.get(); }
+    const RefPtr<SharedBuffer>& customData() const { return m_customData; }
     bool hasCustomData() const { return !!m_customData; }
     void clearCustomData() { m_customData = nullptr; }
 
     void clearAll();
     void clearAllExceptFilenames();
+
+    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, RefPtr<WebCore::Image>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
+    SelectionData() = default;
 
 private:
     String m_text;

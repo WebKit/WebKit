@@ -2321,6 +2321,7 @@ accessibility/editable-webpage-focused-ui-element.html [ Pass ]
 accessibility/element-haspopup.html [ Pass ]
 accessibility/empty-text-under-element-cached.html [ Pass ]
 accessibility/heading-level.html [ Pass ]
+accessibility/hidden-label.html [ Pass ]
 accessibility/html5-required-attribute.html [ Pass ]
 accessibility/iframe-tree-update-with-dirty-layout.html [ Pass ]
 accessibility/iframe-with-role.html [ Pass ]
@@ -6960,8 +6961,6 @@ webkit.org/b/271063 http/tests/navigation/page-cache-getUserMedia-pending-promis
 
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
-webkit.org/b/271388 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
-
 # rdar://124417777 (REGRESSION (iOS 17.4): 5 editing / paste-related layout tests are constantly failing.)
 editing/async-clipboard/clipboard-write-basic.html [ Pass Failure ]
 editing/async-clipboard/sanitize-when-reading-markup.html [ Pass Failure ]
@@ -7017,9 +7016,6 @@ webkit.org/b/271712 [ Debug ] fast/forms/datalist/datalist-textinput-dynamically
 imported/w3c/web-platform-tests/svg/import/animate-elem-30-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-elem-85-t-manual.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/import/animate-pservers-grad-01-b-manual.svg [ Failure ]
-
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
-webkit.org/b/271784 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 
 webkit.org/b/271785 media/modern-media-controls/overflow-support/chapters.html [ Timeout ]
 webkit.org/b/271785 media/modern-media-controls/overflow-support/playback-speed.html [ Timeout ]

@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::WebPreferencesStore : WTF::CanMakeCheckedPtr {
+struct WebKit::WebPreferencesStore {
     WebKit::WebPreferencesStore::ValueMap m_values;
     WebKit::WebPreferencesStore::ValueMap m_overriddenDefaults;
 };

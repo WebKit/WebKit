@@ -47,7 +47,7 @@ using namespace WebCore;
 
 NicosiaImageBufferPipeSource::NicosiaImageBufferPipeSource()
 {
-    m_nicosiaLayer = Nicosia::ContentLayer::create(*this);
+    m_nicosiaLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::OffscreenCanvas)));
 }
 
 NicosiaImageBufferPipeSource::~NicosiaImageBufferPipeSource()

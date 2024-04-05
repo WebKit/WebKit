@@ -29,5 +29,6 @@
     EnabledBySetting=WebGPUEnabled
 ]
 enum GPUPredefinedColorSpace {
-    "srgb"
+    "srgb",
+    "display-p3"
 };

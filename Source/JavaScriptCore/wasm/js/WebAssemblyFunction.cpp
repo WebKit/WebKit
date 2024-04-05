@@ -75,6 +75,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyExecuteStart, WebAssemblyExecuteEnd);
 
+    MarkedArgumentBuffer keepAliveArgs;
     Vector<EncodedJSValue, MarkedArgumentBuffer::inlineCapacity> boxedArgs;
     JSWebAssemblyInstance* jsInstance = wasmFunction->instance();
     Wasm::Instance* wasmInstance = &jsInstance->instance();
@@ -83,7 +84,11 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
         return throwVMTypeError(globalObject, scope, Wasm::errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use));
 
     for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
-        uint64_t value = fromJSValue(globalObject, signature.argumentType(argIndex), callFrame->argument(argIndex));
+        auto argType = signature.argumentType(argIndex);
+        uint64_t value = fromJSValue(globalObject, argType, callFrame->argument(argIndex));
+        if (UNLIKELY(argType.isRef()))
+            keepAliveArgs.append(callFrame->argument(argIndex));
+
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(value);
     }

@@ -38,6 +38,7 @@ header: <WebCore/WebGPUMapMode.h>
     Read,
     Write,
 };
+using WebCore::WebGPU::MapModeFlags = OptionSet<WebCore::WebGPU::MapMode>;
 
 [AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::WebGPU::MapMode : uint8_t {
     Read,
@@ -331,3 +332,5 @@ header: <WebCore/WebGPUTextureUsage.h>
 };
 
 using WebCore::WebGPU::TextureUsageFlags = OptionSet<WebCore::WebGPU::TextureUsage>;
+
+using WebCore::WebGPU::BufferUsageFlags = uint16_t

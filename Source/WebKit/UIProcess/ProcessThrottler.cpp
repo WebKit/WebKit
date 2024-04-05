@@ -47,7 +47,7 @@ static constexpr Seconds processSuspensionTimeout { 20_s };
 static constexpr Seconds removeAllAssertionsTimeout { 8_min };
 static constexpr Seconds processAssertionCacheLifetime { 1_s };
 
-class ProcessThrottler::ProcessAssertionCache : public CanMakeCheckedPtr {
+class ProcessThrottler::ProcessAssertionCache : public CanMakeCheckedPtr<ProcessThrottler::ProcessAssertionCache> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     void add(Ref<ProcessAssertion>&& assertion)

@@ -42,6 +42,9 @@
 #include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
+#if USE(GLIB)
+#include "ArgumentCodersGlib.h"
+#endif
 #if OS(WINDOWS)
 #include "ArgumentCodersWin.h"
 #endif

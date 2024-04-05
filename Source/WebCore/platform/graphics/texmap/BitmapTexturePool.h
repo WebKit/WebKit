@@ -57,9 +57,15 @@ private:
     };
 
     void scheduleReleaseUnusedTextures();
+    void enterLimitExceededModeIfNeeded();
+    void exitLimitExceededModeIfNeeded();
 
     Vector<Entry> m_textures;
     RunLoop::Timer m_releaseUnusedTexturesTimer;
+    uint64_t m_poolSize { 0 };
+    bool m_onLimitExceededMode { false };
+    Seconds m_releaseUnusedSecondsTolerance;
+    Seconds m_releaseUnusedTexturesTimerInterval;
 };
 
 } // namespace WebCore

@@ -38,7 +38,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
     CCDigestAlgorithm digestAlgorithm;
     getCommonCryptoDigestAlgorithm(parameters.hashIdentifier, digestAlgorithm);
 
-    return deriveHDKFBits(digestAlgorithm, key.key().data(), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), parameters.infoVector().data(), parameters.infoVector().size(), length);
+    return deriveHDKFBits(digestAlgorithm, key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length);
 }
 
 } // namespace WebCore

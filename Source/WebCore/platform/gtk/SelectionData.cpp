@@ -26,6 +26,23 @@
 
 namespace WebCore {
 
+SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, RefPtr<WebCore::Image>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
+{
+    if (!text.isEmpty())
+        setText(text);
+    if (!markup.isEmpty())
+        setMarkup(markup);
+    if (!url.isEmpty())
+        setURL(url, String());
+    if (!uriList.isEmpty())
+        setURIList(uriList);
+    if (image)
+        setImage(WTFMove(image));
+    if (buffer)
+        setCustomData(buffer.releaseNonNull());
+    setCanSmartReplace(canSmartReplace);
+}
+
 static void replaceNonBreakingSpaceWithSpace(String& string)
 {
     string = makeStringByReplacingAll(string, noBreakSpace, space);

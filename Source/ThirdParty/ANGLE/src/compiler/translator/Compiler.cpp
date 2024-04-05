@@ -873,7 +873,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    if (!SeparateStructFromFunctionDeclarations(this, root, &getSymbolTable()))
+    if (!SeparateStructFromFunctionDeclarations(*this, *root))
     {
         return false;
     }

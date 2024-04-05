@@ -13,7 +13,22 @@ using namespace angle;
 
 namespace
 {
-class MultisampledRenderToTextureTest : public ANGLETest<>
+
+using MultisampledRenderToTextureTestParams = std::tuple<angle::PlatformParameters, bool>;
+
+std::string PrintToStringParamName(
+    const ::testing::TestParamInfo<MultisampledRenderToTextureTestParams> &info)
+{
+    std::stringstream ss;
+    ss << std::get<0>(info.param);
+    if (std::get<1>(info.param))
+    {
+        ss << "_RobustResourceInit";
+    }
+    return ss.str();
+}
+
+class MultisampledRenderToTextureTest : public ANGLETest<MultisampledRenderToTextureTestParams>
 {
   protected:
     MultisampledRenderToTextureTest()
@@ -24,6 +39,9 @@ class MultisampledRenderToTextureTest : public ANGLETest<>
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
+
+        setRobustResourceInit(::testing::get<1>(GetParam()));
+        forceNewDisplay();
     }
 
     void testSetUp() override
@@ -1003,9 +1021,6 @@ TEST_P(MultisampledRenderToTextureTest, RenderbufferCopyTexImageTest)
 
 void MultisampledRenderToTextureTest::copyTexSubImageTestCommon(bool useRenderbuffer)
 {
-    // Fails on Pixel 2. http://anglebug.com/4906
-    ANGLE_SKIP_TEST_IF(IsAndroid());
-
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     constexpr GLsizei kSize = 16;
 
@@ -1092,10 +1107,6 @@ void MultisampledRenderToTextureES3Test::blitFramebufferTestCommon(bool useRende
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // Some draws are not executed before the blitframebuffer on Pixel2.
-    // http://anglebug.com/2894
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL() && IsPixel2());
-
     constexpr GLsizei kSize = 16;
 
     GLFramebuffer fboMS;
@@ -1123,9 +1134,10 @@ void MultisampledRenderToTextureES3Test::blitFramebufferTestCommon(bool useRende
 
     // Draw red into the multisampled color buffer.
     ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_EQUAL);
-    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), -0.05f);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.05f);
     ASSERT_GL_NO_ERROR();
 
     // Create single sampled framebuffer to use as dest.
@@ -1168,9 +1180,6 @@ TEST_P(MultisampledRenderToTextureES3Test, RenderbufferBlitFramebufferTest)
 // GenerateMipmap functionality test
 TEST_P(MultisampledRenderToTextureTest, GenerateMipmapTest)
 {
-    // Fails on Pixel 2. http://anglebug.com/4906
-    ANGLE_SKIP_TEST_IF(IsAndroid());
-
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
     constexpr GLsizei kSize = 64;
 
@@ -3967,9 +3976,6 @@ TEST_P(MultisampledRenderToTextureES3Test, ClearThenMaskedClearFramebufferTest)
 {
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
 
-    // TODO(geofflang) http://anglebug.com/2894
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGL() && IsPixel2());
-
     constexpr GLsizei kSize = 16;
 
     GLFramebuffer fboMS;
@@ -3999,9 +4005,11 @@ TEST_P(MultisampledRenderToTextureES3Test, ClearThenMaskedClearFramebufferTest)
 
     // Draw red into the multisampled color buffer.  An unresolve operation is needed.
     ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_EQUAL);
-    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
+    glDepthFunc(GL_LEQUAL);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), -0.05f);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.05f);
     ASSERT_GL_NO_ERROR();
 
     // Break the render pass.
@@ -4204,27 +4212,42 @@ TEST_P(MultisampledRenderToTextureWithAdvancedBlendTest, RenderbufferClearThenDr
     drawTestCommon(true, InitMethod::Clear);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(
-    MultisampledRenderToTextureTest,
-    ES3_VULKAN()
-        .disable(Feature::SupportsExtendedDynamicState)
-        .disable(Feature::SupportsExtendedDynamicState2),
-    ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureTest,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES3Test);
-ANGLE_INSTANTIATE_TEST_ES3_AND(MultisampledRenderToTextureES3Test,
-                               ES3_VULKAN()
-                                   .disable(Feature::SupportsExtendedDynamicState)
-                                   .disable(Feature::SupportsExtendedDynamicState2),
-                               ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES3Test,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureES31Test);
-ANGLE_INSTANTIATE_TEST_ES31_AND(MultisampledRenderToTextureES31Test,
-                                ES31_VULKAN()
-                                    .disable(Feature::SupportsExtendedDynamicState)
-                                    .disable(Feature::SupportsExtendedDynamicState2),
-                                ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureES31Test,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31,
+                                 ES31_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState)
+                                     .disable(Feature::SupportsExtendedDynamicState2),
+                                 ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampledRenderToTextureWithAdvancedBlendTest);
-ANGLE_INSTANTIATE_TEST_ES3(MultisampledRenderToTextureWithAdvancedBlendTest);
+ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampledRenderToTextureWithAdvancedBlendTest,
+                                 PrintToStringParamName,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES31);
 }  // namespace

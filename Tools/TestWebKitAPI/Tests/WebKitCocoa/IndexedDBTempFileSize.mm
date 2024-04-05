@@ -55,24 +55,24 @@
 
 TEST(IndexedDB, IndexedDBTempFileSize)
 {
-    auto handler = adoptNS([[IndexedDBFileSizeMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr handler = adoptNS([[IndexedDBFileSizeMessageHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
-    NSURL *originURL = [NSURL URLWithString:@"file://"];
-    __block NSString *databaseRootDirectoryString = nil;
+    RetainPtr originURL = [NSURL URLWithString:@"file://"];
+    __block RetainPtr<NSString> databaseRootDirectoryString;
     readyToContinue = false;
-    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL topOrigin:originURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL.get() topOrigin:originURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         databaseRootDirectoryString = result;
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
-    NSURL *databaseRootDirectory = [NSURL fileURLWithPath:databaseRootDirectoryString isDirectory:YES];
-    NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTempFileSize"_s);
-    NSURL *databaseDirectory = [databaseRootDirectory URLByAppendingPathComponent:hash];
-    NSURL *walFilePath = [databaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];
+    RetainPtr databaseRootDirectory = [NSURL fileURLWithPath:databaseRootDirectoryString.get() isDirectory:YES];
+    String hash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBTempFileSize"_s);
+    RetainPtr databaseDirectory = [databaseRootDirectory URLByAppendingPathComponent:hash];
+    RetainPtr walFilePath = [databaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"];
 
-    auto types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+    RetainPtr types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
     [configuration.get().websiteDataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
@@ -80,9 +80,9 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     TestWebKitAPI::Util::run(&readyToContinue);
 
     // Do some IndexedDB operations to generate WAL file.
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request.get()];
 
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -96,21 +96,21 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     webView = nil;
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:walFilePath.path]);
-    auto fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.path error:nil];
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:walFilePath.get().path]);
+    RetainPtr fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.get().path error:nil];
     NSNumber *fileSizeBefore = [fileAttributes objectForKey:NSFileSize];
 
     // Open the same database again.
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+    [webView loadRequest:request.get()];
 
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
 
-    fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.path error:nil];
-    NSNumber *fileSizeAfter = [fileAttributes objectForKey:NSFileSize];
+    fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:walFilePath.get().path error:nil];
+    RetainPtr fileSizeAfter = [fileAttributes objectForKey:NSFileSize];
     EXPECT_GT([fileSizeBefore longLongValue], [fileSizeAfter longLongValue]);
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());

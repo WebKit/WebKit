@@ -120,6 +120,22 @@ WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
 {
     return LogMedia;
 }
+
+uint32_t PlaybackSessionInterfaceIOS::ptrCount() const
+{
+    return CanMakeCheckedPtr::ptrCount();
+}
+
+void PlaybackSessionInterfaceIOS::incrementPtrCount() const
+{
+    CanMakeCheckedPtr::incrementPtrCount();
+}
+
+void PlaybackSessionInterfaceIOS::decrementPtrCount() const
+{
+    CanMakeCheckedPtr::decrementPtrCount();
+}
+
 #endif
 
 } // namespace WebCore

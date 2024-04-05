@@ -50,6 +50,7 @@ namespace WebKit {
 
 Vector<Ref<WebExtensionDataRecord>> toWebExtensionDataRecords(NSArray *);
 NSArray *toAPI(const Vector<Ref<WebExtensionDataRecord>>&);
+NSError *createDataRecordError(_WKWebExtensionDataRecordError, NSString *underlyingErrorMessage);
 
 } // namespace WebKit
 

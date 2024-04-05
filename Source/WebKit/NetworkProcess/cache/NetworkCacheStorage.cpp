@@ -597,7 +597,7 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
 
     encoder.encodeChecksum();
 
-    return Data(encoder.buffer(), encoder.bufferSize());
+    return Data(encoder.span());
 }
 
 std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperation)

@@ -32,7 +32,7 @@ class RenderProgress;
     
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityProgressIndicator> create(RenderObject*);
+    static Ref<AccessibilityProgressIndicator> create(RenderObject&);
 
     bool isIndeterminate() const final;
 
@@ -45,7 +45,7 @@ private:
     float maxValueForRange() const override;
     float minValueForRange() const override;
 
-    explicit AccessibilityProgressIndicator(RenderObject*);
+    explicit AccessibilityProgressIndicator(RenderObject&);
     HTMLProgressElement* progressElement() const;
     HTMLMeterElement* meterElement() const;
     

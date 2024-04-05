@@ -63,7 +63,7 @@ SlowPath:
             localBuffer[i] = characters[i];
         for (unsigned i = failingIndex; i < length; ++i)
             localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
-        return AtomString(localBuffer, length);
+        return std::span<const LChar> { localBuffer, length };
     }
 
     Ref<StringImpl> convertedString = type == CaseConvertType::Lower ? impl->convertToASCIILowercase() : impl->convertToASCIIUppercase();
@@ -117,15 +117,10 @@ AtomString AtomString::number(double number)
     return AtomString::fromLatin1(numberToString(number, buffer));
 }
 
-AtomString AtomString::fromUTF8Internal(const char* start, const char* end)
+AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
 {
-    ASSERT(start);
-
-    // Caller needs to handle empty string.
-    ASSERT(!end || end > start);
-    ASSERT(end || start[0]);
-
-    return AtomStringImpl::addUTF8(start, end ? end : start + std::strlen(start));
+    ASSERT(!characters.empty());
+    return AtomStringImpl::addUTF8(characters);
 }
 
 #ifndef NDEBUG

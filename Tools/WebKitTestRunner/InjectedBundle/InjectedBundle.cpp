@@ -32,6 +32,7 @@
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/Options.h>
 #include <WebKit/WKBundle.h>
+#include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
@@ -1063,6 +1064,49 @@ void postSynchronousPageMessage(const char* name)
 void postSynchronousPageMessage(const char* name, bool value)
 {
     postSynchronousPageMessage(name, adoptWK(WKBooleanCreate(value)));
+}
+
+static WKBundleFrameRef firstRootFrame(WKBundleFrameRef frame)
+{
+    if (WKBundleFrameGetJavaScriptContext(frame))
+        return frame;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    auto children = adoptWK(WKBundleFrameCopyChildFrames(frame));
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    for (size_t i = 0; i < WKArrayGetSize(children.get()); i++) {
+        if (auto root = firstRootFrame(static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(children.get(), i))))
+            return root;
+    }
+    return nullptr;
+}
+
+static JSContextRef firstRootFrameJSContext()
+{
+    auto mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    return WKBundleFrameGetJavaScriptContext(firstRootFrame(mainFrame));
+}
+
+void asyncReplyHandler(WKTypeRef, void* context)
+{
+    auto function = WTF::adopt(static_cast<Function<void()>::Impl*>(context));
+    function();
+}
+
+void postMessageWithAsyncReply(const char* name, JSValueRef callback)
+{
+    auto context = firstRootFrameJSContext();
+    JSValueProtect(context, callback);
+
+    Function<void()> completionHandler = [callback] () mutable {
+        auto context = firstRootFrameJSContext();
+        JSObjectCallAsFunction(context, JSValueToObject(context, callback, nullptr), JSContextGetGlobalObject(context), 0, nullptr, nullptr);
+        JSValueUnprotect(context, callback);
+    };
+
+    if (auto page = InjectedBundle::singleton().pageRef())
+        WKBundlePagePostMessageWithAsyncReply(page, toWK(name).get(), nullptr, asyncReplyHandler, completionHandler.leak());
+    else
+        completionHandler();
 }
 
 } // namespace WTR

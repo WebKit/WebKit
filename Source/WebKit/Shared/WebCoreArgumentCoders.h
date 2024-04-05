@@ -45,8 +45,6 @@ namespace WebCore {
 class Font;
 class FontPlatformData;
 
-struct SoupNetworkProxySettings;
-
 } // namespace WebCore
 
 namespace IPC {
@@ -69,13 +67,6 @@ template<> struct ArgumentCoder<WebCore::FontPlatformDataAttributes> {
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
-};
-#endif
-
-#if USE(SOUP)
-template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
-    static void encode(Encoder&, const WebCore::SoupNetworkProxySettings&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::SoupNetworkProxySettings&);
 };
 #endif
 

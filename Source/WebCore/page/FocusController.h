@@ -49,7 +49,7 @@ class TreeScope;
 
 struct FocusCandidate;
 
-class FocusController : public CanMakeCheckedPtr {
+class FocusController : public CanMakeCheckedPtr<FocusController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FocusController(Page&, OptionSet<ActivityState>);

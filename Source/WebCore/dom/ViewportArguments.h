@@ -70,8 +70,8 @@ struct ViewportArguments {
         PluginDocument,
         ImageDocument,
 #endif
+        CSSDeviceAdaptation,
         ViewportMeta,
-        CSSDeviceAdaptation
     } type;
 
     static constexpr int ValueAuto = -1;

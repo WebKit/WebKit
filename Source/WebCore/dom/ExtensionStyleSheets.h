@@ -51,7 +51,7 @@ class StyleSheetContents;
 class StyleSheetList;
 class WeakPtrImplWithEventTargetData;
 
-class ExtensionStyleSheets : public CanMakeCheckedPtr {
+class ExtensionStyleSheets : public CanMakeCheckedPtr<ExtensionStyleSheets> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ExtensionStyleSheets(Document&);

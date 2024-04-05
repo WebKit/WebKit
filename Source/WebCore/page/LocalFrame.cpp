@@ -993,6 +993,14 @@ FrameLoaderClient& LocalFrame::loaderClient()
     return loader().client();
 }
 
+void LocalFrame::documentURLForConsoleLog(CompletionHandler<void(const URL&)>&& completionHandler)
+{
+    RefPtr document = this->document();
+    if (!document)
+        return completionHandler({ });
+    completionHandler(document->url());
+}
+
 String LocalFrame::trackedRepaintRectsAsText() const
 {
     if (!m_view)

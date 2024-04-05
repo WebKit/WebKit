@@ -29,6 +29,7 @@
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 class CachedImage;
 class RenderElement;
 
-class RenderImageResource : public CanMakeCheckedPtr {
+class RenderImageResource : public CanMakeCheckedPtr<RenderImageResource> {
     WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_ISO_ALLOCATED(RenderImageResource);
 public:
     RenderImageResource();

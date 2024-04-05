@@ -51,7 +51,6 @@ private:
     void generateFragmentDirective(const SimpleRange&);
 
     URL m_urlWithFragment;
-    bool m_isValid { true };
 };
 
 } // namespace WebCore

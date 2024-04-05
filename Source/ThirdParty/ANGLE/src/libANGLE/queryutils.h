@@ -284,7 +284,7 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value);
 Error GetSyncAttrib(Display *display, SyncID sync, EGLint attribute, EGLint *value);
 egl::Error QuerySurfaceAttrib64KHR(const Display *display,
                                    const gl::Context *context,
-                                   const Surface *surface,
+                                   Surface *surface,
                                    EGLint attribute,
                                    EGLAttribKHR *value);
 

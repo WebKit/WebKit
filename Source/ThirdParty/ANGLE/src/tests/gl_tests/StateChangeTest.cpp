@@ -6043,6 +6043,123 @@ void main()
     ASSERT_GL_NO_ERROR() << "Draw to int texture with correct mask";
 }
 
+// Tests that switching the program properly syncs the framebuffer implementation
+TEST_P(WebGL2ValidationStateChangeTest, IncompatibleDrawFramebufferProgramSwitch)
+{
+    constexpr char kFS0[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+out ivec4 color;
+void main()
+{
+    color = ivec4(1, 0, 1, 1);
+})";
+    ANGLE_GL_PROGRAM(programInt, essl3_shaders::vs::Simple(), kFS0);
+
+    constexpr char kFS1[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+out vec4 color;
+void main()
+{
+    color = vec4(0, 1, 0, 1);
+})";
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS1);
+
+    constexpr size_t kSize = 2;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Incompatible masked-out draw call
+    // Implementations may internally disable render targets to avoid runtime failures
+    glColorMask(false, false, false, false);
+    drawQuad(programInt, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear must not be affected
+    glColorMask(true, true, true, true);
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+
+    // Compatible draw call
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
+// Tests that updating the render target storage properly syncs the framebuffer implementation
+TEST_P(WebGL2ValidationStateChangeTest, MultiAttachmentIncompatibleDrawFramebufferStorageUpdate)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec2 texCoord;
+layout(location = 0) out ivec4 colorInt;
+layout(location = 1) out vec4 colorFloat;
+void main()
+{
+    colorInt = ivec4(1, 0, 1, 1);
+    colorFloat = vec4(0, 1, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+
+    // Explicitly set the program here so that
+    // drawQuad helpers do not switch it
+    glUseProgram(program);
+
+    constexpr size_t kSize = 2;
+
+    GLFramebuffer fb;
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+
+    GLRenderbuffer rb0;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+
+    GLRenderbuffer rb1;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8I, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, rb1);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, bufs);
+
+    // Incompatible masked-out draw call
+    // Implementations may internally disable render targets to avoid runtime failures
+    glColorMask(false, false, false, false);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    // Redefine storage, swapping numeric types
+    glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8I, kSize, kSize);
+    glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+
+    // The same draw call should be valid now
+    glColorMask(true, true, true, true);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT32I_EQ(0, 0, kSize, kSize, GLColor32I(1, 0, 1, 1));
+
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
+}
+
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {

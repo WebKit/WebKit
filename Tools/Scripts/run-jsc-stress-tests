@@ -2869,6 +2869,7 @@ def exportBaseEnvironmentVariables(escape)
         "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && ",
         "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])} && ",
         "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])} && ",
+        "export JSCTEST_CrashReportArgV=#{Shellwords.shellescape(ENV['JSCTEST_CrashReportArgV'])} && ",
         "export TZ=#{Shellwords.shellescape(ENV['TZ'])} && ",
     ].join("")
 end
@@ -3066,6 +3067,9 @@ end
 # https://webkit.org/b/136363
 # Set as done in run-javascript-tests
 ENV["TZ"] = "US/Pacific"; 
+
+# Have crash reporter show the test command in Application Specific Information.
+ENV["JSCTEST_CrashReportArgV"] = "1"
 
 def runBundle
     raise unless $bundle

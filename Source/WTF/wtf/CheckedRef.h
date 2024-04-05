@@ -417,8 +417,21 @@ void CanMakeCheckedPtrBase<StorageType, PtrCounterType>::registerCheckedPtr(cons
 }
 #endif
 
-using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t>;
-using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t>;
+template<typename T> class CanMakeCheckedPtr : public CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t> {
+public:
+    ~CanMakeCheckedPtr()
+    {
+        static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    }
+};
+
+template<typename T> class CanMakeThreadSafeCheckedPtr : public CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t> {
+public:
+    ~CanMakeThreadSafeCheckedPtr()
+    {
+        static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "Objects that use CanMakeCheckedPtr must use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    }
+};
 
 } // namespace WTF
 

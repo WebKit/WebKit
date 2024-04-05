@@ -56,6 +56,7 @@ bool RemotePresentationContextProxy::configure(const WebCore::WebGPU::CanvasConf
 
 void RemotePresentationContextProxy::unconfigure()
 {
+    m_currentTexture = nullptr;
     auto sendResult = send(Messages::RemotePresentationContext::Unconfigure());
     UNUSED_VARIABLE(sendResult);
 }
@@ -74,9 +75,13 @@ RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTextu
     return m_currentTexture;
 }
 
-void RemotePresentationContextProxy::present()
+void RemotePresentationContextProxy::present(bool presentToGPUProcess)
 {
     m_currentTexture = nullptr;
+    if (presentToGPUProcess) {
+        auto sendResult = send(Messages::RemotePresentationContext::Present());
+        UNUSED_VARIABLE(sendResult);
+    }
 }
 
 } // namespace WebKit::WebGPU

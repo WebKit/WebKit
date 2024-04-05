@@ -49,13 +49,9 @@ public:
 
     virtual ~PresentationContextImpl();
 
-    void setSize(uint32_t width, uint32_t height)
-    {
-        m_width = width;
-        m_height = height;
-    }
+    void setSize(uint32_t width, uint32_t height);
 
-    void present();
+    void present(bool = false);
 
     WGPUSurface backing() const { return m_backing.get(); }
 

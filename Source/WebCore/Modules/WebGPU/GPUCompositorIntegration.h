@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class DestinationColorSpace;
 class ImageBuffer;
 
 class GPUCompositorIntegration : public RefCounted<GPUCompositorIntegration> {
@@ -44,7 +45,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height) const;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication) const;
 #endif
 
     void prepareForDisplay(CompletionHandler<void()>&&);

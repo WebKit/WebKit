@@ -25,11 +25,12 @@
 #include "RealtimeOutgoingAudioSource.h"
 
 #include <gst/audio/audio.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Lock.h>
 
 namespace WebCore {
 
-class RealtimeOutgoingAudioSourceLibWebRTC final : public RealtimeOutgoingAudioSource {
+class RealtimeOutgoingAudioSourceLibWebRTC final : public RealtimeOutgoingAudioSource, public CanMakeCheckedPtr<RealtimeOutgoingAudioSourceLibWebRTC> {
 public:
     static Ref<RealtimeOutgoingAudioSourceLibWebRTC> create(Ref<MediaStreamTrackPrivate>&& audioTrackPrivate)
     {
@@ -39,6 +40,11 @@ public:
 private:
     explicit RealtimeOutgoingAudioSourceLibWebRTC(Ref<MediaStreamTrackPrivate>&&);
     ~RealtimeOutgoingAudioSourceLibWebRTC();
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 

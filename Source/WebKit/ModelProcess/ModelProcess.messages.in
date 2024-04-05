@@ -25,7 +25,7 @@
 messages -> ModelProcess LegacyReceiver {
     InitializeModelProcess(struct WebKit::ModelProcessCreationParameters processCreationParameters)
 
-    CreateModelConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle connectionHandle, struct WebKit::ModelProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
+    CreateModelConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::ModelProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
 
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()

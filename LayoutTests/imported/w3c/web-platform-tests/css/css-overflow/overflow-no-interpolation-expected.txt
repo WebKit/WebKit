@@ -1,4 +1,18 @@
 
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.5) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.6) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (1) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-behavior:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (1.5) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.5) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (0.6) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (1) should be [123px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-clip-margin> from [initial] to [123px] at (1.5) should be [123px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <overflow-clip-margin> from [initial] to [123px] at (-0.3) should be [123px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <overflow-clip-margin> from [initial] to [123px] at (0) should be [123px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <overflow-clip-margin> from [initial] to [123px] at (0.3) should be [123px] assert_true: 'from' value should be supported expected true got false
@@ -27,6 +41,20 @@ FAIL Web Animations: property <overflow-clip-margin> from [initial] to [123px] a
 FAIL Web Animations: property <overflow-clip-margin> from [initial] to [123px] at (0.6) should be [123px] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <overflow-clip-margin> from [initial] to [123px] at (1) should be [123px] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <overflow-clip-margin> from [initial] to [123px] at (1.5) should be [123px] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (-0.3) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.3) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.5) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.6) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (1) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-x> from [hidden] to [visible] at (1.5) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (-0.3) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.3) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.5) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (0.6) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (1) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-x> from [hidden] to [visible] at (1.5) should be [visible]
 PASS CSS Transitions: property <overflow-x> from [hidden] to [visible] at (-0.3) should be [visible]
 PASS CSS Transitions: property <overflow-x> from [hidden] to [visible] at (0) should be [visible]
 PASS CSS Transitions: property <overflow-x> from [hidden] to [visible] at (0.3) should be [visible]
@@ -55,6 +83,20 @@ PASS Web Animations: property <overflow-x> from [hidden] to [visible] at (0.5) s
 PASS Web Animations: property <overflow-x> from [hidden] to [visible] at (0.6) should be [visible]
 PASS Web Animations: property <overflow-x> from [hidden] to [visible] at (1) should be [visible]
 PASS Web Animations: property <overflow-x> from [hidden] to [visible] at (1.5) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (-0.3) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.3) should be [hidden]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.5) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.6) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (1) should be [visible]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <overflow-y> from [hidden] to [visible] at (1.5) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (-0.3) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.3) should be [hidden]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.5) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (0.6) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (1) should be [visible]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <overflow-y> from [hidden] to [visible] at (1.5) should be [visible]
 PASS CSS Transitions: property <overflow-y> from [hidden] to [visible] at (-0.3) should be [visible]
 PASS CSS Transitions: property <overflow-y> from [hidden] to [visible] at (0) should be [visible]
 PASS CSS Transitions: property <overflow-y> from [hidden] to [visible] at (0.3) should be [visible]

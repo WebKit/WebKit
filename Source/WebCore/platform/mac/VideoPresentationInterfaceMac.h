@@ -33,6 +33,8 @@
 #include "PlaybackSessionModel.h"
 #include "VideoFullscreenCaptions.h"
 #include "VideoPresentationModel.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -51,8 +53,9 @@ class VideoPresentationInterfaceMac
     : public VideoPresentationModelClient
     , private PlaybackSessionModelClient
     , public VideoFullscreenCaptions
-    , public RefCounted<VideoPresentationInterfaceMac> {
-
+    , public RefCounted<VideoPresentationInterfaceMac>
+    , public CanMakeCheckedPtr<VideoPresentationInterfaceMac> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<VideoPresentationInterfaceMac> create(PlaybackSessionInterfaceMac& playbackSessionInterface)
     {
@@ -110,6 +113,12 @@ public:
 
 private:
     WEBCORE_EXPORT VideoPresentationInterfaceMac(PlaybackSessionInterfaceMac&);
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     ThreadSafeWeakPtr<VideoPresentationModel> m_videoPresentationModel;

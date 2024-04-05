@@ -198,7 +198,6 @@ struct SwapchainImage : angle::NonCopyable
     vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
     vk::Framebuffer fetchFramebuffer;
-    vk::Framebuffer framebufferResolveMS;
 
     uint64_t frameNumber = 0;
 };
@@ -276,12 +275,6 @@ enum class FramebufferFetchMode
     Enabled,
 };
 
-enum class SwapchainResolveMode
-{
-    Disabled,
-    Enabled,
-};
-
 class WindowSurfaceVk : public SurfaceVk
 {
   public:
@@ -342,13 +335,12 @@ class WindowSurfaceVk : public SurfaceVk
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
-    vk::Framebuffer &chooseFramebuffer(const SwapchainResolveMode swapchainResolveMode);
+    vk::Framebuffer &chooseFramebuffer();
 
     angle::Result getCurrentFramebuffer(ContextVk *context,
                                         FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
-                                        const SwapchainResolveMode swapchainResolveMode,
-                                        vk::MaybeImagelessFramebuffer *framebufferOut);
+                                        vk::Framebuffer *framebufferOut);
 
     VkSurfaceTransformFlagBitsKHR getPreTransform() const
     {

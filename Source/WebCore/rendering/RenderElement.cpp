@@ -2473,7 +2473,7 @@ bool RenderElement::hasEligibleContainmentForSizeQuery() const
 
 void RenderElement::clearNeedsLayoutForSkippedContent()
 {
-    for (CheckedRef descendant : descendantsOfType<RenderObject>(*this))
+    for (CheckedRef descendant : descendantsOfTypePostOrder<RenderObject>(*this))
         descendant->clearNeedsLayout(EverHadSkippedContentLayout::No);
     clearNeedsLayout(EverHadSkippedContentLayout::No);
 }

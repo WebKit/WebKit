@@ -166,6 +166,7 @@ class UserContentProvider;
 class UserContentURLPattern;
 class UserScript;
 class UserStyleSheet;
+class ValidatedFormListedElement;
 class ValidationMessageClient;
 class VisibleSelection;
 class VisitedLinkStore;
@@ -405,6 +406,7 @@ public:
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
+    void scheduleValidationMessageUpdate(ValidatedFormListedElement&, HTMLElement&);
 
     WEBCORE_EXPORT ScrollingCoordinator* scrollingCoordinator();
     WEBCORE_EXPORT RefPtr<ScrollingCoordinator> protectedScrollingCoordinator();
@@ -1117,6 +1119,8 @@ public:
 private:
     explicit Page(PageConfiguration&&);
 
+    void updateValidationMessages();
+
     struct Navigation {
         RegistrableDomain domain;
         FrameLoadType type;
@@ -1202,6 +1206,7 @@ private:
     RefPtr<PluginData> m_pluginData;
 
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
+    Vector<std::pair<Ref<ValidatedFormListedElement>, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>> m_validationMessageUpdates;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
 

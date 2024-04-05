@@ -30,6 +30,10 @@ fn f() -> u32 {
     let y2 = arrayLength(yptr);
     let z2 = arrayLength(zptr);
 
+    _ = arrayLength(xptr);
+    _ = arrayLength(yptr);
+    _ = arrayLength(zptr);
+
     return x1 + y1 + z1 + x2 + y2 + z2;
 }
 

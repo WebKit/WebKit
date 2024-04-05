@@ -85,6 +85,12 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(CompletionHandler<vo
         completionHandler();
 }
 
+static void generateAValidationError(Device& device, NSString* message, bool generateValidationError)
+{
+    if (generateValidationError)
+        device.generateAValidationError(message);
+}
+
 void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
     m_renderBuffers.clear();
@@ -94,6 +100,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     if (descriptor.nextInChain)
         return;
 
+    bool reportValidationErrors = descriptor.reportValidationErrors;
     m_device = &device;
     auto allowedFormat = ^(WGPUTextureFormat format) {
         return format == WGPUTextureFormat_BGRA8Unorm || format == WGPUTextureFormat_RGBA8Unorm || format == WGPUTextureFormat_RGBA16Float;
@@ -127,34 +134,39 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     bool needsLuminanceClampFunction = false;
     for (IOSurface *iosurface in m_ioSurfaces) {
         if (iosurface.height != static_cast<NSInteger>(height) || iosurface.width != static_cast<NSInteger>(width))
-            return device.generateAValidationError("Invalid surface size"_s);
+            return generateAValidationError(device, [NSString stringWithFormat:@"Invalid surface size. Backing surface has size (%d, %d) but attempting to configure a size of (%u, %u)", static_cast<int>(iosurface.width), static_cast<int>(iosurface.height), width, height], reportValidationErrors);
     }
 
     if (!allowedFormat(descriptor.format)) {
-        device.generateAValidationError([NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)]);
+        generateAValidationError(device, [NSString stringWithFormat:@"Requested texture format %s is not a valid context format", Texture::formatToString(descriptor.format)], reportValidationErrors);
+        return;
+    }
+
+    if (!width || !height) {
+        generateAValidationError(device, @"Width or height is zero", reportValidationErrors);
         return;
     }
 
     if (descriptor.width > limits.maxTextureDimension2D || descriptor.height > limits.maxTextureDimension2D) {
-        device.generateAValidationError("Requested canvas width and/or height are too large"_s);
+        generateAValidationError(device, @"Requested canvas width and/or height are too large", reportValidationErrors);
         return;
     }
 
     for (auto viewFormat : descriptor.viewFormats) {
         if (!allowedViewFormat(viewFormat)) {
-            device.generateAValidationError("Requested texture view format BGRA8UnormStorage is not enabled"_s);
+            generateAValidationError(device, @"Requested texture view format BGRA8UnormStorage is not enabled", reportValidationErrors);
             return;
         }
     }
 
     Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
     if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
-        device.generateAValidationError(error);
+        generateAValidationError(device, error, reportValidationErrors);
         return;
     }
 
-    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
-        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+    if (descriptor.format == WGPUTextureFormat_BGRA8Unorm && (descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage)) {
+        generateAValidationError(device, @"Requested storage format but BGRA8UnormStorage is not enabled", reportValidationErrors);
         return;
     }
 
@@ -258,13 +270,17 @@ void PresentationContextIOSurface::present()
         [computeEncoder endEncoding];
         m_device->getQueue().commitMTLCommandBuffer(commandBuffer);
     }
+
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
-    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex)
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex) {
+        if (m_device.get())
+            m_device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
         return m_invalidTexture.get();
+    }
 
     auto& texturePtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {
@@ -273,6 +289,7 @@ Texture* PresentationContextIOSurface::getCurrentTexture()
     }
     auto& texture = m_renderBuffers[m_currentIndex].texture;
     texture->recreateIfNeeded();
+    texture->setPreviouslyCleared(0, 0, false);
     return texture.ptr();
 }
 

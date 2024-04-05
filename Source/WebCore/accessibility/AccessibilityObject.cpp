@@ -4004,13 +4004,9 @@ bool AccessibilityObject::isAXHidden() const
     }) != nullptr;
 }
 
-// DOM component of hidden definition.
-// https://www.w3.org/TR/wai-aria/#dfn-hidden
 bool AccessibilityObject::isDOMHidden() const
 {
-    if (auto* style = this->style())
-        return style->display() == DisplayType::None || style->usedVisibility() != Visibility::Visible;
-    return true;
+    return WebCore::isDOMHidden(style());
 }
 
 bool AccessibilityObject::isShowingValidationMessage() const

@@ -1190,7 +1190,7 @@ private:
                 break;
             }
             
-            arrayMode = node->arrayMode();
+            arrayMode = node->arrayMode(); // Reload
             switch (arrayMode.type()) {
             case Array::SelectUsingPredictions:
             case Array::Unprofiled:
@@ -1253,16 +1253,19 @@ private:
                 
             case Array::Float32Array:
             case Array::Float64Array:
-                node->setResult(NodeResultDouble);
+                if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()))
+                    node->setResult(NodeResultDouble);
                 break;
                 
             case Array::Uint32Array:
                 if (node->shouldSpeculateInt32())
                     break;
-                if (node->shouldSpeculateInt52())
+                if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()) && node->shouldSpeculateInt52())
                     node->setResult(NodeResultInt52);
-                else
-                    node->setResult(NodeResultDouble);
+                else {
+                    if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()))
+                        node->setResult(NodeResultDouble);
+                }
                 break;
                 
             default:

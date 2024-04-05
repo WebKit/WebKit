@@ -737,6 +737,7 @@ static HashSet<WebCore::RegistrableDomain>& managedDomains()
 
 NSString *kManagedSitesIdentifier = @"com.apple.mail-shared";
 NSString *kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
+NSString *kCrossSiteTrackingPreventionRelaxedAppsKey = @"CrossSiteTrackingPreventionRelaxedApps";
 
 void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReinitialization)
 {
@@ -750,17 +751,34 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
             return;
         static const auto maxManagedDomainCount = 10;
         NSArray<NSString *> *crossSiteTrackingPreventionRelaxedDomains = nil;
+        NSArray<NSString *> *crossSiteTrackingPreventionRelaxedApps = nil;
+
+        bool isSafari = false;
 #if PLATFORM(MAC)
+        isSafari = WebCore::MacApplication::isSafari();
         NSDictionary *managedSitesPrefs = [NSDictionary dictionaryWithContentsOfFile:[[NSString stringWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier] stringByStandardizingPath]];
         crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
+        crossSiteTrackingPreventionRelaxedApps = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedAppsKey];
 #elif !PLATFORM(MACCATALYST)
+        isSafari = WebCore::IOSApplication::isMobileSafari();
         if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:@selector(crossSiteTrackingPreventionRelaxedDomains)])
             crossSiteTrackingPreventionRelaxedDomains = [(MCProfileConnection *)[PAL::getMCProfileConnectionClass() sharedConnection] crossSiteTrackingPreventionRelaxedDomains];
         else
             crossSiteTrackingPreventionRelaxedDomains = @[];
+
+        auto relaxedAppsSelector = NSSelectorFromString(@"crossSiteTrackingPreventionRelaxedApps");
+        if ([PAL::getMCProfileConnectionClass() instancesRespondToSelector:relaxedAppsSelector])
+            crossSiteTrackingPreventionRelaxedApps = [[PAL::getMCProfileConnectionClass() sharedConnection] performSelector:relaxedAppsSelector];
+        else
+            crossSiteTrackingPreventionRelaxedApps = @[];
 #endif
         managedKeyExists = !!crossSiteTrackingPreventionRelaxedDomains;
     
+        NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
+        bool shouldUseRelaxedDomainsIfAvailable = isSafari || isRunningTest(bundleID) || [crossSiteTrackingPreventionRelaxedApps containsObject:bundleID];
+        if (!shouldUseRelaxedDomainsIfAvailable)
+            return;
+
         RunLoop::main().dispatch([forceReinitialization, crossSiteTrackingPreventionRelaxedDomains = retainPtr(crossSiteTrackingPreventionRelaxedDomains)] {
             if (hasInitializedManagedDomains && forceReinitialization != ForceReinitialization::Yes)
                 return;

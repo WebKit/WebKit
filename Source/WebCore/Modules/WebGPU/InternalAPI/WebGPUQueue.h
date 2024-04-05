@@ -64,8 +64,7 @@ public:
     virtual void writeBuffer(
         const Buffer&,
         Size64 bufferOffset,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         Size64 dataOffset = 0,
         std::optional<Size64> = std::nullopt) = 0;
 
@@ -79,8 +78,7 @@ public:
     virtual void writeBuffer(
         const Buffer&,
         Size64 bufferOffset,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         Size64 dataOffset = 0,
         std::optional<Size64> = std::nullopt) = 0;
 

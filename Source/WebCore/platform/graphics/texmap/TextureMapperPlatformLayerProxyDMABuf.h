@@ -45,7 +45,7 @@ class TextureMapper;
 class TextureMapperPlatformLayerProxyDMABuf final : public TextureMapperPlatformLayerProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperPlatformLayerProxyDMABuf();
+    explicit TextureMapperPlatformLayerProxyDMABuf(ContentType);
     virtual ~TextureMapperPlatformLayerProxyDMABuf();
 
     bool isDMABufBased() const override { return true; }

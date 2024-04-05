@@ -28,4 +28,5 @@
     Vector<WebCore::WebGPU::TextureFormat> viewFormats
     WebCore::WebGPU::PredefinedColorSpace colorSpace
     WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode
+    bool reportValidationErrors
 }

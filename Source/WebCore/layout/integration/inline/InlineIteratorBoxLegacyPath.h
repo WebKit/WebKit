@@ -84,6 +84,11 @@ public:
         return m_inlineBox->renderer();
     }
 
+    bool hasRenderer() const
+    {
+        return true;
+    }
+
     const RenderBlockFlow& formattingContextRoot() const
     {
         return m_inlineBox->root().blockFlow();

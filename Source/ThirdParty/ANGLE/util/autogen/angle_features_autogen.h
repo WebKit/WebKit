@@ -240,6 +240,7 @@ enum class Feature
     PreferHostCachedForNonStaticBufferUsage,
     PreferLinearFilterForYUV,
     PreferMonolithicPipelinesOverLibraries,
+    PreferMSRTSSFlagByDefault,
     PreferSkippingInvalidateForEmulatedFormats,
     PreferSubmitAtFBOBoundary,
     PreferSubmitOnAnySamplesPassedQueryEnd,
