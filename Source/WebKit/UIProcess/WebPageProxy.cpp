@@ -7222,7 +7222,8 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
         if (policyAction == PolicyAction::Use && PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())) {
             auto auditToken = m_process->connection()->getAuditToken();
-            sandbox_enable_state_flag("EnableQuickLookSandboxResources", *auditToken);
+            bool status = sandbox_enable_state_flag("EnableQuickLookSandboxResources", *auditToken);
+            WEBPAGEPROXY_RELEASE_LOG(Sandbox, "Enabling EnableQuickLookSandboxResources state flag, status = %d", status);
         }
 #endif // ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
 #endif // USE(QUICK_LOOK)
