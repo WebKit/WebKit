@@ -453,6 +453,16 @@ void WebAuthenticatorCoordinatorProxy::makeActiveConditionalAssertion()
     }
 }
 
+inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport> *asTransports)
+{
+    Vector<AuthenticatorTransport> transports;
+    for (ASAuthorizationSecurityKeyPublicKeyCredentialDescriptorTransport asTransport : asTransports) {
+        if (auto transport = convertStringToAuthenticatorTransport(asTransport))
+            transports.append(*transport);
+    }
+    return transports;
+}
+
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
 
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
@@ -496,7 +506,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 auto credential = retainPtr((ASAuthorizationPlatformPublicKeyCredentialRegistration *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.attestationObject = toArrayBuffer(credential.get().rawAttestationObject);
-                response.transports = { };
+                response.transports = { AuthenticatorTransport::Internal, AuthenticatorTransport::Hybrid };
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
 
                 bool hasExtensionOutput = false;
@@ -537,7 +547,10 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.isAuthenticatorAttestationResponse = true;
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.attestationObject = toArrayBuffer(credential.get().rawAttestationObject);
-                response.transports = { };
+                if ([credential respondsToSelector:@selector(transports)])
+                    response.transports = toTransports(credential.get().transports);
+                else
+                    response.transports = { };
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationSecurityKeyPublicKeyCredentialAssertionClass()]) {
                 auto credential = retainPtr((ASAuthorizationSecurityKeyPublicKeyCredentialAssertion *)auth.get().credential);
