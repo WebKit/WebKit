@@ -67,6 +67,7 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
+#import "WKTextIndicatorStyleManager.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewInternal.h"
@@ -4497,6 +4498,27 @@ void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
 {
     m_page->recordNavigationSnapshot(item);
 }
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid)
+{
+    if (!m_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    if (!m_textIndicatorStyleManager)
+        m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
+
+    [m_textIndicatorStyleManager addTextIndicatorStyleForID:uuid];
+}
+
+void WebViewImpl::removeTextIndicatorStyleForID(WTF::UUID uuid)
+{
+    if (!m_page->preferences().textIndicatorStylingEnabled())
+        return;
+
+    [m_textIndicatorStyleManager removeTextIndicatorStyleForID:uuid];
+}
+#endif
 
 ViewGestureController& WebViewImpl::ensureGestureController()
 {
