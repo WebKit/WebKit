@@ -222,8 +222,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     ReleaseMemory() -> ()
 
-    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
-
 #if ENABLE(NOTIFY_BLOCKING)
     PostNotification(String message, std::optional<uint64_t> state)
     PostObserverNotification(String message)
