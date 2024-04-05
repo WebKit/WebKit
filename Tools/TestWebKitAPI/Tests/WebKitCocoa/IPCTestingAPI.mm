@@ -644,6 +644,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 
     NSSet *fundamentalTypes = [NSSet setWithArray:@[
         @"char",
+        @"char32_t",
         @"short",
         @"float",
         @"bool",
@@ -684,17 +685,24 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
-        @"WKDDActionContext",
         @"PKSecureElementPass",
         @"WebKit::ObjCObjectGraph",
         @"GCGLErrorCodeSet",
         @"NSURLRequest",
-        @"CGDisplayChangeSummaryFlags",
         @"MachSendRight",
         @"CGBitmapInfo",
-        @"WebCore::ContextMenuAction",
         @"WebKit::RemoteObjectInvocation",
-        @"NSParagraphStyle"
+        @"NSParagraphStyle",
+#if PLATFORM(MAC)
+        @"WKDDActionContext",
+        @"CGDisplayChangeSummaryFlags",
+        @"WebCore::ContextMenuAction"
+#else
+        @"WebCore::InspectorOverlay::Highlight",
+        @"WebCore::MediaControlsContextMenuItem::ID",
+        @"UIColor",
+        @"WebCore::RenderThemeIOS::CSSValueToSystemColorMap"
+#endif
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
         EXPECT_TRUE(false);
