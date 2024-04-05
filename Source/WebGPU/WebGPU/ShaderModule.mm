@@ -211,56 +211,6 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         .supportedFeatures = WTFMove(supportedFeatures)
     });
 
-    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
-    if (!std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
-        NSString *nsWgsl = [NSString stringWithUTF8String:shaderModuleParameters->wgsl.code];
-        NSMutableSet<NSString *> *overrideNames = [NSMutableSet set];
-        NSRange currentRange = NSMakeRange(0, nsWgsl.length);
-        for (;;) {
-            NSRange newRange = [nsWgsl rangeOfString:@"override " options:NSLiteralSearch range:currentRange];
-            if (newRange.location == NSNotFound)
-                break;
-            NSRange endRange = [nsWgsl rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
-            if (endRange.location == NSNotFound)
-                break;
-            auto startIndex = newRange.location + newRange.length;
-            NSString* overrideName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
-            [overrideNames addObject:overrideName];
-            currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
-        }
-
-        NSString* stageNames[] = { @"@vertex ", @"@fragment ", @"@compute " };
-        for (NSString* moduleName : stageNames) {
-            currentRange = NSMakeRange(0, nsWgsl.length);
-            for (;;) {
-                NSRange newRange = [nsWgsl rangeOfString:moduleName options:NSLiteralSearch range:currentRange];
-                if (newRange.location == NSNotFound)
-                    break;
-
-                newRange = [nsWgsl rangeOfString:@" fn " options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location - 1)];
-                if (newRange.location == NSNotFound)
-                    break;
-
-                NSRange endRange = [nsWgsl rangeOfString:@"(" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
-                if (endRange.location == NSNotFound)
-                    break;
-                auto startIndex = newRange.location + newRange.length;
-                NSString* functionName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
-                currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
-                NSString *transformedName = [functionName stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
-                transformedName = [transformedName stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
-                functionNames.set(functionName, transformedName);
-            }
-        }
-
-        nsWgsl = [nsWgsl stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
-        nsWgsl = [nsWgsl stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
-        auto checkResult = WGSL::staticCheck(nsWgsl, std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
-        dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
-        dataLogLn(String(nsWgsl));
-        return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, overrideNames, WTFMove(functionNames));
-    }
-
     return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, nil, WTFMove(functionNames));
 }
 

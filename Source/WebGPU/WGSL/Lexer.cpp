@@ -35,6 +35,41 @@
 
 namespace WGSL {
 
+static unsigned isIdentifierStart(UChar character, const UChar* start, const UChar* end)
+{
+    if (character == '_')
+        return 1;
+
+    unsigned length = 1;
+    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+        length++;
+    if (u_stringHasBinaryProperty(start, length, UCHAR_XID_START))
+        return length;
+    return 0;
+}
+
+static unsigned isIdentifierContinue(UChar character, const UChar* start, const UChar* end)
+{
+    if (auto length = isIdentifierStart(character, start, end))
+        return length;
+    unsigned length = 1;
+    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+        length++;
+    if (u_stringHasBinaryProperty(start, length, UCHAR_XID_CONTINUE))
+        return length;
+    return 0;
+}
+
+static unsigned isIdentifierStart(LChar character, const LChar*, const LChar*)
+{
+    return isASCIIAlpha(character) || character == '_';
+}
+
+static unsigned isIdentifierContinue(LChar character, const LChar*, const LChar*)
+{
+    return isASCIIAlphanumeric(character) || character == '_';
+}
+
 template <typename T>
 Vector<Token> Lexer<T>::lex()
 {
@@ -248,11 +283,15 @@ Token Lexer<T>::nextToken()
     default:
         if (isASCIIDigit(m_current) || m_current == '.')
             return lexNumber();
-        if (isIdentifierStart(m_current)) {
+        if (auto consumed = isIdentifierStart(m_current, m_code, m_codeEnd)) {
+            unsigned length = consumed;
             const T* startOfToken = m_code;
-            shift();
-            while (isIdentifierContinue(m_current))
-                shift();
+            shift(consumed);
+            while (auto consumed = isIdentifierContinue(m_current, m_code, m_codeEnd)) {
+                length += consumed;
+                shift(consumed);
+            }
+
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
             String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
 
@@ -423,6 +462,11 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
 
             if (UNLIKELY(reservedWordSet.contains(view)))
                 return makeToken(TokenType::ReservedWord);
+
+
+            if (UNLIKELY(length >= 2 && *startOfToken == '_' && *(startOfToken + 1) == '_'))
+                return makeToken(TokenType::Invalid);
+
 
             return makeIdentifierToken(WTFMove(view));
         }
