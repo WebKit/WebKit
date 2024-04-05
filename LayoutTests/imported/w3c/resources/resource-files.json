@@ -3999,6 +3999,7 @@
         "web-platform-tests/css/css-transforms/transform3d-translatez-ref.html",
         "web-platform-tests/css/css-transforms/translate-ref.html",
         "web-platform-tests/css/css-transforms/z-index-does-not-apply-ref.html",
+        "web-platform-tests/css/css-transitions/crashtests/delete-image-set.html",
         "web-platform-tests/css/css-transitions/crashtests/transition-during-style-attr-mutation.html",
         "web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html",
         "web-platform-tests/css/css-transitions/inherit-background-color-transition-ref.html",
