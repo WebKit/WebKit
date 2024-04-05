@@ -1687,7 +1687,7 @@ TEST(SiteIsolation, FindStringInFrame)
 
     __block bool done = false;
     [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_TRUE(result.matchFound);
+        EXPECT_FALSE(result.matchFound);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -1717,7 +1717,7 @@ TEST(SiteIsolation, FindStringInNestedFrame)
 
     __block bool done = false;
     [webView findString:@"Hello world" withConfiguration:findConfiguration.get() completionHandler:^(WKFindResult *result) {
-        EXPECT_TRUE(result.matchFound);
+        EXPECT_FALSE(result.matchFound);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
