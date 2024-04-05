@@ -188,7 +188,7 @@ function xAxisFromScale(scale, repository, updatesArray, isTop=false, viewport=n
         if (!params.branch)
             delete params.branch;
         const query = paramsToQuery(params);
-        window.open(`/commit?${query}`, '_blank');
+        window.open(`/commit/info?${query}`, '_blank');
     }
 
     return Timeline.CanvasXAxisComponent(scaleForRepository(scale), {
