@@ -80,9 +80,31 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(PrimitiveDisableCallbacks);
 
 namespace Gigacage {
 
+// This is exactly 32GB because inside JSC, indexed accesses for arrays, typed arrays, etc,
+// use unsigned 32-bit ints as indices. The items those indices access are 8 bytes or less
+// in size. 2^32 * 8 = 32GB. This means if an access on a caged type happens to go out of
+// bounds, the access is guaranteed to land somewhere else in the cage or inside the runway.
+// If this were less than 32GB, those OOB accesses could reach outside of the cage.
+constexpr size_t gigacageRunway = 32llu * bmalloc::Sizes::GB;
+
 bool disablePrimitiveGigacageRequested = false;
 
 using namespace bmalloc;
+
+namespace {
+
+size_t runwaySize(Kind kind)
+{
+    switch (kind) {
+    case Kind::Primitive:
+        return gigacageRunway;
+    case Kind::NumberOfKinds:
+        RELEASE_BASSERT_NOT_REACHED();
+    }
+    return 0;
+}
+
+} // anonymous namespace
 
 void ensureGigacage()
 {
@@ -131,6 +153,7 @@ void ensureGigacage()
             
             for (Kind kind : shuffledKinds) {
                 totalSize = bump(kind, alignTo(kind, totalSize));
+                totalSize += runwaySize(kind);
                 maxAlignment = std::max(maxAlignment, alignment(kind));
             }
 
@@ -144,7 +167,6 @@ void ensureGigacage()
                 fprintf(stderr, "(Make sure you have not set a virtual memory limit.)\n");
                 BCRASH();
             }
-            vmDeallocatePhysicalPages(base, totalSize);
 
             size_t nextCage = 0;
             for (Kind kind : shuffledKinds) {
@@ -156,10 +178,9 @@ void ensureGigacage()
                 uint64_t random[2];
                 cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
                 size_t gigacageSize = maxSize(kind);
-                size_t sizeWithSentinel = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
-                size_t size = sizeWithSentinel - vmPageSize();
+                size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
                 g_gigacageConfig.setAllocSize(kind, size);
-                ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - sizeWithSentinel));
+                ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
                 void* thisBase = reinterpret_cast<unsigned char*>(gigacageBasePtr) + offset;
                 g_gigacageConfig.setAllocBasePtr(kind, thisBase);
 
@@ -169,14 +190,18 @@ void ensureGigacage()
                     reinterpret_cast<uintptr_t>(thisBase),
                     reinterpret_cast<uintptr_t>(thisBase) + size);
 #endif
-
-                // Make OOB accesses into the last pages crash.
-                auto* lastPage = reinterpret_cast<unsigned char*>(thisBase) + size;
-                vmRevokePermissions(lastPage, (reinterpret_cast<unsigned char*>(gigacageBasePtr) + gigacageSize) - lastPage);
+                
+                if (runwaySize(kind) > 0) {
+                    char* runway = reinterpret_cast<char*>(base) + nextCage;
+                    // Make OOB accesses into the runway crash.
+                    vmRevokePermissions(runway, runwaySize(kind));
+                    nextCage += runwaySize(kind);
+                }
             }
 
             g_gigacageConfig.start = base;
             g_gigacageConfig.totalSize = totalSize;
+            vmDeallocatePhysicalPages(base, totalSize);
             g_gigacageConfig.isEnabled = true;
         });
 }

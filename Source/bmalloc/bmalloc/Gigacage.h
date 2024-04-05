@@ -66,7 +66,7 @@ constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
 
 #if GIGACAGE_ENABLED
 
-constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 64 : 32) * bmalloc::Sizes::GB;
+constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 4) * bmalloc::Sizes::GB;
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 
