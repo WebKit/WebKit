@@ -137,7 +137,7 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     encoder << metaData.unused64bits2;
 
     ASSERT(encoder.bufferSize() == CurrentVersionFileHeaderSize);
-    return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
+    return WebKit::NetworkCache::Data(encoder.span());
 }
 
 template<typename T> void getData(const T&, const Function<bool(std::span<const uint8_t>)>&);
@@ -277,12 +277,11 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             writeToFile(sourceJSON.is8Bit());
             m_sourceWritten += sizeof(bool);
             if (sourceJSON.is8Bit()) {
-                size_t serializedLength = sourceJSON.length() * sizeof(LChar);
-                writeToFile(WebKit::NetworkCache::Data(sourceJSON.characters8(), serializedLength));
-                m_sourceWritten += serializedLength;
+                writeToFile(WebKit::NetworkCache::Data(sourceJSON.span8()));
+                m_sourceWritten += sourceJSON.length();
             } else {
                 size_t serializedLength = sourceJSON.length() * sizeof(UChar);
-                writeToFile(WebKit::NetworkCache::Data(reinterpret_cast<const uint8_t*>(sourceJSON.characters16()), serializedLength));
+                writeToFile(WebKit::NetworkCache::Data({ reinterpret_cast<const uint8_t*>(sourceJSON.characters16()), serializedLength }));
                 m_sourceWritten += serializedLength;
             }
         }
@@ -294,7 +293,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             ASSERT(!m_topURLFiltersBytecodeWritten);
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_actionsWritten += actions.size();
-            writeToFile(WebKit::NetworkCache::Data(actions.data(), actions.size()));
+            writeToFile(WebKit::NetworkCache::Data(actions.span()));
         }
 
         void writeURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
@@ -302,20 +301,20 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
             ASSERT(!m_topURLFiltersBytecodeWritten);
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_urlFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
+            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
         }
         
         void writeTopURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_topURLFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
+            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
         }
 
         void writeFrameURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
             m_frameURLFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.data(), bytecode.size()));
+            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
         }
         
         void finalize() final
@@ -339,7 +338,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
     private:
         void writeToFile(bool value)
         {
-            writeToFile(WebKit::NetworkCache::Data(reinterpret_cast<const uint8_t*>(&value), sizeof(value)));
+            writeToFile(WebKit::NetworkCache::Data({ reinterpret_cast<const uint8_t*>(&value), sizeof(value) }));
         }
         void writeToFile(const WebKit::NetworkCache::Data& data)
         {

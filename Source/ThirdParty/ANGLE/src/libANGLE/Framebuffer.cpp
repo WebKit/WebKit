@@ -2134,13 +2134,11 @@ void Framebuffer::setAttachmentImpl(const Context *context,
 
         default:
         {
-            size_t colorIndex = binding - GL_COLOR_ATTACHMENT0;
+            const size_t colorIndex = binding - GL_COLOR_ATTACHMENT0;
             ASSERT(colorIndex < mState.mColorAttachments.size());
-            size_t dirtyBit = DIRTY_BIT_COLOR_ATTACHMENT_0 + colorIndex;
-            updateAttachment(context, &mState.mColorAttachments[colorIndex], dirtyBit,
-                             &mDirtyColorAttachmentBindings[colorIndex], type, binding,
-                             textureIndex, resource, numViews, baseViewIndex, isMultiview, samples);
 
+            // Caches must be updated before notifying the observers.
+            ComponentType componentType = ComponentType::NoType;
             if (!resource)
             {
                 mFloat32ColorAttachmentBits.reset(colorIndex);
@@ -2149,15 +2147,20 @@ void Framebuffer::setAttachmentImpl(const Context *context,
             }
             else
             {
-                updateFloat32AndSharedExponentColorAttachmentBits(
-                    colorIndex, resource->getAttachmentFormat(binding, textureIndex).info);
+                const InternalFormat *formatInfo =
+                    resource->getAttachmentFormat(binding, textureIndex).info;
+                componentType = GetAttachmentComponentType(formatInfo->componentType);
+                updateFloat32AndSharedExponentColorAttachmentBits(colorIndex, formatInfo);
                 mState.mColorAttachmentsMask.set(colorIndex);
             }
-
-            bool enabled = (type != GL_NONE && getDrawBufferState(colorIndex) != GL_NONE);
+            const bool enabled = (type != GL_NONE && getDrawBufferState(colorIndex) != GL_NONE);
             mState.mEnabledDrawBuffers.set(colorIndex, enabled);
-            SetComponentTypeMask(getDrawbufferWriteType(colorIndex), colorIndex,
-                                 &mState.mDrawBufferTypeMask);
+            SetComponentTypeMask(componentType, colorIndex, &mState.mDrawBufferTypeMask);
+
+            const size_t dirtyBit = DIRTY_BIT_COLOR_ATTACHMENT_0 + colorIndex;
+            updateAttachment(context, &mState.mColorAttachments[colorIndex], dirtyBit,
+                             &mDirtyColorAttachmentBindings[colorIndex], type, binding,
+                             textureIndex, resource, numViews, baseViewIndex, isMultiview, samples);
         }
         break;
     }

@@ -2369,9 +2369,16 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
     framebufferInfo.height          = renderArea.y + renderArea.height;
     framebufferInfo.layers          = 1;
 
-    vk::MaybeImagelessFramebuffer framebuffer = {};
-    ANGLE_VK_TRY(contextVk,
-                 framebuffer.getFramebuffer().init(contextVk->getDevice(), framebufferInfo));
+    vk::Framebuffer framebuffer;
+    ANGLE_VK_TRY(contextVk, framebuffer.init(contextVk->getDevice(), framebufferInfo));
+
+    vk::Framebuffer framebufferHandle;
+    framebufferHandle.setHandle(framebuffer.getHandle());
+
+    vk::RenderPassFramebuffer renderPassFramebuffer;
+    renderPassFramebuffer.setFramebuffer(std::move(framebufferHandle), {imageView->getHandle()},
+                                         framebufferInfo.width, framebufferInfo.height,
+                                         framebufferInfo.layers, vk::ImagelessFramebuffer::No);
 
     vk::AttachmentOpsArray renderPassAttachmentOps;
     vk::PackedClearValuesArray clearValues;
@@ -2381,10 +2388,10 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
                                               vk::ImageLayout::ColorWrite);
 
     ANGLE_TRY(contextVk->beginNewRenderPass(
-        framebuffer, renderArea, renderPassDesc, renderPassAttachmentOps,
+        std::move(renderPassFramebuffer), renderArea, renderPassDesc, renderPassAttachmentOps,
         vk::PackedAttachmentCount(1), vk::kAttachmentIndexInvalid, clearValues, commandBufferOut));
 
-    contextVk->addGarbage(&framebuffer.getFramebuffer());
+    contextVk->addGarbage(&framebuffer);
 
     return angle::Result::Continue;
 }

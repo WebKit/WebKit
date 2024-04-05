@@ -2327,7 +2327,6 @@ webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash Pass ]
 
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Timeout ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ Timeout ]
 
 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 

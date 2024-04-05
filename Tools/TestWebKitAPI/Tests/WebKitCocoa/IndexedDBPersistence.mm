@@ -328,38 +328,38 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
 
 TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess"_s);
-    NSURL *webkitURL = [NSURL URLWithString:@"http://webkit.org"];
-    NSURL *iframeURL = [NSURL URLWithString:@"iframe://"];
-    __block NSString *directoryString = nil;
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    String databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess"_s);
+    RetainPtr webkitURL = [NSURL URLWithString:@"http://webkit.org"];
+    RetainPtr iframeURL = [NSURL URLWithString:@"iframe://"];
+    __block RetainPtr<NSString> directoryString = nil;
     done = false;
-    [configuration.get().websiteDataStore _originDirectoryForTesting:iframeURL topOrigin:webkitURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [configuration.get().websiteDataStore _originDirectoryForTesting:iframeURL.get() topOrigin:webkitURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         directoryString = result;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    NSURL *webkitIframeRootDirectory = [NSURL fileURLWithPath:directoryString isDirectory:YES];
-    NSURL *webkitIframeDatabaseDirectory = [webkitIframeRootDirectory URLByAppendingPathComponent:databaseHash];
-    NSURL *webkitIframeDatabaseFile = [webkitIframeDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+    RetainPtr webkitIframeRootDirectory = [NSURL fileURLWithPath:directoryString.get() isDirectory:YES];
+    RetainPtr webkitIframeDatabaseDirectory = [webkitIframeRootDirectory URLByAppendingPathComponent:databaseHash];
+    RetainPtr webkitIframeDatabaseFile = [webkitIframeDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
 
     done = false;
-    [configuration.get().websiteDataStore _originDirectoryForTesting:webkitURL topOrigin:iframeURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [configuration.get().websiteDataStore _originDirectoryForTesting:webkitURL.get() topOrigin:iframeURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         directoryString = result;
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
-    NSURL *iframeWebKitRootDirectory = [NSURL fileURLWithPath:directoryString isDirectory:YES];
+    RetainPtr iframeWebKitRootDirectory = [NSURL fileURLWithPath:directoryString.get() isDirectory:YES];
 
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtURL:webkitIframeRootDirectory error:nil];
-    [fileManager removeItemAtURL:iframeWebKitRootDirectory error:nil];
+    RetainPtr fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:webkitIframeRootDirectory.get() error:nil];
+    [fileManager removeItemAtURL:iframeWebKitRootDirectory.get() error:nil];
 
-    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
         [task didReceiveData:[NSData dataWithBytes:iframeBytesPersistence length:strlen(iframeBytesPersistence)]];
         [task didFinish];
@@ -368,11 +368,11 @@ TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
     // Allowing third-party frame to store data on disk.
     [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyAllowAll];
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     loadThirdPartyPageInWebView(webView.get(), @"database is created - put item success");
-    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeRootDirectory.path]);
-    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
-    EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitRootDirectory.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeRootDirectory.get().path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.get().path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitRootDirectory.get().path]);
 }
 
 TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
@@ -561,19 +561,19 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 
-    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        RetainPtr response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
         [task didReceiveResponse:response.get()];
         [task didReceiveData:[NSData dataWithBytes:getDatabasesBytes length:strlen(getDatabasesBytes)]];
         [task didFinish];
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
 
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadHTMLString:getDatabasesString baseURL:[NSURL URLWithString:@"http://apple.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
@@ -584,44 +584,44 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"child frame databases: []", [getNextMessage() body]);
 
-    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webkit://"]]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     EXPECT_WK_STREQ(@"main frame databases: []", [getNextMessage() body]);
 
     // Getting databases should not create files on disk.
-    NSURL *appleURL = [NSURL URLWithString:@"http://apple.com"];
-    NSURL *webkitURL = [NSURL URLWithString:@"webkit://"];
-    __block NSString *appleDirectoryString = nil;
+    RetainPtr appleURL = [NSURL URLWithString:@"http://apple.com"];
+    RetainPtr webkitURL = [NSURL URLWithString:@"webkit://"];
+    __block RetainPtr<NSString> appleDirectoryString;
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:appleURL topOrigin:appleURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:appleURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         appleDirectoryString = result;
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
-    NSURL *appleDirectoryURL = [NSURL fileURLWithPath:appleDirectoryString isDirectory:YES];
+    RetainPtr appleDirectoryURL = [NSURL fileURLWithPath:appleDirectoryString.get() isDirectory:YES];
 
     readyToContinue = false;
-    __block NSString *webkitDirectoryString = nil;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL topOrigin:webkitURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    __block RetainPtr<NSString> webkitDirectoryString;
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL.get() topOrigin:webkitURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         webkitDirectoryString = result;
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
-    NSURL *webkitDirectoryURL = [NSURL fileURLWithPath:webkitDirectoryString isDirectory:YES];
+    RetainPtr webkitDirectoryURL = [NSURL fileURLWithPath:webkitDirectoryString.get() isDirectory:YES];
 
-    __block NSString *appleWebkitDirectoryString = nil;
+    __block RetainPtr<NSString> appleWebkitDirectoryString;
     readyToContinue = false;
-    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL topOrigin:appleURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL.get() topOrigin:appleURL.get() type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
         appleWebkitDirectoryString = result;
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
-    NSURL *appleWebkitDirectoryURL = [NSURL fileURLWithPath:appleWebkitDirectoryString isDirectory:YES];
+    RetainPtr appleWebkitDirectoryURL = [NSURL fileURLWithPath:appleWebkitDirectoryString.get() isDirectory:YES];
 
-    auto defaultFileManager = [NSFileManager defaultManager];
-    EXPECT_TRUE([defaultFileManager fileExistsAtPath:appleDirectoryURL.path]);
-    EXPECT_FALSE([defaultFileManager fileExistsAtPath:appleWebkitDirectoryURL.path]);
-    EXPECT_FALSE([defaultFileManager fileExistsAtPath:webkitDirectoryURL.path]);
+    RetainPtr defaultFileManager = [NSFileManager defaultManager];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:appleDirectoryURL.get().path]);
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:appleWebkitDirectoryURL.get().path]);
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:webkitDirectoryURL.get().path]);
 }

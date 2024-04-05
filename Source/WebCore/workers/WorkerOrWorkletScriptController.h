@@ -53,7 +53,7 @@ class WorkerConsoleClient;
 class WorkerOrWorkletGlobalScope;
 class WorkerScriptFetcher;
 
-class WorkerOrWorkletScriptController : public CanMakeCheckedPtr {
+class WorkerOrWorkletScriptController : public CanMakeCheckedPtr<WorkerOrWorkletScriptController> {
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletScriptController);
     WTF_MAKE_FAST_ALLOCATED;
 public:

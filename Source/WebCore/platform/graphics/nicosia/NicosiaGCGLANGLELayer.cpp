@@ -88,14 +88,14 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
 
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLTextureMapperANGLE& context)
     : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL)))
+    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL(TextureMapperPlatformLayerProxy::ContentType::WebGL))))
 {
 }
 
 #if USE(ANGLE_GBM)
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLGBM& context)
     : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyDMABuf)))
+    , m_contentLayer(Nicosia::ContentLayer::create(*this, adoptRef(*new TextureMapperPlatformLayerProxyDMABuf(TextureMapperPlatformLayerProxy::ContentType::WebGL))))
 {
 }
 #endif

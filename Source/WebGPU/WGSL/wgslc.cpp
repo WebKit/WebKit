@@ -118,7 +118,7 @@ static int runWGSL(const CommandLine& options)
     FileSystem::closeFile(handle);
     auto source = emptyString();
     if (readResult.has_value())
-        source = String::fromUTF8WithLatin1Fallback(readResult->data(), readResult->size());
+        source = String::fromUTF8WithLatin1Fallback(std::span(readResult->data(), readResult->size()));
     auto checkResult = WGSL::staticCheck(source, std::nullopt, configuration);
     if (auto* failedCheck = std::get_if<WGSL::FailedCheck>(&checkResult)) {
         for (const auto& error : failedCheck->errors)

@@ -70,7 +70,7 @@ private:
 NicosiaDisplayDelegate::NicosiaDisplayDelegate(bool isOpaque)
     : m_isOpaque(isOpaque)
 {
-    m_contentLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyDMABuf));
+    m_contentLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyDMABuf(WebCore::TextureMapperPlatformLayerProxy::ContentType::WebGL)));
 }
 
 NicosiaDisplayDelegate::~NicosiaDisplayDelegate()

@@ -80,7 +80,7 @@ FontCascade::FontCascade(FontCascadeDescription&& description, const FontCascade
 
 FontCascade::FontCascade(const FontCascade& other)
     : CanMakeWeakPtr<FontCascade>()
-    , CanMakeCheckedPtr()
+    , CanMakeCheckedPtr<FontCascade>()
     , m_fontDescription(other.m_fontDescription)
     , m_spacing(other.m_spacing)
     , m_fonts(other.m_fonts)
@@ -1750,7 +1750,7 @@ public:
 #endif
     }
 
-    bool containsMorePaths() { return m_index != m_glyphBuffer->size(); }
+    bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }
     Path path();
     std::pair<float, float> extents();
     GlyphUnderlineType underlineType();
@@ -1759,14 +1759,14 @@ public:
 private:
     unsigned m_index { 0 };
     CheckedRef<const TextRun> m_textRun;
-    CheckedRef<const GlyphBuffer> m_glyphBuffer;
+    const GlyphBuffer& m_glyphBuffer;
     Ref<const Font> m_fontData;
     AffineTransform m_translation;
 };
 
 Path GlyphToPathTranslator::path()
 {
-    Path path = Ref { m_fontData }->pathForGlyph(m_glyphBuffer->glyphAt(m_index));
+    Path path = Ref { m_fontData }->pathForGlyph(m_glyphBuffer.glyphAt(m_index));
     path.transform(m_translation);
     return path;
 }
@@ -1774,7 +1774,7 @@ Path GlyphToPathTranslator::path()
 std::pair<float, float> GlyphToPathTranslator::extents()
 {
     auto beginning = m_translation.mapPoint(FloatPoint(0, 0));
-    auto advance = m_glyphBuffer->advanceAt(m_index);
+    auto advance = m_glyphBuffer.advanceAt(m_index);
     auto end = m_translation.mapSize(size(advance));
     return std::make_pair(beginning.x(), beginning.x() + end.width());
 }
@@ -1786,11 +1786,11 @@ auto GlyphToPathTranslator::underlineType() -> GlyphUnderlineType
 
 void GlyphToPathTranslator::advance()
 {
-    GlyphBufferAdvance advance = m_glyphBuffer->advanceAt(m_index);
+    GlyphBufferAdvance advance = m_glyphBuffer.advanceAt(m_index);
     m_translation.translate(size(advance));
     ++m_index;
-    if (m_index < m_glyphBuffer->size())
-        m_fontData = m_glyphBuffer->fontAt(m_index);
+    if (m_index < m_glyphBuffer.size())
+        m_fontData = m_glyphBuffer.fontAt(m_index);
 }
 
 RefPtr<FontCascadeFonts> FontCascade::protectedFonts() const

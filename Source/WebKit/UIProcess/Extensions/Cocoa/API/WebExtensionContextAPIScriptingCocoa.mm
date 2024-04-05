@@ -326,6 +326,16 @@ void WebExtensionContext::loadRegisteredContentScripts()
     }).get()];
 }
 
+void WebExtensionContext::clearRegisteredContentScripts()
+{
+    m_registeredScriptsMap.clear();
+
+    [registeredContentScriptsStore() deleteDatabaseWithCompletionHandler:^(NSString *errorMessage) {
+        if (errorMessage)
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete registered content scripts database. Error: %{public}@", errorMessage);
+    }];
+}
+
 bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, FirstTimeRegistration firstTimeRegistration, DynamicInjectedContentsMap& injectedContentsMap, NSString *callingAPIName, NSString **errorMessage)
 {
     Vector<String> idsToAdd;

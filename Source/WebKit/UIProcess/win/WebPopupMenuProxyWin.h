@@ -38,6 +38,7 @@ namespace WebKit {
 class WebView;
 
 class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollableArea {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<WebPopupMenuProxyWin> create(WebView* webView, WebPopupMenuProxy::Client& client)
     {

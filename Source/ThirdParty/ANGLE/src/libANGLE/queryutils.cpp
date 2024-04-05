@@ -4628,7 +4628,7 @@ egl::Error QuerySurfaceAttrib(const Display *display,
 
 egl::Error QuerySurfaceAttrib64KHR(const Display *display,
                                    const gl::Context *context,
-                                   const Surface *surface,
+                                   Surface *surface,
                                    EGLint attribute,
                                    EGLAttribKHR *value)
 {
@@ -4662,8 +4662,12 @@ egl::Error QuerySurfaceAttrib64KHR(const Display *display,
             *value = surface->getBitmapPointer();
             break;
         default:
-            UNREACHABLE();
-            break;
+        {
+            EGLint intValue = 0;
+            ANGLE_TRY(QuerySurfaceAttrib(display, context, surface, attribute, &intValue));
+            *value = static_cast<EGLAttribKHR>(intValue);
+        }
+        break;
     }
     return NoError();
 }

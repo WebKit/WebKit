@@ -83,7 +83,7 @@ struct WorkerFetchResult;
 class SWServer : public RefCounted<SWServer>, public CanMakeWeakPtr<SWServer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr {
+    class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr<Connection> {
         WTF_MAKE_FAST_ALLOCATED;
         friend class SWServer;
     public:

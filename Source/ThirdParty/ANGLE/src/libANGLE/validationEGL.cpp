@@ -5750,7 +5750,7 @@ bool ValidateQuerySurface(const ValidationContext *val,
             break;
 
         default:
-            val->setError(EGL_BAD_ATTRIBUTE, "Invalid surface attribute: 0x%04X", attribute);
+            val->setError(EGL_BAD_ATTRIBUTE, "Invalid query surface attribute: 0x%04X", attribute);
             return false;
     }
 
@@ -6698,7 +6698,7 @@ bool ValidateLockSurfaceKHR(const ValidationContext *val,
                 }
                 break;
             default:
-                val->setError(EGL_BAD_ATTRIBUTE, "Invalid query surface64 attribute");
+                val->setError(EGL_BAD_ATTRIBUTE, "Invalid lock surface attribute");
                 return false;
         }
     }
@@ -6734,8 +6734,12 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
         case EGL_BITMAP_POINTER_KHR:
             break;
         default:
-            val->setError(EGL_BAD_ATTRIBUTE, "Invalid eglQuerySurface64 attribute");
-            return false;
+        {
+            EGLint querySurfaceValue;
+            ANGLE_VALIDATION_TRY(
+                ValidateQuerySurface(val, dpy, surfaceID, attribute, &querySurfaceValue));
+        }
+        break;
     }
 
     if (value == nullptr)
@@ -6744,8 +6748,14 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
         return false;
     }
 
+    // EGL_KHR_lock_surface3
+    //  If <attribute> is either EGL_BITMAP_POINTER_KHR or EGL_BITMAP_PITCH_KHR, and either
+    //  <surface> is not locked using eglLockSurfaceKHR ... then an EGL_BAD_ACCESS error is
+    //  generated.
+    const bool surfaceShouldBeLocked =
+        (attribute == EGL_BITMAP_POINTER_KHR) || (attribute == EGL_BITMAP_PITCH_KHR);
     const Surface *surface = dpy->getSurface(surfaceID);
-    if (!surface->isLocked())
+    if (surfaceShouldBeLocked && !surface->isLocked())
     {
         val->setError(EGL_BAD_ACCESS, "Surface is not locked");
         return false;

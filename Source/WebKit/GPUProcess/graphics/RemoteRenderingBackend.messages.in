@@ -28,7 +28,12 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(struct WebCore::FontInternalAttributes data, struct WebCore::FontPlatformDataAttributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
+#if PLATFORM(COCOA)
+    CacheFontCustomPlatformData(struct WebCore::FontCustomPlatformSerializedData fontCustomPlatformData) NotStreamEncodable
+#endif
+#if !PLATFORM(COCOA)
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
+#endif
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     CacheGradient(Ref<WebCore::Gradient> gradient) NotStreamEncodable
     CacheFilter(Ref<WebCore::Filter> filter) NotStreamEncodable

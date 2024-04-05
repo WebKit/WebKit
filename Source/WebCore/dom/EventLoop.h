@@ -153,10 +153,9 @@ private:
     mutable Markable<MonotonicTime> m_nextTimerFireTimeCache;
 };
 
-class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup>, public CanMakeCheckedPtr {
+class EventLoopTaskGroup : public CanMakeWeakPtr<EventLoopTaskGroup>, public CanMakeCheckedPtr<EventLoopTaskGroup> {
     WTF_MAKE_NONCOPYABLE(EventLoopTaskGroup);
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     EventLoopTaskGroup(EventLoop& eventLoop)
         : m_eventLoop(eventLoop)

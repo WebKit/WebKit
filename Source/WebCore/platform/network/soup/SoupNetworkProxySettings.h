@@ -48,6 +48,14 @@ struct SoupNetworkProxySettings {
     {
     }
 
+    SoupNetworkProxySettings(Mode proxyMode, const CString& defaultURL, const GUniquePtr<char*>& hosts, const HashMap<CString, CString>& map)
+        : mode(proxyMode)
+        , defaultProxyURL(defaultURL)
+        , ignoreHosts(g_strdupv(hosts.get()))
+        , proxyMap(map)
+    {
+    }
+
     SoupNetworkProxySettings(const WebCore::SoupNetworkProxySettings& other)
         : mode(other.mode)
         , defaultProxyURL(other.defaultProxyURL)

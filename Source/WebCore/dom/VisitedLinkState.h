@@ -39,7 +39,7 @@ namespace WebCore {
 
 class Document;
 
-class VisitedLinkState : public CanMakeCheckedPtr {
+class VisitedLinkState : public CanMakeCheckedPtr<VisitedLinkState> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit VisitedLinkState(Document&);

@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcess.h"
 #include "RemoteRenderBundle.h"
 #include "RemoteRenderBundleEncoderMessages.h"
 #include "StreamServerConnection.h"
@@ -35,13 +36,26 @@
 #include <WebCore/WebGPURenderBundle.h>
 #include <WebCore/WebGPURenderBundleEncoder.h>
 
+#if PLATFORM(COCOA)
+#define MESSAGE_CHECK(assertion) do { \
+    if (UNLIKELY(!(assertion))) { \
+        if (auto connection = m_gpuConnectionToWebProcess.get()) \
+            connection->terminateWebProcess(); \
+        return; \
+    } \
+} while (0)
+#else
+#define MESSAGE_CHECK RELEASE_ASSERT
+#endif
+
 namespace WebKit {
 
-RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteRenderBundleEncoder::RemoteRenderBundleEncoder(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::RenderBundleEncoder& renderBundleEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderBundleEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
     , m_identifier(identifier)
+    , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderBundleEncoder::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -156,10 +170,10 @@ void RemoteRenderBundleEncoder::insertDebugMarker(String&& markerLabel)
 void RemoteRenderBundleEncoder::finish(const WebGPU::RenderBundleDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    RELEASE_ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
 
     auto renderBundle = m_backing->finish(*convertedDescriptor);
-    RELEASE_ASSERT(renderBundle);
+    MESSAGE_CHECK(renderBundle);
     auto remoteRenderBundle = RemoteRenderBundle::create(*renderBundle, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap->addObject(identifier, remoteRenderBundle);
 }
@@ -170,5 +184,7 @@ void RemoteRenderBundleEncoder::setLabel(String&& label)
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

@@ -35,16 +35,12 @@ namespace WebCore {
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeSaltKey(const Vector<uint8_t>& rawKey)
 {
-    uint8_t usage[] = "SFrame10";
-    uint8_t info[] = "salt";
-    return deriveHDKFSHA256Bits(rawKey.data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 96);
+    return deriveHDKFSHA256Bits(rawKey.subspan(0, 16), "SFrame10"_span, "salt"_span, 96);
 }
 
 static ExceptionOr<Vector<uint8_t>> createBaseSFrameKey(const Vector<uint8_t>& rawKey)
 {
-    uint8_t usage[] = "SFrame10";
-    uint8_t info[] = "key";
-    return deriveHDKFSHA256Bits(rawKey.data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 128);
+    return deriveHDKFSHA256Bits(rawKey.subspan(0, 16), "SFrame10"_span, "key"_span, 128);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeAuthenticationKey(const Vector<uint8_t>& rawKey)
@@ -53,9 +49,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeAuthenticationKey(c
     if (key.hasException())
         return key;
 
-    uint8_t usage[] = "SFrame10 AES CM AEAD";
-    uint8_t info[] = "auth";
-    return deriveHDKFSHA256Bits(key.returnValue().data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 256);
+    return deriveHDKFSHA256Bits(key.returnValue().subspan(0, 16), "SFrame10 AES CM AEAD"_span, "auth"_span, 256);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const Vector<uint8_t>& rawKey)
@@ -64,9 +58,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const
     if (key.hasException())
         return key;
 
-    uint8_t usage[] = "SFrame10 AES CM AEAD";
-    uint8_t info[] = "enc";
-    return deriveHDKFSHA256Bits(key.returnValue().data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 128);
+    return deriveHDKFSHA256Bits(key.returnValue().subspan(0, 16), "SFrame10 AES CM AEAD"_span, "enc"_span, 128);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(std::span<const uint8_t> data, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)

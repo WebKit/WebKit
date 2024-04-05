@@ -38,12 +38,12 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityAttachment::AccessibilityAttachment(RenderAttachment* renderer)
+AccessibilityAttachment::AccessibilityAttachment(RenderAttachment& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
 
-Ref<AccessibilityAttachment> AccessibilityAttachment::create(RenderAttachment* renderer)
+Ref<AccessibilityAttachment> AccessibilityAttachment::create(RenderAttachment& renderer)
 {
     return adoptRef(*new AccessibilityAttachment(renderer));
 }

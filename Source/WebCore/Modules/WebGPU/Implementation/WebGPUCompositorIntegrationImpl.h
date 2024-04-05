@@ -90,7 +90,7 @@ private:
     void prepareForDisplay(CompletionHandler<void()>&&) override;
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication) override;
 
     Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
     WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;

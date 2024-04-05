@@ -5576,8 +5576,7 @@ TEST_P(PixelLocalStorageCompilerTest, Declarations)
     EXPECT_FALSE(log.compileFragmentShader(kPLSInStruct));
     EXPECT_TRUE(log.has("ERROR: 0:5: 'pixelLocalANGLE' : disallowed type in struct"));
     EXPECT_TRUE(
-        log.has("ERROR: 0:10: 'pixelLocalANGLE' : unsupported type - pixelLocalANGLE types are not "
-                "allowed in interface blocks"));
+        log.has("ERROR: 0:10: 'PLSBlock' : Opaque types are not allowed in interface blocks"));
 
     ASSERT_GL_NO_ERROR();
 }

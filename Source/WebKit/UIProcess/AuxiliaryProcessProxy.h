@@ -66,7 +66,7 @@ class AuxiliaryProcessProxy
     , public ResponsivenessTimer::Client
     , private ProcessLauncher::Client
     , public IPC::Connection::Client
-    , public CanMakeThreadSafeCheckedPtr {
+    , public CanMakeThreadSafeCheckedPtr<AuxiliaryProcessProxy> {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:

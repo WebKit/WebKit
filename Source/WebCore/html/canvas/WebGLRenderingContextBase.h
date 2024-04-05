@@ -428,7 +428,7 @@ public:
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 
-    void reshape(int width, int height) override;
+    void reshape(int width, int height, int oldWidth, int oldHeight) override;
 
     void drawBufferToCanvas(SurfaceBuffer) final;
 

@@ -106,7 +106,7 @@ WebMultiRepresentationHEICAttachment *ImageAdapter::multiRepresentationHEIC()
     Vector<uint8_t> data = buffer->copyData();
 
     RetainPtr nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
-    m_multiRepHEIC = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithData:nsData.get()]);
+    m_multiRepHEIC = adoptNS([[PlatformWebMultiRepresentationHEICAttachment alloc] initWithImageContent:nsData.get()]);
 
     return m_multiRepHEIC.get();
 }

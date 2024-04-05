@@ -42,7 +42,7 @@ namespace WebCore {
 class DeferredPromise;
 class RenderStyle;
 
-class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr {
+class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr<FullscreenManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FullscreenManager(Document&);

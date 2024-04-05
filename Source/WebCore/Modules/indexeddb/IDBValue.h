@@ -37,7 +37,7 @@ class IDBValue {
 public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);
-    IDBValue(const ThreadSafeDataBuffer&);
+    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&);
     IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
     WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
     IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);

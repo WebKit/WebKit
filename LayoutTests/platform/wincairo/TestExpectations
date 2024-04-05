@@ -3299,3 +3299,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/same-url-replace-s
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/navigate-from-initial-about-blank-gc.html [ Failure Pass ]
 
 webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Skip ] # Crash
+
+# Makes a subsequent test crash
+webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]

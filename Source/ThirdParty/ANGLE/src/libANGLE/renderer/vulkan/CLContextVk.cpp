@@ -10,7 +10,6 @@
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
-#include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
@@ -22,11 +21,9 @@
 namespace rx
 {
 
-CLContextVk::CLContextVk(const cl::Context &context,
-                         const egl::Display *display,
-                         const cl::DevicePtrs devicePtrs)
+CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs devicePtrs)
     : CLContextImpl(context),
-      vk::Context(GetImplAs<DisplayVk>(display)->getRenderer()),
+      vk::Context(getPlatform()->getRenderer()),
       mAssociatedDevices(devicePtrs)
 {}
 

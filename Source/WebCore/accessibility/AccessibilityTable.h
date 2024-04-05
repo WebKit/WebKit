@@ -38,7 +38,7 @@ class HTMLTableElement;
 
 class AccessibilityTable : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityTable> create(RenderObject*);
+    static Ref<AccessibilityTable> create(RenderObject&);
     static Ref<AccessibilityTable> create(Node&);
     virtual ~AccessibilityTable();
 
@@ -89,7 +89,7 @@ public:
     void setCellSlotsDirty();
 
 protected:
-    explicit AccessibilityTable(RenderObject*);
+    explicit AccessibilityTable(RenderObject&);
     explicit AccessibilityTable(Node&);
 
     AccessibilityChildrenVector m_rows;

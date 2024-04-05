@@ -462,6 +462,7 @@ class Renderer : angle::NonCopyable
                                           vk::ProtectionType protectionType,
                                           egl::ContextPriority priority,
                                           const vk::RenderPass &renderPass,
+                                          VkFramebuffer framebufferOverride,
                                           vk::RenderPassCommandBufferHelper **renderPassCommands);
     angle::Result flushOutsideRPCommands(
         vk::Context *context,
@@ -728,7 +729,15 @@ class Renderer : angle::NonCopyable
         return false;
 #endif
     }
-    vk::ExternalFormatTable mExternalFormatTable;
+
+    vk::ExternalFormatTable *getExternalFormatTable() { return &mExternalFormatTable; }
+
+    std::ostringstream &getPipelineCacheGraphStream() { return mPipelineCacheGraph; }
+    bool isPipelineCacheGraphDumpEnabled() const { return mDumpPipelineCacheGraph; }
+    const char *getPipelineCacheGraphDumpPath() const
+    {
+        return mPipelineCacheGraphDumpPath.c_str();
+    }
 
   private:
     angle::Result setupDevice(vk::Context *context,
@@ -1055,6 +1064,14 @@ class Renderer : angle::NonCopyable
 
     // Memory tracker for allocations and deallocations.
     MemoryAllocationTracker mMemoryAllocationTracker;
+
+    vk::ExternalFormatTable mExternalFormatTable;
+
+    // A graph built from pipeline descs and their transitions.  This is not thread-safe, but it's
+    // only a debug feature that's disabled by default.
+    std::ostringstream mPipelineCacheGraph;
+    bool mDumpPipelineCacheGraph;
+    std::string mPipelineCacheGraphDumpPath;
 };
 
 ANGLE_INLINE Serial Renderer::generateQueueSerial(SerialIndex index)

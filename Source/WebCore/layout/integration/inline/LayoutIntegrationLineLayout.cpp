@@ -741,6 +741,8 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
 
 Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::BlockLayoutState& blockLayoutState, bool isPartialLayout)
 {
+    ASSERT(!m_lineDamage);
+
     if (!m_inlineContent)
         return { };
 
@@ -755,7 +757,9 @@ Vector<LineAdjustment> LineLayout::adjustContentForPagination(const Layout::Bloc
 
     if (layoutRestartLineIndex) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
-        invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+        auto canRestart = invalidation.restartForPagination(*layoutRestartLineIndex, adjustments[*layoutRestartLineIndex].offset);
+        if (!canRestart)
+            m_lineDamage = { };
     }
 
     return adjustments;
@@ -916,6 +920,11 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
     return m_boxTree.rendererForLayoutBox(layoutBox);
+}
+
+bool LineLayout::hasRendererForLayoutBox(const Layout::Box& layoutBox) const
+{
+    return m_boxTree.hasRendererForLayoutBox(layoutBox);
 }
 
 const Layout::ElementBox& LineLayout::rootLayoutBox() const

@@ -46,7 +46,7 @@ messages -> PlaybackSessionManager {
     SetMuted(WebKit::PlaybackSessionContextIdentifier contextId, bool muted)
     SetVolume(WebKit::PlaybackSessionContextIdentifier contextId, double volume)
     SetPlayingOnSecondScreen(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
-    SendRemoteCommand(WebKit::PlaybackSessionContextIdentifier contextId, enum:uint8_t WebCore::PlatformMediaSession::RemoteControlCommandType type, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
+    SendRemoteCommand(WebKit::PlaybackSessionContextIdentifier contextId, enum:uint8_t WebCore::PlatformMediaSessionRemoteControlCommandType type, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
 #if HAVE(SPATIAL_TRACKING_LABEL)
     SetSpatialTrackingLabel(WebKit::PlaybackSessionContextIdentifier contextId, String label)
 #endif

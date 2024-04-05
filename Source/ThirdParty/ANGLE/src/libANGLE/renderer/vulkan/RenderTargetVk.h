@@ -85,7 +85,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     vk::ImageHelper &getImageForWrite() const;
 
     // For cube maps we use single-level single-layer 2D array views.
-    angle::Result getImageView(vk::Context *contextVk, const vk::ImageView **imageViewOut) const;
+    angle::Result getImageView(vk::Context *context, const vk::ImageView **imageViewOut) const;
     angle::Result getImageViewWithColorspace(vk::Context *context,
                                              gl::SrgbWriteControlMode srgbWriteContrlMode,
                                              const vk::ImageView **imageViewOut) const;

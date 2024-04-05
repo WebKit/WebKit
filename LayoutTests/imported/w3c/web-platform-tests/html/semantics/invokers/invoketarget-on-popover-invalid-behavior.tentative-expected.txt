@@ -1,0 +1,13 @@
+
+
+PASS invoking (as foo-bar) on popover does nothing
+PASS invoking (as foo-bar) on open popover does nothing
+PASS invoking (as showmodal) on popover does nothing
+PASS invoking (as showmodal) on open popover does nothing
+PASS invoking (as showpicker) on popover does nothing
+PASS invoking (as showpicker) on open popover does nothing
+PASS invoking (as open) on popover does nothing
+PASS invoking (as open) on open popover does nothing
+PASS invoking (as close) on popover does nothing
+PASS invoking (as close) on open popover does nothing
+

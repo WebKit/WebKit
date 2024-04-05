@@ -102,7 +102,6 @@ Shared/gtk/WebEventFactory.cpp
 
 Shared/linux/WebMemorySamplerLinux.cpp
 
-Shared/soup/WebCoreArgumentCodersSoup.cpp
 Shared/soup/WebErrorsSoup.cpp
 
 Shared/skia/WebCoreArgumentCodersSkia.cpp

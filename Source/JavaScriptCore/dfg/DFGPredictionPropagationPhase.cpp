@@ -594,26 +594,44 @@ private:
                 break;
             case Array::Float32Array:
             case Array::Float64Array:
-                changed |= mergePrediction(SpecFullDouble);
-                break;
-            case Array::Uint32Array:
-                if (isInt32SpeculationForArithmetic(node->getHeapPrediction()) && node->op() == GetByVal)
-                    changed |= mergePrediction(SpecInt32Only);
-                else if (enableInt52())
-                    changed |= mergePrediction(SpecInt52Any);
+                if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                    changed |= mergePrediction(SpecBytecodeDouble | SpecOther);
                 else
-                    changed |= mergePrediction(SpecInt32Only | SpecAnyIntAsDouble);
+                    changed |= mergePrediction(SpecFullDouble);
                 break;
+            case Array::Uint32Array: {
+                if (isInt32SpeculationForArithmetic(node->getHeapPrediction()) && node->op() == GetByVal) {
+                    if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                        changed |= mergePrediction(SpecInt32Only | SpecOther);
+                    else
+                        changed |= mergePrediction(SpecInt32Only);
+                } else if (!(node->op() == GetByVal && arrayMode.isOutOfBounds()) && enableInt52())
+                    changed |= mergePrediction(SpecInt52Any);
+                else {
+                    if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                        changed |= mergePrediction(SpecInt32Only | SpecAnyIntAsDouble | SpecOther);
+                    else
+                        changed |= mergePrediction(SpecInt32Only | SpecAnyIntAsDouble);
+                }
+                break;
+            }
             case Array::Int8Array:
             case Array::Uint8Array:
+            case Array::Uint8ClampedArray:
             case Array::Int16Array:
             case Array::Uint16Array:
             case Array::Int32Array:
-                changed |= mergePrediction(SpecInt32Only);
+                if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                    changed |= mergePrediction(SpecInt32Only | SpecOther);
+                else
+                    changed |= mergePrediction(SpecInt32Only);
                 break;
             case Array::BigInt64Array:
             case Array::BigUint64Array:
-                changed |= mergePrediction(SpecBigInt);
+                if (node->op() == GetByVal && arrayMode.isOutOfBounds())
+                    changed |= mergePrediction(SpecBigInt | SpecOther);
+                else
+                    changed |= mergePrediction(SpecBigInt);
                 break;
             default:
                 changed |= mergePrediction(node->getHeapPrediction());

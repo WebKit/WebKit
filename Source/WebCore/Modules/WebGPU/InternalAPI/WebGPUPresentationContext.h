@@ -45,6 +45,7 @@ public:
 
     WARN_UNUSED_RETURN virtual bool configure(const CanvasConfiguration&) = 0;
     virtual void unconfigure() = 0;
+    virtual void present(bool = false) = 0;
 
     virtual RefPtr<Texture> getCurrentTexture() = 0;
 

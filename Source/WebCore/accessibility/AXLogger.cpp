@@ -559,8 +559,12 @@ TextStream& operator<<(WTF::TextStream& stream, const TextUnderElementMode& mode
         break;
     }
 
-    stream << childrenInclusion << ", includeFocusableContent: " << mode.includeFocusableContent;
-    // Only log the non-default value of false to avoid noise.
+    stream << childrenInclusion;
+    // Only log non-default values to avoid noise.
+    if (mode.includeFocusableContent)
+        stream << ", includeFocusableContent: 1";
+    if (mode.inHiddenSubtree)
+        stream << ", inHiddenSubtree: 1";
     if (!mode.considerHiddenState)
         stream << ", considerHiddenState: 0";
     if (mode.ignoredChildNode)

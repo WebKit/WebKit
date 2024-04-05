@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-AccessibilityMenuList::AccessibilityMenuList(RenderMenuList* renderer)
+AccessibilityMenuList::AccessibilityMenuList(RenderMenuList& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
 
-Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* renderer)
+Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList& renderer)
 {
     return adoptRef(*new AccessibilityMenuList(renderer));
 }

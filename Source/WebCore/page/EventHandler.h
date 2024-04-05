@@ -133,7 +133,7 @@ enum class ImmediateActionStage : uint8_t {
     ActionCompleted
 };
 
-class EventHandler : public CanMakeCheckedPtr {
+class EventHandler : public CanMakeCheckedPtr<EventHandler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit EventHandler(LocalFrame&);

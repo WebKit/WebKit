@@ -1101,7 +1101,8 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        timeout=72000,
                         )
             + 0,
         )
@@ -1116,7 +1117,8 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         command=['/bin/sh', '-c', ' '.join(command) + ' 2>&1 | python3 Tools/Scripts/filter-jsc-tests.py'],
                         logfiles={'json': self.jsonFileName},
-                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'},
+                        timeout=72000,
                         )
             + ExpectShell.log('stdio', stdout='Results for JSC stress tests:\n 9 failures found.')
             + 2,

@@ -93,7 +93,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static String accessibleNameForNode(Node* node, Node* labelledbyNode = nullptr);
+static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr);
 static void appendNameToStringBuilder(StringBuilder&, String&&);
 
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
@@ -1732,7 +1732,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
 
             if (child->isListBox()) {
                 for (const auto& selectedGrandChild : child->selectedChildren())
-                    appendNameToStringBuilder(builder, accessibleNameForNode(selectedGrandChild->node()));
+                    appendNameToStringBuilder(builder, accessibleNameForNode(*selectedGrandChild->node()));
                 continue;
             }
 
@@ -1789,7 +1789,7 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
             appendNameToStringBuilder(result, axLabel->textAsLabelFor(*this));
 #endif
         else
-            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.ptr()));
+            appendNameToStringBuilder(result, accessibleNameForNode(labelElement.get()));
     }
 
     return result.toString();
@@ -1889,19 +1889,19 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     if (RefPtr fieldset = dynamicDowncast<HTMLFieldSetElement>(*node); fieldset && objectCache) {
         AccessibilityObject* object = objectCache->getOrCreate(fieldset->legend());
         if (object && !object->isHidden())
-            textOrder.append(AccessibilityText(accessibleNameForNode(object->node()), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(accessibleNameForNode(*object->node()), AccessibilityTextSource::Alternative));
     }
 
     // The figure element derives its alternative text from the first associated figcaption element if one is available.
     if (isFigureElement()) {
         AccessibilityObject* captionForFigure = this->captionForFigure();
         if (captionForFigure && !captionForFigure->isHidden())
-            textOrder.append(AccessibilityText(accessibleNameForNode(captionForFigure->node()), AccessibilityTextSource::Alternative));
+            textOrder.append(AccessibilityText(accessibleNameForNode(*captionForFigure->node()), AccessibilityTextSource::Alternative));
     }
 
     // Tree items missing a label are labeled by all child elements.
     if (isTreeItem() && ariaLabel.isEmpty() && ariaLabeledByAttribute().isEmpty())
-        textOrder.append(AccessibilityText(accessibleNameForNode(node), AccessibilityTextSource::Alternative));
+        textOrder.append(AccessibilityText(accessibleNameForNode(*node), AccessibilityTextSource::Alternative));
 
 #if ENABLE(MATHML)
     if (node->isMathMLElement())
@@ -2261,38 +2261,59 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text)
 
 String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) const
 {
-    Node* node = this->node();
-    if (RefPtr text = dynamicDowncast<Text>(node))
-        return text->wholeText();
+    auto isAriaVisible = [this] () {
+        return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const auto& object) {
+            return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false"_s);
+        }) != nullptr;
+    };
 
-    bool isAriaVisible = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "false"_s);
-    }) != nullptr;
+    RefPtr node = this->node();
+    if (auto* text = dynamicDowncast<Text>(node.get()))
+        return !mode.isHidden() || isAriaVisible() ? text->wholeText() : emptyString();
 
+    const auto* style = this->style();
+    mode.inHiddenSubtree = WebCore::isDOMHidden(style);
     // The Accname specification states that if the current node is hidden, and not directly
     // referenced by aria-labelledby or aria-describedby, and is not a host language text
     // alternative, the empty string should be returned.
-    if (mode.considerHiddenState && isDOMHidden() && !isAriaVisible && !is<HTMLLabelElement>(node) && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
-        if (labelForObjects().isEmpty() && descriptionForObjects().isEmpty())
+    if (mode.isHidden() && !isAriaVisible() && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
+        if (!labelForObjects().isEmpty() || !descriptionForObjects().isEmpty()) {
+            // This object is a hidden label or description for another object, so ignore hidden states for our
+            // subtree text under element traversals too.
+            //
+            // https://w3c.github.io/accname/#comp_labelledby
+            // "The result of LabelledBy Recursion in combination with Hidden Not Referenced means that user
+            // agents MUST include all nodes in the subtree as part of the accessible name or accessible
+            // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
+            mode.considerHiddenState = false;
+        } else if (style && style->display() == DisplayType::None) {
+            // Unlike visibility:visible + visiblity:visible where the latter can override the former in a subtree,
+            // display:none guarantees nothing within will be rendered, so we can exit early.
             return { };
-
-        // This object is a hidden label or description for another object, so ignore hidden states for our
-        // subtree text under element traversals too (https://w3c.github.io/accname/#comp_labelledby).
-        //
-        // "The result of LabelledBy Recursion in combination with Hidden Not Referenced means that user
-        // agents MUST include all nodes in the subtree as part of the accessible name or accessible
-        // description, when the node referenced by aria-labelledby or aria-describedby is hidden."
-        mode.considerHiddenState = false;
+        }
     }
 
     StringBuilder builder;
+    auto appendTextUnderElement = [&] (const RefPtr<AXCoreObject>& object) {
+        auto childText = object->textUnderElement(mode);
+        if (childText.length())
+            appendNameToStringBuilder(builder, WTFMove(childText));
+    };
+
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
         if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
             continue;
 
+        if (mode.isHidden()) {
+            // If we are within a hidden context, don't add any text for this node. Instead, fan out downwards
+            // to search for un-hidden nodes (e.g. visibility:visible nodes within a visibility:hidden ancestor).
+            appendTextUnderElement(child);
+            continue;
+        }
+
         bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == TextUnderElementMode::Children::IncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
         if (shouldDeriveNameFromAuthor) {
-            appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
+            appendNameToStringBuilder(builder, accessibleNameForNode(*child->node()));
             continue;
         }
 
@@ -2326,9 +2347,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
                 continue;
         }
 
-        String childText = child->textUnderElement(mode);
-        if (childText.length())
-            appendNameToStringBuilder(builder, WTFMove(childText));
+        appendTextUnderElement(child);
     }
 
     return builder.toString().trim(isUnicodeWhitespace).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
@@ -2501,11 +2520,8 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 
 // This function implements the ARIA accessible name as described by the Mozilla
 // ARIA Implementer's Guide.
-static String accessibleNameForNode(Node* node, Node* labelledbyNode)
+static String accessibleNameForNode(Node& node, Node* labelledbyNode)
 {
-    // FIXME: We should just change this function to just take a reference since we ASSERT(node) and deref without a nullptr check.
-    ASSERT(node);
-
     auto* element = dynamicDowncast<Element>(node);
     const AtomString& ariaLabel = element ? element->attributeWithoutSynchronization(aria_labelAttr) : nullAtom();
     if (!ariaLabel.isEmpty())
@@ -2517,8 +2533,8 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    auto* cache = node->document().axObjectCache();
-    RefPtr axObject = cache ? cache->getOrCreate(*node) : nullptr;
+    auto* cache = node.document().axObjectCache();
+    RefPtr axObject = cache ? cache->getOrCreate(node) : nullptr;
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
@@ -2541,7 +2557,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         StringBuilder builder;
         String childText;
         for (const auto& child : selectedChildren)
-            appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
+            appendNameToStringBuilder(builder, accessibleNameForNode(*child->node()));
 
         childText = builder.toString();
         if (!childText.isEmpty())
@@ -2567,7 +2583,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(TextUnderElementMode(TextUnderElementMode::Children::IncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace(isUnicodeWhitespace);
+        text = (element ? element->innerText() : node.textContent()).simplifyWhiteSpace(isUnicodeWhitespace);
 
     if (!text.isEmpty())
         return text;
@@ -2581,7 +2597,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
     if (auto* assignedNodes = (slotElement && labelledbyNode) ? slotElement->assignedNodes() : nullptr) {
         StringBuilder builder;
         for (const auto& assignedNode : *assignedNodes)
-            appendNameToStringBuilder(builder, accessibleNameForNode(assignedNode.get()));
+            appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode));
 
         auto assignedNodesText = builder.toString();
         if (!assignedNodesText.isEmpty())
@@ -2609,7 +2625,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
         if (AccessibilityObject* axObject = cache->getOrCreate(*child)) {
             String description = axObject->ariaLabeledByAttribute();
             if (description.isEmpty())
-                description = accessibleNameForNode(child);
+                description = accessibleNameForNode(*child);
             appendNameToStringBuilder(builder, WTFMove(description));
         }
     }
@@ -2621,7 +2637,7 @@ String AccessibilityNodeObject::descriptionForElements(const Vector<Ref<Element>
 {
     StringBuilder builder;
     for (auto& element : elements)
-        appendNameToStringBuilder(builder, accessibleNameForNode(element.ptr(), node()));
+        appendNameToStringBuilder(builder, accessibleNameForNode(element.get(), node()));
     return builder.toString();
 }
 

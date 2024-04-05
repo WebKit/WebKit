@@ -59,7 +59,8 @@ static CurlResponse createCurlResponse(std::optional<String> contentType = "mult
     return response;
 }
 
-class MultipartHandleClient : public CurlMultipartHandleClient {
+class MultipartHandleClient : public CurlMultipartHandleClient, public CanMakeCheckedPtr<MultipartHandleClient> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void setMultipartHandle();
 
@@ -91,6 +92,11 @@ public:
     bool complete() { return m_didComplete; }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr<MultipartHandleClient>::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr<MultipartHandleClient>::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr<MultipartHandleClient>::decrementPtrCount(); }
+
     Vector<String> m_headers;
     Vector<uint8_t> m_data;
     bool m_didComplete { false };

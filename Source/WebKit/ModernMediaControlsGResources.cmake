@@ -7,11 +7,9 @@ macro(WEBKIT_BUILD_MODERN_MEDIA_CONTROLS_GRESOURCES _derived_sources_dir)
         VERBATIM
     )
 
-    add_custom_command(
-        OUTPUT ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.c ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.deps
-        DEPENDS ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.xml
-        DEPFILE ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.deps
-        COMMAND glib-compile-resources --generate --sourcedir=${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita --target=${_derived_sources_dir}/ModernMediaControlsGResourceBundle.c --dependency-file=${_derived_sources_dir}/ModernMediaControlsGResourceBundle.deps ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.xml
-        VERBATIM
+    GLIB_COMPILE_RESOURCES(
+        OUTPUT        ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.c
+        SOURCE_XML    ${_derived_sources_dir}/ModernMediaControlsGResourceBundle.xml
+        RESOURCE_DIRS ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita
     )
 endmacro()

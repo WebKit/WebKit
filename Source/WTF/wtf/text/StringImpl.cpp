@@ -168,7 +168,7 @@ Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(const LChar* characters
     return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(unsigned length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, CharacterType*& data)
 {
     if (!length) {
         data = nullptr;
@@ -177,7 +177,7 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     return createUninitializedInternalNonEmpty(length, data);
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, CharacterType*& data)
 {
     ASSERT(length);
 
@@ -191,15 +191,15 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     return constructInternal<CharacterType>(*string, length);
 }
 
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, LChar*& data);
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, UChar*& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, LChar*& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, UChar*& data);
 
-Ref<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, LChar*& data)
 {
     return createUninitializedInternal(length, data);
 }
 
-Ref<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, UChar*& data)
 {
     return createUninitializedInternal(length, data);
 }

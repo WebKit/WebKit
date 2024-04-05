@@ -27,6 +27,7 @@
 
 #include "Utilities.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
@@ -35,7 +36,8 @@
 
 namespace TestWebKitAPI {
 
-class CheckedObject : public CanMakeCheckedPtr {
+class CheckedObject : public CanMakeCheckedPtr<CheckedObject> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     int someFunction() const { return -7; }
 };
@@ -348,7 +350,8 @@ TEST(WTF_CheckedPtr, ReferenceCountLimit)
     EXPECT_EQ(object.ptrCount(), count);
 }
 
-class ThreadSafeCheckedPtrObject : public CanMakeThreadSafeCheckedPtr {
+class ThreadSafeCheckedPtrObject : public CanMakeThreadSafeCheckedPtr<ThreadSafeCheckedPtrObject> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     std::atomic<unsigned> value { 0 };
 };

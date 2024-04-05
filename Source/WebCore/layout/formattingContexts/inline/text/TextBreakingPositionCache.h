@@ -46,7 +46,7 @@ public:
     TextBreakingPositionCache();
 
     using Key = std::tuple<String, TextBreakingPositionContext, SecurityOriginData>;
-    using List = Vector<size_t, 10>;
+    using List = Vector<size_t, 8>;
     void set(const Key&, List&& breakingPositionList);
     const List* get(const Key&) const;
 

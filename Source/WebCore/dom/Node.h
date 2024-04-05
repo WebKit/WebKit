@@ -509,7 +509,7 @@ public:
     void clearNodeLists();
 
     virtual bool willRespondToMouseMoveEvents() const;
-    bool willRespondToMouseClickEvents() const;
+    bool willRespondToMouseClickEvents(const RenderStyle* = nullptr) const;
     Editability computeEditabilityForMouseClickEvents(const RenderStyle* = nullptr) const;
     virtual bool willRespondToMouseClickEventsWithEditability(Editability) const;
     virtual bool willRespondToTouchEvents() const;

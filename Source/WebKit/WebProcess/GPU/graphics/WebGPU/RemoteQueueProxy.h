@@ -80,8 +80,7 @@ private:
     void writeBuffer(
         const WebCore::WebGPU::Buffer&,
         WebCore::WebGPU::Size64 bufferOffset,
-        const void* source,
-        size_t byteLength,
+        std::span<const uint8_t> source,
         WebCore::WebGPU::Size64 dataOffset = 0,
         std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
 
@@ -95,8 +94,7 @@ private:
     void writeBuffer(
         const WebCore::WebGPU::Buffer&,
         WebCore::WebGPU::Size64 bufferOffset,
-        void* source,
-        size_t byteLength,
+        std::span<uint8_t> source,
         WebCore::WebGPU::Size64 dataOffset = 0,
         std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
 

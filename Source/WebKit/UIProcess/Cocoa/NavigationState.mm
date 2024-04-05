@@ -514,6 +514,10 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 #if ENABLE(WK_WEB_EXTENSIONS)
 static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigationAction, WebPageProxy& page)
 {
+    bool subframeNavigation = navigationAction.targetFrame() && !navigationAction.targetFrame()->isMainFrame();
+    if (subframeNavigation)
+        return false;
+
     auto *requiredBaseURL = page.cocoaView().get()._requiredWebExtensionBaseURL;
     if (!requiredBaseURL)
         return false;
@@ -545,6 +549,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
 #if ENABLE(WK_WEB_EXTENSIONS)
             if (isUnsupportedWebExtensionNavigation(navigationAction, webPage)) {
+                RELEASE_LOG_DEBUG(Extensions, "Ignoring unsupported web extension navigation");
                 listener->ignore();
                 return;
             }
@@ -614,6 +619,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
         ensureOnMainRunLoop([navigationAction = WTFMove(navigationAction), webPageProxy = WTFMove(webPageProxy), actionPolicy, localListener = WTFMove(localListener), apiWebsitePolicies = WTFMove(apiWebsitePolicies)] () mutable {
 #if ENABLE(WK_WEB_EXTENSIONS)
             if (actionPolicy != WKNavigationActionPolicyCancel && isUnsupportedWebExtensionNavigation(navigationAction, webPageProxy)) {
+                RELEASE_LOG_DEBUG(Extensions, "Ignoring unsupported web extension navigation");
                 localListener->ignore();
                 return;
             }

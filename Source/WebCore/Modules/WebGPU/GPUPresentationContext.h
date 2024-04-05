@@ -49,11 +49,11 @@ public:
         return adoptRef(*new GPUPresentationContext(WTFMove(backing)));
     }
 
-    WARN_UNUSED_RETURN bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate);
+    WARN_UNUSED_RETURN bool configure(const GPUCanvasConfiguration&, GPUIntegerCoordinate, GPUIntegerCoordinate, bool);
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture();
-    void present();
+    void present(bool presentBacking = false);
 
     WebGPU::PresentationContext& backing() { return m_backing; }
     const WebGPU::PresentationContext& backing() const { return m_backing; }

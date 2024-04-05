@@ -30,6 +30,7 @@ struct WebKit::GPUProcessPreferencesForWebProcess {
     bool isDynamicContentScalingEnabled;
 #endif
     bool allowTestOnlyIPC;
+    bool isLockdownSafeFontParserEnabled;
 };
 
 #endif

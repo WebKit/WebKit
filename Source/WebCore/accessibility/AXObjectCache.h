@@ -58,6 +58,7 @@ class Node;
 class Page;
 class RenderBlock;
 class RenderObject;
+class RenderStyle;
 class RenderText;
 class RenderWidget;
 class Scrollbar;
@@ -250,7 +251,7 @@ enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 enum class PostTarget { Element, ObservableParent };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXObjectCache);
-class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr
+class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr<AXObjectCache>
     , public AXTreeStore<AXObjectCache> {
     WTF_MAKE_NONCOPYABLE(AXObjectCache);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(AXObjectCache);
@@ -735,7 +736,7 @@ private:
 #endif
 
     // Object creation.
-    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
+    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject&);
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
@@ -888,6 +889,8 @@ bool nodeHasTableRole(Node*);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node&);
 bool isNodeAriaVisible(Node*);
+
+bool isDOMHidden(const RenderStyle*);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache::AXNotification);
 

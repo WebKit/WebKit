@@ -146,10 +146,12 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# Skip glib-only combobox accessibility tests.
+accessibility/combobox/gtk [ Skip ]
+
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
-accessibility/combobox/combobox-collapsed-selection-changed.html
 accessibility/multiselect-list-reports-active-option.html
 
 # uiController.simulateRotationLikeSafari() is not implemented on macOS.
@@ -2623,7 +2625,7 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 [ Sonoma ] imported/w3c/web-platform-tests/css/css-transforms/transformed-rotateY-1.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/css/css-transforms/transforms-rotateY-degree-60.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-containing-block.html [ ImageOnlyFailure ]
-[ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
+[ Sonoma wk1 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
@@ -2631,7 +2633,7 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/line-styles/canvas_linestyles_linecap_001.htm [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/the-canvas-state/canvas_state_restore_001.htm [ ImageOnlyFailure ]
 [ Sonoma ] imported/w3c/web-platform-tests/html/canvas/element/manual/transformations/canvas_transformations_scale_001.htm [ ImageOnlyFailure ]
-[ Sonoma ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure ]
+[ Sonoma wk1 ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure ]
 [ Sonoma ] svg/as-image/img-with-svg-resource-in-dom-and-drawImage.html [ ImageOnlyFailure ]
 [ Sonoma ] svg/as-image/img-with-svg-resource-in-dom-no-size-and-drawImage.html [ ImageOnlyFailure ]
 [ Sonoma ] svg/as-image/img-with-svg-resource-not-in-dom-and-drawImage.html [ ImageOnlyFailure ]
@@ -2640,26 +2642,6 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 webkit.org/b/270195 [ Monterey+ Debug ] fast/text/emoji-num-glyphs.html [ Timeout ]
 
 webkit.org/b/270303 [ Ventura ] tables/mozilla/bugs/bug4527.html [ Failure ]
-
-# webkit.org/b/270860 (REGRESSION (275949@main): 18 imported WPT /i18n/.../css-text-line-break* tests are consistent/flaky failures.)
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/other-lang/css-text-line-break-de-po-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-cpm-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/unknown-lang/css-text-line-break-po-loose.html  [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cj-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-cpm-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-hyphens-normal.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-iteration-loose.html [ Pass Failure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/zh/css-text-line-break-zh-po-loose.html [ Pass Failure ]
 
 webkit.org/b/270939 [ Ventura ] tables/mozilla/bugs/bug12384.html [ Failure ]
 

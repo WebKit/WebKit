@@ -30,6 +30,7 @@ find_package(WebP REQUIRED COMPONENTS demux)
 find_package(ATSPI 2.5.3)
 
 include(GStreamerDefinitions)
+include(FindGLibCompileResources)
 
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)

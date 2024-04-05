@@ -8,16 +8,23 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPLATFORMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPLATFORMVK_H_
 
+#include "common/MemoryBuffer.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/CLPlatformImpl.h"
 
+#include "libANGLE/renderer/vulkan/vk_utils.h"
+
 #include "libANGLE/Display.h"
+#include "libANGLE/SizedMRUCache.h"
 
 namespace rx
 {
 
-class CLPlatformVk : public CLPlatformImpl
+class CLPlatformVk : public CLPlatformImpl, public vk::Context, public vk::GlobalOps
 {
   public:
+    using Ptr = std::unique_ptr<CLPlatformVk>;
+
     ~CLPlatformVk() override;
 
     Info createInfo() const override;
@@ -40,9 +47,30 @@ class CLPlatformVk : public CLPlatformImpl
     static constexpr cl_version GetVersion();
     static const std::string &GetVersionString();
 
+    angle::Result initBackendRenderer();
+
+    // vk::Context
+    void handleError(VkResult result,
+                     const char *file,
+                     const char *function,
+                     unsigned int line) override;
+
+    // vk::GlobalOps
+    void putBlob(const angle::BlobCacheKey &key, const angle::MemoryBuffer &value) override;
+    bool getBlob(const angle::BlobCacheKey &key, angle::BlobCacheValue *valueOut) override;
+    std::shared_ptr<angle::WaitableEvent> postMultiThreadWorkerTask(
+        const std::shared_ptr<angle::Closure> &task) override;
+    void notifyDeviceLost() override;
+
   private:
     explicit CLPlatformVk(const cl::Platform &platform);
-    egl::Display *mDisplay;
+
+    angle::NativeWindowSystem getWindowSystem();
+    const char *getWSIExtension();
+    const char *getWSILayer() { return nullptr; }
+
+    mutable std::mutex mBlobCacheMutex;
+    angle::SizedMRUCache<angle::BlobCacheKey, angle::MemoryBuffer> mBlobCache;
 };
 
 constexpr cl_version CLPlatformVk::GetVersion()

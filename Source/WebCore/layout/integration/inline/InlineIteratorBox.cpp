@@ -109,6 +109,9 @@ FloatRect Box::visualRect() const
 
 RenderObject::HighlightState Box::selectionState() const
 {
+    if (!hasRenderer())
+        return { };
+
     if (auto* text = dynamicDowncast<TextBox>(*this)) {
         auto& renderer = text->renderer();
         return renderer.view().selection().highlightStateForTextBox(renderer, text->selectableRange());

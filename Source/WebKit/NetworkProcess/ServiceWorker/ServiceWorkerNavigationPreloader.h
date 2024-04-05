@@ -44,7 +44,7 @@ class DownloadManager;
 class NetworkLoad;
 class NetworkSession;
 
-class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader>, public CanMakeCheckedPtr {
+class ServiceWorkerNavigationPreloader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerNavigationPreloader>, public CanMakeCheckedPtr<ServiceWorkerNavigationPreloader> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ServiceWorkerNavigationPreloader(NetworkSession&, NetworkLoadParameters&&, const WebCore::NavigationPreloadState&, bool shouldCaptureExtraNetworkLoadMetrics);

@@ -1017,6 +1017,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiTextureView = WebGPU::fromAPI(entry.textureView);
+                getQueue().clearTextureViewIfNeeded(apiTextureView);
+
                 id<MTLTexture> texture = apiTextureView.texture();
                 if (!apiTextureView.isDestroyed()) {
                     if (!apiTextureView.isValid()) {
@@ -1072,8 +1074,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
-                ASSERT(textureData.texture0);
-                ASSERT(textureData.texture1);
                 if (textureData.texture0) {
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture0);
                     stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(BindGroupEntryUsage::ConstantTexture, entry.binding, externalTexture));

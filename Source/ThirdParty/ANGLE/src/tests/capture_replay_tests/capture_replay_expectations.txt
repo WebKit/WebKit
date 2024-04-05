@@ -158,6 +158,7 @@
 7449 : MultisampleTest.Line/* = SKIP_FOR_CAPTURE
 7449 : MultisampleTest.Point/* = SKIP_FOR_CAPTURE
 7449 : MultisampleTest.Triangle/* = SKIP_FOR_CAPTURE
+7449 : MultisampleTestES3.RenderPassResolveToFBOThenSwap/* = SKIP_FOR_CAPTURE
 
 7483 : MultisampleTest.AlphaToSampleCoverage/* = SKIP_FOR_CAPTURE
 7483 : MultisampleTestES3.ResolveToFBO/* = SKIP_FOR_CAPTURE

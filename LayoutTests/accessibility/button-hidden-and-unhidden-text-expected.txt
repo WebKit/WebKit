@@ -1,0 +1,17 @@
+This test ensures we compute the correct accessibility label when visibility:hidden and visibility:visible are nested.
+
+	AXTitle: visible to all users, un-hidden for all users
+	AXDescription:
+	AXHelp:
+PASS: text.includes('un-hidden for all users') === true
+PASS: !text.includes('hidden-foo-bar') === true
+
+	AXTitle: visible to all users, hidden-foo-bar, un-hidden for all users
+	AXDescription:
+	AXHelp:
+PASS: text.includes('hidden-foo-bar') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+visible to all users, hidden-foo-bar, un-hidden for all users

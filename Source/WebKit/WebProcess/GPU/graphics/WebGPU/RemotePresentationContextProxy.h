@@ -50,7 +50,7 @@ public:
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
-    void present();
+    void present(bool = false) final;
 
 private:
     friend class DowncastConvertToBackingContext;

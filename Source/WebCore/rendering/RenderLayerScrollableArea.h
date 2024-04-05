@@ -258,6 +258,8 @@ public:
     void invalidateScrollAnchoringElement() final;
     ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
+    void createScrollbarsController() final;
+
 private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
@@ -286,8 +288,6 @@ private:
     void registerScrollableAreaForAnimatedScroll();
 
     float deviceScaleFactor() const final;
-
-    void createScrollbarsController() final;
 
 private:
     bool m_scrollDimensionsDirty { true };

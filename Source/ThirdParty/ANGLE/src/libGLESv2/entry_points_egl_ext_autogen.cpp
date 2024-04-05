@@ -1619,7 +1619,10 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
                                              EGLint attribute,
                                              EGLAttribKHR *value)
 {
-
+    if (attribute == EGL_BUFFER_AGE_EXT)
+    {
+        ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(dpy, surface));
+    }
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {

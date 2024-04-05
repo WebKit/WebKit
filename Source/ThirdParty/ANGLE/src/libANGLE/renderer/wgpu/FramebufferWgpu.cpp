@@ -14,6 +14,7 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
 {
@@ -116,14 +117,14 @@ angle::Result FramebufferWgpu::readPixels(const gl::Context *context,
     // Compute size of unclipped rows and initial skip
     const gl::InternalFormat &glFormat = gl::GetInternalFormatInfo(format, type);
 
-    ContextWgpu *contextNull = GetImplAs<ContextWgpu>(context);
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
 
     GLuint rowBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextNull, glFormat.computeRowPitch(type, origArea.width, pack.alignment,
+    ANGLE_CHECK_GL_MATH(contextWgpu, glFormat.computeRowPitch(type, origArea.width, pack.alignment,
                                                               pack.rowLength, &rowBytes));
 
     GLuint skipBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextNull,
+    ANGLE_CHECK_GL_MATH(contextWgpu,
                         glFormat.computeSkipBytes(type, rowBytes, 0, pack, false, &skipBytes));
     pixels += skipBytes;
 
@@ -161,6 +162,54 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                                          const gl::Framebuffer::DirtyBits &dirtyBits,
                                          gl::Command command)
 {
+    ASSERT(dirtyBits.any());
+    for (size_t dirtyBit : dirtyBits)
+    {
+        switch (dirtyBit)
+        {
+            case gl::Framebuffer::DIRTY_BIT_DEPTH_ATTACHMENT:
+            case gl::Framebuffer::DIRTY_BIT_DEPTH_BUFFER_CONTENTS:
+            case gl::Framebuffer::DIRTY_BIT_STENCIL_ATTACHMENT:
+            case gl::Framebuffer::DIRTY_BIT_STENCIL_BUFFER_CONTENTS:
+                ANGLE_TRY(mRenderTargetCache.updateDepthStencilRenderTarget(context, mState));
+                break;
+            case gl::Framebuffer::DIRTY_BIT_READ_BUFFER:
+                ANGLE_TRY(mRenderTargetCache.update(context, mState, dirtyBits));
+                break;
+            case gl::Framebuffer::DIRTY_BIT_DRAW_BUFFERS:
+            case gl::Framebuffer::DIRTY_BIT_DEFAULT_WIDTH:
+            case gl::Framebuffer::DIRTY_BIT_DEFAULT_HEIGHT:
+            case gl::Framebuffer::DIRTY_BIT_DEFAULT_SAMPLES:
+            case gl::Framebuffer::DIRTY_BIT_DEFAULT_FIXED_SAMPLE_LOCATIONS:
+            case gl::Framebuffer::DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE:
+            case gl::Framebuffer::DIRTY_BIT_DEFAULT_LAYERS:
+            case gl::Framebuffer::DIRTY_BIT_FOVEATION:
+                break;
+            default:
+            {
+                static_assert(gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");
+                uint32_t colorIndexGL;
+                if (dirtyBit < gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_MAX)
+                {
+                    colorIndexGL = static_cast<uint32_t>(
+                        dirtyBit - gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0);
+                }
+                else
+                {
+                    ASSERT(dirtyBit >= gl::Framebuffer::DIRTY_BIT_COLOR_BUFFER_CONTENTS_0 &&
+                           dirtyBit < gl::Framebuffer::DIRTY_BIT_COLOR_BUFFER_CONTENTS_MAX);
+                    colorIndexGL = static_cast<uint32_t>(
+                        dirtyBit - gl::Framebuffer::DIRTY_BIT_COLOR_BUFFER_CONTENTS_0);
+                }
+
+                ANGLE_TRY(
+                    mRenderTargetCache.updateColorRenderTarget(context, mState, colorIndexGL));
+
+                break;
+            }
+        }
+    }
+
     return angle::Result::Continue;
 }
 

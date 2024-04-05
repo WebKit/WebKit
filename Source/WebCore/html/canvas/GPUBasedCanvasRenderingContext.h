@@ -40,7 +40,7 @@ public:
     bool isGPUBased() const override { return true; }
     bool isAccelerated() const override { return true; }
 
-    virtual void reshape(int width, int height) = 0;
+    virtual void reshape(int width, int height, int oldWidth, int oldHeight) = 0;
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&);
 

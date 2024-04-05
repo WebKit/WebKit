@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderObject;
 
-AccessibilityARIATable::AccessibilityARIATable(RenderObject* renderer)
+AccessibilityARIATable::AccessibilityARIATable(RenderObject& renderer)
     : AccessibilityTable(renderer)
 {
 }
@@ -47,7 +47,7 @@ AccessibilityARIATable::AccessibilityARIATable(Node& node)
 
 AccessibilityARIATable::~AccessibilityARIATable() = default;
 
-Ref<AccessibilityARIATable> AccessibilityARIATable::create(RenderObject* renderer)
+Ref<AccessibilityARIATable> AccessibilityARIATable::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityARIATable(renderer));
 }

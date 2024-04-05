@@ -34,6 +34,8 @@
 #include "Timer.h"
 #include <functional>
 #include <objc/objc.h>
+#include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -51,7 +53,9 @@ class WebPlaybackSessionChangeObserver;
 
 class WEBCORE_EXPORT PlaybackSessionInterfaceIOS
     : public PlaybackSessionModelClient
-    , public RefCounted<PlaybackSessionInterfaceIOS> {
+    , public RefCounted<PlaybackSessionInterfaceIOS>
+    , public CanMakeCheckedPtr<PlaybackSessionInterfaceIOS> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void initialize();
     virtual void invalidate();
@@ -93,6 +97,11 @@ protected:
     PlaybackSessionModel* m_playbackSessionModel { nullptr };
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final;
+    void incrementPtrCount() const final;
+    void decrementPtrCount() const final;
+
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_spatialTrackingLabel;

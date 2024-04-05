@@ -27,6 +27,7 @@ messages -> RemotePresentationContext NotRefCounted Stream {
     void Configure(WebKit::WebGPU::CanvasConfiguration configuration)
     void Unconfigure()
     void GetCurrentTexture(WebKit::WebGPUIdentifier identifier)
+    void Present()
 }
 
 #endif

@@ -31,6 +31,7 @@
 #include "XMLErrors.h"
 #include <libxml/tree.h>
 #include <libxml/xmlstring.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/CString.h>
@@ -60,7 +61,7 @@ private:
     xmlParserCtxtPtr m_context;
 };
 
-class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient {
+class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient, public CanMakeCheckedPtr<XMLDocumentParser> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<XMLDocumentParser> create(Document& document, LocalFrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
@@ -90,6 +91,11 @@ public:
 private:
     explicit XMLDocumentParser(Document&, LocalFrameView*, OptionSet<ParserContentPolicy>);
     XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
 
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) final;

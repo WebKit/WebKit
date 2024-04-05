@@ -297,6 +297,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void invalidateDriverUniforms();
     void invalidateRenderPipeline();
 
+    void updateIncompatibleAttachments(const gl::State &glState);
+
     // Call this to notify ContextMtl whenever FramebufferMtl's state changed
     void onDrawFrameBufferChangedState(const gl::Context *context,
                                        FramebufferMtl *framebuffer,
@@ -408,9 +410,13 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
 
+    bool getForceResyncDrawFramebuffer() const { return mForceResyncDrawFramebuffer; }
+    gl::DrawBufferMask getIncompatibleAttachments() const { return mIncompatibleAttachments; }
+
   private:
     void ensureCommandBufferReady();
     void endBlitAndComputeEncoding();
+    angle::Result resyncDrawFramebufferIfNeeded(const gl::Context *context);
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,
                             GLint firstVertex,
@@ -623,6 +629,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     MTLWinding mWinding;
     MTLCullMode mCullMode;
     bool mCullAllPolygons = false;
+
+    // Cached state to handle attachments incompatible with the current program
+    bool mForceResyncDrawFramebuffer = false;
+    gl::DrawBufferMask mIncompatibleAttachments;
 
     mtl::BufferManager mBufferManager;
 

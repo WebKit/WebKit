@@ -149,28 +149,30 @@ UChar* StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLen
     return extendBufferForAppending<UChar>(requiredLength);
 }
 
-void StringBuilder::appendCharacters(const UChar* characters, unsigned length)
+void StringBuilder::appendCharacters(std::span<const UChar> characters)
 {
-    if (!length || hasOverflowed())
+    if (characters.empty() || hasOverflowed())
         return;
-    if (length == 1 && isLatin1(characters[0]) && is8Bit()) {
+    if (characters.size() == 1 && isLatin1(characters[0]) && is8Bit()) {
         append(static_cast<LChar>(characters[0]));
         return;
     }
-    if (auto destination = extendBufferForAppendingWithUpconvert(saturatedSum<uint32_t>(m_length, length)))
-        StringImpl::copyCharacters(destination, characters, length);
+    RELEASE_ASSERT(characters.size() < std::numeric_limits<uint32_t>::max());
+    if (auto destination = extendBufferForAppendingWithUpconvert(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
+        StringImpl::copyCharacters(destination, characters.data(), characters.size());
 }
 
-void StringBuilder::appendCharacters(const LChar* characters, unsigned length)
+void StringBuilder::appendCharacters(std::span<const LChar> characters)
 {
-    if (!length || hasOverflowed())
+    if (characters.empty() || hasOverflowed())
         return;
+    RELEASE_ASSERT(characters.size() < std::numeric_limits<uint32_t>::max());
     if (is8Bit()) {
-        if (auto destination = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, length)))
-            StringImpl::copyCharacters(destination, characters, length);
+        if (auto destination = extendBufferForAppending<LChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
+            StringImpl::copyCharacters(destination, characters.data(), characters.size());
     } else {
-        if (auto destination = extendBufferForAppending<UChar>(saturatedSum<uint32_t>(m_length, length)))
-            StringImpl::copyCharacters(destination, characters, length);
+        if (auto destination = extendBufferForAppending<UChar>(saturatedSum<uint32_t>(m_length, static_cast<uint32_t>(characters.size()))))
+            StringImpl::copyCharacters(destination, characters.data(), characters.size());
     }
 }
 

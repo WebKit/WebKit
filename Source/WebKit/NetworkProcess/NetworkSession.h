@@ -101,7 +101,7 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr {
+class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr<NetworkSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);

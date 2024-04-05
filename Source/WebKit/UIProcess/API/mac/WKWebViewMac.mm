@@ -47,6 +47,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/UnifiedTextReplacementAdditions.h>
+#import <WebKitAdditions/WebMultiRepresentationHEICAttachmentAdditions.h>
 #endif
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)

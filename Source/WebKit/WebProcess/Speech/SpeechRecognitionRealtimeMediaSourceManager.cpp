@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SpeechRecognitionCaptureSource.h>
+#include <wtf/CheckedRef.h>
 
 #if PLATFORM(COCOA)
 #include "SharedCARingBuffer.h"
@@ -56,6 +57,7 @@ using namespace WebCore;
 class SpeechRecognitionRealtimeMediaSourceManager::Source
     : private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
+    , public CanMakeCheckedPtr<SpeechRecognitionRealtimeMediaSourceManager::Source>
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -85,6 +87,11 @@ public:
     }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     void sourceStopped() final
     {
         if (m_source->captureDidFail()) {

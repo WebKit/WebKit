@@ -1778,6 +1778,11 @@ static Color consumeOriginColorRaw(CSSParserTokenRange& args, const CSSParserCon
     if (value->isColor())
         return value->color();
 
+    // FIXME: We don't know how to deal with unresolved origin color at parse time.
+    // https://bugs.webkit.org/show_bug.cgi?id=245970
+    if (value->isUnresolvedColor())
+        return { };
+
     ASSERT(value->isValueID());
     auto keyword = value->valueID();
 

@@ -42,7 +42,7 @@ struct PaintInfo;
 
 namespace LayoutIntegration {
 
-class FlexLayout : public CanMakeCheckedPtr {
+class FlexLayout : public CanMakeCheckedPtr<FlexLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FlexLayout(RenderFlexibleBox&);

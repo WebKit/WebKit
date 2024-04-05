@@ -78,7 +78,7 @@ enum class ReasonForCallingCanExecuteScripts : uint8_t {
 
 using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
 
-class ScriptController : public CanMakeWeakPtr<ScriptController>, public CanMakeCheckedPtr {
+class ScriptController : public CanMakeWeakPtr<ScriptController>, public CanMakeCheckedPtr<ScriptController> {
     WTF_MAKE_FAST_ALLOCATED;
 
     using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;

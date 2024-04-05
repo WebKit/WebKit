@@ -110,37 +110,36 @@ ExceptionOr<Vector<uint8_t>> transformAESCTR(CCOperation operation, const Vector
     return WTFMove(head);
 }
 
-CCStatus keyDerivationHMAC(CCDigestAlgorithm digest, const void *keyDerivationKey, size_t keyDerivationKeyLen, const void *context, size_t contextLen, const void *salt, size_t saltLen, void *derivedKey, size_t derivedKeyLen)
+CCStatus keyDerivationHMAC(CCDigestAlgorithm digest, std::span<const uint8_t> keyDerivationKey, std::span<const uint8_t> context, std::span<const uint8_t> salt, Vector<uint8_t>& derivedKey)
 {
     CCKDFParametersRef params;
-    CCStatus rv = CCKDFParametersCreateHkdf(&params, salt, saltLen, context, contextLen);
+    CCStatus rv = CCKDFParametersCreateHkdf(&params, salt.data(), salt.size(), context.data(), context.size());
     if (rv != kCCSuccess)
         return rv;
 
-    rv = CCDeriveKey(params, digest, keyDerivationKey, keyDerivationKeyLen, derivedKey, derivedKeyLen);
+    rv = CCDeriveKey(params, digest, keyDerivationKey.data(), keyDerivationKey.size(), derivedKey.data(), derivedKey.size());
     CCKDFParametersDestroy(params);
 
     return rv;
 }
 
-ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm digestAlgorithm, const uint8_t* key, size_t keySize, const uint8_t* salt, size_t saltSize, const uint8_t* info, size_t infoSize, size_t length)
+ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm digestAlgorithm, std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length)
 {
     Vector<uint8_t> result(length / 8);
-    Vector<uint8_t> infoVector;
 
     // <rdar://problem/32439455> Currently, when key data is empty, CCKeyDerivationHMac will bail out.
-    if (keyDerivationHMAC(digestAlgorithm, key, keySize, info, infoSize, salt, saltSize, result.data(), result.size()) != kCCSuccess)
+    if (keyDerivationHMAC(digestAlgorithm, key, info, salt, result) != kCCSuccess)
         return Exception { ExceptionCode::OperationError };
 
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(const uint8_t* key, size_t keySize, const uint8_t* salt, size_t saltSize, const uint8_t* info, size_t infoSize, size_t length)
+ExceptionOr<Vector<uint8_t>> deriveHDKFSHA256Bits(std::span<const uint8_t> key, std::span<const uint8_t> salt, std::span<const uint8_t> info, size_t length)
 {
-    return deriveHDKFBits(kCCDigestSHA256, key, keySize, salt, saltSize, info, infoSize, length);
+    return deriveHDKFBits(kCCDigestSHA256, key, salt, info, length);
 }
 
-Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t size)
+Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, std::span<const uint8_t> data)
 {
     size_t digestLength;
     switch (algorithm) {
@@ -165,13 +164,13 @@ Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<u
     }
 
     Vector<uint8_t> result(digestLength);
-    CCHmac(algorithm, key.data(), key.size(), data, size, result.data());
+    CCHmac(algorithm, key.data(), key.size(), data.data(), data.size(), result.data());
     return result;
 }
 
-Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, const uint8_t* data, size_t size)
+Vector<uint8_t> calculateSHA256Signature(const Vector<uint8_t>& key, std::span<const uint8_t> data)
 {
-    return calculateHMACSignature(kCCHmacAlgSHA256, key, data, size);
+    return calculateHMACSignature(kCCHmacAlgSHA256, key, data);
 }
 
 } // namespace WebCore

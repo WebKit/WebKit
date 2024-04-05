@@ -122,6 +122,7 @@
 #if PLATFORM(COCOA)
 #include <crt_externs.h>
 #include <wtf/OSObjectPtr.h>
+#include <wtf/cocoa/CrashReporter.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -1155,6 +1156,11 @@ static void convertShebangToJSComment(Vector& buffer)
 
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(FILE* file)
 {
+    struct stat statBuf;
+    if (fstat(fileno(file), &statBuf) == -1)
+        return nullptr;
+    if ((statBuf.st_mode & S_IFMT) != S_IFREG)
+        return nullptr;
     if (fseek(file, 0, SEEK_END) == -1)
         return nullptr;
     long bufferCapacity = ftell(file);
@@ -1204,6 +1210,16 @@ static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
 {
+    struct stat statBuf;
+    if (stat(fileName.utf8().data(), &statBuf) == -1) {
+        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        return false;
+    }
+
+    if ((statBuf.st_mode & S_IFMT) != S_IFREG) {
+        fprintf(stderr, "Trying to open a non-file: %s\n", fileName.utf8().data());
+        return false;
+    }
     FILE* f = fopen(fileName.utf8().data(), "rb");
     if (!f) {
         fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
@@ -3448,14 +3464,6 @@ static void startTimeoutThreadIfNeeded(VM& vm)
 
 int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
 {
-#if OS(DARWIN) && CPU(ARM_THUMB2)
-    // Enabled IEEE754 denormal support.
-    fenv_t env;
-    fegetenv( &env );
-    env.__fpscr &= ~0x01000000u;
-    fesetenv( &env );
-#endif
-
 #if USE(TZONE_MALLOC)
     const char* boothash = GET_TZONE_SEED_FROM_ENV(darwinEnvp);
     WTF_TZONE_INIT(boothash);
@@ -3501,6 +3509,14 @@ int main(int argc, char** argv WTF_TZONE_EXTRA_MAIN_ARGS)
     WTF::initialize();
 #if PLATFORM(COCOA)
     WTF::disableForwardingVPrintfStdErrToOSLog();
+
+    if (getenv("JSCTEST_CrashReportArgV")) {
+        StringPrintStream out;
+        CommaPrinter space(" ");
+        for (int i = 0; i < argc; ++i)
+            out.print(space, argv[i]);
+        WTF::setCrashLogMessage(out.toCString().data());
+    }
 #endif
 
 #if OS(UNIX)

@@ -52,7 +52,7 @@ public:
     bool inlineLevelBoxInserted(const Box&);
     bool inlineLevelBoxWillBeRemoved(const Box&);
 
-    void restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
+    bool restartForPagination(size_t lineIndex, LayoutUnit pageTopAdjustment);
 
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };

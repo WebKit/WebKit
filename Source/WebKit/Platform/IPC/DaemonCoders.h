@@ -184,7 +184,7 @@ template<> struct Coder<WTF::String> {
         encoder << length << is8Bit;
 
         if (is8Bit)
-            encoder.encodeFixedLengthData({ string.characters8(), length * sizeof(LChar) });
+            encoder.encodeFixedLengthData(string.span8());
         else
             encoder.encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar) });
     }

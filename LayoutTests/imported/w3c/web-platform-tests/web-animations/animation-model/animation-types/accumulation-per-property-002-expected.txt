@@ -254,8 +254,8 @@ PASS text-rendering: "optimizeSpeed" onto "optimizeLegibility"
 PASS text-shadow (type: textShadowList) has testAccumulation function
 PASS text-shadow: shadow
 PASS text-spacing-trim (type: discrete) has testAccumulation function
-PASS text-spacing-trim: "space-all" onto "auto"
-PASS text-spacing-trim: "auto" onto "space-all"
+PASS text-spacing-trim: "space-all" onto "normal"
+FAIL text-spacing-trim: "normal" onto "space-all" assert_equals: The value should be normal at 0ms expected "normal" but got "space-all"
 PASS text-transform (type: discrete) has testAccumulation function
 PASS text-transform: "uppercase" onto "capitalize"
 PASS text-transform: "capitalize" onto "uppercase"

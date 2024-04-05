@@ -64,9 +64,20 @@ bool TextureView::previouslyCleared() const
     return m_parentTexture->previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
 }
 
-void TextureView::setPreviouslyCleared()
+void TextureView::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
 {
-    m_parentTexture->setPreviouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+    m_parentTexture->setPreviouslyCleared(m_texture.parentRelativeLevel + mipLevel, m_texture.parentRelativeSlice + slice);
+}
+
+uint32_t TextureView::parentRelativeMipLevel() const
+{
+    RELEASE_ASSERT(baseMipLevel() == m_texture.parentRelativeLevel);
+    return m_texture.parentRelativeLevel;
+}
+
+uint32_t TextureView::parentRelativeSlice() const
+{
+    return m_texture.parentRelativeSlice;
 }
 
 uint32_t TextureView::width() const
@@ -152,7 +163,7 @@ bool TextureView::isValid() const
 void TextureView::destroy()
 {
     m_texture = m_device->placeholderTexture();
-    if (m_commandEncoder)
+    if (m_commandEncoder && !m_parentTexture->isCanvasBacking())
         m_commandEncoder.get()->makeSubmitInvalid();
 
     m_commandEncoder = nullptr;
@@ -161,7 +172,7 @@ void TextureView::destroy()
 void TextureView::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     m_commandEncoder = &commandEncoder;
-    if (isDestroyed())
+    if (isDestroyed() && !m_parentTexture->isCanvasBacking())
         commandEncoder.makeSubmitInvalid();
 }
 

@@ -203,6 +203,10 @@ public:
 
     struct UnderlyingString;
 
+#ifndef NDEBUG
+    WTF_EXPORT_PRIVATE void show() const;
+#endif
+
 private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
     explicit StringView(const char*);
@@ -613,8 +617,8 @@ inline bool StringView::contains(CodeUnitMatchFunction&& function) const
 template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() const
 {
     if (is8Bit())
-        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
-    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(span8());
+    return WTF::containsOnly<isSpecialCharacter>(span16());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
@@ -659,8 +663,8 @@ inline String StringView::toString() const
 inline AtomString StringView::toAtomString() const
 {
     if (is8Bit())
-        return AtomString(characters8(), m_length);
-    return AtomString(characters16(), m_length);
+        return span8();
+    return span16();
 }
 
 inline AtomString StringView::toExistingAtomString() const

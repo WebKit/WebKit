@@ -100,12 +100,12 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
 
-list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
-
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
     Shared/glib/UserMessage.serialization.in
+
+    Shared/soup/WebCoreArgumentCodersSoup.serialization.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
@@ -357,12 +357,11 @@ file(WRITE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     "</gresources>\n"
 )
 
-add_custom_command(
-    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    DEPENDS ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    DEPFILE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps
-    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c --dependency-file=${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.deps ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
-    VERBATIM
+GLIB_COMPILE_RESOURCES(
+    OUTPUT        ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
+    SOURCE_XML    ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
+    RESOURCE_DIRS ${CMAKE_SOURCE_DIR}/Source/WebCore/Resources
+                  ${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES

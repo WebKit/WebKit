@@ -149,6 +149,7 @@ class TextureState final : private angle::NonCopyable
 
     bool hasBeenBoundAsImage() const { return mHasBeenBoundAsImage; }
     bool hasBeenBoundAsAttachment() const { return mHasBeenBoundAsAttachment; }
+    bool hasBeenBoundToMSRTTFramebuffer() const { return mHasBeenBoundToMSRTTFramebuffer; }
 
     gl::SrgbOverride getSRGBOverride() const { return mSrgbOverride; }
 
@@ -243,6 +244,7 @@ class TextureState final : private angle::NonCopyable
 
     bool mHasBeenBoundAsImage;
     bool mHasBeenBoundAsAttachment;
+    bool mHasBeenBoundToMSRTTFramebuffer;
 
     bool mImmutableFormat;
     GLuint mImmutableLevels;
@@ -689,6 +691,9 @@ class Texture final : public RefCountObject<TextureID>,
         DIRTY_BIT_BOUND_AS_IMAGE,
         DIRTY_BIT_BOUND_AS_ATTACHMENT,
 
+        // Bound to MSRTT Framebuffer
+        DIRTY_BIT_BOUND_TO_MSRTT_FRAMEBUFFER,
+
         // Misc
         DIRTY_BIT_USAGE,
         DIRTY_BIT_IMPLEMENTATION,
@@ -712,6 +717,9 @@ class Texture final : public RefCountObject<TextureID>,
     void onBufferContentsChange();
 
     void markInternalIncompleteTexture() { mState.mIsInternalIncompleteTexture = true; }
+
+    // Texture bound to MSRTT framebuffer.
+    void onBindToMSRTTFramebuffer();
 
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;

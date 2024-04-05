@@ -48,7 +48,7 @@ static typename IntegerToStringConversionTrait<T>::ReturnType numberToStringImpl
     if (NumberType == NegativeNumber)
         *--p = '-';
 
-    return IntegerToStringConversionTrait<T>::flush(p, static_cast<unsigned>(end - p), additionalArgument);
+    return IntegerToStringConversionTrait<T>::flush({ p, end }, additionalArgument);
 }
 
 template<typename T, typename SignedIntegerType>
@@ -135,8 +135,7 @@ template<size_t N>
 struct IntegerToStringConversionTrait<Vector<LChar, N>> {
     using ReturnType = Vector<LChar, N>;
     using AdditionalArgumentType = void;
-    // FIXME: Should take in a std::span.
-    static ReturnType flush(LChar* characters, unsigned length, void*) { return { std::span { characters, length } }; }
+    static ReturnType flush(std::span<const LChar> characters, void*) { return characters; }
 };
 
 } // namespace WTF

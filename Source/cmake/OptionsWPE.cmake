@@ -32,6 +32,7 @@ WEBKIT_OPTION_BEGIN()
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 
 include(GStreamerDefinitions)
+include(FindGLibCompileResources)
 
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a WPE reviewer. There must be strong reason to support

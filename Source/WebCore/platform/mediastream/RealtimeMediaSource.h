@@ -107,9 +107,14 @@ public:
 
         virtual void hasStartedProducingData() { }
     };
-    class AudioSampleObserver : public CanMakeCheckedPtr {
+    class AudioSampleObserver {
     public:
         virtual ~AudioSampleObserver() = default;
+
+        // CheckedPtr interface
+        virtual uint32_t ptrCount() const = 0;
+        virtual void incrementPtrCount() const = 0;
+        virtual void decrementPtrCount() const = 0;
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;

@@ -595,9 +595,9 @@ void HTMLCanvasElement::reset()
 
     setSurfaceSize(newSize);
 
-    if (m_context && oldSize != size()) {
+    if (m_context) {
         if (auto* context = dynamicDowncast<GPUBasedCanvasRenderingContext>(*m_context))
-            context->reshape(width(), height());
+            context->reshape(width(), height(), oldSize.width(), oldSize.height());
     }
 
     if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {

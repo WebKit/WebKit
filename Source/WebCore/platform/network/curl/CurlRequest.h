@@ -42,9 +42,9 @@ class NetworkLoadMetrics;
 class ResourceError;
 class FragmentedSharedBuffer;
 
-class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient, public CurlMultipartHandleClient {
+class CurlRequest : public ThreadSafeRefCounted<CurlRequest>, public CurlRequestSchedulerClient, public CurlMultipartHandleClient, public CanMakeThreadSafeCheckedPtr<CurlRequest> {
     WTF_MAKE_NONCOPYABLE(CurlRequest);
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class CaptureNetworkLoadMetrics : uint8_t {
         Basic,
@@ -81,6 +81,11 @@ public:
 
 private:
     WEBCORE_EXPORT CurlRequest(const ResourceRequest&, CurlRequestClient*, CaptureNetworkLoadMetrics);
+
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeThreadSafeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeThreadSafeCheckedPtr::decrementPtrCount(); }
 
     void retain() override { ref(); }
     void release() override { deref(); }

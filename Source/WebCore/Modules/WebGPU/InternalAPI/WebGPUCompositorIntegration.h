@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
+
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -38,6 +40,7 @@
 #endif
 
 namespace WebCore {
+class DestinationColorSpace;
 class ImageBuffer;
 class NativeImage;
 }
@@ -49,7 +52,7 @@ public:
     virtual ~CompositorIntegration() = default;
 
 #if PLATFORM(COCOA)
-    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height) = 0;
+    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication) = 0;
 #endif
 
     virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;

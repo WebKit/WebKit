@@ -1099,6 +1099,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Uint32Array:
         case Array::Float32Array:
         case Array::Float64Array:
+            // Even if we hit out-of-bounds, this is fine. TypedArray does not propagate access to its [[Prototype]] when out-of-bounds access happens.
             read(TypedArrayProperties);
             read(MiscFields);
             if (mode.mayBeResizableOrGrowableSharedTypedArray()) {

@@ -508,15 +508,11 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
     return false;
 }
 
-static void printNavigationErrorMessage(Frame& frame, const URL& activeURL, const char* reason)
+static void printNavigationErrorMessage(Document& document, Frame& frame, const URL& activeURL, ASCIILiteral reason)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-    if (!localFrame)
-        return;
-    String message = "Unsafe JavaScript attempt to initiate navigation for frame with URL '" + localFrame->document()->url().string() + "' from frame with URL '" + activeURL.string() + "'. " + reason + "\n";
-
-    // FIXME: should we print to the console of the document performing the navigation instead?
-    localFrame->document()->protectedWindow()->printErrorMessage(message);
+    frame.documentURLForConsoleLog([window = document.protectedWindow(), activeURL, reason] (const URL& documentURL) {
+        window->printErrorMessage(makeString("Unsafe JavaScript attempt to initiate navigation for frame with URL '", documentURL.string(), "' from frame with URL '", activeURL.string(), "'. ", reason, '\n'));
+    });
 }
 
 uint64_t Document::s_globalTreeVersion = 0;
@@ -2816,12 +2812,12 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
-    // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full
-    // layout.
-    bool requireFullLayout = false;
+    // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full layout.
     if (RefPtr owner = ownerElement()) {
-        if (owner->protectedDocument()->updateLayoutIfDimensionsOutOfDate(*owner))
-            requireFullLayout = true;
+        if (owner->protectedDocument()->updateLayoutIfDimensionsOutOfDate(*owner)) {
+            updateLayout({ }, &element);
+            return true;
+        }
     }
 
     updateRelevancyOfContentVisibilityElements();
@@ -2833,32 +2829,21 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
         return false;
     }
 
-    bool isVertical = false;
-    bool hasSpecifiedLogicalHeight = false;
-    if (CheckedPtr renderer = element.renderer()) {
-        if (renderer->needsLayout()) {
-            // If the renderer needs layout for any reason, give up.
-            requireFullLayout = true;
-        }
-
-        isVertical = !renderer->isHorizontalWritingMode();
-        hasSpecifiedLogicalHeight = renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
-    } else // If we don't have a renderer, give up
-        requireFullLayout = true;
-
-    // Turn off this optimization for input elements with shadow content.
-    if (is<HTMLInputElement>(element))
-        requireFullLayout = true;
-
-    bool checkingLogicalWidth = (dimensionsCheck.contains(DimensionsCheck::Width) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Height) && isVertical);
-    bool checkingLogicalHeight = (dimensionsCheck.contains(DimensionsCheck::Height) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Width) && isVertical);
-
+    // If the renderer needs layout for any reason, give up.
+    // Also, turn off this optimization for input elements with shadow content.
+    bool requireFullLayout = element.renderer()->needsLayout() || is<HTMLInputElement>(element);
     if (!requireFullLayout) {
         CheckedPtr<RenderBox> previousBox;
         CheckedPtr<RenderBox> currentBox;
 
+        CheckedPtr renderer = element.renderer();
+        bool hasSpecifiedLogicalHeight = renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
+        bool isVertical = !renderer->isHorizontalWritingMode();
+        bool checkingLogicalWidth = (dimensionsCheck.contains(DimensionsCheck::Width) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Height) && isVertical);
+        bool checkingLogicalHeight = (dimensionsCheck.contains(DimensionsCheck::Height) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Width) && isVertical);
+
         // Check our containing block chain. If anything in the chain needs a layout, then require a full layout.
-        for (CheckedPtr currentRenderer = element.renderer(); currentRenderer && !currentRenderer->isRenderView(); currentRenderer = currentRenderer->container()) {
+        for (CheckedPtr currentRenderer = renderer; currentRenderer && !currentRenderer->isRenderView(); currentRenderer = currentRenderer->container()) {
 
             // Require the entire container chain to be boxes.
             CheckedPtr currentRendererBox = dynamicDowncast<RenderBox>(*currentRenderer);
@@ -4300,7 +4285,7 @@ bool Document::canNavigate(Frame* targetFrame, const URL& destinationURL)
         return false;
 
     if (isNavigationBlockedByThirdPartyIFrameRedirectBlocking(*targetFrame, destinationURL)) {
-        printNavigationErrorMessage(*targetFrame, url(), "The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame."_s);
+        printNavigationErrorMessage(*this, *targetFrame, url(), "The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame."_s);
         DOCUMENT_RELEASE_LOG_ERROR(Loading, "Navigation was prevented because it was triggered by a cross-origin or untrusted iframe");
         return false;
     }
@@ -4333,7 +4318,7 @@ bool Document::canNavigateInternal(Frame& targetFrame)
     // 1. If A is not the same browsing context as B, and A is not one of the ancestor browsing contexts of B, and B is not a top-level browsing context, and A's active document's active sandboxing
     // flag set has its sandboxed navigation browsing context flag set, then abort these steps negatively.
     if (m_frame != &targetFrame && isSandboxed(SandboxNavigation) && targetFrame.tree().parent() && !targetFrame.tree().isDescendantOf(m_frame.get())) {
-        printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors."_s);
+        printNavigationErrorMessage(*this, targetFrame, url(), "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors."_s);
         return false;
     }
 
@@ -4341,12 +4326,12 @@ bool Document::canNavigateInternal(Frame& targetFrame)
     if (m_frame != &targetFrame && &targetFrame == &m_frame->tree().top()) {
         // 1. If this algorithm is triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation with user activation browsing context flag set, then abort these steps negatively.
         if (isProcessingUserGestureForDocument && isSandboxed(SandboxTopNavigationByUserActivation)) {
-            printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation."_s);
+            printNavigationErrorMessage(*this, targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation."_s);
             return false;
         }
         // 2. Otherwise, If this algorithm is not triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation without user activation browsing context flag set, then abort these steps negatively.
         if (!isProcessingUserGestureForDocument && isSandboxed(SandboxTopNavigation)) {
-            printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."_s);
+            printNavigationErrorMessage(*this, targetFrame, url(), "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."_s);
             return false;
         }
     }
@@ -4354,7 +4339,7 @@ bool Document::canNavigateInternal(Frame& targetFrame)
     // 3. Otherwise, if B is a top-level browsing context, and is neither A nor one of the ancestor browsing contexts of A, and A's Document's active sandboxing flag set has its
     // sandboxed navigation browsing context flag set, and A is not the one permitted sandboxed navigator of B, then abort these steps negatively.
     if (!targetFrame.tree().parent() && m_frame != &targetFrame && &targetFrame != &m_frame->tree().top() && isSandboxed(SandboxNavigation) && targetFrame.opener() != m_frame) {
-        printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."_s);
+        printNavigationErrorMessage(*this, targetFrame, url(), "The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."_s);
         return false;
     }
 
@@ -4391,7 +4376,7 @@ bool Document::canNavigateInternal(Frame& targetFrame)
         }
     }
 
-    printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.");
+    printNavigationErrorMessage(*this, targetFrame, url(), "The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener."_s);
     return false;
 }
 
@@ -4623,20 +4608,30 @@ ViewportArguments Document::viewportArguments() const
     return page->overrideViewportArguments().value_or(m_viewportArguments);
 }
 
+bool Document::isViewportDocument() const
+{
+    RefPtr page = this->page();
+    if (!page)
+        return false;
+
+#if ENABLE(FULLSCREEN_API)
+    if (RefPtr outermostFullscreenDocument = page->outermostFullscreenDocument())
+        return outermostFullscreenDocument == this;
+#endif
+
+    if (RefPtr frame = this->frame())
+        return frame->isMainFrame();
+
+    return false;
+}
+
 void Document::updateViewportArguments()
 {
     RefPtr page = this->page();
     if (!page)
         return;
 
-    bool isViewportDocument = [&] {
-#if ENABLE(FULLSCREEN_API)
-        if (auto* outermostFullscreenDocument = page->outermostFullscreenDocument())
-            return outermostFullscreenDocument == this;
-#endif
-        return frame()->isMainFrame();
-    }();
-    if (!isViewportDocument)
+    if (!isViewportDocument())
         return;
 
 #if ASSERT_ENABLED

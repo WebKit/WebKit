@@ -139,7 +139,9 @@ class GitHub(Scm):
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
 
-            user, _ = self.repository.credentials(required=True)
+            if ':' not in head:
+                user, _ = self.repository.credentials(required=True)
+                head = '{}:{}'.format(user, head)
             url = '{api_url}/repos/{owner}/{name}/pulls'.format(
                 api_url=self.repository.api_url,
                 owner=self.repository.owner,
@@ -152,7 +154,7 @@ class GitHub(Scm):
                     title=title,
                     body=PullRequest.create_body(body, commits),
                     base=base or self.repository.default_branch,
-                    head='{}:{}'.format(user, head),
+                    head=head,
                     draft=draft,
                 ),
             )

@@ -66,7 +66,7 @@
     'angle_non_clang_x86_release_bot': ['angle', 'opencl', 'non_clang', 'x86', 'release'],
     'angle_reclient_android_arm64_debug_bot': ['angle', 'opencl', 'openclcts', 'reclient', 'android', 'arm64', 'debug'],
     'angle_reclient_android_arm64_release_bot': ['angle', 'capture', 'opencl', 'openclcts', 'reclient', 'android', 'arm64', 'release'],
-    'angle_reclient_android_arm_debug_bot': ['angle', 'opencl', 'openclcts', 'reclient', 'android', 'arm', 'debug'],
+    'angle_reclient_android_arm_debug_bot': ['angle', 'opencl', 'openclcts', 'reclient', 'android', 'arm', 'debug', 'cxx17'],
     'angle_reclient_android_arm_release_bot': ['angle', 'opencl', 'openclcts', 'reclient', 'android', 'arm', 'release'],
     'angle_reclient_android_perf_bot': ['angle', 'reclient', 'android', 'arm64', 'perf'],
     'angle_reclient_debug_bot': ['angle', 'opencl', 'reclient', 'debug', 'desktop'],
@@ -102,6 +102,10 @@
     },
     'capture': {
       'gn_args': 'angle_with_capture_by_default=true',
+    },
+    'cxx17': {
+      # Android does not fully support C++20 yet: b/330910097
+      'gn_args': 'use_cxx17=true',
     },
     'debug': {
       'gn_args': 'is_debug=true',

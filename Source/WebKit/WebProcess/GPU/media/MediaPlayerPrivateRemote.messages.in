@@ -25,7 +25,7 @@
 
 messages -> MediaPlayerPrivateRemote NotRefCounted {
     NetworkStateChanged(struct WebKit::RemoteMediaPlayerState state)
-    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state, WebCore::MediaPlayer::ReadyState readyStat)
+    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state, enum:uint8_t WebCore::MediaPlayerReadyState readyStat)
     FirstVideoFrameAvailable()
     VolumeChanged(double volume)
     MuteChanged(bool mute)

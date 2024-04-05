@@ -33,6 +33,7 @@
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include "VideoTrackPrivateMediaStream.h"
+#include <wtf/CheckedRef.h>
 
 #if USE(GSTREAMER_WEBRTC)
 #include "RealtimeIncomingAudioSourceGStreamer.h"
@@ -135,7 +136,8 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(InternalSourcePadProbeData)
 class InternalSource final : public MediaStreamTrackPrivate::Observer,
     public RealtimeMediaSource::Observer,
     public RealtimeMediaSource::AudioSampleObserver,
-    public RealtimeMediaSource::VideoFrameObserver {
+    public RealtimeMediaSource::VideoFrameObserver,
+    public CanMakeCheckedPtr<InternalSource> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName, bool consumerIsVideoPlayer)
@@ -522,6 +524,11 @@ public:
     GstStream* stream() const { return m_stream.get(); }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     void flush()
     {
         GST_DEBUG_OBJECT(m_src.get(), "Flushing");

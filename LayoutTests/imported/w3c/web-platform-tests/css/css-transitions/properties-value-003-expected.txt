@@ -99,5 +99,11 @@ FAIL position position(relative to absolute) / values assert_not_equals: must no
 FAIL position position(relative to absolute) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "position:2s" but got ""
 FAIL position position(absolute to fixed) / values assert_not_equals: must not be target value after start got disallowed value "fixed"
 FAIL position position(absolute to fixed) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "position:2s" but got ""
+FAIL object-view-box object-view-box(inset) / values assert_not_equals: initial and target values may not match got disallowed value ""
+FAIL object-view-box object-view-box(inset) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "object-view-box:2s" but got ""
+FAIL object-view-box object-view-box(rect) / values assert_not_equals: initial and target values may not match got disallowed value ""
+FAIL object-view-box object-view-box(rect) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "object-view-box:2s" but got ""
+FAIL object-view-box object-view-box(xywh) / values assert_not_equals: initial and target values may not match got disallowed value ""
+FAIL object-view-box object-view-box(xywh) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "object-view-box:2s" but got ""
 Text sample
 

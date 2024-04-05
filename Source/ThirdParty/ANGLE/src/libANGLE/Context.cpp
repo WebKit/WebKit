@@ -6334,6 +6334,7 @@ void Context::framebufferTexture2DMultisample(GLenum target,
         ImageIndex index    = ImageIndex::MakeFromTarget(textarget, level, 1);
         framebuffer->setAttachmentMultisample(this, GL_TEXTURE, attachment, index, textureObj,
                                               samples);
+        textureObj->onBindToMSRTTFramebuffer();
     }
     else
     {

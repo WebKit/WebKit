@@ -265,7 +265,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // ICU API document.
         // > Returns pointer to display string of 'len' UChars. If the resource data contains no entry for 'currency', then 'currency' itself is returned.
         if (status == U_USING_DEFAULT_WARNING && result == currency)
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, { currency, 3 });
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, StringView({ currency, 3 }));
         return jsString(vm, String({ result, static_cast<size_t>(length) }));
     }
     case Type::Calendar: {

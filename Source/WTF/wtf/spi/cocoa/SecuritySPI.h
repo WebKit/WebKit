@@ -29,10 +29,12 @@
 
 #include <Security/SecAccessControlPriv.h>
 #include <Security/SecCertificatePriv.h>
+#include <Security/SecCode.h>
 #include <Security/SecCodePriv.h>
 #include <Security/SecIdentityPriv.h>
 #include <Security/SecItemPriv.h>
 #include <Security/SecKeyPriv.h>
+#include <Security/SecStaticCode.h>
 #include <Security/SecTask.h>
 #include <Security/SecTrustPriv.h>
 
@@ -43,6 +45,10 @@
 #else
 
 #include <Security/SecBase.h>
+
+#if __has_include(<Security/CSCommon.h>)
+#include <Security/CSCommon.h>
+#endif
 
 typedef uint32_t SecSignatureHashAlgorithm;
 enum {
@@ -58,6 +64,22 @@ enum {
 };
 
 WTF_EXTERN_C_BEGIN
+
+#if !__has_include(<Security/CSCommon.h>)
+typedef struct __SecCode const *SecStaticCodeRef;
+
+typedef uint32_t SecCSFlags;
+enum {
+    kSecCSDefaultFlags = 0,
+};
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+extern const CFStringRef kSecCodeInfoUnique;
+
+OSStatus SecStaticCodeCreateWithPath(CFURLRef, SecCSFlags, SecStaticCodeRef * CF_RETURNS_RETAINED);
+OSStatus SecCodeCopySigningInformation(SecStaticCodeRef, SecCSFlags, CFDictionaryRef * CF_RETURNS_RETAINED);
+#endif
 
 #if PLATFORM(MAC)
 OSStatus SecTrustedApplicationCreateFromPath(const char* path, SecTrustedApplicationRef*);
@@ -85,6 +107,8 @@ SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef, CFDataRef, CF
 CFDataRef SecAccessControlCopyData(SecAccessControlRef);
 
 CFDataRef SecKeyCopySubjectPublicKeyInfo(SecKeyRef);
+
+OSStatus SecCodeValidateFileResource(SecStaticCodeRef, CFStringRef, CFDataRef, SecCSFlags);
 
 #if PLATFORM(MAC)
 #include <Security/SecAsn1Types.h>

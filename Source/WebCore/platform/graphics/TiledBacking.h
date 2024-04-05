@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -75,7 +76,8 @@ public:
 };
 
 
-class TiledBacking : public CanMakeCheckedPtr {
+class TiledBacking : public CanMakeCheckedPtr<TiledBacking> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~TiledBacking() = default;
 

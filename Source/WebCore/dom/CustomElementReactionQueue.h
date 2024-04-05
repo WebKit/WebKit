@@ -116,7 +116,7 @@ private:
     bool m_invoking { false };
 };
 
-class CustomElementReactionQueue : public CanMakeCheckedPtr {
+class CustomElementReactionQueue : public CanMakeCheckedPtr<CustomElementReactionQueue> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:

@@ -34,6 +34,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarColor.h"
 #include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -70,7 +71,8 @@ inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orient
     return 0;
 }
 
-class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public CanMakeCheckedPtr {
+class ScrollableArea : public CanMakeWeakPtr<ScrollableArea>, public CanMakeCheckedPtr<ScrollableArea> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual bool isScrollView() const { return false; }
     virtual bool isRenderLayer() const { return false; }

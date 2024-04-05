@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class OrientationNotifier : public CanMakeCheckedPtr {
+class OrientationNotifier : public CanMakeCheckedPtr<OrientationNotifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit OrientationNotifier(IntDegrees orientation) { m_orientation = orientation; }

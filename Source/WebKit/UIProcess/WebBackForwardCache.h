@@ -40,7 +40,7 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 
-class WebBackForwardCache : public CanMakeCheckedPtr {
+class WebBackForwardCache : public CanMakeCheckedPtr<WebBackForwardCache> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebBackForwardCache(WebProcessPool&);

@@ -61,7 +61,7 @@ struct LineAdjustment;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 
-class LineLayout : public CanMakeCheckedPtr {
+class LineLayout : public CanMakeCheckedPtr<LineLayout> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 public:
     LineLayout(RenderBlockFlow&);
@@ -119,6 +119,7 @@ public:
     InlineIterator::LineBoxIterator lastLineBox() const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
+    bool hasRendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
     RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
 

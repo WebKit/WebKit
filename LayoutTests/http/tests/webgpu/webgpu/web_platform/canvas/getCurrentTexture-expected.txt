@@ -1,1 +1,18 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :configured:canvasType="onscreen"
+PASS :configured:canvasType="offscreen"
+PASS :single_frames:canvasType="onscreen"
+PASS :single_frames:canvasType="offscreen"
+PASS :multiple_frames:canvasType="onscreen"
+PASS :multiple_frames:canvasType="offscreen"
+PASS :resize:canvasType="onscreen"
+PASS :resize:canvasType="offscreen"
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="onscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="runInNewCanvasFrame";getCurrentTextureAgain=false
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=true
+PASS :expiry:canvasType="offscreen";prevFrameCallsite="requestAnimationFrame";getCurrentTextureAgain=false
+

@@ -1777,7 +1777,7 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 
 # rdar://106116843 ([UI-side compositing] two fast/scrolling/mac/scrollbars overlay-scrollbar-reveal tests time out)
 [ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-reveal.html [ Failure ]
-[ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure ]
+[ Sonoma+ ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-reveal.html [ Failure Timeout ]
 
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
@@ -1854,8 +1854,6 @@ webkit.org/b/262411 [ Sonoma+ ] fast/scrolling/scroll-to-anchor-zoomed-header.ht
 [ Sonoma ] http/wpt/mediarecorder/record-96KHz-sources.html [ Crash ]
 
 [ Monterey Ventura ] media/media-vp8-webm.html [ ImageOnlyFailure ] # Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
-
-webkit.org/b/263049 [ Sonoma+ ] fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
 
 webkit.org/b/263136 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 

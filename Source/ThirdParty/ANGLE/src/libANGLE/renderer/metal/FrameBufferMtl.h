@@ -166,7 +166,9 @@ class FramebufferMtl : public FramebufferImpl
                                                   const bool forceDepthStencilMultisampleLoad);
 
     // Fill RenderPassDesc with relevant attachment's info from GL front end.
-    angle::Result prepareRenderPass(const gl::Context *context, mtl::RenderPassDesc *descOut);
+    angle::Result prepareRenderPass(const gl::Context *context,
+                                    mtl::RenderPassDesc *descOut,
+                                    gl::Command command);
 
     // Check if a render pass specified by the given RenderPassDesc has started or not, if not this
     // method will start the render pass and return its render encoder.

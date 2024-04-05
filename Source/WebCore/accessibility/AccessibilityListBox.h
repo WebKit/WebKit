@@ -34,7 +34,7 @@ namespace WebCore {
 
 class AccessibilityListBox final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityListBox> create(RenderObject*);
+    static Ref<AccessibilityListBox> create(RenderObject&);
     virtual ~AccessibilityListBox();
 
     bool canSetSelectedChildren() const override;
@@ -48,7 +48,7 @@ public:
     void addChildren() override;
 
 private:
-    explicit AccessibilityListBox(RenderObject*);
+    explicit AccessibilityListBox(RenderObject&);
 
     bool isAccessibilityListBoxInstance() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;

@@ -1676,6 +1676,12 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         addExtensionPrerequisite("GL_OES_EGL_image_external");
     }
 
+    if (traceNameIs("poppy_playtime"))
+    {
+        addExtensionPrerequisite("GL_OES_EGL_image_external");
+        addIntegerPrerequisite(GL_MAX_TEXTURE_SIZE, 16383);
+    }
+
     if (IsGalaxyS22())
     {
         if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||

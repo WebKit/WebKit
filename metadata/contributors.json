@@ -367,6 +367,14 @@
    },
    {
       "emails" : [
+         "aleksei@apple.com",
+         "titan.vl@gmail.com"
+      ],
+      "github" : "amarchenko",
+      "name" : "Aleksei Marchenko"
+   },
+   {
+      "emails" : [
          "alexandera_22@apple.com"
       ],
       "expertise" : "Python, Services, Kubernetes",
@@ -3072,7 +3080,8 @@
       "name" : "Georges Basile Stavracas Neto",
       "nicks" : [
          "feaneron"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

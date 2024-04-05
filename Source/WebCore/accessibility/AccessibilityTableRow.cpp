@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTableRow::AccessibilityTableRow(RenderObject* renderer)
+AccessibilityTableRow::AccessibilityTableRow(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
@@ -50,7 +50,7 @@ AccessibilityTableRow::AccessibilityTableRow(Node& node)
 
 AccessibilityTableRow::~AccessibilityTableRow() = default;
 
-Ref<AccessibilityTableRow> AccessibilityTableRow::create(RenderObject* renderer)
+Ref<AccessibilityTableRow> AccessibilityTableRow::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityTableRow(renderer));
 }

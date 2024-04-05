@@ -365,6 +365,54 @@ TEST_P(MultisampleTestES3, ResolveToFBO)
     EXPECT_PIXEL_COLOR_NEAR(kWindowWidth / 2, kWindowHeight / 2, kResult, 1);
 }
 
+// Test that resolve from multisample default framebuffer after an open render pass works when the
+// framebuffer is also immediately implicitly resolved due to swap afterwards.
+TEST_P(MultisampleTestES3, RenderPassResolveToFBOThenSwap)
+{
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWindowWidth, kWindowHeight, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, resolveTexture, 0);
+
+    auto runTest = [&](bool flipY) {
+        // Open a render pass by drawing to the default framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(red, essl1_shaders::PositionAttrib(), 0.5f);
+
+        // Resolve into FBO
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+        if (flipY)
+        {
+            glFramebufferParameteriMESA(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA, 1);
+        }
+        glBlitFramebuffer(0, 0, kWindowWidth, kWindowHeight, 0, 0, kWindowWidth, kWindowHeight,
+                          GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        // Immediately swap so that an implicit resolve to the backbuffer happens right away.
+        swapBuffers();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWindowWidth, kWindowHeight, GLColor::red);
+    };
+
+    runTest(false);
+    if (IsGLExtensionEnabled("GL_MESA_framebuffer_flip_y"))
+    {
+        // With multiple backends, the default framebuffer is flipped w.r.t GL's coordinates.  As a
+        // result, the glBlitFramebuffer may need to take a different path from a direct multisample
+        // resolve.  This test ensures a direct resolve is also tested where possible.
+        runTest(true);
+    }
+}
+
 class MultisampleResolveTest : public ANGLETest<>
 {
   protected:
@@ -1007,6 +1055,81 @@ TEST_P(MultisampleResolveTest, DrawAndResolveMultipleTimes)
     EXPECT_PIXEL_RECT_EQ(width / 2, height / 4, width / 4, height / 4, GLColor(128, 255, 128, 255));
     EXPECT_PIXEL_RECT_EQ(width / 4, height / 2, width / 4, height / 4, GLColor(128, 128, 255, 255));
     EXPECT_PIXEL_RECT_EQ(width / 2, height / 2, width / 4, height / 4, GLColor(255, 255, 128, 255));
+}
+
+// Tests resolve after the read framebuffer's attachment has been swapped out.
+TEST_P(MultisampleResolveTest, SwitchAttachmentsBeforeResolve)
+{
+    constexpr GLuint kWidth  = 16;
+    constexpr GLuint kHeight = 24;
+
+    GLRenderbuffer msaaColor0, msaaColor1;
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaColor0);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, msaaColor1);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+
+    {
+        // First, make one of the MSAA color buffers green.
+        GLFramebuffer clearFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, clearFbo);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  msaaColor1);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        glClearColor(0, 1, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Make sure clear is performed.
+        GLTexture resolveTexture;
+        glBindTexture(GL_TEXTURE_2D, resolveTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+
+        GLFramebuffer verifyFBO;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, verifyFBO);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               resolveTexture, 0);
+
+        glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, verifyFBO);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+    }
+
+    // Set up the msaa framebuffer with the other MSAA color buffer.
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msaaColor0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw into it to start a render pass
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(red, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Set up the resolve framebuffer
+    GLRenderbuffer resolveColor;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolveColor);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              resolveColor);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    // Before resolve the MSAA framebuffer, switch its attachment.  Regression test for a bug where
+    // the resolve used the previous attachment.
+    glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              msaaColor1);
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+
+    // Verify that the resolve happened on the pre-cleared attachment, not the rendered one.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(

@@ -8,13 +8,14 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 
+#include "libANGLE/renderer/vulkan/CLPlatformVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLContextImpl.h"
 
+#include <libANGLE/CLContext.h>
 #include "libANGLE/CLDevice.h"
-#include "libANGLE/Display.h"
 
 namespace rx
 {
@@ -22,9 +23,7 @@ namespace rx
 class CLContextVk : public CLContextImpl, public vk::Context
 {
   public:
-    CLContextVk(const cl::Context &context,
-                const egl::Display *display,
-                const cl::DevicePtrs devicePtrs);
+    CLContextVk(const cl::Context &context, const cl::DevicePtrs devicePtrs);
 
     ~CLContextVk() override;
 
@@ -89,6 +88,8 @@ class CLContextVk : public CLContextImpl, public vk::Context
     angle::Result createUserEvent(const cl::Event &event, CLEventImpl::Ptr *eventOut) override;
 
     angle::Result waitForEvents(const cl::EventPtrs &events) override;
+
+    CLPlatformVk *getPlatform() { return &mContext.getPlatform().getImpl<CLPlatformVk>(); }
 
   private:
     void handleDeviceLost() const;

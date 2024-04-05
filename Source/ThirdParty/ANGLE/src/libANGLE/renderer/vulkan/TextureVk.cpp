@@ -3092,6 +3092,18 @@ angle::Result TextureVk::respecifyImageStorageIfNecessary(ContextVk *contextVk, 
         prepareForGenerateMipmap(contextVk);
     }
 
+    // If texture was not originally created using the MSRTSS flag, it should be recreated when it
+    // is bound to an MSRTT framebuffer.
+    if (contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled &&
+        !contextVk->getFeatures().preferMSRTSSFlagByDefault.enabled &&
+        mState.hasBeenBoundToMSRTTFramebuffer() &&
+        ((mImageCreateFlags & VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT) == 0))
+    {
+        ANGLE_TRY(respecifyImageStorage(contextVk));
+        oldUsageFlags  = mImageUsageFlags;
+        oldCreateFlags = mImageCreateFlags;
+    }
+
     // For immutable texture, base level does not affect allocation. Only usage flags are. If usage
     // flag changed, we respecify image storage early on. This makes the code more reliable and also
     // better performance wise. Otherwise, we will try to preserve base level by calling
@@ -3647,10 +3659,17 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     const VkImageType imageType      = gl_vk::GetImageType(mState.getType());
     const VkImageTiling imageTiling  = mImage->getTilingMode();
 
+    // The MSRTSS bit is included in the create flag for all textures if the feature flag
+    // corresponding to its preference is enabled. Otherwise, it is enabled for a texture if it is
+    // bound to an MSRTT framebuffer.
+    const bool shouldIncludeMSRTSSBit =
+        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled &&
+        (contextVk->getFeatures().preferMSRTSSFlagByDefault.enabled ||
+         mState.hasBeenBoundToMSRTTFramebuffer());
+
     if ((mImageUsageFlags & (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
                              VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)) != 0 &&
-        mOwnsImage && samples == 1 &&
-        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
+        mOwnsImage && samples == 1 && shouldIncludeMSRTSSBit)
     {
         VkImageCreateFlags createFlagsMultisampled =
             mImageCreateFlags | VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;

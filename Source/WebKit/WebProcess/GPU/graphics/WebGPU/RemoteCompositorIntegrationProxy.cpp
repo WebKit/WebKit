@@ -49,9 +49,9 @@ RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy()
 }
 
 #if PLATFORM(COCOA)
-Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(int height, int width)
+Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode)
 {
-    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(height, width));
+    auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode));
     if (!sendResult.succeeded())
         return { };
 

@@ -41,7 +41,7 @@ std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(con
     if (!device)
         return std::nullopt;
 
-    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode } };
+    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
 }
 
 std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
@@ -50,7 +50,7 @@ std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::c
     if (!device)
         return std::nullopt;
 
-    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode } };
+    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
 }
 
 } // namespace WebKit

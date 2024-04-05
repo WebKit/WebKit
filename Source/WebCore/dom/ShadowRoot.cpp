@@ -236,10 +236,11 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
+    ASSERT(m_isClonable);
     switch (type) {
     case CloningOperation::SelfWithTemplateContent:
         return create(targetDocument, m_mode, m_slotAssignmentMode, m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
-            m_isClonable ? Clonable::Yes : Clonable::No, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
+            Clonable::Yes, m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
     case CloningOperation::OnlySelf:
     case CloningOperation::Everything:
         break;

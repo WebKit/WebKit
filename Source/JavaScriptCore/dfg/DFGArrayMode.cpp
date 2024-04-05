@@ -289,9 +289,7 @@ ArrayMode ArrayMode::refine(
     case Array::Float64Array:
     case Array::BigInt64Array:
     case Array::BigUint64Array:
-        // FIXME: no idea why we only preserve this out-of-bounds information for PutByVal and not GetByVal as well.
-        // https://bugs.webkit.org/show_bug.cgi?id=231276
-        if (node->op() == PutByVal) {
+        if (node->op() == PutByVal || node->op() == GetByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 return typedArrayResult(withSpeculation(Array::OutOfBounds));
         }
@@ -317,18 +315,10 @@ ArrayMode ArrayMode::refine(
             return withType(type);
         }
         
-        ArrayMode result;
-        switch (node->op()) {
-        case PutByVal:
+        ArrayMode result = withSpeculation(Array::InBounds);
+        if (node->op() == PutByVal || node->op() == GetByVal) {
             if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
                 result = withSpeculation(Array::OutOfBounds);
-            else
-                result = withSpeculation(Array::InBounds);
-            break;
-            
-        default:
-            result = withSpeculation(Array::InBounds);
-            break;
         }
 
         if (isInt8ArraySpeculation(base))

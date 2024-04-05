@@ -114,8 +114,10 @@ void PointerRewriter::visit(AST::VariableStatement& statement)
 void PointerRewriter::visit(AST::PhonyAssignmentStatement& statement)
 {
     auto* pointerType = std::get_if<Types::Pointer>(statement.rhs().inferredType());
-    if (!pointerType)
+    if (!pointerType) {
+        AST::Visitor::visit(statement);
         return;
+    }
     m_indicesToDelete.append(m_currentStatementIndex);
 }
 

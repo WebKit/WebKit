@@ -164,10 +164,17 @@ class TextureWgpu : public TextureImpl
                                      GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
-    webgpu::ImageHelper &getImage() { return mImage; }
+    webgpu::ImageHelper *getImage() { return mImage; }
 
   private:
-    webgpu::ImageHelper mImage;
+    angle::Result setImageImpl(const gl::Context *context,
+                               const gl::ImageIndex &index,
+                               const gl::Extents &size);
+
+    angle::Result redefineLevel(const gl::Context *context,
+                                const gl::ImageIndex &index,
+                                const gl::Extents &size);
+    webgpu::ImageHelper *mImage;
 };
 
 }  // namespace rx

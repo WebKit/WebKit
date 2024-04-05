@@ -1070,7 +1070,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
 #endif
     case MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection:
         return Vector<ArgumentDescription> {
-            { "handle", "IPC::StreamServerConnection::Handle", nullptr, false },
+            { "handle", "IPC::StreamServerConnectionHandle", nullptr, false },
         };
     case MessageName::TestWithEnabledIf_AlwaysEnabled:
         return Vector<ArgumentDescription> {

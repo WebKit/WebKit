@@ -1,5 +1,5 @@
 
-FAIL
+PASS
 View transitions: Resizing viewport before animating rejects the ready promise.
- assert_unreached: Should have rejected: Resize must must reject `ready`. Reached unreachable code
+
 

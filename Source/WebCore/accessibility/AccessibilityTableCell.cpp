@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTableCell::AccessibilityTableCell(RenderObject* renderer)
+AccessibilityTableCell::AccessibilityTableCell(RenderObject& renderer)
     : AccessibilityRenderObject(renderer)
 {
 }
@@ -52,7 +52,7 @@ AccessibilityTableCell::AccessibilityTableCell(Node& node)
 
 AccessibilityTableCell::~AccessibilityTableCell() = default;
 
-Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject* renderer)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject& renderer)
 {
     return adoptRef(*new AccessibilityTableCell(renderer));
 }

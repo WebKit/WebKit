@@ -35,6 +35,7 @@ template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeTrustedTypes {
 public:
+    static ASCIILiteral workerGlobalSupplementName();
     static TrustedTypePolicyFactory* trustedTypes(LocalDOMWindow&);
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };

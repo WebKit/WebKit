@@ -459,8 +459,7 @@ bool FontCache::useBackslashAsYenSignForFamily(const AtomString& family)
     if (m_familiesUsingBackslashAsYenSign.isEmpty()) {
         auto add = [&] (ASCIILiteral name, std::initializer_list<UChar> unicodeName) {
             m_familiesUsingBackslashAsYenSign.add(AtomString { name });
-            unsigned unicodeNameLength = unicodeName.size();
-            m_familiesUsingBackslashAsYenSign.add(AtomString { unicodeName.begin(), unicodeNameLength });
+            m_familiesUsingBackslashAsYenSign.add(AtomString({ unicodeName.begin(), unicodeName.size() }));
         };
         add("MS PGothic"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF });
         add("MS PMincho"_s, { 0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D });

@@ -29,9 +29,11 @@
 #include "APIData.h"
 #include "SessionState.h"
 #include <mutex>
+#include <wtf/Algorithms.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringView.h>
 
 namespace WebKit {
@@ -133,7 +135,7 @@ public:
         *this << length;
 
         *this << static_cast<uint64_t>(length * sizeof(UChar));
-        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar), alignof(UChar));
+        encodeFixedLengthData({ reinterpret_cast<const uint8_t*>(StringView(value).upconvertedCharacters().get()), length * sizeof(UChar) }, alignof(UChar));
 
         return *this;
     }
@@ -141,7 +143,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<uint8_t>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(value.data(), value.size(), 1);
+        encodeFixedLengthData(value.span(), 1);
 
         return *this;
     }
@@ -149,7 +151,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<char>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.data()), value.size(), 1);
+        encodeFixedLengthData(spanReinterpretCast<const uint8_t>(value.span()), 1);
 
         return *this;
     }
@@ -210,17 +212,17 @@ private:
     {
         static_assert(std::is_arithmetic<Type>::value);
 
-        encodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
+        encodeFixedLengthData({ reinterpret_cast<uint8_t*>(&value), sizeof(value) }, sizeof(value));
         return *this;
     }
 
-    void encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+    void encodeFixedLengthData(std::span<const uint8_t> data, unsigned alignment)
     {
-        RELEASE_ASSERT(data || !size);
-        ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+        RELEASE_ASSERT(data.data() || data.empty());
+        ASSERT(!(reinterpret_cast<uintptr_t>(data.data()) % alignment));
 
-        uint8_t* buffer = grow(alignment, size);
-        memcpy(buffer, data, size);
+        uint8_t* buffer = grow(alignment, data.size());
+        memcpy(buffer, data.data(), data.size());
     }
 
     uint8_t* grow(unsigned alignment, size_t size)
@@ -531,9 +533,9 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 
 class HistoryEntryDataDecoder {
 public:
-    HistoryEntryDataDecoder(const uint8_t* buffer, size_t bufferSize)
-        : m_buffer(buffer)
-        , m_bufferEnd(buffer + bufferSize)
+    HistoryEntryDataDecoder(std::span<const uint8_t> buffer)
+        : m_buffer(buffer.data())
+        , m_bufferEnd(buffer.data() + buffer.size())
     {
         // Keep format compatibility by decoding an unused uint64_t here.
         uint64_t value;
@@ -979,9 +981,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
 #endif
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(const uint8_t* buffer, size_t bufferSize, FrameState& mainFrameState)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(std::span<const uint8_t> buffer, FrameState& mainFrameState)
 {
-    HistoryEntryDataDecoder decoder { buffer, bufferSize };
+    HistoryEntryDataDecoder decoder { buffer };
 
     uint32_t version;
     decoder >> version;
@@ -996,7 +998,7 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(const uint8_t* buff
 
 static WARN_UNUSED_RETURN bool decodeSessionHistoryEntryData(CFDataRef historyEntryData, FrameState& mainFrameState)
 {
-    return decodeSessionHistoryEntryData(CFDataGetBytePtr(historyEntryData), static_cast<size_t>(CFDataGetLength(historyEntryData)), mainFrameState);
+    return decodeSessionHistoryEntryData(span(historyEntryData), mainFrameState);
 }
 
 static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDictionary, BackForwardListItemState& backForwardListItemState)

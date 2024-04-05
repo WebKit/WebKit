@@ -2000,7 +2000,7 @@ header: <WebCore/ResourceRequest.h>
 #endif
 
 [Nested] struct WebCore::ResourceError::IPCData {
-    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceError::Type type;
+    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceErrorBaseType type;
 #if PLATFORM(COCOA)
     RetainPtr<NSError> nsError;
     bool isSanitized;
@@ -2742,14 +2742,14 @@ header: <WebCore/KeyboardScroll.h>
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
-    [NotSerialized] WebCore::TransformOperation::Type type();
+    [NotSerialized] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::TranslateTransformOperation {
     WebCore::Length x();
     WebCore::Length y();
     WebCore::Length z();
-    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::RotateTransformOperation {
@@ -2757,20 +2757,20 @@ header: <WebCore/KeyboardScroll.h>
     double y();
     double z();
     double angle();
-    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::ScaleTransformOperation {
     double x();
     double y();
     double z();
-    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::SkewTransformOperation {
     double angleX();
     double angleY();
-    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperation::Type type();
+    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperationType type();
 }
 
 [RefCounted] class WebCore::PerspectiveTransformOperation {
@@ -2846,7 +2846,7 @@ class WebCore::TransformOperations {
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceBrush {
     WebCore::Color color();
-    WebCore::SourceBrush::OptionalPatternGradient patternGradient();
+    std::variant<std::monostate, WebCore::SourceBrushLogicalGradient, Ref<WebCore::Pattern>> patternGradient();
 }
 
 header: <WebCore/ThreadSafeDataBuffer.h>
@@ -4107,6 +4107,7 @@ enum class WebCore::CDMSessionType : uint8_t {
 };
 using WebCore::CDMInstanceSession::LicenseType = WebCore::CDMSessionType;
 using WebCore::CDMInstanceSession::Message = std::pair<WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>>
+using WebCore::CDMInstanceSession::KeyStatusVector = Vector<std::pair<Ref<WebCore::SharedBuffer>, WebCore::CDMKeyStatus>>;
 
 struct WebCore::CDMRestrictions {
     bool distinctiveIdentifierDenied;
@@ -4244,7 +4245,7 @@ struct WebCore::BackgroundFetchRequest {
     WebCore::FetchHeadersGuard guard;
     WebCore::HTTPHeaderMap httpHeaders;
     String referrer;
-    Markable<WebCore::ContentSecurityPolicyResponseHeaders, WebCore::ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
+    Markable<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
 };
 
 struct WebCore::BackgroundFetchRecordInformation {
@@ -4727,11 +4728,14 @@ header: <WebCore/GraphicsTypes.h>
     DictationAlternatives
 };
 
-header: <WebCore/GraphicsTypes.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
     WebCore::DocumentMarkerLineStyleMode mode;
     WebCore::Color color;
 };
+
+header: <WebCore/GraphicsTypesGL.h>
+using PlatformGLObject = GCGLuint
+using GCGLuint = unsigned
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
 
@@ -6490,7 +6494,8 @@ enum class WebCore::WebGPU::PowerPreference : bool
 
 header: <WebCore/WebGPUPredefinedColorSpace.h>
 enum class WebCore::WebGPU::PredefinedColorSpace : uint8_t {
-    SRGB
+    SRGB,
+    DisplayP3
 };
 
 struct WebCore::CookieStoreGetOptions {
@@ -7454,7 +7459,7 @@ header: <WebCore/Font.h>
 };
 
 [CreateUsing=fromIPCData] class WebCore::Cursor {
-    std::variant<WebCore::Cursor::Type, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
+    std::variant<WebCore::PlatformCursorType, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
 };
 
 header: <WebCore/DOMCacheEngine.h>
@@ -7462,12 +7467,12 @@ header: <WebCore/DOMCacheEngine.h>
     uint64_t identifier;
     uint64_t updateResponseCounter;
 
-    WebCore::FetchHeaders::Guard requestHeadersGuard;
+    WebCore::FetchHeadersGuard requestHeadersGuard;
     WebCore::ResourceRequest request;
     WebCore::FetchOptions options;
     String referrer;
 
-    WebCore::FetchHeaders::Guard responseHeadersGuard;
+    WebCore::FetchHeadersGuard responseHeadersGuard;
     WebCore::ResourceResponse response;
     std::variant<std::nullptr_t, Ref<WebCore::FormData>, Ref<WebCore::SharedBuffer>> responseBody;
     uint64_t responseBodySize;
@@ -8003,3 +8008,74 @@ using ProcessID = int;
 #else
 using ProcessID = pid_t;
 #endif
+
+using WebCore::IntDegrees = int32_t;
+using WebCore::PageOverlay::PageOverlayID = uint64_t
+
+[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType : uint8_t {
+    SVG_PRESERVEASPECTRATIO_UNKNOWN,
+    SVG_PRESERVEASPECTRATIO_NONE,
+    SVG_PRESERVEASPECTRATIO_XMINYMIN,
+    SVG_PRESERVEASPECTRATIO_XMIDYMIN,
+    SVG_PRESERVEASPECTRATIO_XMAXYMIN,
+    SVG_PRESERVEASPECTRATIO_XMINYMID,
+    SVG_PRESERVEASPECTRATIO_XMIDYMID,
+    SVG_PRESERVEASPECTRATIO_XMAXYMID,
+    SVG_PRESERVEASPECTRATIO_XMINYMAX,
+    SVG_PRESERVEASPECTRATIO_XMIDYMAX,
+    SVG_PRESERVEASPECTRATIO_XMAXYMAX
+}
+
+[Nested] enum class WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType : uint8_t {
+    SVG_MEETORSLICE_UNKNOWN,
+    SVG_MEETORSLICE_MEET,
+    SVG_MEETORSLICE_SLICE
+}
+
+enum class WebCore::PlatformMediaError : uint8_t {
+    AppendError,
+    ClientDisconnected,
+    BufferRemoved,
+    SourceRemoved,
+    IPCError,
+    ParsingError,
+    MemoryError,
+    Cancelled,
+    LogicError,
+    DecoderCreationError,
+    NotSupportedError,
+    NetworkError,
+};
+
+#if USE(CG)
+using WebCore::DashArray = Vector<CGFloat>;
+#endif
+#if USE(CAIRO)
+using WebCore::DashArray = Vector<double>;
+#endif
+#if !USE(CG) && !USE(CAIRO)
+using WebCore::DashArray = Vector<float>;
+#endif
+
+[WebKitPlatform] enum class WebCore::NotificationDirection : uint8_t {
+    Auto,
+    Ltr,
+    Rtl
+};
+
+[Nested] enum class WebCore::SVGUnitTypes::SVGUnitType : uint8_t {
+    SVG_UNIT_TYPE_UNKNOWN
+    SVG_UNIT_TYPE_USERSPACEONUSE
+    SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+};
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+header: <WebCore/InspectorFrontendClient.h>
+using Inspector::ExtensionTabID = String
+#endif
+
+using WebCore::ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>
+using WebCore::IDBKeyPath = std::variant<String, Vector<String>>;
+using WebCore::ServiceWorkerOrClientData = std::variant<WebCore::ServiceWorkerData, WebCore::ServiceWorkerClientData>
+using WebCore::MediaPlayer::VideoFullscreenMode = uint32_t
+enum class WebCore::CrossOriginMode : bool

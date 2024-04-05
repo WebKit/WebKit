@@ -27,6 +27,7 @@
 #include "ExceptionOr.h"
 #include "MediaRecorderPrivateOptions.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
@@ -49,7 +50,9 @@ struct MediaRecorderPrivateOptions;
 
 class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
-    , public RealtimeMediaSource::VideoFrameObserver {
+    , public RealtimeMediaSource::VideoFrameObserver
+    , public CanMakeCheckedPtr<MediaRecorderPrivate> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ~MediaRecorderPrivate();
 
@@ -89,6 +92,11 @@ protected:
     bool shouldMuteVideo() const { return m_shouldMuteVideo; }
 
 private:
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+
     virtual void stopRecording(CompletionHandler<void()>&&) = 0;
     virtual void pauseRecording(CompletionHandler<void()>&&) = 0;
     virtual void resumeRecording(CompletionHandler<void()>&&) = 0;

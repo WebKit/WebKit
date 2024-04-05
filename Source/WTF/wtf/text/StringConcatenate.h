@@ -589,11 +589,11 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapter adapter, StringTypeAd
         if (areAllAdapters8Bit) {
             LChar buffer[maxLengthToUseStackVariable];
             stringTypeAdapterAccumulator(buffer, adapter, adapters...);
-            return AtomString { buffer, length };
+            return std::span<const LChar> { buffer, length };
         }
         UChar buffer[maxLengthToUseStackVariable];
         stringTypeAdapterAccumulator(buffer, adapter, adapters...);
-        return AtomString { buffer, length };
+        return std::span<const UChar> { buffer, length };
     }
     return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapter, adapters...).get();
 }

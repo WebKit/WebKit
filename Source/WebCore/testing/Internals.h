@@ -44,6 +44,7 @@
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
 #include <JavaScriptCore/Forward.h>
+#include <wtf/CheckedRef.h>
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"
@@ -185,6 +186,7 @@ class Internals final : public RefCounted<Internals>, private ContextDestruction
     , public RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
     , private RealtimeMediaSource::VideoFrameObserver
+    , public CanMakeCheckedPtr<Internals>
 #endif
     {
 public:
@@ -1459,6 +1461,14 @@ public:
 
 private:
     explicit Internals(Document&);
+
+#if ENABLE(MEDIA_STREAM)
+    // CheckedPtr interface
+    uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
+    void incrementPtrCount() const final { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const final { CanMakeCheckedPtr::decrementPtrCount(); }
+#endif
+
     Document* contextDocument() const;
     LocalFrame* frame() const;
 

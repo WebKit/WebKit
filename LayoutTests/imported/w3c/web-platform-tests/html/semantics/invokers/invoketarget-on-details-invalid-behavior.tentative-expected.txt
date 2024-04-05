@@ -1,0 +1,17 @@
+
+
+PASS invoking (as foo-bar) on details does nothing
+PASS invoking (as foo-bar) on open details does nothing
+PASS invoking (as showpopover) on details does nothing
+PASS invoking (as showpopover) on open details does nothing
+PASS invoking (as showmodal) on details does nothing
+PASS invoking (as showmodal) on open details does nothing
+PASS invoking (as showpicker) on details does nothing
+PASS invoking (as showpicker) on open details does nothing
+PASS invoking (as hidepopover) on details does nothing
+PASS invoking (as hidepopover) on open details does nothing
+PASS invoking (as hide) on details does nothing
+PASS invoking (as hide) on open details does nothing
+PASS invoking (as toggleopen) on details does nothing
+PASS invoking (as toggleopen) on open details does nothing
+
