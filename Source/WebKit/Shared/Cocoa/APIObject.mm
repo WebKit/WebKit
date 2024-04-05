@@ -70,6 +70,7 @@
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WKWindowFeaturesInternal.h"
+#import "_WKApplicationManifestInternal.h"
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
@@ -96,10 +97,6 @@
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
 #import "_WKWebAuthenticationPanelInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
-
-#if ENABLE(APPLICATION_MANIFEST)
-#import "_WKApplicationManifestInternal.h"
-#endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 #import "_WKInspectorExtensionInternal.h"
@@ -155,11 +152,9 @@ void* Object::newObject(size_t size, Type type)
     // API::Object, so they are allocated using +alloc.
 
     switch (type) {
-#if ENABLE(APPLICATION_MANIFEST)
     case Type::ApplicationManifest:
         wrapper = [_WKApplicationManifest alloc];
         break;
-#endif
 
     case Type::Array:
         wrapper = [WKNSArray alloc];

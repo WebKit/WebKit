@@ -108,6 +108,7 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
 #import "_WKAppHighlightInternal.h"
+#import "_WKApplicationManifestInternal.h"
 #import "_WKArchiveConfiguration.h"
 #import "_WKArchiveExclusionRule.h"
 #import "_WKDataTaskInternal.h"
@@ -172,10 +173,6 @@
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextStream.h>
-
-#if ENABLE(APPLICATION_MANIFEST)
-#import "_WKApplicationManifestInternal.h"
-#endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #import "_WKWebExtensionControllerInternal.h"
@@ -3493,7 +3490,6 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_getApplicationManifestWithCompletionHandler:(void (^)(_WKApplicationManifest *))completionHandler
 {
     THROW_IF_SUSPENDED;
-#if ENABLE(APPLICATION_MANIFEST)
     _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
             if (manifest) {
@@ -3503,10 +3499,6 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
                 completionHandler(nil);
         }
     });
-#else
-    if (completionHandler)
-        completionHandler(nil);
-#endif
 }
 
 - (void)_getTextFragmentMatchWithCompletionHandler:(void (^)(NSString *))completionHandler
