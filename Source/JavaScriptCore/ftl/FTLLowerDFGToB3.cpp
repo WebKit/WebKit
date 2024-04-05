@@ -6297,7 +6297,7 @@ IGNORE_CLANG_WARNINGS_END
                     if (isInt(type))
                         result = boxInt32(unboxedResult);
                     else
-                        result = boxDouble(unboxedResult);
+                        result = boxDouble(purifyNaN(unboxedResult));
                     ValueFromBlock fastResult = m_out.anchor(result);
                     m_out.jump(continuation);
 
