@@ -252,9 +252,11 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     if (!jsonString)
         return nil;
 
-    // FIXME: Return nil if jsonString cannot be deserialized into JSON object.
-    auto manifest = WebCore::ApplicationManifestParser::parse(jsonString.get(), URL(manifestURL), URL(documentURL));
-    API::Object::constructInWrapper<API::ApplicationManifest>(self, manifest);
+    auto manifest = WebCore::ApplicationManifestParser::parseWithValidation(jsonString.get(), URL(manifestURL), URL(documentURL));
+    if (!manifest)
+        return nil;
+
+    API::Object::constructInWrapper<API::ApplicationManifest>(self, *manifest);
 
     return self;
 }

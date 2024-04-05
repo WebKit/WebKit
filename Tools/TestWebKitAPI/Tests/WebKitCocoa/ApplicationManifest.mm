@@ -426,6 +426,28 @@ TEST(WKApplicationManifest, JSONDataEncoding)
     EXPECT_NULL(manifest);
 }
 
+TEST(WKApplicationManifest, InvalidJSONData)
+{
+    RetainPtr<NSURL> manifestURL = [NSURL URLWithString:@"https://test.com/manifest.json"];
+    RetainPtr<NSURL> documentURL = [NSURL URLWithString:@"https://test.com"];
+
+    NSDictionary *jsonbject = @{ @"name": @"TestName" };
+    RetainPtr jsonData = [NSJSONSerialization dataWithJSONObject:jsonbject options:0 error:nil];
+    RetainPtr manifest = adoptNS([[_WKApplicationManifest alloc] initWithJSONData:jsonData.get() manifestURL:manifestURL.get() documentURL:documentURL.get()]);
+    EXPECT_NOT_NULL(manifest);
+    EXPECT_WK_STREQ("TestName", manifest.get().name);
+
+    NSString *testString = @"test string";
+    RetainPtr stringData = [testString dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    manifest = adoptNS([[_WKApplicationManifest alloc] initWithJSONData:stringData.get() manifestURL:manifestURL.get() documentURL:documentURL.get()]);
+    EXPECT_NULL(manifest);
+
+    RetainPtr mutableJSONData = adoptNS([[NSMutableData alloc] initWithData:jsonData.get()]);
+    [mutableJSONData appendData:stringData.get()];
+    manifest = adoptNS([[_WKApplicationManifest alloc] initWithJSONData:mutableJSONData.get() manifestURL:manifestURL.get() documentURL:documentURL.get()]);
+    EXPECT_NULL(manifest);
+}
+
 
 } // namespace TestWebKitAPI
 
