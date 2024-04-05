@@ -558,12 +558,164 @@ extern "C" void ipint_catch_all_entry();
     m(0x4d, i64_atomic_rmw16_cmpxchg_u) \
     m(0x4e, i64_atomic_rmw32_cmpxchg_u) \
 
+// TODO: correctly validate these alignments
+#define FOR_EACH_IPINT_UNVALIDATED_ALIGNED_LABEL(m) \
+    m(0x00, argumINT_a0) \
+    m(0x00, argumINT_a1) \
+    m(0x00, argumINT_a2) \
+    m(0x00, argumINT_a3) \
+    m(0x00, argumINT_a4) \
+    m(0x00, argumINT_a5) \
+    m(0x00, argumINT_a6) \
+    m(0x00, argumINT_a7) \
+    m(0x00, argumINT_end) \
+    m(0x00, argumINT_fa0) \
+    m(0x00, argumINT_fa1) \
+    m(0x00, argumINT_fa2) \
+    m(0x00, argumINT_fa3) \
+    m(0x00, argumINT_stack) \
+    m(0x00, local_get_slow_path) \
+    m(0x00, local_set_slow_path) \
+    m(0x00, local_tee_slow_path) \
+    m(0x00, reserved_0x12) \
+    m(0x00, reserved_0x13) \
+    m(0x00, reserved_0x14) \
+    m(0x00, reserved_0x15) \
+    m(0x00, reserved_0x16) \
+    m(0x00, reserved_0x17) \
+    m(0x00, reserved_0x1d) \
+    m(0x00, reserved_0x1e) \
+    m(0x00, reserved_0x1f) \
+    m(0x00, reserved_0x27) \
+    m(0x00, reserved_0xa) \
+    m(0x00, reserved_0xc5) \
+    m(0x00, reserved_0xc6) \
+    m(0x00, reserved_0xc7) \
+    m(0x00, reserved_0xc8) \
+    m(0x00, reserved_0xc9) \
+    m(0x00, reserved_0xca) \
+    m(0x00, reserved_0xcb) \
+    m(0x00, reserved_0xcc) \
+    m(0x00, reserved_0xcd) \
+    m(0x00, reserved_0xce) \
+    m(0x00, reserved_0xcf) \
+    m(0x00, reserved_0xd3) \
+    m(0x00, reserved_0xd4) \
+    m(0x00, reserved_0xd5) \
+    m(0x00, reserved_0xd6) \
+    m(0x00, reserved_0xd7) \
+    m(0x00, reserved_0xd8) \
+    m(0x00, reserved_0xd9) \
+    m(0x00, reserved_0xda) \
+    m(0x00, reserved_0xdb) \
+    m(0x00, reserved_0xdc) \
+    m(0x00, reserved_0xdd) \
+    m(0x00, reserved_0xde) \
+    m(0x00, reserved_0xdf) \
+    m(0x00, reserved_0xe0) \
+    m(0x00, reserved_0xe1) \
+    m(0x00, reserved_0xe2) \
+    m(0x00, reserved_0xe3) \
+    m(0x00, reserved_0xe4) \
+    m(0x00, reserved_0xe5) \
+    m(0x00, reserved_0xe6) \
+    m(0x00, reserved_0xe7) \
+    m(0x00, reserved_0xe8) \
+    m(0x00, reserved_0xe9) \
+    m(0x00, reserved_0xea) \
+    m(0x00, reserved_0xeb) \
+    m(0x00, reserved_0xec) \
+    m(0x00, reserved_0xed) \
+    m(0x00, reserved_0xee) \
+    m(0x00, reserved_0xef) \
+    m(0x00, reserved_0xf0) \
+    m(0x00, reserved_0xf1) \
+    m(0x00, reserved_0xf2) \
+    m(0x00, reserved_0xf3) \
+    m(0x00, reserved_0xf4) \
+    m(0x00, reserved_0xf5) \
+    m(0x00, reserved_0xf6) \
+    m(0x00, reserved_0xf7) \
+    m(0x00, reserved_0xf8) \
+    m(0x00, reserved_0xf9) \
+    m(0x00, reserved_0xfa) \
+    m(0x00, reserved_0xfb) \
+    m(0x00, reserved_0xfd9a01) \
+    m(0x00, reserved_0xfda201) \
+    m(0x00, reserved_0xfda501) \
+    m(0x00, reserved_0xfda601) \
+    m(0x00, reserved_0xfdaf01) \
+    m(0x00, reserved_0xfdb001) \
+    m(0x00, reserved_0xfdb201) \
+    m(0x00, reserved_0xfdb301) \
+    m(0x00, reserved_0xfdb401) \
+    m(0x00, reserved_0xfdbb01) \
+    m(0x00, reserved_0xfdc201) \
+    m(0x00, reserved_0xfdc501) \
+    m(0x00, reserved_0xfdc601) \
+    m(0x00, reserved_0xfdcf01) \
+    m(0x00, reserved_0xfdd001) \
+    m(0x00, reserved_0xfdd201) \
+    m(0x00, reserved_0xfdd301) \
+    m(0x00, reserved_0xfdd401) \
+    m(0x00, reserved_0xfde201) \
+    m(0x00, reserved_0xfdee01) \
+    m(0x00, reserved_0xff) \
+    m(0x00, reserved__atomic_0x4) \
+    m(0x00, reserved__atomic_0x5) \
+    m(0x00, reserved__atomic_0x6) \
+    m(0x00, reserved__atomic_0x7) \
+    m(0x00, reserved__atomic_0x8) \
+    m(0x00, reserved__atomic_0x9) \
+    m(0x00, reserved__atomic_0xa) \
+    m(0x00, reserved__atomic_0xb) \
+    m(0x00, reserved__atomic_0xc) \
+    m(0x00, reserved__atomic_0xd) \
+    m(0x00, reserved__atomic_0xe) \
+    m(0x00, reserved__atomic_0xf) \
+    m(0x00, mint_a0) \
+    m(0x00, mint_a1) \
+    m(0x00, mint_a2) \
+    m(0x00, mint_a3) \
+    m(0x00, mint_a4) \
+    m(0x00, mint_a5) \
+    m(0x00, mint_a6) \
+    m(0x00, mint_a7) \
+    m(0x00, mint_call) \
+    m(0x00, mint_end) \
+    m(0x00, mint_fa0) \
+    m(0x00, mint_fa1) \
+    m(0x00, mint_fa2) \
+    m(0x00, mint_fa3) \
+    m(0x00, mint_fr0) \
+    m(0x00, mint_fr1) \
+    m(0x00, mint_fr2) \
+    m(0x00, mint_fr3) \
+    m(0x00, mint_gap) \
+    m(0x00, mint_r0) \
+    m(0x00, mint_r1) \
+    m(0x00, mint_r2) \
+    m(0x00, mint_r3) \
+    m(0x00, mint_r4) \
+    m(0x00, mint_r5) \
+    m(0x00, mint_r6) \
+    m(0x00, mint_r7) \
+    m(0x00, mint_stack) \
+    m(0x00, mint_stackeight) \
+    m(0x00, mint_stackzero) \
+    m(0x00, uint_fr1) \
+    m(0x00, uint_r0) \
+    m(0x00, uint_r1) \
+    m(0x00, uint_ret) \
+    m(0x00, uint_stack) \
+
 
 #if !ENABLE(C_LOOP) && CPU(ADDRESS64) && (CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_0xFC_TRUNC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_SIMD_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 FOR_EACH_IPINT_ATOMIC_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
+FOR_EACH_IPINT_UNVALIDATED_ALIGNED_LABEL(IPINT_VALIDATE_DEFINE_FUNCTION);
 #endif
 
 namespace JSC { namespace IPInt {

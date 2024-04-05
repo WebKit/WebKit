@@ -403,29 +403,15 @@ end
 # labels in InPlaceInterpreter.cpp) then some linkers will still remove the definition which
 # causes all kinds of problems.
 
-# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-macro alignment()
-if ARM64 or ARM64E
-    # fill with brk instructions
-    emit ".balignl 256, 0xd4388e20"
-elsif X86_64
-    # fill with int 3 instructions
-    emit ".balign 256, 0xcc"
-elsif ARMv7
-    # fill with udf instructions
-    emit ".balignw 256, 0xde00"
-end
-end
-
 macro instructionLabel(instrname)
-    alignment()
-    unalignedglobal _ipint%instrname%_validate
-    _ipint%instrname%:
+    aligned _ipint%instrname%_validate 256
     _ipint%instrname%_validate:
+    _ipint%instrname%:
 end
 
 macro slowPathLabel(instrname)
-    alignment()
+    aligned _ipint%instrname%_slow_path_validate 256
+    _ipint%instrname%_slow_path_validate:
     _ipint%instrname%_slow_path:
 end
 
@@ -435,7 +421,7 @@ macro unimplementedInstruction(instrname)
 end
 
 macro reservedOpcode(opcode)
-    alignment()
+    unimplementedInstruction(_reserved_%opcode%)
     break
 end
 
@@ -649,9 +635,22 @@ end
 # In-Place Interpreter #
 ########################
 
-# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-macro argumINTAlign()
-    emit ".balign 64"
+macro argumINTAlign(instrname)
+    aligned _ipint_argumINT%instrname%_validate 64
+    _ipint_argumINT%instrname%_validate:
+    _argumINT%instrname%:
+end
+
+macro mintAlign(instrname)
+    aligned _ipint_mint%instrname%_validate 64
+    _ipint_mint%instrname%_validate:
+    _mint%instrname%:
+end
+
+macro uintAlign(instrname)
+    aligned _ipint_uint%instrname%_validate 64
+    _ipint_uint%instrname%_validate:
+    _uint%instrname%:
 end
 
 macro checkStackOverflow(callee, scratch)
@@ -710,11 +709,11 @@ macro argumINTDispatch()
     addq 1, PM
     lshiftq 6, csr0
 if ARM64 or ARM64E
-    pcrtoaddr _argumINT_a0, csr4
+    pcrtoaddr _argumINT_begin, csr4
     addq csr0, csr4
     emit "br x23"
 elsif X86_64
-    leap (_argumINT_a0), csr4
+    leap (_argumINT_begin), csr4
     addq csr0, csr4
     emit "jmp *(%r13)"
 else
@@ -1076,11 +1075,6 @@ instructionLabel(_rethrow)
 
 reservedOpcode(0x0a)
 
-# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-macro uintAlign()
-    emit ".balign 64"
-end
-
 macro uintDispatch()
 if ARM64 or ARM64E
     loadb [PM], ws2
@@ -1089,7 +1083,7 @@ if ARM64 or ARM64E
     break
 .safe:
     lshiftq 6, ws2
-    pcrtoaddr _uint_r0, ws3
+    pcrtoaddr _uint_begin, ws3
     addq ws2, ws3
     # ws3 = x12
     emit "br x12"
@@ -1100,7 +1094,7 @@ elsif X86_64
     break
 .safe:
     lshiftq 6, r1
-    leap (_uint_r0), t0
+    leap (_uint_begin), t0
     addq r1, t0
     emit "jmp *(%rax)"
 end
@@ -4302,7 +4296,7 @@ unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_u)
 
 unimplementedInstruction(_simd_f32x4_abs)
 unimplementedInstruction(_simd_f32x4_neg)
-reservedOpcode(0xFDC201)
+reservedOpcode(0xFDE201)
 unimplementedInstruction(_simd_f32x4_sqrt)
 unimplementedInstruction(_simd_f32x4_add)
 unimplementedInstruction(_simd_f32x4_sub)
@@ -5726,11 +5720,6 @@ slowPathLabel(_local_tee)
 ## "Out of line" logic for call ##
 ##################################
 
-# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-macro mintAlign()
-    emit ".balign 64"
-end
-
 macro mintPop(reg)
     loadq [ws1], reg
     addq 16, ws1
@@ -5747,12 +5736,12 @@ macro mintArgDispatch()
     andq 15, ws0
     lshiftq 6, ws0
 if ARM64 or ARM64E
-    pcrtoaddr _mint_a0, csr4
+    pcrtoaddr _mint_begin, csr4
     addq ws0, csr4
     # csr4 = x23
     emit "br x23"
 elsif X86_64
-    leap (_mint_a0), csr4
+    leap (_mint_begin), csr4
     addq ws0, csr4
     # csr4 = r13
     emit "jmp *(%r13)"
@@ -5767,12 +5756,12 @@ macro mintRetDispatch()
 .safe:
     lshiftq 6, ws0
 if ARM64 or ARM64E
-    pcrtoaddr _mint_r0, csr4
+    pcrtoaddr _mint_begin_return, csr4
     addq ws0, csr4
     # csr4 = x23
     emit "br x23"
 elsif X86_64
-    leap (_mint_r0), csr4
+    leap (_mint_begin_return), csr4
     addq ws0, csr4
     # csr4 = r13
     emit "jmp *(%r13)"
@@ -5835,28 +5824,24 @@ _ipint_call_impl:
     addq MC, PM
     mintArgDispatch()
 
-mintAlign()
-_mint_a0:
+_mint_begin:
+mintAlign(_a0)
     mintPop(a0)
     mintArgDispatch()
 
-mintAlign()
-_mint_a1:
+mintAlign(_a1)
     mintPop(a1)
     mintArgDispatch()
 
-mintAlign()
-_mint_a2:
+mintAlign(_a2)
     mintPop(a2)
     mintArgDispatch()
 
-mintAlign()
-_mint_a3:
+mintAlign(_a3)
     mintPop(a3)
     mintArgDispatch()
 
-mintAlign()
-_mint_a4:
+mintAlign(_a4)
 if ARM64 or ARM64E
     mintPop(a4)
     mintArgDispatch()
@@ -5864,8 +5849,7 @@ else
     break
 end
 
-mintAlign()
-_mint_a5:
+mintAlign(_a5)
 if ARM64 or ARM64E
     mintPop(a5)
     mintArgDispatch()
@@ -5873,8 +5857,7 @@ else
     break
 end
 
-mintAlign()
-_mint_a6:
+mintAlign(_a6)
 if ARM64 or ARM64E
     mintPop(a6)
     mintArgDispatch()
@@ -5882,8 +5865,7 @@ else
     break
 end
 
-mintAlign()
-_mint_a7:
+mintAlign(_a7)
 if ARM64 or ARM64E
     mintPop(a7)
     mintArgDispatch()
@@ -5891,45 +5873,37 @@ else
     break
 end
 
-mintAlign()
-_mint_fa0:
+mintAlign(_fa0)
     mintPopF(fa0)
     mintArgDispatch()
 
-mintAlign()
-_mint_fa1:
+mintAlign(_fa1)
     mintPopF(fa1)
     mintArgDispatch()
 
-mintAlign()
-_mint_fa2:
+mintAlign(_fa2)
     mintPopF(fa2)
     mintArgDispatch()
 
-mintAlign()
-_mint_fa3:
+mintAlign(_fa3)
     mintPopF(fa3)
     mintArgDispatch()
 
-mintAlign()
-_mint_stackzero:
+mintAlign(_stackzero)
     mintPop(ws0)
     storeq ws0, [sp]
     mintArgDispatch()
 
-mintAlign()
-_mint_stackeight:
+mintAlign(_stackeight)
     mintPop(ws0)
     pushQuad(ws0)
     mintArgDispatch()
 
-mintAlign()
-_mint_gap:
+mintAlign(_gap)
     subq 16, sp
     mintArgDispatch()
 
-mintAlign()
-_mint_call:
+mintAlign(_call)
     # Set up the rest of the stack frame
     subp FirstArgumentOffset - 16, sp
 
@@ -5967,28 +5941,24 @@ _mint_call:
     addq 4, PM
     mintRetDispatch()
 
-mintAlign()
-_mint_r0:
+_mint_begin_return:
+mintAlign(_r0)
     pushQuad(r0)
     mintRetDispatch()
 
-mintAlign()
-_mint_r1:
+mintAlign(_r1)
     pushQuad(r1)
     mintRetDispatch()
 
-mintAlign()
-_mint_r2:
+mintAlign(_r2)
     pushQuad(t2)
     mintRetDispatch()
 
-mintAlign()
-_mint_r3:
+mintAlign(_r3)
     pushQuad(t3)
     mintRetDispatch()
 
-mintAlign()
-_mint_r4:
+mintAlign(_r4)
 if ARM64 or ARM64E
     pushQuad(t4)
     mintRetDispatch()
@@ -5996,8 +5966,7 @@ else
     break
 end
 
-mintAlign()
-_mint_r5:
+mintAlign(_r5)
 if ARM64 or ARM64E
     pushQuad(t5)
     mintRetDispatch()
@@ -6005,8 +5974,7 @@ else
     break
 end
 
-mintAlign()
-_mint_r6:
+mintAlign(_r6)
 if ARM64 or ARM64E
     pushQuad(t6)
     mintRetDispatch()
@@ -6014,8 +5982,7 @@ else
     break
 end
 
-mintAlign()
-_mint_r7:
+mintAlign(_r7)
 if ARM64 or ARM64E
     pushQuad(t7)
     mintRetDispatch()
@@ -6023,8 +5990,7 @@ else
     break
 end
 
-mintAlign()
-_mint_fr0:
+mintAlign(_fr0)
     if ARM64 or ARM64E
         emit "str q0, [sp, #-16]!"
     else
@@ -6033,8 +5999,7 @@ _mint_fr0:
     end
     mintRetDispatch()
 
-mintAlign()
-_mint_fr1:
+mintAlign(_fr1)
     if ARM64 or ARM64E
         emit "str q1, [sp, #-16]!"
     else
@@ -6043,8 +6008,7 @@ _mint_fr1:
     end
     mintRetDispatch()
 
-mintAlign()
-_mint_fr2:
+mintAlign(_fr2)
     if ARM64 or ARM64E
         emit "str q2, [sp, #-16]!"
     else
@@ -6053,8 +6017,7 @@ _mint_fr2:
     end
     mintRetDispatch()
 
-mintAlign()
-_mint_fr3:
+mintAlign(_fr3)
     if ARM64 or ARM64E
         emit "str q3, [sp, #-16]!"
     else
@@ -6063,13 +6026,11 @@ _mint_fr3:
     end
     mintRetDispatch()
 
-mintAlign()
-_mint_ret_stack:
+mintAlign(_stack)
     # TODO
     break
 
-mintAlign()
-_mint_end:
+mintAlign(_end)
 
     move PM, MC
     move PB, PC
@@ -6088,27 +6049,23 @@ _mint_end:
     ipintReloadMemory()
     nextIPIntInstruction()
 
-uintAlign()
-_uint_r0:
+_uint_begin:
+uintAlign(_r0)
     popQuad(r0, t3)
     uintDispatch()
 
-uintAlign()
-_uint_r1:
+uintAlign(_r1)
     popQuad(r1, t3)
     uintDispatch()
 
-uintAlign()
-_uint_fr1:
+uintAlign(_fr1)
     popFPR()
     uintDispatch()
 
-uintAlign()
-_uint_stack:
+uintAlign(_stack)
     break
 
-uintAlign()
-_uint_ret:
+uintAlign(_ret)
     jmp .ipint_exit
 
 # PM = location in argumINT bytecode
@@ -6121,32 +6078,28 @@ _uint_ret:
 # const argumINTDest = csr3
 # const argumINTSrc = PB
 
-argumINTAlign()
-_argumINT_a0:
+_argumINT_begin:
+argumINTAlign(_a0)
     storeq a0, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_a1:
+argumINTAlign(_a1)
     storeq a1, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_a2:
+argumINTAlign(_a2)
     storeq a2, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_a3:
+argumINTAlign(_a3)
     storeq a3, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_a4:
+argumINTAlign(_a4)
 if ARM64 or ARM64E
     storeq a4, [argumINTDest]
     addq 8, argumINTDest
@@ -6155,8 +6108,7 @@ else
     break
 end
 
-argumINTAlign()
-_argumINT_a5:
+argumINTAlign(_a5)
 if ARM64 or ARM64E
     storeq a5, [argumINTDest]
     addq 8, argumINTDest
@@ -6165,8 +6117,7 @@ else
     break
 end
 
-argumINTAlign()
-_argumINT_a6:
+argumINTAlign(_a6)
 if ARM64 or ARM64E
     storeq a6, [argumINTDest]
     addq 8, argumINTDest
@@ -6175,8 +6126,7 @@ else
     break
 end
 
-argumINTAlign()
-_argumINT_a7:
+argumINTAlign(_a7)
 if ARM64 or ARM64E
     storeq a7, [argumINTDest]
     addq 8, argumINTDest
@@ -6185,40 +6135,34 @@ else
     break
 end
 
-argumINTAlign()
-_argumINT_fa0:
+argumINTAlign(_fa0)
     stored fa0, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_fa1:
+argumINTAlign(_fa1)
     stored fa1, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_fa2:
+argumINTAlign(_fa2)
     stored fa2, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_fa3:
+argumINTAlign(_fa3)
     stored fa3, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_stack:
+argumINTAlign(_stack)
     loadq [argumINTSrc], csr0
     addq 8, argumINTSrc
     storeq csr0, [argumINTDest]
     addq 8, argumINTDest
     argumINTDispatch()
 
-argumINTAlign()
-_argumINT_end:
+argumINTAlign(_end)
     jmp .ipint_entry_end_local
 
 elsif ARMv7
@@ -6237,11 +6181,6 @@ unimplementedInstruction(_throw)
 unimplementedInstruction(_rethrow)
 reservedOpcode(0x0a)
 
-# FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
-macro uintAlign()
-    emit ".balign 64"
-end
-
 macro uintDispatch()
     loadb [PM], t6
     addp 1, PM
@@ -6249,7 +6188,7 @@ macro uintDispatch()
     break
 .safe:
     lshiftp 6, t6
-    leap (_uint_r0 + 1), t7
+    leap (_uint_begin + 1), t7
     addp t6, t7
     # t7 = r9
     emit "bx r9"
@@ -6512,24 +6451,20 @@ unimplementedInstruction(_simd)
 unimplementedInstruction(_atomic)
 reservedOpcode(0xff)
 
-uintAlign()
-_uint_r0:
+_uint_begin:
+uintAlign(_r0)
     break
 
-uintAlign()
-_uint_r1:
+uintAlign(_r1)
     break
 
-uintAlign()
-_uint_fr1:
+uintAlign(_fr1)
     break
 
-uintAlign()
-_uint_stack:
+uintAlign(_stack)
     break
 
-uintAlign()
-_uint_ret:
+uintAlign(_ret)
     jmp .ipint_exit
 
 # PM = location in argumINT bytecode
@@ -6542,60 +6477,46 @@ _uint_ret:
 # const argumINTDest = t6
 # const argumINTSrc = t7
 
-argumINTAlign()
-_argumINT_a0:
+argumINTAlign(_a0)
     break
 
-argumINTAlign()
-_argumINT_a1:
+argumINTAlign(_a1)
     break
 
-argumINTAlign()
-_argumINT_a2:
+argumINTAlign(_a2)
     break
 
-argumINTAlign()
-_argumINT_a3:
+argumINTAlign(_a3)
     break
 
-argumINTAlign()
-_argumINT_a4:
+argumINTAlign(_a4)
     break
 
-argumINTAlign()
-_argumINT_a5:
+argumINTAlign(_a5)
     break
 
-argumINTAlign()
-_argumINT_a6:
+argumINTAlign(_a6)
     break
 
-argumINTAlign()
-_argumINT_a7:
+argumINTAlign(_a7)
     break
 
-argumINTAlign()
-_argumINT_fa0:
+argumINTAlign(_fa0)
     break
 
-argumINTAlign()
-_argumINT_fa1:
+argumINTAlign(_fa1)
     break
 
-argumINTAlign()
-_argumINT_fa2:
+argumINTAlign(_fa2)
     break
 
-argumINTAlign()
-_argumINT_fa3:
+argumINTAlign(_fa3)
     break
 
-argumINTAlign()
-_argumINT_stack:
+argumINTAlign(_stack)
     break
 
-argumINTAlign()
-_argumINT_end:
+argumINTAlign(_end)
     jmp .ipint_entry_end_local
 
 # Put all operations before this `else`, or else unimplemented architectures will fail to build.
