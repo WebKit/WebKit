@@ -402,25 +402,18 @@ class Dashboard {
                         tile.builds.push({sdks: [sdk.sdk, previousSdk.sdk]});
 
                     let candidateCommits = this.commit_bank.commitsDuring(build.uuid, (previous ? previous : latestResult).uuid);
-                    let startAt = 0;
-                    let repositories = new Set();
-                    while (startAt < candidateCommits.length) {
-                        if (repositories.has(candidateCommits[startAt].repository_id))
-                            break;
-                        repositories.add(candidateCommits[startAt].repository_id);
-                        startAt += 1;
-                    }
-                    if (candidateCommits.length > startAt + 1) {
-                        let regressionCommits = {};
-                        while (startAt < candidateCommits.length) {
-                            if (!regressionCommits[candidateCommits[startAt].repository_id])
-                                regressionCommits[candidateCommits[startAt].repository_id] = [];
-                            regressionCommits[candidateCommits[startAt].repository_id].push(candidateCommits[startAt]);
-                            startAt += 1;
-                        }
+                    let regressionCommits = {};
+                    let maxFromRepo = 0;
+                    candidateCommits.forEach(commit => {
+                        if (commit.uuid <= build.uuid)
+                            return;
+                        if (!regressionCommits[commit.repository_id])
+                            regressionCommits[commit.repository_id] = [];
+                        regressionCommits[commit.repository_id].push(commit)
+                        maxFromRepo = Math.max(maxFromRepo, regressionCommits[commit.repository_id].length)
+                    });
+                    if (maxFromRepo > 1)
                         tile.builds.push(regressionCommits);
-                    }
-
                     tile.builds.push(this.tileLineForBuild(build));
                     break;
                 }

@@ -46,8 +46,9 @@ public:
 
     void attach(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
+    enum class WillBeDestroyed : bool { No, Yes };
     enum class CanCollapseAnonymousBlock : bool { No, Yes };
-    RenderPtr<RenderObject> detach(RenderElement&, RenderObject&, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detach(RenderElement&, RenderObject&, WillBeDestroyed, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
 
     void destroy(RenderObject& renderer, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes);
 
@@ -73,9 +74,8 @@ private:
     void attachToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr, RenderObject::IsInternalMove = RenderObject::IsInternalMove::No);
 
-    enum class WillBeDestroyed : bool { No, Yes };
-    RenderPtr<RenderObject> detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed = WillBeDestroyed::Yes) WARN_UNUSED_RETURN;
-    RenderPtr<RenderObject> detachFromRenderGrid(RenderGrid& parent, RenderObject& child) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed) WARN_UNUSED_RETURN;
+    RenderPtr<RenderObject> detachFromRenderGrid(RenderGrid& parent, RenderObject& child, WillBeDestroyed) WARN_UNUSED_RETURN;
 
     void move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion);
     // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote

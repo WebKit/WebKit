@@ -709,7 +709,6 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         remoteWorkerProcessProxy->initializePreferencesForNetworkProcess(preferencesStore.store);
     }
 
-    remoteWorkerProcessProxy->addAllowedFirstPartyForCookies(registrableDomain);
     auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()]() mutable {
         completionHandler(remoteProcessIdentifier);
     });
@@ -2012,8 +2011,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation.currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
     }
 
-    process->addAllowedFirstPartyForCookies(registrableDomain);
-
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled())
         return completionHandler(WTFMove(process), suspendedPage, reason);
 
@@ -2030,7 +2027,6 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
             Ref fallbackProcess = processForRegistrableDomain(dataStore, registrableDomain, lockdownMode, page->protectedConfiguration());
-            fallbackProcess->addAllowedFirstPartyForCookies(registrableDomain);
             prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, registrableDomain, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
             return;
         }

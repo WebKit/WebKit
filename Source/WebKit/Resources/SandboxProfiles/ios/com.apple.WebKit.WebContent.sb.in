@@ -1103,12 +1103,14 @@
 
 
 #if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
-(with-filter (require-not (state-flag "EnableQuickLookSandboxResources"))
+(allow syscall-unix
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+(with-filter
+    (require-all
+        (state-flag "ParentProcessCanEnableQuickLookStateFlag")
+        (require-not (state-flag "EnableQuickLookSandboxResources")))
     (allow syscall-unix (with report) (with telemetry-backtrace)
-        (syscall-unix-rarely-in-use)
-        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
-(with-filter (state-flag "EnableQuickLookSandboxResources")
-    (allow syscall-unix
         (syscall-unix-rarely-in-use)
         (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
 #else

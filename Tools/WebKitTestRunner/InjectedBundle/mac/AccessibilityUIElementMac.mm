@@ -200,7 +200,6 @@ static id attributeValue(id element, NSString *attribute)
         @"AXPopupValue",
         @"AXRelativeFrame",
         @"AXRequired",
-        @"AXSortDirection",
         @"AXValue",
         @"AXVisibleCharacterRange",
     ];

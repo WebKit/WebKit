@@ -37,6 +37,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -77,6 +78,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -117,6 +119,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 
@@ -158,6 +161,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -198,6 +202,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -238,6 +243,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 
@@ -528,6 +534,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -568,6 +575,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -608,6 +616,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -648,6 +657,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0
@@ -768,6 +778,7 @@ AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
+AXSortDirection: AXUnknownSortDirection
 
 ------------
 AXHasDocumentRoleAncestor: 0

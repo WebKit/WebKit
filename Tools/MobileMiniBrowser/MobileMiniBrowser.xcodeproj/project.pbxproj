@@ -117,6 +117,7 @@
 		CDC279282935417100151088 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
 		CDC279292935417100151088 /* looping2s.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = looping2s.html; sourceTree = "<group>"; };
 		DD954C942A90280800C6843C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		E3C8BD852BBF286D00181A2E /* MobileMiniBrowser.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = MobileMiniBrowser.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +178,7 @@
 				CD1DAFA61D709E3600017CF0 /* Info.plist */,
 				CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */,
 				CD1DAF961D709E3600017CF0 /* main.m */,
+				E3C8BD852BBF286D00181A2E /* MobileMiniBrowser.entitlements */,
 			);
 			name = "MobileMiniBrowser App";
 			path = MobileMiniBrowser;

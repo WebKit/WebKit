@@ -67,7 +67,6 @@ private:
 
     std::unique_ptr<TextureMapperPlatformLayerBuffer> m_currentBuffer;
     std::unique_ptr<TextureMapperPlatformLayerBuffer> m_pendingBuffer;
-    bool m_disableBufferInvalidation;
 
     Lock m_wasBufferDroppedLock;
     Condition m_wasBufferDroppedCondition;

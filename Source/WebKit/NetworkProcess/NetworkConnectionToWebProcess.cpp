@@ -1515,11 +1515,6 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(std::span<const uint
 }
 #endif
 
-void NetworkConnectionToWebProcess::addAllowedFirstPartyForCookies(const RegistrableDomain& firstPartyForCookies)
-{
-    protectedConnection()->send(Messages::NetworkProcessConnection::AddAllowedFirstPartyForCookies(firstPartyForCookies), 0);
-}
-
 void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceResponse&& response)
 {
     if (auto* loader = m_networkResourceLoaders.get(identifier))

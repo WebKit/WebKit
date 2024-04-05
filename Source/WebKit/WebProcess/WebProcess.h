@@ -442,9 +442,6 @@ public:
 
     void deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
-    void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
-    bool allowsFirstPartyForCookies(const URL&);
-
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void revokeLaunchServicesSandboxExtension();
 #endif
@@ -862,7 +859,6 @@ private:
     bool m_prefersNonBlinkingCursor { false };
 #endif
 
-    HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
     String m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 

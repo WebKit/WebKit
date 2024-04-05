@@ -228,6 +228,24 @@ String toString(AuthenticatorTransport transport)
     return nullString();
 }
 
+std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport)
+{
+    if (transport == authenticatorTransportUsb)
+        return AuthenticatorTransport::Usb;
+    if (transport == authenticatorTransportNfc)
+        return AuthenticatorTransport::Nfc;
+    if (transport == authenticatorTransportBle)
+        return AuthenticatorTransport::Ble;
+    if (transport == authenticatorTransportInternal)
+        return AuthenticatorTransport::Internal;
+    if (transport == authenticatorTransportCable)
+        return AuthenticatorTransport::Cable;
+    if (transport == authenticatorTransportHybrid)
+        return AuthenticatorTransport::Hybrid;
+    if (transport == authenticatorTransportSmartCard)
+        return AuthenticatorTransport::SmartCard;
+    return std::nullopt;
+}
 
 } // namespace WebCore
 
