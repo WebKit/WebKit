@@ -426,7 +426,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         canIntercept,
         false, // FIXME: userInitiated
         hashChange,
-        false, // FIXME: hasUAVisualTransition
+        document->page() && document->page()->isInSwipeAnimation(),
     };
 
     // Free up no longer needed info.
