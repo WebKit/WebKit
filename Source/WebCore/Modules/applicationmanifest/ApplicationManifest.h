@@ -30,7 +30,6 @@
 #include "Color.h"
 #include "ScreenOrientationLockType.h"
 #include <optional>
-#include <wtf/EnumTraits.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 

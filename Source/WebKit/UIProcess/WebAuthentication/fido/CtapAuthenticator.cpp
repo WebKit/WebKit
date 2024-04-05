@@ -43,7 +43,6 @@
 #include <WebCore/Pin.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/WebAuthenticationUtils.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringConcatenateNumbers.h>

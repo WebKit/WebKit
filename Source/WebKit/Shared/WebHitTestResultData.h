@@ -27,7 +27,6 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedMemory.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

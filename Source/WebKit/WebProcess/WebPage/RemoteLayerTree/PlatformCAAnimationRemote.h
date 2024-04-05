@@ -27,7 +27,6 @@
 
 #include "PlatformCAAnimationRemoteProperties.h"
 #include <WebCore/PlatformCAAnimation.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 

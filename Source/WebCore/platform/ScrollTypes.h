@@ -30,7 +30,6 @@
 #include "ProcessQualified.h"
 #include "RectEdges.h"
 #include "ScrollingNodeID.h"
-#include <wtf/EnumTraits.h>
 
 namespace WTF {
 class TextStream;

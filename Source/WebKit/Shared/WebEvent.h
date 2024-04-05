@@ -33,7 +33,6 @@
 #include "WebEventModifier.h"
 #include "WebEventType.h"
 
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UUID.h>

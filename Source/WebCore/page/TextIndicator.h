@@ -27,7 +27,6 @@
 
 #include "FloatRect.h"
 #include "Image.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>

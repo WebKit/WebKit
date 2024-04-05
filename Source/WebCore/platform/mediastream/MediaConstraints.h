@@ -36,7 +36,6 @@
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <cstdlib>
 #include <wtf/ArgumentCoder.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 

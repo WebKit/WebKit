@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>

@@ -32,7 +32,6 @@
 #include "WebHitTestResultData.h"
 #include <WebCore/ContextMenuContext.h>
 #include <WebCore/ElementContext.h>
-#include <wtf/EnumTraits.h>
 
 namespace IPC {
 class Decoder;

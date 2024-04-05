@@ -29,7 +29,6 @@
 #include "IntPoint.h"
 #include <variant>
 #include <wtf/Assertions.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(WIN)
