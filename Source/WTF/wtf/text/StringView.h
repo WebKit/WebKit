@@ -689,8 +689,8 @@ inline double StringView::toDouble(bool& isValid) const
 inline String StringView::toStringWithoutCopying() const
 {
     if (is8Bit())
-        return StringImpl::createWithoutCopying(characters8(), m_length);
-    return StringImpl::createWithoutCopying(characters16(), m_length);
+        return StringImpl::createWithoutCopying(span8());
+    return StringImpl::createWithoutCopying(span16());
 }
 
 inline size_t StringView::find(UChar character, unsigned start) const

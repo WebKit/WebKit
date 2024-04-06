@@ -146,8 +146,8 @@ public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
 
 protected:
-    StringImplShape(unsigned refCount, unsigned length, const LChar*, unsigned hashAndFlags);
-    StringImplShape(unsigned refCount, unsigned length, const UChar*, unsigned hashAndFlags);
+    StringImplShape(unsigned refCount, std::span<const LChar>, unsigned hashAndFlags);
+    StringImplShape(unsigned refCount, std::span<const UChar>, unsigned hashAndFlags);
 
     enum ConstructWithConstExprTag { ConstructWithConstExpr };
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
@@ -235,12 +235,12 @@ private:
     template<typename Malloc> StringImpl(MallocPtr<LChar, Malloc>, unsigned length);
     template<typename Malloc> StringImpl(MallocPtr<UChar, Malloc>, unsigned length);
     enum ConstructWithoutCopyingTag { ConstructWithoutCopying };
-    StringImpl(const UChar*, unsigned length, ConstructWithoutCopyingTag);
-    StringImpl(const LChar*, unsigned length, ConstructWithoutCopyingTag);
+    StringImpl(std::span<const UChar>, ConstructWithoutCopyingTag);
+    StringImpl(std::span<const LChar>, ConstructWithoutCopyingTag);
 
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring).
-    StringImpl(const LChar*, unsigned length, Ref<StringImpl>&&);
-    StringImpl(const UChar*, unsigned length, Ref<StringImpl>&&);
+    StringImpl(std::span<const LChar>, Ref<StringImpl>&&);
+    StringImpl(std::span<const UChar>, Ref<StringImpl>&&);
 
 public:
     WTF_EXPORT_PRIVATE static void destroy(StringImpl*);
@@ -258,11 +258,8 @@ public:
 
     ALWAYS_INLINE static Ref<StringImpl> create(ASCIILiteral literal) { return createWithoutCopying(literal.span8()); }
 
-    static Ref<StringImpl> createWithoutCopying(const UChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
-    static Ref<StringImpl> createWithoutCopying(const LChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
-    ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(const char* characters, unsigned length) { return createWithoutCopying(reinterpret_cast<const LChar*>(characters), length); }
-    static Ref<StringImpl> createWithoutCopying(std::span<const UChar> characters) { return characters.size() ? createWithoutCopyingNonEmpty(characters.data(), characters.size()) : Ref { *empty() }; }
-    static Ref<StringImpl> createWithoutCopying(std::span<const LChar> characters) { return characters.size() ? createWithoutCopyingNonEmpty(characters.data(), characters.size()) : Ref { *empty() }; }
+    static Ref<StringImpl> createWithoutCopying(std::span<const UChar> characters) { return characters.empty() ?  Ref { *empty() } : createWithoutCopyingNonEmpty(characters); }
+    static Ref<StringImpl> createWithoutCopying(std::span<const LChar> characters) { return characters.empty() ? Ref { *empty() } : createWithoutCopyingNonEmpty(characters); }
     ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(std::span<const char> characters) { return createWithoutCopying({ reinterpret_cast<const LChar*>(characters.data()), characters.size() }); }
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(size_t length, LChar*&);
@@ -526,8 +523,8 @@ protected:
 
     // Used to create new symbol string that holds an existing [[Description]] string as a substring buffer (BufferSubstring).
     enum CreateSymbolTag { CreateSymbol };
-    StringImpl(CreateSymbolTag, const LChar*, unsigned length);
-    StringImpl(CreateSymbolTag, const UChar*, unsigned length);
+    StringImpl(CreateSymbolTag, std::span<const LChar>);
+    StringImpl(CreateSymbolTag, std::span<const UChar>);
 
     // Null symbol.
     explicit StringImpl(CreateSymbolTag);
@@ -549,8 +546,8 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
 
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const LChar*, unsigned length);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(std::span<const LChar>);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(std::span<const UChar>);
 
     template<class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
@@ -826,20 +823,22 @@ inline bool deprecatedIsNotSpaceOrNewline(UChar character)
     return !deprecatedIsSpaceOrNewline(character);
 }
 
-inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)
+inline StringImplShape::StringImplShape(unsigned refCount, std::span<const LChar> data, unsigned hashAndFlags)
     : m_refCount(refCount)
-    , m_length(length)
-    , m_data8(data8)
+    , m_length(data.size())
+    , m_data8(data.data())
     , m_hashAndFlags(hashAndFlags)
 {
+    ASSERT(data.size() <= std::numeric_limits<unsigned>::max());
 }
 
-inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const UChar* data16, unsigned hashAndFlags)
+inline StringImplShape::StringImplShape(unsigned refCount, std::span<const UChar> data, unsigned hashAndFlags)
     : m_refCount(refCount)
-    , m_length(length)
-    , m_data16(data16)
+    , m_length(data.size())
+    , m_data16(data.data())
     , m_hashAndFlags(hashAndFlags)
 {
+    ASSERT(data.size() <= std::numeric_limits<unsigned>::max());
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
@@ -906,7 +905,7 @@ template<bool isSpecialCharacter(UChar)> inline bool StringImpl::containsOnly() 
 }
 
 inline StringImpl::StringImpl(unsigned length, Force8Bit)
-    : StringImplShape(s_refCountIncrement, length, tailPointer<LChar>(), s_hashFlag8BitBuffer | StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, { tailPointer<LChar>(), length }, s_hashFlag8BitBuffer | StringNormal | BufferInternal)
 {
     ASSERT(m_data8);
     ASSERT(m_length);
@@ -915,7 +914,7 @@ inline StringImpl::StringImpl(unsigned length, Force8Bit)
 }
 
 inline StringImpl::StringImpl(unsigned length)
-    : StringImplShape(s_refCountIncrement, length, tailPointer<UChar>(), s_hashZeroValue | StringNormal | BufferInternal)
+    : StringImplShape(s_refCountIncrement, { tailPointer<UChar>(), length }, s_hashZeroValue | StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -925,7 +924,7 @@ inline StringImpl::StringImpl(unsigned length)
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, static_cast<const LChar*>(nullptr), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, { static_cast<const LChar*>(nullptr), length }, s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data8 = characters.leakPtr();
@@ -941,8 +940,8 @@ inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned leng
     STRING_STATS_ADD_8BIT_STRING(m_length);
 }
 
-inline StringImpl::StringImpl(const UChar* characters, unsigned length, ConstructWithoutCopyingTag)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferInternal)
+inline StringImpl::StringImpl(std::span<const UChar> characters, ConstructWithoutCopyingTag)
+    : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringNormal | BufferInternal)
 {
     ASSERT(m_data16);
     ASSERT(m_length);
@@ -950,8 +949,8 @@ inline StringImpl::StringImpl(const UChar* characters, unsigned length, Construc
     STRING_STATS_ADD_16BIT_STRING(m_length);
 }
 
-inline StringImpl::StringImpl(const LChar* characters, unsigned length, ConstructWithoutCopyingTag)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashFlag8BitBuffer | StringNormal | BufferInternal)
+inline StringImpl::StringImpl(std::span<const LChar> characters, ConstructWithoutCopyingTag)
+    : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringNormal | BufferInternal)
 {
     ASSERT(m_data8);
     ASSERT(m_length);
@@ -961,7 +960,7 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
 
 template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), s_hashZeroValue | StringNormal | BufferOwned)
+    : StringImplShape(s_refCountIncrement, { static_cast<const UChar*>(nullptr), length }, s_hashZeroValue | StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakPtr();
@@ -977,8 +976,8 @@ inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned leng
     STRING_STATS_ADD_16BIT_STRING(m_length);
 }
 
-inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashFlag8BitBuffer | StringNormal | BufferSubstring)
+inline StringImpl::StringImpl(std::span<const LChar> characters, Ref<StringImpl>&& base)
+    : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringNormal | BufferSubstring)
 {
     ASSERT(is8Bit());
     ASSERT(m_data8);
@@ -990,8 +989,8 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Ref<Stri
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
 }
 
-inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringNormal | BufferSubstring)
+inline StringImpl::StringImpl(std::span<const UChar> characters, Ref<StringImpl>&& base)
+    : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringNormal | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);
@@ -1025,8 +1024,8 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
     auto* stringImpl = static_cast<StringImpl*>(StringImplMalloc::malloc(substringSize));
     if (rep.is8Bit())
-        return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
-    return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
+        return adoptRef(*new (NotNull, stringImpl) StringImpl({ rep.m_data8 + offset, length }, *ownerRep));
+    return adoptRef(*new (NotNull, stringImpl) StringImpl({ rep.m_data16 + offset, length }, *ownerRep));
 }
 
 template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(size_t length, CharacterType*& output)
@@ -1164,16 +1163,16 @@ inline UChar StringImpl::at(unsigned i) const
     return is8Bit() ? m_data8[i] : m_data16[i];
 }
 
-inline StringImpl::StringImpl(CreateSymbolTag, const LChar* characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
+inline StringImpl::StringImpl(CreateSymbolTag, std::span<const LChar> characters)
+    : StringImplShape(s_refCountIncrement, characters, s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
     ASSERT(is8Bit());
     ASSERT(m_data8);
     STRING_STATS_ADD_8BIT_STRING2(m_length, true);
 }
 
-inline StringImpl::StringImpl(CreateSymbolTag, const UChar* characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, length, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
+inline StringImpl::StringImpl(CreateSymbolTag, std::span<const UChar> characters)
+    : StringImplShape(s_refCountIncrement, characters, s_hashZeroValue | StringSymbol | BufferSubstring)
 {
     ASSERT(!is8Bit());
     ASSERT(m_data16);
@@ -1181,7 +1180,7 @@ inline StringImpl::StringImpl(CreateSymbolTag, const UChar* characters, unsigned
 }
 
 inline StringImpl::StringImpl(CreateSymbolTag)
-    : StringImplShape(s_refCountIncrement, 0, empty()->characters8(), s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
+    : StringImplShape(s_refCountIncrement, empty()->span8(), s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
 {
     ASSERT(is8Bit());
     ASSERT(m_data8);

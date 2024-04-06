@@ -230,7 +230,7 @@ IntRect containerRect(HTMLElement& element)
 
 static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
 {
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
+    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet));
     Ref style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.protectedDocument(), false);
     style->setTextContent(String { shadowStyle });
     shadowRoot.appendChild(WTFMove(style));

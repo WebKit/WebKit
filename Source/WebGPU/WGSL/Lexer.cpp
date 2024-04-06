@@ -293,7 +293,7 @@ Token Lexer<T>::nextToken()
             }
 
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
-            String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
+            String view(StringImpl::createWithoutCopying({ startOfToken, currentTokenLength() }));
 
             static constexpr std::pair<ComparableASCIILiteral, TokenType> keywordMappings[] {
                 { "_", TokenType::Underbar },

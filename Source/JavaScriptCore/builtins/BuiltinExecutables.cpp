@@ -39,7 +39,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BuiltinExecutables);
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String(), SourceTaintedOrigin::Untainted))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying({ s_JSCCombinedCode, s_JSCCombinedCodeLength }), { }, String(), SourceTaintedOrigin::Untainted))
 {
 }
 

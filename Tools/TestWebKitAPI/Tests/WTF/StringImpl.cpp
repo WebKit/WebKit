@@ -43,7 +43,7 @@ TEST(WTF, StringImplCreationFromLiteral)
 
     // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
-    auto programmaticString = StringImpl::createWithoutCopying(programmaticStringData, strlen(programmaticStringData));
+    auto programmaticString = StringImpl::createWithoutCopying(span(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), StringView::fromLatin1(programmaticStringData)));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
@@ -765,7 +765,7 @@ TEST(WTF, ExternalStringImplCreate8bit)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });
 
@@ -787,7 +787,7 @@ TEST(WTF, ExternalStringImplCreate16bit)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });
 
@@ -816,7 +816,7 @@ TEST(WTF, ExternalStringAtom)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
         });    
 
@@ -853,9 +853,9 @@ TEST(WTF, ExternalStringToSymbol)
     bool freeFunctionCalled = false;
 
     {
-        auto external = ExternalStringImpl::create(buffer, bufferStringLength, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
+        auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
             freeFunctionCalled = true;
-        });    
+        });
 
         ASSERT_TRUE(external->isExternal());
         ASSERT_FALSE(external->isSymbol());

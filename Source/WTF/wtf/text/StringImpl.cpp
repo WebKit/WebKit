@@ -156,16 +156,16 @@ void StringImpl::destroy(StringImpl* stringImpl)
     StringImplMalloc::free(stringImpl);
 }
 
-Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(const UChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const UChar> characters)
 {
-    ASSERT(length);
-    return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
+    ASSERT(!characters.empty());
+    return adoptRef(*new StringImpl(characters, ConstructWithoutCopying));
 }
 
-Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(const LChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const LChar> characters)
 {
-    ASSERT(length);
-    return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
+    ASSERT(!characters.empty());
+    return adoptRef(*new StringImpl(characters, ConstructWithoutCopying));
 }
 
 template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, CharacterType*& data)
