@@ -1047,7 +1047,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     }
 }
 
-void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderElement::insertedIntoTree()
 {
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
     // and don't have a layer attached to ourselves.
@@ -1063,10 +1063,10 @@ void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
             parentLayer->dirtyVisibleContentStatus();
     }
 
-    RenderObject::insertedIntoTree(isInternalMove);
+    RenderObject::insertedIntoTree();
 }
 
-void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderElement::willBeRemovedFromTree()
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
     if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
@@ -1081,7 +1081,7 @@ void RenderElement::willBeRemovedFromTree(IsInternalMove isInternalMove)
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         checkedParent()->dirtyLinesFromChangedChild(*this);
 
-    RenderObject::willBeRemovedFromTree(isInternalMove);
+    RenderObject::willBeRemovedFromTree();
 }
 
 inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const

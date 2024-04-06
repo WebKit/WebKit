@@ -144,7 +144,7 @@ private:
 
     ASCIILiteral renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableCell (anonymous)"_s : "RenderTableCell"_s; }
 
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void willBeRemovedFromTree() override;
 
     void updateLogicalWidth() override;
 

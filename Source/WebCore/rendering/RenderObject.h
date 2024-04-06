@@ -1106,9 +1106,8 @@ public:
     LayoutRect absoluteOutlineBounds() const { return outlineBoundsForRepaint(nullptr); }
 
     // FIXME: Renderers should not need to be notified about internal reparenting (webkit.org/b/224143).
-    enum class IsInternalMove : bool { No, Yes };
-    virtual void insertedIntoTree(IsInternalMove = IsInternalMove::No);
-    virtual void willBeRemovedFromTree(IsInternalMove = IsInternalMove::No);
+    virtual void insertedIntoTree();
+    virtual void willBeRemovedFromTree();
 
     void resetFragmentedFlowStateOnRemoval();
     void initializeFragmentedFlowStateOnInsertion();

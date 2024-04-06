@@ -104,15 +104,15 @@ void RenderTableCol::updateFromElement()
         setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderTableCol::insertedIntoTree(IsInternalMove isInternalMove)
+void RenderTableCol::insertedIntoTree()
 {
-    RenderBox::insertedIntoTree(isInternalMove);
+    RenderBox::insertedIntoTree();
     table()->addColumn(this);
 }
 
-void RenderTableCol::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableCol::willBeRemovedFromTree()
 {
-    RenderBox::willBeRemovedFromTree(isInternalMove);
+    RenderBox::willBeRemovedFromTree();
     if (auto* table = this->table()) {
         // We only need to invalidate the column cache when only individual columns are being removed (as opposed to when the entire table is being collapsed).
         table->invalidateColumns();

@@ -395,7 +395,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
     parent.didAttachChild(newChild, beforeChild);
 }
 
-void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild, RenderObject::IsInternalMove isInternalMove)
+void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
@@ -411,14 +411,16 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     // Take the ownership.
     auto* newChild = parent.attachRendererInternal(WTFMove(child), beforeChild);
 
-    if (m_internalMovesType == RenderObject::IsInternalMove::No)
+    if (m_internalMovesType == IsInternalMove::No)
         newChild->initializeFragmentedFlowStateOnInsertion();
     if (!parent.renderTreeBeingDestroyed()) {
-        newChild->insertedIntoTree(isInternalMove);
+        newChild->insertedIntoTree();
 
-        if (m_internalMovesType == RenderObject::IsInternalMove::No) {
+        if (m_internalMovesType == IsInternalMove::No) {
             if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
                 multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
+            if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild))
+                listItemRenderer->updateListMarkerNumbers();
         }
     }
 
@@ -449,7 +451,7 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No);
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
-        auto internalMoveScope = SetForScope { m_internalMovesType, RenderObject::IsInternalMove::Yes };
+        auto internalMoveScope = SetForScope { m_internalMovesType, IsInternalMove::Yes };
         auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No);
         attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
     }
@@ -903,7 +905,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
-static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, RenderObject::IsInternalMove isInternalMove)
+static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, RenderTreeBuilder::IsInternalMove isInternalMove)
 {
     if (child.isFloatingOrOutOfFlowPositioned())
         downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
@@ -917,7 +919,7 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    bool shouldRepaint = isInternalMove == RenderObject::IsInternalMove::No && !is<RenderMultiColumnSet>(child.previousSibling());
+    bool shouldRepaint = isInternalMove == RenderTreeBuilder::IsInternalMove::No && !is<RenderMultiColumnSet>(child.previousSibling());
     if (shouldRepaint) {
         auto shouldForceRepaint = [&] {
             // When repaint is propagated to our layer, we have to force it in case of detach (as this layer may not be around to issue it _affter_ layout).
@@ -936,6 +938,9 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     // If we have a line box wrapper, delete it.
     if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
         textRenderer->removeAndDestroyTextBoxes();
+
+    if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && isInternalMove == RenderTreeBuilder::IsInternalMove::No)
+        listItemRenderer->updateListMarkerNumbers();
 
     // If child is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
@@ -956,10 +961,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);
 
     // FIXME: Fragment state should not be such a special case.
-    if (m_internalMovesType == RenderObject::IsInternalMove::No)
+    if (m_internalMovesType == IsInternalMove::No)
         child.resetFragmentedFlowStateOnRemoval();
 
-    child.willBeRemovedFromTree(m_internalMovesType);
+    child.willBeRemovedFromTree();
     // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |child| dangling.

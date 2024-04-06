@@ -70,7 +70,7 @@ private:
 
     ASCIILiteral renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)"_s : "RenderTableRow"_s; }
     bool canHaveChildren() const override { return true; }
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void willBeRemovedFromTree() override;
     void layout() override;
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;

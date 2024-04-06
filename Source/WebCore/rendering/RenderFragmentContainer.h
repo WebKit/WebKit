@@ -136,8 +136,8 @@ protected:
 private:
     ASCIILiteral renderName() const override { return "RenderFragmentContainer"_s; }
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     virtual void installFragmentedFlow();
 

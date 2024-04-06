@@ -1789,7 +1789,7 @@ static void invalidateLineLayoutAfterTreeMutationIfNeeded(RenderObject& renderer
         container->invalidateLineLayoutPath();
 }
 
-void RenderObject::insertedIntoTree(IsInternalMove)
+void RenderObject::insertedIntoTree()
 {
     invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::No);
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
@@ -1797,7 +1797,7 @@ void RenderObject::insertedIntoTree(IsInternalMove)
         checkedParent()->dirtyLinesFromChangedChild(*this);
 }
 
-void RenderObject::willBeRemovedFromTree(IsInternalMove)
+void RenderObject::willBeRemovedFromTree()
 {
     invalidateLineLayoutAfterTreeMutationIfNeeded(*this, IsRemoval::Yes);
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.

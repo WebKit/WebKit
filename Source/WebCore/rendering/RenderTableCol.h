@@ -69,8 +69,8 @@ private:
     ASCIILiteral renderName() const override { return "RenderTableCol"_s; }
     void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
 
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     bool canHaveChildren() const override;

@@ -117,9 +117,9 @@ void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle*
         table->invalidateCollapsedBorders();
 }
 
-void RenderTableSection::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableSection::willBeRemovedFromTree()
 {
-    RenderBox::willBeRemovedFromTree(isInternalMove);
+    RenderBox::willBeRemovedFromTree();
 
     // Preventively invalidate our cells as we may be re-inserted into
     // a new table which would require us to rebuild our structure.

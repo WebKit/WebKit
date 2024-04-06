@@ -34,8 +34,8 @@ public:
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
 private:
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
     LayoutUnit containingBlockLogicalWidthForContent() const final;
 
     RenderTable* table() const;

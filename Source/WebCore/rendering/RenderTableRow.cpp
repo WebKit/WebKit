@@ -63,9 +63,9 @@ RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
     ASSERT(isRenderTableRow());
 }
 
-void RenderTableRow::willBeRemovedFromTree(IsInternalMove isInternalMove)
+void RenderTableRow::willBeRemovedFromTree()
 {
-    RenderBox::willBeRemovedFromTree(isInternalMove);
+    RenderBox::willBeRemovedFromTree();
 
     section()->setNeedsCellRecalc();
 }
