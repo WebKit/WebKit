@@ -92,7 +92,7 @@ bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
 Expected<CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
 {
     if (isNull())
-        return CString("", 0);
+        return CString { ""_span };
     if (is8Bit())
         return StringImpl::utf8ForCharacters(characters8(), length());
     return StringImpl::utf8ForCharacters(characters16(), length(), mode);

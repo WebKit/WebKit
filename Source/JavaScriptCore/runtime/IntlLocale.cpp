@@ -101,10 +101,9 @@ CString LocaleIDBuilder::toCanonical()
 
     auto buffer = canonicalizeLocaleIDWithoutNullTerminator(m_buffer.data());
     if (!buffer)
-        return CString();
+        return { };
 
-    auto result = canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value()));
-    return CString(result.data(), result.size());
+    return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value())).span();
 }
 
 // Because ICU's C API doesn't have set[Language|Script|Region] functions...

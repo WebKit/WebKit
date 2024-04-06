@@ -730,7 +730,7 @@ static std::optional<CString> directoryContainingDBusSocket(const char* dbusAddr
         while (*pathEnd && *pathEnd != ',')
             pathEnd++;
 
-        CString path(pathStart, pathEnd - pathStart);
+        CString path({ pathStart, pathEnd });
         GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.data()));
         GRefPtr<GFile> parent = adoptGRef(g_file_get_parent(file.get()));
         if (!parent)

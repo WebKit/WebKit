@@ -414,7 +414,7 @@ CString String::latin1() const
     // preserved, characters outside of this range are converted to '?'.
 
     if (isEmpty())
-        return CString("", 0);
+        return ""_span;
 
     if (is8Bit())
         return CString(this->span8());
@@ -431,7 +431,7 @@ CString String::latin1() const
 
 Expected<CString, UTF8ConversionError> String::tryGetUTF8(ConversionMode mode) const
 {
-    return m_impl ? m_impl->tryGetUTF8(mode) : CString { "", 0 };
+    return m_impl ? m_impl->tryGetUTF8(mode) : CString { ""_span };
 }
 
 Expected<CString, UTF8ConversionError> String::tryGetUTF8() const

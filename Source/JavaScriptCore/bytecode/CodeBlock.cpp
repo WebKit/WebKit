@@ -104,16 +104,16 @@ CString CodeBlock::inferredName() const
 {
     switch (codeType()) {
     case GlobalCode:
-        return "<global>";
+        return "<global>"_span;
     case EvalCode:
-        return "<eval>";
+        return "<eval>"_span;
     case FunctionCode:
         return jsCast<FunctionExecutable*>(ownerExecutable())->ecmaName().utf8();
     case ModuleCode:
-        return "<module>";
+        return "<module>"_span;
     default:
         CRASH();
-        return CString("", 0);
+        return ""_span;
     }
 }
 

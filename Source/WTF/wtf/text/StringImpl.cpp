@@ -1557,14 +1557,14 @@ static inline void putUTF8Triple(char*& buffer, UChar character)
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const LChar* source, unsigned length)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
-        return CString(converted.data(), converted.size());
+        return CString { converted };
     }, source, length);
 }
 
 Expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char> converted) {
-        return CString(converted.data(), converted.size());
+        return CString { converted };
     }, characters, length, mode);
 }
 

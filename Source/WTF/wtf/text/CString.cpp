@@ -45,31 +45,31 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
     return adoptRef(*new (NotNull, stringBuffer) CStringBuffer(length));
 }
 
-CString::CString(const char* str)
+CString::CString(const char* string)
 {
-    if (!str)
+    if (!string)
         return;
 
-    init(str, strlen(str));
+    init(WTF::span(string));
 }
 
-CString::CString(const char* str, size_t length)
+CString::CString(std::span<const char> string)
 {
-    if (!str) {
-        ASSERT(!length);
+    if (!string.data()) {
+        ASSERT(string.empty());
         return;
     }
 
-    init(str, length);
+    init(string);
 }
 
-void CString::init(const char* str, size_t length)
+void CString::init(std::span<const char> string)
 {
-    ASSERT(str);
+    ASSERT(string.data());
 
-    m_buffer = CStringBuffer::createUninitialized(length);
-    memcpy(m_buffer->mutableData(), str, length); 
-    m_buffer->mutableData()[length] = '\0';
+    m_buffer = CStringBuffer::createUninitialized(string.size());
+    memcpy(m_buffer->mutableData(), string.data(), string.size());
+    m_buffer->mutableData()[string.size()] = '\0';
 }
 
 char* CString::mutableData()
