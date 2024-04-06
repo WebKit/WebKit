@@ -75,6 +75,14 @@ ExtensionCapabilityGrant::~ExtensionCapabilityGrant()
     setPlatformGrant({ });
 }
 
+ExtensionCapabilityGrant& ExtensionCapabilityGrant::operator=(ExtensionCapabilityGrant&& grant)
+{
+    platformInvalidate(m_platformGrant);
+    m_environmentIdentifier = WTFMove(grant.m_environmentIdentifier);
+    m_platformGrant = WTFMove(grant.m_platformGrant);
+    return *this;
+}
+
 ExtensionCapabilityGrant ExtensionCapabilityGrant::isolatedCopy() &&
 {
     return {
