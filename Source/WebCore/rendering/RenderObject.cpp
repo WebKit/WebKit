@@ -1037,12 +1037,12 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     repaintUsingContainer(repaintContainer.renderer.get(), repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
 }
 
-void RenderObject::repaint() const
+void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     if (!isRooted() || view().printing())
         return;
-    issueRepaint();
+    issueRepaint({ }, ClipRepaintToLayer::No, forceRepaint);
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const

@@ -903,7 +903,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
-static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
+static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed, RenderObject::IsInternalMove isInternalMove)
 {
     if (child.isFloatingOrOutOfFlowPositioned())
         downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
@@ -917,12 +917,19 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    bool shouldRepaint = !is<RenderMultiColumnSet>(child.previousSibling());
+    bool shouldRepaint = isInternalMove == RenderObject::IsInternalMove::No && !is<RenderMultiColumnSet>(child.previousSibling());
     if (shouldRepaint) {
+        auto shouldForceRepaint = [&] {
+            // When repaint is propagated to our layer, we have to force it in case of detach (as this layer may not be around to issue it _affter_ layout).
+            auto* childWithLayer = dynamicDowncast<RenderLayerModelObject>(child);
+            if (!childWithLayer || !childWithLayer->hasLayer())
+                return false;
+            return childWithLayer->layer()->needsFullRepaint();
+        };
         if (child.isBody())
             parent.view().repaintRootContents();
         else
-            child.repaint();
+            child.repaint(shouldForceRepaint() ? RenderObject::ForceRepaint::Yes : RenderObject::ForceRepaint::No);
     }
     child.setNeedsLayoutAndPrefWidthsRecalc();
 
@@ -946,7 +953,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         return parent.detachRendererInternal(child);
 
     if (child.everHadLayout())
-        resetRendererStateOnDetach(parent, child, willBeDestroyed);
+        resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);
 
     // FIXME: Fragment state should not be such a special case.
     if (m_internalMovesType == RenderObject::IsInternalMove::No)
