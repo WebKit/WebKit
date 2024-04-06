@@ -481,6 +481,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpToThis)
 
         LINK(OpGetById)
+        LINK(OpGetLength)
 
         LINK(OpEnumeratorNext)
         LINK(OpEnumeratorInByVal)
@@ -1376,6 +1377,10 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
 
+        m_metadata->forEach<OpGetLength>([&] (auto& metadata) {
+            clearIfNeeded(metadata.m_modeMetadata, "get length"_s);
+        });
+
         m_metadata->forEach<OpTryGetById>([&] (auto& metadata) {
             StructureID oldStructureID = metadata.m_structureID;
             if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
@@ -1538,6 +1543,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             case op_get_by_id: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(this).m_modeMetadata);
+                break;
+            }
+            case op_get_length: {
+                dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
+                LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetLength>().metadata(this).m_modeMetadata);
                 break;
             }
             case op_iterator_open: {
@@ -2717,13 +2727,6 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeInde
 
 #undef CASE
 
-    case OpGetById::opcodeID: {
-        auto bytecode = instruction->as<OpGetById>();
-        auto& metadata = bytecode.metadata(this);
-        if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
-            return &metadata.m_modeMetadata.arrayLengthMode.arrayProfile;
-        break;
-    }
     default:
         break;
     }
@@ -2886,15 +2889,6 @@ void CodeBlock::updateAllArrayProfilePredictions()
             unlinkedCodeBlock->unlinkedArrayProfile(index).update(profile);
         ++index;
     };
-
-    m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-        if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
-            process(metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
-        else {
-            // We reserve an index per GetById whether or not it's currently in ArrayLength mode.
-            ++index;
-        }
-    });
 
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { process(metadata.m_arrayProfile); });

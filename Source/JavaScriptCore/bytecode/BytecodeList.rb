@@ -352,6 +352,17 @@ op :get_by_id,
         modeMetadata: GetByIdModeMetadata,
     }
 
+op :get_length,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        modeMetadata: GetByIdModeMetadata,
+        arrayProfile: ArrayProfile,
+    }
+
 op :profile_type,
     args: {
         targetVirtualRegister: VirtualRegister,
@@ -1419,6 +1430,7 @@ op :op_construct_return_location
 op :op_call_varargs_return_location
 op :op_construct_varargs_return_location
 op :op_get_by_id_return_location
+op :op_get_length_return_location
 op :op_get_by_val_return_location
 op :op_put_by_id_return_location
 op :op_put_by_val_return_location

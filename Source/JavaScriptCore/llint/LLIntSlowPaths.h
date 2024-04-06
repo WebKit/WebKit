@@ -75,6 +75,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_create_cloned_arguments);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_try_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_direct);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_length);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_with_this);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);

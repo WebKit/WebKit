@@ -1327,12 +1327,9 @@ macro getterSetterOSRExitReturnPoint(opName, size)
     loadi CallSiteIndex[cfr], PC
 end
 
-macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
-    const cell = cellAndIndexingType
-    const indexingType = cellAndIndexingType 
+macro arrayProfile(offset, cell, metadata, scratch)
     loadi JSCell::m_structureID[cell], scratch
     storei scratch, offset + ArrayProfile::m_lastSeenStructureID[metadata]
-    loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
 # Note that index is already sign-extended to be a register width.

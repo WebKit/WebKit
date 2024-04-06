@@ -46,6 +46,7 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_get_from_arguments:
     case op_get_from_scope:
     case op_get_by_id:
+    case op_get_length:
     case op_get_by_id_with_this:
     case op_get_by_val_with_this:
     case op_enumerator_get_by_val:

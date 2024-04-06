@@ -78,6 +78,10 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
         clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(m_owner.get()).m_modeMetadata);
         break;
 
+    case op_get_length:
+        clearLLIntGetByIdCache(instruction->as<OpGetLength>().metadata(m_owner.get()).m_modeMetadata);
+        break;
+
     case op_iterator_open:
         clearLLIntGetByIdCache(instruction->as<OpIteratorOpen>().metadata(m_owner.get()).m_modeMetadata);
         break;

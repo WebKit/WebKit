@@ -1711,8 +1711,8 @@ llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, disp
 end)
 
 # The base object is expected in t3
-macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slowLabel, size, metadata, return)
-    metadata(t2, t1)
+# metadata needs to be loaded in t2
+macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slowLabel, size, return)
     loadb %opcodeStruct%::Metadata::%modeMetadataName%.mode[t2], t1
 
 .opGetByIdDefault:
@@ -1738,8 +1738,7 @@ macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slo
 
 .opGetByIdArrayLength:
     bbneq t1, constexpr GetByIdMode::ArrayLength, .opGetByIdUnset
-    move t3, t0
-    arrayProfile(%opcodeStruct%::Metadata::%modeMetadataName%.arrayLengthMode.arrayProfile, t0, t2, t5)
+    loadb JSCell::m_indexingTypeAndMisc[t3], t0
     btiz t0, IsArray, slowLabel
     btiz t0, IndexingShapeMask, slowLabel
     loadCagedJSValue(JSObject::m_butterfly[t3], t0, t1)
@@ -1761,7 +1760,8 @@ end
 llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadata, return)
     get(m_base, t0)
     loadConstantOrVariableCell(size, t0, t3, .opGetByIdSlow)
-    performGetByIDHelper(OpGetById, m_modeMetadata, m_valueProfile, .opGetByIdSlow, size, metadata, return)
+    metadata(t2, t1)
+    performGetByIDHelper(OpGetById, m_modeMetadata, m_valueProfile, .opGetByIdSlow, size, return)
 
 .opGetByIdSlow:
     callSlowPath(_llint_slow_path_get_by_id)
@@ -1771,7 +1771,24 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     getterSetterOSRExitReturnPoint(op_get_by_id, size)
     valueProfile(size, OpGetById, m_valueProfile, r0, t2)
     return(r0)
+end)
 
+
+llintOpWithMetadata(op_get_length, OpGetLength, macro (size, get, dispatch, metadata, return)
+    get(m_base, t0)
+    loadConstantOrVariableCell(size, t0, t3, .opGetLengthSlow)
+    metadata(t2, t1)
+    arrayProfile(OpGetLength::Metadata::m_arrayProfile, t3, t2, t5)
+    performGetByIDHelper(OpGetLength, m_modeMetadata, m_valueProfile, .opGetLengthSlow, size, return)
+
+.opGetLengthSlow:
+    callSlowPath(_llint_slow_path_get_length)
+    dispatch()
+
+.osrReturnPoint:
+    getterSetterOSRExitReturnPoint(op_get_length, size)
+    valueProfile(size, OpGetLength, m_valueProfile, r0, t2)
+    return(r0)
 end)
 
 
@@ -1906,6 +1923,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
     move t0, t2
     arrayProfile(OpGetByVal::Metadata::m_arrayProfile, t2, t5, t1)
+    loadb JSCell::m_indexingTypeAndMisc[t2], t2
 
     get(m_property, t3)
     loadConstantOrVariableInt32(size, t3, t1, .opGetByValSlow)
@@ -2096,6 +2114,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         move t1, t2
         metadata(t5, t0)
         arrayProfile(%opcodeStruct%::Metadata::m_arrayProfile, t2, t5, t0)
+        loadb JSCell::m_indexingTypeAndMisc[t2], t2
         get(m_property, t0)
         loadConstantOrVariableInt32(size, t0, t3, .opPutByValSlow)
         sxi2q t3, t3
@@ -3324,7 +3343,8 @@ llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch
 
     loadVariable(get, m_iterator, t3)
     btqnz t3, notCellMask, .iteratorOpenGenericGetNextSlow
-    performGetByIDHelper(OpIteratorOpen, m_modeMetadata, m_nextValueProfile, .iteratorOpenGenericGetNextSlow, size, metadata, storeNextAndDispatch)
+    metadata(t2, t1)
+    performGetByIDHelper(OpIteratorOpen, m_modeMetadata, m_nextValueProfile, .iteratorOpenGenericGetNextSlow, size, storeNextAndDispatch)
 
 .iteratorOpenGenericGetNextSlow:
     callSlowPath(_llint_slow_path_iterator_open_get_next)
@@ -3384,7 +3404,8 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     loadVariable(get, m_value, t3)
     btqnz t3, notCellMask, .getDoneSlow
-    performGetByIDHelper(OpIteratorNext, m_doneModeMetadata, m_doneValueProfile, .getDoneSlow, size, metadata, storeDoneAndJmpToGetValue)
+    metadata(t2, t1)
+    performGetByIDHelper(OpIteratorNext, m_doneModeMetadata, m_doneValueProfile, .getDoneSlow, size, storeDoneAndJmpToGetValue)
 
 .getDoneSlow:
     callSlowPath(_llint_slow_path_iterator_next_get_done)
@@ -3409,7 +3430,8 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
     # Reload the next result tmp since the get_by_id above may have clobbered t3.
     loadVariable(get, m_value, t3)
     # We don't need to check if the iterator result is a cell here since we will have thrown an error before.
-    performGetByIDHelper(OpIteratorNext, m_valueModeMetadata, m_valueValueProfile, .getValueSlow, size, metadata, storeValueAndDispatch)
+    metadata(t2, t1)
+    performGetByIDHelper(OpIteratorNext, m_valueModeMetadata, m_valueValueProfile, .getValueSlow, size, storeValueAndDispatch)
 
 .getValueSlow:
     callSlowPath(_llint_slow_path_iterator_next_get_value)

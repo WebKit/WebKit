@@ -182,6 +182,7 @@ static LLIntOperations llintOperations()
             LLINT_OP(llint_generic_return_point)
 
             LLINT_RETURN_LOCATION(op_get_by_id)
+            LLINT_RETURN_LOCATION(op_get_length)
             LLINT_RETURN_LOCATION(op_get_by_val)
             LLINT_RETURN_LOCATION(op_put_by_id)
             LLINT_RETURN_LOCATION(op_put_by_val)
