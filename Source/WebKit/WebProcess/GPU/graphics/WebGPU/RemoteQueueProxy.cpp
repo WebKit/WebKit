@@ -104,7 +104,7 @@ void RemoteQueueProxy::writeTexture(
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQueueProxy::writeBuffer(
+void RemoteQueueProxy::writeBufferNoCopy(
     const WebCore::WebGPU::Buffer&,
     WebCore::WebGPU::Size64,
     std::span<uint8_t>,

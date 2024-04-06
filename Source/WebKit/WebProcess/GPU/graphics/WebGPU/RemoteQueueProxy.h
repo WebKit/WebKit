@@ -91,7 +91,7 @@ private:
         const WebCore::WebGPU::ImageDataLayout&,
         const WebCore::WebGPU::Extent3D& size) final;
 
-    void writeBuffer(
+    void writeBufferNoCopy(
         const WebCore::WebGPU::Buffer&,
         WebCore::WebGPU::Size64 bufferOffset,
         std::span<uint8_t> source,

@@ -75,7 +75,7 @@ public:
         const ImageDataLayout&,
         const Extent3D& size) = 0;
 
-    virtual void writeBuffer(
+    virtual void writeBufferNoCopy(
         const Buffer&,
         Size64 bufferOffset,
         std::span<uint8_t> source,
