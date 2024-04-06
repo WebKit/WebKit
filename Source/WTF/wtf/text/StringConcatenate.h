@@ -127,7 +127,7 @@ public:
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, m_characters, m_length); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, { m_characters, m_length }); }
 
 private:
     static unsigned computeLength(const LChar* characters)
@@ -150,7 +150,7 @@ public:
     unsigned length() const { return m_length; }
     bool is8Bit() const { return !m_length; }
     void writeTo(LChar*) const { ASSERT(!m_length); }
-    void writeTo(UChar* destination) const { StringImpl::copyCharacters(destination, m_characters, m_length); }
+    void writeTo(UChar* destination) const { StringImpl::copyCharacters(destination, { m_characters, m_length }); }
 
 private:
     static unsigned computeLength(const UChar* characters)
@@ -204,7 +204,7 @@ public:
     {
         using CharacterTypeForString = std::conditional_t<sizeof(CharacterType) == sizeof(LChar), LChar, UChar>;
         static_assert(sizeof(CharacterTypeForString) == sizeof(CharacterType));
-        StringImpl::copyCharacters(destination, reinterpret_cast<const CharacterTypeForString*>(m_characters), m_length);
+        StringImpl::copyCharacters(destination, { reinterpret_cast<const CharacterTypeForString*>(m_characters), m_length });
     }
 
 private:

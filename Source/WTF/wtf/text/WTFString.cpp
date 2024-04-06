@@ -450,7 +450,7 @@ String String::make8Bit(std::span<const UChar> source)
 {
     LChar* destination;
     String result = String::createUninitialized(source.size(), destination);
-    StringImpl::copyCharacters(destination, source.data(), source.size());
+    StringImpl::copyCharacters(destination, source);
     return result;
 }
 
@@ -458,10 +458,9 @@ void String::convertTo16Bit()
 {
     if (isNull() || !is8Bit())
         return;
-    auto length = this->length();
     UChar* destination;
-    auto convertedString = String::createUninitialized(length, destination);
-    StringImpl::copyCharacters(destination, characters8(), length);
+    auto convertedString = String::createUninitialized(length(), destination);
+    StringImpl::copyCharacters(destination, span8());
     *this = WTFMove(convertedString);
 }
 

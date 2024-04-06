@@ -733,10 +733,10 @@ TEST(WTF, StaticStringImpl)
 TEST(WTF, DynamicStaticStringImpl)
 {
     // Construct using MAKE_STATIC_STRING_IMPL.
-    String hello = StringImpl::createStaticStringImpl("hello", 5);
-    String world = StringImpl::createStaticStringImpl("world", 5);
-    String longer = StringImpl::createStaticStringImpl("longer", 6);
-    String hello2 = StringImpl::createStaticStringImpl("hello", 5);
+    String hello = StringImpl::createStaticStringImpl("hello"_span);
+    String world = StringImpl::createStaticStringImpl("world"_span);
+    String longer = StringImpl::createStaticStringImpl("longer"_span);
+    String hello2 = StringImpl::createStaticStringImpl("hello"_span);
 
     doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
 }

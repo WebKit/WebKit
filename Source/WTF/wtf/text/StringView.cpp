@@ -94,8 +94,8 @@ Expected<CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mod
     if (isNull())
         return CString { ""_span };
     if (is8Bit())
-        return StringImpl::utf8ForCharacters(characters8(), length());
-    return StringImpl::utf8ForCharacters(characters16(), length(), mode);
+        return StringImpl::utf8ForCharacters(span8());
+    return StringImpl::utf8ForCharacters(span16(), mode);
 }
 
 CString StringView::utf8(ConversionMode mode) const

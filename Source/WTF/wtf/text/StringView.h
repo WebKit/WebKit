@@ -623,12 +623,12 @@ template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() 
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
 {
-    StringImpl::copyCharacters(destination, characters8(), m_length);
+    StringImpl::copyCharacters(destination, span8());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters16(CharacterType* destination) const
 {
-    StringImpl::copyCharacters(destination, characters16(), m_length);
+    StringImpl::copyCharacters(destination, span16());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters(CharacterType* destination) const
@@ -646,10 +646,8 @@ inline StringView::UpconvertedCharactersWithSize<N>::UpconvertedCharactersWithSi
         m_characters = string.characters16();
         return;
     }
-    const LChar* characters8 = string.characters8();
-    unsigned length = string.m_length;
-    m_upconvertedCharacters.grow(length);
-    StringImpl::copyCharacters(m_upconvertedCharacters.data(), characters8, length);
+    m_upconvertedCharacters.grow(string.m_length);
+    StringImpl::copyCharacters(m_upconvertedCharacters.data(), string.span8());
     m_characters = m_upconvertedCharacters.data();
 }
 
@@ -1485,8 +1483,8 @@ template<typename Func>
 inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
     if (is8Bit())
-        return StringImpl::tryGetUTF8ForCharacters(function, characters8(), length());
-    return StringImpl::tryGetUTF8ForCharacters(function, characters16(), length(), mode);
+        return StringImpl::tryGetUTF8ForCharacters(function, span8());
+    return StringImpl::tryGetUTF8ForCharacters(function, span16(), mode);
 }
 
 template<> struct VectorTraits<StringView> : VectorTraitsBase<false, void> {

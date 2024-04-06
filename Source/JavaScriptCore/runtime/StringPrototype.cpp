@@ -321,7 +321,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < rangeCount; i++) {
             int srcLen = substringRanges[i].distance();
-            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+            StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
             bufferPos += srcLen;
         }
 
@@ -340,7 +340,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
         int srcLen = substringRanges[i].distance();
-        StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+        StringImpl::copyCharacters(buffer + bufferPos.value(), { sourceData + substringRanges[i].begin(), static_cast<size_t>(srcLen) });
         bufferPos += srcLen;
     }
 
