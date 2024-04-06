@@ -4525,7 +4525,7 @@ Color LocalFrameView::documentBackgroundColor() const
         if (!fullscreenManager)
             return { };
 
-        auto* fullscreenElement = fullscreenManager->fullscreenElement();
+        RefPtr fullscreenElement = fullscreenManager->fullscreenElement();
         if (!fullscreenElement)
             return { };
 

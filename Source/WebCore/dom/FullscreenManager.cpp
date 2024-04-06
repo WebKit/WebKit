@@ -312,8 +312,8 @@ void FullscreenManager::cancelFullscreen()
         }
 
         // This triggers finishExitFullscreen with ExitMode::Resize, which fully exits the document.
-        if (auto* fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
-            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement);
+        if (RefPtr fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
+            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement.get());
         else
             INFO_LOG(identifier, "Top document has no fullscreen element");
     });
@@ -365,8 +365,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
         exitingDocument = topDocument;
     }
 
-    auto element = exitingDocument->fullscreenManager().fullscreenElement();
-    if (element && !element->isConnected()) {
+    if (RefPtr element = exitingDocument->fullscreenManager().fullscreenElement(); element && !element->isConnected()) {
         addDocumentToFullscreenChangeEventQueue(exitingDocument);
         clearFullscreenFlags(*element);
         element->removeFromTopLayer();
