@@ -690,7 +690,6 @@ void WebProcessProxy::shutDown()
         webConnection->invalidate();
 
     m_backgroundResponsivenessTimer.invalidate();
-    m_activityForHoldingLockedFiles = nullptr;
     m_audibleMediaActivity = std::nullopt;
     m_mediaStreamingActivity = std::nullopt;
 
@@ -1899,19 +1898,6 @@ void WebProcessProxy::updateMediaStreamingActivity()
     } else {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateMediaStreamingActivity: Stop Media Networking Activity for WebProcess");
         m_mediaStreamingActivity = std::nullopt;
-    }
-}
-
-void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
-{
-    if (!isHoldingLockedFiles) {
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "setIsHoldingLockedFiles: UIProcess is releasing a background assertion because the WebContent process is no longer holding locked files");
-        m_activityForHoldingLockedFiles = nullptr;
-        return;
-    }
-    if (!m_activityForHoldingLockedFiles) {
-        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "setIsHoldingLockedFiles: UIProcess is taking a background assertion because the WebContent process is holding locked files");
-        m_activityForHoldingLockedFiles = throttler().backgroundActivity("Holding locked files"_s).moveToUniquePtr();
     }
 }
 

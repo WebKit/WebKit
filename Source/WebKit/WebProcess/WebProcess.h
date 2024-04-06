@@ -87,11 +87,6 @@ OBJC_CLASS NSMutableDictionary;
 #include <WebCore/CaptionUserPreferences.h>
 #endif
 
-#if USE(RUNNINGBOARD)
-#include "WebSQLiteDatabaseTracker.h"
-#endif
-
-
 namespace API {
 class Object;
 }
@@ -770,10 +765,6 @@ private:
 
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     WebCore::Timer m_nonVisibleProcessMemoryCleanupTimer;
-#endif
-
-#if USE(RUNNINGBOARD)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
     bool m_suppressMemoryPressureHandler { false };
