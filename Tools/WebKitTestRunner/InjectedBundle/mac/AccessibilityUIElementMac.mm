@@ -198,10 +198,8 @@ static id attributeValue(id element, NSString *attribute)
         @"AXOrientation",
         @"AXOwns",
         @"AXPopupValue",
-        @"AXRelativeFrame",
         @"AXRequired",
         @"AXValue",
-        @"AXVisibleCharacterRange",
     ];
 
     NSArray<NSString *> *supportedAttributes = [element accessibilityAttributeNames];

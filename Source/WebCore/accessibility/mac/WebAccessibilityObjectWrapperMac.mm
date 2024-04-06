@@ -925,11 +925,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isColumnHeader() || backingObject->isRowHeader())
         [additional addObject:NSAccessibilitySortDirectionAttribute];
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled())
-        [additional addObject:NSAccessibilityRelativeFrameAttribute];
-#endif
-
     return additional;
 }
 
@@ -978,6 +973,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityHighestEditableAncestorAttribute,
         NSAccessibilityTextInputMarkedRangeAttribute,
         NSAccessibilityTextInputMarkedTextMarkerRangeAttribute,
+        NSAccessibilityVisibleCharacterRangeAttribute,
+        NSAccessibilityRelativeFrameAttribute,
     ];
     static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
@@ -1021,7 +1018,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityNumberOfCharactersAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextAttribute];
         [tempArray addObject:NSAccessibilitySelectedTextRangeAttribute];
-        [tempArray addObject:NSAccessibilityVisibleCharacterRangeAttribute];
         [tempArray addObject:NSAccessibilityInsertionPointLineNumberAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
@@ -1236,7 +1232,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed staticTextAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
         [tempArray addObject:NSAccessibilityIntersectionWithSelectionRangeAttribute];
-        [tempArray addObject:NSAccessibilityVisibleCharacterRangeAttribute];
         return tempArray;
     }();
 

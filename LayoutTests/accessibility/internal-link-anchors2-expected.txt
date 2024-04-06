@@ -30,6 +30,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXHeading: '[ edit ] Tourette syndrome'>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 24}
 AXElementBusy: 0
 
 ------------
@@ -63,6 +64,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 
 ------------
@@ -96,6 +98,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXGroup>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {9223372036854775807, 0}
 AXElementBusy: 0
 
 ------------
