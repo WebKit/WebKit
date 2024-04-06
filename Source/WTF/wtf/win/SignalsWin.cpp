@@ -145,7 +145,7 @@ void SignalHandlers::finalize()
 {
     Config::AssertNotFrozenScope assertScope;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
-    RELEASE_ASSERT(handlers.initState == SignalHandlers::InitState::Finalized);
+    RELEASE_ASSERT(handlers.initState == SignalHandlers::InitState::Initializing);
     handlers.initState = SignalHandlers::InitState::Finalized;
 
     for (unsigned i = 0; i < numberOfSignals; ++i) {
