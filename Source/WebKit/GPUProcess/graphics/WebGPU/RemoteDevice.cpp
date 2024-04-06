@@ -274,41 +274,41 @@ void RemoteDevice::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& 
     m_objectHeap->addObject(identifier, remoteRenderPipeline);
 }
 
-void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool)>&& callback)
+void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false);
+        callback(false, ""_s);
         return;
     }
 
-    m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier] (RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline) mutable {
+    m_backing->createComputePipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier] (RefPtr<WebCore::WebGPU::ComputePipeline>&& computePipeline, String&& error) mutable {
         bool result = computePipeline.get();
         if (result) {
             auto remoteComputePipeline = RemoteComputePipeline::create(computePipeline.releaseNonNull(), objectHeap, WTFMove(streamConnection), identifier);
             objectHeap->addObject(identifier, remoteComputePipeline);
         }
-        callback(result);
+        callback(result, WTFMove(error));
     });
 }
 
-void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool)>&& callback)
+void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(bool, String&&)>&& callback)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor) {
-        callback(false);
+        callback(false, ""_s);
         return;
     }
 
-    m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier] (RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline) mutable {
+    m_backing->createRenderPipelineAsync(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap.get() }, streamConnection = m_streamConnection.copyRef(), identifier] (RefPtr<WebCore::WebGPU::RenderPipeline>&& renderPipeline, String&& error) mutable {
         bool result = renderPipeline.get();
         if (result) {
             auto remoteRenderPipeline = RemoteRenderPipeline::create(renderPipeline.releaseNonNull(), objectHeap, WTFMove(streamConnection), identifier);
             objectHeap->addObject(identifier, remoteRenderPipeline);
         }
-        callback(result);
+        callback(result, WTFMove(error));
     });
 }
 

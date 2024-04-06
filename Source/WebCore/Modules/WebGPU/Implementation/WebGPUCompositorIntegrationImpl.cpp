@@ -71,6 +71,8 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
     if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
+    if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::Default, colorFormat))
+        m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));
 
     {
         auto renderBuffers = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, m_renderBuffers.size(), &kCFTypeArrayCallBacks));

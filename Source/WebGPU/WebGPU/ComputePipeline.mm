@@ -63,17 +63,17 @@ static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::Constan
     return MTLSizeMake(width, height, depth);
 }
 
-static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
+static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
 {
     if (!isAsync)
         object.generateAValidationError(error ?: @"createComputePipeline failed");
-    return ComputePipeline::createInvalid(object);
+    return std::make_pair(ComputePipeline::createInvalid(object), error);
 }
 
-Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync)
+std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync)
 {
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
-        return ComputePipeline::createInvalid(*this);
+        return returnInvalidComputePipeline(*this, isAsync);
 
     ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
     if (!shaderModule.isValid() || &shaderModule.device() != this)
@@ -83,9 +83,10 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants);
+    NSError *error;
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPointName, label, descriptor.compute.constantCount, descriptor.compute.constants, &error);
     if (!libraryCreationResult || &pipelineLayout.device() != this)
-        return returnInvalidComputePipeline(*this, isAsync);
+        return returnInvalidComputePipeline(*this, isAsync, error.description ?: @"Compute library failed creation");
 
     auto library = libraryCreationResult->library;
     const auto& wgslConstantValues = libraryCreationResult->wgslConstantValues;
@@ -115,18 +116,18 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         if (!generatedPipelineLayout->isValid())
             return returnInvalidComputePipeline(*this, isAsync);
         auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label);
-        return ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, *this);
+        return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, *this), nil);
     }
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);
-    return ComputePipeline::create(computePipelineState, pipelineLayout, size, *this);
+    return std::make_pair(ComputePipeline::create(computePipelineState, pipelineLayout, size, *this), nil);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
-    auto pipeline = createComputePipeline(descriptor, true);
-    instance().scheduleWork([pipeline, callback = WTFMove(callback), protectedThis = Ref { *this }]() mutable {
-        callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
+    auto pipelineAndError = createComputePipeline(descriptor, true);
+    instance().scheduleWork([pipeline = WTFMove(pipelineAndError.first), callback = WTFMove(callback), protectedThis = Ref { *this }, error = WTFMove(pipelineAndError.second)]() mutable {
+        callback((pipeline->isValid() || protectedThis->isDestroyed()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), WTFMove(error));
     });
 }
 

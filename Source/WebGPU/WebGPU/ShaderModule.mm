@@ -72,19 +72,18 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error)
 {
     auto options = [MTLCompileOptions new];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
 ALLOW_DEPRECATED_DECLARATIONS_END
-    NSError *error = nil;
     // FIXME(PERFORMANCE): Run the asynchronous version of this
-    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
-    if (error) {
+    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:error];
+    if (error && *error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
-        WGPU_FUZZER_ASSERT_NOT_REACHED("Failed metal compilation");
+        WTFLogAlways("MSL compilation error: %@", *error);
+        return nil;
     }
     library.label = label;
     return library;
@@ -114,7 +113,8 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
     auto msl = WGSL::generate(shaderModule, result, wgslConstantValues);
-    auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label));
+    NSError *error = nil;
+    auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label), &error);
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(result.entryPoints), library, nil, { }, device);

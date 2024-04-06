@@ -468,11 +468,11 @@ void GPUDevice::createComputePipelineAsync(const GPUComputePipelineDescriptor& c
         promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Internal }));
         return;
     }
-    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::ComputePipeline>&& computePipeline) mutable {
+    m_backing->createComputePipelineAsync(computePipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::ComputePipeline>&& computePipeline, String&& error) mutable {
         if (computePipeline)
             promise.resolve(GPUComputePipeline::create(computePipeline.releaseNonNull()));
         else
-            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(WTFMove(error), { GPUPipelineErrorReason::Validation }));
     });
 }
 
@@ -494,11 +494,11 @@ ExceptionOr<void> GPUDevice::createRenderPipelineAsync(const GPURenderPipelineDe
     if (!m_autoPipelineLayout)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createRenderBundleEncoder: Unable to make encoder."_s };
 
-    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::RenderPipeline>&& renderPipeline) mutable {
+    m_backing->createRenderPipelineAsync(renderPipelineDescriptor.convertToBacking(*m_autoPipelineLayout), [promise = WTFMove(promise)](RefPtr<WebGPU::RenderPipeline>&& renderPipeline, String&& error) mutable {
         if (renderPipeline.get())
             promise.resolve(GPURenderPipeline::create(renderPipeline.releaseNonNull()));
         else
-            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(""_s, { GPUPipelineErrorReason::Validation }));
+            promise.rejectType<IDLInterface<GPUPipelineError>>(GPUPipelineError::create(WTFMove(error), { GPUPipelineErrorReason::Validation }));
     });
     return { };
 }
