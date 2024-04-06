@@ -642,11 +642,11 @@ void TextIterator::handleTextRun()
         auto hasPrecedingCollapsedWhitespace = m_lastTextNodeEndedWithCollapsedSpace || (m_textRun == firstTextRun && textRunStart == runStart && runStart);
         auto shouldEmitWhitespace = !isAfterRangeEnd && hasPrecedingCollapsedWhitespace && m_lastCharacter && !renderer->style().isCollapsibleWhiteSpace(m_lastCharacter);
         if (shouldEmitWhitespace) {
-            if (m_lastTextNode == textNode.ptr() && runStart && rendererText[runStart - 1] == ' ') {
+            if (m_lastTextNode == textNode.ptr() && runStart && renderer->style().isCollapsibleWhiteSpace(rendererText[runStart - 1])) {
                 unsigned spaceRunStart = runStart - 1;
-                while (spaceRunStart && rendererText[spaceRunStart - 1] == ' ')
+                while (spaceRunStart && renderer->style().isCollapsibleWhiteSpace(rendererText[spaceRunStart - 1]))
                     --spaceRunStart;
-                emitText(textNode, renderer, spaceRunStart, spaceRunStart + 1);
+                emitCharacter(' ', WTFMove(textNode), nullptr, spaceRunStart, spaceRunStart + 1);
             } else
                 emitCharacter(' ', WTFMove(textNode), nullptr, runStart, runStart);
             return;
@@ -1179,6 +1179,15 @@ RefPtr<Node> TextIterator::protectedCurrentNode() const
 {
     return m_currentNode;
 }
+
+#if ENABLE(TREE_DEBUGGING)
+void TextIterator::showTreeForThis() const
+{
+    if (m_currentNode)
+        m_currentNode->showTreeForThis();
+    fprintf(stderr, "offset: %d\n", m_offset);
+}
+#endif
 
 // --------
 
@@ -2658,3 +2667,18 @@ bool containsPlainText(const String& document, const String& target, FindOptions
 }
 
 }
+
+#if ENABLE(TREE_DEBUGGING)
+
+void showTree(const WebCore::TextIterator& pos)
+{
+    pos.showTreeForThis();
+}
+
+void showTree(const WebCore::TextIterator* pos)
+{
+    if (pos)
+        pos->showTreeForThis();
+}
+
+#endif
