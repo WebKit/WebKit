@@ -611,7 +611,7 @@ static CString getShaderLog(GLuint shader)
     glGetShaderInfoLog(shader, logLength, &infoLength, info.data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return std::span { info.data(), stringLength };
+    return std::span<const char> { info.data(), stringLength };
 }
 
 static CString getProgramLog(GLuint program)
@@ -626,7 +626,7 @@ static CString getProgramLog(GLuint program)
     glGetProgramInfoLog(program, logLength, &infoLength, info.data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return std::span { info.data(), stringLength };
+    return std::span<const char> { info.data(), stringLength };
 }
 #endif
 
