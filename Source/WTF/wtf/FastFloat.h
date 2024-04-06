@@ -32,5 +32,7 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
 WTF_EXPORT_PRIVATE double parseDouble(const UChar* string, size_t length, size_t& parsedLength);
+WTF_EXPORT_PRIVATE float parseFloat(const LChar* string, size_t length, size_t& parsedLength);
+WTF_EXPORT_PRIVATE float parseFloat(const UChar* string, size_t length, size_t& parsedLength);
 
 } // namespace WTF

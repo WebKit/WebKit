@@ -55,6 +55,13 @@ inline double parseDouble(StringView string, size_t& parsedLength)
     return parseDouble(string.characters16(), string.length(), parsedLength);
 }
 
+inline float parseFloat(StringView string, size_t& parsedLength)
+{
+    if (string.is8Bit())
+        return parseFloat(string.characters8(), string.length(), parsedLength);
+    return parseFloat(string.characters16(), string.length(), parsedLength);
+}
+
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
@@ -63,3 +70,4 @@ using WTF::numberToStringWithTrailingPoint;
 using WTF::numberToFixedPrecisionString;
 using WTF::numberToFixedWidthString;
 using WTF::parseDouble;
+using WTF::parseFloat;
