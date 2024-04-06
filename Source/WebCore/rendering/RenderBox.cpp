@@ -3112,13 +3112,6 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
     return shouldFlip;
 }
 
-void RenderBox::willBeRemovedFromTree(IsInternalMove isInternalMove)
-{
-    RenderBoxModelObject::willBeRemovedFromTree(isInternalMove);
-    if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent()))
-        parentFlexibleBox->clearCachedMainSizeForChild(*this);
-}
-
 void RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit height) const
 {
     // FIXME: it should be enough with checking hasOverridingLogicalHeight() as this logic could be shared

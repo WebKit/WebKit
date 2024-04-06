@@ -908,8 +908,10 @@ static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& chil
     if (child.isFloatingOrOutOfFlowPositioned())
         downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
     else if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent)) {
-        if (CheckedPtr childBox = dynamicDowncast<RenderBox>(child))
+        if (CheckedPtr childBox = dynamicDowncast<RenderBox>(child)) {
             parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
+            parentFlexibleBox->clearCachedMainSizeForChild(*childBox);
+        }
     }
 
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
