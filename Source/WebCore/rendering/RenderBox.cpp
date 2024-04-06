@@ -250,16 +250,15 @@ void RenderBox::removeFloatingAndInvalidateForLayout()
 
 void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 {
-    ASSERT(isFloatingOrOutOfFlowPositioned());
-
-    if (renderTreeBeingDestroyed())
-        return;
+    ASSERT(!renderTreeBeingDestroyed());
 
     if (isFloating())
-        removeFloatingAndInvalidateForLayout();
+        return removeFloatingAndInvalidateForLayout();
 
     if (isOutOfFlowPositioned())
-        RenderBlock::removePositionedObject(*this);
+        return RenderBlock::removePositionedObject(*this);
+
+    ASSERT_NOT_REACHED();
 }
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

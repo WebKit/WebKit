@@ -311,14 +311,14 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
 
 void RenderObject::resetFragmentedFlowStateOnRemoval()
 {
+    ASSERT(!renderTreeBeingDestroyed());
+
     if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
-    if (!renderTreeBeingDestroyed()) {
-        if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
-            renderElement->removeFromRenderFragmentedFlow();
-            return;
-        }
+    if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
+        renderElement->removeFromRenderFragmentedFlow();
+        return;
     }
 
     // A RenderFragmentedFlow is always considered to be inside itself, so it never has to change its state in response to parent changes.

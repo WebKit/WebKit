@@ -903,58 +903,62 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
+static void resetRendererStateOnDetach(RenderElement& parent, RenderObject& child, RenderTreeBuilder::WillBeDestroyed willBeDestroyed)
+{
+    if (child.isFloatingOrOutOfFlowPositioned())
+        downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
+    else if (CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent)) {
+        if (CheckedPtr childBox = dynamicDowncast<RenderBox>(child))
+            parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
+    }
+
+    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
+    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
+    // disappears gets repainted properly.
+    bool shouldRepaint = !is<RenderMultiColumnSet>(child.previousSibling());
+    if (shouldRepaint) {
+        if (child.isBody())
+            parent.view().repaintRootContents();
+        else
+            child.repaint();
+    }
+    child.setNeedsLayoutAndPrefWidthsRecalc();
+
+    // If we have a line box wrapper, delete it.
+    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+        textRenderer->removeAndDestroyTextBoxes();
+
+    // If child is the start or end of the selection, then clear the selection to
+    // avoid problems of invalid pointers.
+    if (willBeDestroyed == RenderTreeBuilder::WillBeDestroyed::Yes && child.isSelectionBorder())
+        parent.frame().selection().setNeedsSelectionUpdate();
+}
+
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
 
-    if (child.isFloatingOrOutOfFlowPositioned())
-        downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
+    if (parent.renderTreeBeingDestroyed())
+        return parent.detachRendererInternal(child);
 
-    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
-    // disappears gets repainted properly.
-    if (!parent.renderTreeBeingDestroyed() && child.everHadLayout()) {
-        bool shouldNotRepaint = is<RenderMultiColumnSet>(child.previousSibling());
-        if (child.isBody() && !shouldNotRepaint)
-            parent.view().repaintRootContents();
-        else if (!shouldNotRepaint)
-            child.repaint();
-        child.setNeedsLayoutAndPrefWidthsRecalc();
-    }
+    if (child.everHadLayout())
+        resetRendererStateOnDetach(parent, child, willBeDestroyed);
 
-    // If we have a line box wrapper, delete it.
-    if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
-        textRenderer->removeAndDestroyTextBoxes();
-
-    if (!parent.renderTreeBeingDestroyed()) {
-        CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent);
-        CheckedPtr childBox = dynamicDowncast<RenderBox>(child);
-        if (parentFlexibleBox && !child.isFloatingOrOutOfFlowPositioned() && childBox)
-            parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
-    }
-
-    // If child is the start or end of the selection, then clear the selection to
-    // avoid problems of invalid pointers.
-    if (!parent.renderTreeBeingDestroyed() && willBeDestroyed == WillBeDestroyed::Yes && child.isSelectionBorder())
-        parent.frame().selection().setNeedsSelectionUpdate();
-
-    if (!parent.renderTreeBeingDestroyed() && m_internalMovesType == RenderObject::IsInternalMove::No)
+    // FIXME: Fragment state should not be such a special case.
+    if (m_internalMovesType == RenderObject::IsInternalMove::No)
         child.resetFragmentedFlowStateOnRemoval();
 
-    if (!parent.renderTreeBeingDestroyed())
-        child.willBeRemovedFromTree(m_internalMovesType);
-
+    child.willBeRemovedFromTree(m_internalMovesType);
     // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |child| dangling.
     auto childToTake = parent.detachRendererInternal(child);
 
-    if (!parent.renderTreeBeingDestroyed()) {
-        if (AXObjectCache* cache = parent.document().existingAXObjectCache())
-            cache->childrenChanged(&parent);
-    }
+    if (AXObjectCache* cache = parent.document().existingAXObjectCache())
+        cache->childrenChanged(&parent);
+
     return childToTake;
 }
 
