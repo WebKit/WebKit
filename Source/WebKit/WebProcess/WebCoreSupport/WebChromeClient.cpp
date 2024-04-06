@@ -1272,6 +1272,16 @@ void WebChromeClient::exitVideoFullscreenToModeWithoutAnimation(HTMLVideoElement
     protectedPage()->videoPresentationManager().exitVideoFullscreenToModeWithoutAnimation(videoElement, targetMode);
 }
 
+void WebChromeClient::setVideoFullscreenMode(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    protectedPage()->videoPresentationManager().setVideoFullscreenMode(videoElement, mode);
+}
+
+void WebChromeClient::clearVideoFullscreenMode(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    protectedPage()->videoPresentationManager().clearVideoFullscreenMode(videoElement, mode);
+}
+
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1284,11 +1294,26 @@ bool WebChromeClient::supportsFullScreenForElement(const Element&, bool withKeyb
 void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     protectedPage()->fullScreenManager()->enterFullScreenForElement(&element, mode);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(&element); videoElement && mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
+        setVideoFullscreenMode(*videoElement, mode);
+#endif
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)
 {
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    bool exitingInWindowFullscreen = false;
+    if (element) {
+        if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(*element))
+            exitingInWindowFullscreen = videoElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
+    }
+#endif
     protectedPage()->fullScreenManager()->exitFullScreenForElement(element);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (exitingInWindowFullscreen)
+        clearVideoFullscreenMode(*dynamicDowncast<HTMLVideoElement>(*element), HTMLMediaElementEnums::VideoFullscreenModeInWindow);
+#endif
 }
 
 #endif

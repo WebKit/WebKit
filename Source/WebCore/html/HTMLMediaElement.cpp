@@ -7147,8 +7147,12 @@ void HTMLMediaElement::willBecomeFullscreenElement(VideoFullscreenMode mode)
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (oldVideoFullscreenMode == VideoFullscreenModePictureInPicture) {
-        if (auto* video = dynamicDowncast<HTMLVideoElement>(*this))
-            video->exitToFullscreenModeWithoutAnimationIfPossible(oldVideoFullscreenMode, VideoFullscreenModeStandard);
+        if (RefPtr video = dynamicDowncast<HTMLVideoElement>(*this)) {
+            if (RefPtr page = document().page(); page && mode == VideoFullscreenModeInWindow)
+                page->chrome().client().exitVideoFullscreenForVideoElement(*video);
+            else
+                video->exitToFullscreenModeWithoutAnimationIfPossible(oldVideoFullscreenMode, mode);
+        }
     }
 #endif
 
