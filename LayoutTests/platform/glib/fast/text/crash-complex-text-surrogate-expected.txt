@@ -18,7 +18,7 @@ layer at (0,0) size 785x678
         text run at (0,120) width 9: "Y"
       RenderText {#text} at (9,120) size 45x15
         text run at (9,120) width 45: "a bcd"
-      RenderInline {SPAN} at (0,0) size 9x15
+      RenderInline {SPAN} at (54,120) size 9x15
         RenderText {#text} at (54,120) size 9x15
           text run at (54,120) width 9: "\x{202B}X"
       RenderText {#text} at (0,0) size 0x0
@@ -33,7 +33,7 @@ layer at (0,0) size 785x678
         text run at (0,377) width 99: "(evaluating"
         text run at (0,392) width 279: "'document.scripts[3].toString')"
       RenderBR {BR} at (279,392) size 0x15
-      RenderInline {ACRONYM} at (0,0) size 0x15
+      RenderInline {ACRONYM} at (0,407) size 0x15
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,407) size 117x45
         text run at (0,407) width 45: "s is:"
