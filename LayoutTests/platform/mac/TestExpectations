@@ -2654,3 +2654,7 @@ webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
 [ Sonoma+ ] fast/url/url-hostname-encoding.html [ Failure ]
 
 webkit.org/b/272001 media/media-source/media-managedmse-noresumeafterpause.html [ Pass Failure ]
+
+# webkit.org/b/272249 NEW TEST (277103@main): [ MacOS ] 2 tests in imported/w3c/web-platform-tests/css are constant failure on x86 and Monterey
+[ Monterey x86_64 ] imported/w3c/web-platform-tests/css/css-animations/animate-with-color-mix.html [ Failure ]
+[ Monterey x86_64 ] imported/w3c/web-platform-tests/css/css-transitions/animations/animate-with-color-mix.html [ Failure ] 
