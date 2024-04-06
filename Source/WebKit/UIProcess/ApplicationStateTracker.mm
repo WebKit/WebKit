@@ -34,6 +34,7 @@
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import <WebCore/UIViewControllerUtilities.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -77,16 +78,24 @@ void* WKUIWindowSceneObserverContext = &WKUIWindowSceneObserverContext;
 
 - (void)setObservedWindow:(UIWindow *)window
 {
-    if (window == _window.get())
+    RetainPtr newWindow = window;
+    RetainPtr oldWindow = _window.get();
+    if (oldWindow == newWindow)
         return;
 
-    if (_window)
-        [_window removeObserver:self forKeyPath:@"windowScene"];
+    if (oldWindow) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        // -removeObserver:forKeyPath: will throw an exception if this
+        // object wasn't registered as an observer of _window at
+        // this keyPath.
+        [oldWindow removeObserver:self forKeyPath:@"windowScene"];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 
-    _window = window;
+    _window = newWindow.get();
 
-    if (_window)
-        [_window addObserver:self forKeyPath:@"windowScene" options:NSKeyValueObservingOptionNew context:WebKit::WKUIWindowSceneObserverContext];
+    if (newWindow)
+        [newWindow addObserver:self forKeyPath:@"windowScene" options:NSKeyValueObservingOptionNew context:WebKit::WKUIWindowSceneObserverContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey, id> *)change context:(void *)context
