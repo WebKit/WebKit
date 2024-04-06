@@ -1644,43 +1644,45 @@ StringView WordAwareIterator::text() const
 
 // --------
 
-static inline UChar foldQuoteMark(UChar c)
+static inline UChar foldQuoteMarkAndReplaceNoBreakSpace(UChar c)
 {
     switch (c) {
-        case hebrewPunctuationGershayim:
-        case leftDoubleQuotationMark:
-        case leftLowDoubleQuotationMark:
-        case rightDoubleQuotationMark:
-        case leftPointingDoubleAngleQuotationMark:
-        case rightPointingDoubleAngleQuotationMark:
-        case doubleHighReversed9QuotationMark:
-        case doubleLowReversed9QuotationMark:
-        case reversedDoublePrimeQuotationMark:
-        case doublePrimeQuotationMark:
-        case lowDoublePrimeQuotationMark:
-        case fullwidthQuotationMark:
-            return '"';
-        case hebrewPunctuationGeresh:
-        case leftSingleQuotationMark:
-        case leftLowSingleQuotationMark:
-        case rightSingleQuotationMark:
-        case singleLow9QuotationMark:
-        case singleLeftPointingAngleQuotationMark:
-        case singleRightPointingAngleQuotationMark:
-        case leftCornerBracket:
-        case rightCornerBracket:
-        case leftWhiteCornerBracket:
-        case rightWhiteCornerBracket:
-        case presentationFormForVerticalLeftCornerBracket:
-        case presentationFormForVerticalRightCornerBracket:
-        case presentationFormForVerticalLeftWhiteCornerBracket:
-        case presentationFormForVerticalRightWhiteCornerBracket:
-        case fullwidthApostrophe:
-        case halfwidthLeftCornerBracket:
-        case halfwidthRightCornerBracket:
-            return '\'';
-        default:
-            return c;
+    case hebrewPunctuationGershayim:
+    case leftDoubleQuotationMark:
+    case leftLowDoubleQuotationMark:
+    case rightDoubleQuotationMark:
+    case leftPointingDoubleAngleQuotationMark:
+    case rightPointingDoubleAngleQuotationMark:
+    case doubleHighReversed9QuotationMark:
+    case doubleLowReversed9QuotationMark:
+    case reversedDoublePrimeQuotationMark:
+    case doublePrimeQuotationMark:
+    case lowDoublePrimeQuotationMark:
+    case fullwidthQuotationMark:
+        return '"';
+    case hebrewPunctuationGeresh:
+    case leftSingleQuotationMark:
+    case leftLowSingleQuotationMark:
+    case rightSingleQuotationMark:
+    case singleLow9QuotationMark:
+    case singleLeftPointingAngleQuotationMark:
+    case singleRightPointingAngleQuotationMark:
+    case leftCornerBracket:
+    case rightCornerBracket:
+    case leftWhiteCornerBracket:
+    case rightWhiteCornerBracket:
+    case presentationFormForVerticalLeftCornerBracket:
+    case presentationFormForVerticalRightCornerBracket:
+    case presentationFormForVerticalLeftWhiteCornerBracket:
+    case presentationFormForVerticalRightWhiteCornerBracket:
+    case fullwidthApostrophe:
+    case halfwidthLeftCornerBracket:
+    case halfwidthRightCornerBracket:
+        return '\'';
+    case noBreakSpace:
+        return ' ';
+    default:
+        return c;
     }
 }
 
@@ -2085,7 +2087,7 @@ inline size_t SearchBuffer::append(StringView text)
     ASSERT(usableLength);
     m_buffer.grow(oldLength + usableLength);
     for (unsigned i = 0; i < usableLength; ++i)
-        m_buffer[oldLength + i] = foldQuoteMark(text[i]);
+        m_buffer[oldLength + i] = foldQuoteMarkAndReplaceNoBreakSpace(text[i]);
     return usableLength;
 }
 
@@ -2352,7 +2354,7 @@ inline bool SearchBuffer::atBreak() const
 
 inline void SearchBuffer::append(UChar c, bool isStart)
 {
-    m_buffer[m_cursor] = c == noBreakSpace ? ' ' : foldQuoteMark(c);
+    m_buffer[m_cursor] = foldQuoteMarkAndReplaceNoBreakSpace(c);
     m_isCharacterStartBuffer[m_cursor] = isStart;
     if (++m_cursor == m_target.length()) {
         m_cursor = 0;
