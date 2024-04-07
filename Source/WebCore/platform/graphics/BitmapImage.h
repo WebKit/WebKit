@@ -113,6 +113,10 @@ private:
     std::optional<IntPoint> hotSpot() const final { return m_source->hotSpot(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_source->singlePixelSolidColor(); }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool shouldUseQuickLookForFullscreen() const final { return m_source->shouldUseQuickLookForFullscreen(); }
+#endif
+
     // Image methods
     bool isBitmapImage() const final { return true; }
     bool isAnimating() const final { return m_source->isAnimating(); }

@@ -77,6 +77,10 @@ public:
 
 private:
     String decodeUTI(const SharedBuffer&) const;
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool shouldUseQuickLookForFullscreen() const;
+#endif
     
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };

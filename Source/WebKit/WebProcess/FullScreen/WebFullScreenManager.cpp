@@ -230,7 +230,7 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
                 return std::nullopt;
 
             auto* image = renderImage->cachedImage()->image();
-            if (!image || !image->isBitmapImage())
+            if (!image || !image->shouldUseQuickLookForFullscreen())
                 return std::nullopt;
 
             auto* buffer = renderImage->cachedImage()->resourceBuffer();
