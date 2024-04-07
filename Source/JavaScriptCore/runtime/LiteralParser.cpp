@@ -900,12 +900,12 @@ TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharT
         }
 
         if (!m_builder.isEmpty())
-            m_builder.appendCharacters(runStart, m_ptr - runStart);
+            m_builder.append(std::span { runStart, m_ptr });
 
 slowPathBegin:
         if ((m_mode != SloppyJSON) && m_ptr < m_end && *m_ptr == '\\') {
             if (m_builder.isEmpty() && runStart < m_ptr)
-                m_builder.appendCharacters(runStart, m_ptr - runStart);
+                m_builder.append(std::span { runStart, m_ptr });
             ++m_ptr;
             if (m_ptr >= m_end) {
                 m_lexErrorMessage = "Unterminated string"_s;

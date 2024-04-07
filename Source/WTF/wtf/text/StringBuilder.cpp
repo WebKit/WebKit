@@ -149,7 +149,7 @@ UChar* StringBuilder::extendBufferForAppendingWithUpconvert(unsigned requiredLen
     return extendBufferForAppending<UChar>(requiredLength);
 }
 
-void StringBuilder::appendCharacters(std::span<const UChar> characters)
+void StringBuilder::append(std::span<const UChar> characters)
 {
     if (characters.empty() || hasOverflowed())
         return;
@@ -162,7 +162,7 @@ void StringBuilder::appendCharacters(std::span<const UChar> characters)
         StringImpl::copyCharacters(destination, characters);
 }
 
-void StringBuilder::appendCharacters(std::span<const LChar> characters)
+void StringBuilder::append(std::span<const LChar> characters)
 {
     if (characters.empty() || hasOverflowed())
         return;
