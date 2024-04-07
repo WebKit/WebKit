@@ -1420,6 +1420,9 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     if (renderer().capturedInViewTransition()) {
         ComputedOffsets computedOffsets(m_owningLayer, compositedAncestor, compositedBounds(), { }, { });
         parentGraphicsLayerRect.move(computedOffsets.fromParentGraphicsLayer());
+
+        if (auto* renderer = renderBox())
+            parentGraphicsLayerRect.move(renderer->visualOverflowRect().location() - compositedBounds().location());
     }
 
     if (m_ancestorClippingStack)
