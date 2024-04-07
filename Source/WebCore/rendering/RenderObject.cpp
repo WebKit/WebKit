@@ -1383,7 +1383,8 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     if (node()) {
         stream << " node (" << node() << ")";
         if (node()->isTextNode()) {
-            String value = node()->nodeValue();
+            ASSERT(is<RenderText>(*this));
+            auto value = downcast<RenderText>(*this).text();
             stream << " length->(" << value.length() << ")";
 
             value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
