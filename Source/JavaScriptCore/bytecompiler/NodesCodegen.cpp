@@ -1733,7 +1733,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_arrayPush(BytecodeGenerator& g
 
     ASSERT(!node->m_next);
 
-    RefPtr<RegisterID> length = generator.emitDirectGetById(generator.newTemporary(), base.get(), generator.propertyNames().length);
+    RefPtr<RegisterID> length = generator.emitGetLength(generator.newTemporary(), base.get());
     return generator.move(dst, generator.emitDirectPutByVal(base.get(), length.get(), value.get()));
 }
 
