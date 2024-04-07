@@ -189,7 +189,12 @@ inline void TextRun::setTabSize(bool allow, const TabSize& size)
 inline TextRun TextRun::isolatedCopy() const
 {
     TextRun clone = *this;
-    clone.m_text = clone.m_text.isolatedCopy();
+    // We need to ensure a deep copy here, calling `clone.m_text.isolatedCopy()`
+    // is insufficient (rdar://125823370).
+    if (clone.m_text.is8Bit())
+        clone.m_text = clone.m_text.span8();
+    else
+        clone.m_text = clone.m_text.span16();
     return clone;
 }
 
