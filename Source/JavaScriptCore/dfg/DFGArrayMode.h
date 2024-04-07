@@ -29,6 +29,7 @@
 
 #include "ArrayProfile.h"
 #include "SpeculatedType.h"
+#include "StructureSet.h"
 
 namespace JSC {
 
@@ -85,7 +86,8 @@ enum Class : uint8_t {
     NonArray, // Definitely some object that is not a JSArray.
     OriginalNonArray, // Definitely some object that is not a JSArray, but that object has the original structure.
     Array, // Definitely a JSArray, and may or may not have custom properties or have undergone some other bizarre transitions.
-    OriginalArray, // Definitely a JSArray, and still has one of the primordial JSArray structures for the global object that this code block (possibly inlined code block) belongs to.
+    OriginalArray, // Definitely a JSArray, and still has one of the primordial JSArray structures and/or copy on write structures for the global object that this code block (possibly inlined code block) belongs to.
+    OriginalNonCopyOnWriteArray, // Definitely a JSArray, and still has one of the primordial JSArray structures for the global object that this code block (possibly inlined code block) belongs to.
     OriginalCopyOnWriteArray, // Definitely a copy on write JSArray, and still has one of the primordial JSArray copy on write structures for the global object that this code block (possibly inlined code block) belongs to.
     PossiblyArray // Some object that may or may not be a JSArray.
 };
@@ -241,9 +243,9 @@ public:
                 if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
                     myArrayClass = Array::OriginalCopyOnWriteArray;
                 else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalArray;
+                    myArrayClass = Array::OriginalNonCopyOnWriteArray;
                 else
-                    myArrayClass = Array::Array;
+                    myArrayClass = Array::OriginalArray;
             } else
                 myArrayClass = Array::Array;
         } else
@@ -283,6 +285,7 @@ public:
         switch (arrayClass()) {
         case Array::Array:
         case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
         case Array::OriginalCopyOnWriteArray:
             return true;
         default:
@@ -292,7 +295,14 @@ public:
     
     bool isJSArrayWithOriginalStructure() const
     {
-        return arrayClass() == Array::OriginalArray || arrayClass() == Array::OriginalCopyOnWriteArray;
+        switch (arrayClass()) {
+        case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
+        case Array::OriginalCopyOnWriteArray:
+            return true;
+        default:
+            return false;
+        }
     }
     
     bool isInBoundsSaneChain() const
@@ -446,9 +456,8 @@ public:
         }
     }
     
-    // Returns 0 if this is not OriginalArray.
-    Structure* originalArrayStructure(Graph&, const CodeOrigin&) const;
-    Structure* originalArrayStructure(Graph&, Node*) const;
+    StructureSet originalArrayStructures(Graph&, const CodeOrigin&) const;
+    StructureSet originalArrayStructures(Graph&, Node*) const;
     
     bool doesConversion() const
     {
@@ -562,11 +571,12 @@ private:
         case Array::OriginalCopyOnWriteArray:
             ASSERT(hasInt32(shape) || hasDouble(shape) || hasContiguous(shape));
             return asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
+        case Array::OriginalArray:
         case Array::Array:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))
                 return asArrayModesIgnoringTypedArrays(shape | IsArray) | asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
             FALLTHROUGH;
-        case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
             return asArrayModesIgnoringTypedArrays(shape | IsArray);
         case Array::PossiblyArray:
             if (hasInt32(shape) || hasDouble(shape) || hasContiguous(shape))

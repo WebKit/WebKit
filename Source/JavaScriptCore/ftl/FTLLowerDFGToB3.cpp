@@ -21862,6 +21862,7 @@ IGNORE_CLANG_WARNINGS_END
 
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
+            case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
                 return nullptr;
@@ -21904,6 +21905,7 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock lastNext = m_out.appendTo(checkCase, trueCase);
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
+            case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
                 return nullptr;

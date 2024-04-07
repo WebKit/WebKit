@@ -1016,6 +1016,7 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
         IndexingType shape = arrayMode.shapeMask();
         switch (arrayMode.arrayClass()) {
         case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
         case Array::OriginalCopyOnWriteArray:
             RELEASE_ASSERT_NOT_REACHED();
             return result;
@@ -1048,6 +1049,7 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
 
         switch (arrayMode.arrayClass()) {
         case Array::OriginalArray:
+        case Array::OriginalNonCopyOnWriteArray:
         case Array::OriginalCopyOnWriteArray:
             RELEASE_ASSERT_NOT_REACHED();
             return result;

@@ -4061,25 +4061,25 @@ private:
         } else {
             // Note that we only need to be using a structure check if we opt for InBoundsSaneChain, since
             // that needs to protect against JSArray's __proto__ being changed.
-            Structure* structure = arrayMode.originalArrayStructure(m_graph, origin.semantic);
+            auto structures = arrayMode.originalArrayStructures(m_graph, origin.semantic);
         
             Edge indexEdge = index ? Edge(index, Int32Use) : Edge();
             
             if (arrayMode.doesConversion()) {
-                if (structure) {
+                if (!structures.isEmpty() && structures.size() == 1) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, ArrayifyToStructure, origin,
-                        OpInfo(m_graph.registerStructure(structure)), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
+                        OpInfo(m_graph.registerStructure(structures.onlyStructure())), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
                 } else {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, Arrayify, origin,
                         OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
                 }
             } else {
-                if (structure) {
+                if (!structures.isEmpty()) {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, CheckStructure, origin,
-                        OpInfo(m_graph.addStructureSet(structure)), Edge(array, CellUse));
+                        OpInfo(m_graph.addStructureSet(structures)), Edge(array, CellUse));
                 } else {
                     m_insertionSet.insertNode(
                         m_indexInBlock, SpecNone, CheckArray, origin,
