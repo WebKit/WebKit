@@ -168,7 +168,7 @@ private:
 
 class IPIntGenerator {
 public:
-    IPIntGenerator(ModuleInformation&, unsigned, const TypeDefinition&, const uint8_t*, const uint32_t);
+    IPIntGenerator(ModuleInformation&, unsigned, const TypeDefinition&, std::span<const uint8_t>);
 
     using ControlType = IPIntControlType;
     using ExpressionType = Value;
@@ -530,9 +530,9 @@ private:
 // use if (true) to avoid warnings.
 #define IPINT_UNIMPLEMENTED { if (true) { CRASH(); } return { }; }
 
-IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, const TypeDefinition&, const uint8_t* bytecode, const uint32_t bytecode_len)
+IPIntGenerator::IPIntGenerator(ModuleInformation& info, unsigned functionIndex, const TypeDefinition&, std::span<const uint8_t> bytecode)
     : m_info(info)
-    , m_metadata(WTF::makeUnique<FunctionIPIntMetadataGenerator>(functionIndex, bytecode, bytecode_len))
+    , m_metadata(WTF::makeUnique<FunctionIPIntMetadataGenerator>(functionIndex, bytecode))
 {
     UNUSED_PARAM(info);
 }
@@ -2052,7 +2052,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
         }
 
         // Metadata = round up 8 bytes, one for each
-        m_metadata->m_bytecodeLength = m_parser->offset();
+        m_metadata->m_bytecode = m_metadata->m_bytecode.first(m_parser->offset());
         Vector<Type, 16> types(entry.controlData.branchTargetArity());
         for (size_t i = 0; i < entry.controlData.branchTargetArity(); ++i)
             types[i] = entry.controlData.branchTargetType(i);
@@ -2282,10 +2282,10 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     return WTFMove(m_metadata);
 }
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(const uint8_t* functionStart, size_t functionLength, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
 {
-    IPIntGenerator generator(info, functionIndex, signature, functionStart, functionLength);
-    FunctionParser<IPIntGenerator> parser(generator, functionStart, functionLength, signature, info);
+    IPIntGenerator generator(info, functionIndex, signature, function);
+    FunctionParser<IPIntGenerator> parser(generator, function, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
     return generator.finalize();
 }
