@@ -830,6 +830,8 @@ accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+accessibility/range-input-increment-decrement-fires-input-event.html [ WontFix ]
+
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
 
