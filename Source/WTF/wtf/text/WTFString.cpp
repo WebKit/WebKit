@@ -540,7 +540,7 @@ static inline double toDoubleType(std::span<const CharacterType> data, bool* ok,
     while (leadingSpacesLength < data.size() && isUnicodeCompatibleASCIIWhitespace(data[leadingSpacesLength]))
         ++leadingSpacesLength;
 
-    double number = parseDouble(data.data() + leadingSpacesLength, data.size() - leadingSpacesLength, parsedLength);
+    double number = parseDouble(data.subspan(leadingSpacesLength), parsedLength);
     if (!parsedLength) {
         if (ok)
             *ok = false;

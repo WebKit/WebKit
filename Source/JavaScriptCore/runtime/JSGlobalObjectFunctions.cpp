@@ -327,7 +327,7 @@ static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
     RELEASE_ASSERT(data < end);
 
     size_t parsedLength;
-    double number = parseDouble(data, end - data, parsedLength);
+    double number = parseDouble(std::span { data, end }, parsedLength);
     if (parsedLength) {
         data += parsedLength;
         return number;

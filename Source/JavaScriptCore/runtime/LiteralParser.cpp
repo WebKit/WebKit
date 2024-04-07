@@ -1087,7 +1087,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     
     token.type = TokNumber;
     size_t parsedLength;
-    token.numberToken = parseDouble(start, m_ptr - start, parsedLength);
+    token.numberToken = parseDouble(std::span { start, m_ptr }, parsedLength);
     return TokNumber;
 }
 

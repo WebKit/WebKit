@@ -1038,7 +1038,7 @@ Token Lexer<T>::lexNumber()
 
     if (!isHex) {
         size_t parsedLength;
-        double result = parseDouble(integral, m_code - integral, parsedLength);
+        double result = parseDouble(std::span { integral, m_code }, parsedLength);
         ASSERT(integral + parsedLength == end);
         return convert(result);
     }

@@ -2263,7 +2263,7 @@ start:
             goto returnError;
         }
         size_t parsedLength;
-        tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
+        tokenData->doubleValue = parseDouble(m_buffer8, parsedLength);
         if (token == INTEGER)
             token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
 
@@ -2450,7 +2450,7 @@ start:
                     goto returnError;
                 }
                 size_t parsedLength;
-                tokenData->doubleValue = parseDouble(m_buffer8.data(), m_buffer8.size(), parsedLength);
+                tokenData->doubleValue = parseDouble(m_buffer8, parsedLength);
                 if (token == INTEGER)
                     token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }

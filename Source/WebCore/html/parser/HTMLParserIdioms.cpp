@@ -225,18 +225,18 @@ std::optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 }
 
 template <typename CharacterType>
-static std::optional<double> parseValidHTMLFloatingPointNumberInternal(const CharacterType* position, size_t length)
+static std::optional<double> parseValidHTMLFloatingPointNumberInternal(std::span<const CharacterType> characters)
 {
-    ASSERT(length > 0);
+    ASSERT(!characters.empty());
 
     // parseDouble() allows the string to start with a '+' or to end with a '.' but those
     // are not valid floating point numbers as per HTML.
-    if (*position == '+' || *(position + length - 1) == '.')
+    if (characters.front() == '+' || characters.back() == '.')
         return std::nullopt;
 
     size_t parsedLength = 0;
-    double number = parseDouble(position, length, parsedLength);
-    return parsedLength == length && std::isfinite(number) ? number : std::optional<double>();
+    double number = parseDouble(characters, parsedLength);
+    return parsedLength == characters.size() && std::isfinite(number) ? number : std::optional<double>();
 }
 
 // https://html.spec.whatwg.org/#valid-floating-point-number
@@ -244,14 +244,9 @@ std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 {
     if (input.isEmpty())
         return std::nullopt;
-
-    if (LIKELY(input.is8Bit())) {
-        auto* start = input.characters8();
-        return parseValidHTMLFloatingPointNumberInternal(start, input.length());
-    }
-
-    auto* start = input.characters16();
-    return parseValidHTMLFloatingPointNumberInternal(start, input.length());
+    if (LIKELY(input.is8Bit()))
+        return parseValidHTMLFloatingPointNumberInternal(input.span8());
+    return parseValidHTMLFloatingPointNumberInternal(input.span16());
 }
 
 static inline bool isHTMLSpaceOrDelimiter(UChar character)
@@ -284,7 +279,7 @@ static Vector<double> parseHTMLListOfOfFloatingPointNumberValuesInternal(const C
             ++position;
 
         size_t parsedLength = 0;
-        double number = parseDouble(numberStart, position - numberStart, parsedLength);
+        double number = parseDouble(std::span { numberStart, position }, parsedLength);
         numbers.append(parsedLength > 0 && std::isfinite(number) ? number : 0);
 
         // This skips past the delimiter.
@@ -476,7 +471,7 @@ static std::optional<HTMLDimensionParsingResult> parseHTMLDimensionNumber(const 
         skipWhile<isASCIIDigit>(position, end);
 
     size_t parsedLength = 0;
-    double number = parseDouble(start, position - start, parsedLength);
+    double number = parseDouble(std::span { start, position }, parsedLength);
     if (!(parsedLength && std::isfinite(number)))
         return std::nullopt;
 
