@@ -81,9 +81,9 @@ bool VTTScanner::scanRun(const Run& run, const String& toMatch)
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = equal(toMatch.impl(), m_data.characters8, matchLength);
+        matched = equal(toMatch.impl(), { m_data.characters8, matchLength });
     else
-        matched = equal(toMatch.impl(), m_data.characters16, matchLength);
+        matched = equal(toMatch.impl(), { m_data.characters16, matchLength });
     if (matched)
         seekTo(run.end());
     return matched;

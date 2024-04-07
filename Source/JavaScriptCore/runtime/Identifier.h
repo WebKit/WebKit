@@ -248,12 +248,12 @@ inline bool Identifier::equal(const StringImpl* r, const LChar* s)
 
 inline bool Identifier::equal(const StringImpl* r, const LChar* s, unsigned length)
 {
-    return WTF::equal(r, s, length);
+    return WTF::equal(r, { s, length });
 }
 
 inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned length)
 {
-    return WTF::equal(r, s, length);
+    return WTF::equal(r, { s, length });
 }
 
 ALWAYS_INLINE std::optional<uint32_t> parseIndex(const Identifier& identifier)

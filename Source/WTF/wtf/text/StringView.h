@@ -711,15 +711,15 @@ template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<
 inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
-    return WTF::find(characters16(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
+        return WTF::find(span8(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
+    return WTF::find(span16(), std::forward<CodeUnitMatchFunction>(matchFunction), start);
 }
 
 inline size_t StringView::reverseFind(UChar character, unsigned start) const
 {
     if (is8Bit())
-        return WTF::reverseFind(characters8(), m_length, character, start);
-    return WTF::reverseFind(characters16(), m_length, character, start);
+        return WTF::reverseFind(span8(), character, start);
+    return WTF::reverseFind(span16(), character, start);
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME
@@ -1352,7 +1352,7 @@ inline size_t String::findIgnoringASCIICase(StringView string, unsigned start) c
     return m_impl ? m_impl->findIgnoringASCIICase(string, start) : notFound;
 }
 
-inline size_t String::reverseFind(StringView string, unsigned start) const
+inline size_t String::reverseFind(StringView string, size_t start) const
 {
     return m_impl ? m_impl->reverseFind(string, start) : notFound;
 }
@@ -1434,7 +1434,7 @@ inline bool String::hasInfixEndingAt(StringView suffix, unsigned end) const
     return m_impl && suffix && m_impl->hasInfixEndingAt(suffix, end);
 }
 
-inline size_t AtomString::find(StringView string, unsigned start) const
+inline size_t AtomString::find(StringView string, size_t start) const
 {
     return m_string.find(string, start);
 }
@@ -1444,7 +1444,7 @@ inline size_t AtomString::findIgnoringASCIICase(StringView string) const
     return m_string.findIgnoringASCIICase(string);
 }
 
-inline size_t AtomString::findIgnoringASCIICase(StringView string, unsigned start) const
+inline size_t AtomString::findIgnoringASCIICase(StringView string, size_t start) const
 {
     return m_string.findIgnoringASCIICase(string, start);
 }

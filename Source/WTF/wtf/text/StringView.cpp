@@ -430,7 +430,7 @@ String makeStringByReplacingAll(StringView string, UChar target, UChar replaceme
         }
         if (i == length)
             return string.toString();
-        return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+        return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
     }
 
     auto* characters = string.characters16();
@@ -442,7 +442,7 @@ String makeStringByReplacingAll(StringView string, UChar target, UChar replaceme
     }
     if (i == length)
         return string.toString();
-    return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+    return StringImpl::createByReplacingInCharacters({ characters, length }, target, replacement, i);
 }
 
 int codePointCompare(StringView lhs, StringView rhs)
@@ -451,12 +451,12 @@ int codePointCompare(StringView lhs, StringView rhs)
     bool rhsIs8Bit = rhs.is8Bit();
     if (lhsIs8Bit) {
         if (rhsIs8Bit)
-            return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters8(), rhs.length());
-        return codePointCompare(lhs.characters8(), lhs.length(), rhs.characters16(), rhs.length());
+            return codePointCompare(lhs.span8(), rhs.span8());
+        return codePointCompare(lhs.span8(), rhs.span16());
     }
     if (rhsIs8Bit)
-        return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters8(), rhs.length());
-    return codePointCompare(lhs.characters16(), lhs.length(), rhs.characters16(), rhs.length());
+        return codePointCompare(lhs.span16(), rhs.span8());
+    return codePointCompare(lhs.span16(), rhs.span16());
 }
 
 template<typename CharacterType> static String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)

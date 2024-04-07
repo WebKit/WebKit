@@ -108,7 +108,7 @@ static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t fir
 {
     size_t slash = firstSlash;
     do {
-        size_t previousSlash = slash ? reverseFind(path.data(), path.size(), '/', slash - 1) : notFound;
+        size_t previousSlash = slash ? reverseFind(path.span(), '/', slash - 1) : notFound;
         // Don't remove the host, i.e. http://foo.org/../foo.html
         if (previousSlash == notFound || (previousSlash > 3 && path[previousSlash - 2] == ':' && path[previousSlash - 1] == '/')) {
             path[slash] = 0;

@@ -226,7 +226,7 @@ struct SubstringTranslator8 : SubstringTranslator {
 
     static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
-        return WTF::equal(string.get(), buffer.baseString->characters8() + buffer.start, buffer.length);
+        return WTF::equal(string.get(), buffer.baseString->span8().subspan(buffer.start, buffer.length));
     }
 };
 
@@ -238,7 +238,7 @@ struct SubstringTranslator16 : SubstringTranslator {
 
     static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
-        return WTF::equal(string.get(), buffer.baseString->characters16() + buffer.start, buffer.length);
+        return WTF::equal(string.get(), buffer.baseString->span16().subspan(buffer.start, buffer.length));
     }
 };
 

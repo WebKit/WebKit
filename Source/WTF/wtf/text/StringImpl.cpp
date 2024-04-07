@@ -321,9 +321,9 @@ Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
         length = maxLength;
     }
     if (is8Bit())
-        return create(std::span { m_data8 + start, length });
+        return create(span8().subspan(start, length));
 
-    return create(std::span { m_data16 + start, length });
+    return create(span16().subspan(start, length));
 }
 
 char32_t StringImpl::characterStartingAt(unsigned i)
@@ -698,10 +698,10 @@ SlowPath:
 }
 
 template<StringImpl::CaseConvertType type, typename CharacterType>
-ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, const CharacterType* data, unsigned length)
+ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, std::span<const CharacterType> data)
 {
-    unsigned failingIndex;
-    for (unsigned i = 0; i < length; ++i) {
+    size_t failingIndex;
+    for (size_t i = 0; i < data.size(); ++i) {
         CharacterType character = data[i];
         if (type == CaseConvertType::Lower ? UNLIKELY(isASCIIUpper(character)) : LIKELY(isASCIILower(character))) {
             failingIndex = i;
@@ -712,9 +712,9 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, con
 
 SlowPath:
     CharacterType* newData;
-    auto newImpl = createUninitializedInternalNonEmpty(length, newData);
-    copyCharacters(newData, { data, failingIndex });
-    for (unsigned i = failingIndex; i < length; ++i)
+    auto newImpl = createUninitializedInternalNonEmpty(data.size(), newData);
+    copyCharacters(newData, data.first(failingIndex));
+    for (size_t i = failingIndex; i < data.size(); ++i)
         newData[i] = type == CaseConvertType::Lower ? toASCIILower(data[i]) : toASCIIUpper(data[i]);
     return newImpl;
 }
@@ -722,15 +722,15 @@ SlowPath:
 Ref<StringImpl> StringImpl::convertToASCIILowercase()
 {
     if (is8Bit())
-        return convertASCIICase<CaseConvertType::Lower>(*this, m_data8, m_length);
-    return convertASCIICase<CaseConvertType::Lower>(*this, m_data16, m_length);
+        return convertASCIICase<CaseConvertType::Lower>(*this, span8());
+    return convertASCIICase<CaseConvertType::Lower>(*this, span16());
 }
 
 Ref<StringImpl> StringImpl::convertToASCIIUppercase()
 {
     if (is8Bit())
-        return convertASCIICase<CaseConvertType::Upper>(*this, m_data8, m_length);
-    return convertASCIICase<CaseConvertType::Upper>(*this, m_data16, m_length);
+        return convertASCIICase<CaseConvertType::Upper>(*this, span8());
+    return convertASCIICase<CaseConvertType::Upper>(*this, span16());
 }
 
 template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::trimMatchedCharacters(CodeUnitPredicate predicate)
@@ -822,19 +822,19 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(span16(), ok);
 }
 
-size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned start)
+size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
 {
-    ASSERT(matchLength);
-    ASSERT(matchLength <= MaxLength);
+    ASSERT(!matchString.empty());
+    ASSERT(matchString.size() <= static_cast<size_t>(MaxLength));
 
     // Check start & matchLength are in range.
     if (start > length())
         return notFound;
-    unsigned searchLength = length() - start;
-    if (matchLength > searchLength)
+    size_t searchLength = length() - start;
+    if (matchString.size() > searchLength)
         return notFound;
     // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = searchLength - matchLength;
+    size_t delta = searchLength - matchString.size();
 
     // Optimization: keep a running hash of the strings,
     // only call equal if the hashes match.
@@ -844,16 +844,16 @@ size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned
 
         unsigned searchHash = 0;
         unsigned matchHash = 0;
-        for (unsigned i = 0; i < matchLength; ++i) {
+        for (size_t i = 0; i < matchString.size(); ++i) {
             searchHash += searchCharacters[i];
             matchHash += matchString[i];
         }
 
-        unsigned i = 0;
-        while (searchHash != matchHash || !equal(searchCharacters + i, matchString, matchLength)) {
+        size_t i = 0;
+        while (searchHash != matchHash || !equal(searchCharacters + i, matchString.data(), matchString.size())) {
             if (i == delta)
                 return notFound;
-            searchHash += searchCharacters[i + matchLength];
+            searchHash += searchCharacters[i + matchString.size()];
             searchHash -= searchCharacters[i];
             ++i;
         }
@@ -864,33 +864,33 @@ size_t StringImpl::find(const LChar* matchString, unsigned matchLength, unsigned
 
     unsigned searchHash = 0;
     unsigned matchHash = 0;
-    for (unsigned i = 0; i < matchLength; ++i) {
+    for (size_t i = 0; i < matchString.size(); ++i) {
         searchHash += searchCharacters[i];
         matchHash += matchString[i];
     }
 
-    unsigned i = 0;
-    while (searchHash != matchHash || !equal(searchCharacters + i, matchString, matchLength)) {
+    size_t i = 0;
+    while (searchHash != matchHash || !equal(searchCharacters + i, matchString.data(), matchString.size())) {
         if (i == delta)
             return notFound;
-        searchHash += searchCharacters[i + matchLength];
+        searchHash += searchCharacters[i + matchString.size()];
         searchHash -= searchCharacters[i];
         ++i;
     }
     return start + i;
 }
 
-size_t StringImpl::reverseFind(const LChar* matchString, unsigned matchLength, unsigned start)
+size_t StringImpl::reverseFind(std::span<const LChar> matchString, size_t start)
 {
-    ASSERT(matchLength);
+    ASSERT(!matchString.empty());
 
-    unsigned length = this->length();
-    if (matchLength > length)
+    size_t length = this->length();
+    if (matchString.size() > length)
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), matchString, start, length, matchLength);
-    return reverseFindInner(characters16(), matchString, start, length, matchLength);
+        return reverseFindInner(characters8(), matchString.data(), start, length, matchString.size());
+    return reverseFindInner(characters16(), matchString.data(), start, length, matchString.size());
 }
 
 size_t StringImpl::find(StringView matchString)
@@ -932,7 +932,7 @@ size_t StringImpl::find(StringView matchString)
     return findInner(characters16(), matchString.characters16(), 0, length(), matchLength);
 }
 
-size_t StringImpl::find(StringView matchString, unsigned start)
+size_t StringImpl::find(StringView matchString, size_t start)
 {
     // Check for null or empty string to match against
     if (UNLIKELY(!matchString))
@@ -948,35 +948,35 @@ size_t StringImpl::findIgnoringASCIICase(StringView matchString) const
     return ::WTF::findIgnoringASCIICase(*this, matchString, 0);
 }
 
-size_t StringImpl::findIgnoringASCIICase(StringView matchString, unsigned start) const
+size_t StringImpl::findIgnoringASCIICase(StringView matchString, size_t start) const
 {
     if (!matchString)
         return notFound;
     return ::WTF::findIgnoringASCIICase(*this, matchString, start);
 }
 
-size_t StringImpl::reverseFind(UChar character, unsigned start)
+size_t StringImpl::reverseFind(UChar character, size_t start)
 {
     if (is8Bit())
-        return WTF::reverseFind(characters8(), m_length, character, start);
-    return WTF::reverseFind(characters16(), m_length, character, start);
+        return WTF::reverseFind(span8(), character, start);
+    return WTF::reverseFind(span16(), character, start);
 }
 
-size_t StringImpl::reverseFind(StringView matchString, unsigned start)
+size_t StringImpl::reverseFind(StringView matchString, size_t start)
 {
     // Check for null or empty string to match against
     if (!matchString)
         return notFound;
-    unsigned matchLength = matchString.length();
-    unsigned ourLength = length();
+    size_t matchLength = matchString.length();
+    size_t ourLength = length();
     if (!matchLength)
         return std::min(start, ourLength);
 
     // Optimization 1: fast case for strings of length 1.
     if (matchLength == 1) {
         if (is8Bit())
-            return WTF::reverseFind(characters8(), ourLength, matchString[0], start);
-        return WTF::reverseFind(characters16(), ourLength, matchString[0], start);
+            return WTF::reverseFind(span8(), matchString[0], start);
+        return WTF::reverseFind(span16(), matchString[0], start);
     }
 
     // Check start & matchLength are in range.
@@ -995,14 +995,14 @@ size_t StringImpl::reverseFind(StringView matchString, unsigned start)
     return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
 }
 
-ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, const char* matchString, unsigned matchLength)
+ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, std::span<const char> matchString)
 {
-    ASSERT(matchLength <= string.length());
-    ASSERT(start + matchLength <= string.length());
+    ASSERT(matchString.size() <= string.length());
+    ASSERT(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
-        return equal(string.characters8() + start, reinterpret_cast<const LChar*>(matchString), matchLength);
-    return equal(string.characters16() + start, reinterpret_cast<const LChar*>(matchString), matchLength);
+        return equal(string.characters8() + start, reinterpret_cast<const LChar*>(matchString.data()), matchString.size());
+    return equal(string.characters16() + start, reinterpret_cast<const LChar*>(matchString.data()), matchString.size());
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
@@ -1039,12 +1039,12 @@ bool StringImpl::startsWith(UChar character) const
     return m_length && (*this)[0] == character;
 }
 
-bool StringImpl::startsWith(const char* matchString, unsigned matchLength) const
+bool StringImpl::startsWith(std::span<const char> matchString) const
 {
-    return matchLength <= length() && equalInner(*this, 0, matchString, matchLength);
+    return matchString.size() <= length() && equalInner(*this, 0, matchString);
 }
 
-bool StringImpl::hasInfixStartingAt(StringView matchString, unsigned start) const
+bool StringImpl::hasInfixStartingAt(StringView matchString, size_t start) const
 {
     return equalInner(*this, start, matchString);
 }
@@ -1064,12 +1064,12 @@ bool StringImpl::endsWith(UChar character) const
     return m_length && (*this)[m_length - 1] == character;
 }
 
-bool StringImpl::endsWith(const char* matchString, unsigned matchLength) const
+bool StringImpl::endsWith(std::span<const char> matchString) const
 {
-    return matchLength <= length() && equalInner(*this, length() - matchLength, matchString, matchLength);
+    return matchString.size() <= length() && equalInner(*this, length() - matchString.size(), matchString);
 }
 
-bool StringImpl::hasInfixEndingAt(StringView matchString, unsigned end) const
+bool StringImpl::hasInfixEndingAt(StringView matchString, size_t end) const
 {
     return end >= matchString.length() && equalInner(*this, end - matchString.length(), matchString);
 }
@@ -1091,7 +1091,7 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
         }
         if (i == m_length)
             return *this;
-        return createByReplacingInCharacters(m_data8, m_length, target, replacement, i);
+        return createByReplacingInCharacters(span8(), target, replacement, i);
     }
 
     unsigned i;
@@ -1101,14 +1101,14 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
     }
     if (i == m_length)
         return *this;
-    return createByReplacingInCharacters(m_data16, m_length, target, replacement, i);
+    return createByReplacingInCharacters(span16(), target, replacement, i);
 }
 
-Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace, StringView string)
+Ref<StringImpl> StringImpl::replace(size_t position, size_t lengthToReplace, StringView string)
 {
-    position = std::min(position, length());
+    position = std::min<size_t>(position, length());
     lengthToReplace = std::min(lengthToReplace, length() - position);
-    unsigned lengthToInsert = string.length();
+    size_t lengthToInsert = string.length();
     if (!lengthToReplace && !lengthToInsert)
         return *this;
 
@@ -1148,16 +1148,16 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, StringView replacement)
     if (!replacement)
         return *this;
     if (replacement.is8Bit())
-        return replace(pattern, replacement.characters8(), replacement.length());
-    return replace(pattern, replacement.characters16(), replacement.length());
+        return replace(pattern, replacement.span8());
+    return replace(pattern, replacement.span16());
 }
 
-Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, unsigned repStrLength)
+Ref<StringImpl> StringImpl::replace(UChar pattern, std::span<const LChar> replacement)
 {
-    ASSERT(replacement);
+    ASSERT(replacement.data());
 
     size_t srcSegmentStart = 0;
-    unsigned matchCount = 0;
+    size_t matchCount = 0;
 
     // Count the matches.
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
@@ -1169,11 +1169,11 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
     if (!matchCount)
         return *this;
 
-    if (repStrLength && matchCount > MaxLength / repStrLength)
+    if (!replacement.empty() && matchCount > MaxLength / replacement.size())
         CRASH();
 
-    unsigned replaceSize = matchCount * repStrLength;
-    unsigned newSize = m_length - matchCount;
+    size_t replaceSize = matchCount * replacement.size();
+    size_t newSize = m_length - matchCount;
     if (newSize >= (MaxLength - replaceSize))
         CRASH();
 
@@ -1181,9 +1181,9 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
 
     // Construct the new data.
     size_t srcSegmentEnd;
-    unsigned srcSegmentLength;
+    size_t srcSegmentLength;
     srcSegmentStart = 0;
-    unsigned dstOffset = 0;
+    size_t dstOffset = 0;
 
     if (is8Bit()) {
         LChar* data;
@@ -1193,8 +1193,8 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
             srcSegmentLength = srcSegmentEnd - srcSegmentStart;
             copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
             dstOffset += srcSegmentLength;
-            copyCharacters(data + dstOffset, { replacement, repStrLength });
-            dstOffset += repStrLength;
+            copyCharacters(data + dstOffset, replacement);
+            dstOffset += replacement.size();
             srcSegmentStart = srcSegmentEnd + 1;
         }
 
@@ -1214,9 +1214,9 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
         copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
 
         dstOffset += srcSegmentLength;
-        copyCharacters(data + dstOffset, { replacement, repStrLength });
+        copyCharacters(data + dstOffset, replacement);
 
-        dstOffset += repStrLength;
+        dstOffset += replacement.size();
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
@@ -1228,12 +1228,12 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, uns
     return newImpl;
 }
 
-Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, unsigned repStrLength)
+Ref<StringImpl> StringImpl::replace(UChar pattern, std::span<const UChar> replacement)
 {
-    ASSERT(replacement);
+    ASSERT(replacement.data());
 
     size_t srcSegmentStart = 0;
-    unsigned matchCount = 0;
+    size_t matchCount = 0;
 
     // Count the matches.
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
@@ -1245,11 +1245,11 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, uns
     if (!matchCount)
         return *this;
 
-    if (repStrLength && matchCount > MaxLength / repStrLength)
+    if (!replacement.empty() && matchCount > MaxLength / replacement.size())
         CRASH();
 
-    unsigned replaceSize = matchCount * repStrLength;
-    unsigned newSize = m_length - matchCount;
+    size_t replaceSize = matchCount * replacement.size();
+    size_t newSize = m_length - matchCount;
     if (newSize >= (MaxLength - replaceSize))
         CRASH();
 
@@ -1257,9 +1257,9 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, uns
 
     // Construct the new data.
     size_t srcSegmentEnd;
-    unsigned srcSegmentLength;
+    size_t srcSegmentLength;
     srcSegmentStart = 0;
-    unsigned dstOffset = 0;
+    size_t dstOffset = 0;
 
     if (is8Bit()) {
         UChar* data;
@@ -1270,9 +1270,9 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, uns
             copyCharacters(data + dstOffset, { m_data8 + srcSegmentStart, srcSegmentLength });
 
             dstOffset += srcSegmentLength;
-            copyCharacters(data + dstOffset, { replacement, repStrLength });
+            copyCharacters(data + dstOffset, replacement);
 
-            dstOffset += repStrLength;
+            dstOffset += replacement.size();
             srcSegmentStart = srcSegmentEnd + 1;
         }
 
@@ -1292,9 +1292,9 @@ Ref<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, uns
         copyCharacters(data + dstOffset, { m_data16 + srcSegmentStart, srcSegmentLength });
 
         dstOffset += srcSegmentLength;
-        copyCharacters(data + dstOffset, { replacement, repStrLength });
+        copyCharacters(data + dstOffset, replacement);
 
-        dstOffset += repStrLength;
+        dstOffset += replacement.size();
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
@@ -1415,30 +1415,30 @@ bool equal(const StringImpl* a, const StringImpl* b)
     return equalCommon(a, b);
 }
 
-template<typename CharacterType> inline bool equalInternal(const StringImpl* a, const CharacterType* b, unsigned length)
+template<typename CharacterType> inline bool equalInternal(const StringImpl* a, std::span<const CharacterType> b)
 {
     if (!a)
-        return !b;
-    if (!b)
+        return !b.data();
+    if (!b.data())
         return false;
 
-    if (a->length() != length)
+    if (a->length() != b.size())
         return false;
-    if (!length)
+    if (b.empty())
         return true;
     if (a->is8Bit())
-        return *a->characters8() == *b && equal(a->characters8() + 1, b + 1, length - 1);
-    return *a->characters16() == *b && equal(a->characters16() + 1, b + 1, length - 1);
+        return *a->characters8() == b.front() && equal(a->characters8() + 1, b.data() + 1, b.size() - 1);
+    return *a->characters16() == b.front() && equal(a->characters16() + 1, b.data() + 1, b.size() - 1);
 }
 
-bool equal(const StringImpl* a, const LChar* b, unsigned length)
+bool equal(const StringImpl* a, std::span<const LChar> b)
 {
-    return equalInternal(a, b, length);
+    return equalInternal(a, b);
 }
 
-bool equal(const StringImpl* a, const UChar* b, unsigned length)
+bool equal(const StringImpl* a, std::span<const UChar> b)
 {
-    return equalInternal(a, b, length);
+    return equalInternal(a, b);
 }
 
 bool equal(const StringImpl* a, const LChar* b)
@@ -1658,21 +1658,21 @@ unsigned StringImpl::concurrentHash() const
     return hash;
 }
 
-bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
+bool equalIgnoringNullity(std::span<const UChar> a, StringImpl* b)
 {
     if (!b)
-        return !aLength;
-    if (aLength != b->length())
+        return a.empty();
+    if (a.size() != b->length())
         return false;
     if (b->is8Bit()) {
         const LChar* bCharacters = b->characters8();
-        for (unsigned i = 0; i < aLength; ++i) {
-            if (a[i] != bCharacters[i])
+        for (auto aCharacter : a) {
+            if (aCharacter != *bCharacters++)
                 return false;
         }
         return true;
     }
-    return equal(a, b->characters16(), b->length());
+    return equal(a, b->span16());
 }
 
 } // namespace WTF

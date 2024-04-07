@@ -250,7 +250,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
         ASSERT_NOT_REACHED();
         return;
     case Type::DOCTYPE:
-        if (LIKELY(token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().impl(), token.name().data(), 4)))
+        if (LIKELY(token.name().size() == 4 && equal(HTMLNames::htmlTag->localName().impl(), token.name().span())))
             m_name = HTMLNames::htmlTag->localName();
         else
             m_name = AtomString(token.name().span());

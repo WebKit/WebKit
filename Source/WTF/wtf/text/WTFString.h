@@ -151,13 +151,13 @@ public:
     size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
-    size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
-    size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_impl ? m_impl->find(literal, start) : notFound; }
+    size_t find(CodeUnitMatchFunction matchFunction, size_t start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
+    size_t find(ASCIILiteral literal, size_t start = 0) const { return m_impl ? m_impl->find(literal, start) : notFound; }
 
     // Find the last instance of a single character or string.
-    size_t reverseFind(UChar character, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
-    size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
-    size_t reverseFind(StringView, unsigned start = MaxLength) const;
+    size_t reverseFind(UChar character, size_t start = MaxLength) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
+    size_t reverseFind(ASCIILiteral literal, size_t start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
+    size_t reverseFind(StringView, size_t start = MaxLength) const;
 
     WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithNullTermination() const;
     WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithoutNullTermination() const;
@@ -458,7 +458,7 @@ inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, 
 ALWAYS_INLINE String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, UChar target, ASCIILiteral literal)
 {
     if (auto impl = string.impl())
-        return String { impl->replace(target, literal.characters(), literal.length()) };
+        return String { impl->replace(target, literal.span8()) };
     return string;
 }
 
