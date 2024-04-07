@@ -114,7 +114,7 @@ public:
 
     void setController(WebVideoFullscreenController* controller) { m_controller = controller; }
     void setUpFullscreen(HTMLVideoElement&, UIView *, HTMLMediaElementEnums::VideoFullscreenMode);
-    void exitFullscreen();
+    void exitFullscreen() final;
     void requestHideAndExitFullscreen();
     void invalidate();
 
@@ -168,7 +168,6 @@ private:
     ExternalPlaybackTargetType externalPlaybackTargetType() const override;
     String externalPlaybackLocalizedDeviceName() const override;
     bool wirelessVideoPlaybackDisabled() const override;
-    void toggleFullscreen() override { }
     void togglePictureInPicture() override { }
     void toggleInWindowFullscreen() override { }
     void enterFullscreen() override { }

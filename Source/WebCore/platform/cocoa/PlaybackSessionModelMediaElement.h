@@ -72,10 +72,10 @@ public:
     WEBCORE_EXPORT void setPlaybackRate(double) final;
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
-    WEBCORE_EXPORT void toggleFullscreen() final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
     WEBCORE_EXPORT void toggleInWindowFullscreen() final;
     WEBCORE_EXPORT void enterFullscreen() final;
+    WEBCORE_EXPORT void exitFullscreen() final;
     WEBCORE_EXPORT void toggleMuted() final;
     WEBCORE_EXPORT void setMuted(bool) final;
     WEBCORE_EXPORT void setVolume(double) final;

@@ -64,10 +64,8 @@ void VideoPresentationInterfaceLMK::setupFullscreen(UIView& videoView, const Flo
 
 void VideoPresentationInterfaceLMK::setupPlayerViewController()
 {
-    linearMediaPlayer().allowFullScreenFromInline = YES;
     linearMediaPlayer().captionLayer = captionsLayer();
     linearMediaPlayer().contentType = WKSLinearMediaContentTypePlanar;
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
 
     ensurePlayableViewController();
 }
@@ -79,15 +77,13 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 
 void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeFullscreenFromInline;
-    // FIXME: Wait until -linearMediaPlayer:didEnterFullscreenWithError: is called before calling completionHandler
+    [linearMediaPlayer() enterFullscreen];
     completionHandler(YES, nil);
 }
 
 void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
-    linearMediaPlayer().presentationMode = WKSLinearMediaPresentationModeInline;
-    // FIXME: Wait until -linearMediaPlayer:didExitFullscreenWithError: is called before calling completionHandler
+    [linearMediaPlayer() exitFullscreen];
     completionHandler(YES, nil);
 }
 
