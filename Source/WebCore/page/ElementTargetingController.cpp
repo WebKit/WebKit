@@ -187,6 +187,9 @@ static String parentRelativeSelectorRecursive(Element& element)
 // Returns multiple CSS selectors that uniquely match the target element.
 static Vector<String> selectorsForTarget(Element& element)
 {
+    if (element.isInShadowTree())
+        return { };
+
     if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
         RefPtr host = pseudoElement->hostElement();
         if (!host)
@@ -432,7 +435,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
             additionalRegionForNearbyElements.unite(targetBoundingBox);
 
         candidates.removeAllMatching([&](auto& candidate) {
-            if (target.ptr() != candidate.ptr() && !target->contains(candidate))
+            if (target.ptr() != candidate.ptr() && !target->containsIncludingShadowDOM(candidate.ptr()))
                 return false;
 
             if (checkForNearbyTargets) {
