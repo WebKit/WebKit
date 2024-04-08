@@ -305,8 +305,8 @@ public:
         return character;
     }
 
-    static String normalizeSpaces(const LChar*, unsigned length);
-    static String normalizeSpaces(const UChar*, unsigned length);
+    static String normalizeSpaces(std::span<const LChar>);
+    static String normalizeSpaces(std::span<const UChar>);
     static String normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }

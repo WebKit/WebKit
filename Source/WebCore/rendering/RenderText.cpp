@@ -1370,10 +1370,10 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, SingleThreadWeak
     setPreferredLogicalWidthsDirty(false);
 }
 
-template<typename CharacterType> static inline bool containsOnlyCollapsibleWhitespace(const CharacterType* characters, unsigned length, const RenderStyle& style)
+template<typename CharacterType> static inline bool containsOnlyCollapsibleWhitespace(std::span<const CharacterType> characters, const RenderStyle& style)
 {
-    for (unsigned i = 0; i < length; ++i) {
-        if (!style.isCollapsibleWhiteSpace(characters[i]))
+    for (auto character : characters) {
+        if (!style.isCollapsibleWhiteSpace(character))
             return false;
     }
     return true;
@@ -1382,15 +1382,15 @@ template<typename CharacterType> static inline bool containsOnlyCollapsibleWhite
 bool RenderText::containsOnlyCollapsibleWhitespace() const
 {
     if (text().is8Bit())
-        return WebCore::containsOnlyCollapsibleWhitespace(text().characters8(), text().length(), style());
-    return WebCore::containsOnlyCollapsibleWhitespace(text().characters16(), text().length(), style());
+        return WebCore::containsOnlyCollapsibleWhitespace(text().span8(), style());
+    return WebCore::containsOnlyCollapsibleWhitespace(text().span16(), style());
 }
 
 // FIXME: merge this with isCSSSpace somehow
-template<typename CharacterType> static inline bool containsOnlyPossiblyCollapsibleWhitespace(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static inline bool containsOnlyPossiblyCollapsibleWhitespace(std::span<const CharacterType> characters)
 {
-    for (unsigned i = 0; i < length; ++i) {
-        if (!(characters[i] == '\n' || characters[i] == ' ' || characters[i] == '\t'))
+    for (auto character : characters) {
+        if (!(character == '\n' || character == ' ' || character == '\t'))
             return false;
     }
     return true;
@@ -1402,8 +1402,8 @@ bool RenderText::containsOnlyCSSWhitespace(unsigned from, unsigned length) const
     ASSERT(length <= text().length());
     ASSERT(from + length <= text().length());
     if (text().is8Bit())
-        return containsOnlyPossiblyCollapsibleWhitespace(text().characters8() + from, length);
-    return containsOnlyPossiblyCollapsibleWhitespace(text().characters16() + from, length);
+        return containsOnlyPossiblyCollapsibleWhitespace(text().span8().subspan(from, length));
+    return containsOnlyPossiblyCollapsibleWhitespace(text().span16().subspan(from, length));
 }
 
 Vector<std::pair<unsigned, unsigned>> RenderText::draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const

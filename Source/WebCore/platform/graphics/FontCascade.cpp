@@ -563,32 +563,32 @@ int FontCascade::offsetForPosition(const TextRun& run, float x, bool includePart
 }
 
 template <typename CharacterType>
-static inline String normalizeSpacesInternal(const CharacterType* characters, unsigned length)
+static inline String normalizeSpacesInternal(std::span<const CharacterType> characters)
 {
     StringBuilder normalized;
-    normalized.reserveCapacity(length);
+    normalized.reserveCapacity(characters.size());
 
-    for (unsigned i = 0; i < length; ++i)
-        normalized.append(FontCascade::normalizeSpaces(characters[i]));
+    for (auto character : characters)
+        normalized.append(FontCascade::normalizeSpaces(character));
 
     return normalized.toString();
 }
 
-String FontCascade::normalizeSpaces(const LChar* characters, unsigned length)
+String FontCascade::normalizeSpaces(std::span<const LChar> characters)
 {
-    return normalizeSpacesInternal(characters, length);
+    return normalizeSpacesInternal(characters);
 }
 
-String FontCascade::normalizeSpaces(const UChar* characters, unsigned length)
+String FontCascade::normalizeSpaces(std::span<const UChar> characters)
 {
-    return normalizeSpacesInternal(characters, length);
+    return normalizeSpacesInternal(characters);
 }
 
 String FontCascade::normalizeSpaces(StringView stringView)
 {
     if (stringView.is8Bit())
-        return normalizeSpacesInternal(stringView.characters8(), stringView.length());
-    return normalizeSpacesInternal(stringView.characters16(), stringView.length());
+        return normalizeSpacesInternal(stringView.span8());
+    return normalizeSpacesInternal(stringView.span16());
 }
 
 static std::atomic<bool> disableFontSubpixelAntialiasingForTesting = false;

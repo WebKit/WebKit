@@ -55,13 +55,13 @@ Ref<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Docum
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#fonts-and-colors
 template <typename CharacterType>
-static bool parseFontSize(const CharacterType* characters, unsigned length, int& size)
+static bool parseFontSize(std::span<const CharacterType> characters, int& size)
 {
 
     // Step 1
     // Step 2
-    const CharacterType* position = characters;
-    const CharacterType* end = characters + length;
+    const CharacterType* position = characters.data();
+    const CharacterType* end = characters.data() + characters.size();
 
     // Step 3
     while (position < end) {
@@ -136,9 +136,9 @@ static bool parseFontSize(const String& input, int& size)
         return false;
 
     if (input.is8Bit())
-        return parseFontSize(input.characters8(), input.length(), size);
+        return parseFontSize(input.span8(), size);
 
-    return parseFontSize(input.characters16(), input.length(), size);
+    return parseFontSize(input.span16(), size);
 }
 
 bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, CSSValueID& size)
