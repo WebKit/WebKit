@@ -1279,16 +1279,16 @@ static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeDat
     for (size_t i = 0; i < willChangeData->numFeatures(); ++i) {
         WillChangeData::FeaturePropertyPair feature = willChangeData->featureAt(i);
         switch (feature.first) {
-        case WillChangeData::ScrollPosition:
+        case WillChangeData::Feature::ScrollPosition:
             list.append(CSSPrimitiveValue::create(CSSValueScrollPosition));
             break;
-        case WillChangeData::Contents:
+        case WillChangeData::Feature::Contents:
             list.append(CSSPrimitiveValue::create(CSSValueContents));
             break;
-        case WillChangeData::Property:
+        case WillChangeData::Feature::Property:
             list.append(CSSPrimitiveValue::create(feature.second));
             break;
-        case WillChangeData::Invalid:
+        case WillChangeData::Feature::Invalid:
             ASSERT_NOT_REACHED();
             break;
         }
