@@ -4057,25 +4057,21 @@ void MediaPlayerPrivateAVFoundationObjC::updateSpatialTrackingLabel()
         return;
     }
 
-    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (!m_visible) {
-        // If the page is not visible, use the AudioSession's STS label.
-        [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
-        return;
-    }
-
     if (m_videoLayer) {
         // Let AVPlayer manage setting the spatial tracking label in its AVPlayerLayer itself;
         [m_avPlayer _setSTSLabel:nil];
         return;
     }
 
-    // If there is no AVPlayerLayer, use the default spatial tracking label if available, or
-    // the session's spatial tracking label if not.
-    if (!m_defaultSpatialTrackingLabel.isNull())
+    if (!m_defaultSpatialTrackingLabel.isNull()) {
+        // If a default spatial tracking label was explicitly set, use it.
         [m_avPlayer _setSTSLabel:m_defaultSpatialTrackingLabel];
-    else
-        [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
+        return;
+    }
+
+    // If there is no AVPlayerLayer, and no default spatial tracking label is available, use the session's spatial tracking label.
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    [m_avPlayer _setSTSLabel:session.spatialTrackingLabel];
 }
 #endif
 

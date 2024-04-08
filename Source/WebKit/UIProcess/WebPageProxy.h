@@ -2426,8 +2426,9 @@ public:
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
-    void setSpatialTrackingLabel(const String&);
-    const String& spatialTrackingLabel() const;
+    void setDefaultSpatialTrackingLabel(const String&);
+    const String& defaultSpatialTrackingLabel() const;
+    void updateDefaultSpatialTrackingLabel();
 #endif
 
 private:
@@ -3547,6 +3548,10 @@ private:
 #endif
 
     std::unique_ptr<WebsitePoliciesData> m_mainFrameWebsitePoliciesData;
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    String m_defaultSpatialTrackingLabel;
+#endif
 };
 
 } // namespace WebKit

@@ -355,6 +355,10 @@ struct PerWebProcessState {
 
     RetainPtr<NSArray<NSNumber *>> _scrollViewDefaultAllowedTouchTypes;
 #endif
+
+#if PLATFORM(VISION)
+    String _defaultSTSLabel;
+#endif
 }
 
 - (BOOL)_isValid;

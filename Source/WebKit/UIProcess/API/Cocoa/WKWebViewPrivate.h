@@ -676,6 +676,12 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 @end
 
+#if TARGET_OS_VISION
+@interface WKWebView (WKPrivateVision)
+@property (copy, setter=_setDefaultSTSLabel:) NSString *_defaultSTSLabel;
+@end
+#endif
+
 @interface WKWebView () <UIResponderStandardEditActions>
 @end
 

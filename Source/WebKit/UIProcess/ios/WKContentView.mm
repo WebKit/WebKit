@@ -277,7 +277,6 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [_spatialTrackingView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     [_spatialTrackingView setFrame:self.bounds];
     [self addSubview:_spatialTrackingView.get()];
-    _page->setSpatialTrackingLabel(_spatialTrackingLabel);
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];

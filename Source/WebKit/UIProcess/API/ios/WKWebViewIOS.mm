@@ -4752,6 +4752,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
+
+#if PLATFORM(VISION)
+@implementation WKWebView(WKPrivateVision)
+- (NSString *)_defaultSTSLabel
+{
+    return nsStringNilIfNull(_page->defaultSpatialTrackingLabel());
+}
+
+- (void)_setDefaultSTSLabel:(NSString *)defaultSTSLabel
+{
+    _page->setDefaultSpatialTrackingLabel(defaultSTSLabel);
+}
+@end
+#endif
+
 #endif // ENABLE(FULLSCREEN_API)
 
 @implementation WKWebView (_WKWebViewPrintFormatter)
