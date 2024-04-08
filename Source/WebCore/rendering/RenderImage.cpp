@@ -398,14 +398,15 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
         updateInnerContentRect();
     }
 
-    LayoutRect repaintRect = contentBoxRect();
-    if (rect) {
-        // The image changed rect is in source image coordinates (pre-zooming),
-        // so map from the bounds of the image to the contentsBox.
-        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageResource().imageSize(1.0f)), repaintRect)));
+    if (parent()) {
+        auto repaintRect = contentBoxRect();
+        if (rect) {
+            // The image changed rect is in source image coordinates (pre-zooming),
+            // so map from the bounds of the image to the contentsBox.
+            repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageResource().imageSize(1.0f)), repaintRect)));
+        }
+        repaintRectangle(repaintRect);
     }
-        
-    repaintRectangle(repaintRect);
 
     // Tell any potential compositing layers that the image needs updating.
     contentChanged(ImageChanged);

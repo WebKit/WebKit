@@ -51,6 +51,7 @@ public:
     enum class CanCollapseAnonymousBlock : bool { No, Yes };
     RenderPtr<RenderObject> detach(RenderElement&, RenderObject&, WillBeDestroyed, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
 
+    enum class IsSubtreeTeardown : bool { No, Yes };
     void destroy(RenderObject& renderer, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes);
 
     // NormalizeAfterInsertion::Yes ensures that the destination subtree is consistent after the insertion (anonymous wrappers etc).
@@ -148,6 +149,7 @@ private:
     std::unique_ptr<Continuation> m_continuationBuilder;
     bool m_hasBrokenContinuation { false };
     IsInternalMove m_internalMovesType { IsInternalMove::No };
+    IsSubtreeTeardown m_isSubtreeTeardown { IsSubtreeTeardown::No };
 };
 
 }

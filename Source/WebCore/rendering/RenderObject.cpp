@@ -1039,21 +1039,24 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
 {
-    // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    if (!isRooted() || view().printing())
+    ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
+
+    if (view().printing())
         return;
     issueRepaint({ }, ClipRepaintToLayer::No, forceRepaint);
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const
 {
+    ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this));
     return repaintRectangle(repaintRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No, ForceRepaint::No);
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintToLayer shouldClipToLayer, ForceRepaint forceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets) const
 {
-    // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    if (!isRooted() || view().printing())
+    ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
+
+    if (view().printing())
         return;
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
@@ -1064,9 +1067,7 @@ void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintTo
 
 void RenderObject::repaintSlowRepaintObject() const
 {
-    // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    if (!isRooted())
-        return;
+    ASSERT(isDescendantOf(&view()) || is<RenderScrollbarPart>(this) || is<RenderReplica>(this));
 
     CheckedRef view = this->view();
     if (view->printing())

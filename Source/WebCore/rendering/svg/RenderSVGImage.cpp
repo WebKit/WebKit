@@ -345,7 +345,7 @@ void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadM
 
 void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 {
-    if (renderTreeBeingDestroyed())
+    if (renderTreeBeingDestroyed() || !parent())
         return;
 
     repaintClientsOfReferencedSVGResources();

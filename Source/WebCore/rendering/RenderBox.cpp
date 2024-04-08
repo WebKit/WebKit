@@ -2030,12 +2030,10 @@ static StyleImage* findLayerUsedImage(WrappedImagePtr image, const FillLayer& la
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 {
-    if (!parent())
-        return;
-
     if ((style().borderImage().image() && style().borderImage().image()->data() == image) ||
         (style().maskBorder().image() && style().maskBorder().image()->data() == image)) {
-        repaint();
+        if (parent())
+            repaint();
         return;
     }
 
@@ -2048,6 +2046,9 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool didFullRepaint = false;
 
     auto repaintForBackgroundAndMask = [&](auto& style) {
+        if (!parent())
+            return;
+
         if (!didFullRepaint)
             didFullRepaint = repaintLayerRectsForImage(image, style.backgroundLayers(), true);
         if (!didFullRepaint)

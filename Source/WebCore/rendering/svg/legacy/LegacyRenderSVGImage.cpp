@@ -254,6 +254,8 @@ bool LegacyRenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTe
 
 void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
 {
+    if (!parent())
+        return;
     // The image resource defaults to nullImage until the resource arrives.
     // This empty image may be cached by SVG resources which must be invalidated.
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this))

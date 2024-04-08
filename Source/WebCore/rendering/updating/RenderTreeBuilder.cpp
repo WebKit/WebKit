@@ -160,6 +160,19 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
 {
     RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
+
+    auto notifyDescendantRenderersBeforeSubtreeTearDownIfApplicable = [&] {
+        if (renderer.renderTreeBeingDestroyed())
+            return;
+        auto* rendererToDelete = dynamicDowncast<RenderElement>(renderer);
+        if (!rendererToDelete || !rendererToDelete->firstChild())
+            return;
+
+        for (auto& descendant : descendantsOfType<RenderObject>(*rendererToDelete))
+            descendant.willBeRemovedFromTree();
+    };
+    notifyDescendantRenderersBeforeSubtreeTearDownIfApplicable();
+
     auto toDestroy = detach(*renderer.parent(), renderer, WillBeDestroyed::Yes, canCollapseAnonymousBlock);
 
     if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer))
@@ -168,19 +181,21 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     if (auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer))
         continuationBuilder().cleanupOnDestroy(*renderBox);
 
-    // We need to detach the subtree first so that the descendants don't have
-    // access to previous/next sublings at detach().
-    // FIXME: webkit.org/b/182909.
-    auto* childToDestroy = dynamicDowncast<RenderElement>(toDestroy.get());
-    if (!childToDestroy)
-        return;
+    auto tearDownSubTreeIfApplicable = [&] {
+        auto* rendererToDelete = dynamicDowncast<RenderElement>(toDestroy.get());
+        if (!rendererToDelete)
+            return;
 
-    while (childToDestroy->firstChild()) {
-        auto& firstChild = *childToDestroy->firstChild();
-        if (auto* node = firstChild.node())
-            node->setRenderer(nullptr);
-        destroy(firstChild);
-    }
+        auto isSubtreeTeardown = SetForScope { m_isSubtreeTeardown, IsSubtreeTeardown::Yes };
+        while (rendererToDelete->firstChild()) {
+            auto& firstChild = *rendererToDelete->firstChild();
+            if (auto* node = firstChild.node())
+                node->setRenderer(nullptr);
+            destroy(firstChild);
+        }
+    };
+    // FIXME: webkit.org/b/182909.
+    tearDownSubTreeIfApplicable();
 }
 
 void RenderTreeBuilder::attach(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -953,8 +968,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
+    ASSERT(m_isSubtreeTeardown == IsSubtreeTeardown::No || willBeDestroyed == WillBeDestroyed::Yes);
 
-    if (parent.renderTreeBeingDestroyed())
+    if (parent.renderTreeBeingDestroyed() || m_isSubtreeTeardown == IsSubtreeTeardown::Yes)
         return parent.detachRendererInternal(child);
 
     if (child.everHadLayout())

@@ -155,6 +155,8 @@ auto RenderTableCol::rectsForRepaintingAfterLayout(const RenderLayerModelObject*
 void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Repaint only the rect the image paints in.
+    if (!parent())
+        return;
     repaint();
 }
 

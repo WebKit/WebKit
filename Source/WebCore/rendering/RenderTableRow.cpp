@@ -242,6 +242,8 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Examine cells and repaint only the rect the image paints in.
+    if (!parent())
+        return;
     repaint();
 }
 
