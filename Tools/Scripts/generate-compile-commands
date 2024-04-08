@@ -36,7 +36,7 @@ import json
 import argparse
 
 # Get command line args
-parser = argparse.ArgumentParser(description='Generate compile_commands.json', 
+parser = argparse.ArgumentParser(description='Generate compile_commands.json for Xcode builds',
             usage="""
                   make r EXPORT_COMPILE_COMMANDS=YES
                   generate-compile-commands WebKitBuild/Release
@@ -57,8 +57,15 @@ os.chdir(base_dir)
 compile_commands_dir = opts.built_products_dir + "/compile_commands/"
 
 if not os.path.exists(compile_commands_dir):
-    print("Please specify the build directory with compile_commands.")
-    print("Example: generate-compile-commands WebKitBuild/Release")
+    is_cmake_build = os.path.exists(opts.built_products_dir + "/CMakeCache.txt")
+    if is_cmake_build:
+        print("The build directory passed seems to be a CMake build.")
+        print("This script is only used for Xcode builds.")
+        print("For CMake builds use -DCMAKE_EXPORT_COMPILE_COMMANDS=ON instead "
+              "(this is already the default when using -DDEVELOPER_MODE=ON with Makefile and Ninja generators).")
+    else:
+        print("Please specify the build directory with compile_commands.")
+        print("Example: generate-compile-commands WebKitBuild/Release")
     exit(1)
 
 # Generate compile_commands.json
