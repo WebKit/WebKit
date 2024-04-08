@@ -58,7 +58,6 @@ public:
     void subtreeChildWasAdded(RenderObject*);
     void subtreeChildWillBeRemoved(RenderObject*, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
     void subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes);
-    void willLayout();
     void subtreeTextDidChange(RenderSVGInlineText*);
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }

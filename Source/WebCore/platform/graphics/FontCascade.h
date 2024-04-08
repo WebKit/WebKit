@@ -410,7 +410,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
 
 inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection) const
 {
-    if (text.isNull() || text.isEmpty())
+    if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
     float* cacheEntry = protectedFonts()->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());

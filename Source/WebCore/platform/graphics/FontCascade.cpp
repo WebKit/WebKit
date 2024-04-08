@@ -357,7 +357,7 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
 
 float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const
 {
-    if (text.isNull() || text.isEmpty())
+    if (text.isEmpty())
         return 0;
 
     auto monospaceCharacterWidth = primaryFont().spaceWidth();
