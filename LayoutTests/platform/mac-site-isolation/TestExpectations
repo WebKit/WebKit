@@ -479,7 +479,6 @@ http/tests/security/xss-DENIED-non-shadowable-propterty-with-iframe-proto.html [
 http/tests/security/xss-DENIED-regular-propterty-with-iframe-proto.html [ Skip ]
 http/tests/site-isolation/iframe-process-termination-after-navigation-completed.html [ Skip ]
 http/tests/site-isolation/iframe-process-termination.html [ Skip ]
-http/tests/site-isolation/selection-focus.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/top-level-data-url.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/cross-origin-video.html [ Skip ]

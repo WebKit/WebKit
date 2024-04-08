@@ -346,7 +346,7 @@ bool ScrollingTree::commitTreeStateInternal(std::unique_ptr<ScrollingStateTree>&
 
     if (hostingContextIdentifier) {
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - starting hosted tree commit for hosting context ID:  " << *hostingContextIdentifier);
-        if (auto scrollingNode = m_hostedSubtrees.get(*hostingContextIdentifier))
+        if (auto scrollingNode = m_hostedSubtrees.take(*hostingContextIdentifier))
             commitState.frameHostingNode = scrollingNode;
         else {
             LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - parent not present for hosted tree commit");
