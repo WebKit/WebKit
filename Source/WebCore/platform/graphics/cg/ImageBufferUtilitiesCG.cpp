@@ -144,7 +144,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
     
     auto data = source.bytes();
-    auto dataSize = source.sizeInBytes();
+    auto dataSize = data.size();
 
     Vector<uint8_t> premultipliedData;
 
@@ -171,12 +171,12 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
         }
 
         dataAlphaInfo = kCGImageAlphaNoneSkipLast; // Ignore the alpha channel.
-        data = premultipliedData.data();
+        data = premultipliedData.mutableSpan();
     }
 
-    verifyImageBufferIsBigEnough(data, dataSize);
+    verifyImageBufferIsBigEnough(data.data(), dataSize);
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, dataSize, nullptr));
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data.data(), dataSize, nullptr));
     if (!dataProvider)
         return false;
 
@@ -186,7 +186,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
     return encode(image.get(), mimeType, quality, function);
 }
 
-static bool encode(const std::span<const uint8_t>& data, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(std::span<const uint8_t> data, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
 {
     if (data.empty())
         return false;
@@ -255,7 +255,7 @@ Vector<uint8_t> encodeData(const PixelBuffer& pixelBuffer, const String& mimeTyp
     return encodeToVector(pixelBuffer, mimeType, quality);
 }
 
-Vector<uint8_t> encodeData(const std::span<const uint8_t>& data, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(std::span<const uint8_t> data, const String& mimeType, std::optional<double> quality)
 {
     return encodeToVector(data, mimeType, quality);
 }

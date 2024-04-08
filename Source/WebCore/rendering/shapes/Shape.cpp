@@ -209,14 +209,13 @@ Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const L
     if (!pixelBuffer)
         return createShape();
 
-    unsigned pixelArrayLength = pixelBuffer->sizeInBytes();
-    unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
-    uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
+    if (imageRect.area() * 4 == pixelBuffer->bytes().size()) {
+        unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
+        uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
 
-    int minBufferY = std::max(0, marginRect.y() - imageRect.y());
-    int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());
+        int minBufferY = std::max(0, marginRect.y() - imageRect.y());
+        int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());
 
-    if ((imageRect.area() * 4) == pixelArrayLength) {
         for (int y = minBufferY; y < maxBufferY; ++y) {
             int startX = -1;
             for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {

@@ -285,7 +285,7 @@ void FETurbulenceSoftwareApplier::applyPlatformGeneric(const IntRect& filterRegi
             point.setX(point.x() + 1);
             FloatPoint localPoint = point.scaled(inverseScale.width(), inverseScale.height());
             auto values = calculateTurbulenceValueForPoint(paintingData, stitchData, localPoint);
-            pixelBuffer.setRange(values.components.data(), 4, indexOfPixelChannel);
+            pixelBuffer.setRange({ values.components.data(), 4 }, indexOfPixelChannel);
             indexOfPixelChannel += 4;
         }
     }

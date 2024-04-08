@@ -88,10 +88,9 @@ void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFor
     MESSAGE_CHECK(memory, "No shared memory for getPixelBufferForImageBuffer"_s);
     MESSAGE_CHECK(WebCore::PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat), "Pixel format not supported"_s);
     IntRect srcRect(srcPoint, srcSize);
-    auto pixelBuffer = m_imageBuffer->getPixelBuffer(destinationFormat, srcRect);
-    if (pixelBuffer) {
-        MESSAGE_CHECK(pixelBuffer->sizeInBytes() <= memory->size(), "Shmem for return of getPixelBuffer is too small"_s);
-        memcpy(memory->data(), pixelBuffer->bytes(), pixelBuffer->sizeInBytes());
+    if (auto pixelBuffer = m_imageBuffer->getPixelBuffer(destinationFormat, srcRect)) {
+        MESSAGE_CHECK(pixelBuffer->bytes().size() <= memory->size(), "Shmem for return of getPixelBuffer is too small"_s);
+        memcpy(memory->data(), pixelBuffer->bytes().data(), pixelBuffer->bytes().size());
     } else
         memset(memory->data(), 0, memory->size());
     completionHandler();
