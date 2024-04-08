@@ -46,6 +46,9 @@
                                         (view [class: WKCompositingView]
                                           (layer bounds [x: 0 y: 0 width: 800 height: 600])
                                           (layer position [x: 400 y: 400]))))))))))))))))
+            (view [class: UIView]
+              (layer bounds [x: 0 y: 0 width: 800 height: 7013])
+              (layer position [x: 400 y: 400]))
             (view [class: _UILayerHostView]
               (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
         (view [class: UIView]

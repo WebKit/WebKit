@@ -60,4 +60,7 @@
                                       (layer position [x: 400 y: 400])
                                       (layer cornerRadius 8))))))))))))))))))
     (
+      (layer bounds [x: 0 y: 0 width: 800 height: 713])
+      (layer position [x: 400 y: 400]))
+    (
       (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
