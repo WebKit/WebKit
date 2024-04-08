@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/CodePtr.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/PlatformRegisters.h>
@@ -60,7 +59,7 @@ enum class Signal {
     AccessFault, // For posix this is both SIGSEGV and SIGBUS
     NumberOfSignals = AccessFault + 2, // AccessFault is really two signals.
     Unknown = NumberOfSignals
-#else // not OS(UNIX)
+#else
     FloatingPoint,
     IllegalInstruction,
     AccessFault,
@@ -82,19 +81,13 @@ struct SigInfo {
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;
 using SignalHandlerMemory = std::aligned_storage<sizeof(SignalHandler), std::alignment_of<SignalHandler>::value>::type;
 
+extern Atomic<bool> fallbackToOldExceptions;
 struct SignalHandlers {
     static void initialize();
-    static void finalize();
 
     void add(Signal, SignalHandler&&);
     template<typename Func>
     void forEachHandler(Signal, const Func&) const;
-
-    // We intentionally disallow presigning the return PC on platforms that can't authenticate it so
-    // we don't accidentally leave an unfrozen pointer in the heap somewhere.
-#if CPU(ARM64E) && HAVE(HARDENED_MACH_EXCEPTIONS)
-    void* presignReturnPCForHandler(CodePtr<NoPtrTag>);
-#endif
 
     static constexpr size_t numberOfSignals = static_cast<size_t>(Signal::NumberOfSignals);
     static constexpr size_t maxNumberOfHandlers = 4;
@@ -105,16 +98,16 @@ struct SignalHandlers {
     mach_port_t exceptionPort;
     exception_mask_t addedExceptions;
     bool useMach;
+
+    enum class InitState : uint8_t {
+        Uninitialized = 0,
+        InitializedHandlerThread,
+        AddedHandlers
+    };
+    InitState initState;
 #else
     static constexpr bool useMach = false;
 #endif
-    enum class InitState : uint8_t {
-        Uninitialized = 0,
-        Initializing,
-        Finalized,
-    };
-    InitState initState;
-
     uint8_t numberOfHandlers[numberOfSignals];
     SignalHandlerMemory handlers[numberOfSignals][maxNumberOfHandlers];
 
@@ -131,16 +124,38 @@ struct SignalHandlers {
 // These functions are a one way street i.e. once installed, a signal handler cannot be uninstalled
 // and once commited they can't be turned off.
 WTF_EXPORT_PRIVATE void addSignalHandler(Signal, SignalHandler&&);
-// Note: This function doesn't necessarily activate the signal right away. Signals are
-// activated when SignalHandlers::finalize() runs and that signal has been turned on.
-// This also only currently does something if using Mach exceptions rather than posix/windows signals.
 WTF_EXPORT_PRIVATE void activateSignalHandlersFor(Signal);
+WTF_EXPORT_PRIVATE void finalizeSignalHandlers();
+
+#if OS(UNIX) && HAVE(MACH_EXCEPTIONS)
+inline exception_mask_t toMachMask(Signal signal)
+{
+    switch (signal) {
+    case Signal::AccessFault: return EXC_MASK_BAD_ACCESS;
+    case Signal::IllegalInstruction: return EXC_MASK_BAD_INSTRUCTION;
+    case Signal::FloatingPoint: return EXC_MASK_ARITHMETIC;
+    case Signal::Breakpoint: return EXC_MASK_BREAKPOINT;
+    default: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#endif // OS(UNIX) && HAVE(MACH_EXCEPTIONS)
 
 #if HAVE(MACH_EXCEPTIONS)
-void handleSignalsWithMach();
-
 class Thread;
 void registerThreadForMachExceptionHandling(Thread&);
+WTF_EXPORT_PRIVATE void initMachExceptionHandlerThread(bool, uint32_t, exception_mask_t);
+inline void initializeSignalHandling(uint32_t signingKey, exception_mask_t mask) { initMachExceptionHandlerThread(true, signingKey, mask); }
+inline void disableSignalHandling() { initMachExceptionHandlerThread(false, 0, 0); }
+
+void handleSignalsWithMach();
+#else
+inline void initializeSignalHandling(uint32_t signingKey, int mask)
+{
+    UNUSED_PARAM(signingKey);
+    UNUSED_PARAM(mask);
+}
+inline void disableSignalHandling() { }
 #endif // HAVE(MACH_EXCEPTIONS)
 
 } // namespace WTF
@@ -156,3 +171,6 @@ using WTF::SignalAction;
 using WTF::SignalHandler;
 using WTF::addSignalHandler;
 using WTF::activateSignalHandlersFor;
+using WTF::finalizeSignalHandlers;
+using WTF::initializeSignalHandling;
+using WTF::disableSignalHandling;

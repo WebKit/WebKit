@@ -69,8 +69,6 @@ constexpr size_t ConfigSizeToProtect = std::max(CeilingOnPageSize, 16 * KB);
 struct Config {
     WTF_EXPORT_PRIVATE static void permanentlyFreeze();
     WTF_EXPORT_PRIVATE static void initialize();
-    WTF_EXPORT_PRIVATE static void finalize();
-    WTF_EXPORT_PRIVATE static void disableFreezingForTesting();
 
     struct AssertNotFrozenScope {
         AssertNotFrozenScope();
@@ -85,7 +83,6 @@ struct Config {
     uintptr_t highestAccessibleAddress;
 
     bool isPermanentlyFrozen;
-    bool disabledFreezingForTesting;
     bool useSpecialAbortForExtraSecurityImplications;
 #if PLATFORM(COCOA)
     bool disableForwardingVPrintfStdErrToOSLog;
