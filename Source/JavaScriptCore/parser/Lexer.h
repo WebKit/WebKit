@@ -130,13 +130,12 @@ public:
 
 private:
     void record8(int);
-    void append8(const T*, size_t);
+    void append8(std::span<const T>);
     void record16(int);
     void record16(T);
     void recordUnicodeCodePoint(char32_t);
-    // FIXME: These should take in spans.
-    void append16(const LChar*, size_t);
-    void append16(const UChar* characters, size_t length) { m_buffer16.append(std::span { characters, length }); }
+    void append16(std::span<const LChar>);
+    void append16(std::span<const UChar> characters) { m_buffer16.append(characters); }
 
     static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
     char32_t currentCodePoint() const;
@@ -156,14 +155,12 @@ private:
     ALWAYS_INLINE void setCodeStart(StringView);
 
     template<typename CharacterType>
-    ALWAYS_INLINE const Identifier* makeIdentifier(const CharacterType* characters, size_t length);
-    template<typename CharacterType>
-    ALWAYS_INLINE const Identifier* makeIdentifier(std::span<const CharacterType> characters);
+    ALWAYS_INLINE const Identifier* makeIdentifier(std::span<const CharacterType>);
 
-    ALWAYS_INLINE const Identifier* makeLCharIdentifier(const LChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier* makeLCharIdentifier(const UChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars);
-    ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeLCharIdentifier(std::span<const LChar>);
+    ALWAYS_INLINE const Identifier* makeLCharIdentifier(std::span<const UChar>);
+    ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(std::span<const UChar>, UChar orAllChars);
+    ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(std::span<const UChar>);
     ALWAYS_INLINE const Identifier* makeEmptyIdentifier();
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
@@ -276,34 +273,26 @@ inline UChar Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
     return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
 }
 
-// FIXME: Port call sites to the overload taking a span and drop this one.
-template<typename T>
-template<typename CharacterType>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const CharacterType* characters, size_t length)
-{
-    return &m_arena->makeIdentifier(m_vm, characters, length);
-}
-
 template<typename T>
 template<typename CharacterType>
 ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(std::span<const CharacterType> characters)
 {
-    return &m_arena->makeIdentifier(m_vm, characters.data(), characters.size());
+    return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar)
+ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(std::span<const UChar> characters, UChar)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars)
+ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(std::span<const UChar> characters, UChar orAllChars)
 {
     if (!(orAllChars & ~0xff))
-        return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
+        return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 
-    return &m_arena->makeIdentifier(m_vm, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <typename T>
@@ -327,21 +316,21 @@ ALWAYS_INLINE void Lexer<UChar>::setCodeStart(StringView sourceString)
 }
 
 template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(const UChar* characters, size_t length)
+ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(std::span<const UChar> characters)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }
 
 template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const LChar* characters, size_t length)
+ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(std::span<const LChar> characters)
 {
-    return &m_arena->makeIdentifier(m_vm, characters, length);
+    return &m_arena->makeIdentifier(m_vm, characters);
 }
 
 template <typename T>
-ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* characters, size_t length)
+ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(std::span<const UChar> characters)
 {
-    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
+    return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters);
 }
 
 #if ASSERT_ENABLED
@@ -392,7 +381,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, Op
         )
         tokenData->ident = nullptr;
     else
-        tokenData->ident = makeLCharIdentifier(start, ptr - start);
+        tokenData->ident = makeLCharIdentifier({ start, ptr });
 
     tokenLocation->line = m_lineNumber;
     tokenLocation->lineStartOffset = currentLineStartOffset();

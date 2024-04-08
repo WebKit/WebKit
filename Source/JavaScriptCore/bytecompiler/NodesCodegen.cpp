@@ -164,8 +164,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
     if (regExp->isValid())
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
 
-    const char* messageCharacters = regExp->errorMessage();
-    const Identifier& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), bitwise_cast<const LChar*>(messageCharacters), strlen(messageCharacters));
+    auto& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), span8(regExp->errorMessage()));
     generator.emitThrowStaticError(ErrorTypeWithExtension::SyntaxError, message);
     return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
