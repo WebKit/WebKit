@@ -614,7 +614,32 @@ nothing to commit, working tree clean
                     returncode=0,
                     stdout='\n'.join([
                         '--- a/ChangeLog\n+++ b/ChangeLog\n@@ -1,0 +1,0 @@\n{}'.format(
-                            '\n'.join(['+ {}'.format(line) for line in commit.message.splitlines()])
+                            '\n'.join(['+{}'.format(line) for line in commit.message.splitlines()])
+                        ) for commit in list(self.rev_list(args[2] if '..' in args[2] else '{}..HEAD'.format(args[2])))
+                    ])
+                )
+            ), mocks.Subprocess.Route(
+                self.executable, 'format-patch', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        'From {hash}\n'
+                        'From: {author} <{email}>\n'
+                        'Date: {date}\n'
+                        'Subject: [PATCH] {message}\n'
+                        '---\n'
+                        'diff --git a/ChangeLog b/ChangeLog\n'
+                        '--- a/ChangeLog\n'
+                        '+++ b/ChangeLog\n'
+                        '@@ -1,0 +1,0 @@\n'
+                        '{content}'.format(
+                            hash=commit.hash,
+                            author=commit.author.name,
+                            email=commit.author.email,
+                            date=datetime.utcfromtimestamp(commit.timestamp + time.timezone).strftime('%a %b %d %H:%M:%S %Y +0000'),
+                            message=commit.message.rstrip(),
+                            content='\n'.join(['+{}'.format(line) for line in commit.message.splitlines()]),
                         ) for commit in list(self.rev_list(args[2] if '..' in args[2] else '{}..HEAD'.format(args[2])))
                     ])
                 )
