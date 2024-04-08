@@ -300,7 +300,10 @@ protected:
 
     bool layerCreationAllowedForSubtree() const;
 
-    enum StylePropagationType { PropagateToAllChildren, PropagateToBlockChildrenOnly };
+    enum class StylePropagationType {
+        AllChildren,
+        BlockChildrenOnly
+    };
     void propagateStyleToAnonymousChildren(StylePropagationType);
 
     bool repaintBeforeStyleChange(StyleDifference, const RenderStyle& oldStyle, const RenderStyle& newStyle);

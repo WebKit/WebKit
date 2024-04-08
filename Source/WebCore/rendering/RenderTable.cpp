@@ -135,7 +135,7 @@ RenderTableSection* RenderTable::topSection() const
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren(PropagateToAllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 
     bool oldFixedTableLayout = oldStyle ? oldStyle->isFixedTableLayout() : false;
 

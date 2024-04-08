@@ -83,7 +83,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
     ASSERT(style().display() == DisplayType::TableRow);
 
     RenderBox::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren(PropagateToAllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 
     if (section() && oldStyle && style().logicalHeight() != oldStyle->logicalHeight())
         section()->rowLogicalHeightChanged(rowIndex());

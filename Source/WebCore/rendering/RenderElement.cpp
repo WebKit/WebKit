@@ -788,7 +788,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (!elementChild->isAnonymous() || elementChild->style().pseudoElementType() != PseudoId::None)
             continue;
 
-        if (propagationType == PropagateToBlockChildrenOnly && !is<RenderBlock>(elementChild.get()))
+        if (propagationType == StylePropagationType::BlockChildrenOnly && !is<RenderBlock>(elementChild.get()))
             continue;
 
         // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.
