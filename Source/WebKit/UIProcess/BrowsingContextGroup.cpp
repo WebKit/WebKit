@@ -41,7 +41,7 @@ BrowsingContextGroup::~BrowsingContextGroup() = default;
 
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForDomain(const WebCore::RegistrableDomain& domain, WebProcessProxy& process, const WebPreferences& preferences)
 {
-    if (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled()) {
+    if (!domain.isEmpty() && (preferences.siteIsolationEnabled() || preferences.processSwapOnCrossSiteWindowOpenEnabled())) {
         if (auto* existingProcess = processForDomain(domain)) {
             ASSERT(existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier());
             return *existingProcess;
@@ -76,7 +76,7 @@ FrameProcess* BrowsingContextGroup::processForDomain(const WebCore::RegistrableD
 void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
 {
     auto& domain = process.domain();
-    ASSERT(!m_processMap.get(domain) || m_processMap.get(domain)->process().state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
+    ASSERT(domain.isEmpty() || !m_processMap.get(domain) || m_processMap.get(domain)->process().state() == WebProcessProxy::State::Terminated || m_processMap.get(domain) == &process);
     m_processMap.set(domain, process);
     for (auto& page : m_pages) {
         if (domain == WebCore::RegistrableDomain(URL(page.currentURL())))
