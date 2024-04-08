@@ -151,7 +151,7 @@ protected:
     void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
 
 #if PLATFORM(MAC)
-    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
+    static void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
     void populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
