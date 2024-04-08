@@ -265,9 +265,9 @@ std::ostream& operator<<(std::ostream& os, Int128Impl v) {
       (flags & std::ios::basefield) == std::ios_base::fmtflags();
   if (print_as_decimal) {
     if (Int128High64(v) < 0) {
-      rep = "-";
+      rep.append("-");
     } else if (flags & std::ios::showpos) {
-      rep = "+";
+      rep.append("+");
     }
   }
 
