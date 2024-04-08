@@ -188,10 +188,10 @@ fn testFieldAccess() -> i32
 fn testIndexAccess() -> i32
 {
     // CHECK: local\d+ = __unpack\(global\d+\);
-    // CHECK-NEXT: local\d+\[0\] = __unpack\(global\d+\[0\]\);
-    // CHECK-NEXT: global\d+\[0\] = global\d+\[0\];
-    // CHECK-NEXT: global\d+\[0\] = __pack\(local\d+\[0\]\);
-    // CHECK-NEXT: global\d+\[global\d+\] = __pack\(local\d+\[global\d+\]\);
+    // CHECK-NEXT: local\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = __unpack\(global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\]\);
+    // CHECK-NEXT: global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\];
+    // CHECK-NEXT: global\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\] = __pack\(local\d+\[min\(unsigned\(0\), \(2u - 1u\)\)\]\);
+    // CHECK-NEXT: global\d+\[min\(unsigned\(global\d+\), \(2u - 1u\)\)\] = __pack\(local\d+\[min\(unsigned\(global\d+\), \(2u - 1u\)\)\]\);
     var at = at1;
     at[0] = at1[0];
     at1[0] = at2[0];
