@@ -44,9 +44,9 @@ using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
 struct Config {
     static Config& singleton();
 
-    static void disableFreezingForTesting() { g_wtfConfig.disableFreezingForTesting(); }
+    JS_EXPORT_PRIVATE static void disableFreezingForTesting();
     JS_EXPORT_PRIVATE static void enableRestrictedOptions();
-    static void finalize() { WTF::Config::finalize(); }
+    static void permanentlyFreeze() { WTF::Config::permanentlyFreeze(); }
 
     static void configureForTesting()
     {
@@ -60,8 +60,8 @@ struct Config {
     // All the fields in this struct should be chosen such that their
     // initial value is 0 / null / falsy because Config is instantiated
     // as a global singleton.
-    // FIXME: We should use a placement new constructor from JSC::initialize so we can use default initializers.
 
+    bool disabledFreezingForTesting;
     bool restrictedOptionsEnabled;
     bool jitDisabled;
     bool vmCreationDisallowed;
