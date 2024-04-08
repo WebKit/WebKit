@@ -89,19 +89,21 @@ protected:
     FixedVector<HandlerInfo> m_exceptionHandlers;
 };
 
-#if ENABLE(JIT)
 class JITCallee : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JITCallee);
 public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
 
+#if ENABLE(JIT)
     void setEntrypoint(Wasm::Entrypoint&&);
+#endif
 
 protected:
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
 
+#if ENABLE(JIT)
     std::tuple<void*, void*> rangeImpl() const
     {
         void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
@@ -112,9 +114,16 @@ protected:
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
 
     RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
+#else
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; }
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
+#endif
 
     FixedVector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
+#if ENABLE(JIT)
     Wasm::Entrypoint m_entrypoint;
+#endif
 };
 
 class JSEntrypointCallee final : public JITCallee {
@@ -131,35 +140,6 @@ private:
     {
     }
 };
-
-#else
-
-class JSEntrypointCallee final : public Callee {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSEntrypointCallee);
-public:
-    friend class Callee;
-
-    static Ref<JSEntrypointCallee> create()
-    {
-        return adoptRef(*new JSEntrypointCallee);
-    }
-
-private:
-    JSEntrypointCallee()
-        : Callee(Wasm::CompilationMode::JSEntrypointMode)
-    {
-    }
-
-    std::tuple<void*, void*> rangeImpl() const
-    {
-        return { nullptr, nullptr };
-    }
-
-    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return { }; }
-
-    RegisterAtOffsetList* calleeSaveRegistersImpl() { return nullptr; }
-};
-#endif // ENABLE(JIT)
 
 class WasmToJSCallee final : public Callee {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WasmToJSCallee);

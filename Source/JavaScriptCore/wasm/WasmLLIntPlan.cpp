@@ -181,13 +181,13 @@ void LLIntPlan::didCompleteCompilation()
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
+#if ENABLE(JIT)
             TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
             const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
 
-#if ENABLE(JIT)
             if (!LIKELY(Options::useJIT())) {
 #endif
                 Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));

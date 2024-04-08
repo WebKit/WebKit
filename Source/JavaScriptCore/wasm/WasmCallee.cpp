@@ -164,7 +164,6 @@ const HandlerInfo* Callee::handlerForIndex(Instance& instance, unsigned index, c
     return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
 }
 
-#if ENABLE(JIT)
 JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
     : Callee(compilationMode)
 {
@@ -175,6 +174,7 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::p
 {
 }
 
+#if ENABLE(JIT)
 void JITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
 {
     m_entrypoint = WTFMove(entrypoint);
