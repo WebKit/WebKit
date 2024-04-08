@@ -147,20 +147,19 @@ size_t StringView::find(std::span<const LChar> match, unsigned start) const
         return notFound;
 
     if (is8Bit())
-        return findInner(characters8() + start, match.data(), start, searchLength, match.size());
-    return findInner(characters16() + start, match.data(), start, searchLength, match.size());
+        return findInner(span8().subspan(start), match, start);
+    return findInner(span16().subspan(start), match, start);
 }
 
 size_t StringView::reverseFind(std::span<const LChar> match, unsigned start) const
 {
     ASSERT(!match.empty());
-    auto length = this->length();
-    if (match.size() > length)
+    if (match.size() > length())
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), match.data(), start, length, match.size());
-    return reverseFindInner(characters16(), match.data(), start, length, match.size());
+        return reverseFindInner(span8(), match, start);
+    return reverseFindInner(span16(), match, start);
 }
 
 void StringView::SplitResult::Iterator::findNextSubstring()
@@ -393,24 +392,22 @@ size_t StringView::reverseFind(StringView matchString, unsigned start) const
     if (isNull())
         return notFound;
 
-    unsigned matchLength = matchString.length();
-    unsigned ourLength = length();
-    if (!matchLength)
-        return std::min(start, ourLength);
+    if (matchString.length())
+        return std::min(start, length());
 
     // Check start & matchLength are in range.
-    if (matchLength > ourLength)
+    if (matchString.length() > length())
         return notFound;
 
     if (is8Bit()) {
         if (matchString.is8Bit())
-            return reverseFindInner(characters8(), matchString.characters8(), start, ourLength, matchLength);
-        return reverseFindInner(characters8(), matchString.characters16(), start, ourLength, matchLength);
+            return reverseFindInner(span8(), matchString.span8(), start);
+        return reverseFindInner(span8(), matchString.span16(), start);
     }
 
     if (matchString.is8Bit())
-        return reverseFindInner(characters16(), matchString.characters8(), start, ourLength, matchLength);
-    return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
+        return reverseFindInner(span16(), matchString.span8(), start);
+    return reverseFindInner(span16(), matchString.span16(), start);
 }
 
 String makeStringByReplacingAll(StringView string, UChar target, UChar replacement)

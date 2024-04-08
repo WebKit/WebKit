@@ -234,11 +234,12 @@ UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters
     return UCOL_EQUAL;
 }
 
+// FIXME: This should take is std::spans.
 template<typename CharacterType1, typename CharacterType2>
 inline std::optional<UCollationResult> compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
 {
     if (length1 == length2) {
-        if (equal(characters1, characters2, length1))
+        if (equal(characters1, { characters2, length2 }))
             return UCOL_EQUAL;
     }
 

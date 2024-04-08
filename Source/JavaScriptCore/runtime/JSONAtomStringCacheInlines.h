@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+// FIXME: This should take in a std::span.
 template<typename CharacterType>
 ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(const CharacterType* characters, unsigned length)
 {
@@ -47,7 +48,7 @@ ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(const CharacterType*
 
     auto lastCharacter = characters[length - 1];
     auto& slot = cacheSlot(firstCharacter, lastCharacter, length);
-    if (UNLIKELY(slot.m_length != length || !equal(slot.m_buffer, characters, length))) {
+    if (UNLIKELY(slot.m_length != length || !equal(slot.m_buffer, { characters, length }))) {
         auto result = AtomStringImpl::add(std::span { characters, length });
         slot.m_impl = result;
         slot.m_length = length;

@@ -25,6 +25,7 @@
 #include "config.h"
 #include <wtf/text/StringImpl.h>
 
+#include <wtf/Algorithms.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
@@ -850,7 +851,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
         }
 
         size_t i = 0;
-        while (searchHash != matchHash || !equal(searchCharacters + i, matchString.data(), matchString.size())) {
+        while (searchHash != matchHash || !equal(searchCharacters + i, matchString)) {
             if (i == delta)
                 return notFound;
             searchHash += searchCharacters[i + matchString.size()];
@@ -870,7 +871,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
     }
 
     size_t i = 0;
-    while (searchHash != matchHash || !equal(searchCharacters + i, matchString.data(), matchString.size())) {
+    while (searchHash != matchHash || !equal(searchCharacters + i, matchString)) {
         if (i == delta)
             return notFound;
         searchHash += searchCharacters[i + matchString.size()];
@@ -884,13 +885,12 @@ size_t StringImpl::reverseFind(std::span<const LChar> matchString, size_t start)
 {
     ASSERT(!matchString.empty());
 
-    size_t length = this->length();
-    if (matchString.size() > length)
+    if (matchString.size() > length())
         return notFound;
 
     if (is8Bit())
-        return reverseFindInner(characters8(), matchString.data(), start, length, matchString.size());
-    return reverseFindInner(characters16(), matchString.data(), start, length, matchString.size());
+        return reverseFindInner(span8(), matchString, start);
+    return reverseFindInner(span16(), matchString, start);
 }
 
 size_t StringImpl::find(StringView matchString)
@@ -922,14 +922,14 @@ size_t StringImpl::find(StringView matchString)
 
     if (is8Bit()) {
         if (matchString.is8Bit())
-            return findInner(characters8(), matchString.characters8(), 0, length(), matchLength);
-        return findInner(characters8(), matchString.characters16(), 0, length(), matchLength);
+            return findInner(span8(), matchString.span8(), 0);
+        return findInner(span8(), matchString.span16(), 0);
     }
 
     if (matchString.is8Bit())
-        return findInner(characters16(), matchString.characters8(), 0, length(), matchLength);
+        return findInner(span16(), matchString.span8(), 0);
 
-    return findInner(characters16(), matchString.characters16(), 0, length(), matchLength);
+    return findInner(span16(), matchString.span16(), 0);
 }
 
 size_t StringImpl::find(StringView matchString, size_t start)
@@ -967,32 +967,30 @@ size_t StringImpl::reverseFind(StringView matchString, size_t start)
     // Check for null or empty string to match against
     if (!matchString)
         return notFound;
-    size_t matchLength = matchString.length();
-    size_t ourLength = length();
-    if (!matchLength)
-        return std::min(start, ourLength);
+    if (matchString.isEmpty())
+        return std::min<size_t>(start, length());
 
     // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1) {
+    if (matchString.length() == 1) {
         if (is8Bit())
             return WTF::reverseFind(span8(), matchString[0], start);
         return WTF::reverseFind(span16(), matchString[0], start);
     }
 
     // Check start & matchLength are in range.
-    if (matchLength > ourLength)
+    if (matchString.length() > length())
         return notFound;
 
     if (is8Bit()) {
         if (matchString.is8Bit())
-            return reverseFindInner(characters8(), matchString.characters8(), start, ourLength, matchLength);
-        return reverseFindInner(characters8(), matchString.characters16(), start, ourLength, matchLength);
+            return reverseFindInner(span8(), matchString.span8(), start);
+        return reverseFindInner(span8(), matchString.span16(), start);
     }
     
     if (matchString.is8Bit())
-        return reverseFindInner(characters16(), matchString.characters8(), start, ourLength, matchLength);
+        return reverseFindInner(span16(), matchString.span8(), start);
 
-    return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
+    return reverseFindInner(span16(), matchString.span16(), start);
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, std::span<const char> matchString)
@@ -1001,8 +999,8 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, s
     ASSERT(start + matchString.size() <= string.length());
 
     if (string.is8Bit())
-        return equal(string.characters8() + start, reinterpret_cast<const LChar*>(matchString.data()), matchString.size());
-    return equal(string.characters16() + start, reinterpret_cast<const LChar*>(matchString.data()), matchString.size());
+        return equal(string.characters8() + start, spanReinterpretCast<const LChar>(matchString));
+    return equal(string.characters16() + start, spanReinterpretCast<const LChar>(matchString));
 }
 
 ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
@@ -1016,12 +1014,12 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, S
 
     if (string.is8Bit()) {
         if (matchString.is8Bit())
-            return equal(string.characters8() + start, matchString.characters8(), matchString.length());
-        return equal(string.characters8() + start, matchString.characters16(), matchString.length());
+            return equal(string.characters8() + start, matchString.span8());
+        return equal(string.characters8() + start, matchString.span16());
     }
     if (matchString.is8Bit())
-        return equal(string.characters16() + start, matchString.characters8(), matchString.length());
-    return equal(string.characters16() + start, matchString.characters16(), matchString.length());
+        return equal(string.characters16() + start, matchString.span8());
+    return equal(string.characters16() + start, matchString.span16());
 }
 
 bool StringImpl::startsWith(StringView string) const
@@ -1427,8 +1425,8 @@ template<typename CharacterType> inline bool equalInternal(const StringImpl* a, 
     if (b.empty())
         return true;
     if (a->is8Bit())
-        return *a->characters8() == b.front() && equal(a->characters8() + 1, b.data() + 1, b.size() - 1);
-    return *a->characters16() == b.front() && equal(a->characters16() + 1, b.data() + 1, b.size() - 1);
+        return *a->characters8() == b.front() && equal(a->characters8() + 1, b.subspan(1));
+    return *a->characters16() == b.front() && equal(a->characters16() + 1, b.subspan(1));
 }
 
 bool equal(const StringImpl* a, std::span<const LChar> b)

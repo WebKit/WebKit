@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
@@ -779,13 +778,13 @@ inline bool equal(StringView a, const LChar* b)
     if (a.isEmpty())
         return !b;
 
-    unsigned aLength = a.length();
-    if (aLength != strlen(reinterpret_cast<const char*>(b)))
+    auto bSpan = span8(reinterpret_cast<const char*>(b));
+    if (a.length() != bSpan.size())
         return false;
 
     if (a.is8Bit())
-        return equal(a.characters8(), b, aLength);
-    return equal(a.characters16(), b, aLength);
+        return equal(a.characters8(), bSpan);
+    return equal(a.characters16(), bSpan);
 }
 
 ALWAYS_INLINE bool equal(StringView a, ASCIILiteral b)
@@ -1227,14 +1226,14 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
 
     if (haystack.is8Bit()) {
         if (needle.is8Bit())
-            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
-        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
+            return findInner(haystack.span8().subspan(start), needle.span8(), start);
+        return findInner(haystack.span8().subspan(start), needle.span16(), start);
     }
 
     if (needle.is8Bit())
-        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
+        return findInner(haystack.span16().subspan(start), needle.span8(), start);
 
-    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
+    return findInner(haystack.span16().subspan(start), needle.span16(), start);
 }
 
 inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
@@ -1265,18 +1264,17 @@ inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, 
 
 inline bool startsWith(StringView reference, StringView prefix)
 {
-    unsigned prefixLength = prefix.length();
-    if (prefixLength > reference.length())
+    if (prefix.length() > reference.length())
         return false;
 
     if (reference.is8Bit()) {
         if (prefix.is8Bit())
-            return equal(reference.characters8(), prefix.characters8(), prefixLength);
-        return equal(reference.characters8(), prefix.characters16(), prefixLength);
+            return equal(reference.characters8(), prefix.span8());
+        return equal(reference.characters8(), prefix.span16());
     }
     if (prefix.is8Bit())
-        return equal(reference.characters16(), prefix.characters8(), prefixLength);
-    return equal(reference.characters16(), prefix.characters16(), prefixLength);
+        return equal(reference.characters16(), prefix.span8());
+    return equal(reference.characters16(), prefix.span16());
 }
 
 inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
@@ -1306,12 +1304,12 @@ inline bool endsWith(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equal(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
-        return equal(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+            return equal(reference.characters8() + startOffset, suffix.span8());
+        return equal(reference.characters8() + startOffset, suffix.span16());
     }
     if (suffix.is8Bit())
-        return equal(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
-    return equal(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+        return equal(reference.characters16() + startOffset, suffix.span8());
+    return equal(reference.characters16() + startOffset, suffix.span16());
 }
 
 inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
@@ -1352,7 +1350,7 @@ inline size_t String::findIgnoringASCIICase(StringView string, unsigned start) c
     return m_impl ? m_impl->findIgnoringASCIICase(string, start) : notFound;
 }
 
-inline size_t String::reverseFind(StringView string, size_t start) const
+inline size_t String::reverseFind(StringView string, unsigned start) const
 {
     return m_impl ? m_impl->reverseFind(string, start) : notFound;
 }

@@ -78,7 +78,7 @@ public:
     // Scan the character |c|.
     bool scan(char);
     // Scan the first |charactersCount| characters of the string |characters|.
-    bool scan(const LChar* characters, size_t charactersCount);
+    bool scan(std::span<const LChar> characters);
 
     // Scan the literal |characters|.
     template<unsigned charactersCount>
@@ -160,7 +160,7 @@ inline size_t VTTScanner::Run::length() const
 template<unsigned charactersCount>
 inline bool VTTScanner::scan(const char (&characters)[charactersCount])
 {
-    return scan(reinterpret_cast<const LChar*>(characters), charactersCount - 1);
+    return scan({ reinterpret_cast<const LChar*>(characters), charactersCount - 1 });
 }
 
 template<bool characterPredicate(UChar)>

@@ -55,18 +55,18 @@ bool VTTScanner::scan(char c)
     return true;
 }
 
-bool VTTScanner::scan(const LChar* characters, size_t charactersCount)
+bool VTTScanner::scan(std::span<const LChar> characters)
 {
     unsigned matchLength = m_is8Bit ? m_end.characters8 - m_data.characters8 : m_end.characters16 - m_data.characters16;
-    if (matchLength < charactersCount)
+    if (matchLength < characters.size())
         return false;
     bool matched;
     if (m_is8Bit)
-        matched = equal(m_data.characters8, characters, charactersCount);
+        matched = equal(m_data.characters8, characters);
     else
-        matched = equal(m_data.characters16, characters, charactersCount);
+        matched = equal(m_data.characters16, characters);
     if (matched)
-        advance(charactersCount);
+        advance(characters.size());
     return matched;
 }
 
