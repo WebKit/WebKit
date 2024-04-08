@@ -1,0 +1,13 @@
+<p>Text to be copied and pasted</p>
+<script>
+onpaste = (event) => {
+    // FIXME: This should send the pasted text.
+    window.parent.postMessage("onpaste", "*");
+}
+
+onload = () => {
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+    document.execCommand("Paste");
+}
+</script>

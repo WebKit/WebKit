@@ -1495,7 +1495,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
             result.postLayoutData = std::optional<EditorState::PostLayoutData> { EditorState::PostLayoutData { } };
         result.postLayoutData->canCut = editor.canCut();
         result.postLayoutData->canCopy = editor.canCopy();
-        result.postLayoutData->canPaste = editor.canPaste();
+        result.postLayoutData->canPaste = editor.canEdit();
 
         if (!result.visualData)
             result.visualData = std::optional<EditorState::VisualData> { EditorState::VisualData { } };

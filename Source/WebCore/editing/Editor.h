@@ -205,7 +205,6 @@ public:
 
     WEBCORE_EXPORT bool canCut() const;
     WEBCORE_EXPORT bool canCopy() const;
-    WEBCORE_EXPORT bool canPaste() const;
     WEBCORE_EXPORT bool canDelete() const;
     WEBCORE_EXPORT bool canSmartCopyOrDelete();
     bool shouldSmartDelete();

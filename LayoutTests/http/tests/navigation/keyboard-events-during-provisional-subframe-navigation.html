@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ ShouldSuppressTextInputFromEditingDuringProvisionalNavigation=true ] -->
 <html>
 <body>
     <iframe id="subframe"></iframe>
@@ -9,7 +9,6 @@
             testRunner.dumpAsText();
             testRunner.dumpChildFramesAsText();
             testRunner.waitUntilDone();
-            internals.settings.setShouldSuppressTextInputFromEditingDuringProvisionalNavigation(true);
         }
 
         runBeforeTest(window);

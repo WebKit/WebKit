@@ -530,18 +530,6 @@ bool Editor::canCopy() const
     return selection.isRange() && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
 }
 
-bool Editor::canPaste() const
-{
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(document().frame()->mainFrame());
-    if (!localFrame)
-        return false;
-
-    if (localFrame->loader().shouldSuppressTextInputFromEditing())
-        return false;
-
-    return canEdit();
-}
-
 bool Editor::canDelete() const
 {
     const VisibleSelection& selection = document().selection().selection();
@@ -1606,7 +1594,7 @@ void Editor::paste(Pasteboard& pasteboard, FromMenuOrKeyBinding fromMenuOrKeyBin
 
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::Paste))
         return; // DHTML did the whole operation
-    if (!canPaste())
+    if (!canEdit())
         return;
     updateMarkersForWordsAffectedByEditing(false);
     ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
@@ -1622,7 +1610,7 @@ void Editor::pasteAsPlainText(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsPlainText))
         return;
-    if (!canPaste())
+    if (!canEdit())
         return;
     updateMarkersForWordsAffectedByEditing(false);
     pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document().pageID())));
@@ -1634,7 +1622,7 @@ void Editor::pasteAsQuotation(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteAsQuotation))
         return;
-    if (!canPaste())
+    if (!canEdit())
         return;
     updateMarkersForWordsAffectedByEditing(false);
     Ref document = protectedDocument();
@@ -1652,7 +1640,7 @@ void Editor::pasteFont(FromMenuOrKeyBinding fromMenuOrKeyBinding)
 
     if (!dispatchClipboardEvent(findEventTargetFromSelection(), ClipboardEventKind::PasteFont))
         return;
-    if (!canPaste())
+    if (!canEdit())
         return;
     updateMarkersForWordsAffectedByEditing(false);
     ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());

@@ -27,6 +27,7 @@
 #import "WebPasteboardProxy.h"
 
 #import "Connection.h"
+#import "PageLoadState.h"
 #import "PasteboardAccessIntent.h"
 #import "RemotePageProxy.h"
 #import "SandboxExtension.h"
@@ -107,6 +108,9 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::acce
 
     for (Ref page : process->pages()) {
         Ref preferences = page->preferences();
+        if (preferences->shouldSuppressTextInputFromEditingDuringProvisionalNavigation() && page->pageLoadState().isProvisional())
+            continue;
+
         if (!preferences->domPasteAllowed() || !preferences->javaScriptCanAccessClipboard())
             continue;
 
