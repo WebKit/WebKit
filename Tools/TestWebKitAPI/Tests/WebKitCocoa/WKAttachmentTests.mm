@@ -2559,6 +2559,18 @@ static RetainPtr<NSItemProvider> mapItemForTesting()
     return itemProvider;
 }
 
+static RetainPtr<NSItemProvider> calendarInviteForTesting()
+{
+    RetainPtr url = [[NSBundle mainBundle] URLForResource:@"event" withExtension:@"ics" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr data = [NSData dataWithContentsOfURL:url.get()];
+    RetainPtr text = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
+    RetainPtr itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerData:data.get() type:@"com.apple.calendar.ics"];
+    [itemProvider registerData:data.get() type:@"com.apple.ical.ics"];
+    [itemProvider registerObject:text.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    return itemProvider;
+}
+
 static RetainPtr<NSItemProvider> contactItemForTesting()
 {
     auto contact = adoptNS([allocCNMutableContactInstance() init]);
@@ -2588,6 +2600,22 @@ TEST(WKAttachmentTestsIOS, InsertDroppedMapItemAsAttachment)
     _WKAttachmentInfo *info = [simulator insertedAttachments].firstObject.info;
     EXPECT_WK_STREQ("Apple Park.vcf", info.name);
     EXPECT_WK_STREQ("text/vcard", info.contentType);
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedCalendarInviteAsAttachment)
+{
+    auto itemProvider = calendarInviteForTesting();
+    auto webView = webViewForTestingAttachments();
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(25, 25) to:CGPointMake(100, 100)];
+
+    [webView expectElementCount:1 querySelector:@"ATTACHMENT"];
+    EXPECT_WK_STREQ("text/calendar", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_EQ(1U, [simulator insertedAttachments].count);
+    _WKAttachmentInfo *info = [simulator insertedAttachments].firstObject.info;
+    EXPECT_TRUE([info.name containsString:@".ics"]);
+    EXPECT_WK_STREQ("text/calendar", info.contentType);
 }
 
 TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
