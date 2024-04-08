@@ -1,24 +1,6 @@
 
 
 PASS Sanity check: Setting non-TT attributes still works.
-FAIL Set embed.src via textContent assert_throws_js: function "_ => {
-      element.attributes[0].textContent = "sldkjsfldk";
-    }" did not throw
-FAIL Set embed.src via nodeValue assert_throws_js: function "_ => {
-      element.attributes[0].nodeValue = "sdflkgjdlkgjdg";
-    }" did not throw
-FAIL Set object.data via textContent assert_throws_js: function "_ => {
-      element.attributes[0].textContent = "sldkjsfldk";
-    }" did not throw
-FAIL Set object.data via nodeValue assert_throws_js: function "_ => {
-      element.attributes[0].nodeValue = "sdflkgjdlkgjdg";
-    }" did not throw
-FAIL Set object.codebase via textContent assert_throws_js: function "_ => {
-      element.attributes[0].textContent = "sldkjsfldk";
-    }" did not throw
-FAIL Set object.codebase via nodeValue assert_throws_js: function "_ => {
-      element.attributes[0].nodeValue = "sdflkgjdlkgjdg";
-    }" did not throw
 FAIL Set script.src via textContent assert_throws_js: function "_ => {
       element.attributes[0].textContent = "sldkjsfldk";
     }" did not throw
