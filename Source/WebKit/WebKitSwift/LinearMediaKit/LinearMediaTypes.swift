@@ -103,25 +103,6 @@ extension WKSLinearMediaContentType {
     }
 }
 
-extension WKSLinearMediaPresentationMode {
-    var presentationMode: PresentationMode? {
-        switch self {
-        case .none:
-            nil
-        case .inline:
-            .inline
-        case .fullscreen:
-            .fullscreen
-        case .fullscreenFromInline:
-            .fullscreenFromInline
-        case .pip:
-            .pip
-        @unknown default:
-            fatalError()
-        }
-    }
-}
-
 extension WKSLinearMediaViewingMode {
     init(_ viewingMode: ViewingMode?) {
         switch viewingMode {

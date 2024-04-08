@@ -42,8 +42,8 @@ private class SwiftOnlyData: NSObject {
     @Published var startDate: Date?
     @Published var endDate: Date?
 
-    // FIXME: Move this back to WKSLinearMediaPlayer once rdar://122496124 is resolved.
-    @Published var presentationMode: WKSLinearMediaPresentationMode = .none
+    @Published var presentationMode: PresentationMode = .inline
+    @Published var presentationState: WKSLinearMediaPresentationState = .inline
 }
 
 @_objcImplementation extension WKSLinearMediaPlayer {
@@ -113,19 +113,21 @@ private class SwiftOnlyData: NSObject {
         set { swiftOnlyData.endDate = newValue }
     }
 
-    // FIXME: Make this a stored property once rdar://122496124 is resolved.
-    var presentationMode: WKSLinearMediaPresentationMode {
-        get { swiftOnlyData.presentationMode }
-        set { swiftOnlyData.presentationMode = newValue }
+    var presentationState: WKSLinearMediaPresentationState {
+        swiftOnlyData.presentationState
     }
 
     @nonobjc private var swiftOnlyData: SwiftOnlyData
+    @nonobjc private var cancellables: [AnyCancellable] = []
 
     private static let preferredTimescale: CMTimeScale = 600
 
     public override init() {
         swiftOnlyData = .init()
         super.init()
+        swiftOnlyData.$presentationState
+            .sink { [unowned self] in presentationStateChanged($0) }
+            .store(in: &cancellables)
     }
 
     // FIXME: Remove this override once rdar://108224957 is resolved.
@@ -141,6 +143,45 @@ private class SwiftOnlyData: NSObject {
         viewController.prefersAutoDimming = true
         return viewController
     }
+
+    func enterFullscreen() {
+        switch presentationState {
+        case .inline, .enteringFullscreen, .exitingFullscreen:
+            swiftOnlyData.presentationState = .fullscreen
+        case .fullscreen:
+            break
+        @unknown default:
+            fatalError()
+        }
+    }
+
+    func exitFullscreen() {
+        switch presentationState {
+        case .exitingFullscreen, .fullscreen, .enteringFullscreen:
+            swiftOnlyData.presentationState = .inline
+        case .inline:
+            break
+        @unknown default:
+            fatalError()
+        }
+    }
+}
+
+extension WKSLinearMediaPlayer {
+    private func presentationStateChanged(_ presentationState: WKSLinearMediaPresentationState) {
+        switch presentationState {
+        case .inline:
+            swiftOnlyData.presentationMode = .inline
+        case .enteringFullscreen:
+            delegate?.linearMediaPlayerEnterFullscreen?(self)
+        case .fullscreen:
+            swiftOnlyData.presentationMode = .fullscreenFromInline
+        case .exitingFullscreen:
+            delegate?.linearMediaPlayerExitFullscreen?(self)
+        @unknown default:
+            fatalError()
+        }
+    }
 }
 
 #if canImport(LinearMediaKit, _version: 205)
@@ -151,7 +192,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public var presentationModePublisher: AnyPublisher<PresentationMode, Never> {
-        swiftOnlyData.$presentationMode.compactMap { $0.presentationMode }.eraseToAnyPublisher()
+        swiftOnlyData.$presentationMode.eraseToAnyPublisher()
     }
 
     public var errorPublisher: AnyPublisher<Error?, Never> {
@@ -478,11 +519,27 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func toggleInlineMode() {
-        delegate?.linearMediaPlayerToggleInlineMode?(self)
+        switch presentationState {
+        case .inline:
+            swiftOnlyData.presentationState = .enteringFullscreen
+        case .fullscreen:
+            swiftOnlyData.presentationState = .exitingFullscreen
+        case .enteringFullscreen, .exitingFullscreen:
+            break
+        @unknown default:
+            fatalError()
+        }
     }
 
     public func willEnterFullscreen() {
-        delegate?.linearMediaPlayerWillEnterFullscreen?(self)
+        switch presentationState {
+        case .inline:
+            swiftOnlyData.presentationState = .enteringFullscreen
+        case .enteringFullscreen, .exitingFullscreen, .fullscreen:
+            break
+        @unknown default:
+            fatalError()
+        }
     }
 
     public func didCompleteEnterFullscreen(result: Result<Void, Error>) {
@@ -495,7 +552,14 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public func willExitFullscreen() {
-        delegate?.linearMediaPlayerWillExitFullscreen?(self)
+        switch presentationState {
+        case .fullscreen:
+            swiftOnlyData.presentationState = .exitingFullscreen
+        case .inline, .enteringFullscreen, .exitingFullscreen:
+            break
+        @unknown default:
+            fatalError()
+        }
     }
 
     public func didCompleteExitFullscreen(result: Result<Void, Error>) {

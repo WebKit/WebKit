@@ -44,12 +44,11 @@ typedef NS_ENUM(NSInteger, WKSLinearMediaContentType) {
     WKSLinearMediaContentTypeAudioOnly
 };
 
-typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationMode) {
-    WKSLinearMediaPresentationModeNone = 0,
-    WKSLinearMediaPresentationModeInline,
-    WKSLinearMediaPresentationModeFullscreen,
-    WKSLinearMediaPresentationModeFullscreenFromInline,
-    WKSLinearMediaPresentationModePip
+typedef NS_ENUM(NSInteger, WKSLinearMediaPresentationState) {
+    WKSLinearMediaPresentationStateInline = 0,
+    WKSLinearMediaPresentationStateEnteringFullscreen,
+    WKSLinearMediaPresentationStateFullscreen,
+    WKSLinearMediaPresentationStateExitingFullscreen
 };
 
 typedef NS_ENUM(NSInteger, WKSLinearMediaViewingMode) {

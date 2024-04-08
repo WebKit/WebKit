@@ -339,21 +339,6 @@ void PlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
     m_mediaElement->setSelectedTextTrack(textTrack);
 }
 
-void PlaybackSessionModelMediaElement::toggleFullscreen()
-{
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    auto* element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
-    ASSERT(element);
-    if (!element)
-        return;
-
-    if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeStandard)
-        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
-    else
-        element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Fullscreen);
-#endif
-}
-
 void PlaybackSessionModelMediaElement::togglePictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -394,6 +379,16 @@ void PlaybackSessionModelMediaElement::enterFullscreen()
         return;
 
     element->webkitEnterFullscreen();
+}
+
+void PlaybackSessionModelMediaElement::exitFullscreen()
+{
+    RefPtr element = dynamicDowncast<HTMLVideoElement>(*m_mediaElement);
+    ASSERT(element);
+    if (!element)
+        return;
+
+    element->webkitExitFullscreen();
 }
 
 void PlaybackSessionModelMediaElement::toggleMuted()
