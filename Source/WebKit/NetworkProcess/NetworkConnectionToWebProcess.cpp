@@ -1318,7 +1318,7 @@ WebSharedWorkerServerConnection* NetworkConnectionToWebProcess::sharedWorkerConn
 void NetworkConnectionToWebProcess::unregisterSWConnection()
 {
     if (m_swConnection)
-        m_swConnection->server().removeConnection(m_swConnection->identifier());
+        m_swConnection->protectedServer()->removeConnection(m_swConnection->identifier());
 }
 
 void NetworkConnectionToWebProcess::establishSWServerConnection()
