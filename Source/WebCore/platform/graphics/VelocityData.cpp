@@ -32,9 +32,8 @@ namespace WebCore {
 
 VelocityData HistoricalVelocityData::velocityForNewData(FloatPoint newPosition, double scale, MonotonicTime timestamp)
 {
-    auto append = [&](FloatPoint newPosition, double scale, MonotonicTime timestamp)
-    {
-        m_latestDataIndex = (m_latestDataIndex + 1) % maxHistoryDepth;
+    auto append = [&](FloatPoint newPosition, double scale, MonotonicTime timestamp) {
+        m_latestDataIndex = (m_latestDataIndex + 1) == maxHistoryDepth ? 0 : m_latestDataIndex + 1;
         m_positionHistory[m_latestDataIndex] = { timestamp, newPosition, scale };
         m_historySize = std::min(m_historySize + 1, maxHistoryDepth);
         m_lastAppendTimestamp = timestamp;

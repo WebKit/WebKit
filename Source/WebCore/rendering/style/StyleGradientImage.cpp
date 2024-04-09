@@ -615,9 +615,13 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
                     stops.append(newStop);
                     if (currOffset > maxExtent)
                         break;
-                    if (srcStopOrdinal < originalNumberOfStops - 1)
+
+                    if (++srcStopOrdinal < originalNumberOfStops) {
                         currOffset += *stops[srcStopIndex + 1].offset - *stops[srcStopIndex].offset;
-                    srcStopOrdinal = (srcStopOrdinal + 1) % originalNumberOfStops;
+                        continue;
+                    }
+
+                    srcStopOrdinal %= originalNumberOfStops;
                 }
             }
         }

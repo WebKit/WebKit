@@ -85,7 +85,7 @@ private:
     // Double buffering.
     static constexpr unsigned bufferCount = 2;
     unsigned bufferIndex() const { return m_bufferIndex; }
-    void swapBuffers() { m_bufferIndex = (m_bufferIndex + 1) % bufferCount; }
+    void swapBuffers() { m_bufferIndex ^= 1; }
 
     unsigned m_bufferIndex { 0 };
     std::array<Lock, bufferCount> m_bufferLocks;
