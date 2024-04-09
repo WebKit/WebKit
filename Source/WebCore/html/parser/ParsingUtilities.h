@@ -50,6 +50,15 @@ template<typename CharacterType, typename DelimiterType> bool skipExactly(const 
     return false;
 }
 
+template<typename CharacterType, typename DelimiterType> bool skipExactly(std::span<const CharacterType>& data, DelimiterType delimiter)
+{
+    if (!data.empty() && data.front() == delimiter) {
+        data = data.subspan(1);
+        return true;
+    }
+    return false;
+}
+
 template<typename CharacterType, typename DelimiterType> bool skipExactly(StringParsingBuffer<CharacterType>& buffer, DelimiterType delimiter)
 {
     if (buffer.hasCharactersRemaining() && *buffer == delimiter) {
@@ -147,6 +156,18 @@ template<bool characterPredicate(UChar)> void skipWhile(const UChar*& position, 
 {
     while (position < end && characterPredicate(*position))
         ++position;
+}
+
+template<bool characterPredicate(LChar)> void skipWhile(std::span<const LChar>& data)
+{
+    while (!data.empty() && characterPredicate(data.front()))
+        data = data.subspan(1);
+}
+
+template<bool characterPredicate(UChar)> void skipWhile(std::span<const UChar>& data)
+{
+    while (!data.empty() && characterPredicate(data.front()))
+        data = data.subspan(1);
 }
 
 template<bool characterPredicate(LChar)> void skipWhile(StringParsingBuffer<LChar>& buffer)
