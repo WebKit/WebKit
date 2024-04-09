@@ -258,8 +258,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::IsRadioInput, object.isRadioInput());
     }
 
-    if (object.canHaveSelectedChildren())
-        setObjectVectorProperty(AXPropertyName::SelectedChildren, object.selectedChildren());
+    if (auto selectedChildren = object.selectedChildren())
+        setObjectVectorProperty(AXPropertyName::SelectedChildren, *selectedChildren);
 
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
@@ -561,6 +561,13 @@ void AXIsolatedObject::updateChildrenIfNecessary()
     // FIXME: this is a no-op for isolated objects and should be removed from
     // the public interface. It is used in the mac implementation of
     // [WebAccessibilityObjectWrapper accessibilityHitTest].
+}
+
+std::optional<AXCoreObject::AccessibilityChildrenVector> AXIsolatedObject::selectedChildren()
+{
+    if (m_propertyMap.contains(AXPropertyName::SelectedChildren))
+        return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::SelectedChildren));
+    return std::nullopt;
 }
 
 void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& selectedChildren)

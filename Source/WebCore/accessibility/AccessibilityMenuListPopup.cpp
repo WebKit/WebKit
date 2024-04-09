@@ -68,7 +68,7 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityMenuListPopup::selectedChildren()
+std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMenuListPopup::selectedChildren()
 {
     if (!canHaveSelectedChildren())
         return { };

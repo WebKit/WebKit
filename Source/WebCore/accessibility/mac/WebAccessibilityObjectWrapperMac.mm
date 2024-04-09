@@ -1652,10 +1652,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return makeNSArray(backingObject->children());
     }
 
-    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (backingObject->canHaveSelectedChildren())
-            return makeNSArray(backingObject->selectedChildren());
-        return nil;
+    if ([attributeName isEqualToString:NSAccessibilitySelectedChildrenAttribute]) {
+        auto selectedChildren = backingObject->selectedChildren();
+        return selectedChildren ? makeNSArray(*selectedChildren) : nil;
     }
 
     if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
@@ -1872,8 +1871,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             || [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute])
             return makeNSArray(backingObject->columns());
 
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
-            return makeNSArray(backingObject->selectedChildren());
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
+            auto selectedChildren = backingObject->selectedChildren();
+            return selectedChildren ? makeNSArray(*selectedChildren) : nil;
+        }
 
         // HTML tables don't support this attribute yet.
         if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute])
@@ -1949,8 +1950,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if (backingObject->isTree()) {
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
-            return makeNSArray(backingObject->selectedChildren());
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
+            auto selectedChildren = backingObject->selectedChildren();
+            return selectedChildren ? makeNSArray(*selectedChildren) : nil;
+        }
 
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;

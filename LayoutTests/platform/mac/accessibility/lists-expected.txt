@@ -42,7 +42,7 @@ AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 14}
-AXSelectedChildren: <array of size 0>
+AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXElementBusy: 0
@@ -79,7 +79,7 @@ AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 14}
-AXSelectedChildren: <array of size 0>
+AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXElementBusy: 0
