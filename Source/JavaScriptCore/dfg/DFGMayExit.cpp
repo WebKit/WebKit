@@ -225,7 +225,9 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         return Exits;
 
     case CompareStrictEq:
-        if (node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse))
+        if (node->isBinaryUseKind(MiscUse) || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse))
+            break;
+        if (node->isBinaryUseKind(OtherUse) || node->isBinaryUseKind(OtherUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, OtherUse))
             break;
         FALLTHROUGH;
     case CompareEq:
@@ -238,6 +240,8 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         if (node->isBinaryUseKind(DoubleRepUse))
             break;
         if (node->isBinaryUseKind(Int52RepUse))
+            break;
+        if (node->isBinaryUseKind(SymbolUse))
             break;
         return Exits;
 

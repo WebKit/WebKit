@@ -8136,7 +8136,16 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
-    if (node->isBinaryUseKind(MiscUse, UntypedUse)
+    if (node->isBinaryUseKind(OtherUse)
+        || node->isBinaryUseKind(OtherUse, UntypedUse)
+        || node->isBinaryUseKind(UntypedUse, OtherUse)) {
+        compileOtherStrictEq(node);
+        return false;
+    }
+
+
+    if (node->isBinaryUseKind(MiscUse)
+        || node->isBinaryUseKind(MiscUse, UntypedUse)
         || node->isBinaryUseKind(UntypedUse, MiscUse)) {
         compileMiscStrictEq(node);
         return false;
@@ -16460,6 +16469,28 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
         speculateMisc(node->child1(), op1.jsValueRegs());
     if (node->child2().useKind() == MiscUse)
         speculateMisc(node->child2(), op2.jsValueRegs());
+
+#if USE(JSVALUE64)
+    compare64(Equal, op1.gpr(), op2.gpr(), result.gpr());
+#else
+    move(TrustedImm32(0), result.gpr());
+    Jump notEqual = branch32(NotEqual, op1.tagGPR(), op2.tagGPR());
+    compare32(Equal, op1.payloadGPR(), op2.payloadGPR(), result.gpr());
+    notEqual.link(this);
+#endif
+    unblessedBooleanResult(result.gpr(), node);
+}
+
+void SpeculativeJIT::compileOtherStrictEq(Node* node)
+{
+    JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
+    JSValueOperand op2(this, node->child2(), ManualOperandSpeculation);
+    GPRTemporary result(this);
+
+    if (node->child1().useKind() == OtherUse)
+        speculateOther(node->child1(), op1.jsValueRegs());
+    if (node->child2().useKind() == OtherUse)
+        speculateOther(node->child2(), op2.jsValueRegs());
 
 #if USE(JSVALUE64)
     compare64(Equal, op1.gpr(), op2.gpr(), result.gpr());

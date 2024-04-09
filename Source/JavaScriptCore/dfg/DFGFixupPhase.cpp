@@ -4834,6 +4834,12 @@ private:
             return;
         }
 
+        if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
+            fixEdge<ObjectUse>(node->child1());
+            fixEdge<ObjectUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (node->child1()->shouldSpeculateObject()) {
             fixEdge<ObjectUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);
@@ -4841,6 +4847,13 @@ private:
         }
         if (node->child2()->shouldSpeculateObject()) {
             fixEdge<ObjectUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+
+        if (node->child1()->shouldSpeculateSymbol() && node->child2()->shouldSpeculateSymbol()) {
+            fixEdge<SymbolUse>(node->child1());
+            fixEdge<SymbolUse>(node->child2());
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
@@ -4854,6 +4867,31 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+
+        if (node->child1()->shouldSpeculateOther() && node->child2()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child1());
+            fixEdge<OtherUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child1()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+        if (node->child2()->shouldSpeculateOther()) {
+            fixEdge<OtherUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
+
+
+        if (node->child1()->shouldSpeculateMisc() && node->child2()->shouldSpeculateMisc()) {
+            fixEdge<MiscUse>(node->child1());
+            fixEdge<MiscUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (node->child1()->shouldSpeculateMisc()) {
             fixEdge<MiscUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);
@@ -4864,6 +4902,7 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+
         if (node->child1()->shouldSpeculateStringIdent()
             && node->child2()->shouldSpeculateNotStringVar()) {
             fixEdge<StringIdentUse>(node->child1());
