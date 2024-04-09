@@ -431,9 +431,8 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
         return;
     setNormalChildNeedsLayoutBit(true);
     if (markParents == MarkContainingBlockChain)
-        markContainingBlocksForLayout();
+        scheduleLayout(markContainingBlocksForLayout());
 }
-
 
 inline Element* RenderElement::generatingElement() const
 {

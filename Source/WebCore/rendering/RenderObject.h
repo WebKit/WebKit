@@ -753,7 +753,7 @@ public:
 
     RenderBoxModelObject* offsetParent() const;
 
-    void markContainingBlocksForLayout(ScheduleRelayout = ScheduleRelayout::Yes, RenderElement* newRoot = nullptr);
+    RenderElement* markContainingBlocksForLayout(RenderElement* layoutRoot = nullptr);
     void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     enum class EverHadSkippedContentLayout { Yes, No };
     void clearNeedsLayout(EverHadSkippedContentLayout = EverHadSkippedContentLayout::Yes);
@@ -1133,6 +1133,7 @@ protected:
 
     virtual void willBeDestroyed();
 
+    void scheduleLayout(RenderElement* layoutRoot);
     void setNeedsPositionedMovementLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsPositionedMovementLayout, b); }
     void setNormalChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NormalChildNeedsLayout, b); }
     void setPosChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::PosChildNeedsLayout, b); }
@@ -1363,7 +1364,7 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
         return;
     m_stateBitfields.setFlag(StateFlag::NeedsLayout);
     if (markParents == MarkContainingBlockChain)
-        markContainingBlocksForLayout();
+        scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
         setLayerNeedsFullRepaint();
 }

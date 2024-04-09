@@ -568,20 +568,17 @@ void RenderObject::clearNeedsLayout(EverHadSkippedContentLayout everHadSkippedCo
 #endif
 }
 
-static void scheduleRelayoutForSubtree(RenderElement& renderer)
+void RenderObject::scheduleLayout(RenderElement* layoutRoot)
 {
-    if (auto* renderView = dynamicDowncast<RenderView>(renderer)) {
-        renderView->protectedFrameView()->checkedLayoutContext()->scheduleLayout();
-        return;
-    }
+    if (auto* renderView = dynamicDowncast<RenderView>(layoutRoot))
+        return renderView->protectedFrameView()->checkedLayoutContext()->scheduleLayout();
 
-    if (renderer.isRooted())
-        renderer.view().protectedFrameView()->checkedLayoutContext()->scheduleSubtreeLayout(renderer);
+    if (layoutRoot && layoutRoot->isRooted())
+        layoutRoot->view().protectedFrameView()->checkedLayoutContext()->scheduleSubtreeLayout(*layoutRoot);
 }
 
-void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayout, RenderElement* newRoot)
+RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layoutRoot)
 {
-    ASSERT(scheduleRelayout == ScheduleRelayout::No || !newRoot);
     ASSERT(!isSetNeedsLayoutForbidden());
 
     CheckedPtr ancestor = container();
@@ -596,42 +593,44 @@ void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayo
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
         CheckedPtr container = ancestor->container();
-        if (!container && !ancestor->isRenderView())
-            return;
+        if (!container && !ancestor->isRenderView()) {
+            // Internal render tree shuffle.
+            return { };
+        }
+
         if (hasOutOfFlowPosition) {
             bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
             // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
             while (ancestor && (!ancestor->isRenderBlock() || ancestor->isAnonymousBlock()))
                 ancestor = ancestor->container();
             if (!ancestor || ancestor->posChildNeedsLayout())
-                return;
+                return { };
             if (willSkipRelativelyPositionedInlines)
                 container = ancestor->container();
             ancestor->setPosChildNeedsLayoutBit(true);
             simplifiedNormalFlowLayout = true;
         } else if (simplifiedNormalFlowLayout) {
             if (ancestor->needsSimplifiedNormalFlowLayout())
-                return;
+                return { };
             ancestor->setNeedsSimplifiedNormalFlowLayoutBit(true);
         } else {
             if (ancestor->normalChildNeedsLayout())
-                return;
+                return { };
             ancestor->setNormalChildNeedsLayoutBit(true);
         }
         ASSERT(!ancestor->isSetNeedsLayoutForbidden());
 
-        if (ancestor == newRoot)
-            return;
-
-        if (scheduleRelayout == ScheduleRelayout::Yes && objectIsRelayoutBoundary(ancestor.get()))
-            break;
+        if (layoutRoot) {
+            // Having a valid layout root also mean we should not stop at layout boundaries.
+            if (ancestor == layoutRoot)
+                return layoutRoot;
+        } else if (objectIsRelayoutBoundary(ancestor.get()))
+            return ancestor.get();
 
         hasOutOfFlowPosition = ancestor->isOutOfFlowPositioned();
         ancestor = WTFMove(container);
     }
-
-    if (scheduleRelayout == ScheduleRelayout::Yes && ancestor)
-        scheduleRelayoutForSubtree(*ancestor);
+    return { };
 }
 
 #if ASSERT_ENABLED

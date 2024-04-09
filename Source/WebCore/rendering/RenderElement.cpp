@@ -1011,7 +1011,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         // directly affect the containing block of this object is a change to
         // the position style.
         if (needsLayout() && oldStyle && oldStyle->position() != m_style.position())
-            markContainingBlocksForLayout();
+            scheduleLayout(markContainingBlocksForLayout());
 
         if (diff == StyleDifference::Layout)
             setNeedsLayoutAndPrefWidthsRecalc();
@@ -1159,7 +1159,7 @@ void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle
     if (needsPositionedMovementLayout())
         return;
     setNeedsPositionedMovementLayoutBit(true);
-    markContainingBlocksForLayout();
+    scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer()) {
         if (oldStyle && style().diffRequiresLayerRepaint(*oldStyle, downcast<RenderLayerModelObject>(*this).layer()->isComposited()))
             setLayerNeedsFullRepaint();
@@ -1182,7 +1182,7 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
     if (needsSimplifiedNormalFlowLayout())
         return;
     setNeedsSimplifiedNormalFlowLayoutBit(true);
-    markContainingBlocksForLayout();
+    scheduleLayout(markContainingBlocksForLayout());
     if (hasLayer())
         setLayerNeedsFullRepaint();
 }

@@ -283,7 +283,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
                 // current containing block chain for preferred widths recalculation.
                 setNeedsLayoutAndPrefWidthsRecalc();
             } else
-                markContainingBlocksForLayout();
+                scheduleLayout(markContainingBlocksForLayout());
             
             if (oldStyle->position() != PositionType::Static && newStyle.hasOutOfFlowPosition())
                 parent()->setChildNeedsLayout();
