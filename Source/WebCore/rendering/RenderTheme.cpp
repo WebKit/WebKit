@@ -1559,12 +1559,12 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-linktext
     // Text in non-active, non-visited links. For light backgrounds, traditionally blue.
     case CSSValueLinktext:
-        return SRGBA<uint8_t> { 0, 0, 238 };
+        return useDarkAppearance ? SRGBA<uint8_t> { 158, 158, 255 } : SRGBA<uint8_t> { 0, 0, 238 };
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-visitedtext
     // Text in visited links. For light backgrounds, traditionally purple.
     case CSSValueVisitedtext:
-        return SRGBA<uint8_t> { 85, 26, 139 };
+        return useDarkAppearance ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 85, 26, 139 };
 
     // https://drafts.csswg.org/css-color-4/#valdef-system-color-activetext
     // Text in active links. For light backgrounds, traditionally red.
@@ -1652,9 +1652,9 @@ Color RenderTheme::systemColor(CSSValueID cssValueId, OptionSet<StyleColorOption
 
     // Non-standard addition.
     case CSSValueWebkitLink: {
-        if (useDarkAppearance)
-            return forVisitedLink ? SRGBA<uint8_t> { 208, 173, 240 } : SRGBA<uint8_t> { 158, 158, 255 };
-        return forVisitedLink ? SRGBA<uint8_t> { 85, 26, 139 } : SRGBA<uint8_t> { 0, 0, 238 };
+        if (forVisitedLink)
+            return systemColor(CSSValueVisitedtext, options);
+        return systemColor(CSSValueLinktext, options);
     }
 
     // Deprecated system-colors:
