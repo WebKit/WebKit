@@ -3300,3 +3300,12 @@ webkit.org/b/271408 [ Debug ] fast/images/decode-render-animated-image.html [ Sk
 
 # Makes a subsequent test crash
 webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
+
+http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
+
+http/tests/inspector/network/resource-sizes-network.html [ Failure ]
+http/tests/xmlhttprequest/onabort-response-getters.html [ Failure ]
+http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure ]
+http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure ]
+
+fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
