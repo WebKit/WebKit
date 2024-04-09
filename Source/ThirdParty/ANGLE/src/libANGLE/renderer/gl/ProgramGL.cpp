@@ -107,10 +107,14 @@ class ProgramGL::LinkTaskGL final : public LinkTask
     {}
     ~LinkTaskGL() override = default;
 
-    std::vector<std::shared_ptr<LinkSubTask>> link(const gl::ProgramLinkedResources &resources,
-                                                   const gl::ProgramMergedVaryings &mergedVaryings,
-                                                   bool *canSubTasksRunPostLinkOut) override
+    void link(const gl::ProgramLinkedResources &resources,
+              const gl::ProgramMergedVaryings &mergedVaryings,
+              std::vector<std::shared_ptr<LinkSubTask>> *linkSubTasksOut,
+              std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut) override
     {
+        ASSERT(linkSubTasksOut && linkSubTasksOut->empty());
+        ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
+
         mProgram->linkJobImpl(mExtensions);
 
         // If there is no native parallel compile, do the post-link right away.
@@ -121,7 +125,7 @@ class ProgramGL::LinkTaskGL final : public LinkTask
 
         // See comment on mResources
         mResources = &resources;
-        return {};
+        return;
     }
 
     angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override

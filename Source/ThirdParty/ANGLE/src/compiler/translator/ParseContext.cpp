@@ -6736,6 +6736,11 @@ bool TParseContext::binaryOpCommonCheck(TOperator op,
                                         TIntermTyped *right,
                                         const TSourceLoc &loc)
 {
+    if (left->getBasicType() == EbtVoid || right->getBasicType() == EbtVoid)
+    {
+        error(loc, "operation with void operands", GetOperatorString(op));
+        return false;
+    }
     // Check opaque types are not allowed to be operands in expressions other than array indexing
     // and structure member selection.
     if (IsOpaqueType(left->getBasicType()) || IsOpaqueType(right->getBasicType()))

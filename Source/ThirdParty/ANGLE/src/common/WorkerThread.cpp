@@ -187,6 +187,9 @@ void AsyncWorkerPool::threadLoop()
         // Note: always add an ANGLE_TRACE_EVENT* macro in the closure.  Then the job will show up
         // in traces.
         (*closure)();
+        // Release shared_ptr<Closure> before notifying the event to allow for destructor based
+        // dependencies (example: anglebug.com/8661)
+        task.second.reset();
         waitable->markAsReady();
     }
 }

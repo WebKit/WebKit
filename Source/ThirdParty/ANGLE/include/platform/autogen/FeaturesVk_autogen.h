@@ -55,13 +55,6 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/2970"
     };
 
-    FeatureInfo supportsDepthClipEnable = {
-        "supportsDepthClipEnable",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_EXT_depth_clip_enable extension.",
-        &members, "http://anglebug.com/3970"
-    };
-
     FeatureInfo supportsDepthClampZeroOne = {
         "supportsDepthClampZeroOne",
         FeatureCategory::VulkanFeatures,
@@ -254,9 +247,16 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo supportsDepthStencilResolve = {
         "supportsDepthStencilResolve",
         FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_depth_stencil_resolve extension",
+        &members, "http://anglebug.com/4836"
+    };
+
+    FeatureInfo supportsDepthStencilIndependentResolveNone = {
+        "supportsDepthStencilIndependentResolveNone",
+        FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_KHR_depth_stencil_resolve "
         "extension with the independentResolveNone feature",
-        &members, "http://anglebug.com/4836"
+        &members, "http://anglebug.com/7551"
     };
 
     FeatureInfo supportsMultisampledRenderToSingleSampledGOOGLEX = {
@@ -1336,6 +1336,13 @@ struct FeaturesVk : FeatureSetBase
         &members, "http://anglebug.com/8503"
     };
 
+    FeatureInfo disableDepthStencilResolveThroughAttachment = {
+        "disableDepthStencilResolveThroughAttachment",
+        FeatureCategory::VulkanWorkarounds,
+        "On some drivers, using a depth/stencil resolve attachment results in errors",
+        &members, "http://anglebug.com/8658"
+    };
+
     FeatureInfo clDumpVkSpirv = {
         "clDumpVkSpirv",
         FeatureCategory::VulkanFeatures,
@@ -1350,6 +1357,20 @@ struct FeaturesVk : FeatureSetBase
         "sufficient numbers of times this effect becomes visible to users. Conditionally "
         "enable additional blend factors for dithering",
         &members, "https://issuetracker.google.com/328837151"
+    };
+
+    FeatureInfo enableMergeClientAttribBuffer = {
+        "enableMergeClientAttribBuffer",
+        FeatureCategory::VulkanFeatures,
+        "Enable merge for client attrib buffer if possible",
+        &members, "https://issuetracker.google.com/328301788"
+    };
+
+    FeatureInfo supportsShaderNonSemanticInfo = {
+        "supportsShaderNonSemanticInfo",
+        FeatureCategory::VulkanFeatures,
+        "Enable non-semantic info inside shader module via VK_KHR_shader_non_semantic_info extension",
+        &members, "http://anglebug.com/8549"
     };
 
 };

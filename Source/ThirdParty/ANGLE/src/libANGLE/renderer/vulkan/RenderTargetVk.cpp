@@ -135,6 +135,17 @@ void RenderTargetVk::onDepthStencilDraw(ContextVk *contextVk, uint32_t framebuff
                                   mResolveImage, mImageSiblingSerial);
 }
 
+void RenderTargetVk::onDepthStencilResolve(ContextVk *contextVk, uint32_t framebufferLayerCount)
+{
+    ASSERT(mImage->getActualFormat().hasDepthOrStencilBits());
+    ASSERT(framebufferLayerCount <= mLayerCount);
+    ASSERT(mResolveImage == nullptr);
+
+    contextVk->onImageRenderPassWrite(mLevelIndexGL, mLayerIndex, framebufferLayerCount,
+                                      mImage->getAspectFlags(),
+                                      vk::ImageLayout::DepthStencilResolve, mImage);
+}
+
 vk::ImageHelper &RenderTargetVk::getImageForRenderPass()
 {
     ASSERT(mImage && mImage->valid());

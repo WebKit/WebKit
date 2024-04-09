@@ -203,10 +203,7 @@ class CommandQueue final : public _cl_command_queue, public Object
                                            cl_event *event);
 
     angle::Result enqueueNDRangeKernel(cl_kernel kernel,
-                                       cl_uint workDim,
-                                       const size_t *globalWorkOffset,
-                                       const size_t *globalWorkSize,
-                                       const size_t *localWorkSize,
+                                       const NDRange &ndrange,
                                        cl_uint numEventsInWaitList,
                                        const cl_event *eventWaitList,
                                        cl_event *event);

@@ -491,9 +491,10 @@ class ProgramD3D::LinkTaskD3D final : public LinkLoadTaskD3D
     {}
     ~LinkTaskD3D() override = default;
 
-    std::vector<std::shared_ptr<LinkSubTask>> link(const gl::ProgramLinkedResources &resources,
-                                                   const gl::ProgramMergedVaryings &mergedVaryings,
-                                                   bool *canSubTasksRunPostLinkOut) override;
+    void link(const gl::ProgramLinkedResources &resources,
+              const gl::ProgramMergedVaryings &mergedVaryings,
+              std::vector<std::shared_ptr<LinkSubTask>> *linkSubTasksOut,
+              std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut) override;
 
   private:
     const gl::Version mClientVersion;
@@ -502,12 +503,15 @@ class ProgramD3D::LinkTaskD3D final : public LinkLoadTaskD3D
     const gl::ProvokingVertexConvention mProvokingVertex;
 };
 
-std::vector<std::shared_ptr<LinkSubTask>> ProgramD3D::LinkTaskD3D::link(
-    const gl::ProgramLinkedResources &resources,
-    const gl::ProgramMergedVaryings &mergedVaryings,
-    bool *canSubTasksRunPostLinkOut)
+void ProgramD3D::LinkTaskD3D::link(const gl::ProgramLinkedResources &resources,
+                                   const gl::ProgramMergedVaryings &mergedVaryings,
+                                   std::vector<std::shared_ptr<LinkSubTask>> *linkSubTasksOut,
+                                   std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "LinkTaskD3D::link");
+
+    ASSERT(linkSubTasksOut && linkSubTasksOut->empty());
+    ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
 
     angle::Result result =
         mProgram->linkJobImpl(this, mCaps, mClientVersion, mClientType, resources, mergedVaryings);
@@ -515,15 +519,13 @@ std::vector<std::shared_ptr<LinkSubTask>> ProgramD3D::LinkTaskD3D::link(
 
     if (result != angle::Result::Continue)
     {
-        return {};
+        return;
     }
 
     // Create the subtasks
-    std::vector<std::shared_ptr<LinkSubTask>> subTasks;
-
     if (mExecutable->hasShaderStage(gl::ShaderType::Compute))
     {
-        subTasks.push_back(std::make_shared<GetComputeExecutableTask>(
+        linkSubTasksOut->push_back(std::make_shared<GetComputeExecutableTask>(
             mProgram, mProgram->getAttachedShader(gl::ShaderType::Compute)));
     }
     else
@@ -531,17 +533,14 @@ std::vector<std::shared_ptr<LinkSubTask>> ProgramD3D::LinkTaskD3D::link(
         // Geometry shaders are currently only used internally, so there is no corresponding shader
         // object at the interface level. For now the geometry shader debug info is prepended to the
         // vertex shader.
-        subTasks.push_back(std::make_shared<GetVertexExecutableTask>(
+        linkSubTasksOut->push_back(std::make_shared<GetVertexExecutableTask>(
             mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex)));
-        subTasks.push_back(std::make_shared<GetPixelExecutableTask>(
+        linkSubTasksOut->push_back(std::make_shared<GetPixelExecutableTask>(
             mProgram, mProgram->getAttachedShader(gl::ShaderType::Fragment)));
-        subTasks.push_back(std::make_shared<GetGeometryExecutableTask>(
+        linkSubTasksOut->push_back(std::make_shared<GetGeometryExecutableTask>(
             mProgram, mProgram->getAttachedShader(gl::ShaderType::Vertex), mCaps,
             mProvokingVertex));
     }
-
-    *canSubTasksRunPostLinkOut = false;
-    return subTasks;
 }
 
 class ProgramD3D::LoadTaskD3D final : public LinkLoadTaskD3D
@@ -552,14 +551,18 @@ class ProgramD3D::LoadTaskD3D final : public LinkLoadTaskD3D
     {}
     ~LoadTaskD3D() override = default;
 
-    std::vector<std::shared_ptr<LinkSubTask>> load(bool *canSubTasksRunPostLinkOut) override
+    void load(std::vector<std::shared_ptr<LinkSubTask>> *linkSubTasksOut,
+              std::vector<std::shared_ptr<LinkSubTask>> *postLinkSubTasksOut) override
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "LoadTaskD3D::load");
+
+        ASSERT(linkSubTasksOut && linkSubTasksOut->empty());
+        ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
 
         gl::BinaryInputStream stream(mStreamData.data(), mStreamData.size());
         mResult = mExecutable->loadBinaryShaderExecutables(this, mProgram->mRenderer, &stream);
 
-        return {};
+        return;
     }
 
     angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override

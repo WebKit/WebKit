@@ -228,6 +228,13 @@ void main()
         glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::GetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
+
+        // Make sure deleting the program doesn't result in a binary save.  Regression test for a
+        // bug where the binary was re-cached after being loaded.
+        glUseProgram(0);
+        program.reset();
+
+        EXPECT_EQ(CacheOpResult::ValueNotSet, gLastCacheOpResult);
     }
 }
 

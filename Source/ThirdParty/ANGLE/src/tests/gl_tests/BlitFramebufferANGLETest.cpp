@@ -3224,6 +3224,153 @@ TEST_P(BlitFramebufferTest, OOBWrite)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that flipped blits don't have off-by-one errors
+TEST_P(BlitFramebufferTest, FlippedBlits)
+{
+    constexpr const GLsizei kWidth  = 11;
+    constexpr const GLsizei kHeight = 19;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLRenderbuffer srcColorRB, srcDepthRB, dstColorRB, dstDepthRB;
+    GLFramebuffer srcFBO, dstFBO;
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorLoc = glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    // Create source and dest FBOs
+    glBindRenderbuffer(GL_RENDERBUFFER, srcColorRB);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, srcDepthRB);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, kWidth, kHeight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, srcColorRB);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              srcDepthRB);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, dstColorRB);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, dstDepthRB);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, kWidth, kHeight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, dstColorRB);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              dstDepthRB);
+
+    // Fill the source framebuffer with differring values per pixel, so off-by-one errors are more
+    // easily found.
+    glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    auto makeColor = [](GLsizei row, GLsizei col) -> GLColor {
+        return GLColor(row * 255 / kHeight, col * 255 / kWidth, (row * 7 + col * 11) % 256, 255);
+    };
+    auto makeDepth = [](GLsizei row, GLsizei col) -> float {
+        return 1.8f * ((row * kWidth + col) % 33 / 32.0f) - 0.9f;
+    };
+    auto makeStencil = [](GLsizei row, GLsizei col) -> uint8_t {
+        return (col * kHeight + row) & 0xFF;
+    };
+
+    glBindFramebuffer(GL_FRAMEBUFFER, srcFBO);
+    glUseProgram(drawColor);
+    for (GLsizei row = 0; row < kHeight; ++row)
+    {
+        for (GLsizei col = 0; col < kWidth; ++col)
+        {
+            glScissor(col, row, 1, 1);
+
+            glUniform4fv(colorLoc, 1, makeColor(row, col).toNormalizedVector().data());
+            glStencilFunc(GL_ALWAYS, makeStencil(row, col), 0xFF);
+            drawQuad(drawColor, essl1_shaders::PositionAttrib(), makeDepth(row, col));
+        }
+    }
+
+    glDepthFunc(GL_LESS);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    auto test = [&](int testIndex, bool flipX, bool flipY, GLint srcOffsetX, GLint srcOffsetY,
+                    GLint dstOffsetX, GLint dstOffsetY, GLint width, GLint height) {
+        glDisable(GL_SCISSOR_TEST);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFBO);
+
+        const GLint srcX0 = srcOffsetX;
+        const GLint srcY0 = srcOffsetY;
+        const GLint srcX1 = srcOffsetX + width;
+        const GLint srcY1 = srcOffsetY + height;
+
+        const GLint dstX0 = flipX ? dstOffsetX + width : dstOffsetX;
+        const GLint dstY0 = flipY ? dstOffsetY + height : dstOffsetY;
+        const GLint dstX1 = flipX ? dstOffsetX : dstOffsetX + width;
+        const GLint dstY1 = flipY ? dstOffsetY : dstOffsetY + height;
+
+        glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1,
+                          GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                          GL_NEAREST);
+
+        // Verify results
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, dstFBO);
+
+        for (GLsizei row = 0; row < height; ++row)
+        {
+            for (GLsizei col = 0; col < width; ++col)
+            {
+                const GLint srcPixelX = col + srcOffsetX;
+                const GLint srcPixelY = row + srcOffsetY;
+                const GLint dstPixelX = dstOffsetX + (flipX ? width - 1 - col : col);
+                const GLint dstPixelY = dstOffsetY + (flipY ? height - 1 - row : row);
+
+                const GLColor expectColor   = makeColor(srcPixelY, srcPixelX);
+                const float expectDepth     = makeDepth(srcPixelY, srcPixelX);
+                const uint8_t expectStencil = makeStencil(srcPixelY, srcPixelX);
+
+                // Verify color
+                EXPECT_PIXEL_COLOR_EQ(dstPixelX, dstPixelY, expectColor)
+                    << testIndex << " " << flipX << " " << flipY << " " << row << " " << col;
+
+                glEnable(GL_SCISSOR_TEST);
+                glScissor(dstPixelX, dstPixelY, 1, 1);
+
+                // Verify depth and stencil
+                glStencilFunc(GL_EQUAL, expectStencil, 0xFF);
+                drawQuad(drawRed, essl1_shaders::PositionAttrib(), expectDepth - 0.05);
+                drawQuad(drawGreen, essl1_shaders::PositionAttrib(), expectDepth + 0.05);
+
+                EXPECT_PIXEL_COLOR_EQ(dstPixelX, dstPixelY, GLColor::red)
+                    << testIndex << " " << flipX << " " << flipY << " " << row << " " << col;
+            }
+        }
+    };
+
+    for (int flipX = 0; flipX < 2; ++flipX)
+    {
+        for (int flipY = 0; flipY < 2; ++flipY)
+        {
+            // Test 0, full sized blit
+            test(0, flipX != 0, flipY != 0, 0, 0, 0, 0, kWidth, kHeight);
+            // Test 1, blit only one pixel
+            test(1, flipX != 0, flipY != 0, kWidth / 3, kHeight / 7, 2 * kWidth / 5,
+                 3 * kHeight / 4, 1, 1);
+            // Test 2, random region
+            test(2, flipX != 0, flipY != 0, kWidth / 5, 2 * kHeight / 7, kWidth / 6, kHeight / 4,
+                 kWidth / 2, kHeight / 2);
+        }
+    }
+}
+
 // Test blitting a depthStencil buffer with multiple depth values to a larger size.
 TEST_P(BlitFramebufferTest, BlitDepthStencilPixelByPixel)
 {

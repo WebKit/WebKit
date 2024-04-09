@@ -187,10 +187,7 @@ class CLCommandQueueVk : public CLCommandQueueImpl
                                            CLEventImpl::CreateFunc *eventCreateFunc) override;
 
     angle::Result enqueueNDRangeKernel(const cl::Kernel &kernel,
-                                       cl_uint workDim,
-                                       const size_t *globalWorkOffset,
-                                       const size_t *globalWorkSize,
-                                       const size_t *localWorkSize,
+                                       const cl::NDRange &ndrange,
                                        const cl::EventPtrs &waitEvents,
                                        CLEventImpl::CreateFunc *eventCreateFunc) override;
 

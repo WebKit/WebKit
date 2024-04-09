@@ -45,14 +45,6 @@
             "issue": "http://anglebug.com/2970"
         },
         {
-            "name": "supports_depth_clip_enable",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the VK_EXT_depth_clip_enable extension."
-            ],
-            "issue": "http://anglebug.com/3970"
-        },
-        {
             "name": "supports_depth_clamp_zero_one",
             "category": "Features",
             "description": [
@@ -258,10 +250,18 @@
             "name": "supports_depth_stencil_resolve",
             "category": "Features",
             "description": [
+                "VkDevice supports the VK_KHR_depth_stencil_resolve extension"
+            ],
+            "issue": "http://anglebug.com/4836"
+        },
+        {
+            "name": "supports_depth_stencil_independent_resolve_none",
+            "category": "Features",
+            "description": [
                 "VkDevice supports the VK_KHR_depth_stencil_resolve ",
                 "extension with the independentResolveNone feature"
             ],
-            "issue": "http://anglebug.com/4836"
+            "issue": "http://anglebug.com/7551"
         },
         {
             "name": "supports_multisampled_render_to_single_sampled_GOOGLEX",
@@ -1457,6 +1457,14 @@
             "issue": "http://anglebug.com/8503"
         },
         {
+            "name": "disable_depth_stencil_resolve_through_attachment",
+            "category": "Workarounds",
+            "description": [
+                "On some drivers, using a depth/stencil resolve attachment results in errors"
+            ],
+            "issue": "http://anglebug.com/8658"
+        },
+        {
             "name": "cl_dump_vk_spirv",
             "category": "Features",
             "description": [
@@ -1472,6 +1480,22 @@
                 "enable additional blend factors for dithering"
             ],
             "issue": "https://issuetracker.google.com/328837151"
+        },
+        {
+            "name": "enable_merge_client_attrib_buffer",
+            "category": "Features",
+            "description": [
+                "Enable merge for client attrib buffer if possible"
+            ],
+            "issue": "https://issuetracker.google.com/328301788"
+        },
+        {
+            "name": "supports_shader_non_semantic_info",
+            "category": "Features",
+            "description": [
+                "Enable non-semantic info inside shader module via VK_KHR_shader_non_semantic_info extension"
+            ],
+            "issue": "http://anglebug.com/8549"
         }
     ]
 }
