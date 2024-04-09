@@ -761,6 +761,7 @@ private:
     bool m_muted { false };
     bool m_preservesPitch { true };
     bool m_privateBrowsing { false };
+    bool m_shouldPrepareToPlay { false };
     bool m_shouldPrepareToRender { false };
     bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };

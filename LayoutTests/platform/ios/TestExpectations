@@ -235,6 +235,7 @@ imported/w3c/web-platform-tests/pointerlock [ Skip ]
 http/tests/media
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 http/tests/cache/disk-cache/disk-cache-media-small.html
+http/tests/media/audio-load-loadeddata.html [ Pass ]
 
 # No touch events
 fast/events/touch [ Skip ]
