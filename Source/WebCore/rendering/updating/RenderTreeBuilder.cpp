@@ -426,24 +426,28 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
 
     // Take the ownership.
     auto* newChild = parent.attachRendererInternal(WTFMove(child), beforeChild);
+    if (parent.renderTreeBeingDestroyed()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    if (m_internalMovesType == IsInternalMove::No)
+    newChild->insertedIntoTree();
+    if (m_internalMovesType == IsInternalMove::No) {
         newChild->initializeFragmentedFlowStateOnInsertion();
-    if (!parent.renderTreeBeingDestroyed()) {
-        newChild->insertedIntoTree();
-
-        if (m_internalMovesType == IsInternalMove::No) {
-            if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
-                multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
-            if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild))
-                listItemRenderer->updateListMarkerNumbers();
-        }
+        if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
+            multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
+        if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild))
+            listItemRenderer->updateListMarkerNumbers();
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
-    parent.setPreferredLogicalWidthsDirty(true);
-    if (!parent.normalChildNeedsLayout())
-        parent.setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
+    if (!newChild->style().hasOutOfFlowPosition())
+        parent.setPreferredLogicalWidthsDirty(true);
+
+    if (!parent.normalChildNeedsLayout()) {
+        // We may supply the static position for an absolute positioned child.
+        parent.setChildNeedsLayout();
+    }
 
     if (AXObjectCache* cache = parent.document().axObjectCache())
         cache->childrenChanged(&parent, newChild);

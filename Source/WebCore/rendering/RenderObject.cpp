@@ -655,20 +655,21 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
 {
     // In order to avoid pathological behavior when inlines are deeply nested, we do include them
     // in the chain that we mark dirty (even though they're kind of irrelevant).
-    CheckedPtr o = isRenderTableCell() ? containingBlock() : container();
-    while (o && !o->preferredLogicalWidthsDirty()) {
-        // Don't invalidate the outermost object of an unrooted subtree. That object will be 
+    CheckedPtr ancestor = isRenderTableCell() ? containingBlock() : container();
+    while (ancestor && !ancestor->preferredLogicalWidthsDirty()) {
+        // Don't invalidate the outermost object of an unrooted subtree. That object will be
         // invalidated when the subtree is added to the document.
-        CheckedPtr container = o->isRenderTableCell() ? o->containingBlock() : o->container();
-        if (!container && !o->isRenderView())
+        CheckedPtr container = ancestor->isRenderTableCell() ? ancestor->containingBlock() : ancestor->container();
+        if (!container && !ancestor->isRenderView())
             break;
 
-        o->m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsDirty, true);
-        if (o->style().hasOutOfFlowPosition())
+        ancestor->m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsDirty, true);
+        if (ancestor->style().hasOutOfFlowPosition()) {
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
             break;
-        o = WTFMove(container);
+        }
+        ancestor = WTFMove(container);
     }
 }
 

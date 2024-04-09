@@ -374,15 +374,12 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 
     if (subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
-    if (!isLayoutSchedulingEnabled())
+
+    if (isLayoutPending())
+        return;
+    if (!isLayoutSchedulingEnabled() || !frame().document()->shouldScheduleLayout())
         return;
     if (!needsLayout())
-        return;
-    if (!frame().document()->shouldScheduleLayout())
-        return;
-
-    InspectorInstrumentation::didInvalidateLayout(protectedFrame());
-    if (m_layoutTimer.isActive())
         return;
 
 #if !LOG_DISABLED
@@ -390,6 +387,7 @@ void LocalFrameViewLayoutContext::scheduleLayout()
         LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
 
+    InspectorInstrumentation::didInvalidateLayout(protectedFrame());
     m_layoutTimer.startOneShot(0_s);
 }
 
