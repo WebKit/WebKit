@@ -3586,10 +3586,7 @@ webkit.org/b/237220 imported/w3c/web-platform-tests/svg/coordinate-systems/abspo
 
 webkit.org/b/237218 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ Pass Failure ]
 
-webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
-
-[ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
-fast/canvas/canvas-blending-text.html [ Pass Failure ]
+webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ] 
 
 # webkit.org/b/201982 These are flaky failures on iOS
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
