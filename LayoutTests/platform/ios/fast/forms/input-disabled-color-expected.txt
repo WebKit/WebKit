@@ -119,7 +119,7 @@ layer at (171,324) size 141x14 scrollWidth 153
     RenderText {#text} at (0,0) size 151x14
       text run at (0,0) width 151: "This text field is not disabled"
 layer at (8,29) size 153x21
-  RenderTextControl {INPUT} at (0,21) size 153x22 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (0,21) size 153x22 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
 layer at (15,32) size 139x14 scrollWidth 343
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (0,0) size 344x14
@@ -131,7 +131,7 @@ layer at (15,55) size 139x14 scrollWidth 343
     RenderText {#text} at (0,0) size 344x14
       text run at (0,0) width 344: "The text in this disabled field should displayed as dimmed or grey"
 layer at (8,74) size 153x21
-  RenderTextControl {INPUT} at (0,65) size 153x23 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#0000FF] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (0,65) size 153x23 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#0000FF] [border: (1px solid #3C3C4399)]
 layer at (15,77) size 139x14 scrollWidth 343
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (0,0) size 344x14
@@ -143,7 +143,7 @@ layer at (15,100) size 139x14 scrollWidth 343
     RenderText {#text} at (0,0) size 344x14
       text run at (0,0) width 344: "The text in this disabled field should displayed as dimmed or grey"
 layer at (8,119) size 153x21
-  RenderTextControl {INPUT} at (0,110) size 153x23 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#000000] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (0,110) size 153x23 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#000000] [border: (1px solid #3C3C4399)]
 layer at (15,122) size 139x14 scrollWidth 343
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (0,0) size 344x14
@@ -155,7 +155,7 @@ layer at (15,145) size 139x14 scrollWidth 343
     RenderText {#text} at (0,0) size 344x14
       text run at (0,0) width 344: "The text in this disabled field should displayed as dimmed or grey"
 layer at (8,164) size 153x21
-  RenderTextControl {INPUT} at (0,155) size 153x23 [color=color(srgb 0.34117648 0.34117648 0.34117648)] [bgcolor=#808080] [border: (1px solid #3C3C4399)]
+  RenderTextControl {INPUT} at (0,155) size 153x23 [color=color(srgb 0.341176 0.341176 0.341176)] [bgcolor=#808080] [border: (1px solid #3C3C4399)]
 layer at (15,167) size 139x14 scrollWidth 343
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (0,0) size 344x14
