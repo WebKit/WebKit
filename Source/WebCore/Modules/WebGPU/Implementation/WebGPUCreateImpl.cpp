@@ -50,7 +50,7 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::P
 #endif
     auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
     {
-        scheduleWorkFunction(CompletionHandler<void(void)>(makeBlockPtr(WTFMove(workItem)), CompletionHandlerCallThread::AnyThread));
+        scheduleWorkFunction(Function<void()>(makeBlockPtr(WTFMove(workItem))));
     });
     WGPUInstanceCocoaDescriptor cocoaDescriptor {
         {

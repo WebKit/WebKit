@@ -68,7 +68,7 @@ public:
     void writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void setLabel(String&&);
 
-    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
+    void onSubmittedWorkScheduled(Function<void()>&&);
 
     bool isValid() const { return m_commandQueue; }
     void makeInvalid();

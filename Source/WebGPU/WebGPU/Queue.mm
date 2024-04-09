@@ -162,7 +162,7 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>
     callbacks.append(WTFMove(callback));
 }
 
-void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
+void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     ASSERT(m_submittedCommandBufferCount >= m_scheduledCommandBufferCount);
     auto devicePtr = m_device.get();
@@ -209,21 +209,21 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
         auto device = protectedThis->m_device.get();
         if (!device || !device->device())
             return;
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_scheduledCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
                 callback();
-        }, CompletionHandlerCallThread::AnyThread));
+        });
     }];
     [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
         auto device = protectedThis->m_device.get();
         if (!device || !device->device())
             return;
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);
-        }, CompletionHandlerCallThread::AnyThread));
+        });
     }];
 
     [commandBuffer commit];

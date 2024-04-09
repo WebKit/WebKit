@@ -64,7 +64,7 @@ public:
     bool isValid() const { return m_isValid; }
 
     // This can be called on a background thread.
-    using WorkItem = CompletionHandler<void(void)>;
+    using WorkItem = Function<void()>;
     void scheduleWork(WorkItem&&);
     const std::optional<const MachSendRight>& webProcessID() const;
 

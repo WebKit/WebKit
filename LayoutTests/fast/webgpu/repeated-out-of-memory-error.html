@@ -6,77 +6,75 @@ This test passes if it does not crash.
     }
 
     onload = async () => {
-        try {
-            let adapter0 = await navigator.gpu.requestAdapter(
-                {
-                    powerPreference: 'high-performance',
-                }
-            );
-            let device0 = await adapter0.requestDevice(
-                {
-                    label: '\u{1fc7e}',
-                    requiredFeatures: [
-                        'depth-clip-control',
-                        'shader-f16',
-                        'bgra8unorm-storage'
-                    ],
-                    requiredLimits: {
-                        maxColorAttachmentBytesPerSample: 60,
-                        maxVertexAttributes: 30,
-                        maxVertexBufferArrayStride: 11348,
-                        maxStorageTexturesPerShaderStage: 42,
-                        maxBindingsPerBindGroup: 7372,
-                        maxTextureArrayLayers: 2011
-                    },
-                }
-            );
-            let bindGroupLayout0 = device0.createBindGroupLayout(
-                {
-                    entries: [
-                        {
-                            binding: 5869,
-                            visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-                            texture: { viewDimension: '2d', sampleType: 'float', multisampled: false },
-                        }
-                    ],
-                }
-            );
-            device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
-            device0.createTexture(
-                {
-                    label: '\u04ab',
-                    size: {
-                        width: 7798,
-                        height: 7120,
-                        depthOrArrayLayers: 377,
-                    },
-                    format: 'stencil8',
-                    usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
-                }
-            );
-            let sampler5 = device0.createSampler(
-                {
-                    addressModeU: 'repeat',
-                    addressModeV: 'mirror-repeat',
-                    addressModeW: 'mirror-repeat',
-                    minFilter: 'nearest',
-                    lodMinClamp: 45.683,
-                    lodMaxClamp: 77.763,
-                    compare: 'always',
-                }
-            );
-            let bindGroup0 = device0.createBindGroup(
-                {
-                    layout: bindGroupLayout0,
-                    entries: [
-                        {
-                            binding: 646,
-                            resource: sampler5,
-                        }
-                    ],
-                }
-            );
-        } catch (e) { }
+        let adapter0 = await navigator.gpu.requestAdapter(
+            {
+                powerPreference: 'high-performance',
+            }
+        );
+        let device0 = await adapter0.requestDevice(
+            {
+                label: '\u{1fc7e}',
+                requiredFeatures: [
+                    'depth-clip-control',
+                    'shader-f16',
+                    'bgra8unorm-storage'
+                ],
+                requiredLimits: {
+                    maxColorAttachmentBytesPerSample: 60,
+                    maxVertexAttributes: 30,
+                    maxVertexBufferArrayStride: 11348,
+                    maxStorageTexturesPerShaderStage: 42,
+                    maxBindingsPerBindGroup: 372,
+                    maxTextureArrayLayers: 2011
+                },
+            }
+        );
+        let bindGroupLayout0 = device0.createBindGroupLayout(
+            {
+                entries: [
+                    {
+                        binding: 5869,
+                        visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+                        texture: { viewDimension: '2d', sampleType: 'float', multisampled: false },
+                    }
+                ],
+            }
+        );
+        device0.addEventListener('uncapturederror', e => { e.label = device0.label; });
+        device0.createTexture(
+            {
+                label: '\u04ab',
+                size: {
+                    width: 7798,
+                    height: 7120,
+                    depthOrArrayLayers: 377,
+                },
+                format: 'stencil8',
+                usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+            }
+        );
+        let sampler5 = device0.createSampler(
+            {
+                addressModeU: 'repeat',
+                addressModeV: 'mirror-repeat',
+                addressModeW: 'mirror-repeat',
+                minFilter: 'nearest',
+                lodMinClamp: 45.683,
+                lodMaxClamp: 77.763,
+                compare: 'always',
+            }
+        );
+        let bindGroup0 = device0.createBindGroup(
+            {
+                layout: bindGroupLayout0,
+                entries: [
+                    {
+                        binding: 646,
+                        resource: sampler5,
+                    }
+                ],
+            }
+        );
         if (window.testRunner)
             testRunner.notifyDone();
     };

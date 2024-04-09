@@ -126,11 +126,6 @@ static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
     return false;
 }
 
-static bool shouldEnableWebGPU(const std::string& pathOrURL)
-{
-    return pathContains(pathOrURL, "webgpu/");
-}
-
 static bool shouldSetDefaultPortsForWTR(const std::string& pathOrURL)
 {
     return pathContains(pathOrURL, "localhost:8000/") || pathContains(pathOrURL, "localhost:8443/")
@@ -159,8 +154,6 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.doubleTestRunnerFeatures.insert({ "viewWidth", viewWidthAndHeight->first });
         features.doubleTestRunnerFeatures.insert({ "viewHeight", viewWidthAndHeight->second });
     }
-    if (shouldEnableWebGPU(command.pathOrURL))
-        features.boolWebPreferenceFeatures.insert({ "WebGPUEnabled", true });
     if (shouldSetDefaultPortsForWTR(command.pathOrURL)) {
         features.uint16TestRunnerFeatures.insert({ "insecureUpgradePort", 8000 });
         features.uint16TestRunnerFeatures.insert({ "secureUpgradePort", 8443 });

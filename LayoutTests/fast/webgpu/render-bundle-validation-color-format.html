@@ -4,7 +4,6 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 onload = async () => {
-  try {
     let adapter0 = await navigator.gpu.requestAdapter();
     let device0 = await adapter0.requestDevice();
 
@@ -233,8 +232,7 @@ onload = async () => {
     );
     
     renderBundleEncoder0.setPipeline(pipeline);
-  } catch (e) { }
-  window.testRunner?.notifyDone();
+    window.testRunner?.notifyDone();
 }
 </script>
 This test passes if it does not crash.
