@@ -81,10 +81,6 @@ cc_defaults {
     arch: {
         arm: {
             srcs: [],
-
-            neon: {
-                srcs: [],
-            },
         },
 
         arm64: {
@@ -266,20 +262,20 @@ cc_defaults {
         "libpiex",
         "libexpat",
         "libft2",
+        "libharfbuzz_subset",
     ],
     static_libs: [
         "libwebp-decode",
         "libwebp-encode",
         "libwuffs_mirror_release_c",
     ],
+    cflags: [
+        "-DSK_PDF_USE_HARFBUZZ_SUBSET",
+    ],
     target: {
       android: {
         shared_libs: [
-            "libharfbuzz_subset",
             "libheif",
-        ],
-        cflags: [
-            "-DSK_PDF_USE_HARFBUZZ_SUBSET",
         ],
       },
       darwin: {
@@ -463,8 +459,6 @@ def generate_args(target_os, enable_gpu, renderengine = False):
 
     # Tracing-related flags:
     'skia_disable_tracing':                 'false',
-    # Required for some SKSL tests
-    'skia_enable_sksl_tracing':             'true',
     # The two Perfetto integrations are currently mutually exclusive due to
     # complexity.
     'skia_use_perfetto':                    'false',

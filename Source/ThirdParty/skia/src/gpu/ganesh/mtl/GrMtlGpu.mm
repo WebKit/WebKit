@@ -11,14 +11,18 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/GpuTypes.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendSemaphore.h"
+#include "include/gpu/ganesh/mtl/GrMtlBackendSurface.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/base/SkMathPriv.h"
 #include "src/base/SkRectMemcpy.h"
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkMipmap.h"
+#include "src/gpu/DataUtils.h"
 #include "src/gpu/ganesh/GrBackendUtils.h"
 #include "src/gpu/ganesh/GrDataUtils.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
+#include "src/gpu/ganesh/GrImageInfo.h"
+#include "src/gpu/ganesh/GrPixmap.h"
 #include "src/gpu/ganesh/GrRenderTarget.h"
 #include "src/gpu/ganesh/GrResourceProvider.h"
 #include "src/gpu/ganesh/GrTexture.h"
@@ -73,8 +77,7 @@ std::unique_ptr<GrGpu> GrMtlGpu::Make(const GrMtlBackendContext& context,
     return std::unique_ptr<GrGpu>(new GrMtlGpu(direct,
                                                options,
                                                device,
-                                               queue,
-                                               context.fBinaryArchive.get()));
+                                               queue));
 }
 
 // This constant determines how many OutstandingCommandBuffers are allocated together as a block in
@@ -84,7 +87,7 @@ std::unique_ptr<GrGpu> GrMtlGpu::Make(const GrMtlBackendContext& context,
 static const int kDefaultOutstandingAllocCnt = 8;
 
 GrMtlGpu::GrMtlGpu(GrDirectContext* direct, const GrContextOptions& options,
-                   id<MTLDevice> device, id<MTLCommandQueue> queue, GrMTLHandle binaryArchive)
+                   id<MTLDevice> device, id<MTLCommandQueue> queue)
         : INHERITED(direct)
         , fDevice(device)
         , fQueue(queue)
@@ -99,11 +102,6 @@ GrMtlGpu::GrMtlGpu(GrDirectContext* direct, const GrContextOptions& options,
     this->testingOnly_startCapture();
 #endif
     fCurrentCmdBuffer = GrMtlCommandBuffer::Make(fQueue);
-#if GR_METAL_SDK_VERSION >= 230
-    if (@available(macOS 11.0, iOS 14.0, tvOS 14.0, *)) {
-        fBinaryArchive = (__bridge id<MTLBinaryArchive>)(binaryArchive);
-    }
-#endif
 }
 
 GrMtlGpu::~GrMtlGpu() {
@@ -545,7 +543,7 @@ sk_sp<GrAttachment> GrMtlGpu::makeMSAAAttachment(SkISize dimensions,
     // TODO: add memoryless support
     SkASSERT(isMemoryless == GrMemoryless::kNo);
 
-    MTLPixelFormat pixelFormat = (MTLPixelFormat) format.asMtlFormat();
+    MTLPixelFormat pixelFormat = (MTLPixelFormat)GrBackendFormats::AsMtlFormat(format);
     SkASSERT(pixelFormat != MTLPixelFormatInvalid);
     SkASSERT(!skgpu::MtlFormatIsCompressed(pixelFormat));
     SkASSERT(this->mtlCaps().isFormatRenderable(pixelFormat, numSamples));
@@ -679,7 +677,8 @@ sk_sp<GrTexture> GrMtlGpu::onCreateCompressedTexture(SkISize dimensions,
 
     SkISize levelDimensions = dimensions;
     for (int currentMipLevel = 0; currentMipLevel < numMipLevels; currentMipLevel++) {
-        const size_t levelRowBytes = GrCompressedRowBytes(compressionType, levelDimensions.width());
+        const size_t levelRowBytes = skgpu::CompressedRowBytes(compressionType,
+                                                               levelDimensions.width());
         size_t levelSize = SkCompressedDataSize(compressionType, levelDimensions, nullptr, false);
 
         // TODO: can this all be done in one go?
@@ -709,11 +708,11 @@ sk_sp<GrTexture> GrMtlGpu::onCreateCompressedTexture(SkISize dimensions,
     return std::move(tex);
 }
 
-// TODO: Extra retain/release can't be avoided here because of getMtlTextureInfo copying the
+// TODO: Extra retain/release can't be avoided here because of GetMtlTextureInfo copying the
 // sk_cfp. It would be useful to have a (possibly-internal-only?) API to get the raw pointer.
 static id<MTLTexture> get_texture_from_backend(const GrBackendTexture& backendTex) {
     GrMtlTextureInfo textureInfo;
-    if (!backendTex.getMtlTextureInfo(&textureInfo)) {
+    if (!GrBackendTextures::GetMtlTextureInfo(backendTex, &textureInfo)) {
         return nil;
     }
     return GrGetMTLTexture(textureInfo.fTexture.get());
@@ -721,7 +720,7 @@ static id<MTLTexture> get_texture_from_backend(const GrBackendTexture& backendTe
 
 static id<MTLTexture> get_texture_from_backend(const GrBackendRenderTarget& backendRT) {
     GrMtlTextureInfo textureInfo;
-    if (!backendRT.getMtlTextureInfo(&textureInfo)) {
+    if (!GrBackendRenderTargets::GetMtlTextureInfo(backendRT, &textureInfo)) {
         return nil;
     }
     return GrGetMTLTexture(textureInfo.fTexture.get());
@@ -934,15 +933,14 @@ GrBackendTexture GrMtlGpu::onCreateBackendTexture(SkISize dimensions,
         return {};
     }
 
-    GrBackendTexture backendTex(dimensions.width(), dimensions.height(), mipmapped, info);
-    return backendTex;
+    return GrBackendTextures::MakeMtl(dimensions.width(), dimensions.height(), mipmapped, info);
 }
 
 bool GrMtlGpu::onClearBackendTexture(const GrBackendTexture& backendTexture,
                                      sk_sp<skgpu::RefCntedCallback> finishedCallback,
                                      std::array<float, 4> color) {
     GrMtlTextureInfo info;
-    SkAssertResult(backendTexture.getMtlTextureInfo(&info));
+    SkAssertResult(GrBackendTextures::GetMtlTextureInfo(backendTexture, &info));
 
     id<MTLTexture> GR_NORETAIN mtlTexture = GrGetMTLTexture(info.fTexture.get());
 
@@ -1038,7 +1036,7 @@ GrBackendTexture GrMtlGpu::onCreateCompressedBackendTexture(SkISize dimensions,
         return {};
     }
 
-    return GrBackendTexture(dimensions.width(), dimensions.height(), mipmapped, info);
+    return GrBackendTextures::MakeMtl(dimensions.width(), dimensions.height(), mipmapped, info);
 }
 
 bool GrMtlGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendTexture,
@@ -1046,7 +1044,7 @@ bool GrMtlGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendT
                                                 const void* data,
                                                 size_t size) {
     GrMtlTextureInfo info;
-    SkAssertResult(backendTexture.getMtlTextureInfo(&info));
+    SkAssertResult(GrBackendTextures::GetMtlTextureInfo(backendTexture, &info));
 
     id<MTLTexture> mtlTexture = GrGetMTLTexture(info.fTexture.get());
 
@@ -1095,7 +1093,7 @@ bool GrMtlGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendT
         size_t levelRowBytes;
         size_t levelSize;
 
-        levelRowBytes = GrCompressedRowBytes(compression, levelDimensions.width());
+        levelRowBytes = skgpu::CompressedRowBytes(compression, levelDimensions.width());
         levelSize = SkCompressedDataSize(compression, levelDimensions, nullptr, false);
 
         // TODO: can this all be done in one go?
@@ -1155,7 +1153,7 @@ bool GrMtlGpu::isTestingOnlyBackendTexture(const GrBackendTexture& tex) const {
     SkASSERT(GrBackendApi::kMetal == tex.backend());
 
     GrMtlTextureInfo info;
-    if (!tex.getMtlTextureInfo(&info)) {
+    if (!GrBackendTextures::GetMtlTextureInfo(tex, &info)) {
         return false;
     }
     id<MTLTexture> mtlTexture = GrGetMTLTexture(info.fTexture.get());
@@ -1198,14 +1196,14 @@ GrBackendRenderTarget GrMtlGpu::createTestingOnlyBackendRenderTarget(SkISize dim
         return {};
     }
 
-    return GrBackendRenderTarget(dimensions.width(), dimensions.height(), info);
+    return GrBackendRenderTargets::MakeMtl(dimensions.width(), dimensions.height(), info);
 }
 
 void GrMtlGpu::deleteTestingOnlyBackendRenderTarget(const GrBackendRenderTarget& rt) {
     SkASSERT(GrBackendApi::kMetal == rt.backend());
 
     GrMtlTextureInfo info;
-    if (rt.getMtlTextureInfo(&info)) {
+    if (GrBackendRenderTargets::GetMtlTextureInfo(rt, &info)) {
         this->submitToGpu(GrSyncCpu::kYes);
         // Nothing else to do here, will get cleaned up when the GrBackendRenderTarget
         // is deleted.

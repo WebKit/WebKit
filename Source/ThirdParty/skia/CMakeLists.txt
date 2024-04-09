@@ -353,6 +353,7 @@ add_library(Skia STATIC
     src/gpu/Blend.cpp
     src/gpu/BlendFormula.cpp
     src/gpu/BlurUtils.cpp
+    src/gpu/DataUtils.cpp
     src/gpu/DitherUtils.cpp
     src/gpu/PipelineUtils.cpp
     src/gpu/RectanizerPow2.cpp
@@ -849,11 +850,12 @@ add_library(Skia STATIC
     src/sksl/transform/SkSLReplaceConstVarsWithLiterals.cpp
     src/sksl/transform/SkSLRewriteIndexedSwizzle.cpp
 
-    src/utils/SkClipStackUtils.cpp
     src/utils/SkCharToGlyphCache.cpp
+    src/utils/SkClipStackUtils.cpp
     src/utils/SkCustomTypeface.cpp
     src/utils/SkDashPath.cpp
     src/utils/SkFloatToDecimal.cpp
+    src/utils/SkJSONWriter.cpp
     src/utils/SkMatrix22.cpp
     src/utils/SkNWayCanvas.cpp
     src/utils/SkPatchUtils.cpp

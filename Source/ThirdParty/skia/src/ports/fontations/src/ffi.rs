@@ -3,9 +3,13 @@ use ffi::{FillLinearParams, FillRadialParams};
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 use font_types::{BoundingBox, GlyphId, Pen};
-use read_fonts::{tables::colr::CompositeMode, FileRef, FontRef, ReadError, TableProvider};
+use read_fonts::{
+    tables::colr::CompositeMode, tables::os2::SelectionFlags, FileRef, FontRef, ReadError,
+    TableProvider,
+};
 use skrifa::{
     attribute::Style,
+    charmap::MappingIndex,
     color::{Brush, ColorGlyphFormat, ColorPainter, Transform},
     instance::{Location, Size},
     metrics::{GlyphMetrics, Metrics},
@@ -19,13 +23,19 @@ use std::pin::Pin;
 use crate::bitmap::{bitmap_glyph, bitmap_metrics, has_bitmap_glyph, png_data, BridgeBitmapGlyph};
 
 use crate::ffi::{
-    AxisWrapper, BridgeFontStyle, BridgeScalerMetrics, ColorPainterWrapper, ColorStop,
-    PaletteOverride, PathWrapper, SkiaDesignCoordinate,
+    AxisWrapper, BridgeFontStyle, BridgeLocalizedName, BridgeScalerMetrics, ClipBox,
+    ColorPainterWrapper, ColorStop, PaletteOverride, PathWrapper, SkiaDesignCoordinate,
 };
 
-fn lookup_glyph_or_zero(font_ref: &BridgeFontRef, codepoint: u32) -> u16 {
+fn make_mapping_index<'a>(font_ref: &'a BridgeFontRef) -> Box<BridgeMappingIndex> {
     font_ref
-        .with_font(|f| Some(f.charmap().map(codepoint)?.to_u16()))
+        .with_font(|f| Some(Box::new(BridgeMappingIndex(MappingIndex::new(f)))))
+        .unwrap()
+}
+
+fn lookup_glyph_or_zero(font_ref: &BridgeFontRef, map: &BridgeMappingIndex, codepoint: u32) -> u16 {
+    font_ref
+        .with_font(|f| Some(map.0.charmap(f).map(codepoint)?.to_u16()))
         .unwrap_or_default()
 }
 
@@ -33,6 +43,19 @@ fn num_glyphs(font_ref: &BridgeFontRef) -> u16 {
     font_ref
         .with_font(|f| Some(f.maxp().ok()?.num_glyphs()))
         .unwrap_or_default()
+}
+
+fn fill_glyph_to_unicode_map(font_ref: &BridgeFontRef, map: &mut [u32]) {
+    map.fill(0);
+    font_ref.with_font(|f| {
+        let mappings = f.charmap().mappings();
+        for item in mappings {
+            if map[item.1.to_u16() as usize] == 0 {
+                map[item.1.to_u16() as usize] = item.0;
+            }
+        }
+        Some(())
+    });
 }
 
 struct PathWrapperPen<'a> {
@@ -154,10 +177,10 @@ impl<'a> ColorPainter for ColorPainterImpl<'a> {
                     &FillRadialParams {
                         x0: c0.x,
                         y0: c0.y,
-                        r0: r0,
+                        r0,
                         x1: c1.x,
                         y1: c1.y,
-                        r1: r1,
+                        r1,
                     },
                     &mut bridge_color_stops,
                     extend as u8,
@@ -253,10 +276,10 @@ impl<'a> ColorPainter for ColorPainterImpl<'a> {
                     &FillRadialParams {
                         x0: c0.x,
                         y0: c0.y,
-                        r0: r0,
+                        r0,
                         x1: c1.x,
                         y1: c1.y,
-                        r1: r1,
+                        r1,
                     },
                     &mut bridge_color_stops,
                     extend as u8,
@@ -317,13 +340,11 @@ fn get_path(
     outlines
         .0
         .as_ref()
-        .map(|outlines| {
+        .and_then(|outlines| {
             let glyph = outlines.get(GlyphId::new(glyph_id))?;
             let draw_settings = DrawSettings::unhinted(Size::new(size), &coords.normalized_coords);
 
-            let mut pen_dump = PathWrapperPen {
-                path_wrapper: path_wrapper,
-            };
+            let mut pen_dump = PathWrapperPen { path_wrapper };
             match glyph.draw(draw_settings, &mut pen_dump) {
                 Err(_) => None,
                 Ok(metrics) => {
@@ -357,10 +378,10 @@ fn units_per_em_or_zero(font_ref: &BridgeFontRef) -> u16 {
 
 fn convert_metrics(skrifa_metrics: &Metrics) -> ffi::Metrics {
     ffi::Metrics {
-        top: skrifa_metrics.bounds.map_or_else(|| 0.0, |b| b.y_max),
-        bottom: skrifa_metrics.bounds.map_or_else(|| 0.0, |b| b.y_min),
-        x_min: skrifa_metrics.bounds.map_or_else(|| 0.0, |b| b.x_min),
-        x_max: skrifa_metrics.bounds.map_or_else(|| 0.0, |b| b.x_max),
+        top: skrifa_metrics.bounds.map_or(0.0, |b| b.y_max),
+        bottom: skrifa_metrics.bounds.map_or(0.0, |b| b.y_min),
+        x_min: skrifa_metrics.bounds.map_or(0.0, |b| b.x_min),
+        x_max: skrifa_metrics.bounds.map_or(0.0, |b| b.x_max),
         ascent: skrifa_metrics.ascent,
         descent: skrifa_metrics.descent,
         leading: skrifa_metrics.leading,
@@ -368,6 +389,10 @@ fn convert_metrics(skrifa_metrics: &Metrics) -> ffi::Metrics {
         max_char_width: skrifa_metrics.max_width.unwrap_or(0.0),
         x_height: skrifa_metrics.x_height.unwrap_or(0.0),
         cap_height: skrifa_metrics.cap_height.unwrap_or(0.0),
+        underline_position: skrifa_metrics.underline.map_or(f32::NAN, |u| u.offset),
+        underline_thickness: skrifa_metrics.underline.map_or(f32::NAN, |u| u.thickness),
+        strikeout_position: skrifa_metrics.strikeout.map_or(f32::NAN, |s| s.offset),
+        strikeout_thickness: skrifa_metrics.strikeout.map_or(f32::NAN, |s| s.thickness),
     }
 }
 
@@ -403,8 +428,6 @@ fn get_localized_strings<'a>(font_ref: &'a BridgeFontRef<'a>) -> Box<BridgeLocal
     })
 }
 
-use crate::ffi::BridgeLocalizedName;
-
 fn localized_name_next(
     bridge_localized_strings: &mut BridgeLocalizedStrings,
     out_localized_name: &mut BridgeLocalizedName,
@@ -433,7 +456,15 @@ fn english_or_first_font_name(font_ref: &BridgeFontRef, name_id: StringId) -> Op
 }
 
 fn family_name(font_ref: &BridgeFontRef) -> String {
-    english_or_first_font_name(font_ref, StringId::FAMILY_NAME).unwrap_or_default()
+    font_ref.with_font(|f| {
+        // https://learn.microsoft.com/en-us/typography/opentype/spec/os2#fsselection
+        // Bit 8 of the `fsSelection' field in the `OS/2' table indicates a WWS-only font face.
+        // When this bit is set it means *do not* use the WWS strings.
+        let use_wws = !f.os2().map_or(false, |t| t.fs_selection().contains(SelectionFlags::WWS));
+        if use_wws { english_or_first_font_name(font_ref, StringId::WWS_FAMILY_NAME) } else { None }
+         .or_else(|| english_or_first_font_name(font_ref, StringId::TYPOGRAPHIC_FAMILY_NAME))
+         .or_else(|| english_or_first_font_name(font_ref, StringId::FAMILY_NAME))
+    }).unwrap_or_default()
 }
 
 fn postscript_name(font_ref: &BridgeFontRef, out_string: &mut String) -> bool {
@@ -501,8 +532,6 @@ fn has_colrv1_glyph(font_ref: &BridgeFontRef, glyph_id: u16) -> bool {
 fn has_colrv0_glyph(font_ref: &BridgeFontRef, glyph_id: u16) -> bool {
     has_colr_glyph(font_ref, ColorGlyphFormat::ColrV0, glyph_id)
 }
-
-use crate::ffi::ClipBox;
 
 fn get_colrv1_clip_box(
     font_ref: &BridgeFontRef,
@@ -609,6 +638,36 @@ fn variation_position(
     coords.filtered_user_coords.len().try_into().unwrap()
 }
 
+fn coordinates_for_shifted_named_instance_index(
+    font_ref: &BridgeFontRef,
+    shifted_index: u32,
+    coords: &mut [SkiaDesignCoordinate],
+) -> isize {
+    font_ref
+        .with_font(|f| {
+            let fvar = f.fvar().ok()?;
+            let instances = fvar.instances().ok()?;
+            let index: usize = ((shifted_index >> 16) - 1).try_into().unwrap();
+            let instance_coords = instances.get(index).ok()?.coordinates;
+
+            if coords.len() != 0 {
+                if coords.len() < instance_coords.len() {
+                    return None;
+                }
+                let axis_coords = f.axes().iter().zip(instance_coords.iter()).enumerate();
+                for (i, axis_coord) in axis_coords {
+                    coords[i] = SkiaDesignCoordinate {
+                        axis: u32::from_be_bytes(axis_coord.0.tag().to_be_bytes()),
+                        value: axis_coord.1.get().to_f32(),
+                    };
+                }
+            }
+
+            Some(instance_coords.len() as isize)
+        })
+        .unwrap_or(-1)
+}
+
 fn populate_axes(font_ref: &BridgeFontRef, mut axis_wrapper: Pin<&mut AxisWrapper>) -> isize {
     font_ref
         .with_font(|f| {
@@ -637,7 +696,17 @@ fn populate_axes(font_ref: &BridgeFontRef, mut axis_wrapper: Pin<&mut AxisWrappe
 fn make_font_ref_internal<'a>(font_data: &'a [u8], index: u32) -> Result<FontRef<'a>, ReadError> {
     match FileRef::new(font_data) {
         Ok(file_ref) => match file_ref {
-            FileRef::Font(font_ref) => Ok(font_ref),
+            FileRef::Font(font_ref) => {
+                // Indices with the higher bits set are meaningful here and do not result in an
+                // error, as they may refer to a named instance and are taken into account by the
+                // Fontations typeface implementation,
+                // compare `coordinates_for_shifted_named_instance_index()`.
+                if index & 0xFFFF > 0 {
+                    Err(ReadError::InvalidCollectionIndex(index))
+                } else {
+                    Ok(font_ref)
+                }
+            }
             FileRef::Collection(collection) => collection.get(index),
         },
         Err(e) => Err(e),
@@ -683,13 +752,27 @@ fn resolve_into_normalized_coords(
         .map(|coord| (Tag::from_be_bytes(coord.axis.to_be_bytes()), coord.value));
     let bridge_normalized_coords = font_ref
         .with_font(|f| {
+            let merged_defaults_with_user = f
+                .axes()
+                .iter()
+                .map(|axis| (axis.tag(), axis.default_value()))
+                .chain(design_coords.iter().map(|user_coord| {
+                    (
+                        Tag::from_be_bytes(user_coord.axis.to_be_bytes()),
+                        user_coord.value,
+                    )
+                }));
             Some(BridgeNormalizedCoords {
-                filtered_user_coords: f.axes().filter(variation_tuples.clone()).collect(),
+                filtered_user_coords: f.axes().filter(merged_defaults_with_user).collect(),
                 normalized_coords: f.axes().location(variation_tuples),
             })
         })
         .unwrap_or_default();
     Box::new(bridge_normalized_coords)
+}
+
+fn normalized_coords_equal(a: &BridgeNormalizedCoords, b: &BridgeNormalizedCoords) -> bool {
+    a.normalized_coords.coords() == b.normalized_coords.coords()
 }
 
 fn draw_colr_glyph(
@@ -716,14 +799,14 @@ fn next_color_stop(color_stops: &mut BridgeColorStops, out_stop: &mut ColorStop)
         out_stop.alpha = color_stop.alpha;
         out_stop.stop = color_stop.offset;
         out_stop.palette_index = color_stop.palette_index;
-        return true;
+        true
     } else {
-        return false;
+        false
     }
 }
 
 fn num_color_stops(color_stops: &BridgeColorStops) -> usize {
-    return color_stops.num_stops;
+    color_stops.num_stops
 }
 
 fn get_font_style(font_ref: &BridgeFontRef, style: &mut BridgeFontStyle) -> bool {
@@ -732,21 +815,20 @@ fn get_font_style(font_ref: &BridgeFontRef, style: &mut BridgeFontStyle) -> bool
             let attrs = f.attributes();
             let skia_weight = attrs.weight.value().round() as i32;
             let skia_slant = match attrs.style {
-                x if x == Style::Normal => 0,
-                x if x == Style::Italic => 1,
-                        _ /* kOblique_Slant */=> 2
+                Style::Normal => 0,
+                Style::Italic => 1,
+                _ => 2, /* kOblique_Slant */
             };
-            // Match back the skrifa values to get the system values (more or less)
-            let skia_width = match (attrs.stretch.ratio() * 1000.0).round() as i32 {
-                x if x <= 500 => 1,
-                x if x <= 625 => 2,
-                x if x <= 725 => 3,
-                x if x <= 875 => 4,
-                x if x <= 1000 => 5,
-                x if x <= 1125 => 6,
-                x if x <= 1250 => 7,
-                x if x <= 1500 => 8,
-                x if x <= 2000 => 9,
+            //1-9 map to 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.5, 2.0
+            let skia_width = match attrs.stretch.ratio() {
+                x if x <= 0.5625 => 1,
+                x if x <= 0.6875 => 2,
+                x if x <= 0.8125 => 3,
+                x if x <= 0.9375 => 4,
+                x if x <= 1.0625 => 5,
+                x if x <= 1.1875 => 6,
+                x if x <= 1.3750 => 7,
+                x if x <= 1.7500 => 8,
                 _ => 9,
             };
 
@@ -808,7 +890,7 @@ fn is_serif_style(font_ref: &BridgeFontRef) -> bool {
             match family_type {
                 FAMILY_TYPE_TEXT_AND_DISPLAY => {
                     let serif_style = panose[1];
-                    Some(serif_style >= SERIF_STYLE_COVE && serif_style <= SERIF_STYLE_TRIANGLE)
+                    Some((SERIF_STYLE_COVE..=SERIF_STYLE_TRIANGLE).contains(&serif_style))
                 }
                 _ => None,
             }
@@ -870,7 +952,11 @@ mod bitmap {
         FontRef, TableProvider,
     };
 
-    use font_types::GlyphId;
+    use font_types::{BoundingBox, GlyphId};
+    use skrifa::{
+        instance::{LocationRef, Size},
+        metrics::GlyphMetrics,
+    };
 
     use crate::{ffi::BitmapMetrics as FfiBitmapMetrics, BridgeFontRef};
 
@@ -986,6 +1072,21 @@ mod bitmap {
             .unwrap_or_default()
     }
 
+    fn glyf_bounds(font_ref: &FontRef, glyph_id: GlyphId) -> Option<BoundingBox<i16>> {
+        let glyf_table = font_ref.glyf().ok()?;
+        let glyph = font_ref
+            .loca(None)
+            .ok()?
+            .get_glyf(glyph_id, &glyf_table)
+            .ok()??;
+        Some(BoundingBox {
+            x_min: glyph.x_min(),
+            y_min: glyph.y_min(),
+            x_max: glyph.x_max(),
+            y_max: glyph.y_max(),
+        })
+    }
+
     pub unsafe fn bitmap_glyph<'a>(
         font_ref: &'a BridgeFontRef,
         glyph_id: u16,
@@ -995,11 +1096,25 @@ mod bitmap {
         font_ref
             .with_font(|font| {
                 if let Some(sbix_glyph) = sbix_glyph(font, glyph_id, Some(font_size)) {
+                    // https://learn.microsoft.com/en-us/typography/opentype/spec/sbix
+                    // "If there is a glyph contour, the glyph design space
+                    // origin for the graphic is placed at the lower left corner
+                    // of the glyph bounding box (xMin, yMin)."
+                    let glyf_bb = glyf_bounds(font, glyph_id).unwrap_or_default();
+                    let glyf_left_side_bearing =
+                        GlyphMetrics::new(font, Size::unscaled(), LocationRef::default())
+                            .left_side_bearing(glyph_id)
+                            .unwrap_or_default();
+
                     return Some(Box::new(BridgeBitmapGlyph {
                         data: Some(BitmapPixelData::PngData(sbix_glyph.glyph_data.data())),
                         metrics: FfiBitmapMetrics {
-                            bearing_x: sbix_glyph.glyph_data.origin_offset_x() as f32,
-                            bearing_y: sbix_glyph.glyph_data.origin_offset_y() as f32,
+                            bearing_x: glyf_left_side_bearing,
+                            inner_bearing_x: sbix_glyph.glyph_data.origin_offset_x() as f32,
+                            bearing_y: glyf_bb.y_min as f32,
+                            inner_bearing_y: sbix_glyph.glyph_data.origin_offset_y() as f32,
+                            width: glyf_bb.x_max as f32 - glyf_bb.x_min as f32,
+                            height: glyf_bb.y_max as f32 - glyf_bb.y_min as f32,
                             ppem_x: sbix_glyph.ppem as f32,
                             ppem_y: sbix_glyph.ppem as f32,
                             placement_origin_bottom_left: true,
@@ -1026,6 +1141,8 @@ mod bitmap {
                                 bearing_y,
                                 ppem_x: cblc_glyph.ppem_x as f32,
                                 ppem_y: cblc_glyph.ppem_y as f32,
+                                width: f32::INFINITY,
+                                height: f32::INFINITY,
                                 ..Default::default()
                             },
                         }));
@@ -1048,6 +1165,8 @@ mod bitmap {
     }
 }
 
+pub struct BridgeMappingIndex(MappingIndex);
+
 #[cxx::bridge(namespace = "fontations_ffi")]
 mod ffi {
     struct ColorStop {
@@ -1069,6 +1188,10 @@ mod ffi {
         x_max: f32,
         x_height: f32,
         cap_height: f32,
+        underline_position: f32,
+        underline_thickness: f32,
+        strikeout_position: f32,
+        strikeout_thickness: f32,
     }
 
     struct BridgeLocalizedName {
@@ -1076,6 +1199,7 @@ mod ffi {
         language: String,
     }
 
+    #[derive(PartialEq, Debug, Default)]
     struct SkiaDesignCoordinate {
         axis: u32,
         value: f32,
@@ -1130,6 +1254,7 @@ mod ffi {
     }
 
     // This type is used to mirror SkFontStyle values for Weight, Slant and Width
+    #[derive(Default)]
     pub struct BridgeFontStyle {
         pub weight: i32,
         pub slant: i32,
@@ -1138,17 +1263,28 @@ mod ffi {
 
     #[derive(Default)]
     struct BitmapMetrics {
+        // Outer glyph bearings that affect the computed bounds. We distinguish
+        // those here from `inner_bearing_*` to account for CoreText behavior in
+        // SBIX placement. Where the sbix originOffsetX/Y are applied only
+        // within the bounds. Specified in font units.
         bearing_x: f32,
         bearing_y: f32,
-        // Not returning CBDT/CBLC encoded width and height values as these
-        // should be retrieved from the PNG, which is avoids a potential
-        // mismatch between stored metrics and actual image dimensions.  ppem_*
-        // values are used to compute a scale factor on the client side.
+        // Scale factors to scale image to 1em.
         ppem_x: f32,
         ppem_y: f32,
         // Account for the fact that Sbix and CBDT/CBLC have a different origin
         // definition.
         placement_origin_bottom_left: bool,
+        // For SBIX, width and height in font units as determined from maximum x
+        // and y values from the corresponding contour glyph.  For CBDT, set to
+        // f32::INFINITY.
+        width: f32,
+        height: f32,
+        // For SBIX, specified as a pixel value, to be scaled by `ppem_*` as an
+        // offset applied to placing the image within the bounds rectangle.
+        // 0 for CBDT, CBLC.
+        inner_bearing_x: f32,
+        inner_bearing_y: f32,
     }
 
     extern "Rust" {
@@ -1173,7 +1309,14 @@ mod ffi {
         /// Returns false if the data cannot be interpreted as a font or collection.
         unsafe fn font_or_collection<'a>(font_data: &'a [u8], num_fonts: &mut u32) -> bool;
 
-        fn lookup_glyph_or_zero(font_ref: &BridgeFontRef, codepoint: u32) -> u16;
+        type BridgeMappingIndex;
+        unsafe fn make_mapping_index<'a>(font_ref: &'a BridgeFontRef) -> Box<BridgeMappingIndex>;
+        fn lookup_glyph_or_zero(
+            font_ref: &BridgeFontRef,
+            map: &BridgeMappingIndex,
+            codepoint: u32,
+        ) -> u16;
+
         fn get_path(
             outlines: &BridgeOutlineCollection,
             glyph_id: u16,
@@ -1199,6 +1342,7 @@ mod ffi {
             coords: &BridgeNormalizedCoords,
         ) -> Metrics;
         fn num_glyphs(font_ref: &BridgeFontRef) -> u16;
+        fn fill_glyph_to_unicode_map(font_ref: &BridgeFontRef, map: &mut [u32]);
         fn family_name(font_ref: &BridgeFontRef) -> String;
         fn postscript_name(font_ref: &BridgeFontRef, out_string: &mut String) -> bool;
 
@@ -1238,6 +1382,19 @@ mod ffi {
             coords: &BridgeNormalizedCoords,
             coordinates: &mut [SkiaDesignCoordinate],
         ) -> isize;
+        // Fills the passed-in slice with the axis coordinates for a given
+        // shifted named instance index. A shifted named instance index is a
+        // 32bit value that contains the index to a named instance left-shifted
+        // by 16bits and offset by 1. This mirrors FreeType behavior to smuggle
+        // named instance identifiers through a TrueType collection index.
+        // Returns the number of coordinates copied. If the slice length is 0,
+        // performs no copy but only returns the number of axis coordinates for
+        // the given shifted index. Returns -1 on error.
+        fn coordinates_for_shifted_named_instance_index(
+            font_ref: &BridgeFontRef,
+            shifted_index: u32,
+            coords: &mut [SkiaDesignCoordinate],
+        ) -> isize;
 
         fn populate_axes(font_ref: &BridgeFontRef, axis_wrapper: Pin<&mut AxisWrapper>) -> isize;
 
@@ -1255,6 +1412,8 @@ mod ffi {
             font_ref: &BridgeFontRef,
             design_coords: &[SkiaDesignCoordinate],
         ) -> Box<BridgeNormalizedCoords>;
+
+        fn normalized_coords_equal(a: &BridgeNormalizedCoords, b: &BridgeNormalizedCoords) -> bool;
 
         fn draw_colr_glyph(
             font_ref: &BridgeFontRef,
@@ -1388,23 +1547,14 @@ mod ffi {
     }
 }
 
-impl Default for BridgeFontStyle {
-    fn default() -> Self {
-        Self {
-            weight: 0,
-            slant: 0,
-            width: 0,
-        }
-    }
-}
-
 /// Tests to exercise COLR and CPAL parts of the Fontations FFI.
 /// Run using `$ bazel test --with_fontations //src/ports/fontations:test_ffi`
 #[cfg(test)]
 mod test {
     use crate::{
-        ffi::BridgeFontStyle, ffi::PaletteOverride, font_or_collection, font_ref_is_valid,
-        get_font_style, make_font_ref, resolve_palette,
+        coordinates_for_shifted_named_instance_index,
+        ffi::{BridgeFontStyle, PaletteOverride, SkiaDesignCoordinate},
+        font_or_collection, font_ref_is_valid, get_font_style, make_font_ref, resolve_palette,
     };
     use std::fs;
 
@@ -1524,5 +1674,69 @@ mod test {
         assert_eq!(font_style.width, 5); // Skia normal
         assert_eq!(font_style.slant, 0); // Skia upright
         assert_eq!(font_style.weight, 400); // Skia normal
+    }
+
+    #[test]
+    fn test_shifted_named_instance_index() {
+        let file_buffer =
+            fs::read(TEST_VARIABLE).expect("Font to test named instances could not be opened.");
+        let font_ref = make_font_ref(&file_buffer, 0);
+        assert!(font_ref_is_valid(&font_ref));
+        // Named instances are 1-indexed.
+        const SHIFTED_NAMED_INSTANCE_INDEX: u32 = 5 << 16;
+        const OUT_OF_BOUNDS_NAMED_INSTANCE_INDEX: u32 = 6 << 16;
+
+        let num_coords = coordinates_for_shifted_named_instance_index(
+            &font_ref,
+            SHIFTED_NAMED_INSTANCE_INDEX,
+            &mut [],
+        );
+        assert_eq!(num_coords, 2);
+
+        let mut too_small: [SkiaDesignCoordinate; 1] = Default::default();
+        let num_coords = coordinates_for_shifted_named_instance_index(
+            &font_ref,
+            SHIFTED_NAMED_INSTANCE_INDEX,
+            &mut too_small,
+        );
+        assert_eq!(num_coords, -1);
+
+        let mut received_coords: [SkiaDesignCoordinate; 2] = Default::default();
+        let num_coords = coordinates_for_shifted_named_instance_index(
+            &font_ref,
+            SHIFTED_NAMED_INSTANCE_INDEX,
+            &mut received_coords,
+        );
+        assert_eq!(num_coords, 2);
+        assert_eq!(
+            received_coords[0],
+            SkiaDesignCoordinate {
+                axis: u32::from_be_bytes([b'w', b'g', b'h', b't']),
+                value: 400.0
+            }
+        );
+        assert_eq!(
+            received_coords[1],
+            SkiaDesignCoordinate {
+                axis: u32::from_be_bytes([b'w', b'd', b't', b'h']),
+                value: 200.0
+            }
+        );
+
+        let mut too_large: [SkiaDesignCoordinate; 5] = Default::default();
+        let num_coords = coordinates_for_shifted_named_instance_index(
+            &font_ref,
+            SHIFTED_NAMED_INSTANCE_INDEX,
+            &mut too_large,
+        );
+        assert_eq!(num_coords, 2);
+
+        // Index out of bounds:
+        let num_coords = coordinates_for_shifted_named_instance_index(
+            &font_ref,
+            OUT_OF_BOUNDS_NAMED_INSTANCE_INDEX,
+            &mut [],
+        );
+        assert_eq!(num_coords, -1);
     }
 }

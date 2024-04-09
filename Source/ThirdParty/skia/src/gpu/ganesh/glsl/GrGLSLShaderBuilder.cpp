@@ -4,9 +4,10 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
-
 #include "src/gpu/ganesh/glsl/GrGLSLShaderBuilder.h"
 
+#include "include/private/gpu/ganesh/GrTypesPriv.h"
+#include "modules/skcms/skcms.h"
 #include "src/core/SkSLTypeShared.h"
 #include "src/gpu/Blend.h"
 #include "src/gpu/Swizzle.h"
@@ -14,7 +15,8 @@
 #include "src/gpu/ganesh/GrShaderVar.h"
 #include "src/gpu/ganesh/glsl/GrGLSLColorSpaceXformHelper.h"
 #include "src/gpu/ganesh/glsl/GrGLSLProgramBuilder.h"
-#include "src/sksl/ir/SkSLVarDeclarations.h"
+#include "src/gpu/ganesh/glsl/GrGLSLProgramDataManager.h"
+#include "src/sksl/SkSLGLSL.h"
 
 using namespace skia_private;
 
@@ -150,8 +152,9 @@ void GrGLSLShaderBuilder::appendColorGamutXform(SkString* out,
     // function, one for the (inverse) destination transfer function, and one for the gamut xform.
     // Any combination of these may be present, although some configurations are much more likely.
 
-    auto emitTFFunc = [=](const char* name, GrGLSLProgramDataManager::UniformHandle uniform,
-                          skcms_TFType tfType) {
+    auto emitTFFunc = [this, &uniformHandler](const char* name,
+                                              GrGLSLProgramDataManager::UniformHandle uniform,
+                                              skcms_TFType tfType) {
         const GrShaderVar gTFArgs[] = { GrShaderVar("x", SkSLType::kFloat) };
         const char* coeffs = uniformHandler->getUniformCStr(uniform);
         SkString body;

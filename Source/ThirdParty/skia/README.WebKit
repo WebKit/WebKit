@@ -1,11 +1,7 @@
 This directory contains a copy of Skia from the official repository.
 
   - URL: https://skia.googlesource.com/skia
-  - Commit: f4f7364eb73a016f363d3d66ff3007e3a94e3f5e
-
-Changes on top of upstream Skia:
-
-  - Added files with an Epoxy GL/EGL symbol resolver.
+  - Commit: 5b62c0022f92b3fea4fd9b99e1e517fe002cf15a
 
 The simplest way of updating its contents is to re-create the directory
 from scratch, and restoring the needed files with Git. Example commands:

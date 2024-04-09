@@ -85,6 +85,9 @@ public:
 
     const Transform& localToDeviceTransform();
 
+    // Flushes any pending work to the recorder and then deregisters and abandons the recorder.
+    void setImmutable() override;
+
     SkStrikeDeviceInfo strikeDeviceInfo() const override;
 
     TextureProxy* target();
@@ -262,6 +265,9 @@ private:
                                                           bool requireMSAA) const;
 
     bool needsFlushBeforeDraw(int numNewDraws, DstReadRequirement) const;
+
+    // Flush internal work, such as pending clip draws and atlas uploads, into the Device's DrawTask
+    void internalFlush();
 
     Recorder* fRecorder;
     sk_sp<DrawContext> fDC;

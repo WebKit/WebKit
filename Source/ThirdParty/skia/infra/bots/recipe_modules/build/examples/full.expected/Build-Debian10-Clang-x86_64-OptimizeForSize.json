@@ -1,6 +1,32 @@
 [
   {
     "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-gn"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-gn"
+  },
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-ninja"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-ninja"
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -16,19 +42,6 @@
       "@@@STEP_LOG_LINE@VERSION@42@@@",
       "@@@STEP_LOG_END@VERSION@@@"
     ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "[START_DIR]/cache/work/skia/bin/fetch-gn"
-    ],
-    "cwd": "[START_DIR]/cache/work/skia",
-    "env": {
-      "CHROME_HEADLESS": "1",
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "fetch-gn"
   },
   {
     "cmd": [
@@ -66,7 +79,7 @@
   },
   {
     "cmd": [
-      "ninja",
+      "[START_DIR]/cache/work/skia/third_party/ninja/ninja",
       "-C",
       "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-OptimizeForSize/OptimizeForSize"
     ],
@@ -103,7 +116,7 @@
       "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
       "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-OptimizeForSize/OptimizeForSize",
       "[START_DIR]/[SWARM_OUT_DIR]/out/OptimizeForSize",
-      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skottie_tool,lib/*.so,run_testlab"
     ],
     "infra_step": true,
     "name": "copy build products"
