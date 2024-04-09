@@ -458,22 +458,31 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
 
 void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    static NSString * const apiName = @"tabs.sendMessage()";
+
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"tabs.sendMessage()", nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
-    auto contentScriptProcesses = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, WebExtensionContentWorldType::ContentScript);
-    if (contentScriptProcesses.isEmpty()) {
+    if (!tab->extensionHasPermission()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+        return;
+    }
+
+    auto targetContentWorldType = isURLForThisExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
+
+    auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnMessage, targetContentWorldType);
+    if (processes.isEmpty()) {
         completionHandler({ });
         return;
     }
 
-    ASSERT(contentScriptProcesses.size() == 1);
-    auto process = contentScriptProcesses.takeAny();
+    ASSERT(processes.size() == 1);
+    auto process = processes.takeAny();
 
-    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::ContentScript, messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](String&& replyJSON) mutable {
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](String&& replyJSON) mutable {
         completionHandler(WTFMove(replyJSON));
     }, identifier());
 }
@@ -482,26 +491,31 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
 {
     static NSString * const apiName = @"tabs.connect()";
 
-    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
-    constexpr auto targetContentWorldType = WebExtensionContentWorldType::ContentScript;
-
-    // Add 1 for the starting port here so disconnect will balance with a decrement.
-    addPorts(sourceContentWorldType, targetContentWorldType, channelIdentifier, { senderParameters.pageProxyIdentifier });
-
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
         completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
         return;
     }
 
-    auto contentScriptProcesses = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
-    if (contentScriptProcesses.isEmpty()) {
+    if (!tab->extensionHasPermission()) {
+        completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+        return;
+    }
+
+    constexpr auto sourceContentWorldType = WebExtensionContentWorldType::Main;
+    auto targetContentWorldType = isURLForThisExtension(tab->url()) ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
+
+    // Add 1 for the starting port here so disconnect will balance with a decrement.
+    addPorts(sourceContentWorldType, targetContentWorldType, channelIdentifier, { senderParameters.pageProxyIdentifier });
+
+    auto processes = tab->processes(WebExtensionEventListenerType::RuntimeOnConnect, targetContentWorldType);
+    if (processes.isEmpty()) {
         completionHandler(toWebExtensionError(apiName, nil, @"no runtime.onConnect listeners found"));
         return;
     }
 
-    ASSERT(contentScriptProcesses.size() == 1);
-    auto process = contentScriptProcesses.takeAny();
+    ASSERT(processes.size() == 1);
+    auto process = processes.takeAny();
 
     process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
         addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
