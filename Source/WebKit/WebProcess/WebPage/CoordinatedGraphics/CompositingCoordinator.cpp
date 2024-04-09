@@ -173,6 +173,10 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
         m_forceFrameSync = false;
 #endif
     }
+#if HAVE(DISPLAY_LINK)
+    else
+        m_client.updateScene();
+#endif
 
     m_page.didUpdateRendering();
 
