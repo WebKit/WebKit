@@ -2167,7 +2167,6 @@ webkit.org/b/215658 svg/custom/object-sizing-no-width-height.xhtml [ Pass Failur
 
 webkit.org/b/215767 [ Debug ] inspector/animation/nameChanged.html [ Pass Crash ]
 
-webkit.org/b/232322 [ BigSur Debug ] inspector/audit/run-accessibility.html [ Slow ]
 
 webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeout ]
 
@@ -2206,51 +2205,22 @@ webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure
 
 webkit.org/b/221095 [ Monterey+ ] media/mediacapabilities/vp9.html [ Skip ]
 
-webkit.org/b/221146 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Failure ]
 
 webkit.org/b/221369 [ Monterey+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
 webkit.org/b/220552 [ Monterey+ ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
 
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
-webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
 
 webkit.org/b/221717 [ Monterey+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
 
-webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222493 [ Monterey+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
 
-webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/223193 [ BigSur ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
-
-webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/send-response-event-order.htm [ Pass Failure ]
-
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
-
-webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html [ Pass Failure ]
-
-# webkit.org/b/224066 Updating test expectations for 10 tests
-[ BigSur ] webanimations/accelerated-animation-easing-and-direction-update.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
-
-# webkit.org/b/223904 Updating test expectations for 9 tests
-[ BigSur ] transforms/2d/scale-change-composited.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/2d/scale-composited.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/2d/translate-change-composited.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/2d/translate-composited.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/2d/rotate-change-composited.html [ Pass ImageOnlyFailure ]
-[ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]
 
 # rdar://80332264 ([ Monterey wk1 ] compositing/fixed-with-main-thread-scrolling.html has multiple failures)
 [ Monterey ] compositing/fixed-with-main-thread-scrolling.html [ Skip ]
@@ -2271,9 +2241,7 @@ webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScrip
 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
-[ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
 
-[ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 
@@ -2281,9 +2249,7 @@ webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]
 
 webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Pass Failure ]
 
-webkit.org/b/226377 [ BigSur ] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html [ Pass Failure ]
 
-webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]
 
 # testRunner.setShouldSwapToEphemeralSessionOnNextNavigation() does not work with window.open() in DRT.
 fast/html/broadcast-channel-between-different-sessions.html [ Skip ]
@@ -2300,9 +2266,6 @@ webkit.org/b/227367 media/media-fullscreen-return-to-inline.html [ Pass Timeout 
 webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/227237 Updating test expectations for 3 tests.
-[ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html [ Pass ImageOnlyFailure ]
-[ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1.html [ Pass ImageOnlyFailure ]
-[ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1.html [ Pass ImageOnlyFailure ]
 
 # rdar://80331434 ([ Mac WK1 Release ] accessibility/loading-iframe-sends-notification.html is a flaky timeout)
 [ Release ] accessibility/loading-iframe-sends-notification.html [ Pass Timeout ]
@@ -2317,27 +2280,19 @@ webkit.org/b/228796 [ Monterey+ ] webaudio/silent-audio-interrupted-in-backgroun
 
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
-webkit.org/b/228084 [ BigSur Release ] media/video-restricted-no-preload-auto.html [ Pass Failure ]
 
 webkit.org/b/228801 [ Release ] media/video-page-visibility-restriction.html [ Pass Timeout ]
 
 webkit.org/b/230071 media/video-preload.html [ Pass Failure ]
 
-webkit.org/b/227973 [ BigSur Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html [ Pass Failure ]
 
-webkit.org/b/225495 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-023.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/225490 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-containing-block-002.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/225470 [ BigSur Release ] svg/filters/feDiffuseLighting-bottomRightPixel.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/225420 [ BigSur Release ] imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-017.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Pass Timeout ]
 
 webkit.org/b/244499 [ Debug ]  imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Crash ]
 
-webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm [ Pass Timeout ]
 
 webkit.org/b/232276 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/spin-by-blocking-style-sheet.html [ Pass Failure ]
 
@@ -2373,16 +2328,13 @@ webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
-webkit.org/b/230055 [ BigSur ] webrtc/datachannel/datachannel-page-cache-send.html [ Pass Timeout ]
 
 webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
 
-webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
 
-webkit.org/b/230848 [ BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
