@@ -64,6 +64,8 @@ static constexpr auto minimumDistanceToConsiderEdgesEquidistant = 2;
 static constexpr auto selectorBasedVisibilityAdjustmentTimeLimit = 30_s;
 static constexpr auto adjustmentClientRectCleanUpDelay = 15_s;
 
+using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
+
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
     , m_recentAdjustmentClientRectsCleanUpTimer { *this, &ElementTargetingController::cleanUpAdjustmentClientRects, adjustmentClientRectCleanUpDelay }
@@ -124,7 +126,7 @@ static inline String computeIDSelector(Element& element)
         if (auto* matches = element.document().getAllElementsById(elementID); matches && matches->size() == 1)
             return makeString('#', elementID);
     }
-    return { };
+    return emptyString();
 }
 
 static inline String computeClassSelector(Element& element)
@@ -139,35 +141,87 @@ static inline String computeClassSelector(Element& element)
         if (querySelectorMatchesOneElement(element.document(), selector))
             return selector;
     }
-    return { };
+    return emptyString();
 }
 
-static String parentRelativeSelectorRecursive(Element&);
-static String selectorForElementRecursive(Element& element)
+static String siblingRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+static String parentRelativeSelectorRecursive(Element&, ElementSelectorCache&);
+
+static String shortestSelector(const Vector<String>& selectors)
 {
+    auto minLength = std::numeric_limits<size_t>::max();
+    String shortestSelector;
+    for (auto& selector : selectors) {
+        if (selector.length() >= minLength)
+            continue;
+
+        minLength = selector.length();
+        shortestSelector = selector;
+    }
+    return shortestSelector;
+}
+
+static String selectorForElementRecursive(Element& element, ElementSelectorCache& cache)
+{
+    if (auto selector = cache.get(element))
+        return *selector;
+
+    Vector<String> selectors;
+    selectors.reserveInitialCapacity(5);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
-        return selector;
+        selectors.append(WTFMove(selector));
 
     if (auto selector = computeClassSelector(element); !selector.isEmpty())
-        return selector;
+        selectors.append(WTFMove(selector));
 
     if (querySelectorMatchesOneElement(element.document(), element.tagName()))
-        return element.tagName();
+        selectors.append(element.tagName());
 
-    return parentRelativeSelectorRecursive(element);
+    if (auto selector = shortestSelector(selectors); !selector.isEmpty()) {
+        cache.add(element, selector);
+        return selector;
+    }
+
+    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        selectors.append(WTFMove(selector));
+
+    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        selectors.append(WTFMove(selector));
+
+    auto selector = shortestSelector(selectors);
+    cache.add(element, selector);
+    return selector;
 }
 
-static String parentRelativeSelectorRecursive(Element& element)
+static String siblingRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
+{
+    RefPtr<Element> siblingElement;
+    for (RefPtr sibling = element.previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        siblingElement = dynamicDowncast<Element>(sibling);
+        if (siblingElement)
+            break;
+    }
+
+    if (!siblingElement)
+        return emptyString();
+
+    if (auto selector = selectorForElementRecursive(*siblingElement, cache); !selector.isEmpty())
+        return makeString(WTFMove(selector), " + "_s, element.tagName());
+
+    return emptyString();
+}
+
+static String parentRelativeSelectorRecursive(Element& element, ElementSelectorCache& cache)
 {
     RefPtr parent = element.parentElement();
     if (!parent)
-        return { };
+        return emptyString();
 
-    if (auto selector = selectorForElementRecursive(*parent); !selector.isEmpty()) {
+    if (auto selector = selectorForElementRecursive(*parent, cache); !selector.isEmpty()) {
         auto selectorPrefix = makeString(WTFMove(selector), " > "_s, element.tagName());
         auto [childIndex, childCountOfType] = childIndexByType(element, *parent);
         if (childIndex == notFound)
-            return { };
+            return emptyString();
 
         if (childCountOfType == 1)
             return selectorPrefix;
@@ -181,11 +235,11 @@ static String parentRelativeSelectorRecursive(Element& element)
         return makeString(WTFMove(selectorPrefix), ":nth-child("_s, childIndex + 1, ')');
     }
 
-    return { };
+    return emptyString();
 }
 
 // Returns multiple CSS selectors that uniquely match the target element.
-static Vector<String> selectorsForTarget(Element& element)
+static Vector<String> selectorsForTarget(Element& element, ElementSelectorCache& cache)
 {
     if (element.isInShadowTree())
         return { };
@@ -208,12 +262,13 @@ static Vector<String> selectorsForTarget(Element& element)
         if (pseudoSelector.isEmpty())
             return { };
 
-        return selectorsForTarget(*host).map([&](auto hostSelector) {
+        return selectorsForTarget(*host, cache).map([&](auto hostSelector) {
             return makeString(hostSelector, pseudoSelector);
         });
     }
 
     Vector<String> selectors;
+    selectors.reserveInitialCapacity(5);
     if (auto selector = computeIDSelector(element); !selector.isEmpty())
         selectors.append(WTFMove(selector));
 
@@ -223,11 +278,26 @@ static Vector<String> selectorsForTarget(Element& element)
     if (querySelectorMatchesOneElement(element.document(), element.tagName()))
         selectors.append(element.tagName());
 
-    if (selectors.isEmpty()) {
-        // Only fall back on the parent relative selector as a last resort.
-        if (auto selector = parentRelativeSelectorRecursive(element); !selector.isEmpty())
-            selectors.append(WTFMove(selector));
-    }
+    std::sort(selectors.begin(), selectors.end(), [](auto& first, auto& second) {
+        return first.length() < second.length();
+    });
+
+    Vector<String> relativeSelectors;
+    relativeSelectors.reserveInitialCapacity(2);
+    if (auto selector = parentRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        relativeSelectors.append(WTFMove(selector));
+
+    if (auto selector = siblingRelativeSelectorRecursive(element, cache); !selector.isEmpty())
+        relativeSelectors.append(WTFMove(selector));
+
+    std::sort(relativeSelectors.begin(), relativeSelectors.end(), [](auto& first, auto& second) {
+        return first.length() < second.length();
+    });
+
+    selectors.appendVector(WTFMove(relativeSelectors));
+
+    if (!selectors.isEmpty())
+        cache.add(element, selectors.first());
 
     return selectors;
 }
@@ -260,7 +330,7 @@ static FloatRect computeClientRect(RenderObject& renderer)
 }
 
 enum class IsUnderPoint : bool { No, Yes };
-static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint)
+static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint isUnderPoint, ElementSelectorCache& cache)
 {
     CheckedPtr renderer = element.renderer();
     return {
@@ -268,7 +338,7 @@ static TargetedElementInfo targetedElementInfo(Element& element, IsUnderPoint is
         .documentIdentifier = element.document().identifier(),
         .offsetEdges = computeOffsetEdges(renderer->style()),
         .renderedText = TextExtraction::extractRenderedText(element),
-        .selectors = selectorsForTarget(element),
+        .selectors = selectorsForTarget(element, cache),
         .boundsInRootView = element.boundingBoxInRootViewCoordinates(),
         .boundsInClientCoordinates = computeClientRect(*renderer),
         .positionType = renderer->style().position(),
@@ -455,10 +525,11 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
 
     m_recentAdjustmentClientRectsCleanUpTimer.restart();
 
+    ElementSelectorCache cache;
     Vector<TargetedElementInfo> results;
     results.reserveInitialCapacity(targets.size());
     for (auto iterator = targets.rbegin(); iterator != targets.rend(); ++iterator) {
-        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes));
+        results.append(targetedElementInfo(*iterator, IsUnderPoint::Yes, cache));
         addOutOfFlowTargetClientRectIfNeeded(*iterator);
     }
 
@@ -501,7 +572,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     }();
 
     for (auto& element : nearbyTargets) {
-        results.append(targetedElementInfo(element, IsUnderPoint::No));
+        results.append(targetedElementInfo(element, IsUnderPoint::No, cache));
         addOutOfFlowTargetClientRectIfNeeded(element);
     }
 
