@@ -568,9 +568,12 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
     // We can't just push this logic down into the platform-specific Gradient code,
     // because we have to know the extent of the gradient, and possible move the end points.
     if (repeating == CSSGradientRepeat::Repeating && numberOfStops > 1) {
+        float maxExtent = gradientAdapter.maxExtent(maxLengthForRepeat, gradientLength);
         // If the difference in the positions of the first and last color-stops is 0,
         // the gradient defines a solid-color image with the color of the last color-stop in the rule.
         float gradientRange = *stops.last().offset - *stops.first().offset;
+        if (maxExtent > 1)
+            gradientRange /= maxExtent;
         if (!gradientRange) {
             stops.first().offset = 0;
             stops.first().color = stops.last().color;
@@ -587,7 +590,6 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
         } else {
             // Since the gradient range is deemed big enough, the amount of necessary stops is
             // calculated for both the [0, first-offset] and the [last-offset, maxExtent] ranges.
-            float maxExtent = gradientAdapter.maxExtent(maxLengthForRepeat, gradientLength);
             CheckedSize numberOfGeneratedStopsBeforeFirst;
             CheckedSize numberOfGeneratedStopsAfterLast;
 
