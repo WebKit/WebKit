@@ -107,12 +107,8 @@
 #endif
 
 #if USE(EGL) && !USE(LIBEPOXY)
-#if !defined(PFNEGLCREATEIMAGEPROC)
 typedef EGLImage (EGLAPIENTRYP PFNEGLCREATEIMAGEPROC) (EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, const EGLAttrib*);
-#endif
-#if !defined(PFNEGLDESTROYIMAGEPROC)
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEPROC) (EGLDisplay, EGLImage);
-#endif
 #ifndef EGL_KHR_image_base
 #define EGL_KHR_image_base 1
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImage);
