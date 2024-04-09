@@ -480,9 +480,8 @@ String fromUTF8Impl(std::span<const LChar> string)
     UChar* bufferStart = buffer.data();
  
     UChar* bufferCurrent = bufferStart;
-    const char* stringCurrent = reinterpret_cast<const char*>(string.data());
     constexpr auto function = replaceInvalidSequences ? convertUTF8ToUTF16ReplacingInvalidSequences : convertUTF8ToUTF16;
-    if (!function(stringCurrent, reinterpret_cast<const char*>(string.data() + string.size()), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
+    if (!function(spanReinterpretCast<const char8_t>(string), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
         return String();
 
     size_t utf16Length = bufferCurrent - bufferStart;

@@ -105,7 +105,7 @@ protected:
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
     {
         using namespace FailureHelper; // See ADL comment in namespace above.
-        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset), ": "_s, makeString(args)...));
+        return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, m_offset, ": "_s, makeString(args)...));
     }
 #define WASM_PARSER_FAIL_IF(condition, ...) do { \
     if (UNLIKELY(condition))                     \
@@ -173,21 +173,20 @@ ALWAYS_INLINE bool Parser<SuccessType>::consumeUTF8String(Name& result, size_t s
     if (!result.tryReserveCapacity(stringLength))
         return false;
 
-    auto* stringStart = m_source.data() + m_offset;
+    auto string = m_source.subspan(m_offset, stringLength);
 
     // We don't cache the UTF-16 characters since it seems likely the string is ASCII.
-    if (UNLIKELY(!charactersAreAllASCII(std::span { stringStart, stringLength }))) {
+    if (UNLIKELY(!charactersAreAllASCII(string))) {
         Vector<UChar, 1024> buffer(stringLength);
         UChar* bufferStart = buffer.data();
 
         UChar* bufferCurrent = bufferStart;
-        const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-        if (!WTF::Unicode::convertUTF8ToUTF16(stringCurrent, reinterpret_cast<const char *>(stringStart + stringLength), &bufferCurrent, bufferCurrent + buffer.size()))
+        if (!WTF::Unicode::convertUTF8ToUTF16(spanReinterpretCast<const char8_t>(string), &bufferCurrent, bufferCurrent + buffer.size()))
             return false;
     }
 
     result.grow(stringLength);
-    memcpy(result.data(), stringStart, stringLength);
+    memcpy(result.data(), string.data(), stringLength);
     m_offset += stringLength;
     return true;
 }

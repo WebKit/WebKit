@@ -290,17 +290,17 @@ public:
     }
 };
 
-struct FromUTF8 {
-    const char* characters;
+struct UTF8Adapter {
+    const char8_t* characters;
     unsigned lengthUTF8 { 0 };
     unsigned lengthUTF16 { 0 };
     bool is8Bit { true };
     bool conversionFailed { true };
 
-    FromUTF8(const char* characters, size_t length)
-        : characters { characters }
+    UTF8Adapter(std::span<const char8_t> characters)
+        : characters { characters.data() }
     {
-        auto result = Unicode::computeUTFLengths(characters, characters + length);
+        auto result = Unicode::computeUTFLengths(characters);
         if (result.result == Unicode::ConversionResult::SourceIllegal)
             return;
         if (result.lengthUTF16 > String::MaxLength)
@@ -310,12 +310,11 @@ struct FromUTF8 {
         is8Bit = result.isAllASCII;
         conversionFailed = false;
     }
-    template<typename T, size_t Extent> FromUTF8(std::span<T, Extent> span) : FromUTF8(span.data(), span.size()) { }
 };
 
-template<> class StringTypeAdapter<FromUTF8, void> {
+template<> class StringTypeAdapter<UTF8Adapter, void> {
 public:
-    StringTypeAdapter(FromUTF8 characters)
+    StringTypeAdapter(UTF8Adapter characters)
         : m_characters { characters }
     {
     }
@@ -323,10 +322,18 @@ public:
     unsigned length() const { return m_characters.lengthUTF16; }
     bool is8Bit() const { return m_characters.is8Bit; }
     void writeTo(LChar* destination) const { memcpy(destination, m_characters.characters, m_characters.lengthUTF16); }
-    void writeTo(UChar* destination) const { Unicode::convertUTF8ToUTF16(m_characters.characters, m_characters.characters + m_characters.lengthUTF8, &destination, destination + m_characters.lengthUTF16); }
+    void writeTo(UChar* destination) const { Unicode::convertUTF8ToUTF16({ m_characters.characters, m_characters.lengthUTF8 }, &destination, destination + m_characters.lengthUTF16); }
 
 private:
-    FromUTF8 m_characters;
+    UTF8Adapter m_characters;
+};
+
+template<size_t Extent> class StringTypeAdapter<std::span<const char8_t, Extent>, void> : public StringTypeAdapter<UTF8Adapter, void> {
+public:
+    StringTypeAdapter(std::span<const char8_t, Extent> span)
+        : StringTypeAdapter<UTF8Adapter, void> { span }
+    {
+    }
 };
 
 template<typename... StringTypes> class StringTypeAdapter<std::tuple<StringTypes...>, void> {
@@ -620,9 +627,9 @@ inline String WARN_UNUSED_RETURN makeStringByInserting(StringView originalString
 
 } // namespace WTF
 
-using WTF::FromUTF8;
 using WTF::Indentation;
 using WTF::IndentationScope;
+using WTF::UTF8Adapter;
 using WTF::makeAtomString;
 using WTF::makeString;
 using WTF::makeStringByInserting;

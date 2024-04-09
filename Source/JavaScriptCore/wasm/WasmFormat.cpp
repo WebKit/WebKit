@@ -58,9 +58,7 @@ void Segment::destroy(Segment *segment)
 
 String makeString(const Name& characters)
 {
-    String result = String::fromUTF8(characters);
-    ASSERT(result);
-    return result;
+    return WTF::makeString(characters);
 }
 
 } } // namespace JSC::Wasm

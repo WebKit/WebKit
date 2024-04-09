@@ -165,8 +165,7 @@ struct HashAndUTF8CharactersTranslator {
         auto newString = StringImpl::createUninitialized(buffer.utf16Length, target);
 
         bool containsOnlyASCII;
-        const char* source = buffer.characters;
-        if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &containsOnlyASCII))
+        if (!convertUTF8ToUTF16({ reinterpret_cast<const char8_t*>(buffer.characters), buffer.length }, &target, target + buffer.utf16Length, &containsOnlyASCII))
             RELEASE_ASSERT_NOT_REACHED();
 
         if (containsOnlyASCII)
