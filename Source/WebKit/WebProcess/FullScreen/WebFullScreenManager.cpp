@@ -246,9 +246,12 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 
         auto mimeType = emptyString();
         if (auto* cachedImage = renderImage->cachedImage()) {
-            if (auto* image = cachedImage->image())
+            if (RefPtr image = cachedImage->image()) {
                 mimeType = image->mimeType();
 
+                if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+                    mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
+            }
             if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
                 mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
         }
