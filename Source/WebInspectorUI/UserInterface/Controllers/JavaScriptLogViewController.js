@@ -263,6 +263,8 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             sourceURLAppender: appendWebInspectorConsoleEvaluationSourceURL,
         };
 
+        WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
+
         WI.runtimeManager.evaluateInInspectedWindow(text, options, printResult.bind(this));
     }
 
