@@ -94,7 +94,7 @@ public:
         unsigned bodyShareCount;
         String bodyHash;
     };
-    enum TraverseFlag {
+    enum class TraverseFlag : uint8_t {
         ComputeWorth = 1 << 0,
         ShareCount = 1 << 1,
     };
