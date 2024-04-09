@@ -348,26 +348,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_nstricteq)
     RETURN(jsBoolean(!JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_inc)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpInc>();
-    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
-    JSValue result = jsInc(globalObject, argument);
-    CHECK_EXCEPTION();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_dec)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpDec>();
-    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
-    JSValue result = jsDec(globalObject, argument);
-    CHECK_EXCEPTION();
-    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, { });
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_string)
 {
     BEGIN();
@@ -376,18 +356,23 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_string)
 }
 
 #if ENABLE(JIT)
-static void updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValue result, JSValue operand)
+static void updateArithProfileForUnaryArithOp(CodeBlock* codeBlock, const JSInstruction* pc, JSValue result, JSValue operand)
 {
+    UnaryArithProfile& profile = *codeBlock->unaryArithProfileForPC(pc);
+
     profile.observeArg(operand);
     ASSERT(result.isNumber() || result.isBigInt());
 
-    if (result.isHeapBigInt())
+    if (result.isHeapBigInt()) {
         profile.setObservedHeapBigInt();
+        if (!jsCast<JSBigInt*>(operand)->isBigInt64()
+            || !jsCast<JSBigInt*>(result)->isBigInt64())
+            profile.setObservedBigInt64Overflow();
 #if USE(BIGINT32)
-    else if (result.isBigInt32())
+    } else if (result.isBigInt32()) {
         profile.setObservedBigInt32();
 #endif
-    else {
+    } else {
         ASSERT(result.isNumber());
         if (!result.isInt32()) {
             if (operand.isInt32())
@@ -411,8 +396,32 @@ static void updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValu
     }
 }
 #else
-static void updateArithProfileForUnaryArithOp(UnaryArithProfile&, JSValue, JSValue) { }
+static void updateArithProfileForUnaryArithOp(CodeBlock*, const JSInstruction*, JSValue, JSValue) { }
 #endif
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_inc)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpInc>();
+    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
+    JSValue result = jsInc(globalObject, argument);
+    CHECK_EXCEPTION();
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, {
+        updateArithProfileForUnaryArithOp(codeBlock, pc, result, argument);
+    });
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_dec)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpDec>();
+    JSValue argument = GET_C(bytecode.m_srcDst).jsValue();
+    JSValue result = jsDec(globalObject, argument);
+    CHECK_EXCEPTION();
+    RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, result, {
+        updateArithProfileForUnaryArithOp(codeBlock, pc, result, argument);
+    });
+}
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
 {
@@ -422,14 +431,12 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
     JSValue primValue = operand.toPrimitive(globalObject, PreferNumber);
     CHECK_EXCEPTION();
 
-    auto& profile = codeBlock->unlinkedCodeBlock()->unaryArithProfile(bytecode.m_profileIndex);
-
 #if USE(BIGINT32)
     if (primValue.isBigInt32()) {
         JSValue result = JSBigInt::unaryMinus(globalObject, primValue.bigInt32AsInt32());
         CHECK_EXCEPTION();
         RETURN_WITH_PROFILING(result, {
-            updateArithProfileForUnaryArithOp(profile, result, operand);
+            updateArithProfileForUnaryArithOp(codeBlock, pc, result, operand);
         });
     }
 #endif
@@ -438,19 +445,19 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
         JSValue result = JSBigInt::unaryMinus(globalObject, primValue.asHeapBigInt());
         CHECK_EXCEPTION();
         RETURN_WITH_PROFILING(result, {
-            updateArithProfileForUnaryArithOp(profile, result, operand);
+            updateArithProfileForUnaryArithOp(codeBlock, pc, result, operand);
         });
     }
     
     JSValue result = jsNumber(-primValue.toNumber(globalObject));
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForUnaryArithOp(profile, result, operand);
+        updateArithProfileForUnaryArithOp(codeBlock, pc, result, operand);
     });
 }
 
 #if ENABLE(DFG_JIT)
-static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeBlock, const JSInstruction* pc, JSValue result, JSValue left, JSValue right)
+static void updateArithProfileForBinaryArithOp(CodeBlock* codeBlock, const JSInstruction* pc, JSValue result, JSValue left, JSValue right)
 {
     BinaryArithProfile& profile = *codeBlock->binaryArithProfileForPC(pc);
 
@@ -474,17 +481,21 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
                     profile.setObservedInt52Overflow();
             }
         }
-    } else if (result.isHeapBigInt())
+    } else if (result.isHeapBigInt()) {
         profile.setObservedHeapBigInt();
+        if (!jsCast<JSBigInt*>(left)->isBigInt64()
+            || !jsCast<JSBigInt*>(right)->isBigInt64()
+            || !jsCast<JSBigInt*>(result)->isBigInt64())
+            profile.setObservedBigInt64Overflow();
 #if USE(BIGINT32)
-    else if (result.isBigInt32())
+    } else if (result.isBigInt32()) {
         profile.setObservedBigInt32();
 #endif
-    else 
+    } else
         profile.setObservedNonNumeric();
 }
 #else
-static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock*, const JSInstruction*, JSValue, JSValue, JSValue) { }
+static void updateArithProfileForBinaryArithOp(CodeBlock*, const JSInstruction*, JSValue, JSValue, JSValue) { }
 #endif
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_number)
@@ -542,7 +553,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_add)
     JSValue result = jsAdd(globalObject, v1, v2);
 
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, v1, v2);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, v1, v2);
     });
 }
 
@@ -559,7 +570,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_mul)
     JSValue result = jsMul(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -572,7 +583,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_sub)
     JSValue result = jsSub(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -585,7 +596,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_div)
     JSValue result = jsDiv(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -597,7 +608,9 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_mod)
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
     JSValue result = jsRemainder(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_pow)
@@ -608,7 +621,9 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_pow)
     JSValue right = GET_C(bytecode.m_rhs).jsValue();
     JSValue result = jsPow(globalObject, left, right);
     CHECK_EXCEPTION();
-    RETURN(result);
+    RETURN_WITH_PROFILING(result, {
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
+    });
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lshift)
@@ -623,7 +638,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lshift)
     JSValue result = jsLShift(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -639,7 +654,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rshift)
     JSValue result = jsRShift(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -693,7 +708,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitand)
     JSValue result = jsBitwiseAnd(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -709,7 +724,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitor)
     JSValue result = jsBitwiseOr(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 
@@ -725,7 +740,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_bitxor)
     JSValue result = jsBitwiseXor(globalObject, left, right);
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
-        updateArithProfileForBinaryArithOp(globalObject, codeBlock, pc, result, left, right);
+        updateArithProfileForBinaryArithOp(codeBlock, pc, result, left, right);
     });
 }
 

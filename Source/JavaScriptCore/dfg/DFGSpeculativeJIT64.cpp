@@ -1425,6 +1425,47 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     }
 }
 
+GPRReg SpeculativeJIT::fillSpeculateBigInt64(Edge edge)
+{
+    VirtualRegister virtualRegister = edge->virtualRegister();
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+    switch (info.registerFormat()) {
+    case DataFormatNone: {
+        DataFormat spillFormat = info.spillFormat();
+        if (spillFormat != DataFormatBigInt64) {
+            DFG_CRASH(m_graph, m_currentNode, toCString(
+                "Expected ", edge, " to have igInt64 format but instead it is spilled as ",
+                dataFormatToString(spillFormat)).data());
+        }
+        DFG_ASSERT(m_graph, m_currentNode, spillFormat == DataFormatBigInt64, spillFormat);
+
+        GPRReg gpr = allocate();
+        load64(addressFor(virtualRegister), gpr);
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        info.fillBigInt64(m_stream, gpr);
+        return gpr;
+    }
+    case DataFormatBigInt64: {
+        GPRReg gpr = info.gpr();
+        bool wasLocked = m_gprs.isLocked(gpr);
+        lock(gpr);
+        if (wasLocked) {
+            GPRReg result = allocate();
+            move(gpr, result);
+            unlock(gpr);
+            gpr = result;
+        } else
+            info.fillBigInt64(m_stream, gpr);
+        return gpr;
+    }
+
+    default:
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        return InvalidGPRReg;
+    }
+}
+
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
     ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepAnyIntUse);
@@ -1969,6 +2010,20 @@ void SpeculativeJIT::compileInt52Compare(Node* node, RelationalCondition conditi
     jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
 }
 
+void SpeculativeJIT::compileBigInt64Compare(Node* node, RelationalCondition condition)
+{
+    SpeculateBigInt64Operand op1(this, node->child1());
+    SpeculateBigInt64Operand op2(this, node->child2());
+    GPRTemporary result(this);
+
+    compare64(condition, op1.gpr(), op2.gpr(), result.gpr());
+
+    // If we add a DataFormatBool, we should use it here.
+    or32(TrustedImm32(JSValue::ValueFalse), result.gpr());
+    jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+}
+
+
 void SpeculativeJIT::compilePeepHoleInt52Branch(Node* node, Node* branchNode, RelationalCondition condition)
 {
     BasicBlock* taken = branchNode->branchData()->taken.block;
@@ -1986,6 +2041,27 @@ void SpeculativeJIT::compilePeepHoleInt52Branch(Node* node, Node* branchNode, Re
     SpeculateWhicheverInt52Operand op1(this, node->child1());
     SpeculateWhicheverInt52Operand op2(this, node->child2(), op1);
     
+    branch64(condition, op1.gpr(), op2.gpr(), taken);
+    jump(notTaken);
+}
+
+void SpeculativeJIT::compilePeepHoleBigInt64Branch(Node* node, Node* branchNode, RelationalCondition condition)
+{
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+
+    // The branch instruction will branch to the taken block.
+    // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
+    if (taken == nextBlock()) {
+        condition = invert(condition);
+        BasicBlock* tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    SpeculateBigInt64Operand op1(this, node->child1());
+    SpeculateBigInt64Operand op2(this, node->child2());
+
     branch64(condition, op1.gpr(), op2.gpr(), taken);
     jump(notTaken);
 }
@@ -3172,7 +3248,17 @@ void SpeculativeJIT::compile(Node* node)
             generationInfoFromVirtualRegister(virtualRegister).initInt52(node, node->refCount(), result.gpr());
             break;
         }
+
+        case FlushedBigInt64: {
+            GPRTemporary result(this);
+            load64(addressFor(node->machineLocal()), result.gpr());
             
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
+            generationInfoFromVirtualRegister(virtualRegister).initBigInt64(node, node->refCount(), result.gpr());
+            break;
+        }
+
         default:
             GPRTemporary result(this);
             load64(addressFor(node->machineLocal()), result.gpr());
@@ -3236,7 +3322,15 @@ void SpeculativeJIT::compile(Node* node)
             recordSetLocal(DataFormatInt52);
             break;
         }
-            
+
+        case FlushedBigInt64: {
+            SpeculateBigInt64Operand value(this, node->child1());
+            store64(value.gpr(), addressFor(node->machineLocal()));
+            noResult(node);
+            recordSetLocal(DataFormatBigInt64);
+            break;
+        }
+
         case FlushedCell: {
             SpeculateCellOperand cell(this, node->child1());
             GPRReg cellGPR = cell.gpr();
@@ -3380,6 +3474,58 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
 
+        default:
+            DFG_CRASH(m_graph, node, "Bad use kind");
+        }
+        break;
+    }
+
+    case BigInt64Rep: {
+        switch (node->child1().useKind()) {
+        case HeapBigIntUse: {
+            SpeculateCellOperand cell(this, node->child1());
+            GPRReg cellGPR = cell.gpr();
+            speculateHeapBigInt(node->child1(), cellGPR);
+
+            GPRTemporary scratch1(this);
+            GPRReg scratch1GPR = scratch1.gpr();
+            GPRTemporary scratch2(this);
+            GPRReg scratch2GPR = scratch2.gpr();
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+
+            JumpList overflowCases;
+            JumpList doneCases;
+
+            load32(Address(cellGPR, JSBigInt::offsetOfLength()), resultGPR);
+            // If length > 1 then overflow.
+            overflowCases.append(branch32(Above, resultGPR, TrustedImm32(1)));
+            // If length == 0 then done.
+            doneCases.append(branchTest32(Zero, resultGPR));
+
+            // Get JSBigInt 64-bit value. Note that JSBigInt use m_sign to indicate
+            // positive and negative value.
+            loadPtr(Address(cellGPR, JSBigInt::offsetOfData()), scratch1GPR);
+            cageConditionally(Gigacage::Primitive, scratch1GPR, resultGPR, scratch2GPR);
+            load64(Address(scratch1GPR), resultGPR);
+
+            // Signed case: If value > 0x8000'0000'0000'0000 then int64 negative overflow.
+            Jump unsignedCase = branchTest8(Zero, Address(cellGPR, JSBigInt::offsetOfSign()));
+            overflowCases.append(branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int64_t>::min())));
+            neg64(resultGPR);
+            doneCases.append(jump());
+
+            // Unsigned case: If value > 0x7FFF'FFFF'FFFF'FFFF then int64 positive overflow.
+            unsignedCase.link(this);
+            overflowCases.append(branch64(Above, resultGPR, TrustedImm64(std::numeric_limits<int64_t>::max())));
+
+            // Done
+            doneCases.link(this);
+
+            speculationCheck(BigInt64Overflow, JSValueRegs(), node->child1().node(), overflowCases);
+            bigInt64Result(resultGPR, node);
+            break;
+        }
         default:
             DFG_CRASH(m_graph, node, "Bad use kind");
         }

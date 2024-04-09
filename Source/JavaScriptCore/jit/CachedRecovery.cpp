@@ -57,6 +57,7 @@ bool CachedRecovery::loadsIntoGPR() const
 #elif USE(JSVALUE64)
     case Int52DisplacedInJSStack:
     case StrictInt52DisplacedInJSStack:
+    case BigInt64DisplacedInJSStack:
     case DisplacedInJSStack:
 #endif
     case BooleanDisplacedInJSStack:

@@ -117,6 +117,15 @@ void AbstractValue::setType(Graph& graph, SpeculatedType type)
         else
             m_structure.makeTop();
         m_arrayModes = ALL_ARRAY_MODES;
+    } else if (type == SpecBigInt64) {
+        // BigInt64 is special since it's a representation for bigint
+        // but still need to be boxed to JSBigInt as JSValue.
+        // TODO: This is needed for passing test `bigint64-to-this.js`. But why?
+        m_structure.makeTop();
+        m_arrayModes = ALL_ARRAY_MODES;
+
+        // m_structure.clear();
+        // m_arrayModes = 0;
     } else {
         m_structure.clear();
         m_arrayModes = 0;
@@ -167,6 +176,11 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
         if (m_type & SpecNonInt32AsInt52) {
             m_type &= ~SpecNonInt32AsInt52;
             m_type |= SpecAnyIntAsDouble;
+        }
+        if (m_type & SpecBigInt64) {
+            // This is for ValueRep which should be a representation for heap bigint.
+            m_type &= ~SpecBigInt64;
+            m_type |= SpecHeapBigInt;
         }
         if (m_type & ~SpecBytecodeTop)
             DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n").data());
@@ -457,7 +471,9 @@ FiltrationResult AbstractValue::normalizeClarity(Graph& graph)
 #if ASSERT_ENABLED
 void AbstractValue::checkConsistency() const
 {
-    if (!(m_type & SpecCell)) {
+    if (!(m_type & SpecCell)
+        // && !(m_type & SpecBigInt64)
+        ) {
         RELEASE_ASSERT(m_structure.isClear());
         RELEASE_ASSERT(!m_arrayModes);
     }
@@ -562,6 +578,8 @@ bool AbstractValue::validateOSREntryValue(JSValue value, FlushFormat format) con
             if (jsDoubleNumber(m_value.asAnyInt()) != jsDoubleNumber(value.asAnyInt()))
                 return false;
         }
+    } else if (format == FlushedBigInt64) {
+        RELEASE_ASSERT(false, "case for FlushedBigInt64 not implemented");
     } else {
         if (!!m_value && m_value != value)
             return false;

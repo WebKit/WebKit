@@ -51,7 +51,7 @@ namespace JSC { namespace FTL {
 using namespace DFG;
 
 static void reboxAccordingToFormat(
-    DataFormat format, AssemblyHelpers& jit, GPRReg value, GPRReg scratch1, GPRReg scratch2)
+    DataFormat format, CCallHelpers& jit, VM& vm, OSRExit& exit, GPRReg value, GPRReg scratch1, GPRReg scratch2)
 {
     switch (format) {
     case DataFormatInt32: {
@@ -72,6 +72,20 @@ static void reboxAccordingToFormat(
         jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
         jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
         jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+
+    case DataFormatBigInt64: {
+        // FIXME: need to rework this.
+        jit.pushToSave(GPRInfo::regT3);
+
+        jit.setupArguments<decltype(operationInt64ToBigInt)>(CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(exit.m_codeOrigin)), value);
+        jit.prepareCallOperation(vm);
+        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), GPRInfo::regT3);
+        jit.call(GPRInfo::regT3, OperationPtrTag);
+        jit.move(GPRInfo::returnValueGPR, value);
+
+        jit.popToRestore(GPRInfo::regT3);
         break;
     }
 
@@ -102,7 +116,7 @@ static void reboxAccordingToFormat(
 }
 
 static void compileRecovery(
-    CCallHelpers& jit, const ExitValue& value,
+    CCallHelpers& jit, VM& vm, OSRExit& exit, const ExitValue& value,
     const FixedVector<B3::ValueRep>& valueReps,
     char* registerScratch,
     const HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
@@ -124,6 +138,7 @@ static void compileRecovery(
     case ExitValueInJSStack:
     case ExitValueInJSStackAsInt32:
     case ExitValueInJSStackAsInt52:
+    case ExitValueInJSStackAsBigInt64:
     case ExitValueInJSStackAsDouble:
         jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
         break;
@@ -137,8 +152,7 @@ static void compileRecovery(
         break;
     }
         
-    reboxAccordingToFormat(
-        value.dataFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+    reboxAccordingToFormat(value.dataFormat(), jit, vm, exit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
 }
 
 static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit, CodeBlock* codeBlock)
@@ -206,7 +220,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     auto recoverValue = [&] (const ExitValue& value) {
         compileRecovery(
-            jit, value,
+            jit, vm, exit, value,
             exit.m_valueReps,
             registerScratch, materializationToPointer);
     };
@@ -255,8 +269,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     // Do some value profiling.
     if (exit.m_descriptor->m_profileDataFormat != DataFormatNone) {
         Location::forValueRep(exit.m_valueReps[0]).restoreInto(jit, registerScratch, GPRInfo::regT0);
-        reboxAccordingToFormat(
-            exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+        reboxAccordingToFormat(exit.m_descriptor->m_profileDataFormat, jit, vm, exit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;

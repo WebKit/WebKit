@@ -49,6 +49,7 @@ enum ValueRecoveryTechnique : uint8_t {
     UnboxedInt32InGPR,
     UnboxedInt52InGPR,
     UnboxedStrictInt52InGPR,
+    UnboxedBigInt64InGPR,
     UnboxedBooleanInGPR,
     UnboxedCellInGPR,
 #if USE(JSVALUE32_64)
@@ -65,6 +66,7 @@ enum ValueRecoveryTechnique : uint8_t {
 #endif
     Int52DisplacedInJSStack,
     StrictInt52DisplacedInJSStack,
+    BigInt64DisplacedInJSStack, // It's in the stack, at a different location, and it's unboxed.
     DoubleDisplacedInJSStack,
     CellDisplacedInJSStack,
     BooleanDisplacedInJSStack,
@@ -117,6 +119,8 @@ public:
             result.m_technique = UnboxedBooleanInGPR;
         else if (dataFormat == DataFormatCell)
             result.m_technique = UnboxedCellInGPR;
+        else if (dataFormat == DataFormatBigInt64)
+            result.m_technique = UnboxedBigInt64InGPR;
         else
             result.m_technique = InGPR;
         UnionType u;
@@ -168,6 +172,10 @@ public:
             result.m_technique = StrictInt52DisplacedInJSStack;
             break;
             
+        case DataFormatBigInt64:
+            result.m_technique = BigInt64DisplacedInJSStack;
+            break;
+
         case DataFormatDouble:
             result.m_technique = DoubleDisplacedInJSStack;
             break;
@@ -246,6 +254,7 @@ public:
         case UnboxedCellInGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
+        case UnboxedBigInt64InGPR:
             return true;
         default:
             return false;
@@ -278,6 +287,7 @@ public:
 #endif
         case Int52DisplacedInJSStack:
         case StrictInt52DisplacedInJSStack:
+        case BigInt64DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
@@ -310,6 +320,9 @@ public:
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
             return DataFormatStrictInt52;
+        case UnboxedBigInt64InGPR:
+        case BigInt64DisplacedInJSStack:
+            return DataFormatBigInt64;
         case UnboxedBooleanInGPR:
         case BooleanDisplacedInJSStack:
             return DataFormatBoolean;
@@ -386,7 +399,8 @@ public:
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack:
         case Int52DisplacedInJSStack:
-        case StrictInt52DisplacedInJSStack: {
+        case StrictInt52DisplacedInJSStack:
+        case BigInt64DisplacedInJSStack: {
             ValueRecovery result;
             result.m_technique = m_technique;
             UnionType u;
@@ -425,6 +439,7 @@ public:
         case UnboxedCellInGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
+        case UnboxedBigInt64InGPR:
             func(gpr());
             return;
         case InFPR:

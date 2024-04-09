@@ -515,6 +515,12 @@ inline int32_t JSValue::asInt32() const
     return static_cast<int32_t>(u.asInt64);
 }
 
+inline int64_t JSValue::asBigInt64() const
+{
+    ASSERT(isBigInt64());
+    return JSBigInt::toBigInt64(*this);
+}
+
 inline bool JSValue::isDouble() const
 {
     return isNumber() && !isInt32();
@@ -714,6 +720,16 @@ inline bool JSValue::isBigInt() const
 inline bool JSValue::isHeapBigInt() const
 {
     return isCell() && asCell()->isHeapBigInt();
+}
+
+inline bool JSValue::isBigInt64() const
+{
+    // Unlike BigInt32, BigInt64 should still have heap bigint
+    // cell type since it's still JSBigInt and the purpose of
+    // BigInt64 is to utilize 64-bit instructions in DFG and FTL
+    // computations when the operands and results in 64-bit range.
+    ASSERT(isCell() && asCell()->isHeapBigInt());
+    return asHeapBigInt()->isBigInt64();
 }
 
 inline bool JSValue::isBigInt32() const

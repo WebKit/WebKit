@@ -9,7 +9,7 @@ function testRightShift(left, right, expected)
         throw new Error("" + left + ", " + right + " resulted in " + result + " but expected " + expected);
 }
 
-for (var i = 0; i < 1000 ; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     testRightShift(0n, 0n, 0n);
     testRightShift(0b101n, -1n, 0b1010n);
     testRightShift(0b101n, -2n, 0b10100n);

@@ -191,6 +191,10 @@ void printInternal(PrintStream& out, const ArithProfile<T>& profile)
             out.print(separator, "Int52Overflow");
             separator = "|";
         }
+        if (profile.didObserveBigInt64Overflow()) {
+            out.print(separator, "BigInt64Overflow");
+            separator = "|";
+        }
         if (profile.didObserveHeapBigInt()) {
             out.print(separator, "HeapBigInt");
             separator = "|";

@@ -168,6 +168,23 @@ void Graph::printNodeWhiteSpace(PrintStream& out, Node* node)
     printWhiteSpace(out, amountOfNodeWhiteSpace(node));
 }
 
+void Graph::checkAbstractValueSpeculatedType(unsigned NodeIndex, NodeType type)
+{
+    if (!m_abstractValuesCache)
+        return;
+    for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
+        if (BasicBlock* block = this->block(blockIndex)) {
+            for (unsigned i = 0; i < block->size(); ++i) {
+                Node* node = block->at(i);
+                if (node->index() == NodeIndex && node->op() == type) {
+                    if (AbstractValue* value = m_abstractValuesCache->atOrNull(node))
+                        dataLogLn("found node ", node, " abstractValue's type: ", SpeculationDump(value->m_type));
+                }
+            }
+        }
+    }
+}
+
 void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContext* context)
 {
     Prefix myPrefix(prefixStr);
@@ -224,9 +241,9 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     }
 
     if (toCString(NodeFlagsDump(node->flags())) != "<empty>")
-        out.print(comma, NodeFlagsDump(node->flags()));
+        out.print(comma, "NodeFlags: ", NodeFlagsDump(node->flags()));
     if (node->prediction())
-        out.print(comma, SpeculationDump(node->prediction()));
+        out.print(comma, "SpeculatedType: ", SpeculationDump(node->prediction()));
     if (node->hasNumberOfArgumentsToSkip())
         out.print(comma, "numberOfArgumentsToSkip = ", node->numberOfArgumentsToSkip());
     if (node->hasNumberOfBoundArguments())
@@ -1834,6 +1851,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
         case ValueRep:
         case DoubleRep:
         case Int52Rep:
+        case BigInt64Rep:
             node = node->child1().node();
             break;
         default:

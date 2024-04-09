@@ -100,17 +100,19 @@ static constexpr SpeculatedType SpecMisc                              = SpecBool
 static constexpr SpeculatedType SpecEmpty                             = 1ull << 42; // It's definitely an empty value marker.
 static constexpr SpeculatedType SpecHeapBigInt                        = 1ull << 43; // It's definitely a BigInt that is allocated on the heap
 static constexpr SpeculatedType SpecBigInt32                          = 1ull << 44; // It's definitely a small BigInt that is inline the JSValue
+static constexpr SpeculatedType SpecBigInt64                          = 1ull << 45; // It's definitely a BigInt within 64bit range.
+
 #if USE(BIGINT32)
-static constexpr SpeculatedType SpecBigInt                            = SpecBigInt32 | SpecHeapBigInt;
+static constexpr SpeculatedType SpecBigInt                            = SpecBigInt32 | SpecBigInt64 | SpecHeapBigInt;
 #else
 // We should not include SpecBigInt32. We are using SpecBigInt in various places like prediction. If this includes SpecBigInt32, fixup phase is confused if !USE(BIGINT32) since it is not using AnyBigIntUse.
-static constexpr SpeculatedType SpecBigInt                            = SpecHeapBigInt;
+static constexpr SpeculatedType SpecBigInt                            = SpecBigInt64 | SpecHeapBigInt;
 #endif
-static constexpr SpeculatedType SpecDataViewObject                    = 1ull << 45; // It's definitely a JSDataView.
+static constexpr SpeculatedType SpecDataViewObject                    = 1ull << 46; // It's definitely a JSDataView.
 static constexpr SpeculatedType SpecPrimitive                         = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc | SpecBigInt; // It's any non-Object JSValue.
 static constexpr SpeculatedType SpecObject                            = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecRegExpObject | SpecDateObject | SpecPromiseObject | SpecMapObject | SpecSetObject | SpecWeakMapObject | SpecWeakSetObject | SpecProxyObject | SpecDerivedArray | SpecObjectOther | SpecDataViewObject; // Bitmask used for testing for any kind of object prediction.
 static constexpr SpeculatedType SpecCell                              = SpecObject | SpecString | SpecSymbol | SpecCellOther | SpecHeapBigInt; // It's definitely a JSCell.
-static constexpr SpeculatedType SpecHeapTop                           = SpecCell | SpecBigInt32 | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
+static constexpr SpeculatedType SpecHeapTop                           = SpecCell | SpecBigInt32 | SpecBigInt64 | SpecBytecodeNumber | SpecMisc; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN.
 static constexpr SpeculatedType SpecBytecodeTop                       = SpecHeapTop | SpecEmpty; // It can be any of the above, except for SpecInt52Only and SpecDoubleImpureNaN. Corresponds to what could be found in a bytecode local.
 static constexpr SpeculatedType SpecFullTop                           = SpecBytecodeTop | SpecFullNumber; // It can be anything that bytecode could see plus exotic encodings of numbers.
 
@@ -119,7 +121,9 @@ static constexpr SpeculatedType SpecTypeofMightBeFunction             = SpecFunc
 // SpecCellCheck is the type set representing the values that can flow through a cell check.
 // On 64-bit platforms, the empty value passes a cell check. Also, ~SpecCellCheck is the type
 // set that representing the values that flow through when testing that something is not a cell.
-static constexpr SpeculatedType SpecCellCheck          = is64Bit() ? (SpecCell | SpecEmpty) : SpecCell;
+static constexpr SpeculatedType SpecCellCheck                         = is64Bit() ? (SpecCell | SpecEmpty) : SpecCell;
+
+static constexpr SpeculatedType SpecNotCellNorBigInt                  = ~SpecCellCheck & ~SpecBigInt;
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 
@@ -212,6 +216,11 @@ inline bool isSymbolSpeculation(SpeculatedType value)
 inline bool isBigInt32Speculation(SpeculatedType value)
 {
     return value == SpecBigInt32;
+}
+
+inline bool isBigInt64Speculation(SpeculatedType value)
+{
+    return !!value && (value & SpecBigInt64) == value;
 }
 
 inline bool isHeapBigIntSpeculation(SpeculatedType value)

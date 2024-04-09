@@ -97,6 +97,7 @@ enum UseKind : uint8_t {
     // 3. The Int52 representation for an unboxed integer value that must be stored
     //    in a GP register.
     Int52RepUse,
+    BigInt64RepUse,
 
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
@@ -111,6 +112,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecInt32Only;
     case Int52RepUse:
         return SpecInt52Any;
+    case BigInt64RepUse:
+        return SpecBigInt64;
     case AnyIntUse:
         return SpecInt32Only | SpecAnyIntAsDouble;
     case NumberUse:
@@ -189,7 +192,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case NotCellUse:
         return ~SpecCellCheck;
     case NotCellNorBigIntUse:
-        return ~SpecCellCheck & ~SpecBigInt;
+        return SpecNotCellNorBigInt;
     case NotDoubleUse:
         return ~SpecFullDouble;
     case NeitherDoubleNorHeapBigIntUse:
@@ -218,6 +221,7 @@ inline bool shouldNotHaveTypeCheck(UseKind kind)
     case KnownBooleanUse:
     case KnownOtherUse:
     case Int52RepUse:
+    case BigInt64RepUse:
     case DoubleRepUse:
         return true;
     default:
@@ -288,6 +292,8 @@ inline UseKind useKindForResult(NodeFlags result)
     switch (result) {
     case NodeResultInt52:
         return Int52RepUse;
+    case NodeResultBigInt64:
+        return BigInt64RepUse;
     case NodeResultDouble:
         return DoubleRepUse;
     default:

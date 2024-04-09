@@ -39,6 +39,7 @@ enum ValueSourceKind {
     ValueInJSStack,
     Int32InJSStack,
     Int52InJSStack,
+    BigInt64InJSStack,
     CellInJSStack,
     BooleanInJSStack,
     DoubleInJSStack,
@@ -53,6 +54,8 @@ static inline ValueSourceKind dataFormatToValueSourceKind(DataFormat dataFormat)
         return Int32InJSStack;
     case DataFormatInt52:
         return Int52InJSStack;
+    case DataFormatBigInt64:
+        return BigInt64InJSStack;
     case DataFormatDouble:
         return DoubleInJSStack;
     case DataFormatBoolean:
@@ -76,6 +79,8 @@ static inline DataFormat valueSourceKindToDataFormat(ValueSourceKind kind)
         return DataFormatInt32;
     case Int52InJSStack:
         return DataFormatInt52;
+    case BigInt64InJSStack:
+        return DataFormatBigInt64;
     case CellInJSStack:
         return DataFormatCell;
     case BooleanInJSStack:
@@ -145,6 +150,8 @@ public:
             return ValueSource(Int32InJSStack, where);
         case FlushedInt52:
             return ValueSource(Int52InJSStack, where);
+        case FlushedBigInt64:
+            return ValueSource(BigInt64InJSStack, where);
         case FlushedCell:
             return ValueSource(CellInJSStack, where);
         case FlushedBoolean:

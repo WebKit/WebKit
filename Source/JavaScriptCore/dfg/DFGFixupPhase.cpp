@@ -194,6 +194,18 @@ private:
         case Inc:
         case Dec: {
             if (node->child1()->shouldSpeculateBigInt()) {
+                if (node->shouldSpeculateBigInt64()) {
+                    node->setOp(op == Inc ? ArithAdd : ArithSub);
+                    node->setArithMode(Arith::CheckOverflow);
+                    Node* nodeConstantOne = m_insertionSet.insertNode(m_indexInBlock, SpecHeapBigInt, JSConstant, node->origin, OpInfo(m_graph.freeze(vm().heapBigIntConstantOne.get())));
+                    node->children.setChild2(Edge(nodeConstantOne));
+                    fixEdge<BigInt64RepUse>(node->child1());
+                    fixEdge<BigInt64RepUse>(node->child2());
+                    node->setResult(NodeResultBigInt64);
+                    node->clearFlags(NodeMustGenerate);
+                    break;
+                }
+
                 if (node->child1()->shouldSpeculateHeapBigInt()) {
                     // FIXME: the freezing does not appear useful (since the JSCell is kept alive by vm), but it refuses to compile otherwise.
                     // FIXME: we might optimize inc/dec to a specialized function call instead in that case.
@@ -268,6 +280,15 @@ private:
             Edge& child1 = node->child1();
             Edge& child2 = node->child2();
 
+            if (node->shouldSpeculateBigInt64()) {
+                fixEdge<BigInt64RepUse>(node->child1());
+                fixEdge<BigInt64RepUse>(node->child2());
+                node->setArithMode(Arith::CheckOverflow);
+                node->setResult(NodeResultBigInt64);
+                node->setOp(ArithSub);
+                break;
+            }
+
             if (Node::shouldSpeculateHeapBigInt(child1.node(), child2.node())) {
                 fixEdge<HeapBigIntUse>(child1);
                 fixEdge<HeapBigIntUse>(child2);
@@ -314,7 +335,42 @@ private:
         case ValueBitXor:
         case ValueBitOr:
         case ValueBitAnd: {
+
+            auto setArithOp = [&] () {
+                switch (op) {
+                case ValueBitXor:
+                    node->setOp(ArithBitXor);
+                    break;
+                case ValueBitOr:
+                    node->setOp(ArithBitOr);
+                    break;
+                case ValueBitAnd:
+                    node->setOp(ArithBitAnd);
+                    break;
+                case ValueBitLShift:
+                    node->setOp(ArithBitLShift);
+                    break;
+                case ValueBitRShift:
+                    node->setOp(ArithBitRShift);
+                    break;
+                default:
+                    DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
+                    break;
+                }
+            };
+
             if (Node::shouldSpeculateBigInt(node->child1().node(), node->child2().node())) {
+                if (node->shouldSpeculateBigInt64()) {
+                    fixEdge<BigInt64RepUse>(node->child1());
+                    fixEdge<BigInt64RepUse>(node->child2());
+                    if (node->op() == ValueBitLShift || node->op() == ValueBitRShift)
+                        node->setArithMode(Arith::CheckOverflow);
+                    node->setResult(NodeResultBigInt64);
+                    node->clearFlags(NodeMustGenerate);
+                    setArithOp();
+                    break;
+                }
+
 #if USE(BIGINT32)
                 if (Node::shouldSpeculateBigInt32(node->child1().node(), node->child2().node())) {
                     fixEdge<BigInt32Use>(node->child1());
@@ -340,27 +396,7 @@ private:
                 break;
             }
             
-            switch (op) {
-            case ValueBitXor:
-                node->setOp(ArithBitXor);
-                break;
-            case ValueBitOr:
-                node->setOp(ArithBitOr);
-                break;
-            case ValueBitAnd:
-                node->setOp(ArithBitAnd);
-                break;
-            case ValueBitLShift:
-                node->setOp(ArithBitLShift);
-                break;
-            case ValueBitRShift:
-                node->setOp(ArithBitRShift);
-                break;
-            default:
-                DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
-                break;
-            }
-
+            setArithOp();
             node->clearFlags(NodeMustGenerate);
             node->setResult(NodeResultInt32);
             fixIntConvertingEdge(node->child1());
@@ -372,6 +408,14 @@ private:
             Edge& operandEdge = node->child1();
 
             if (operandEdge.node()->shouldSpeculateBigInt()) {
+                if (node->shouldSpeculateBigInt64()) {
+                    fixEdge<BigInt64RepUse>(operandEdge);
+                    node->setResult(NodeResultBigInt64);
+                    node->clearFlags(NodeMustGenerate);
+                    node->setOp(ArithBitNot);
+                    break;
+                }
+
                 node->clearFlags(NodeMustGenerate);
 
 #if USE(BIGINT32)
@@ -481,6 +525,15 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+
+            if (node->shouldSpeculateBigInt64()) {
+                fixEdge<BigInt64RepUse>(node->child1());
+                node->setArithMode(Arith::CheckOverflow);
+                node->setResult(NodeResultBigInt64);
+                node->setOp(ArithNegate);
+                break;
+            }
+
             if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
                 node->setOp(ArithNegate);
                 fixDoubleOrBooleanEdge(node->child1());
@@ -624,6 +677,16 @@ private:
             Edge& rightChild = node->child2();
 
             if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
+                if (node->shouldSpeculateBigInt64()) {
+                    fixEdge<BigInt64RepUse>(leftChild);
+                    fixEdge<BigInt64RepUse>(rightChild);
+                    node->setArithMode(Arith::CheckOverflow);
+                    node->setResult(NodeResultBigInt64);
+                    node->setOp(ArithMul);
+                    node->clearFlags(NodeMustGenerate);
+                    break;
+                }
+
 #if USE(BIGINT32)
                 if (m_graph.binaryArithShouldSpeculateBigInt32(node, FixupPass)) {
                     fixEdge<BigInt32Use>(node->child1());
@@ -738,6 +801,16 @@ private:
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
 
+            if (node->shouldSpeculateBigInt64()) {
+                fixEdge<BigInt64RepUse>(leftChild);
+                fixEdge<BigInt64RepUse>(rightChild);
+                node->setArithMode(Arith::CheckOverflow);
+                node->setResult(NodeResultBigInt64);
+                node->setOp(node->op() == ValueMod ? ArithMod : ArithDiv);
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
             if (Node::shouldSpeculateHeapBigInt(leftChild.node(), rightChild.node())) {
                 fixEdge<HeapBigIntUse>(leftChild);
                 fixEdge<HeapBigIntUse>(rightChild);
@@ -817,6 +890,16 @@ private:
         }
 
         case ValuePow: {
+            if (node->shouldSpeculateBigInt64()) {
+                fixEdge<BigInt64RepUse>(node->child1());
+                fixEdge<BigInt64RepUse>(node->child2());
+                node->setArithMode(Arith::CheckOverflow);
+                node->setResult(NodeResultBigInt64);
+                node->setOp(ArithPow);
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+
             if (Node::shouldSpeculateHeapBigInt(node->child1().node(), node->child2().node())) {
                 fixEdge<HeapBigIntUse>(node->child1());
                 fixEdge<HeapBigIntUse>(node->child2());
@@ -947,6 +1030,12 @@ private:
             if (Node::shouldSpeculateInt52(node->child1().node(), node->child2().node())) {
                 fixEdge<Int52RepUse>(node->child1());
                 fixEdge<Int52RepUse>(node->child2());
+                node->clearFlags(NodeMustGenerate);
+                break;
+            }
+            if (m_graph.comparisonShouldSpeculateBigInt64(node, FixupPass)) {
+                fixEdge<BigInt64RepUse>(node->child1());
+                fixEdge<BigInt64RepUse>(node->child2());
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
@@ -1893,6 +1982,7 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
+            // TODO: bigint64?
             if (node->child1()->shouldSpeculateInt52()) {
                 fixEdge<Int52RepUse>(node->child1());
                 node->clearFlags(NodeMustGenerate);
@@ -2065,6 +2155,7 @@ private:
                             break;
                         }
 
+                        // TODO: bigint64?
                         if (node->child1()->shouldSpeculateInt52()) {
                             insertCheck<Int52RepUse>(node->child1().node());
                             m_graph.convertToConstant(node, m_graph.freeze(globalObject->numberProtoToStringFunction()));
@@ -2368,6 +2459,11 @@ private:
             break;
         }
 
+        // case FiatBigInt64: {
+        //     TODO
+        //     break;
+        // }
+
         case GetArrayLength: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child1()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             // We don't know how to handle generic and we only emit this in the Parser when we have checked the value is an Array/TypedArray.
@@ -2455,6 +2551,7 @@ private:
         case DoubleRep:
         case ValueRep:
         case Int52Rep:
+        case BigInt64Rep:
         case Int52Constant:
         case Identity: // This should have been cleaned up.
         case BooleanToNumber:
@@ -3139,6 +3236,7 @@ private:
                         fixEdge<Int32Use>(valueToStore);
                     else
                         fixEdge<Int52RepUse>(valueToStore);
+                    // TODO: bigint64?
                     break;
                 }
             }
@@ -3286,6 +3384,7 @@ private:
         switch (useKind) {
         case Int32Use:
         case Int52RepUse:
+        // TODO: bigint64?
         case DoubleRepUse:
         case NotCellUse:
             toString->clearFlags(NodeMustGenerate);
@@ -3467,6 +3566,12 @@ private:
                 m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
                 return;
             }
+            // TODO: check do we need this?
+            if (node->child1()->shouldSpeculateBigInt64()) {
+                insertCheck<BigInt64RepUse>(node->child1().node());
+                m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
+                return;
+            }
             if (node->child1()->shouldSpeculateNumber()) {
                 insertCheck<NumberUse>(node->child1().node());
                 m_graph.convertToConstant(node, m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic)->numberPrototype()));
@@ -3522,6 +3627,13 @@ private:
                 fixEdge<Int52RepUse>(node->child1());
                 node->convertToIdentity();
                 node->setResult(NodeResultInt52);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateBigInt64()) {
+                fixEdge<BigInt64RepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultBigInt64);
                 return;
             }
 
@@ -3968,6 +4080,9 @@ private:
                 case FlushedInt52:
                     node->setResult(NodeResultInt52);
                     break;
+                case FlushedBigInt64:
+                    node->setResult(NodeResultBigInt64);
+                    break;
                 default:
                     break;
                 }
@@ -3976,7 +4091,6 @@ private:
             case SetLocal:
                 // NOTE: Any type checks we put here may get hoisted by fixupChecksInBlock(). So, if we
                 // add new type checking use kind for SetLocals, we need to modify that code as well.
-                
                 switch (variable->flushFormat()) {
                 case FlushedJSValue:
                     break;
@@ -3988,6 +4102,9 @@ private:
                     break;
                 case FlushedInt52:
                     fixEdge<Int52RepUse>(node->child1());
+                    break;
+                case FlushedBigInt64:
+                    fixEdge<BigInt64RepUse>(node->child1());
                     break;
                 case FlushedCell:
                     fixEdge<CellUse>(node->child1());
@@ -4264,6 +4381,9 @@ private:
             if (!isInt32Speculation(variable->prediction()) && isInt32OrInt52Speculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
+        case BigInt64RepUse:
+            m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+            break;
         case CellUse:
         case KnownCellUse:
         case ObjectUse:
@@ -4330,8 +4450,28 @@ private:
             insertCheck<NumberUse>(value.node());
             return;
         }
-            
-        if (value->shouldSpeculateNotCell()) {
+
+        // Stage 1:
+        //      @1 = ValueAdd(HeapBigInt, HeapBigInt)
+        //      ...
+        //      PutGlobalVariable(@cell, @1)
+        //
+        // Stage 2:
+        //      @1 = ArithAdd(BigInt64Rep, BigInt64Rep) : BigInt64
+        //      ...
+        //      @2 = Check(NotCell:@1)
+        //      PutGlobalVariable(@cell, @1)
+        //
+        // Stage 3:
+        //      @1 = ArithAdd(BigInt64Rep, BigInt64Rep)
+        //      ...
+        //      @3 = ValueRep(@1) : HeapBigInt
+        //      @2 = Check(NotCell:@3)
+        //      PutGlobalVariable(@cell, @1)
+        //
+        // If the pointed node has a BigInt64 result, then a ValueRep for HeapBigInt will be added
+        // later. In that case, by adding Check node for NotCellUse would always OSR exit.
+        if (value->shouldSpeculateNotCell() && !value->hasBigInt64Result()) {
             insertCheck<NotCellUse>(value.node());
             return;
         }
@@ -4459,6 +4599,14 @@ private:
             return true;
         }
         
+        if (node->shouldSpeculateBigInt64()) {
+            fixEdge<BigInt64RepUse>(node->child1());
+            fixEdge<BigInt64RepUse>(node->child2());
+            node->setArithMode(Arith::CheckOverflow);
+            node->setResult(NodeResultBigInt64);
+            return true;
+        }
+
         return false;
     }
     
@@ -4788,6 +4936,12 @@ private:
             node->setOpAndDefaultFlags(CompareStrictEq);
             return;
         }
+        if (m_graph.comparisonShouldSpeculateBigInt64(node, FixupPass)) {
+            fixEdge<BigInt64RepUse>(node->child1());
+            fixEdge<BigInt64RepUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
             fixEdge<DoubleRepUse>(node->child1());
             fixEdge<DoubleRepUse>(node->child2());
@@ -5013,6 +5167,8 @@ private:
                                 edge.setUseKind(DoubleRepUse);
                             else if (edge->hasInt52Result())
                                 edge.setUseKind(Int52RepUse);
+                            else if (edge->hasBigInt64Result())
+                                edge.setUseKind(BigInt64RepUse);
                             break;
             
                         case RealNumberUse:
@@ -5107,8 +5263,20 @@ private:
                         break;
                     }
 
+                    case BigInt64RepUse: {
+                        if (edge->hasBigInt64Result())
+                            break;
+
+                        ASSERT(indexForChecks != UINT_MAX);
+                        result = m_insertionSet.insertNode(
+                            indexForChecks, SpecBigInt64, BigInt64Rep, originForChecks,
+                            Edge(edge.node(), HeapBigIntUse));
+                        edge.setNode(result);
+                        break;
+                    }
+
                     default: {
-                        if (!edge->hasDoubleResult() && !edge->hasInt52Result())
+                        if (!edge->hasDoubleResult() && !edge->hasInt52Result() && !edge->hasBigInt64Result())
                             break;
             
                         ASSERT(indexForChecks != UINT_MAX);
@@ -5116,10 +5284,14 @@ private:
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecBytecodeDouble, ValueRep, originForChecks,
                                 Edge(edge.node(), DoubleRepUse));
-                        } else {
+                        } else if (edge->hasInt52Result()) {
                             result = m_insertionSet.insertNode(
                                 indexForChecks, SpecInt32Only | SpecAnyIntAsDouble, ValueRep,
                                 originForChecks, Edge(edge.node(), Int52RepUse));
+                        } else if (edge->hasBigInt64Result()) {
+                            result = m_insertionSet.insertNode(
+                                indexForChecks, SpecHeapBigInt, ValueRep,
+                                originForChecks, Edge(edge.node(), BigInt64RepUse));
                         }
 
                         edge.setNode(result);

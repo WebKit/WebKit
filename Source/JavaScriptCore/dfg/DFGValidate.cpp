@@ -272,6 +272,7 @@ public:
                     case Int32Use:
                     case KnownInt32Use:
                     case Int52RepUse:
+                    case BigInt64RepUse:
                     case DoubleRepUse:
                     case BooleanUse:
                     case KnownBooleanUse:

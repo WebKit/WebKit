@@ -398,6 +398,62 @@ public:
             && !hasExitSite(node, Int52Overflow);
     }
     
+    bool binaryArithShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!enableBigInt64())
+            return false;
+
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
+
+        return Node::shouldSpeculateBigInt(left, right)
+            && node->canSpeculateBigInt64(pass)
+            && !hasExitSite(node, BigInt64Overflow);
+    }
+
+    bool comparisonShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!enableBigInt64())
+            return false;
+
+        if (!node->canSpeculateBigInt64(pass) || hasExitSite(node, BigInt64Overflow))
+            return false;
+
+        Node* left = node->child1().node();
+        Node* right = node->child2().node();
+
+        // FIXME: It seems that convert compare(HeapBigInt, HeapBigInt) to compare(BigInt64, BigInt64)
+        // is not profitable based on microbenchmark results. So, here we only support for
+        // compare(BigInt64, BigInt64|HeapBigInt). Maybe we should check other combinations, e.g.,
+        // compare(BigInt64, String), compare(BigInt64, Number), compare(BigInt64, Boolean), and compare(BigInt64, Symbol)
+        if (!enableBigInt64())
+            return false;
+        if (left->shouldSpeculateBigInt64() && right->shouldSpeculateBigInt())
+            return true;
+        if (left->shouldSpeculateBigInt() && right->shouldSpeculateBigInt64())
+            return true;
+        return false;
+    }
+
+    bool invariantValueShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!enableBigInt64())
+            return false;
+
+        return isBigIntSpeculation(node->getHeapPrediction())
+            && node->canSpeculateBigInt64(pass)
+            && !hasExitSite(node, BigInt64Overflow);
+    }
+
+    bool unaryArithShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!enableBigInt64())
+            return false;
+        return node->child1()->shouldSpeculateBigInt()
+            && node->canSpeculateBigInt64(pass)
+            && !hasExitSite(node, BigInt64Overflow);
+    }
+
     bool unaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
         return node->child1()->shouldSpeculateInt32OrBooleanForArithmetic()
@@ -1152,6 +1208,8 @@ public:
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
+
+    void checkAbstractValueSpeculatedType(unsigned NodeIndex, NodeType);
 
     StackCheck m_stackChecker;
     VM& m_vm;

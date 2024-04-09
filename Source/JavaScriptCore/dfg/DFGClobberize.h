@@ -250,6 +250,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
+    case BigInt64Rep:
     case BooleanToNumber:
     case FiatInt52:
     case MakeRope:
@@ -328,7 +329,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithNegate:
         if (node->child1().useKind() == Int32Use
             || node->child1().useKind() == DoubleRepUse
-            || node->child1().useKind() == Int52RepUse)
+            || node->child1().useKind() == Int52RepUse
+            || node->child1().useKind() == BigInt64RepUse)
             def(PureValue(node, node->arithMode()));
         else
             clobberTop();
@@ -480,6 +482,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         switch (node->binaryUseKind()) {
         case Int32Use:
         case Int52RepUse:
+        case BigInt64RepUse:
         case DoubleRepUse:
             def(PureValue(node, node->arithMode()));
             return;
@@ -835,6 +838,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         switch (node->child1().useKind()) {
         case Int32Use:
         case Int52RepUse:
+        case BigInt64RepUse:
         case DoubleRepUse:
         case BigInt32Use:
         case HeapBigIntUse:

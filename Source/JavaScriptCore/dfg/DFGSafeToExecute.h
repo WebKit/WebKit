@@ -95,6 +95,7 @@ public:
         case NotDoubleUse:
         case NeitherDoubleNorHeapBigIntNorStringUse:
         case NeitherDoubleNorHeapBigIntUse:
+        case BigInt64RepUse:
             return;
             
         case KnownInt32Use:
@@ -299,6 +300,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ValueRep:
     case DoubleRep:
     case Int52Rep:
+    case BigInt64Rep:
     case BooleanToNumber:
     case FiatInt52:
     case HasIndexedProperty:

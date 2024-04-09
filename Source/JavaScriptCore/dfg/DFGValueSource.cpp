@@ -48,6 +48,9 @@ void ValueSource::dump(PrintStream& out) const
     case Int52InJSStack:
         out.print("Int52:", virtualRegister());
         break;
+    case BigInt64InJSStack:
+        out.print("BigInt64:", virtualRegister());
+        break;
     case CellInJSStack:
         out.print("Cell:", virtualRegister());
         break;

@@ -39,6 +39,7 @@ enum FlushFormat : uint8_t {
     DeadFlush,
     FlushedInt32,
     FlushedInt52,
+    FlushedBigInt64,
     FlushedDouble,
     FlushedCell,
     FlushedBoolean,
@@ -58,6 +59,8 @@ inline NodeFlags resultFor(FlushFormat format)
         return NodeResultInt32;
     case FlushedInt52:
         return NodeResultInt52;
+    case FlushedBigInt64:
+        return NodeResultBigInt64;
     case FlushedDouble:
         return NodeResultDouble;
     case FlushedBoolean:
@@ -80,6 +83,8 @@ inline UseKind useKindFor(FlushFormat format)
         return Int32Use;
     case FlushedInt52:
         return Int52RepUse;
+    case FlushedBigInt64:
+        return BigInt64RepUse;
     case FlushedDouble:
         return DoubleRepUse;
     case FlushedBoolean:
@@ -102,6 +107,8 @@ inline UseKind uncheckedUseKindFor(FlushFormat format)
         return KnownInt32Use;
     case FlushedInt52:
         return Int52RepUse;
+    case FlushedBigInt64:
+        return BigInt64RepUse;
     case FlushedDouble:
         return DoubleRepUse;
     case FlushedBoolean:
@@ -130,6 +137,8 @@ inline DataFormat dataFormatFor(FlushFormat format)
         return DataFormatInt32;
     case FlushedInt52:
         return DataFormatInt52;
+    case FlushedBigInt64:
+        return DataFormatBigInt64;
     case FlushedCell:
         return DataFormatCell;
     case FlushedBoolean:

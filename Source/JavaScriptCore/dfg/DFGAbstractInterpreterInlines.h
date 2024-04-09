@@ -558,6 +558,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
+        if (node->child1().useKind() == BigInt64RepUse) {
+            setNonCellTypeForNode(node, SpecBigInt64);
+            break;
+        }
+
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
@@ -626,6 +631,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             && (isBoolInt32Speculation(forNode(node->child1()).m_type) ||
                 isBoolInt32Speculation(forNode(node->child2()).m_type))) {
             setNonCellTypeForNode(node, SpecBoolInt32);
+            break;
+        }
+
+        if (node->child1().useKind() == BigInt64RepUse) {
+            setNonCellTypeForNode(node, SpecBigInt64);
             break;
         }
         
@@ -773,7 +783,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
-        
+
+    case BigInt64Rep: {
+        // TODO: constant bigint?
+        setNonCellTypeForNode(node, SpecBigInt64);
+        break;
+    }
+
     case ValueRep: {
         JSValue value = forNode(node->child1()).value();
         if (value) {
@@ -852,6 +868,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 }
             }
             setNonCellTypeForNode(node, SpecInt52Any);
+            break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
             break;
         case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
@@ -975,6 +994,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             setNonCellTypeForNode(node, SpecInt52Any);
             break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
+            break;
         case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
                 setConstant(node, jsDoubleNumber(left.asNumber() - right.asNumber()));
@@ -1039,6 +1061,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             setNonCellTypeForNode(node, SpecInt52Any);
             break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
+            break;
         case DoubleRepUse:
             if (child && child.isNumber()) {
                 setConstant(node, jsDoubleNumber(-child.asNumber()));
@@ -1065,6 +1090,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case Int52RepUse:
             setNonCellTypeForNode(node, SpecInt52Any);
+            break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
             break;
         case DoubleRepUse:
             setNonCellTypeForNode(node, typeOfDoubleIncOrDec(forNode(node->child1()).m_type));
@@ -1175,6 +1203,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 typeOfDoubleProduct(
                     forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -1221,6 +1252,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             }
             
+            break;
+        case BigInt64RepUse:
+            setNonCellTypeForNode(node, SpecBigInt64);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1384,6 +1418,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
+
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setNonCellTypeForNode(node, SpecBigInt64);
+            break;
+        }
+
         setNonCellTypeForNode(node, typeOfDoublePow(forNode(node->child1()).m_type, forNode(node->child2()).m_type));
         break;
     }
@@ -2169,6 +2209,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1() == node->child2()) {
             if (node->isBinaryUseKind(Int32Use) ||
                 node->isBinaryUseKind(Int52RepUse) ||
+                node->isBinaryUseKind(BigInt64RepUse) ||
                 node->isBinaryUseKind(BigInt32Use) ||
                 node->isBinaryUseKind(HeapBigIntUse) ||
                 node->isBinaryUseKind(AnyBigIntUse) ||
@@ -2255,6 +2296,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (node->isBinaryUseKind(BooleanUse)
                 || node->isBinaryUseKind(Int32Use)
                 || node->isBinaryUseKind(Int52RepUse)
+                || node->isBinaryUseKind(BigInt64RepUse)
                 || node->isBinaryUseKind(StringUse)
                 || node->isBinaryUseKind(StringIdentUse)
                 || node->isBinaryUseKind(SymbolUse)

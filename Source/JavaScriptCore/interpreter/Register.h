@@ -70,6 +70,7 @@ namespace JSC {
         int64_t asanUnsafeUnboxedInt52() const;
         int64_t unboxedStrictInt52() const;
         int64_t asanUnsafeUnboxedStrictInt52() const;
+        int64_t unboxedBigInt64() const;
         int64_t unboxedInt64() const;
         int64_t asanUnsafeUnboxedInt64() const;
         bool unboxedBoolean() const;
@@ -177,6 +178,13 @@ namespace JSC {
     {
         return u.integer;
     }
+
+#if USE(JSVALUE64)
+    ALWAYS_INLINE int64_t Register::unboxedBigInt64() const
+    {
+        return jsValue().asBigInt64();
+    }
+#endif
 
     ALWAYS_INLINE int64_t Register::unboxedInt64() const
     {

@@ -336,6 +336,7 @@ public:
     GPRReg fillSpeculateInt32(Edge, DataFormat& returnFormat);
     GPRReg fillSpeculateInt32Strict(Edge);
     GPRReg fillSpeculateInt52(Edge, DataFormat desiredFormat);
+    GPRReg fillSpeculateBigInt64(Edge);
     FPRReg fillSpeculateDouble(Edge);
     GPRReg fillSpeculateCell(Edge);
     GPRReg fillSpeculateBoolean(Edge);
@@ -504,7 +505,8 @@ public:
         }
 
         case DataFormatInt52:
-        case DataFormatStrictInt52: {
+        case DataFormatStrictInt52:
+        case DataFormatBigInt64: {
             store64(info.gpr(), JITCompiler::addressFor(spillMe));
             info.spill(m_stream, spillMe, spillFormat);
             return;
@@ -605,7 +607,7 @@ public:
 #endif
 
     // Helper functions to enable code sharing in implementations of bit/shift ops.
-    void bitOp(NodeType op, int32_t imm, GPRReg op1, GPRReg result)
+    void bitOp32(NodeType op, int32_t imm, GPRReg op1, GPRReg result)
     {
         switch (op) {
         case ArithBitAnd:
@@ -621,7 +623,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-    void bitOp(NodeType op, GPRReg op1, GPRReg op2, GPRReg result)
+    void bitOp32(NodeType op, GPRReg op1, GPRReg op2, GPRReg result)
     {
         switch (op) {
         case ArithBitAnd:
@@ -637,7 +639,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-    void shiftOp(NodeType op, GPRReg op1, int32_t shiftAmount, GPRReg result)
+    void shiftOp32(NodeType op, GPRReg op1, int32_t shiftAmount, GPRReg result)
     {
         switch (op) {
         case ArithBitRShift:
@@ -653,7 +655,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-    void shiftOp(NodeType op, GPRReg op1, GPRReg shiftAmount, GPRReg result)
+    void shiftOp32(NodeType op, GPRReg op1, GPRReg shiftAmount, GPRReg result)
     {
         switch (op) {
         case ArithBitRShift:
@@ -669,7 +671,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-    
+
     // Returns the index of the branch node if peephole is okay, UINT_MAX otherwise.
     unsigned detectPeepHoleBranch()
     {
@@ -800,6 +802,16 @@ public:
     void strictInt52Result(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
         int52Result(reg, node, DataFormatStrictInt52, mode);
+    }
+    void bigInt64Result(GPRReg reg, Node* node)
+    {
+        useChildren(node);
+
+        VirtualRegister virtualRegister = node->virtualRegister();
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+        m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+        info.initBigInt64(node, node->refCount(), reg);
     }
     void noResult(Node* node, UseChildrenMode mode = CallUseChildren)
     {
@@ -1237,6 +1249,7 @@ public:
     bool compilePeepHoleBranch(Node*, RelationalCondition, DoubleCondition, S_JITOperation_GJJ);
     void compilePeepHoleInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleInt52Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+    void compilePeepHoleBigInt64Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
 #if USE(BIGINT32)
     void compilePeepHoleBigInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
 #endif
@@ -1331,6 +1344,7 @@ public:
 
     void compileInt32Compare(Node*, RelationalCondition);
     void compileInt52Compare(Node*, RelationalCondition);
+    void compileBigInt64Compare(Node*, RelationalCondition);
 #if USE(BIGINT32)
     void compileBigInt32Compare(Node*, RelationalCondition);
 #endif
@@ -2870,6 +2884,53 @@ private:
     GPRReg m_gprOrInvalid;
 };
 #endif // USE(BIGINT32)
+
+class SpeculateBigInt64Operand {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit SpeculateBigInt64Operand(SpeculativeJIT* jit, Edge edge)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT(m_jit && edge.useKind() == BigInt64RepUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+
+    ~SpeculateBigInt64Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+
+    Edge edge() const
+    {
+        return m_edge;
+    }
+
+    Node* node() const
+    {
+        return edge().node();
+    }
+
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateBigInt64(edge());
+        return m_gprOrInvalid;
+    }
+
+    void use()
+    {
+        m_jit->use(node());
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+};
 
 #define DFG_TYPE_CHECK_WITH_EXIT_KIND(exitKind, source, edge, typesPassedThrough, jumpToFail) do { \
         JSValueSource _dtc_source = (source);                           \

@@ -213,6 +213,8 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
             format = FlushedDouble;
         }
 
+        // TODO: FlushedBigInt64?
+
         if (!entry->m_expectedValues.local(local).validateOSREntryValue(value, format)) {
             dataLogLnIf(Options::verboseOSR(),
                 "    OSR failed because variable ", VirtualRegister(localOffset), " is ",

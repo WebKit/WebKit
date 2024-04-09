@@ -73,7 +73,10 @@ DataFormat ExitValue::dataFormat() const
             
     case ExitValueInJSStackAsInt52:
         return DataFormatInt52;
-            
+
+    case ExitValueInJSStackAsBigInt64:
+        return DataFormatBigInt64;
+
     case ExitValueInJSStackAsDouble:
         return DataFormatDouble;
     }
@@ -104,6 +107,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case ExitValueInJSStackAsInt52:
         out.print("InJSStackAsInt52:", virtualRegister());
+        return;
+    case ExitValueInJSStackAsBigInt64:
+        out.print("InJSStackAsBigInt64:", virtualRegister());
         return;
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble:", virtualRegister());

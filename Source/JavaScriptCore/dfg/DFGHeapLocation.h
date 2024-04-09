@@ -55,6 +55,7 @@ enum LocationKind {
     IndexedPropertyInt32Loc,
     IndexedPropertyInt32OutOfBoundsSaneChainLoc,
     IndexedPropertyInt52Loc,
+    IndexedPropertyBigInt64Loc,
     IndexedPropertyJSOutOfBoundsSaneChainLoc,
     IndexedPropertyJSLoc,
     IndexedPropertyStorageLoc,
@@ -184,6 +185,8 @@ inline LocationKind indexedPropertyLocForResultType(NodeFlags canonicalResultRep
         return IndexedPropertyDoubleLoc;
     case NodeResultInt52:
         return IndexedPropertyInt52Loc;
+    case NodeResultBigInt64:
+        return IndexedPropertyBigInt64Loc;
     case NodeResultInt32:
         return IndexedPropertyInt32Loc;
     case NodeResultJS:

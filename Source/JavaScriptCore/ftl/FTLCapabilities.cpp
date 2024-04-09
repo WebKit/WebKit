@@ -308,6 +308,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
+    case BigInt64Rep:
     case DoubleConstant:
     case Int52Constant:
     case BooleanToNumber:
@@ -522,6 +523,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case Int32Use:
                 case KnownInt32Use:
                 case Int52RepUse:
+                case BigInt64RepUse:
                 case NumberUse:
                 case RealNumberUse:
                 case DoubleRepUse:
