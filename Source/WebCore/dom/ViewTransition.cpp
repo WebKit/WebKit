@@ -278,7 +278,8 @@ static RefPtr<ImageBuffer> snapshotNodeVisualOverflowClippedToViewport(LocalFram
     ASSERT(node.renderer()->hasLayer());
     CheckedPtr layerRenderer = downcast<RenderLayerModelObject>(node.renderer());
 
-    oldOverflowRect = layerRenderer->layer()->localBoundingBox();
+    oldOverflowRect = layerRenderer->layer()->localBoundingBox(RenderLayer::IncludeRootBackgroundPaintingArea);
+
     IntRect paintRect = snappedIntRect(oldOverflowRect);
 
     ASSERT(frame.page());
@@ -625,9 +626,17 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(Element& e
     };
 
     Ref<MutableStyleProperties> props = styleExtractor.copyProperties(transitionProperties);
+    CheckedPtr renderer = element.renderer();
+
+    if (renderer && renderer->isDocumentElementRenderer()) {
+        auto& frameView = renderer->view().frameView();
+        props->setProperty(CSSPropertyWidth, CSSPrimitiveValue::create(frameView.contentsWidth(), CSSUnitType::CSS_PX));
+        props->setProperty(CSSPropertyHeight, CSSPrimitiveValue::create(frameView.contentsHeight(), CSSUnitType::CSS_PX));
+
+    }
 
     TransformationMatrix transform;
-    auto* renderer = element.renderer();
+
     RenderElement* container = nullptr;
     while (renderer && !renderer->isRenderView()) {
         container = renderer->container();
