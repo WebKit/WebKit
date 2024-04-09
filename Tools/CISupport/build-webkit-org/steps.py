@@ -480,15 +480,16 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
                 # S3 might not be configured on local instances, achieve similar functionality without S3.
                 steps_to_add.extend([UploadBuiltProduct()])
         # Minified build archive
-        if (triggers and full_platform.startswith(('mac', 'ios-simulator', 'tvos-simulator', 'watchos-simulator'))) or (rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash')):
-            steps_to_add += [ArchiveMinifiedBuiltProduct()]
-            if CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
-                steps_to_add.extend([
-                    GenerateS3URL(f"{full_platform}-{architecture}-{configuration}", minified=True),
-                    UploadFileToS3(f"WebKitBuild/minified-{configuration}.zip", links={self.name: 'Minified Archive'}),
-                ])
-            else:
-                steps_to_add.extend([UploadMinifiedBuiltProduct()])
+        if (full_platform.startswith(('mac', 'ios-simulator', 'tvos-simulator', 'watchos-simulator'))):
+            if (triggers or (rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'))):
+                steps_to_add += [ArchiveMinifiedBuiltProduct()]
+                if CURRENT_HOSTNAME in BUILD_WEBKIT_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
+                    steps_to_add.extend([
+                        GenerateS3URL(f"{full_platform}-{architecture}-{configuration}", minified=True),
+                        UploadFileToS3(f"WebKitBuild/minified-{configuration}.zip", links={self.name: 'Minified Archive'}),
+                    ])
+                else:
+                    steps_to_add.extend([UploadMinifiedBuiltProduct()])
 
         # Using a single addStepsAfterCurrentStep because of https://github.com/buildbot/buildbot/issues/4874
         self.build.addStepsAfterCurrentStep(steps_to_add)
