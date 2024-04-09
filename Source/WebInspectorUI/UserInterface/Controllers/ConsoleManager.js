@@ -180,6 +180,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
 
         WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
+        WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
 
         // COMPATIBILITY (iOS 16.4, macOS 13.3): `Console.ClearReason` did not exist.
         if (!reason) {
