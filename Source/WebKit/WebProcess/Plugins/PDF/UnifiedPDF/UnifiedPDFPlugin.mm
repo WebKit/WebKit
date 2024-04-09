@@ -920,6 +920,9 @@ void UnifiedPDFPlugin::paintPDFContent(GraphicsContext& context, const FloatRect
 
         if (!asyncRenderer) {
             LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin: painting PDF page " << pageInfo.pageIndex << " into rect " << pageDestinationRect << " with clip " << clipRect);
+
+            context.fillRect(pageDestinationRect, Color::white);
+
             [page drawWithBox:kPDFDisplayBoxCropBox toContext:context.platformContext()];
         }
 
