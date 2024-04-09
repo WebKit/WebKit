@@ -70,6 +70,8 @@ public:
     virtual void registerBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
     virtual void unregisterBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin) = 0;
 
+    virtual String blobType(const URL&) = 0;
+
     virtual unsigned long long blobSize(const URL&) = 0;
 
     virtual void writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) = 0;

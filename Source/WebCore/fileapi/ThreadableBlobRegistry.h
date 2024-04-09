@@ -57,6 +57,7 @@ public:
     static void registerBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin);
     static void unregisterBlobURLHandle(const URL&, const std::optional<SecurityOriginData>& topOrigin);
 
+    WEBCORE_EXPORT static String blobType(const URL&);
     WEBCORE_EXPORT static unsigned long long blobSize(const URL&);
 
     // Returns the origin for the given blob URL. This is because we are not able to embed the unique security origin or the origin of file URL
