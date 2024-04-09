@@ -144,11 +144,11 @@ void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_
 #if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
         flags |= MPO_EXCEPTION_PORT;
 #endif
-        mach_port_options_t opts = {
-            .flags = flags
-        };
+        mach_port_options_t options;
+        memset(&options, 0, sizeof(options));
+        options.flags = flags;
 
-        kern_return_t kr = mach_port_construct(mach_task_self(), &opts, 0, &handlers.exceptionPort);
+        kern_return_t kr = mach_port_construct(mach_task_self(), &options, 0, &handlers.exceptionPort);
         RELEASE_ASSERT(kr == KERN_SUCCESS);
 
 #if CPU(ARM64) && HAVE(HARDENED_MACH_EXCEPTIONS)
