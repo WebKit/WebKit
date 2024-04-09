@@ -6901,11 +6901,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_focusedElementInformation.hasEverBeenPasswordField) {
         if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])
             privateTraits.learnsCorrections = NO;
-#if USE(BROWSERENGINEKIT)
         extendedTraits.typingAdaptationEnabled = NO;
-#else
-        extendedTraits.typingAdaptationDisabled = YES;
-#endif
     }
 
     if ([privateTraits respondsToSelector:@selector(setShortcutConversionType:)])
@@ -13044,7 +13040,10 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     if (!_extendedTextInputTraits)
         _extendedTextInputTraits = adoptNS([WKExtendedTextInputTraits new]);
 
-    if (!_isBlurringFocusedElement)
+    if (!self._hasFocusedElement && !_isFocusingElementWithKeyboard) {
+        [_extendedTextInputTraits restoreDefaultValues];
+        [_extendedTextInputTraits setSelectionColorsToMatchTintColor:[self _cascadeInteractionTintColor]];
+    } else if (!_isBlurringFocusedElement)
         [self _updateTextInputTraits:_extendedTextInputTraits.get()];
 
     return _extendedTextInputTraits.get();
