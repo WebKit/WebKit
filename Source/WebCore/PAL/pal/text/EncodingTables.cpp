@@ -28,6 +28,7 @@
 
 #include "TextCodecICU.h"
 #include <mutex>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace PAL {
 
@@ -8625,12 +8626,12 @@ const std::array<UChar, 23940>& gb18030()
             ASSERT(icuOutput != 0xFFFD);
             (*array)[pointer] = icuOutput;
         }
-        
-#if U_ICU_VERSION_MAJOR_NUM < 74
+
+    if (WTF::ICU::majorVersion() < 74) {
         // This is a difference between ICU and the encoding specification.
         ASSERT((*array)[6555] == 0xe5e5);
         (*array)[6555] = 0x3000;
-#endif
+    }
 
 #if !HAVE(GB_18030_2022)
         static std::array<std::pair<size_t, UChar>, 18> gb18030_2022Differences { {
