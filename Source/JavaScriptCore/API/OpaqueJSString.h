@@ -41,14 +41,14 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
         return adoptRef(*new OpaqueJSString);
     }
 
-    static Ref<OpaqueJSString> create(const LChar* characters, unsigned length)
+    static Ref<OpaqueJSString> create(std::span<const LChar> characters)
     {
-        return adoptRef(*new OpaqueJSString(characters, length));
+        return adoptRef(*new OpaqueJSString(characters));
     }
 
-    static Ref<OpaqueJSString> create(const UChar* characters, unsigned length)
+    static Ref<OpaqueJSString> create(std::span<const UChar> characters)
     {
-        return adoptRef(*new OpaqueJSString(characters, length));
+        return adoptRef(*new OpaqueJSString(characters));
     }
 
     JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> tryCreate(const String&);
@@ -88,14 +88,14 @@ private:
     {
     }
 
-    OpaqueJSString(const LChar* characters, unsigned length) // FIXME: Should take in a span.
-        : m_string({ characters, length })
+    OpaqueJSString(std::span<const LChar> characters)
+        : m_string(characters)
         , m_characters(nullptr)
     {
     }
 
-    OpaqueJSString(const UChar* characters, unsigned length) // FIXME: Should take in a span.
-        : m_string({ characters, length })
+    OpaqueJSString(std::span<const UChar> characters)
+        : m_string(characters)
         , m_characters(m_string.impl() && m_string.is8Bit() ? nullptr : const_cast<UChar*>(m_string.characters16()))
     {
     }

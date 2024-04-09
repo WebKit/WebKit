@@ -587,7 +587,7 @@ inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar line
 }
 
 template <typename CharacterType>
-static inline String escapePattern(const String& pattern, const CharacterType* characters, unsigned length)
+static inline String escapePattern(const String& pattern, std::span<const CharacterType> characters)
 {
     bool previousCharacterWasBackslash = false;
     bool inBrackets = false;
@@ -598,12 +598,11 @@ static inline String escapePattern(const String& pattern, const CharacterType* c
     // not a valid RegularExpressionLiteral (since it is a single line comment), and hence
     // source cannot ever validly be "". If the source is empty, return a different Pattern
     // that would match the same thing.
-    if (!length)
+    if (characters.empty())
         return "(?:)"_s;
 
     // early return for strings that don't contain a forwards slash and LineTerminator
-    for (unsigned i = 0; i < length; ++i) {
-        CharacterType ch = characters[i];
+    for (auto ch : characters) {
         if (!previousCharacterWasBackslash) {
             if (inBrackets) {
                 if (ch == ']')
@@ -635,8 +634,7 @@ static inline String escapePattern(const String& pattern, const CharacterType* c
     previousCharacterWasBackslash = false;
     inBrackets = false;
     StringBuilder result;
-    for (unsigned i = 0; i < length; ++i) {
-        CharacterType ch = characters[i];
+    for (auto ch : characters) {
         if (!previousCharacterWasBackslash) {
             if (inBrackets) {
                 if (ch == ']')
@@ -670,8 +668,8 @@ static inline String escapePattern(const String& pattern, const CharacterType* c
 String RegExp::escapedPattern() const
 {
     if (m_patternString.is8Bit())
-        return escapePattern(m_patternString, m_patternString.characters8(), m_patternString.length());
-    return escapePattern(m_patternString, m_patternString.characters16(), m_patternString.length());
+        return escapePattern(m_patternString, m_patternString.span8());
+    return escapePattern(m_patternString, m_patternString.span16());
 }
 
 String RegExp::toSourceString() const

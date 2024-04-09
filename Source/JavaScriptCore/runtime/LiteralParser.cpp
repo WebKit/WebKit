@@ -130,11 +130,11 @@ template <typename CharType>
 ALWAYS_INLINE Identifier LiteralParser<CharType>::makeIdentifier(VM& vm, typename Lexer::LiteralParserTokenPtr token)
 {
     if (token->type == TokIdentifier)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->identifierStart, token->stringOrIdentifierLength));
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->identifier()));
     ASSERT(token->type == TokString);
     if (token->stringIs8Bit)
-        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringStart8, token->stringOrIdentifierLength));
-    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->stringStart16, token->stringOrIdentifierLength));
+        return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string8()));
+    return Identifier::fromString(vm, vm.jsonAtomStringCache.makeIdentifier(token->string16()));
 }
 
 template <typename CharType>

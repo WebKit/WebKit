@@ -64,7 +64,7 @@ static constexpr WTF::BitSet<256> makeCharacterBitmap(const char (&characters)[c
 }
 
 template<typename CharacterType>
-static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNotEscape, const CharacterType* characters, unsigned length)
+static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNotEscape, std::span<const CharacterType> characters)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -77,11 +77,11 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
     };
 
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
-    builder.reserveCapacity(length);
+    builder.reserveCapacity(characters.size());
 
     // 4. Repeat
-    auto* end = characters + length;
-    for (auto* cursor = characters; cursor != end; ++cursor) {
+    auto* end = characters.data() + characters.size();
+    for (auto* cursor = characters.data(); cursor != end; ++cursor) {
         auto character = *cursor;
 
         // 4-c. If C is in unescapedSet, then
@@ -149,30 +149,30 @@ static JSValue encode(JSGlobalObject* globalObject, JSValue argument, const WTF:
 {
     return toStringView(globalObject, argument, [&] (StringView view) {
         if (view.is8Bit())
-            return encode(globalObject, doNotEscape, view.characters8(), view.length());
-        return encode(globalObject, doNotEscape, view.characters16(), view.length());
+            return encode(globalObject, doNotEscape, view.span8());
+        return encode(globalObject, doNotEscape, view.span16());
     });
 }
 
 template <typename CharType>
 ALWAYS_INLINE
-static JSValue decode(JSGlobalObject* globalObject, const CharType* characters, int length, const WTF::BitSet<256>& doNotUnescape, bool strict)
+static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> characters, const WTF::BitSet<256>& doNotUnescape, bool strict)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
-    int k = 0;
+    size_t k = 0;
     UChar u = 0;
-    while (k < length) {
-        const CharType* p = characters + k;
+    while (k < characters.size()) {
+        const CharType* p = characters.data() + k;
         CharType c = *p;
         if (c == '%') {
-            int charLen = 0;
-            if (k <= length - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
+            size_t charLen = 0;
+            if (k <= characters.size() - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
                 const char b0 = Lexer<CharType>::convertHex(p[1], p[2]);
                 const int sequenceLen = 1 + U8_COUNT_TRAIL_BYTES(b0);
-                if (k <= length - sequenceLen * 3) {
+                if (k <= characters.size() - sequenceLen * 3) {
                     charLen = sequenceLen * 3;
                     uint8_t sequence[U8_MAX_LENGTH];
                     sequence[0] = b0;
@@ -208,7 +208,7 @@ static JSValue decode(JSGlobalObject* globalObject, const CharType* characters, 
                     return throwException(globalObject, scope, createURIError(globalObject, "URI error"_s));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
-                if (k <= length - 6 && p[1] == 'u'
+                if (k <= characters.size() - 6 && p[1] == 'u'
                         && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
                         && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
                     charLen = 6;
@@ -221,7 +221,7 @@ static JSValue decode(JSGlobalObject* globalObject, const CharType* characters, 
                 continue;
             }
         }
-        k++;
+        ++k;
         builder.append(c);
     }
     if (UNLIKELY(builder.hasOverflowed()))
@@ -233,8 +233,8 @@ static JSValue decode(JSGlobalObject* globalObject, JSValue argument, const WTF:
 {
     return toStringView(globalObject, argument, [&] (StringView view) {
         if (view.is8Bit())
-            return decode(globalObject, view.characters8(), view.length(), doNotUnescape, strict);
-        return decode(globalObject, view.characters16(), view.length(), doNotUnescape, strict);
+            return decode(globalObject, view.span8(), doNotUnescape, strict);
+        return decode(globalObject, view.span16(), doNotUnescape, strict);
     });
 }
 
