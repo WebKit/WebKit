@@ -48,7 +48,7 @@ public:
     explicit ExtensionCapabilityGrant(String environmentIdentifier);
     ~ExtensionCapabilityGrant();
 
-    ExtensionCapabilityGrant& operator=(ExtensionCapabilityGrant&&);
+    ExtensionCapabilityGrant& operator=(ExtensionCapabilityGrant&&) = default;
     ExtensionCapabilityGrant isolatedCopy() &&;
 
     const String& environmentIdentifier() const { return m_environmentIdentifier; }
