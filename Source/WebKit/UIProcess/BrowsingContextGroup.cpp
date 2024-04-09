@@ -142,7 +142,6 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
 
 void BrowsingContextGroup::removePage(WebPageProxy& page)
 {
-    ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
     m_remotePages.take(page);
