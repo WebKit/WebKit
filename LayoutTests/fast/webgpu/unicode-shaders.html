@@ -1,0 +1,10 @@
+<script>
+  if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    device.createShaderModule({code: `\u00c0`});
+    if (window.testRunner) { testRunner.notifyDone() }
+  };
+</script>
+This test passes if it does not crash.

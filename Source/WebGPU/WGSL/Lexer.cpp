@@ -41,7 +41,7 @@ static unsigned isIdentifierStart(UChar character, const UChar* start, const UCh
         return 1;
 
     unsigned length = 1;
-    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+    if (end > start + 1 && u_charType(*start) == U_SURROGATE)
         length++;
     if (u_stringHasBinaryProperty(start, length, UCHAR_XID_START))
         return length;
@@ -53,7 +53,7 @@ static unsigned isIdentifierContinue(UChar character, const UChar* start, const 
     if (auto length = isIdentifierStart(character, start, end))
         return length;
     unsigned length = 1;
-    if (u_charType(*(start + length - 1)) == U_SURROGATE && static_cast<unsigned>(end - start) > length)
+    if (end > start + 1 && u_charType(*start) == U_SURROGATE)
         length++;
     if (u_stringHasBinaryProperty(start, length, UCHAR_XID_CONTINUE))
         return length;
