@@ -682,6 +682,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return imulThunkGenerator;
     case RandomIntrinsic:
         return randomThunkGenerator;
+#if USE(JSVALUE64)
+    case ObjectIsIntrinsic:
+        return objectIsThunkGenerator;
+#endif
 #if !OS(WINDOWS)
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;
