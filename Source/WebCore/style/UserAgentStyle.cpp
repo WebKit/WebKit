@@ -181,7 +181,7 @@ void UserAgentStyle::initDefaultStyleSheet()
     if (extraDefaultStyleSheet.isEmpty())
         defaultRules = StringImpl::createWithoutCopying(htmlUserAgentStyleSheet);
     else
-        defaultRules = makeString(htmlUserAgentStyleSheet, extraDefaultStyleSheet);
+        defaultRules = makeString(std::span { htmlUserAgentStyleSheet }, extraDefaultStyleSheet);
     defaultStyleSheet = parseUASheet(defaultRules);
     addToDefaultStyle(*defaultStyleSheet);
 
@@ -191,7 +191,7 @@ void UserAgentStyle::initDefaultStyleSheet()
     if (extraQuirksStyleSheet.isEmpty())
         quirksRules = StringImpl::createWithoutCopying(quirksUserAgentStyleSheet);
     else
-        quirksRules = makeString(quirksUserAgentStyleSheet, extraQuirksStyleSheet);
+        quirksRules = makeString(std::span { quirksUserAgentStyleSheet }, extraQuirksStyleSheet);
     quirksStyleSheet = parseUASheet(quirksRules);
 
     RuleSetBuilder quirkBuilder(*defaultQuirksStyle, screenEval());
