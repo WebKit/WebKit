@@ -688,6 +688,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (WKBackForwardList *)backForwardList
 {
+    [self _didAccessBackForwardList];
     return wrapper(_page->backForwardList());
 }
 
@@ -855,19 +856,35 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     return _page->pageLoadState().certificateInfo().trust().get();
 }
 
+- (void)_didAccessBackForwardList
+{
+    BOOL oldValue = _didAccessBackForwardList;
+    _didAccessBackForwardList = YES;
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    if (!oldValue)
+        [self _updatePageLoadObserverState];
+#else
+    UNUSED_PARAM(oldValue);
+#endif
+}
+
 - (BOOL)canGoBack
 {
+    [self _didAccessBackForwardList];
     return _page->pageLoadState().canGoBack();
 }
 
 - (BOOL)canGoForward
 {
+    [self _didAccessBackForwardList];
     return _page->pageLoadState().canGoForward();
 }
 
 - (WKNavigation *)goBack
 {
     THROW_IF_SUSPENDED;
+    [self _didAccessBackForwardList];
     if (self._safeBrowsingWarning)
         return [self reload];
     return wrapper(_page->goBack()).autorelease();
@@ -876,6 +893,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)goForward
 {
     THROW_IF_SUSPENDED;
+    [self _didAccessBackForwardList];
     return wrapper(_page->goForward()).autorelease();
 }
 

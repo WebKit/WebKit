@@ -87,6 +87,7 @@ extern "C" {
     M(Notifications) \
     M(PDF) \
     M(PDFAsyncRendering) \
+    M(PageLoadObserver) \
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \
