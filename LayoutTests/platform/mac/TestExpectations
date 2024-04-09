@@ -1051,6 +1051,8 @@ webkit.org/b/158534 css3/filters/backdrop/dynamic-backdrop-filter-change.html [ 
 webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-div.html [ Pass ]
+fast/css/appearance-apple-pay-button-input-type-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius-longhands.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-width.html [ Pass ]

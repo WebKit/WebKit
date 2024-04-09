@@ -158,6 +158,20 @@ StyleAppearance RenderTheme::adjustAppearanceForElement(RenderStyle& style, cons
         return autoAppearance;
     }
 
+#if ENABLE(APPLE_PAY)
+    // Only apply `appearance: -apple-pay-button` on buttons and non-form controls.
+    if (appearance == StyleAppearance::ApplePayButton) {
+        if (autoAppearance == StyleAppearance::Button)
+            return appearance;
+
+        if (!inputElement && autoAppearance == StyleAppearance::None)
+            return appearance;
+
+        style.setUsedAppearance(autoAppearance);
+        return autoAppearance;
+    }
+#endif
+
     return appearance;
 }
 
