@@ -107,9 +107,9 @@ void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int3
     completionHandler(value);
 }
 
-void IPCStreamTester::asyncMessage(bool value, CompletionHandler<void(bool)>&& completionHandler)
+void IPCStreamTester::asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    completionHandler(!value);
+    completionHandler(value + 1);
 }
 
 #if USE(FOUNDATION)
