@@ -67,6 +67,7 @@ public:
     std::span<const LChar> span8() const { return { characters8(), length() }; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
+    constexpr char operator[](unsigned index) const { return m_charactersWithNullTerminator[index]; }
     constexpr char characterAt(unsigned index) const { return m_charactersWithNullTerminator[index]; }
 
 #ifdef __OBJC__
