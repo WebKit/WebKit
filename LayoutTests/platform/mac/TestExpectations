@@ -1304,15 +1304,8 @@ webkit.org/b/189483 imported/w3c/web-platform-tests/css/css-fonts/variations/sln
 media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
 
 # Tests which pass on Ventura.
-webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
-webkit.org/b/247588 [ BigSur Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
-
-# Tests timing out on BigSur but not timing out on Ventura
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
-webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
+webkit.org/b/247588 [  Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.serviceworker.html [ Failure ]
+webkit.org/b/247588 [  Monterey ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.sharedworker.html [ Failure ]
 
 # Flaky subtests. Sometimes fails with Promise rejection, sometimes fails the assertion.
 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
@@ -1599,7 +1592,6 @@ webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
 
 webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Pass Failure ]
-
 webkit.org/b/206484 imported/w3c/web-platform-tests/websockets/cookies/007.html [ Pass Failure ]
 
 webkit.org/b/206285 inspector/worker/debugger-pause.html [ Pass Failure ]
@@ -1687,19 +1679,12 @@ webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-p
 [ BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
 [ BigSur ] http/tests/model/model-document.html [ Skip ]
 
-webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
-webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
 
-webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
 
-webkit.org/b/214643 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Pass Failure ]
 
-webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
 
-webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
 
-webkit.org/b/215450 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Pass Failure ]
 
 # <rdar://problem/31017631> Stress GC bot failing LayoutTest step with timeout while running WebCryptoAPI/derive_bits_keys tests
 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
@@ -1938,15 +1923,10 @@ webkit.org/b/221973 [ Monterey+ ] media/media-webm-no-duration.html [ Failure ]
 webkit.org/b/221218 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
 webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
-
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
-
 # Not all OSes support the same set of emoji.
-[ BigSur ] fast/text/mending-heart.html [ Failure ]
 
-webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
 # webkit.org/b/255294  2 http/tests/media/FairPlay tests are flakey.
 http/tests/media/fairplay/legacy-fairplay-mse-v2.html [ Pass Failure ]
@@ -1964,7 +1944,6 @@ webrtc/h264-baseline.html  [ Failure Timeout ]
 
 webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
 
-webkit.org/b/223271 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
 
 webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
@@ -2011,9 +1990,7 @@ webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/maco
 
 webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
 
-webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ Pass ImageOnlyFailure ]
 
 # Buttons are not focusable on Mac so this test doesn't work as expected.
 webkit.org/b/22261 imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html [ Skip ]
@@ -2036,7 +2013,6 @@ webkit.org/b/223645 [ Monterey+ ] media/video-played-ranges-1.html [ Pass Failur
 
 # rdar://80345970 ([ Mac ] imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html is a flaky failure)
 imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html [ Pass Failure Crash ]
-
 webkit.org/b/227910 imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 
 # rdar://80345578 ([ Mac iOS Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html is flaky crashing)
@@ -2072,7 +2048,6 @@ webkit.org/b/223472 [ Release arm64 ] imported/w3c/web-platform-tests/resource-t
 webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]
 
 webkit.org/b/221017 media/modern-media-controls/media-controller/media-controller-click-on-video-background-should-pause-fullscreen.html [ Timeout Pass ]
-
 webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
 
 webkit.org/b/227877 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
@@ -2117,13 +2092,11 @@ fast/css/accent-color/submit.html [ Skip ]
 
 webkit.org/b/199350 fast/css/accent-color/datalist.html [ ImageOnlyFailure ]
 webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
-
 # display-p3 canvas and ImageData are Cocoa only for now.
 [ Monterey+ ] fast/canvas/canvas-color-space-display-p3-ImageData.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html [ Pass ]
-[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Pass ]
@@ -2181,28 +2154,22 @@ webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-s
 # Note: These tests were previously marked as flaky failures for Big Sur Release WK2 for webkit.org/b/235681, this may need to be re-added once webkit.org/b/248067 is resolved
 webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
 webkit.org/b/248067 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
-
 # Plugins
 # FIXME: Remove these tests.
 platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
 platform/mac/plugins/convert-point.html [ Skip ]
 
 webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
-
 webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
 
-# This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
 # These tests require platform support.
 # <rdar://problem/87944426>
-[ BigSur Monterey ] fast/text/locale-shaping-2.html [ Pass ImageOnlyFailure ]
 [ BigSur Monterey ] fast/text/locale-shaping-3.html [ Pass ImageOnlyFailure ]
 
-[ BigSur ] imported/w3c/web-platform-tests/url/toascii.window.html [ Skip ]
 
 # Was in LayoutTests/Expectations, now only happening on Mac
-imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
 
 webkit.org/b/237166 [ Monterey+ ] webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Pass Timeout ]
 
@@ -2232,7 +2199,6 @@ webkit.org/b/242481 fast/css/direct-adjacent-style-sharing-3.html [ Pass ImageOn
 
 webkit.org/b/242484 fast/css/display-contents-all.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/242226 http/tests/media/modern-media-controls/time-control [ Pass Crash ]
 
 webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailure ]
 
@@ -2291,7 +2257,6 @@ imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https 
 [ Ventura+ ] animations/animation-events-not-cancelable.html [ Pass Failure ]
 [ Monterey+ ] animations/remove-syncing-animation.html [ Pass Failure ]
 [ Monterey+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Pass Failure ]
-[ Monterey+ ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Pass Failure ]
 [ Ventura+ ] fast/events/before-unload-navigate-different-window.html [ Pass Failure ]
 [ Monterey+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass Failure Timeout ]

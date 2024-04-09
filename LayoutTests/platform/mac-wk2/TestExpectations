@@ -67,7 +67,6 @@ http/tests/ssl/applepay [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
-webkit.org/b/229423 [ BigSur Debug arm64 ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Pass Crash ]
 
 http/tests/paymentrequest/ApplePayModifier-disbursementPaymentRequest.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
@@ -320,7 +319,6 @@ webkit.org/b/90156 editing/mac/spelling/autocorrection-blockquote-crash.html [ F
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
 webkit.org/b/229723 [ BigSur Debug ] http/tests/security/no-indexeddb-from-sandbox.html [ Pass Crash ]
-
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
@@ -575,7 +573,6 @@ webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [
 
 webkit.org/b/231372 [ BigSur arm64 Debug ] http/tests/xmlhttprequest/access-control-response-with-body.html [ Pass Crash ]
 
-# webkit.org/b/263955 Twelve css WPTs are failing with async overflow scrolling enabled on macOS
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
@@ -1019,7 +1016,6 @@ webkit.org/b/207269 [ Debug ] http/tests/websocket/tests/hybi/server-close.html 
 webkit.org/b/229820 [ BigSur Debug arm64 ] loader/stateobjects/pushstate-size.html [ Pass Crash ]
 
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
-
 webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]
@@ -1085,7 +1081,6 @@ webkit.org/b/213804 fast/scrolling/mac/scroll-snapping-in-progress.html [ Pass F
 
 webkit.org/b/229206 [ Debug ] http/wpt/webrtc/sframe-transform-error.html [ Pass Failure ]
 
-webkit.org/b/214478 [ Debug ] http/wpt/webrtc/generateCertificate.html [ Skip ]
 webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html [ Skip ]
 
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash Failure ]
@@ -1216,7 +1211,6 @@ webanimations/transform-property-and-transform-animation-with-delay-on-forced-la
 
 webkit.org/b/232040 webanimations/marker-opacity-animation-no-effect.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/244916 [ Monterey ] webanimations/relative-ordering-of-translate-and-scale-properties-accelerated.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/221847 platform/mac/media/encrypted-media/fps-encrypted-event.html [ Pass Timeout ]
 
@@ -1258,7 +1252,6 @@ webkit.org/b/230488 [ arm64 ] imported/w3c/web-platform-tests/infrastructure/ref
 
 webkit.org/b/230571 [ Release ] imported/w3c/web-platform-tests/page-visibility/unload-bubbles.html [ Pass Failure ]
 
-webkit.org/b/221759 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Pass Timeout ]
 
 webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pass ImageOnlyFailure ]
 
@@ -1306,18 +1299,14 @@ webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.ht
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
-
 webkit.org/b/225430 [ arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
 
 webkit.org/b/225488 fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html [ Pass Timeout ]
 
-webkit.org/b/225498 fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/225527 [ BigSur Release arm64 ] http/tests/workers/service/self_registration.html [ Pass Timeout ]
-
 webkit.org/b/207474 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
 
-webkit.org/b/225529 [ arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html [ Pass Failure ]
 
 webkit.org/b/225534 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html [ Pass Crash ]
 
@@ -1326,17 +1315,14 @@ webkit.org/b/225533 [ BigSur Release arm64 ] mathml/scripts-removeChild.html [ P
 webkit.org/b/225666 http/tests/cache/disk-cache/redirect-chain-limits.html [ Slow ]
 
 webkit.org/b/225664 editing/selection/move-by-character-brute-force.html [ Slow ]
-
 webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html [ Pass Failure ]
 
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
 
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr Failure ]
 
-webkit.org/b/227467 [ arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/227504 [ Monterey+ Debug ] accessibility/table-title.html [ Pass Timeout ]
-
 webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Pass Failure ]
 
 # rdar://80346382 ([ Monterey Release wk2 arm64 ] platform/mac/fast/overflow/overflow-scrollbar-hit-test.html is a flaky crash)
@@ -1353,7 +1339,6 @@ webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall
 webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Crash ]
 
 webkit.org/b/230366 [ Release ] fast/canvas/canvas-blending-text.html [ Pass Failure Crash ]
-webkit.org/b/230366 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Failure ]
 
 webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
 
@@ -1365,7 +1350,6 @@ webkit.org/b/227874 [ Release ] fullscreen/full-screen-remove-children.html [ Pa
 
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
-webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
 webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOnlyFailure ]
 
@@ -1387,7 +1371,6 @@ webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html 
 webkit.org/b/228528 [ BigSur Debug arm64 ] fast/text/emoji-overlap.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure ]
-
 webkit.org/b/229156 [ Monterey+ ] webrtc/video-addTrack.html [ Pass Failure ]
 
 webkit.org/b/229015 [ BigSur ] webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html [ Pass Timeout Failure ]
@@ -1403,14 +1386,12 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Montery on OpenSource:
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
-[ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
 
 #rdar://82043074 ([Star wk2 Debug arm64,Sky/AzulE wk2 Guard-Malloc] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
 imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure ]
 
 webkit.org/b/230775 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
 
-webkit.org/b/229429 [ BigSur Debug ] http/tests/inspector/network/fetch-network-data.html [ Pass Failure ]
 
 webkit.org/b/229454 [ BigSur Debug ] http/tests/inspector/network/resource-timing.html [ Pass Failure ]
 
@@ -1429,26 +1410,19 @@ webkit.org/b/231088 [ Release ] http/tests/loading/preload-slow-loading.py [ Pas
 
 webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Crash Failure ]
 
-webkit.org/b/229584 [ BigSur Release ] animations/fill-mode-forwards.html [ Pass Failure ]
 
 webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
-
 webkit.org/b/229595 [ Debug ] imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.worker.html [ Pass Failure ]
 
-webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
-[ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/230013 [ BigSur Debug ] http/tests/inspector/network/x-frame-options.html [ Pass Failure ]
-
 webkit.org/b/230027 [ BigSur Debug ] http/tests/media/media-document-referer.html [ Pass Failure ]
 
 webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Pass Timeout ]
 
-webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/fetch-response-body.html [ Pass Failure ]
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-request-properties.html [ Pass Failure ]
@@ -1457,7 +1431,6 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-requ
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Failure ]
 
 webkit.org/b/230504 [ Monterey+ Release ] css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
-
 webkit.org/b/230514 [ BigSur Release ] imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
 
 webkit.org/b/230518 [ Release ]  accessibility/mac/button-shouldnot-have-axvalue.html [ Pass Crash ]
@@ -1471,46 +1444,34 @@ webkit.org/b/230866 [ BigSur ] imported/w3c/web-platform-tests/mediacapture-stre
 webkit.org/b/231083 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Pass Failure ]
 
 webkit.org/b/231386 [ BigSur ] http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html [ Pass Timeout ]
-
 webkit.org/b/235605 [ arm64 ] fast/scrolling/mac/j-shaped-scroll-rubberband.html [ Failure ]
 
-# Plugins
 # FIXME: Remove these tests.
 platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
 platform/mac-wk2/plugins/npp-setwindow-called-on-scroll.html [ Skip ]
 platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 
 webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
-
 webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
-
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
-
 # Need to handle object fit MSE for non UI-side compositing
-webkit.org/b/264944 [ Monterey Ventura ] http/tests/media/media-source/media-source-video-fit-fill.html [ Failure ]
 
-fast/text/install-font-style-recalc.html [ Pass ]
 
 webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.html [ Pass Crash ]
-
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
 # [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
-webkit.org/b/239386 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/texture-size.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
-webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/misc/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
-webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Pass Timeout ]
 webkit.org/b/239386 webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/uniforms/uniform-values-per-program.html [ Pass Timeout ]
@@ -1521,12 +1482,10 @@ webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
@@ -1603,7 +1562,6 @@ webkit.org/b/245727 [ Monterey ] imported/w3c/web-platform-tests/notifications/i
 
 # webkit.org/b/246773 Constant crashes on wk2 debug
 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load.html [ Skip ]
-[ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-default-001.html [ Skip ]
 
 webkit.org/b/254778 [ Ventura Debug arm64 ] fast/images/avif-image-decoding.html [ Pass Crash ]
