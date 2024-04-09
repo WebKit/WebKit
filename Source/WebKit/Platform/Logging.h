@@ -39,6 +39,7 @@ extern "C" {
 #endif
 
 #define WEBKIT2_LOG_CHANNELS(M) \
+    M(API) \
     M(ActivityState) \
     M(AdvancedPrivacyProtections) \
     M(AppSSO) \
