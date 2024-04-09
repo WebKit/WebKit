@@ -1056,8 +1056,8 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup& group)
 template<typename CharacterType>
 static inline void parseHeader(std::span<const CharacterType> header, ResourceResponse& response)
 {
-    ASSERT(WTF::find(header.data(), header.size(), ':') != notFound);
-    unsigned colonPosition = WTF::find(header.data(), header.size(), ':');
+    auto colonPosition = WTF::find(header, ':');
+    ASSERT(colonPosition != notFound);
 
     // Save memory by putting the header names into atom strings so each is stored only once,
     // even though the setHTTPHeaderField function does not require an atom string.

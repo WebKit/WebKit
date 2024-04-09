@@ -309,6 +309,7 @@ public:
     ALWAYS_INLINE std::span<const UChar> span16() const { return { characters16(), length() }; }
 
     template<typename CharacterType> const CharacterType* characters() const;
+    template<typename CharacterType> std::span<const CharacterType> span() const { return { characters<CharacterType>(), length() }; }
 
     size_t cost() const;
     size_t costDuringGC();
@@ -735,8 +736,8 @@ inline size_t reverseFind(std::span<const LChar> characters, UChar matchCharacte
 inline size_t StringImpl::find(LChar character, size_t start)
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, character, start);
-    return WTF::find(characters16(), m_length, character, start);
+        return WTF::find(span8(), character, start);
+    return WTF::find(span16(), character, start);
 }
 
 ALWAYS_INLINE size_t StringImpl::find(char character, size_t start)
@@ -747,8 +748,8 @@ ALWAYS_INLINE size_t StringImpl::find(char character, size_t start)
 inline size_t StringImpl::find(UChar character, size_t start)
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, character, start);
-    return WTF::find(characters16(), m_length, character, start);
+        return WTF::find(span8(), character, start);
+    return WTF::find(span16(), character, start);
 }
 
 template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>

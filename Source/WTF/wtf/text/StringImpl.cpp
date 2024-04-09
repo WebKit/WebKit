@@ -904,12 +904,12 @@ size_t StringImpl::find(StringView matchString)
     if (matchLength == 1) {
         if (is8Bit()) {
             if (matchString.is8Bit())
-                return WTF::find(characters8(), length(), matchString.characters8()[0]);
-            return WTF::find(characters8(), length(), matchString.characters16()[0]);
+                return WTF::find(span8(), matchString.characters8()[0]);
+            return WTF::find(span8(), matchString.characters16()[0]);
         }
         if (matchString.is8Bit())
-            return WTF::find(characters16(), length(), matchString.characters8()[0]);
-        return WTF::find(characters16(), length(), matchString.characters16()[0]);
+            return WTF::find(span16(), matchString.characters8()[0]);
+        return WTF::find(span16(), matchString.characters16()[0]);
     }
 
     // Check matchLength is in range.

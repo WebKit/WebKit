@@ -201,7 +201,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(const Charact
     
     if (position + literalLength > end)
         return false;
-    if (!equalLettersIgnoringASCIICase(position, literalLength, literal))
+    if (!equalLettersIgnoringASCIICase(position, literal))
         return false;
     position += literalLength;
     return true;
@@ -213,7 +213,7 @@ template<typename CharacterType> bool skipExactlyIgnoringASCIICase(StringParsing
 
     if (buffer.lengthRemaining() < literalLength)
         return false;
-    if (!equalLettersIgnoringASCIICase(buffer.position(), literalLength, literal))
+    if (!equalLettersIgnoringASCIICase(buffer.position(), literal))
         return false;
     buffer += literalLength;
     return true;

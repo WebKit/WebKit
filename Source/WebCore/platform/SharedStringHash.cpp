@@ -126,7 +126,7 @@ static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t fir
 template <typename CharacterType>
 static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
-    size_t refPos = find(path.data(), path.size(), '#');
+    size_t refPos = find(path.span(), '#');
     if (!refPos || refPos == notFound)
         refPos = path.size();
 
