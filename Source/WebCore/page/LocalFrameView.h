@@ -448,6 +448,8 @@ public:
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     bool isVisuallyNonEmpty() const { return m_contentQualifiesAsVisuallyNonEmpty; }
+
+    bool hasEnoughContentForVisualMilestones() const;
     bool hasContentfulDescendants() const;
     void checkAndDispatchDidReachVisuallyNonEmptyState();
 
@@ -1067,6 +1069,13 @@ inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String
         return;
 
     incrementVisuallyNonEmptyCharacterCountSlowCase(inlineText);
+}
+
+inline bool LocalFrameView::hasEnoughContentForVisualMilestones() const
+{
+    if (!m_frame->page())
+        return false;
+    return isVisuallyNonEmpty() && hasContentfulDescendants() && (!m_frame->page()->requestedLayoutMilestones().contains(LayoutMilestone::DidRenderSignificantAmountOfText) || m_renderedSignificantAmountOfText);
 }
 
 inline RefPtr<LocalFrameView> LocalFrame::protectedView() const
