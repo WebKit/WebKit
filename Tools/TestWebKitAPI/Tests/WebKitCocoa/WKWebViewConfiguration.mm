@@ -40,6 +40,41 @@
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
+@interface SubclassWebViewConfiguration : WKWebViewConfiguration {
+    RetainPtr<NSString> _subclassData;
+}
+@end
+
+@implementation SubclassWebViewConfiguration
+
+- (NSString *)subclassData
+{
+    return _subclassData.get();
+}
+
+- (void)setSubclassData:(NSString *)data
+{
+    _subclassData = data;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    id copy = [super copyWithZone:zone];
+    [copy setSubclassData:@"copied"];
+    return copy;
+}
+
+@end
+
+TEST(WebKit, ConfigurationSubclass)
+{
+    auto configuration = adoptNS([SubclassWebViewConfiguration new]);
+    [configuration setSubclassData:@"original"];
+    EXPECT_WK_STREQ([configuration subclassData], "original");
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    EXPECT_WK_STREQ([(SubclassWebViewConfiguration *)[webView configuration] subclassData], "copied");
+}
+
 TEST(WebKit, InvalidConfiguration)
 {
     auto shouldThrowExceptionWhenUsed = [](Function<void(WKWebViewConfiguration *)>&& modifier, bool expectException) {

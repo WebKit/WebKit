@@ -290,7 +290,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return wrapper(_pageConfiguration->copy().leakRef());
+    WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
+    configuration->_pageConfiguration->copyDataFrom(*_pageConfiguration);
+    return configuration;
 }
 
 - (WKProcessPool *)processPool

@@ -95,6 +95,7 @@ public:
     virtual ~PageConfiguration();
 
     Ref<PageConfiguration> copy() const;
+    void copyDataFrom(const PageConfiguration&);
 
     WebKit::BrowsingContextGroup& browsingContextGroup() const;
     void setBrowsingContextGroup(RefPtr<WebKit::BrowsingContextGroup>&&);
