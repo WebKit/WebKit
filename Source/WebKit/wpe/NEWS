@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.44.1
+=================
+
+What's new in WPE WebKit 2.44.1?
+
+  - Do not schedule layer flushes when drawing area size is empty.
+  - Fix videos with alpha when using the DMA-BUF sink.
+  - Fix the build with ENABLE_WEB_AUDIO=OFF.
+  - Fix the build with ENABLE_VIDEO=OFF.
+  - Fix the build with USE_GBM=OFF.
+  - Fix the build in 32bit platforms
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.44.0
 =================
 
