@@ -56,7 +56,8 @@ public:
 
 private:
     CodeBlock* m_codeBlock;
-    HashSet<JSCell*> m_references;
+    HashSet<JSCell*> m_cells;
+    HashSet<StructureID> m_structures;
 };
 
 } } // namespace JSC::DFG

@@ -131,6 +131,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(GetterSetter, JSType::GetterSetterType, JSType::GetterSetterType) \
     macro(CustomGetterSetter, JSType::CustomGetterSetterType, JSType::CustomGetterSetterType) \
     macro(NativeExecutable, JSType::NativeExecutableType, JSType::NativeExecutableType) \
+    macro(CodeBlock, JSType::CodeBlockType, JSType::CodeBlockType) \
     macro(JSObject, FirstObjectType, LastObjectType) \
     macro(JSFinalObject, JSType::FinalObjectType, JSType::FinalObjectType) \
     macro(JSFunction, JSType::JSFunctionType, JSType::JSFunctionType) \
