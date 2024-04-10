@@ -425,6 +425,7 @@ public:
 
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
+    void setStorageSiteValidationEnabled(PAL::SessionID, bool);
 
 private:
     // CheckedPtr interface

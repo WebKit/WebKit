@@ -175,6 +175,9 @@ public:
     void setPrivateClickMeasurementDebugMode(bool);
     void storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement&);
 
+    bool storageSiteValidationEnabled() const { return m_storageSiteValidationEnabled; }
+    void setStorageSiteValidationEnabled(bool);
+
     uint64_t perOriginStorageQuota() const { return m_configuration->perOriginStorageQuota(); }
     std::optional<double> originQuotaRatio() { return m_configuration->originQuotaRatio(); }
 
@@ -607,6 +610,7 @@ private:
 #if HAVE(NW_PROXY_CONFIG)
     std::optional<Vector<std::pair<Vector<uint8_t>, WTF::UUID>>> m_proxyConfigData;
 #endif
+    bool m_storageSiteValidationEnabled { false };
 };
 
 }

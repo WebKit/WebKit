@@ -3007,4 +3007,10 @@ void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessio
         session->setInspectionForServiceWorkersAllowed(inspectable);
 }
 
+void NetworkProcess::setStorageSiteValidationEnabled(PAL::SessionID sessionID, bool enabled)
+{
+    if (auto* session = networkSession(sessionID))
+        session->protectedStorageManager()->setStorageSiteValidationEnabled(enabled);
+}
+
 } // namespace WebKit

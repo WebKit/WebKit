@@ -244,4 +244,5 @@ messages -> NetworkProcess LegacyReceiver {
     SetProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, WTF::UUID>> proxyConfigurations)
 #endif
 
+    SetStorageSiteValidationEnabled(PAL::SessionID sessionID, bool enabled)
 }
