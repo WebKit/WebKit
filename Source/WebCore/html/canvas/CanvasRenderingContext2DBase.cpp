@@ -40,6 +40,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleImageValue.h"
 #include "CachedImage.h"
+#include "CanvasGlyphDisplayListCache.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "ColorConversion.h"
@@ -2730,7 +2731,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             else
                 c->setStrokeColor(Color::black);
 
-            fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::UseFallbackIfFontNotReady);
+            drawBidiText(*c, textRun, location + offset);
         }
 
         auto maskImage = c->createAlignedImageBuffer(maskRect.size());
@@ -2752,10 +2753,10 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             maskImageContext.translate(location - maskRect.location());
             // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
             maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-            fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
+            drawBidiText(maskImageContext, textRun, FloatPoint(0, 0));
         } else {
             maskImageContext.translate(-maskRect.location());
-            fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+            drawBidiText(maskImageContext, textRun, location);
         }
 
         GraphicsContextStateSaver stateSaver(*c);
@@ -2780,17 +2781,31 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     bool repaintEntireCanvas = false;
     if (isFullCanvasCompositeMode(state().globalComposite)) {
         beginCompositeLayer();
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        drawBidiText(*c, textRun, location);
         endCompositeLayer();
         repaintEntireCanvas = true;
     } else if (state().globalComposite == CompositeOperator::Copy) {
         clearCanvas();
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        drawBidiText(*c, textRun, location);
         repaintEntireCanvas = true;
     } else
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
+        drawBidiText(*c, textRun, location);
 
     didDraw(repaintEntireCanvas, textRect);
+}
+
+void CanvasRenderingContext2DBase::drawBidiText(GraphicsContext& context, const TextRun& run, const FloatPoint& point)
+{
+    auto& fontProxy = *this->fontProxy();
+
+    m_glyphDisplayList = CanvasGlyphDisplayListCache::singleton().getDisplayList(fontProxy.fontCascade(), context, run);
+
+    if (m_glyphDisplayList)
+        context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), point);
+    else
+        fontProxy.drawBidiText(context, run, point, FontCascade::UseFallbackIfFontNotReady);
+
+    m_glyphDisplayList = nullptr;
 }
 
 Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const String& text)

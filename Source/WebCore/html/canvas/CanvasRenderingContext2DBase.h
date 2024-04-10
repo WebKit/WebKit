@@ -248,6 +248,7 @@ public:
         const FontCascadeDescription& fontDescription() const;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
+        const FontCascade& fontCascade() const { return m_font; }
 
 #if ASSERT_ENABLED
         bool isPopulated() const { return m_font.fonts(); }
@@ -345,6 +346,7 @@ protected:
     void drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
     bool canDrawText(double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
     void drawTextUnchecked(const TextRun&, double x, double y, bool fill, std::optional<double> maxWidth = std::nullopt);
+    void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&);
 
     Ref<TextMetrics> measureTextInternal(const TextRun&);
     Ref<TextMetrics> measureTextInternal(const String& text);
@@ -461,6 +463,7 @@ private:
     mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
+    DisplayList::DisplayList* m_glyphDisplayList { nullptr };
 };
 
 } // namespace WebCore
