@@ -21,6 +21,7 @@
 #include "WebKitProtocolHandler.h"
 
 #include "BuildRevision.h"
+#include "DMABufRendererBufferMode.h"
 #include "DisplayVBlankMonitor.h"
 #include "WebKitError.h"
 #include "WebKitURISchemeRequestPrivate.h"
@@ -31,13 +32,16 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/PlatformDisplaySurfaceless.h>
 #include <WebCore/PlatformScreen.h>
 #include <epoxy/gl.h>
+#include <fcntl.h>
 #include <gio/gio.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #if OS(UNIX)
 #include <sys/utsname.h>
@@ -50,13 +54,12 @@
 #if PLATFORM(GTK)
 #if USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
-#include "DMABufRendererBufferMode.h"
-#include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 #include <gtk/gtk.h>
 
 #if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
+#endif
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -65,7 +68,7 @@
 
 #if USE(GBM)
 #include <WebCore/PlatformDisplayGBM.h>
-#endif
+#include <gbm.h>
 #endif
 
 #if USE(EGL)
@@ -163,13 +166,21 @@ static const char* openGLAPI()
     return "OpenGL ES 2 (libepoxy)";
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
 static String dmabufRendererWithSupportedBuffers()
 {
     StringBuilder buffers;
     buffers.append("DMABuf (Supported buffers: "_s);
-#if USE(EGL)
+
+#if PLATFORM(GTK)
     auto mode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
+#else
+    OptionSet<DMABufRendererBufferMode> mode;
+    if (wpe_display_get_drm_render_node(wpe_display_get_primary()))
+        mode.add(DMABufRendererBufferMode::Hardware);
+    mode.add(DMABufRendererBufferMode::SharedMemory);
+#endif
+
     if (mode.contains(DMABufRendererBufferMode::Hardware))
         buffers.append("Hardware"_s);
     if (mode.contains(DMABufRendererBufferMode::SharedMemory)) {
@@ -177,7 +188,7 @@ static String dmabufRendererWithSupportedBuffers()
             buffers.append(", ");
         buffers.append("Shared Memory"_s);
     }
-#endif
+
     buffers.append(')');
     return buffers.toString();
 }
@@ -283,8 +294,16 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
 #if PLATFORM(WPE)
-    addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
-    addTableRow(versionObject, "WPE backend"_s, String::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
+#if ENABLE(WPE_PLATFORM)
+    bool usingWPEPlatformAPI = !!g_type_class_peek(WPE_TYPE_DISPLAY);
+#else
+    bool usingWPEPlatformAPI = false;
+#endif
+
+    if (!usingWPEPlatformAPI) {
+        addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
+        addTableRow(versionObject, "WPE backend"_s, String::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
+    }
 #endif
 
     stopTable();
@@ -370,6 +389,9 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
         if (usingDMABufRenderer)
             addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+        if (usingWPEPlatformAPI)
+            addTableRow(hardwareAccelerationObject, "Renderer"_s, dmabufRendererWithSupportedBuffers());
 #endif
         addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
 
@@ -424,6 +446,48 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
                 platformDisplay->clearSharingGLContext();
             }
         }
+    }
+#endif
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    if (usingWPEPlatformAPI) {
+        std::unique_ptr<PlatformDisplay> platformDisplay;
+#if USE(GBM)
+        UnixFileDescriptor fd;
+        struct gbm_device* device = nullptr;
+        if (const char* node = wpe_display_get_drm_render_node(wpe_display_get_primary())) {
+            fd = UnixFileDescriptor { open(node, O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+            if (fd) {
+                device = gbm_create_device(fd.value());
+                if (device)
+                    platformDisplay = PlatformDisplayGBM::create(device);
+            }
+        }
+#endif
+        if (!platformDisplay)
+            platformDisplay = PlatformDisplaySurfaceless::create();
+
+        if (platformDisplay) {
+            auto hardwareAccelerationObject = JSON::Object::create();
+            startTable("Hardware Acceleration Information (Render Process)"_s);
+
+            addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::Surfaceless ? "Surfaceless"_s : "GBM"_s));
+
+            {
+                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));
+                addEGLInfo(hardwareAccelerationObject);
+            }
+
+            stopTable();
+            jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
+
+            platformDisplay->clearSharingGLContext();
+        }
+
+#if USE(GBM)
+        if (device)
+            gbm_device_destroy(device);
+#endif
     }
 #endif
 
