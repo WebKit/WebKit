@@ -1736,6 +1736,8 @@ public:
     void textReplacementSessionUpdateStateForReplacementWithUUID(const WTF::UUID& sessionUUID, WebTextReplacementDataState, const WTF::UUID& replacementUUID);
 
     void removeTextIndicatorStyleForID(const WTF::UUID&);
+
+    void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
 #endif
 
 private:
@@ -2778,6 +2780,7 @@ private:
 
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
     UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
+    HashMap<WTF::UUID, Ref<WebCore::Range>> m_textIndicatorStyleEnablementRanges;
 #endif
 
     mutable RefPtr<Logger> m_logger;

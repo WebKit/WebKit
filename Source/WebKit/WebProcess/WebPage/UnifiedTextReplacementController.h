@@ -73,7 +73,7 @@ public:
 
     void updateStateForSelectedReplacementIfNeeded();
 
-    void getTextIndicatorForID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+    RefPtr<WebCore::Range> rangeForUUID(const WTF::UUID uuid) { return m_contextRanges.get(uuid); }
 
 private:
     void textReplacementSessionPerformEditActionForPlainText(WebCore::Document&, const WTF::UUID&, WebKit::WebTextReplacementData::EditAction);

@@ -1204,6 +1204,14 @@ void WebPageProxy::textReplacementSessionUpdateStateForReplacementWithUUID(const
     protectedPageClient()->textReplacementSessionUpdateStateForReplacementWithUUID(sessionUUID, state, replacementUUID);
 }
 
+void WebPageProxy::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::EnableTextIndicatorStyleAfterElementWithID(elementID, uuid));
+}
+
 #endif
 
 } // namespace WebKit

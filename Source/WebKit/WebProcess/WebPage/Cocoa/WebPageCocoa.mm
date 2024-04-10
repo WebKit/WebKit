@@ -312,7 +312,33 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 #if ENABLE(UNIFIED_TEXT_REPLACEMENT)
 void WebPage::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
 {
-    m_unifiedTextReplacementController->getTextIndicatorForID(uuid, WTFMove(completionHandler));
+    RefPtr range = m_unifiedTextReplacementController->rangeForUUID(uuid);
+    if (!range)
+        range = m_textIndicatorStyleEnablementRanges.get(uuid);
+    if (!range) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto simpleRange = makeSimpleRange(range);
+    if (!simpleRange) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+        std::optional<TextIndicatorData> textIndicatorData;
+        constexpr OptionSet textIndicatorOptions {
+            TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+            TextIndicatorOption::ExpandClipBeyondVisibleRect,
+            TextIndicatorOption::UseSelectionRectForSizing
+        };
+        if (auto textIndicator = TextIndicator::createWithRange(*simpleRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { }))
+            textIndicatorData = textIndicator->data();
+        completionHandler(WTFMove(textIndicatorData));
+        return;
+    }
+    completionHandler(std::nullopt);
 }
 
 void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool visible, CompletionHandler<void()>&& completionHandler)
@@ -320,6 +346,38 @@ void WebPage::updateTextIndicatorStyleVisibilityForID(const WTF::UUID uuid, bool
     // FIXME: Turn on/off the visibility.
 
     completionHandler();
+}
+
+void WebPage::enableTextIndicatorStyleAfterElementWithID(const String& elementID, const WTF::UUID& uuid)
+{
+    // FIXME: move the start of the range to be after the element with the ID listed.
+
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr document = frame->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr root = document->documentElement();
+    if (!root) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    VisibleSelection fullDocumentSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
+    auto simpleRange = fullDocumentSelection.range();
+    if (!simpleRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_textIndicatorStyleEnablementRanges.add(uuid, createLiveRange(*simpleRange));
 }
 
 #endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)

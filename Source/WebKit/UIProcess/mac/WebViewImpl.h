@@ -733,7 +733,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void textReplacementSessionDidReceiveTextWithReplacementRange(const WTF::UUID&, const WebCore::AttributedString&, const WebCore::CharacterRange&, const WebUnifiedTextReplacementContextData&);
 
     void textReplacementSessionDidReceiveEditAction(const WTF::UUID&, WebTextReplacementDataEditAction);
+#endif
 
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
     void addTextIndicatorStyleForID(WTF::UUID);
     void removeTextIndicatorStyleForID(WTF::UUID);
 #endif

@@ -2771,6 +2771,43 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #endif
 }
 
+- (NSUUID *)_enableTextIndicatorStylingAfterElementWithID:(NSString *)elementID
+{
+    RetainPtr nsUUID = [NSUUID UUID];
+
+    auto uuid = WTF::UUID::fromNSUUID(nsUUID.get());
+    if (!uuid)
+        return nil;
+
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+    _page->enableTextIndicatorStyleAfterElementWithID(elementID, *uuid);
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView addTextIndicatorStyleForID:nsUUID.get()];
+#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    _impl->addTextIndicatorStyleForID(*uuid);
+#endif
+    return nsUUID.get();
+#else
+    return nil;
+#endif
+}
+
+- (void)_disableTextIndicatorStylingWithUUID:(NSUUID *)nsuuid
+{
+#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if PLATFORM(IOS_FAMILY)
+    [_contentView removeTextIndicatorStyleForID:nsuuid];
+#elif PLATFORM(MAC) && ENABLE(UNIFIED_TEXT_REPLACEMENT_UI)
+    auto uuid = WTF::UUID::fromNSUUID(nsuuid);
+    if (!uuid)
+        return;
+    _impl->removeTextIndicatorStyleForID(*uuid);
+#endif
+#endif
+}
+
+
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion
 {
     WebCore::TargetedElementRequest coreRequest {
