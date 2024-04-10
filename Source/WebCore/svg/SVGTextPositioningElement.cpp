@@ -104,6 +104,7 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
                 textAncestor->setNeedsPositioningValuesUpdate();
         }
         updateSVGRendererForElementChange();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 

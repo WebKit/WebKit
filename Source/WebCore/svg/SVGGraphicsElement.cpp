@@ -27,8 +27,10 @@
 #include "RenderAncestorIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"
+#include "RenderLayerInlines.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGResourceMasker.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
@@ -211,6 +213,18 @@ Path SVGGraphicsElement::toClipPath()
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());
     return path;
+}
+
+void SVGGraphicsElement::invalidateResourceImageBuffersIfNeeded()
+{
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return;
+    if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer())) {
+        if (auto* container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
+            if (auto* patternRenderer = dynamicDowncast<RenderSVGResourceMasker>(container))
+                patternRenderer->invalidateMask();
+        }
+    }
 }
 
 }

@@ -115,9 +115,11 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         if (document().settings().layerBasedSVGEngineEnabled()) {
-            if (CheckedPtr renderer = this->renderer())
-                renderer->repaintClientsOfReferencedSVGResources();
-            return;
+            if (CheckedPtr maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(renderer())) {
+                maskRenderer->invalidateMask();
+                maskRenderer->repaintClientsOfReferencedSVGResources();
+                return;
+            }
         }
 
         updateSVGRendererForElementChange();
@@ -135,9 +137,10 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
         return;
 
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (CheckedPtr renderer = this->renderer())
-            renderer->repaintClientsOfReferencedSVGResources();
-        return;
+        if (CheckedPtr maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(renderer())) {
+            maskRenderer->invalidateMask();
+            maskRenderer->repaintClientsOfReferencedSVGResources();
+        }
     }
 
     updateSVGRendererForElementChange();

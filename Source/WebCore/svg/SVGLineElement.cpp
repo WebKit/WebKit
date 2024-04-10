@@ -90,6 +90,7 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
             shape->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 
