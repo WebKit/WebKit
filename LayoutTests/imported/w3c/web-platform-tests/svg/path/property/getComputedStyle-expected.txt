@@ -1,10 +1,10 @@
 
-FAIL d property of g0 should be none. assert_equals: expected (string) "none" but got (undefined) undefined
-FAIL d property of p1 should be none. assert_equals: expected (string) "none" but got (undefined) undefined
-FAIL d property of p2 should be path("M 10 2 H 20"). assert_equals: expected (string) "path(\"M 10 2 H 20\")" but got (undefined) undefined
-FAIL d property of p3 should be path("M 10 3 H 30"). assert_equals: expected (string) "path(\"M 10 3 H 30\")" but got (undefined) undefined
-FAIL d property of p4 should be path("M 10 4 H 40"). assert_equals: expected (string) "path(\"M 10 4 H 40\")" but got (undefined) undefined
-FAIL d property of g5 should be path("M 10 5 H 50"). assert_equals: expected (string) "path(\"M 10 5 H 50\")" but got (undefined) undefined
-FAIL d property of p6 should be path("M 10 5 H 50"). assert_equals: expected (string) "path(\"M 10 5 H 50\")" but got (undefined) undefined
-FAIL d property of p7 should be none. assert_equals: expected (string) "none" but got (undefined) undefined
+PASS d property of g0 should be none.
+PASS d property of p1 should be none.
+FAIL d property of p2 should be path("M 10 2 H 20"). assert_equals: expected "path(\"M 10 2 H 20\")" but got "none"
+PASS d property of p3 should be path("M 10 3 H 30").
+PASS d property of p4 should be path("M 10 4 H 40").
+PASS d property of g5 should be path("M 10 5 H 50").
+PASS d property of p6 should be path("M 10 5 H 50").
+PASS d property of p7 should be none.
 

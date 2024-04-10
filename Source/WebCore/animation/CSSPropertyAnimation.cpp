@@ -4077,6 +4077,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyContainer:
         case CSSPropertyContainerName:
         case CSSPropertyContainerType:
+        case CSSPropertyD:
         case CSSPropertyFlex:
         case CSSPropertyFlexFlow:
         case CSSPropertyGap:

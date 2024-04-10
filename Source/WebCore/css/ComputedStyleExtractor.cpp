@@ -1842,6 +1842,13 @@ static CSSValueID valueIDForRaySize(RayPathOperation::Size size)
     return CSSValueInvalid;
 }
 
+static Ref<CSSValue> valueForSVGPath(const BasicShapePath* path)
+{
+    if (!path)
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return valueForSVGPath(*path, SVGPathConversion::ForceAbsolute);
+}
+
 static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
 {
     if (!operation)
@@ -4598,6 +4605,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPixelValueForLength(style.svgStyle().y(), style);
     case CSSPropertyWebkitTextZoom:
         return createConvertingToCSSValueID(style.textZoom());
+
+    case CSSPropertyD:
+        return valueForSVGPath(style.d());
 
     case CSSPropertyPaintOrder:
         return paintOrder(style.paintOrder());

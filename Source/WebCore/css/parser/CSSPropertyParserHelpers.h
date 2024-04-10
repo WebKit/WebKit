@@ -275,6 +275,7 @@ RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
 enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
+RefPtr<CSSValue> consumePath(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
 RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);

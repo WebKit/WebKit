@@ -1,6 +1,6 @@
 
-FAIL getTotalLength() with d property assert_equals: the initial d expected (string) "path(\"M 0 0\")" but got (undefined) undefined
-FAIL getPointAtLength() with d property assert_equals: the initial d expected (string) "path(\"M 0 0\")" but got (undefined) undefined
-FAIL isPointInFill() with d property assert_equals: the initial d expected (string) "path(\"M 0 0\")" but got (undefined) undefined
-FAIL isPointInStroke() with d property assert_equals: the initial d expected (string) "path(\"M 0 0\")" but got (undefined) undefined
+FAIL getTotalLength() with d property assert_equals: the total length expected 10 but got 0
+FAIL getPointAtLength() with d property assert_equals: x-axis position expected 10 but got 0
+FAIL isPointInFill() with d property assert_equals: expected true but got false
+FAIL isPointInStroke() with d property assert_equals: expected true but got false
 
