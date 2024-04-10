@@ -325,7 +325,7 @@ static bool parseHTTPRefreshInternal(std::span<const CharacterType> data, double
     while (!data.empty() && isASCIIDigit(data.front()))
         data = data.subspan(1);
 
-    StringView timeString(std::span { numberStart, data.data() });
+    StringView timeString(std::span(numberStart, data.data()));
     if (timeString.isEmpty()) {
         if (data.empty() || data.front() != '.')
             return false;
