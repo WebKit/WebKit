@@ -1758,3 +1758,5 @@ fast/text/whitespace/pre-wrap-015.html [ Timeout ]
 webkit.org/b/272224 imported/w3c/web-platform-tests/selection/textcontrols/selectionchange.html [ Failure ]
 
 webkit.org/b/272225 media/media-source/media-managedmse-resume-after-stall.html [ Failure ]
+
+webkit.org/b/272426 http/tests/webxr/webxr-third-party-iframe-requestsession-denied-by-insufficient-feature-policy.html [ Crash Pass ]

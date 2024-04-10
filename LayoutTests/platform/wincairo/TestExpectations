@@ -913,6 +913,8 @@ http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ]
 http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Failure ]
 
+http/tests/webxr [ Skip ]
+
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
