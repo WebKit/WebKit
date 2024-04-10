@@ -31,15 +31,17 @@ RELATED_BLANK = {'related-to': [], 'blocked-by': [], 'blocking': [], 'parent-of'
 
 class TestRadar(unittest.TestCase):
     def test_encoding(self):
-        self.assertEqual(
-            radar.Tracker.Encoder().default(radar.Tracker(project='WebKit')),
-            dict(hide_title=True, type='radar', projects=['WebKit']),
-        )
+        with OutputCapture():
+            self.assertEqual(
+                radar.Tracker.Encoder().default(radar.Tracker(project='WebKit')),
+                dict(hide_title=True, type='radar', projects=['WebKit']),
+            )
 
     def test_decoding(self):
-        decoded = Tracker.from_json(json.dumps(radar.Tracker(), cls=Tracker.Encoder))
-        self.assertIsInstance(decoded, radar.Tracker)
-        self.assertEqual(decoded.from_string('rdar://1234').id, 1234)
+        with OutputCapture():
+            decoded = Tracker.from_json(json.dumps(radar.Tracker(), cls=Tracker.Encoder))
+            self.assertIsInstance(decoded, radar.Tracker)
+            self.assertEqual(decoded.from_string('rdar://1234').id, 1234)
 
     def test_no_radar(self):
         with mocks.NoRadar():
