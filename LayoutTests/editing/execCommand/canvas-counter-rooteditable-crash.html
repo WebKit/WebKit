@@ -1,0 +1,24 @@
+<body onload="loadFunction()">
+    <hr>
+    <canvas>
+    </canvas>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+    
+function loadFunction() {
+    if (document.counter)
+        document.counter++;
+    else 
+        document.counter = 1;
+
+    if (document.counter <= 1) {
+        document.designMode='on';
+        document.execCommand('selectall');
+        document.execCommand('RemoveFormat');
+        document.execCommand('inserthtml', false);
+    }
+}
+</script>
+</body>
