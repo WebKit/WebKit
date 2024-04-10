@@ -238,6 +238,26 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         }
     }
 
+    if (auto* text = dynamicDowncast<RenderSVGText>(parent)) {
+        svgBuilder().attach(*text, WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (parent.style().display() == DisplayType::Ruby || parent.style().display() == DisplayType::RubyBlock) {
+        auto& parentCandidate = rubyBuilder().findOrCreateParentForStyleBasedRubyChild(parent, *child, beforeChild);
+        if (&parentCandidate == &parent) {
+            rubyBuilder().attachForStyleBasedRuby(parentCandidate, WTFMove(child), beforeChild);
+            return;
+        }
+        insertRecursiveIfNeeded(parentCandidate);
+        return;
+    }
+
+    if (auto* parentBlockFlow = dynamicDowncast<RenderBlockFlow>(parent)) {
+        blockFlowBuilder().attach(*parentBlockFlow, WTFMove(child), beforeChild);
+        return;
+    }
+
     if (auto* row = dynamicDowncast<RenderTableRow>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(*row, *child, beforeChild);
         if (&parentCandidate == &parent) {
@@ -298,11 +318,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* text = dynamicDowncast<RenderSVGText>(parent)) {
-        svgBuilder().attach(*text, WTFMove(child), beforeChild);
-        return;
-    }
-
 #if ENABLE(MATHML)
     if (auto* mathMLFenced = dynamicDowncast<RenderMathMLFenced>(parent)) {
         mathMLBuilder().attach(*mathMLFenced, WTFMove(child), beforeChild);
@@ -312,21 +327,6 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
 
     if (auto* gridParent = dynamicDowncast<RenderGrid>(parent)) {
         attachToRenderGrid(*gridParent, WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (parent.style().display() == DisplayType::Ruby || parent.style().display() == DisplayType::RubyBlock) {
-        auto& parentCandidate = rubyBuilder().findOrCreateParentForStyleBasedRubyChild(parent, *child, beforeChild);
-        if (&parentCandidate == &parent) {
-            rubyBuilder().attachForStyleBasedRuby(parentCandidate, WTFMove(child), beforeChild);
-            return;
-        }
-        insertRecursiveIfNeeded(parentCandidate);
-        return;
-    }
-
-    if (auto* parentBlockFlow = dynamicDowncast<RenderBlockFlow>(parent)) {
-        blockFlowBuilder().attach(*parentBlockFlow, WTFMove(child), beforeChild);
         return;
     }
 
@@ -360,6 +360,12 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
+    if (auto* text = dynamicDowncast<RenderSVGText>(parent))
+        return svgBuilder().detach(*text, child, willBeDestroyed);
+
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
+        return blockBuilder().detach(*blockFlow, child, willBeDestroyed, canCollapseAnonymousBlock);
+
     if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
         return formControlsBuilder().detach(*menuList, child, willBeDestroyed);
 
@@ -369,9 +375,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
     if (auto* grid = dynamicDowncast<RenderGrid>(parent))
         return detachFromRenderGrid(*grid, child, willBeDestroyed);
 
-    if (auto* text = dynamicDowncast<RenderSVGText>(parent))
-        return svgBuilder().detach(*text, child, willBeDestroyed);
-
     if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent))
         return svgBuilder().detach(*svgInline, child, willBeDestroyed);
 
@@ -380,9 +383,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
         return svgBuilder().detach(*svgRoot, child, willBeDestroyed);
-
-    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
-        return blockBuilder().detach(*blockFlow, child, willBeDestroyed, canCollapseAnonymousBlock);
 
     if (auto* block = dynamicDowncast<RenderBlock>(parent))
         return blockBuilder().detach(*block, child, willBeDestroyed, canCollapseAnonymousBlock);
