@@ -63,18 +63,26 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKW(const Vector<uint8_t>& key, c
 #if HAVE(SWIFT_CPP_INTEROP)
 static ExceptionOr<Vector<uint8_t>> wrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    auto rv = PAL::AesKw::wrap(data.span(), key.span());
+    Vector<uint8_t> result(data.size() + CryptoAlgorithmAESKW::s_extraSize);
+    uint64_t resultSize = result.size();
+    const PAL::AesKwRV rv = PAL::AesKw::wrap(key.data(), key.size(), data.data(), data.size(), result.data(), resultSize);
     if (!rv.getErrCode().isSuccess())
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getResult());
+    result.shrink(rv.getOutputSize());
+    return WTFMove(result);
 }
 
 static ExceptionOr<Vector<uint8_t>> unwrapKeyAESKWCryptoKit(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    auto rv = PAL::AesKw::unwrap(data.span(), key.span());
+    Vector<uint8_t> dataOut(data.size());
+    uint64_t dataOutSize = dataOut.size();
+    const PAL::AesKwRV rv = PAL::AesKw::unwrap(key.data(), key.size(), data.data(), data.size(), dataOut.data(), dataOutSize);
     if (!rv.getErrCode().isSuccess())
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getResult());
+    if (rv.getOutputSize() % 8)
+        return Exception { ExceptionCode::OperationError };
+    dataOut.shrink(rv.getOutputSize());
+    return WTFMove(dataOut);
 }
 #endif
 

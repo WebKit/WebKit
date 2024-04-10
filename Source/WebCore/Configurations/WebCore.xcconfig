@@ -35,7 +35,7 @@ WK_APPLEJPEGXL_PREPROCESSOR_DEFINITIONS_YES = USE_JPEGXL=1;
 
 // FIXME: remove the interop setting here when rdar://124492036 is resolved.
 WK_HAVE_SWIFT_CPP_INTEROP = HAVE_SWIFT_CPP_INTEROP=0;
-WK_HAVE_SWIFT_CPP_INTEROP[sdk=macosx14*] = ;
+WK_HAVE_SWIFT_CPP_INTEROP[sdk=macos14*] = ;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=iphoneos17*] = ;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=iphonesimulator17*] = ;
 WK_HAVE_SWIFT_CPP_INTEROP[sdk=appletvos17*] = ;

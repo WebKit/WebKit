@@ -28,20 +28,8 @@
 #include <cstdint>
 #include <wtf/Vector.h>
 
-namespace Cpp {
-
 using VectorUInt8 = WTF::Vector<uint8_t>;
 using SpanConstUInt8 = std::span<const uint8_t>;
-using OptionalVectorUInt8 = std::optional<WTF::Vector<uint8_t>>;
-
-
-// FIXME: remove when swift support is available rdar://118026392
-inline OptionalVectorUInt8 makeOptional(VectorUInt8 val)
-{
-    return val;
-}
-
-} // PAL
 
 #ifndef __swift__
 #include "PALSwift-Generated.h"

@@ -54,10 +54,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if HAVE(SWIFT_CPP_INTEROP)
 static ExceptionOr<Vector<uint8_t>> encryptCryptoKitAESGCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
-    auto rv = PAL::AesGcm::encrypt(key.span(), iv.span(), additionalData.span(), plainText.span(), desiredTagLengthInBytes);
-    if (!rv.getErrorCode().isSuccess())
+    // Protect against underflow in the subtraction below.
+    if (desiredTagLengthInBytes > CryptoAlgorithmAESGCM::DefaultTagLength / 8)
         return Exception { ExceptionCode::OperationError };
-    return WTFMove(*rv.getCipherText());
+    Vector<uint8_t> cipherText(plainText.size() + CryptoAlgorithmAESGCM::DefaultTagLength);
+    if (!PAL::AesGcm::encrypt(key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), plainText.data(), plainText.size(), cipherText.data()).isSuccess())
+        return Exception { ExceptionCode::OperationError };
+    cipherText.resize(cipherText.size() - (CryptoAlgorithmAESGCM::DefaultTagLength - desiredTagLengthInBytes));
+    return WTFMove(cipherText);
 }
 #endif
 

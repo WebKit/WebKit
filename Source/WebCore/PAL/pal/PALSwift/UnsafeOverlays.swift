@@ -30,97 +30,12 @@ import CryptoKit
 
 import PALSwift
 
-enum UnsafeErrors: Error {
-    case invalidLength
-    case emptySpan
-}
-
 extension HashFunction {
     mutating func update(data: SpanConstUInt8) {
-        if data.empty() {
-            self.update(data: Data.empty())
-        } else {
-            self.update(
-                bufferPointer: UnsafeRawBufferPointer(
-                    start: data.__dataUnsafe(), count: data.size()))
-        }
+        self.update(
+            bufferPointer: UnsafeRawBufferPointer(
+                start: data.__dataUnsafe(), count: data.size()))
     }
 }
 
-extension ContiguousBytes {
-    public func copyToVectorUInt8() -> VectorUInt8 {
-        return self.withUnsafeBytes { buf in
-            let result = VectorUInt8(buf.count)
-            buf.copyBytes(
-                to: UnsafeMutableRawBufferPointer(
-                    start: UnsafeMutableRawPointer(mutating: result.__dataUnsafe()),
-                    count: result.size()), count: result.size())
-            return result
-        }
-    }
-}
-
-extension Data {
-    static let emptyData = Data()
-    fileprivate static func temporaryDataFromSpan(spanNoCopy: SpanConstUInt8) -> Data {
-        if spanNoCopy.empty() {
-            return Data.empty()
-        } else {
-            return Data(
-                bytesNoCopy: UnsafeMutablePointer(mutating: spanNoCopy.__dataUnsafe()),
-                count: spanNoCopy.size(), deallocator: .none)
-        }
-    }
-
-    // CryptoKit does not support a null pointer with zero length. We instead need to pass an empty Data. This class provides that.
-    public static func empty() -> Data {
-        return emptyData
-    }
-}
-
-private class _WorkAroundRadar116406681 {
-    // rdar://116406681
-    private func forceLinkageForVectorDestructor() {
-        let _ = VectorUInt8()
-    }
-}
-
-extension AES.GCM {
-    public static func seal(
-        _ message: SpanConstUInt8, key: SpanConstUInt8, iv: SpanConstUInt8, ad: SpanConstUInt8
-    ) throws -> AES.GCM.SealedBox {
-        if ad.size() > 0 {
-            return try AES.GCM.seal(
-                Data.temporaryDataFromSpan(spanNoCopy: message),
-                using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: key)),
-                nonce: AES.GCM.Nonce(data: Data.temporaryDataFromSpan(spanNoCopy: iv)),
-                authenticating: Data.temporaryDataFromSpan(spanNoCopy: ad))
-        } else {
-            return try AES.GCM.seal(
-                Data.temporaryDataFromSpan(spanNoCopy: message),
-                using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: key)),
-                nonce: AES.GCM.Nonce(data: Data.temporaryDataFromSpan(spanNoCopy: iv))
-            )
-        }
-    }
-}
-
-extension AES.KeyWrap {
-    public static func unwrap(_ wrapped: SpanConstUInt8, using: SpanConstUInt8) throws
-        -> SymmetricKey
-    {
-        return try AES.KeyWrap.unwrap(
-            Data.temporaryDataFromSpan(spanNoCopy: wrapped),
-            using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: using)))
-
-    }
-    public static func wrap(_ keyToWrap: SpanConstUInt8, using: SpanConstUInt8) throws
-        -> VectorUInt8
-    {
-        return try AES.KeyWrap.wrap(
-            SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: keyToWrap)),
-            using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: using))
-        ).copyToVectorUInt8()
-    }
-}
 #endif
