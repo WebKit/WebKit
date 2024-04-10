@@ -26,7 +26,7 @@ import unittest
 from webkitbugspy import Issue, Tracker, User, radar, mocks
 from webkitcorepy import mocks as wkmocks, OutputCapture
 
-RELATED_BLANK = {'related-to': [], 'blocked-by': [], 'blocking': [], 'parent-of': [], 'subtask-of': [], 'cause-of': [], 'caused-by': [], 'duplicate-of': [], 'original-of': []}
+RELATED_BLANK = {'related-to': [], 'blocked-by': [], 'blocking': [], 'parent-of': [], 'subtask-of': [], 'cause-of': [], 'caused-by': [], 'duplicate-of': [], 'original-of': [], 'clone-of': [], 'cloned-to': []}
 
 
 class TestRadar(unittest.TestCase):
@@ -473,7 +473,7 @@ What version of 'WebKit Text' should the bug be associated with?:
 
             self.assertEqual(issue.related, RELATED_BLANK)
             issue.relate(related_to=issue2)
-            self.assertEqual(issue.related, {'related-to': [issue2], 'blocked-by': [], 'blocking': [], 'parent-of': [], 'subtask-of': [], 'cause-of': [], 'caused-by': [], 'duplicate-of': [], 'original-of': []})
+            self.assertEqual(issue.related, {'related-to': [issue2], 'blocked-by': [], 'blocking': [], 'parent-of': [], 'subtask-of': [], 'cause-of': [], 'caused-by': [], 'duplicate-of': [], 'original-of': [], 'clone-of': [], 'cloned-to': []})
 
     def test_relate(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
