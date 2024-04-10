@@ -223,16 +223,17 @@ struct RenderLayerCompositor::CompositingState {
 };
 
 struct RenderLayerCompositor::UpdateBackingTraversalState {
-    UpdateBackingTraversalState(RenderLayer* compAncestor = nullptr, Vector<RenderLayer*>* clippedLayers = nullptr, Vector<RenderLayer*>* overflowScrollers = nullptr)
+    UpdateBackingTraversalState(RenderLayer* compAncestor = nullptr, Vector<RenderLayer*>* clippedLayers = nullptr, Vector<RenderLayer*>* overflowScrollers = nullptr,  Vector<RenderLayer*>* seenSeparatedLayers = nullptr)
         : compositingAncestor(compAncestor)
         , layersClippedByScrollers(clippedLayers)
         , overflowScrollLayers(overflowScrollers)
+        , separatedLayers(seenSeparatedLayers)
     {
     }
 
     UpdateBackingTraversalState stateForDescendants() const
     {
-        UpdateBackingTraversalState state(compositingAncestor, layersClippedByScrollers, overflowScrollLayers);
+        UpdateBackingTraversalState state(compositingAncestor, layersClippedByScrollers, overflowScrollLayers, separatedLayers);
 #if !LOG_DISABLED
         state.depth = depth + 1;
 #endif
@@ -245,6 +246,8 @@ struct RenderLayerCompositor::UpdateBackingTraversalState {
     Vector<RenderLayer*>* layersClippedByScrollers;
     // List of layers with composited overflow:scroll.
     Vector<RenderLayer*>* overflowScrollLayers;
+    // List of layers with separated layers
+    Vector<RenderLayer*>* separatedLayers;
 
 #if !LOG_DISABLED
     unsigned depth { 0 };
@@ -1430,7 +1433,8 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     UpdateBackingTraversalState traversalStateForDescendants = traversalState.stateForDescendants();
     Vector<RenderLayer*> layersClippedByScrollers;
     Vector<RenderLayer*> compositedOverflowScrollLayers;
-    
+    Vector<RenderLayer*> seenSeparatedLayers;
+
     if (layer.needsScrollingTreeUpdate())
         scrollingTreeState.needSynchronousScrollingReasonsUpdate = true;
 
@@ -1481,6 +1485,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         traversalStateForDescendants.compositingAncestor = &layer;
         traversalStateForDescendants.layersClippedByScrollers = &layersClippedByScrollers;
         traversalStateForDescendants.overflowScrollLayers = &compositedOverflowScrollLayers;
+        traversalStateForDescendants.separatedLayers = &seenSeparatedLayers;
 
 #if !LOG_DISABLED
         logLayerInfo(layer, "updateBackingAndHierarchy", traversalState.depth);
@@ -1563,6 +1568,29 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             traversalState.overflowScrollLayers->append(&layer);
 
         layerBacking->updateAfterDescendants();
+
+        if (traversalState.separatedLayers) {
+            if (is<RenderModel>(layer.renderer())) {
+                traversalState.separatedLayers->append(&layer);
+            } else {
+                LayoutRect absoluteBounds = layerBacking->compositedBounds();
+                absoluteBounds.move(layer.offsetFromAncestor(m_renderView.layer()));
+
+                for (auto* separatedLayer : *traversalState.separatedLayers) {
+                    auto* separatedLayerBacking = separatedLayer->backing(); // FIXME: Guard against nil backing?
+                    LayoutRect separatedLayerBounds = separatedLayerBacking->compositedBounds();
+                    separatedLayerBounds.move(separatedLayer->offsetFromAncestor(m_renderView.layer()));
+
+                    if (absoluteBounds.intersects(separatedLayerBounds)) {
+                        // TODO: Set backing to separated
+                        LOG_WITH_STREAM(Compositing, stream << TextStream::Repeat(traversalState.depth * 2, ' ') << &layer << " WILL BE SEPARATED");
+
+                        traversalState.separatedLayers->append(&layer); // Can I mutate while iterating?
+                        break;
+                    }
+                }
+            }
+        }
     }
     
     layer.clearUpdateBackingOrHierarchyTraversalState();
