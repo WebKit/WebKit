@@ -3,7 +3,7 @@ bar
 baz
 End of test
 AXRole: AXWebArea
-    AXRole: AXSection AXValue: foo !
+    AXRole: AXSection AXValue: foo!
     AXRole: AXSection AXValue: bar
     AXRole: AXUnknown AXValue: !
     AXRole: AXSection AXValue: baz

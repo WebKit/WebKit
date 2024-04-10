@@ -727,6 +727,8 @@ enum class AccessibilityOrientation {
     Undefined,
 };
 
+enum class TrimWhitespace : bool { No, Yes };
+
 struct TextUnderElementMode {
     enum class Children : uint8_t {
         SkipIgnoredChildren,
@@ -738,6 +740,7 @@ struct TextUnderElementMode {
     bool includeFocusableContent;
     bool considerHiddenState { true };
     bool inHiddenSubtree { false };
+    TrimWhitespace trimWhitespace { TrimWhitespace::Yes };
     Node* ignoredChildNode;
 
     TextUnderElementMode(Children childrenInclusion = Children::SkipIgnoredChildren, bool includeFocusable = false, Node* ignoredChild = nullptr)

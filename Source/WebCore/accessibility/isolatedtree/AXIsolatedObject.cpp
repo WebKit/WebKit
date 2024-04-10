@@ -371,7 +371,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     // These properties are only needed on the AXCoreObject interface due to their use in ATSPI,
     // so only cache them for ATSPI.
-#if PLATFORM(ATSPI)
+#if USE(ATSPI)
     // We cache IsVisible on all platforms just for Widgets above. In ATSPI, this should be cached on all objects.
     if (!object.isWidget())
         setProperty(AXPropertyName::IsVisible, object.isVisible());
