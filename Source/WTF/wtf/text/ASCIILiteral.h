@@ -123,12 +123,6 @@ struct ASCIILiteralHash {
 template<typename T> struct DefaultHash;
 template<> struct DefaultHash<ASCIILiteral> : ASCIILiteralHash { };
 
-struct ASCIILiteralPtrHash {
-    static unsigned hash(const ASCIILiteral& key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key.characters())); }
-    static bool equal(const ASCIILiteral& a, const ASCIILiteral& b) { return a.characters() == b.characters(); }
-    static constexpr bool safeToCompareToEmptyOrDeleted = false;
-};
-
 inline ASCIILiteral ASCIILiteral::deletedValue()
 {
     ASCIILiteral result;
@@ -141,7 +135,6 @@ inline namespace StringLiterals {
 constexpr ASCIILiteral operator"" _s(const char* characters, size_t)
 {
     auto result = ASCIILiteral::fromLiteralUnsafe(characters);
-    // We rely on this for ASCIILiteralPtrHash above.
     ASSERT_UNDER_CONSTEXPR_CONTEXT(result.characters() == characters);
     return result;
 }
@@ -159,5 +152,4 @@ constexpr std::span<const LChar> operator"" _span(const char* characters, size_t
 
 } // namespace WTF
 
-using WTF::ASCIILiteralPtrHash;
 using namespace WTF::StringLiterals;
