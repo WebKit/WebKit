@@ -730,6 +730,14 @@ void Page::setMainFrame(Ref<Frame>&& frame)
 void Page::setMainFrameURL(const URL& url)
 {
     m_mainFrameURL = url;
+    m_mainFrameOrigin = SecurityOrigin::create(url);
+}
+
+SecurityOrigin& Page::mainFrameOrigin() const
+{
+    if (!m_mainFrameOrigin)
+        return SecurityOrigin::opaqueOrigin();
+    return *m_mainFrameOrigin;
 }
 
 bool Page::openedByDOM() const
