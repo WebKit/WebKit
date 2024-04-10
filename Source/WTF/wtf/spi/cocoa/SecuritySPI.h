@@ -42,6 +42,7 @@
 
 #else
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <Security/SecBase.h>
 
 typedef uint32_t SecSignatureHashAlgorithm;

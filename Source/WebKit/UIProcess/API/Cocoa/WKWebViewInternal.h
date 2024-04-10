@@ -36,6 +36,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "DynamicViewportSizeUpdate.h"
@@ -334,6 +335,12 @@ struct PerWebProcessState {
 
     RetainPtr<NSArray<NSNumber *>> _scrollViewDefaultAllowedTouchTypes;
 #endif
+
+    BOOL _didAccessBackForwardList;
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    RetainPtr<NSString> _pendingPageLoadObserverHost;
+#endif
 }
 
 - (BOOL)_isValid;
@@ -364,6 +371,8 @@ struct PerWebProcessState {
 - (void)_clearSafeBrowsingWarningIfForMainFrameNavigation;
 
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting;
+
+- (void)_didAccessBackForwardList NS_DIRECT;
 
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;

@@ -28,12 +28,14 @@
 #if PLATFORM(COCOA)
 
 #include <wtf/Forward.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
 namespace WTF {
 
 class String;
 
+WTF_EXPORT_PRIVATE bool hasEntitlement(SecTaskRef, ASCIILiteral entitlement);
 WTF_EXPORT_PRIVATE bool hasEntitlement(audit_token_t, ASCIILiteral entitlement);
 WTF_EXPORT_PRIVATE bool hasEntitlement(xpc_connection_t, StringView entitlement);
 WTF_EXPORT_PRIVATE bool hasEntitlement(xpc_connection_t, ASCIILiteral entitlement);

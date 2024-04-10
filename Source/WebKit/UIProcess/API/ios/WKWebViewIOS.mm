@@ -59,6 +59,7 @@
 #import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessPool.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -72,7 +73,11 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Box.h>
 #import <wtf/FixedVector.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/RefCounted.h>
 #import <wtf/SystemTracing.h>
+#import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -88,6 +93,10 @@
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
 #import <UIKit/UIEventAttribution.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewIOSAdditionsBefore.mm>
 #endif
 
 #define FORWARD_ACTION_TO_WKCONTENTVIEW(_action) \
@@ -864,6 +873,14 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
         if (auto *findSession = dynamic_objc_cast<UITextSearchingFindSession>([_findInteraction activeFindSession]))
             findSession.searchableObject = [self _searchableObject];
+    }
+#endif
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    URL url { _page->currentURL() };
+    if (url.isValid() && url.protocolIsInHTTPFamily()) {
+        _pendingPageLoadObserverHost = static_cast<NSString *>(url.hostAndPort());
+        [self _updatePageLoadObserverState];
     }
 #endif
 }
@@ -2306,6 +2323,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [_customContentView web_setMinimumSize:bounds.size];
     [self _scheduleVisibleContentRectUpdate];
+
+#if ENABLE(PAGE_LOAD_OBSERVER)
+    [self _updatePageLoadObserverState];
+#endif
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -3505,6 +3526,11 @@ static bool isLockdownModeWarningNeeded()
 {
     _overriddenZoomScaleParameters = std::nullopt;
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>)
+#import <WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>
+#endif
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)
