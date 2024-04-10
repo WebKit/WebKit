@@ -61,6 +61,7 @@ public:
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
 
     bool hasReferenceFilter() const;
+    bool isReferenceFilter() const;
 
     bool transformColor(Color&) const;
     bool inverseTransformColor(Color&) const;
