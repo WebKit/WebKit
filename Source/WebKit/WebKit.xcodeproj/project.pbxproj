@@ -2451,6 +2451,7 @@
 		E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */; };
 		E4E57F6B21A83B1200345F3C /* RemoteLayerTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */; };
 		E50620922542102000C43091 /* ContactsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E50620912542102000C43091 /* ContactsUISPI.h */; };
+		E51BD9D02BC5F32300F40647 /* UnifiedTextReplacementSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E51BD9CF2BC5F32300F40647 /* UnifiedTextReplacementSoftLink.h */; };
 		E5227D8427A11261008EAB57 /* WebFoundTextRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E5227D8227A11231008EAB57 /* WebFoundTextRange.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
 		E539DFEB2A44A6A600769F09 /* MRUIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E539DFEA2A44A69100769F09 /* MRUIKitSPI.h */; };
@@ -8037,6 +8038,8 @@
 		E4E57F6821A83B0300345F3C /* RemoteLayerTreeNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeNode.mm; sourceTree = "<group>"; };
 		E4E57F6A21A83B1100345F3C /* RemoteLayerTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeNode.h; sourceTree = "<group>"; };
 		E50620912542102000C43091 /* ContactsUISPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactsUISPI.h; sourceTree = "<group>"; };
+		E51BD9CF2BC5F32300F40647 /* UnifiedTextReplacementSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnifiedTextReplacementSoftLink.h; sourceTree = "<group>"; };
+		E51BD9D12BC5F35000F40647 /* UnifiedTextReplacementSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UnifiedTextReplacementSoftLink.mm; sourceTree = "<group>"; };
 		E5227D8227A11231008EAB57 /* WebFoundTextRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebFoundTextRange.h; sourceTree = "<group>"; };
 		E5227D8327A11231008EAB57 /* WebFoundTextRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebFoundTextRange.cpp; sourceTree = "<group>"; };
 		E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionPicker.h; sourceTree = "<group>"; };
@@ -11747,6 +11750,8 @@
 				462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */,
 				44C51842266BE8C3006DD522 /* TCCSoftLink.h */,
 				44C51843266BE8C3006DD522 /* TCCSoftLink.mm */,
+				E51BD9CF2BC5F32300F40647 /* UnifiedTextReplacementSoftLink.h */,
+				E51BD9D12BC5F35000F40647 /* UnifiedTextReplacementSoftLink.mm */,
 				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
 				86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */,
 				7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */,
@@ -16674,6 +16679,7 @@
 				461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */,
 				5C4B9D8B210A8CCF008F14D1 /* UndoOrRedo.h in Headers */,
 				93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */,
+				E51BD9D02BC5F32300F40647 /* UnifiedTextReplacementSoftLink.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				5C19A5201FD0B29500EEA323 /* URLSchemeTaskParameters.h in Headers */,
 				1AC1336818565B5700F3EC05 /* UserData.h in Headers */,

@@ -25,22 +25,6 @@
 
 #pragma once
 
-#if ENABLE(UNIFIED_TEXT_REPLACEMENT)
-
-#import <Foundation/Foundation.h>
-
-namespace WebKit {
-class WebViewImpl;
-}
-
-@interface WKTextIndicatorStyleManager : NSObject
-
-+ (BOOL)supportsTextIndicatorStyle;
-
-- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)view;
-- (void)addTextIndicatorStyleForID:(NSUUID *)uuid;
-- (void)removeTextIndicatorStyleForID:(NSUUID *)uuid;
-
-@end
-
-#endif // ENABLE(UNIFIED_TEXT_REPLACEMENT)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/UnifiedTextReplacementSoftLinkAdditions.h>
+#endif
