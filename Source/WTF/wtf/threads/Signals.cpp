@@ -134,6 +134,12 @@ void initMachExceptionHandlerThread(bool enable, uint32_t signingKey, exception_
         Config::AssertNotFrozenScope assertScope;
         SignalHandlers& handlers = g_wtfConfig.signalHandlers;
 
+        // We need this because some WebKit processes (e.g. GPU process) don't allow signal handling in their
+        // sandbox profiles. We don't use them there so there's no point in setting up a dispatch queue we're
+        // never going to use.
+        if (!handlers.addedExceptions)
+            return;
+
         uint16_t flags = MPO_INSERT_SEND_RIGHT;
 
 // This provisional flag can be removed once macos sonoma is no longer supported
