@@ -57,8 +57,7 @@ public:
         RefPtr<SharedBuffer> dataInAttributedStringFormat;
         String dataInHTMLFormat;
         String dataInStringFormat;
-        Vector<String> clientTypes;
-        Vector<RefPtr<SharedBuffer>> clientData;
+        Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
 #endif
     };
 

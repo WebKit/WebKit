@@ -128,8 +128,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!webContent->dataInStringFormat.isNull())
             [pasteboardItem setString:webContent->dataInStringFormat forType:NSPasteboardTypeString];
 
-        for (unsigned i = 0; i < webContent->clientTypes.size(); ++i)
-            [pasteboardItem setData:webContent->clientData[i]->createNSData().get() forType:toUTIUnlessAlreadyUTI(webContent->clientTypes[i]).get()];
+        for (unsigned i = 0; i < webContent->clientTypesAndData.size(); ++i)
+            [pasteboardItem setData:webContent->clientTypesAndData[i].second->createNSData().get() forType:toUTIUnlessAlreadyUTI(webContent->clientTypesAndData[i].first).get()];
 
         PasteboardCustomData customData;
         customData.setOrigin(webContent->contentOrigin);

@@ -37,8 +37,7 @@ struct PromisedAttachmentInfo {
     String attachmentIdentifier;
 #endif
 
-    Vector<String> additionalTypes;
-    Vector<RefPtr<SharedBuffer>> additionalData;
+    Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> additionalTypesAndData;
 
     operator bool() const
     {
