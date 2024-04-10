@@ -24,7 +24,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
+from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GitHub,
@@ -306,7 +306,7 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
         self.addStep(InstallHooks())
-        self.addStep(CommitPatch())
+        self.addStep(ApplyPatch())
 
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())

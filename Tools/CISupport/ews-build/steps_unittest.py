@@ -46,7 +46,7 @@ from .layout_test_failures import LayoutTestFailures
 from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
+                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
@@ -3773,6 +3773,18 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
+    READ_LIMIT = 1000
+    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
+
+    @staticmethod
+    def downloadFileRecordingContents(limit, recorder):
+        def behavior(command):
+            reader = command.args['reader']
+            data = reader.remote_read(limit)
+            recorder(data)
+            reader.remote_close()
+        return behavior
+
     def setUp(self):
         self.longMessage = True
 
@@ -3789,14 +3801,37 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(ApplyPatch())
         self.setProperty('patch_id', '1234')
         self.assertEqual(ApplyPatch.flunkOnFailure, True)
-        self.assertEqual(ApplyPatch.haltOnFailure, False)
+        self.assertEqual(ApplyPatch.haltOnFailure, True)
+        buf = []
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=600,
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
-                        ) +
-            0,
+            Expect('downloadFile', dict(
+                workerdest='.buildbot-diff', workdir='wkdir',
+                blocksize=1024 * 32, maxsize=None, mode=None,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
+            + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(ApplyPatch.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Applied patch')
         return self.runStep()
@@ -3804,16 +3839,31 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure(self):
         self.setupStep(ApplyPatch())
         self.setProperty('patch_id', '1234')
+        buf = []
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=600,
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
-                        ) +
-            ExpectShell.log('stdio', stdout='Unexpected failure.') +
-            2,
+            Expect('downloadFile', dict(
+                workerdest='.buildbot-diff', workdir='wkdir',
+                blocksize=1024 * 32, maxsize=None, mode=None,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
+            + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=600,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
+            ) + 1,
         )
-        self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
+        self.expectOutcome(result=FAILURE, state_string='git failed to apply patch to trunk')
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
@@ -3824,25 +3874,6 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.expectHidden(True)
         self.expectOutcome(result=SKIPPED, state_string="Skipping applying patch since patch_id isn't provided")
         return self.runStep()
-
-    def test_failure_on_commit_queue(self):
-        self.setupStep(ApplyPatch())
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('patch_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=600,
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff'],
-                        ) +
-            ExpectShell.log('stdio', stdout='Unexpected failure.') +
-            2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('comment_text'), 'Tools/Scripts/svn-apply failed to apply attachment 1234 to trunk.\nPlease resolve the conflicts and upload a new patch.')
-        self.assertEqual(self.getProperty('build_finish_summary'), 'Tools/Scripts/svn-apply failed to apply patch 1234 to trunk')
-        return rc
 
 
 class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
