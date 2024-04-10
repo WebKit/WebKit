@@ -102,6 +102,7 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_run = SVGTextMetrics::constructTextRun(text);
     m_isComplexText = scaledFont.codePath(m_run) == FontCascade::CodePath::Complex;
 
+    m_canUseSimplifiedTextMeasuring = false;
     if (!m_isComplexText) {
         if (auto cachedValue = text.canUseSimplifiedTextMeasuring())
             m_canUseSimplifiedTextMeasuring = cachedValue.value();
