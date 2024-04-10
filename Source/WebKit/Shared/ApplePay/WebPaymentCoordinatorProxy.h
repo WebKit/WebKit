@@ -100,6 +100,7 @@ public:
 #if PLATFORM(MAC)
         virtual NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) = 0;
 #endif
+        virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
     };
 
     friend class NetworkConnectionToWebProcess;
@@ -171,7 +172,8 @@ private:
     void platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
-    RetainPtr<PKPaymentRequest> platformPaymentRequest(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
+    RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
+    void platformSetPaymentRequestUserAgent(PKPaymentRequest *, const String& userAgent);
 #endif
 
     Client& m_client;
