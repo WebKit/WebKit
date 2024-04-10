@@ -151,8 +151,7 @@ bool FEGaussianBlur::resultIsAlphaImage(const FilterImageVector& inputs) const
 OptionSet<FilterRenderingMode> FEGaussianBlur::supportedFilterRenderingModes() const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;
-    // FIXME: Ensure the correctness of the CG GaussianBlur filter (http://webkit.org/b/243816).
-#if 0 && HAVE(CGSTYLE_COLORMATRIX_BLUR)
+#if HAVE(CGSTYLE_COLORMATRIX_BLUR)
     if (m_stdX == m_stdY)
         modes.add(FilterRenderingMode::GraphicsContext);
 #endif
@@ -166,8 +165,8 @@ std::unique_ptr<FilterEffectApplier> FEGaussianBlur::createSoftwareApplier() con
 
 std::optional<GraphicsStyle> FEGaussianBlur::createGraphicsStyle(const Filter& filter) const
 {
-    auto radius = calculateUnscaledKernelSize(filter.resolvedSize({ m_stdX, m_stdY }));
-    return GraphicsGaussianBlur { radius };
+    auto stdDeviation = calculateKernelSize(filter, { m_stdX, m_stdY });
+    return GraphicsGaussianBlur { stdDeviation };
 }
 
 TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
