@@ -1523,6 +1523,9 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
             return cacheResultAndReturn(PermissionState::RequestedImplicitly);
     }
 
+    if (hasPermission(_WKWebExtensionPermissionWebNavigation, tab, options))
+        return cacheResultAndReturn(PermissionState::RequestedImplicitly);
+
     if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(_WKWebExtensionPermissionTabs, tab, options))
         return PermissionState::RequestedImplicitly;
 
