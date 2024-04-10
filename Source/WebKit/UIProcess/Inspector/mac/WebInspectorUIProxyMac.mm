@@ -823,6 +823,36 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     [inspectedView setFrame:inspectedViewFrame];
 }
 
+static RetainPtr<NSArray> transferConstraintsAwayFromInspectedView(NSView *oldConstraintView, NSView *inspectedView, NSView *newContainerView)
+{
+    RetainPtr transferredConstraints = adoptNS([[NSMutableArray alloc] init]);
+    if (oldConstraintView != nil) {
+        for (NSLayoutConstraint *oldConstraint in oldConstraintView.constraints) {
+            // Ignore custom subclasses of NSLayoutConstraint, because they may use custom attribute
+            // values which fail when trying to initialize a new constraint.
+            if ([oldConstraint isMemberOfClass:[NSLayoutConstraint class]]) {
+                // Update the first or second item to refer to container view instead
+                BOOL inspectedIsFirst = (oldConstraint.firstItem == inspectedView);
+                BOOL inspectedIsSecond = (oldConstraint.secondItem == inspectedView);
+
+                if (inspectedIsFirst || inspectedIsSecond) {
+                    NSObject *newFirstItem = inspectedIsFirst ? newContainerView : oldConstraint.firstItem;
+                    NSObject *newSecondItem = inspectedIsSecond ? newContainerView : oldConstraint.secondItem;
+
+                    NSLayoutConstraint *newConstraint = [NSLayoutConstraint constraintWithItem:newFirstItem attribute:oldConstraint.firstAttribute relatedBy:oldConstraint.relation toItem:newSecondItem attribute:oldConstraint.secondAttribute multiplier:oldConstraint.multiplier constant:oldConstraint.constant];
+                    [transferredConstraints.get() addObject:newConstraint];
+                    oldConstraint.active = NO;
+                }
+            }
+        }
+
+        for (NSView *subview in oldConstraintView.subviews)
+            [transferredConstraints.get() addObjectsFromArray:transferConstraintsAwayFromInspectedView(subview, inspectedView, newContainerView).get()];
+    }
+
+    return transferredConstraints;
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
     ASSERT(inspectedPage());
@@ -853,9 +883,59 @@ void WebInspectorUIProxy::platformAttach()
         break;
     }
 
-    inspectedViewFrameDidChange(currentDimension);
+    NSView *inspectedViewParent = [inspectedView superview];
+    NSView *inspectorViewParent = inspectedViewParent;
 
-    [inspectedView.superview addSubview:inspectorView positioned:NSWindowBelow relativeTo:inspectedView];
+    if (inspectedView.translatesAutoresizingMaskIntoConstraints) {
+        // Impose a manual resize on the inspected view based on the inspector's size
+        inspectedViewFrameDidChange(currentDimension);
+    } else {
+        // Because the inspected view may be laid out using constraints or autosizing mask, but
+        // only autosizing mask is compatible with sharing space with the inspector view, take a
+        // different approach when the inspected view appears to be laid out by constraints.
+
+        // Put the inspected view and the inspector view in a shared container, and set the shared container
+        // up to possess the layout attributes of the original inspected view.
+        RetainPtr containerView = adoptNS([[NSView alloc] initWithFrame:[inspectedView frame]]);
+        containerView.get().autoresizingMask = inspectedView.autoresizingMask;
+        containerView.get().translatesAutoresizingMaskIntoConstraints = NO;
+        inspectorViewParent = containerView.get();
+
+        // Impose a manual resize on the inspected view based on the inspector's size
+        inspectedViewFrameDidChange(currentDimension);
+
+        // Transfer any constraints involving the inspectedView so that they relate instead to the containerView
+        NSArray *transferredConstraints = transferConstraintsAwayFromInspectedView(inspectedView.window.contentView, inspectedView, containerView.get()).get();
+
+        // Transfer content hugging and compression resistance
+        NSLayoutPriority horizontalHugging = [inspectedView contentHuggingPriorityForOrientation:NSLayoutConstraintOrientationHorizontal];
+        [containerView setContentHuggingPriority:horizontalHugging forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+        NSLayoutPriority verticalHugging = [inspectedView contentHuggingPriorityForOrientation:NSLayoutConstraintOrientationVertical];
+        [containerView setContentHuggingPriority:verticalHugging forOrientation:NSLayoutConstraintOrientationVertical];
+
+        NSLayoutPriority horizontalCompression = [inspectedView contentCompressionResistancePriorityForOrientation:NSLayoutConstraintOrientationHorizontal];
+        [containerView setContentCompressionResistancePriority:horizontalCompression forOrientation:NSLayoutConstraintOrientationHorizontal];
+
+        NSLayoutPriority verticalCompresssion = [inspectedView contentCompressionResistancePriorityForOrientation:NSLayoutConstraintOrientationVertical];
+        [containerView setContentCompressionResistancePriority:verticalCompresssion forOrientation:NSLayoutConstraintOrientationVertical];
+
+        // Add the inspected view to the container, converting it to use autoresizing mask to take up all
+        // available space (the inspector view yields to the inspected view's size).
+        inspectedView.translatesAutoresizingMaskIntoConstraints = YES;
+        inspectedView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+        [inspectedView removeConstraints:[inspectedView constraints]];
+        [containerView addSubview:inspectedView];
+
+        // And add the container to the original superview
+        [inspectedViewParent addSubview:containerView.get()];
+
+        // Activate any transferred constraints
+        for (NSLayoutConstraint *constraint in transferredConstraints)
+            constraint.active = YES;
+    }
+
+    [inspectorViewParent addSubview:inspectorView positioned:NSWindowBelow relativeTo:inspectedView];
     [inspectorView.window makeFirstResponder:inspectorView];
 }
 
