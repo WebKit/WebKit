@@ -18,6 +18,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-relative-absolute.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-single.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/getComputedStyle.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/marker-path-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/marker-path-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/marker-path.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/mpath-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/mpath-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/mpath.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/priority-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/priority-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/priority.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/serialization.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/test_style_flush_on_dom_api_with_d_property.html
