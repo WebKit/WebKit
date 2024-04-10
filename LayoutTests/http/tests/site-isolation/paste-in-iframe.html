@@ -5,7 +5,7 @@ description("Tests that the iframe is able to receive paste events.");
 jsTestIsAsync = true;
 
 addEventListener("message", (event) => {
-    shouldBe("event.data", "'onpaste'");
+    shouldBe("event.data", "'Text to be copied and pasted'");
     finishJSTest();
 });
 </script>

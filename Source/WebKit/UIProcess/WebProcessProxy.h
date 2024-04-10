@@ -223,6 +223,7 @@ public:
     void removeRemotePageProxy(RemotePageProxy&);
 
     Vector<Ref<WebPageProxy>> pages() const;
+    Vector<Ref<WebPageProxy>> mainPages() const;
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned provisionalPageCount() const { return m_provisionalPages.computeSize(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }

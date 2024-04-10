@@ -205,6 +205,16 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::globalPages()
 
 Vector<Ref<WebPageProxy>> WebProcessProxy::pages() const
 {
+    auto pages = mainPages();
+    for (auto& remotePage : m_remotePages) {
+        if (auto* page = remotePage.page())
+            pages.append(*page);
+    }
+    return pages;
+}
+
+Vector<Ref<WebPageProxy>> WebProcessProxy::mainPages() const
+{
     return WTF::map(m_pageMap, [] (auto& keyValue) -> Ref<WebPageProxy> {
         return keyValue.value.get();
     });
@@ -693,7 +703,7 @@ void WebProcessProxy::shutDown()
     m_audibleMediaActivity = std::nullopt;
     m_mediaStreamingActivity = std::nullopt;
 
-    for (Ref page : pages())
+    for (Ref page : mainPages())
         page->disconnectFramesFromPage();
 
     for (Ref webUserContentControllerProxy : m_webUserContentControllerProxies)
@@ -1179,7 +1189,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     if (RefPtr webConnection = this->webConnection())
         webConnection->didClose();
 
-    auto pages = this->pages();
+    auto pages = mainPages();
 
     Vector<WeakPtr<ProvisionalPageProxy>> provisionalPages;
     m_provisionalPages.forEach([&] (auto& page) {
@@ -1331,7 +1341,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
 #if USE(RUNNINGBOARD) && PLATFORM(MAC)
-    for (Ref page : pages()) {
+    for (Ref page : mainPages()) {
         if (page->preferences().backgroundWebContentRunningBoardThrottlingEnabled())
             setRunningBoardThrottlingEnabled();
     }
