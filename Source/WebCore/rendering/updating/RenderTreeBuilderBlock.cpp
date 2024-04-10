@@ -180,8 +180,13 @@ static std::optional<ParentAndBeforeChild> findParentAndBeforeChildForNonSibling
     auto& beforeChildAnonymousContainer = *beforeChildContainer;
     if (beforeChildAnonymousContainer.isAnonymousBlock()) {
         auto mayUseBeforeChildContainerAsParent = [&] {
-            if (child.isOutOfFlowPositioned() && beforeChildAnonymousContainer.isFlexItemIncludingDeprecated()) {
-                // Do not try to move an out-of-flow block box under an anonymous flex item. It should stay a direct child of the flex container.
+            auto isFlexOrGridItemContainer = [&] {
+                if (auto* renderBox = dynamicDowncast<RenderBox>(beforeChildAnonymousContainer))
+                    return renderBox->isFlexItemIncludingDeprecated() || renderBox->isGridItem();
+                return false;
+            };
+            if (child.isOutOfFlowPositioned() && isFlexOrGridItemContainer()) {
+                // Do not try to move an out-of-flow block box under an anonymous flex/grid item. It should stay a direct child of the flex/grid container.
                 // https://www.w3.org/TR/css-flexbox-1/#abspos-items
                 // As it is out-of-flow, an absolutely-positioned child of a flex container does not participate in flex layout.
                 // The static position of an absolutely-positioned child of a flex container is determined such that the
