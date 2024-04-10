@@ -661,7 +661,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     handleFragmentedFlowStateChange();
 }
 
-void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
+void RenderTreeBuilder::createAnonymousWrappersForInlineContent(RenderBlock& parent, RenderObject* insertionPoint)
 {
     // makeChildrenNonInline takes a block whose children are *all* inline and it
     // makes sure that inline children are coalesced under anonymous
