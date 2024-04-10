@@ -1026,6 +1026,9 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(const Vector& other)
     : Base(other.size(), other.size())
 {
+#ifdef __swift__
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("C++ copy constructors are not memory safe in Swift. Try to find a way to borrow the object instead.");
+#endif
     asanSetInitialBufferSizeTo(other.size());
 
     if (begin())
@@ -1037,6 +1040,9 @@ template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMini
 Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity, OtherMalloc>& other)
     : Base(other.size(), other.size())
 {
+#ifdef __swift__
+    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("C++ copy constructors are not memory safe in Swift. Try to find a way to borrow the object instead.");
+#endif
     asanSetInitialBufferSizeTo(other.size());
 
     if (begin())
