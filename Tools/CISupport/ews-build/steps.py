@@ -182,10 +182,10 @@ class GitHub(object):
         if prefix in cls._cache:
             return cls._cache[prefix]
 
-        try:
-            passwords = json.load(open('passwords.json'))
-            cls._cache[prefix] = passwords.get(f'{prefix}USERNAME', None), passwords.get(f'{prefix}ACCESS_TOKEN', None)
-        except Exception as e:
+        username, password = load_password(f'{prefix}USERNAME'), load_password(f'{prefix}ACCESS_TOKEN')
+        if username and password:
+            cls._cache[prefix] = username, password
+        else:
             print('Error reading GitHub credentials')
             cls._cache[prefix] = None, None
 
@@ -1628,12 +1628,10 @@ class BugzillaMixin(AddToLogMixin):
             print(f'Error in sending email for infrastructure issue: {e}')
 
     def get_bugzilla_api_key(self):
-        try:
-            passwords = json.load(open('passwords.json'))
-            return passwords.get('BUGZILLA_API_KEY', '')
-        except Exception as e:
+        password = load_password('BUGZILLA_API_KEY', default='')
+        if not password:
             print('Error in reading Bugzilla api key')
-            return ''
+        return password
 
     @defer.inlineCallbacks
     def remove_flags_on_patch(self, patch_id):
