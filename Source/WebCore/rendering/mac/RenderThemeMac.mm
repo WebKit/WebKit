@@ -471,8 +471,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
         return RenderTheme::systemColor(cssValueID, options);
     }
 
-    // -webkit-link requests Visitedtext when the link is visited, let it fetch Visitedtext from the cache if possible.
-    ASSERT(!forVisitedLink || cssValueID == CSSValueVisitedtext);
+    ASSERT(!forVisitedLink);
 
     auto it = cache.systemStyleColors.find(cssValueID);
     if (it != cache.systemStyleColors.end())
