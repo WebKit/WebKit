@@ -165,9 +165,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             return;
     }
 
-    // SVG roots with filters specified (using CSS or SVG presentation attributes) are applied
-    // as CSSFilter by RenderLayer, so don't reapply the filter here.
-    if (!isRenderingMask && !renderer.isRenderOrLegacyRenderSVGRoot()) {
+    if (!isRenderingMask) {
         m_filter = resources->filter();
         if (m_filter && !m_filter->isIdentity()) {
             m_savedContext = &m_paintInfo->context();
