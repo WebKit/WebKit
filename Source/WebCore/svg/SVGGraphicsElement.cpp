@@ -31,6 +31,7 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceMasker.h"
+#include "RenderSVGResourcePattern.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
 #include "SVGPathData.h"
@@ -221,8 +222,12 @@ void SVGGraphicsElement::invalidateResourceImageBuffersIfNeeded()
         return;
     if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer())) {
         if (auto* container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
-            if (auto* patternRenderer = dynamicDowncast<RenderSVGResourceMasker>(container))
-                patternRenderer->invalidateMask();
+            if (auto* maskRenderer = dynamicDowncast<RenderSVGResourceMasker>(container))
+                maskRenderer->invalidateMask();
+        }
+        if (auto* container = svgRenderer->enclosingLayer()->enclosingSVGHiddenOrResourceContainer()) {
+            if (auto* patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(container))
+                patternRenderer->invalidatePattern(RenderSVGResourcePattern::SuppressRepaint::Yes);
         }
     }
 }

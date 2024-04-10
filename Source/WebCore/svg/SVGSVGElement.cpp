@@ -256,6 +256,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
                     renderer->checkedView()->setNeedsLayout(MarkOnlyThis);
             }
         }
+        invalidateResourceImageBuffersIfNeeded();
         updateSVGRendererForElementChange();
         return;
     }
@@ -276,6 +277,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         if (CheckedPtr renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
 
+        invalidateResourceImageBuffersIfNeeded();
         updateSVGRendererForElementChange();
         return;
     }
