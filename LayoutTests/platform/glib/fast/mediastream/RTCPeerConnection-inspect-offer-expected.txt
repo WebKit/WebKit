@@ -24,6 +24,8 @@ a=rtcp-fb:96 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
+a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=fmtp:96 minptime=10;useinbandfec=1
 a=rtpmap:9 G722/8000
 a=rtcp-fb:9 transport-cc
@@ -70,6 +72,8 @@ a=rtcp-fb:96 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
 a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
+a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
 a=fmtp:96 minptime=10;useinbandfec=1
 a=rtpmap:9 G722/8000
 a=rtcp-fb:9 transport-cc
@@ -107,10 +111,10 @@ a=rtcp-fb:97 ccm fir
 a=rtcp-fb:97 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=extmap:1 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
-a=extmap:2 http://www.webrtc.org/experiments/rtp-hdrext/color-space
-a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid
-a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
-a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:mid
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
+a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+a=extmap:5 http://www.webrtc.org/experiments/rtp-hdrext/color-space
 a=fmtp:97 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
 a=rtpmap:98 H264/90000
 a=rtcp-fb:98 nack
