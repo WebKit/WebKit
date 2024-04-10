@@ -813,8 +813,12 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     }
 
     auto* bindGroupLayout = group.bindGroupLayout();
-    if (!bindGroupLayout || !bindGroupLayout->validateDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
-        makeInvalid(@"insufficient dynamic offsets in layout for bind group");
+    if (!bindGroupLayout) {
+        makeInvalid(@"GPURenderPassEncoder.setBindGroup: bind group is nil");
+        return;
+    }
+    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
+        makeInvalid([NSString stringWithFormat:@"GPURenderPassEncoder.setBindGroup: %@", error]);
         return;
     }
 

@@ -133,7 +133,7 @@ public:
     uint32_t dynamicUniformBuffers() const;
     uint32_t dynamicStorageBuffers() const;
     uint32_t dynamicBufferCount() const;
-    bool validateDynamicOffsets(const uint32_t*, size_t, const BindGroup&) const;
+    NSString* errorValidatingDynamicOffsets(const uint32_t*, size_t, const BindGroup&) const;
     NSString* errorValidatingBindGroupCompatibility(const BindGroupLayout&) const;
 
 private:
