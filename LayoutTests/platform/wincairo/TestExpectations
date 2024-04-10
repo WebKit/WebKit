@@ -3185,9 +3185,6 @@ webkit.org/b/173726 animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/263926 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Skip ] # Makes a subsequent test timeout
 
-webkit.org/b/263953 fast/url/idna2008.html [ Failure ]
-webkit.org/b/263953 fast/url/url-hostname-encoding.html [ Failure ]
-
 webkit.org/b/261308 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/wasm/serialization/module/nested-worker-success.any.worker.html [ Skip ] # Failure
@@ -3305,9 +3302,10 @@ webkit.org/b/272127 fast/text/remove-renderer-and-select-crash.html [ Skip ]
 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
-http/tests/inspector/network/resource-sizes-network.html [ Failure ]
-http/tests/xmlhttprequest/onabort-response-getters.html [ Failure ]
-http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure ]
-http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure ]
+# Pass on Buildbot, Failure on my PC
+webkit.org/b/272445 http/tests/inspector/network/resource-sizes-network.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onabort-response-getters.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure Pass ]
+webkit.org/b/272445 http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure Pass ]
 
 fast/forms/form-submission-crash-4.html [ Timeout Failure Pass ]
