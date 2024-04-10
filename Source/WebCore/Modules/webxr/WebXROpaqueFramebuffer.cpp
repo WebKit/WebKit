@@ -58,30 +58,30 @@ static void ensure(GL& gl, GCGLOwnedFramebuffer& framebuffer)
 
 #if PLATFORM(COCOA)
 
-static void ensure(GL& gl, GCGLOwnedRenderbuffer& buffer)
+static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GCGLenum internalFormat, GL::ExternalImageSource source, GCGLint layer)
 {
-    if (!buffer) {
+    if (!buffer.renderBufferObject) {
         auto object = gl.createRenderbuffer();
         if (!object)
             return;
-        buffer.adopt(gl, object);
+        buffer.renderBufferObject.adopt(gl, object);
     }
-}
-
-static void createAndBindCompositorBuffer(GL& gl, WebXRExternalRenderbuffer& buffer, GCGLenum internalFormat, GL::EGLImageSource source, GCGLint layer)
-{
-    ensure(gl, buffer.renderBufferObject);
     gl.bindRenderbuffer(GL::RENDERBUFFER, buffer.renderBufferObject);
-    buffer.image.adopt(gl, gl.createAndBindEGLImage(GL::RENDERBUFFER, internalFormat, source, layer));
+    auto image = gl.createExternalImage(WTFMove(source), internalFormat, layer);
+    if (!image)
+        return;
+    gl.bindExternalImage(GL::RENDERBUFFER, image);
+    buffer.image.adopt(gl, image);
 }
 
-static GL::EGLImageSource makeEGLImageSource(const std::tuple<WTF::MachSendRight, bool>& imageSource)
+static GL::ExternalImageSource makeExternalImageSource(std::tuple<WTF::MachSendRight, bool>&& imageSource)
 {
-    auto [imageHandle, isSharedTexture] = imageSource;
+    auto [imageHandle, isSharedTexture] = WTFMove(imageSource);
     if (isSharedTexture)
-        return GL::EGLImageSourceMTLSharedTextureHandle { WTF::MachSendRight(imageHandle) };
-    return GL::EGLImageSourceIOSurfaceHandle { WTF::MachSendRight(imageHandle) };
+        return GraphicsContextGLExternalImageSourceMTLSharedTextureHandle { WTFMove(imageHandle) };
+    return GraphicsContextGLExternalImageSourceIOSurfaceHandle { WTFMove(imageHandle) };
 }
+
 #endif
 
 std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformXR::LayerHandle handle, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
@@ -162,14 +162,14 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::FrameData::LayerData& 
 
     int layerCount = (m_displayLayout == PlatformXR::Layout::Layered) ? 2 : 1;
     for (int layer = 0; layer < layerCount; ++layer) {
-        auto colorTextureSource = makeEGLImageSource(data.colorTexture);
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::NONE, colorTextureSource, layer);
+        auto colorTextureSource = makeExternalImageSource(std::tuple<MachSendRight, bool> { data.colorTexture });
+        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].colorBuffer, GL::NONE, WTFMove(colorTextureSource), layer);
         ASSERT(m_displayAttachments[layer].colorBuffer.image);
         if (!m_displayAttachments[layer].colorBuffer.image)
             return;
 
-        auto depthStencilBufferSource = makeEGLImageSource(data.depthStencilBuffer);
-        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, depthStencilBufferSource, layer);
+        auto depthStencilBufferSource = makeExternalImageSource(std::tuple<MachSendRight, bool> { data.depthStencilBuffer });
+        createAndBindCompositorBuffer(*gl, m_displayAttachments[layer].depthStencilBuffer, GL::DEPTH24_STENCIL8, WTFMove(depthStencilBufferSource), layer);
     }
 
     m_renderingFrameIndex = data.renderingFrameIndex;
@@ -221,11 +221,11 @@ void WebXROpaqueFramebuffer::endFrame()
 
 #if PLATFORM(COCOA)
     if (m_completionSyncEvent) {
-        auto completionSync = gl->createEGLSync(std::tuple(m_completionSyncEvent, m_renderingFrameIndex));
+        auto completionSync = gl->createExternalSync(std::tuple(m_completionSyncEvent, m_renderingFrameIndex));
         ASSERT(completionSync);
         constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
-        gl->clientWaitEGLSyncWithFlush(completionSync, kTimeout);
-        gl->destroyEGLSync(completionSync);
+        gl->clientWaitExternalSyncWithFlush(completionSync, kTimeout);
+        gl->deleteExternalSync(completionSync);
     } else
         gl->finish();
 
@@ -234,7 +234,6 @@ void WebXROpaqueFramebuffer::endFrame()
         m_displayAttachments[layer].colorBuffer.destroyImage(*gl);
         m_displayAttachments[layer].depthStencilBuffer.destroyImage(*gl);
     }
-
 #else
     // FIXME: We have to call finish rather than flush because we only want to disconnect
     // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
@@ -431,7 +430,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer(GraphicsContextGL& gl, const Platf
 
     // Calculate viewports of each eye
     if (foveationChange) {
-        if (!gl.createFoveation(toIntSize(data.physicalSize[0]), toIntSize(data.physicalSize[1]), data.screenSize, data.horizontalSamples[0], data.verticalSamples, data.horizontalSamples[1]))
+        if (!gl.addFoveation(toIntSize(data.physicalSize[0]), toIntSize(data.physicalSize[1]), data.screenSize, data.horizontalSamples[0], data.verticalSamples, data.horizontalSamples[1]))
             return false;
         gl.enableFoveation(m_drawAttachments.colorBuffer);
     }

@@ -2089,11 +2089,11 @@ enum class WebCore::MediaCaptureType : uint8_t {
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGL.h>
-[CustomHeader, RValue] struct WebCore::GraphicsContextGLEGLImageSourceIOSurfaceHandle {
+[CustomHeader, RValue] struct WebCore::GraphicsContextGLExternalImageSourceIOSurfaceHandle {
     MachSendRight handle;
 };
 
-[CustomHeader, RValue] struct WebCore::GraphicsContextGLEGLImageSourceMTLSharedTextureHandle {
+[CustomHeader, RValue] struct WebCore::GraphicsContextGLExternalImageSourceMTLSharedTextureHandle {
     MachSendRight handle;
 };
 #endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
@@ -7981,10 +7981,12 @@ using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDevic
 header: <WebCore/GraphicsContextGL.h>
 #endif
 #if PLATFORM(COCOA) && ENABLE(WEBGL)
-using WebCore::GraphicsContextGL::EGLImageSource = std::variant<WebCore::GraphicsContextGLEGLImageSourceIOSurfaceHandle, WebCore::GraphicsContextGLEGLImageSourceMTLSharedTextureHandle>
+using WebCore::GraphicsContextGL::ExternalImageSource = std::variant<WebCore::GraphicsContextGLExternalImageSourceIOSurfaceHandle, WebCore::GraphicsContextGLExternalImageSourceMTLSharedTextureHandle>
+using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight, uint64_t>
 #endif
 #if !PLATFORM(COCOA) && ENABLE(WEBGL)
-using WebCore::GraphicsContextGL::EGLImageSource = int
+using WebCore::GraphicsContextGL::ExternalImageSource = int
+using WebCore::GraphicsContextGL::ExternalSyncSource = int
 #endif
 
 using WebCore::DOMCacheEngine::CacheInfosOrError = Expected<WebCore::DOMCacheEngine::CacheInfos, WebCore::DOMCacheEngine::Error>;

@@ -290,7 +290,7 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
 }
 
-bool GraphicsContextGLGBM::createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
+bool GraphicsContextGLGBM::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
 {
     return false;
 }

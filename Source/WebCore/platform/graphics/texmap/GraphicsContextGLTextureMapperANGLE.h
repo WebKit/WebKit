@@ -58,7 +58,7 @@ public:
     void setContextVisibility(bool) final;
     bool reshapeDrawingBuffer() final;
     void prepareForDisplay() final;
-    bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
+    bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
     void enableFoveation(GCGLuint) final;
     void disableFoveation() final;
 

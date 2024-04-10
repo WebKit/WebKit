@@ -2859,33 +2859,39 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(PlatformGLObject program, G
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
-GCEGLImage GraphicsContextGLANGLE::createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint)
+GCGLExternalImage GraphicsContextGLANGLE::createExternalImage(ExternalImageSource&&, GCGLenum, GCGLint)
 {
     notImplemented();
-    return nullptr;
+    return { };
 }
 
-void GraphicsContextGLANGLE::destroyEGLImage(GCEGLImage handle)
-{
-    EGL_DestroyImageKHR(platformDisplay(), handle);
-}
-
-GCEGLSync GraphicsContextGLANGLE::createEGLSync(ExternalEGLSyncEvent)
+void GraphicsContextGLANGLE::bindExternalImage(GCGLenum, GCGLExternalImage)
 {
     notImplemented();
-    return nullptr;
 }
 
-void GraphicsContextGLANGLE::destroyEGLSync(GCEGLSync sync)
+void GraphicsContextGLANGLE::deleteExternalImage(GCGLExternalImage handle)
 {
-    bool result = EGL_DestroySync(platformDisplay(), sync);
+    bool result = EGL_DestroyImageKHR(platformDisplay(), m_eglImages.take(handle));
     ASSERT_UNUSED(result, !!result);
 }
 
-void GraphicsContextGLANGLE::clientWaitEGLSyncWithFlush(GCEGLSync sync, uint64_t timeout)
+GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&)
 {
-    auto ret = EGL_ClientWaitSync(platformDisplay(), sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
-    ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
+    notImplemented();
+    return { };
+}
+
+void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
+{
+    bool result = EGL_DestroySync(platformDisplay(), m_eglSyncs.take(sync));
+    ASSERT_UNUSED(result, !!result);
+}
+
+bool GraphicsContextGLANGLE::clientWaitExternalSyncWithFlush(GCGLExternalSync sync, uint64_t timeout)
+{
+    auto ret = EGL_ClientWaitSync(platformDisplay(), m_eglSyncs.get(sync), EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
+    return ret == EGL_CONDITION_SATISFIED;
 }
 
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)

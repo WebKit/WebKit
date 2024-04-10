@@ -165,13 +165,6 @@ void RemoteGraphicsContextGL::forceContextLost()
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
-void RemoteGraphicsContextGL::createAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer, CompletionHandler<void(uint64_t handle)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    auto handle = m_context->createAndBindEGLImage(target, internalFormat, WTFMove(source), layer);
-    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)));
-}
-
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());

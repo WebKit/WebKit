@@ -451,17 +451,6 @@ void RemoteGraphicsContextGLProxy::depthRange(GCGLclampf zNear, GCGLclampf zFar)
     }
 }
 
-void RemoteGraphicsContextGLProxy::destroyEGLImage(GCEGLImage handle)
-{
-    if (isContextLost())
-        return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::DestroyEGLImage(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle))));
-    if (sendResult != IPC::Error::NoError) {
-        markContextLost();
-        return;
-    }
-}
-
 void RemoteGraphicsContextGLProxy::detachShader(PlatformGLObject arg0, PlatformGLObject arg1)
 {
     if (isContextLost())
@@ -3082,7 +3071,7 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
     }
 }
 
-RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY arg0)
+RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY arg0)
 {
     if (isContextLost())
         return { };
@@ -3095,26 +3084,76 @@ RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::drawingBufferToPixelB
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::destroyEGLSync(GCEGLSync arg0)
+GCGLExternalImage RemoteGraphicsContextGLProxy::createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&& arg0, GCGLenum internalFormat, GCGLint layer)
+{
+    if (isContextLost())
+        return { };
+    auto name = createObjectName();
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalImage(name, WTFMove(arg0), internalFormat, layer));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return { };
+    }
+    return name;
+}
+
+void RemoteGraphicsContextGLProxy::deleteExternalImage(GCGLExternalImage handle)
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::DestroyEGLSync(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0))));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DeleteExternalImage(handle));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return;
     }
 }
 
-void RemoteGraphicsContextGLProxy::clientWaitEGLSyncWithFlush(GCEGLSync arg0, uint64_t timeout)
+void RemoteGraphicsContextGLProxy::bindExternalImage(GCGLenum target, GCGLExternalImage arg1)
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::ClientWaitEGLSyncWithFlush(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0)), timeout));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::BindExternalImage(target, arg1));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return;
     }
+}
+
+GCGLExternalSync RemoteGraphicsContextGLProxy::createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&& arg0)
+{
+    if (isContextLost())
+        return { };
+    auto name = createObjectName();
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CreateExternalSync(name, WTFMove(arg0)));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return { };
+    }
+    return name;
+}
+
+void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DeleteExternalSync(arg0));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return;
+    }
+}
+
+bool RemoteGraphicsContextGLProxy::clientWaitExternalSyncWithFlush(GCGLExternalSync arg0, uint64_t timeout)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ClientWaitExternalSyncWithFlush(arg0, timeout));
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
 }
 
 bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
@@ -3130,11 +3169,11 @@ bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
     return returnValue;
 }
 
-bool RemoteGraphicsContextGLProxy::createFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight)
+bool RemoteGraphicsContextGLProxy::addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight)
 {
     if (isContextLost())
         return { };
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateFoveation(physicalSizeLeft, physicalSizeRight, screenSize, std::span<const float>(reinterpret_cast<const float*>(horizontalSamplesLeft.data()), horizontalSamplesLeft.size()), std::span<const float>(reinterpret_cast<const float*>(verticalSamples.data()), verticalSamples.size()), std::span<const float>(reinterpret_cast<const float*>(horizontalSamplesRight.data()), horizontalSamplesRight.size())));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::AddFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight));
     if (!sendResult.succeeded()) {
         markContextLost();
         return { };
@@ -3143,11 +3182,11 @@ bool RemoteGraphicsContextGLProxy::createFoveation(WebCore::IntSize physicalSize
     return returnValue;
 }
 
-void RemoteGraphicsContextGLProxy::enableFoveation(GCGLuint framebuffer)
+void RemoteGraphicsContextGLProxy::enableFoveation(GCGLuint arg0)
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::EnableFoveation(framebuffer));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::EnableFoveation(arg0));
     if (sendResult != IPC::Error::NoError) {
         markContextLost();
         return;

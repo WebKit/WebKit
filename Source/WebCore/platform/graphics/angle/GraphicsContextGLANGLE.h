@@ -289,11 +289,12 @@ public:
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
     void getActiveUniformBlockiv(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
-    GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) override;
-    void destroyEGLImage(GCEGLImage) final;
-    GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
-    void destroyEGLSync(GCEGLSync) final;
-    void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) final;
+    GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) override;
+    void deleteExternalImage(GCGLExternalImage) final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) override;
+    GCGLExternalSync createExternalSync(ExternalSyncSource&&) override;
+    void deleteExternalSync(GCGLExternalSync) final;
+    bool clientWaitExternalSyncWithFlush(GCGLExternalSync, uint64_t) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -438,10 +439,14 @@ protected:
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
 #if USE(TEXTURE_MAPPER)
-    GCEGLSuface m_surfaceObj { nullptr };
+    GCEGLSurface m_surfaceObj { nullptr };
 #endif
     GCGLint m_packAlignment { 4 };
     GCGLint m_packRowLength { 0 };
+    uint32_t m_nextExternalImageName { 0 };
+    uint32_t m_nextExternalSyncName { 0 };
+    HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglImages;
+    HashMap<uint32_t, void*, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_eglSyncs;
 };
 
 

@@ -44,7 +44,7 @@ struct XRWebGLLayerInit;
 
 struct WebXRExternalRenderbuffer {
     GCGLOwnedRenderbuffer renderBufferObject;
-    GCEGLOwnedImage image;
+    GCGLOwnedExternalImage image;
 
     void destroyImage(GraphicsContextGL&);
     void release(GraphicsContextGL&);
