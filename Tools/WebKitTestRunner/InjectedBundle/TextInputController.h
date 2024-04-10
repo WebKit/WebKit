@@ -40,7 +40,7 @@ public:
 
     void makeWindowObject(JSContextRef);
 
-    void setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef highlights, JSValueRef annotations);
+    void setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef highlights);
     bool hasMarkedText();
     void unmarkText();
     void insertText(JSStringRef text);

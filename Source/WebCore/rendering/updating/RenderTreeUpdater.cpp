@@ -340,6 +340,7 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         return;
 
     generatedContent().updateBackdropRenderer(*renderer);
+    generatedContent().updateWritingSuggestionsRenderer(*renderer);
     if (&element == element.document().documentElement())
         viewTransition().updatePseudoElementTree(*renderer);
 

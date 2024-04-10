@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,31 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
-#include "RenderTreeUpdater.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Element;
-class RenderQuote;
-
-class RenderTreeUpdater::GeneratedContent {
+class WritingSuggestionData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GeneratedContent(RenderTreeUpdater&);
+    WritingSuggestionData(String&& content, String&& currentText, uint64_t&& offset)
+        : m_content(WTFMove(content))
+        , m_currentText(WTFMove(currentText))
+        , m_offset(WTFMove(offset))
+    {
+        ASSERT(!m_content.isEmpty());
+    }
 
-    void updateBackdropRenderer(RenderElement&);
-    void updatePseudoElement(Element&, const Style::ElementUpdate&, PseudoId);
-    void updateRemainingQuotes();
-    void updateCounters();
-    void updateWritingSuggestionsRenderer(RenderElement&);
+    String content() const { return m_content; }
 
-    static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
-    static void removeAfterPseudoElement(Element&, RenderTreeBuilder&);
+    String currentText() const { return m_currentText; }
+
+    uint64_t offset() const { return m_offset; }
 
 private:
-    void updateQuotesUpTo(RenderQuote*);
-    
-    bool needsPseudoElement(const RenderStyle*);
-
-    RenderTreeUpdater& m_updater;
-    SingleThreadWeakPtr<RenderQuote> m_previousUpdatedQuote;
+    String m_content;
+    String m_currentText;
+    uint64_t m_offset;
 };
 
 }

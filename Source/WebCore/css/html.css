@@ -433,6 +433,10 @@ button {
     appearance: auto;
 }
 
+::-internal-writing-suggestions {
+    color: color-mix(in srgb, currentColor 50%, transparent);
+}
+
 input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)

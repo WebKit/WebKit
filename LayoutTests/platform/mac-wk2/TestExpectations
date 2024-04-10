@@ -1715,7 +1715,8 @@ webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gestu
 
 webkit.org/b/260917 [ Ventura ] fast/forms/border-color-relayout.html [ Pass ImageOnlyFailure ]
 # Enable Sonoma only test added in rdar://110488738.
-[ Sonoma+ ] accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Pass ]
+# webkit.org/b/271969
+[ Sonoma+ ] accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 
 # rdar://103251644 (REGRESSION : [ GuardMalloc ] com.apple.MediaToolbox: PerformTransferBytePumpAsync)
 editing/text-iterator/backwards-text-iterator-basic.html [ Crash ]

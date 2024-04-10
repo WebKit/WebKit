@@ -5151,56 +5151,40 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
     return mergedUnderlines;
 }
 
-static HashMap<String, Vector<WebCore::CharacterRange>> compositionAnnotations(NSAttributedString *string)
-{
-    if (!string.length)
-        return { };
-
-    static NSSet *supportedAttributes = nil;
-#if HAVE(INLINE_PREDICTIONS)
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        supportedAttributes = [[NSSet alloc] initWithObjects:NSTextCompletionAttributeName, nil];
-    });
-#endif
-
-    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
-    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&annotations](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        [attributes enumerateKeysAndObjectsUsingBlock:[&annotations, &range](NSAttributedStringKey key, id value, BOOL *) {
-
-            if (![supportedAttributes containsObject:key] || ![value respondsToSelector:@selector(boolValue)] || ![value boolValue])
-                return;
-
-            auto it = annotations.find(key);
-            if (it == annotations.end())
-                it = annotations.add(key, Vector<WebCore::CharacterRange> { }).iterator;
-            auto& vector = it->value;
-
-            // Coalesce this range into the previous one if possible
-            if (vector.size() > 0) {
-                auto& last = vector.last();
-                if (NSMaxRange(last) == range.location) {
-                    last.length += range.length;
-                    return;
-                }
-            }
-            vector.append(range);
-        }];
-    }];
-
-    return annotations;
-}
-
 void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replacementRange)
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
     ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
 
-    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", isAttributedString ? [string string] : string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
+
+#if HAVE(INLINE_PREDICTIONS)
+    BOOL hasTextCompletion = [&] {
+        if (!isAttributedString)
+            return NO;
+
+        __block BOOL result;
+
+        NSAttributedString *attributedString = (NSAttributedString *)string;
+        [attributedString enumerateAttribute:NSTextCompletionAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+            if ([value respondsToSelector:@selector(boolValue)] && [value boolValue]) {
+                result = YES;
+                *stop = YES;
+            }
+        }];
+
+        return result;
+    }();
+
+    if (hasTextCompletion || m_isHandlingAcceptedCandidate) {
+        m_isHandlingAcceptedCandidate = hasTextCompletion;
+        m_page->setWritingSuggestion([string string], selectedRange);
+        return;
+    }
+#endif
 
     Vector<WebCore::CompositionUnderline> underlines;
     Vector<WebCore::CompositionHighlight> highlights;
-    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
     NSString *text;
 
     if (isAttributedString) {
@@ -5212,7 +5196,6 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         else
 #endif
             underlines = compositionUnderlines(string);
-        annotations = compositionAnnotations(string);
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
@@ -5231,7 +5214,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), WTFMove(annotations), selectedRange, replacementRange);
+    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
 }
 
 #if HAVE(INLINE_PREDICTIONS)

@@ -76,6 +76,7 @@ class KillRing;
 class LocalFrame;
 class Pasteboard;
 class PasteboardWriterData;
+class RenderInline;
 class RenderLayer;
 class FragmentedSharedBuffer;
 class Font;
@@ -87,6 +88,7 @@ class Text;
 class TextCheckerClient;
 class TextEvent;
 class TextPlaceholderElement;
+class WritingSuggestionData;
 
 struct CompositionHighlight;
 struct DictationAlternative;
@@ -395,7 +397,9 @@ public:
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setWritingSuggestion(const String&, const CharacterRange& selection);
+    WEBCORE_EXPORT void setOffset(uint64_t);
     WEBCORE_EXPORT void confirmComposition();
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
     void confirmOrCancelCompositionAndNotifyClient();
@@ -606,6 +610,13 @@ public:
     bool isPastingFromMenuOrKeyBinding() const { return m_pastingFromMenuOrKeyBinding; }
     bool isCopyingFromMenuOrKeyBinding() const { return m_copyingFromMenuOrKeyBinding; }
 
+    Element* writingSuggestionsContainerElement();
+    WritingSuggestionData* writingSuggestionData() const { return m_writingSuggestionData.get(); }
+    bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
+
+    RenderInline* writingSuggestionRenderer() const;
+    void setWritingSuggestionRenderer(RenderInline&);
+
 private:
     Document& document() const { return m_document.get(); }
     Ref<Document> protectedDocument() const { return m_document.get(); }
@@ -661,6 +672,8 @@ private:
 
     void postTextStateChangeNotificationForCut(const String&, const VisibleSelection&);
 
+    void removeWritingSuggestionIfNeeded();
+
     WeakPtr<EditorClient> m_client;
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
@@ -683,6 +696,10 @@ private:
     MemoryCompactRobinHoodHashSet<String> m_insertedAttachmentIdentifiers;
     MemoryCompactRobinHoodHashSet<String> m_removedAttachmentIdentifiers;
 #endif
+
+    std::unique_ptr<WritingSuggestionData> m_writingSuggestionData;
+    SingleThreadWeakPtr<RenderInline> m_writingSuggestionRenderer;
+    bool m_isInsertingTextForWritingSuggestion { false };
 
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted { false };
