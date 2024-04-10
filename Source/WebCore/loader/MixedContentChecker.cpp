@@ -92,6 +92,17 @@ static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, c
     frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
+static bool shouldAllowInsecureLocalRequest([[maybe_unused]] LocalFrame& frame, [[maybe_unused]] const URL& url)
+{
+#if PLATFORM(IOS_FAMILY)
+    return !frame.loader().client().isParentProcessAFullWebBrowser() && SecurityOrigin::isLocalHostOrLoopbackIPAddress(url.host());
+#else
+    return false;
+#endif
+}
+
+
+
 static bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, MixedContentChecker::ContentType type, const URL& url)
 {
     if (!frame.document() || frame.document()->settings().upgradeMixedContentEnabled())
@@ -154,6 +165,9 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
 
+    if (shouldAllowInsecureLocalRequest(frame, url))
+        return false;
+
     auto shouldUpgradeIPAddressForTesting = document->settings().iPAddressMixedContentUpgradeTestingEnabled();
 
     // The request's URL is not upgraded in the following cases.
@@ -179,7 +193,7 @@ static bool shouldBlockInsecureContent(LocalFrame& frame, const URL& url, MixedC
         return false;
     if (!foundMixedContentInFrameTree(frame, url))
         return false;
-    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
+    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldAllowInsecureLocalRequest(frame, url)) && isUpgradable == MixedContentChecker::IsUpgradable::Yes)
         return false;
     logConsoleWarningForUpgrade(frame, /* blocked */ true, url);
     return true;
