@@ -1,30 +1,30 @@
 
 PASS "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" are valid d values
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress -1 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0.125 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0.875 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 1 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 2 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress -1
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0.125
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 0.875
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 1
+PASS Animation between "path("M 0 0 H 1 H 2")" and "path("M 0 0 H 3")" at progress 2
 PASS "path("M 1 2 L 3 4 Z")" and "none" are valid d values
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress -1 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0.125 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0.875 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 1 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 2 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress -1
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0.125
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 0.875
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 1
+PASS Animation between "path("M 1 2 L 3 4 Z")" and "none" at progress 2
 PASS "path("M 10 0 H 11")" and "path("M 20 0 V 2")" are valid d values
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress -1 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0.125 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0.875 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 1 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 2 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress -1
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0.125
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 0.875
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 1
+PASS Animation between "path("M 10 0 H 11")" and "path("M 20 0 V 2")" at progress 2
 PASS "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" are valid d values
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress -1 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0.125 assert_equals: expected "path(\"M 0 0 H 1 H 2\")" but got "none"
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0.875 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 1 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
-FAIL Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 2 assert_equals: expected "path(\"M 0 0 H 3\")" but got "none"
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress -1
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0.125
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 0.875
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 1
+PASS Animation between "path("M 1 2 L 4 6 Z")" and "path("M 1 2 H 4 V 6")" at progress 2
 

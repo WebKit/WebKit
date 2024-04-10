@@ -1,3 +1,3 @@
 
-FAIL d responsive to inherited d changes assert_equals: expected "path(\"M 0 0 H 300\")" but got "none"
+PASS d responsive to inherited d changes
 
