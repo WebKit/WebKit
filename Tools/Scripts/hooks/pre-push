@@ -145,9 +145,9 @@ def remote_name_mappings():
         remote = line.split()
         if len(remote) < 2:
             continue
-        b[remote[0]] = remote[1]
         match = REMOTE_RE.match(remote[1])
         if match:
+            b[remote[0]] = remote[1]
             a['{}:{}'.format(match.group('host'), match.group('path'))] = remote[0]
     return a, b
 
