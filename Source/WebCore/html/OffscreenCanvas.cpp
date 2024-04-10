@@ -66,12 +66,41 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer> buffer, const IntSize& size, bool originClean)
+class OffscreenCanvasPlaceholderData : public ThreadSafeRefCounted<OffscreenCanvasPlaceholderData, WTF::DestructionThread::Main> {
+    WTF_MAKE_NONCOPYABLE(OffscreenCanvasPlaceholderData);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<OffscreenCanvasPlaceholderData> create(HTMLCanvasElement& placeholder)
+    {
+        RefPtr<ImageBufferPipe::Source> pipeSource;
+        RefPtr placeholderContext = downcast<PlaceholderRenderingContext>(placeholder.renderingContext());
+        if (auto& pipe = placeholderContext->imageBufferPipe())
+            pipeSource = pipe->source();
+        return adoptRef(*new OffscreenCanvasPlaceholderData { placeholder, WTFMove(pipeSource) });
+    }
+    RefPtr<HTMLCanvasElement> placeholder() const { return m_placeholder.get(); }
+    RefPtr<ImageBufferPipe::Source> pipeSource() const { return m_pipeSource; }
+
+private:
+    OffscreenCanvasPlaceholderData(HTMLCanvasElement& placeholder, RefPtr<ImageBufferPipe::Source> pipeSource)
+        : m_placeholder(placeholder)
+        , m_pipeSource(WTFMove(pipeSource))
+    {
+    }
+
+    WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_placeholder;
+    RefPtr<ImageBufferPipe::Source> m_pipeSource;
+};
+
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(std::unique_ptr<SerializedImageBuffer> buffer, const IntSize& size, bool originClean, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
     : m_buffer(WTFMove(buffer))
+    , m_placeholderData(WTFMove(placeholderData))
     , m_size(size)
     , m_originClean(originClean)
 {
 }
+
+DetachedOffscreenCanvas::~DetachedOffscreenCanvas() = default;
 
 RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionContext& context)
 {
@@ -80,10 +109,9 @@ RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer(ScriptExecutionCont
     return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(m_buffer), context.graphicsClient());
 }
 
-WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> DetachedOffscreenCanvas::takePlaceholderCanvas()
+RefPtr<OffscreenCanvasPlaceholderData> DetachedOffscreenCanvas::takePlaceholderData()
 {
-    ASSERT(isMainThread());
-    return std::exchange(m_placeholderCanvas, nullptr);
+    return WTFMove(m_placeholderData);
 }
 
 bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
@@ -101,44 +129,32 @@ bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
 {
-    auto canvas = adoptRef(*new OffscreenCanvas(scriptExecutionContext, width, height));
+    auto canvas = adoptRef(*new OffscreenCanvas(scriptExecutionContext, { static_cast<int>(width), static_cast<int>(height) }, nullptr));
     canvas->suspendIfNeeded();
     return canvas;
 }
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
-    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size().width(), detachedCanvas->size().height()));
+    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderData()));
     clone->setImageBuffer(detachedCanvas->takeImageBuffer(scriptExecutionContext));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
-
-    callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), placeholderData = Ref { *clone->m_placeholderData }] () mutable {
-        if (RefPtr canvas = detachedCanvas->takePlaceholderCanvas().get()) {
-            placeholderData->canvas = canvas;
-            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas->renderingContext());
-            auto& imageBufferPipe = placeholderContext.imageBufferPipe();
-            if (imageBufferPipe)
-                placeholderData->bufferPipeSource = imageBufferPipe->source();
-        }
-    });
-
     clone->suspendIfNeeded();
     return clone;
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement& canvas)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement& placeholder)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, canvas.width(), canvas.height()));
-    offscreen->setPlaceholderCanvas(canvas);
+    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), OffscreenCanvasPlaceholderData::create(placeholder)));
     offscreen->suspendIfNeeded();
     return offscreen;
 }
 
-OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
+OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<OffscreenCanvasPlaceholderData> placeholderData)
     : ActiveDOMObject(&scriptExecutionContext)
-    , CanvasBase(IntSize(width, height), scriptExecutionContext.noiseInjectionHashSalt())
-    , m_placeholderData(PlaceholderData::create())
+    , CanvasBase(WTFMove(size), scriptExecutionContext.noiseInjectionHashSalt())
+    , m_placeholderData(WTFMove(placeholderData))
 {
 }
 
@@ -456,44 +472,17 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    auto detached = makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean());
-    detached->m_placeholderCanvas = std::exchange(m_placeholderData->canvas, nullptr);
-
+    auto detached = makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean(), WTFMove(m_placeholderData));
     setSize(IntSize(0, 0));
-
     return detached;
-}
-
-void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
-{
-    ASSERT(!m_context);
-    ASSERT(isMainThread());
-    Ref protectedCanvas { canvas };
-    m_placeholderData->canvas = canvas;
-    auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas.renderingContext());
-    auto& imageBufferPipe = placeholderContext.imageBufferPipe();
-    if (imageBufferPipe)
-        m_placeholderData->bufferPipeSource = imageBufferPipe->source();
-}
-
-void OffscreenCanvas::pushBufferToPlaceholder()
-{
-    callOnMainThread([placeholderData = Ref { *m_placeholderData }] () mutable {
-        Locker locker { placeholderData->bufferLock };
-        if (RefPtr canvas = placeholderData->canvas.get()) {
-            if (placeholderData->pendingCommitBuffer) {
-                auto imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer), canvas->document().graphicsClient());
-                canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
-            }
-        }
-        placeholderData->pendingCommitBuffer = nullptr;
-    });
 }
 
 void OffscreenCanvas::commitToPlaceholderCanvas()
 {
     RefPtr imageBuffer = buffer();
     if (!imageBuffer)
+        return;
+    if (!m_placeholderData)
         return;
 
     // FIXME: Transfer texture over if we're using accelerated compositing
@@ -503,21 +492,29 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
         m_context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
     }
 
-    if (m_placeholderData->bufferPipeSource) {
-        m_placeholderData->bufferPipeSource->handle(*imageBuffer);
-    }
+    if (auto pipeSource = m_placeholderData->pipeSource())
+        pipeSource->handle(*imageBuffer);
 
-    Locker locker { m_placeholderData->bufferLock };
-    bool shouldPushBuffer = !m_placeholderData->pendingCommitBuffer;
-    if (auto clone = imageBuffer->clone())
-        m_placeholderData->pendingCommitBuffer = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
-    if (m_placeholderData->pendingCommitBuffer && shouldPushBuffer)
-        pushBufferToPlaceholder();
+    auto clone = imageBuffer->clone();
+    if (!clone)
+        return;
+    auto serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTFMove(clone));
+    if (!serializedClone)
+        return;
+    callOnMainThread([placeholderData = Ref { *m_placeholderData }, buffer = WTFMove(serializedClone)] () mutable {
+        RefPtr canvas = placeholderData->placeholder();
+        if (!canvas)
+            return;
+        RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(buffer), canvas->document().graphicsClient());
+        if (!imageBuffer)
+            return;
+        canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
+    });
 }
 
 void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
 {
-    if (!m_hasScheduledCommit) {
+    if (!m_hasScheduledCommit && m_placeholderData) {
         auto& scriptContext = *scriptExecutionContext();
         m_hasScheduledCommit = true;
         scriptContext.postTask([protectedThis = Ref { *this }, this] (ScriptExecutionContext&) {
