@@ -4505,6 +4505,9 @@ void WebViewImpl::addTextIndicatorStyleForID(WTF::UUID uuid)
     if (!m_page->preferences().textIndicatorStylingEnabled())
         return;
 
+    if (![WKTextIndicatorStyleManager supportsTextIndicatorStyle])
+        return;
+
     if (!m_textIndicatorStyleManager)
         m_textIndicatorStyleManager = adoptNS([[WKTextIndicatorStyleManager alloc] initWithWebViewImpl:*this]);
 

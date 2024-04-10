@@ -173,6 +173,7 @@ Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
 Shared/Cocoa/SharedCARingBuffer.cpp
 Shared/Cocoa/TCCSoftLink.mm @no-unify
+Shared/Cocoa/UnifiedTextReplacementSoftLink.mm
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm
