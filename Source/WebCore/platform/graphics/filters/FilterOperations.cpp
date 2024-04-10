@@ -73,6 +73,11 @@ bool FilterOperations::hasReferenceFilter() const
     return false;
 }
 
+bool FilterOperations::isReferenceFilter() const
+{
+    return m_operations.size() == 1 && m_operations[0]->type() == FilterOperation::Type::Reference;
+}
+
 IntOutsets FilterOperations::outsets() const
 {
     IntOutsets totalOutsets;
