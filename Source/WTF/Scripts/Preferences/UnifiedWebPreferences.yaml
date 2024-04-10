@@ -6809,18 +6809,6 @@ UseGPUProcessForWebGLEnabled:
       "USE(GRAPHICS_LAYER_WC)": true
       default: false
 
-UseGeneralDirectoryForStorage:
-  type: bool
-  status: internal
-  category: dom
-  humanReadableName: "Use General Directory For Storage"
-  humanReadableDescription: "Use general storage directory for IndexedDB and LocalStorage"
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
-
 UseGiantTiles:
   type: bool
   status: embedder
