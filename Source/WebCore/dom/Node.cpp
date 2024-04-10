@@ -984,7 +984,7 @@ void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode
     case Style::InvalidationMode::Normal:
         break;
     case Style::InvalidationMode::RecompositeLayer:
-        setStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
+        setStateFlag(StateFlag::StyleResolutionShouldRecompositeLayer);
         break;
     case Style::InvalidationMode::RebuildRenderer:
     case Style::InvalidationMode::InsertedIntoAncestor:
