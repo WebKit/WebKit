@@ -60,6 +60,7 @@ public:
 
     Device& device() const { return m_device; }
     void makeInvalid(NSString*);
+    void makeInvalidWithoutCommit();
     void setBufferMapCount(int);
     int bufferMapCount() const;
     NSString* lastError() const;

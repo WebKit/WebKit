@@ -255,7 +255,7 @@ void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
             device->generateAValidationError(command.lastError() ?: @"Command buffer appears twice.");
             return;
         }
-        command.makeInvalid(@"command buffer was submitted");
+        command.makeInvalidWithoutCommit();
     }
 
     for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)

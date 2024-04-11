@@ -55,6 +55,12 @@ void CommandBuffer::makeInvalid(NSString* lastError)
     m_commandBuffer = nil;
 }
 
+void CommandBuffer::makeInvalidWithoutCommit()
+{
+    m_lastErrorString = @"command buffer submitted";
+    m_commandBuffer = nil;
+}
+
 NSString* CommandBuffer::lastError() const
 {
     return m_lastErrorString;
