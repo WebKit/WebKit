@@ -52,9 +52,6 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
-using namespace WTF::Unicode;
-
 static Node* previousLeafWithSameEditability(Node* node, EditableType editableType)
 {
     bool editable = hasEditableStyle(*node, editableType);
@@ -95,7 +92,7 @@ static Position previousLineCandidatePosition(Node* node, const VisiblePosition&
         if (highestEditableRoot(firstPositionInOrBeforeNode(previousNode.get()), editableType) != highestRoot)
             break;
 
-        Position pos = previousNode->hasTagName(brTag) ? positionBeforeNode(previousNode.get()) :
+        Position pos = previousNode->hasTagName(HTMLNames::brTag) ? positionBeforeNode(previousNode.get()) :
             makeDeprecatedLegacyPosition(previousNode.get(), caretMaxOffset(*previousNode));
         
         if (pos.isCandidate())
