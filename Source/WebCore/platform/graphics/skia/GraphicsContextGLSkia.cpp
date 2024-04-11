@@ -119,7 +119,7 @@ RefPtr<NativeImage> GraphicsContextGL::createNativeImageFromPixelBuffer(const Gr
     auto imageInfo = SkImageInfo::Make(imageSize.width(), imageSize.height(), kRGBA_8888_SkColorType, alphaType);
 
     Ref protectedPixelBuffer = pixelBuffer;
-    SkPixmap pixmap(imageInfo, pixelBuffer->bytes(), imageInfo.minRowBytes());
+    SkPixmap pixmap(imageInfo, pixelBuffer->bytes().data(), imageInfo.minRowBytes());
     auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
         static_cast<PixelBuffer*>(context)->deref();
     }, &protectedPixelBuffer.leakRef());

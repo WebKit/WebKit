@@ -338,8 +338,6 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     auto modelBoundingBox = REEntityComputeMeshBounds(m_model->rootEntity(), true, matrix_identity_float4x4, kREEntityStatusNone);
     m_originalBoundingBoxExtents = REAABBExtents(modelBoundingBox);
 
-    REEntitySubtreeAddNetworkComponentRecursive(m_model->rootEntity());
-
     REPtr<REEntityRef> hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(hostingEntity.get(), "WebKit:EntityWithRootComponent");
 
@@ -352,11 +350,31 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     RECALayerClientComponentSetShouldSyncToRemotes(layerComponent.get(), true);
 
     auto clientComponent = RECALayerGetCALayerClientComponent(m_layer.get());
-    auto rootEntity = REComponentGetEntity(clientComponent);
-    REEntitySetName(rootEntity, "WebKit:ClientComponentRoot");
+    auto clientComponentEntity = REComponentGetEntity(clientComponent);
+    REEntitySetName(clientComponentEntity, "WebKit:ClientComponentEntity");
     REEntitySetName(m_model->rootEntity(), "WebKit:ModelRootEntity");
-    REEntitySetParent(m_model->rootEntity(), rootEntity);
-    RENetworkMarkEntityMetadataDirty(rootEntity);
+
+    // FIXME: Clipping workaround for rdar://125188888 (blocked by rdar://123516357 -> rdar://124718417).
+    // containerEntity is required to add a clipping primitive that is independent from model's rootEntity.
+    // Adding the primitive directly to clientComponentEntity has no visual effect.
+    constexpr float clippingBoxHalfSize = 500; // meters
+    REPtr<REEntityRef> containerEntity = adoptRE(REEntityCreate());
+    REEntitySetName(containerEntity.get(), "WebKit:ContainerEntity");
+
+    REEntitySetParent(containerEntity.get(), clientComponentEntity);
+    REEntitySetParent(m_model->rootEntity(), containerEntity.get());
+
+    REEntitySubtreeAddNetworkComponentRecursive(containerEntity.get());
+
+    auto clipComponent = REEntityGetOrAddComponentByClass(containerEntity.get(), REClippingPrimitiveComponentGetComponentType());
+    REClippingPrimitiveComponentSetShouldClipChildren(clipComponent, true);
+    REClippingPrimitiveComponentSetShouldClipSelf(clipComponent, true);
+
+    REAABB clipBounds { simd_make_float3(-clippingBoxHalfSize, -clippingBoxHalfSize, -2 * clippingBoxHalfSize),
+        simd_make_float3(clippingBoxHalfSize, clippingBoxHalfSize, 0) };
+    REClippingPrimitiveComponentClipToBox(clipComponent, clipBounds);
+
+    RENetworkMarkEntityMetadataDirty(clientComponentEntity);
     RENetworkMarkEntityMetadataDirty(m_model->rootEntity());
 
     updateBackgroundColor();

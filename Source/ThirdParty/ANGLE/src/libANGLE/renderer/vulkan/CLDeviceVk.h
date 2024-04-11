@@ -10,6 +10,7 @@
 
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/renderer/CLDeviceImpl.h"
 
@@ -36,6 +37,9 @@ class CLDeviceVk : public CLDeviceImpl
                                    cl_uint numDevices,
                                    CreateFuncs &subDevices,
                                    cl_uint *numDevicesRet) override;
+
+    // Returns runtime-selected LWS value
+    cl::WorkgroupSize selectWorkGroupSize(const cl::NDRange &ndrange) const;
 
   private:
     vk::Renderer *mRenderer;

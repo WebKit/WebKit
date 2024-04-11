@@ -1,0 +1,10 @@
+This test verifies that pressing the Space key twice replaces a space character after 'Hi' with a period.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS editor.textContent became 'Hi.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hi.

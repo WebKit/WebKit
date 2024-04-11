@@ -261,7 +261,6 @@ public:
     bool is8Bit() const;
 
     // --- ADDED ---
-    inline bool equal(JSGlobalObject*, const char* ptr, size_t len) const;
     inline void value(jsstring_iterator* iterator) const;
     // --- ADDED ---
 

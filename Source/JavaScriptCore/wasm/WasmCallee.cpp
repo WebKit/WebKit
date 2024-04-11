@@ -29,7 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InPlaceInterpreter.h"
+#include "LLIntData.h"
 #include "LLIntExceptions.h"
+#include "LLIntThunks.h"
 #include "NativeCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
@@ -162,7 +164,6 @@ const HandlerInfo* Callee::handlerForIndex(Instance& instance, unsigned index, c
     return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
 }
 
-#if ENABLE(JIT)
 JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
     : Callee(compilationMode)
 {
@@ -173,6 +174,7 @@ JITCallee::JITCallee(Wasm::CompilationMode compilationMode, size_t index, std::p
 {
 }
 
+#if ENABLE(JIT)
 void JITCallee::setEntrypoint(Wasm::Entrypoint&& entrypoint)
 {
     m_entrypoint = WTFMove(entrypoint);
@@ -190,8 +192,8 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
     , m_functionIndex(generator.m_functionIndex)
     , m_signatures(WTFMove(generator.m_signatures))
-    , m_bytecode(generator.m_bytecode + generator.m_bytecodeOffset)
-    , m_bytecodeLength(generator.m_bytecodeLength - generator.m_bytecodeOffset)
+    , m_bytecode(generator.m_bytecode.data() + generator.m_bytecodeOffset)
+    , m_bytecodeLength(generator.m_bytecode.size() - generator.m_bytecodeOffset)
     , m_metadataVector(WTFMove(generator.m_metadata))
     , m_metadata(m_metadataVector.data())
     , m_argumINTBytecode(WTFMove(generator.m_argumINTBytecode))

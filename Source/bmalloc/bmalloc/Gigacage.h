@@ -132,7 +132,7 @@ BINLINE void* addressOfBasePtr(Kind kind)
     return &g_gigacageConfig.basePtrs[kind];
 }
 
-BINLINE size_t maxSize(Kind kind)
+BINLINE constexpr size_t maxSize(Kind kind)
 {
     switch (kind) {
     case Primitive:
@@ -149,7 +149,7 @@ BINLINE size_t alignment(Kind kind)
     return maxSize(kind);
 }
 
-BINLINE size_t mask(Kind kind)
+BINLINE constexpr size_t mask(Kind kind)
 {
     return gigacageSizeToMask(maxSize(kind));
 }

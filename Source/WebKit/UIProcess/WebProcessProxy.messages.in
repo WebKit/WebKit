@@ -41,8 +41,6 @@ messages -> WebProcessProxy LegacyReceiver {
     CreateModelProcessConnection(IPC::ConnectionHandle connectionIdentifier, struct WebKit::ModelProcessConnectionParameters parameters) AllowedWhenWaitingForSyncReply
 #endif
 
-    SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
-
     DidExceedActiveMemoryLimit()
     DidExceedInactiveMemoryLimit()
     DidExceedMemoryFootprintThreshold(size_t footprint)

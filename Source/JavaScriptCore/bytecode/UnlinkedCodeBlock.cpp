@@ -338,7 +338,6 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
         FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(COUNT)
 #undef COUNT
         numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
-        numberOfArrayProfiles += m_metadata->numEntries<OpGetById>();
         m_arrayProfiles = FixedVector<UnlinkedArrayProfile>(numberOfArrayProfiles);
     }
 

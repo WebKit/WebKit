@@ -95,6 +95,11 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     return copy;
 }
 
+void PageConfiguration::copyDataFrom(const PageConfiguration& other)
+{
+    m_data = other.m_data;
+}
+
 BrowsingContextGroup& PageConfiguration::browsingContextGroup() const
 {
     return m_data.browsingContextGroup.get();

@@ -30,6 +30,7 @@
 #import <JavaScriptCore/JSContextPrivate.h>
 #import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <JavaScriptCore/JSRemoteInspector.h>
+#import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSValue.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
@@ -45,7 +46,7 @@ public:
     {
     }
 
-    JSContext* ensureContext()
+    RetainPtr<JSContext> ensureContext()
     {
         m_lastUseTime = MonotonicTime::now();
         if (!m_context) {
@@ -65,7 +66,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
             m_timer.startOneShot(sharedJSContextMaxIdleTime);
         }
-        return m_context.get();
+        return m_context;
     }
 
     void releaseContextIfNecessary()
@@ -88,20 +89,21 @@ private:
 
 static SharedJSContext& sharedContext()
 {
-    static NeverDestroyed<SharedJSContext> sharedContext;
+    static MainThreadNeverDestroyed<SharedJSContext> sharedContext;
     return sharedContext.get();
 }
 
 id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serializedScriptValue, JSValueRef* exception)
 {
     ASSERT(RunLoop::isMain());
-    JSContext* context = sharedContext().ensureContext();
+    RetainPtr context = sharedContext().ensureContext();
+    JSRetainPtr globalContextRef = [context JSGlobalContextRef];
 
-    JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], exception);
+    JSValueRef valueRef = serializedScriptValue.deserialize(globalContextRef.get(), exception);
     if (!valueRef)
         return nil;
 
-    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context];
+    JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
     return value.toObject;
 }
 
@@ -145,12 +147,13 @@ static RefPtr<WebCore::SerializedScriptValue> coreValueFromNSObject(id object)
         return nullptr;
 
     ASSERT(RunLoop::isMain());
-    JSContext* context = sharedContext().ensureContext();
-    JSValue *value = [JSValue valueWithObject:object inContext:context];
+    RetainPtr context = sharedContext().ensureContext();
+    JSValue *value = [JSValue valueWithObject:object inContext:context.get()];
     if (!value)
         return nullptr;
 
-    auto globalObject = toJS([context JSGlobalContextRef]);
+    JSRetainPtr globalContextRef = [context JSGlobalContextRef];
+    auto globalObject = toJS(globalContextRef.get());
     ASSERT(globalObject);
     JSC::JSLockHolder lock(globalObject);
 

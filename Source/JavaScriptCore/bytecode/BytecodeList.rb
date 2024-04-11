@@ -352,6 +352,17 @@ op :get_by_id,
         modeMetadata: GetByIdModeMetadata,
     }
 
+op :get_length,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        modeMetadata: GetByIdModeMetadata,
+        arrayProfile: ArrayProfile,
+    }
+
 op :profile_type,
     args: {
         targetVirtualRegister: VirtualRegister,
@@ -1419,14 +1430,17 @@ op :op_construct_return_location
 op :op_call_varargs_return_location
 op :op_construct_varargs_return_location
 op :op_get_by_id_return_location
+op :op_get_length_return_location
 op :op_get_by_val_return_location
 op :op_put_by_id_return_location
 op :op_put_by_val_return_location
 op :op_iterator_open_return_location
 op :op_iterator_next_return_location
 op :op_call_direct_eval_slow_return_location
+op :wasm_function_prologue_trampoline
 op :wasm_function_prologue
 op :wasm_function_prologue_simd
+op :js_to_wasm_wrapper_entry
 
 op :js_trampoline_op_call
 op :js_trampoline_op_call_ignore_result

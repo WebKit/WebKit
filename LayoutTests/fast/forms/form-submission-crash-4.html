@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+function runTest() {
+  form.submit();
+  p.appendChild(object);
+  object.foo;
+  setTimeout(function() {
+    document.write("PASS if no crash");
+    testRunner.notifyDone();
+  }, 10);
+}
+</script>
+<body onload=runTest()>
+  <p id="p"></p>
+  <object id="object" data="?foo=bar">
+    <form id="form"></form>
+  </object>
+</body>

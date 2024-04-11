@@ -56,7 +56,7 @@ private:
     void addChildren() override;
     void handleChildrenChanged();
     bool computeAccessibilityIsIgnored() const override;
-    AccessibilityChildrenVector selectedChildren() final;
+    std::optional<AccessibilityChildrenVector> selectedChildren() final;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 };

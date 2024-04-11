@@ -131,8 +131,8 @@ private:
     void createShaderModule(const WebGPU::ShaderModuleDescriptor&, WebGPUIdentifier);
     void createComputePipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier);
     void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier);
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool)>&&);
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool)>&&);
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void(bool, String&&)>&&);
 
     void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUIdentifier);
     void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPUIdentifier);

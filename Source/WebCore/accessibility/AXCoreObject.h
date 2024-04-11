@@ -1261,8 +1261,7 @@ public:
     virtual void detachFromParent() = 0;
     virtual bool isDetachedFromParent() = 0;
 
-    bool canHaveSelectedChildren() const;
-    virtual AccessibilityChildrenVector selectedChildren() = 0;
+    virtual std::optional<AccessibilityChildrenVector> selectedChildren() = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();

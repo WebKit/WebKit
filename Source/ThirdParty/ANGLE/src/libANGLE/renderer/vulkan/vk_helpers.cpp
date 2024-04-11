@@ -141,6 +141,21 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         },
     },
     {
+        ImageLayout::MSRTTEmulationColorUnresolveAndResolve,
+        ImageMemoryBarrierData{
+            "MSRTTEmulationColorUnresolveAndResolve",
+            VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            // Transition to: all reads and writes must happen after barrier.
+            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+            // Transition from: all writes must finish before barrier.
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            ResourceAccess::ReadWrite,
+            PipelineStage::FragmentShader,
+        },
+    },
+    {
         ImageLayout::DepthWriteStencilWrite,
         ImageMemoryBarrierData{
             "DepthWriteStencilWrite",
@@ -367,6 +382,22 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
             VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
             ResourceAccess::ReadWrite,
             PipelineStage::ColorAttachmentOutput,
+        },
+    },
+    {
+        ImageLayout::MSRTTEmulationDepthStencilUnresolveAndResolve,
+        ImageMemoryBarrierData{
+            "MSRTTEmulationDepthStencilUnresolveAndResolve",
+            VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+            // Note: depth/stencil resolve uses color output stage and mask!
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+            // Transition to: all reads and writes must happen after barrier.
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+            // Transition from: all writes must finish before barrier.
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            ResourceAccess::ReadWrite,
+            PipelineStage::FragmentShader,
         },
     },
     {
@@ -2256,7 +2287,14 @@ void RenderPassCommandBufferHelper::finalizeColorImageLayout(
     }
     else
     {
-        imageLayout = ImageLayout::ColorWrite;
+        // When color is unresolved, use a layout that includes fragment shader reads.  This is done
+        // for all color resolve attachments even if they are not all unresolved for simplicity.  In
+        // particular, the GL color index is not available (only the packed index) at this point,
+        // but that is needed to query whether the attachment is unresolved or not.
+        const bool hasUnresolve =
+            isResolveImage && mRenderPassDesc.getColorUnresolveAttachmentMask().any();
+        imageLayout = hasUnresolve ? ImageLayout::MSRTTEmulationColorUnresolveAndResolve
+                                   : ImageLayout::ColorWrite;
         updateImageLayoutAndBarrier(context, image, VK_IMAGE_ASPECT_COLOR_BIT, imageLayout);
     }
 
@@ -2405,7 +2443,10 @@ void RenderPassCommandBufferHelper::finalizeDepthStencilResolveImageLayout(Conte
 
     ImageHelper *depthStencilResolveImage = mDepthResolveAttachment.getImage();
 
-    ImageLayout imageLayout     = ImageLayout::DepthStencilResolve;
+    // When depth/stencil is unresolved, use a layout that includes fragment shader reads.
+    ImageLayout imageLayout     = mRenderPassDesc.hasDepthStencilUnresolveAttachment()
+                                      ? ImageLayout::MSRTTEmulationDepthStencilUnresolveAndResolve
+                                      : ImageLayout::DepthStencilResolve;
     const angle::Format &format = depthStencilResolveImage->getActualFormat();
     ASSERT(format.hasDepthOrStencilBits());
     VkImageAspectFlags aspectFlags = GetDepthStencilAspectFlags(format);
@@ -2502,17 +2543,18 @@ void RenderPassCommandBufferHelper::finalizeDepthStencilLoadStore(Context *conte
     // This has to be called after layout been finalized
     ASSERT(dsOps.initialLayout != static_cast<uint16_t>(ImageLayout::Undefined));
 
-    uint32_t currentCmdCount  = getRenderPassWriteCommandCount();
-    bool isDepthInvalidated   = false;
-    bool isStencilInvalidated = false;
-    bool hasResolveAttachment = mRenderPassDesc.hasDepthStencilResolveAttachment();
+    uint32_t currentCmdCount         = getRenderPassWriteCommandCount();
+    bool isDepthInvalidated          = false;
+    bool isStencilInvalidated        = false;
+    bool hasDepthResolveAttachment   = mRenderPassDesc.hasDepthResolveAttachment();
+    bool hasStencilResolveAttachment = mRenderPassDesc.hasStencilResolveAttachment();
 
     mDepthAttachment.finalizeLoadStore(
         context, currentCmdCount, mRenderPassDesc.hasDepthUnresolveAttachment(),
-        hasResolveAttachment, &depthLoadOp, &depthStoreOp, &isDepthInvalidated);
+        hasDepthResolveAttachment, &depthLoadOp, &depthStoreOp, &isDepthInvalidated);
     mStencilAttachment.finalizeLoadStore(
         context, currentCmdCount, mRenderPassDesc.hasStencilUnresolveAttachment(),
-        hasResolveAttachment, &stencilLoadOp, &stencilStoreOp, &isStencilInvalidated);
+        hasStencilResolveAttachment, &stencilLoadOp, &stencilStoreOp, &isStencilInvalidated);
 
     const bool disableMixedDepthStencilLoadOpNoneAndLoad =
         context->getRenderer()->getFeatures().disallowMixedDepthStencilLoadOpNoneAndLoad.enabled;

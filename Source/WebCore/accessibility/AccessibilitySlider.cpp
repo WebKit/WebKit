@@ -147,11 +147,11 @@ float AccessibilitySlider::minValueForRange() const
 bool AccessibilitySlider::setValue(const String& value)
 {
     RefPtr input = inputElement();
-    
-    if (input->value() == value)
-        return true;
+    if (!input)
+        return false;
 
-    input->setValue(value, DispatchChangeEvent);
+    if (input->value() != value)
+        input->setValue(value, DispatchInputAndChangeEvent);
     return true;
 }
 

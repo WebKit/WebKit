@@ -729,11 +729,11 @@ private:
     Vector<uint32_t> m_declaredFunctions;
 };
 
-Expected<void, String> parseExtendedConstExpr(const uint8_t* source, size_t length, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
+Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Validate, offsetInSource, info);
-    FunctionParser<ConstExprGenerator> parser(generator, source, length, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
+    FunctionParser<ConstExprGenerator> parser(generator, source, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
     offset = parser.offset();
 
@@ -747,7 +747,7 @@ Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& cons
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
-    FunctionParser<ConstExprGenerator> parser(generator, constantExpression.data(), constantExpression.size(), *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
+    FunctionParser<ConstExprGenerator> parser(generator, constantExpression, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 
     ConstExprGenerator::ExpressionType result = generator.result();

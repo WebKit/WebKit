@@ -1348,17 +1348,17 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
     return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
 }
 
-bool KeyframeEffect::isTargetingTransformRelatedProperty() const
+static bool propertiesContainTransformRelatedProperty(const HashSet<AnimatableCSSProperty>& properties)
 {
-    return m_blendingKeyframes.properties().contains(CSSPropertyTranslate)
-        || m_blendingKeyframes.properties().contains(CSSPropertyScale)
-        || m_blendingKeyframes.properties().contains(CSSPropertyRotate)
-        || m_blendingKeyframes.properties().contains(CSSPropertyTransform);
+    return properties.contains(CSSPropertyTranslate)
+        || properties.contains(CSSPropertyScale)
+        || properties.contains(CSSPropertyRotate)
+        || properties.contains(CSSPropertyTransform);
 }
 
 bool KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation() const
 {
-    return isRunningAccelerated() && isTargetingTransformRelatedProperty();
+    return isRunningAccelerated() && propertiesContainTransformRelatedProperty(m_blendingKeyframes.properties());
 }
 
 void KeyframeEffect::invalidate()
@@ -1764,7 +1764,8 @@ void KeyframeEffect::animationDidFinish()
 void KeyframeEffect::transformRelatedPropertyDidChange()
 {
     ASSERT(isRunningAcceleratedTransformRelatedAnimation());
-    addPendingAcceleratedAction(AcceleratedAction::TransformChange);
+    auto hasTransformRelatedPropertyWithImplicitKeyframe = propertiesContainTransformRelatedProperty(m_acceleratedPropertiesWithImplicitKeyframe);
+    addPendingAcceleratedAction(hasTransformRelatedPropertyWithImplicitKeyframe ? AcceleratedAction::UpdateProperties : AcceleratedAction::TransformChange);
 }
 
 std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)

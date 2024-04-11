@@ -47,7 +47,7 @@ static void testUInt32LEBDecode(std::initializer_list<uint8_t> data, size_t star
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     uint32_t result;
-    bool status = WTF::LEBDecoder::decodeUInt32(vector.data(), vector.size(), startOffset, result);
+    bool status = WTF::LEBDecoder::decodeUInt32(vector, startOffset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
@@ -99,7 +99,7 @@ static void testUInt64LEBDecode(std::initializer_list<uint8_t> data, size_t star
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     uint64_t result;
-    bool status = WTF::LEBDecoder::decodeUInt64(vector.data(), vector.size(), startOffset, result);
+    bool status = WTF::LEBDecoder::decodeUInt64(vector, startOffset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
@@ -163,7 +163,7 @@ static void testInt32LEBDecode(std::initializer_list<uint8_t> data, size_t start
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     int32_t result;
-    bool status = WTF::LEBDecoder::decodeInt32(vector.data(), vector.size(), startOffset, result);
+    bool status = WTF::LEBDecoder::decodeInt32(vector, startOffset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;
@@ -217,7 +217,7 @@ static void testInt64LEBDecode(std::initializer_list<uint8_t> data, size_t start
     Vector<uint8_t> vector(data);
     auto string = toString(vector);
     int64_t result;
-    bool status = WTF::LEBDecoder::decodeInt64(vector.data(), vector.size(), startOffset, result);
+    bool status = WTF::LEBDecoder::decodeInt64(vector, startOffset, result);
     EXPECT_EQ(expectedStatus, status) << string;
     if (expectedStatus) {
         EXPECT_EQ(expectedResult, result) << string;

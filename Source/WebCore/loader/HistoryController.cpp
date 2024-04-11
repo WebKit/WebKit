@@ -109,16 +109,6 @@ Ref<LocalFrame> HistoryController::protectedFrame() const
     return m_frame.get();
 }
 
-void HistoryController::clearScrollPositionAndViewState()
-{
-    RefPtr currentItem = m_currentItem;
-    if (!currentItem)
-        return;
-
-    currentItem->clearScrollPosition();
-    currentItem->setPageScaleFactor(0);
-}
-
 /*
  There is a race condition between the layout and load completion that affects restoring the scroll position.
  We try to restore the scroll position at both the first layout and upon load completion.
@@ -810,24 +800,6 @@ bool HistoryController::itemsAreClones(HistoryItem& item1, HistoryItem* item2) c
     return item2
         && &item1 != item2
         && item1.itemSequenceNumber() == item2->itemSequenceNumber();
-}
-
-// Helper method that determines whether the current frame tree matches given history item's.
-bool HistoryController::currentFramesMatchItem(HistoryItem& item) const
-{
-    if ((!m_frame->tree().uniqueName().isEmpty() || !item.target().isEmpty()) && m_frame->tree().uniqueName() != item.target())
-        return false;
-
-    const auto& childItems = item.children();
-    if (childItems.size() != m_frame->tree().childCount())
-        return false;
-    
-    for (auto& item : childItems) {
-        if (!m_frame->tree().childByUniqueName(item->target()))
-            return false;
-    }
-    
-    return true;
 }
 
 void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)

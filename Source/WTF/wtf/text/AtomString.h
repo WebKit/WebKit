@@ -87,12 +87,12 @@ public:
     bool contains(StringView) const;
     bool containsIgnoringASCIICase(StringView) const;
 
-    size_t find(UChar character, unsigned start = 0) const { return m_string.find(character, start); }
-    size_t find(ASCIILiteral literal, unsigned start = 0) const { return m_string.find(literal, start); }
-    size_t find(StringView, unsigned start = 0) const;
+    size_t find(UChar character, size_t start = 0) const { return m_string.find(character, start); }
+    size_t find(ASCIILiteral literal, size_t start = 0) const { return m_string.find(literal, start); }
+    size_t find(StringView, size_t start = 0) const;
     size_t findIgnoringASCIICase(StringView) const;
-    size_t findIgnoringASCIICase(StringView, unsigned start) const;
-    size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
+    size_t findIgnoringASCIICase(StringView, size_t start) const;
+    size_t find(CodeUnitMatchFunction matchFunction, size_t start = 0) const { return m_string.find(matchFunction, start); }
 
     bool startsWith(StringView) const;
     bool startsWithIgnoringASCIICase(StringView) const;
@@ -151,7 +151,7 @@ static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must 
 
 inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
 inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(a.impl(), b); }
-inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.data(), b.size()); }    
+inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.span()); }
 inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const String& a, const AtomString& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const Vector<UChar>& a, const AtomString& b) { return b == a; }

@@ -704,43 +704,6 @@ void UnifiedTextReplacementController::updateStateForSelectedReplacementIfNeeded
     m_webPage->textReplacementSessionShowInformationForReplacementWithUUIDRelativeToRect(data.sessionUUID, data.uuid, rect);
 }
 
-
-void UnifiedTextReplacementController::getTextIndicatorForID(const WTF::UUID& uuid, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
-{
-    RefPtr range = m_contextRanges.get(uuid);
-    auto simpleRange = makeSimpleRange(range.get());
-
-    if (!simpleRange) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    RefPtr corePage = m_webPage->corePage();
-    if (!corePage) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage->mainFrame());
-    if (!localMainFrame) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    constexpr OptionSet<WebCore::TextIndicatorOption> textIndicatorOptions {
-        WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
-        WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
-        WebCore::TextIndicatorOption::UseSelectionRectForSizing
-    };
-    RefPtr textIndicator = WebCore::TextIndicator::createWithRange(*simpleRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
-    if (!textIndicator) {
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    completionHandler(textIndicator->data());
-}
-
 } // namespace WebKit
 
 #endif

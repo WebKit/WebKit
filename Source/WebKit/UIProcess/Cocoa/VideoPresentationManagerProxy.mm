@@ -1009,6 +1009,22 @@ void VideoPresentationManagerProxy::exitFullscreenWithoutAnimationToMode(Playbac
     hasVideoInPictureInPictureDidChange(targetMode & MediaPlayerEnums::VideoFullscreenModePictureInPicture);
 }
 
+void VideoPresentationManagerProxy::setVideoFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    MESSAGE_CHECK((mode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+
+    ensureInterface(contextId).setMode(mode, false);
+}
+
+void VideoPresentationManagerProxy::clearVideoFullscreenMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+{
+    MESSAGE_CHECK((mode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+
+#if PLATFORM(MAC)
+    ensureInterface(contextId).clearMode(mode);
+#endif
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void VideoPresentationManagerProxy::setInlineRect(PlaybackSessionContextIdentifier contextId, const WebCore::FloatRect& inlineRect, bool visible)
@@ -1252,8 +1268,10 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 
     m_page->send(Messages::VideoPresentationManager::DidCleanupFullscreen(contextId));
 
-    interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
-    removeClientForContext(contextId);
+    if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow)) {
+        interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, false);
+        removeClientForContext(contextId);
+    }
 }
 
 void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIdentifier contextId, WebCore::FloatRect frame)

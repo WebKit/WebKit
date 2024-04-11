@@ -92,7 +92,7 @@ std::pair<sk_sp<T>, int> PrecompileBase::SelectOption(const std::vector<sk_sp<T>
         if (desiredOption < (option ? option->numCombinations() : 1)) {
             return { option, desiredOption };
         }
-        desiredOption -= option->numCombinations();
+        desiredOption -= option ? option->numCombinations() : 1;
     }
     return { nullptr, 0 };
 }
@@ -116,11 +116,15 @@ class PrecompileShader : public PrecompileBase {
 public:
     PrecompileShader() : PrecompileBase(Type::kShader) {}
 
-    virtual bool isConstant() const { return false; }
+    virtual bool isConstant(int desiredCombination) const { return false; }
 
     sk_sp<PrecompileShader> makeWithLocalMatrix();
 
     sk_sp<PrecompileShader> makeWithColorFilter(sk_sp<PrecompileColorFilter>);
+
+    sk_sp<PrecompileShader> makeWithWorkingColorSpace(sk_sp<SkColorSpace>);
+
+    sk_sp<PrecompileShader> makeWithCTM();
 };
 
 class PrecompileMaskFilter : public PrecompileBase {
@@ -180,6 +184,8 @@ public:
         fBlenderOptions.assign(blenders.begin(), blenders.end());
     }
 
+    void setClipShaders(SkSpan<const sk_sp<PrecompileShader>> clipShaders);
+
     void setDither(bool dither) { fDither = dither; }
 
     // Provides access to functions that aren't part of the public API.
@@ -194,6 +200,7 @@ private:
     int numColorFilterCombinations() const;
     // TODO: need to decompose imagefilters into component draws
     int numBlendModeCombinations() const;
+    int numClipShaderCombinations() const;
 
     int numCombinations() const;
     // 'desiredCombination' must be less than the result of the numCombinations call
@@ -215,6 +222,7 @@ private:
     std::vector<sk_sp<PrecompileColorFilter>> fColorFilterOptions;
     std::vector<sk_sp<PrecompileImageFilter>> fImageFilterOptions;
     std::vector<sk_sp<PrecompileBlender>> fBlenderOptions;
+    std::vector<sk_sp<PrecompileShader>> fClipShaderOptions;
     bool fDither = false;
 };
 

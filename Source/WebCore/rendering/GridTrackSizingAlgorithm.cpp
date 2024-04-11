@@ -200,7 +200,7 @@ const GridTrackSize& GridTrackSizingAlgorithm::rawGridTrackSize(GridTrackSizingD
     unsigned autoTrackStylesSize = autoTrackStyles.size();
     if (untranslatedIndexAsInt < 0) {
         int index = untranslatedIndexAsInt % static_cast<int>(autoTrackStylesSize);
-        // We need to traspose the index because the first negative implicit line will get the last defined auto track and so on.
+        // We need to transpose the index because the first negative implicit line will get the last defined auto track and so on.
         index += index ? autoTrackStylesSize : 0;
         ASSERT(index >= 0);
         return autoTrackStyles[index];
@@ -589,7 +589,7 @@ static void distributeItemIncurredIncreases(Vector<WeakPtr<GridTrack>>& tracks, 
     }
     for (uint32_t i = 0; i < tracksSize; ++i) {
         // Sorting is not needed for TrackSizeComputationVariant::CrossingFlexibleTracks, since all tracks have an infinite growth potential.
-        ASSERT(tracks[i]->growthLimitIsInfinite());  
+        ASSERT(tracks[i]->growthLimitIsInfinite());
         distributeItemIncurredIncreaseToTrack<phase, limit>(*tracks[i], freeSpace, fractionsOfRemainingSpace[i]);
     }
 }

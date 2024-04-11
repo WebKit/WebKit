@@ -2391,16 +2391,16 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
             selected = axObject->isSelected();
 
             auto selectedChildren = axObject->selectedChildren();
-            if (selectedChildren.size()) {
+            if (selectedChildren && selectedChildren->size()) {
                 selectedChildNodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
-                for (auto& selectedChildObject : selectedChildren) {
+                for (auto& selectedChildObject : *selectedChildren) {
                     if (Node* selectedChildNode = selectedChildObject->node()) {
                         if (auto selectedChildNodeId = pushNodePathToFrontend(selectedChildNode))
                             selectedChildNodeIds->addItem(selectedChildNodeId);
                     }
                 }
             }
-            
+
             headingLevel = axObject->headingLevel();
             hierarchicalLevel = axObject->hierarchicalLevel();
             

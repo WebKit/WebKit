@@ -203,7 +203,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         }
     }
 
-    propagateStyleToAnonymousChildren(PropagateToAllChildren);
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 }
 
 bool RenderInline::mayAffectLayout() const

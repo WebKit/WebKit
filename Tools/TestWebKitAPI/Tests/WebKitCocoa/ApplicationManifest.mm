@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if ENABLE(APPLICATION_MANIFEST)
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestCocoa.h"
@@ -450,5 +448,3 @@ TEST(WKApplicationManifest, InvalidJSONData)
 
 
 } // namespace TestWebKitAPI
-
-#endif // ENABLE(APPLICATION_MANIFEST)

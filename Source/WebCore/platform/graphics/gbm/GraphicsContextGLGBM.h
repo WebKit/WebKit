@@ -67,7 +67,7 @@ public:
     bool platformInitializeExtensions() override;
 
     bool reshapeDrawingBuffer() override;
-    bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) override;
+    bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) override;
     void enableFoveation(GCGLuint) override;
     void disableFoveation() override;
 

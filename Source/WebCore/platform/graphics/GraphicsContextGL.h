@@ -75,18 +75,24 @@ class VideoFrame;
 class GraphicsContextGL;
 
 #if PLATFORM(COCOA)
-struct GraphicsContextGLEGLImageSourceIOSurfaceHandle {
+struct GraphicsContextGLExternalImageSourceIOSurfaceHandle {
     MachSendRight handle;
 };
-struct GraphicsContextGLEGLImageSourceMTLSharedTextureHandle {
+struct GraphicsContextGLExternalImageSourceMTLSharedTextureHandle {
     MachSendRight handle;
 };
-using GraphicsContextGLEGLImageSource = std::variant<
-    GraphicsContextGLEGLImageSourceIOSurfaceHandle,
-    GraphicsContextGLEGLImageSourceMTLSharedTextureHandle
+using GraphicsContextGLExternalImageSource = std::variant<
+    GraphicsContextGLExternalImageSourceIOSurfaceHandle,
+    GraphicsContextGLExternalImageSourceMTLSharedTextureHandle
     >;
-#endif // PLATFORM(COCOA)
+using GraphicsContextGLExternalSyncSource = std::tuple<MachSendRight, uint64_t>;
 
+#else
+
+using GraphicsContextGLExternalImageSource = int;
+using GraphicsContextGLExternalSyncSource = int;
+
+#endif
 
 enum class GraphicsContextGLSurfaceBuffer : bool {
     DrawingBuffer,
@@ -1510,27 +1516,22 @@ public:
     // ========== EGL related entry points.
 
 #if PLATFORM(COCOA)
-    using EGLImageSourceIOSurfaceHandle = GraphicsContextGLEGLImageSourceIOSurfaceHandle;
-    using EGLImageSourceMTLSharedTextureHandle = GraphicsContextGLEGLImageSourceMTLSharedTextureHandle;
-    using EGLImageSource = GraphicsContextGLEGLImageSource;
-#else
-    using EGLImageSource = int;
+    using EGLImageSourceIOSurfaceHandle = GraphicsContextGLExternalImageSourceIOSurfaceHandle;
+    using EGLImageSourceMTLSharedTextureHandle = GraphicsContextGLExternalImageSourceMTLSharedTextureHandle;
 #endif
-    virtual GCEGLImage createAndBindEGLImage(GCGLenum, GCGLenum, EGLImageSource, GCGLint) = 0;
-    virtual void destroyEGLImage(GCEGLImage) = 0;
-
-    virtual bool createFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) = 0;
+    virtual bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) = 0;
     virtual void enableFoveation(GCGLuint) = 0;
     virtual void disableFoveation() = 0;
 
-#if PLATFORM(COCOA)
-    using ExternalEGLSyncEvent = std::tuple<MachSendRight, uint64_t>;
-#else
-    using ExternalEGLSyncEvent = int;
-#endif
-    virtual GCEGLSync createEGLSync(ExternalEGLSyncEvent) = 0;
-    virtual void destroyEGLSync(GCEGLSync) = 0;
-    virtual void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) = 0;
+    using ExternalImageSource = GraphicsContextGLExternalImageSource;
+    virtual GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) = 0;
+    virtual void deleteExternalImage(GCGLExternalImage) = 0;
+    virtual void bindExternalImage(GCGLenum target, GCGLExternalImage) = 0;
+
+    using ExternalSyncSource = GraphicsContextGLExternalSyncSource;
+    virtual GCGLExternalSync createExternalSync(ExternalSyncSource&&) = 0;
+    virtual void deleteExternalSync(GCGLExternalSync) = 0;
+    virtual bool clientWaitExternalSyncWithFlush(GCGLExternalSync, uint64_t timeout) = 0;
 
     // ========== Extension related entry points.
 
@@ -1745,7 +1746,7 @@ private:
 using GCGLOwnedFramebuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteFramebuffer>;
 using GCGLOwnedRenderbuffer = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteRenderbuffer>;
 using GCGLOwnedTexture = GCGLOwned<PlatformGLObject, &GraphicsContextGL::deleteTexture>;
-using GCEGLOwnedImage = GCGLOwned<GCEGLImage, &GraphicsContextGL::destroyEGLImage>;
+using GCGLOwnedExternalImage = GCGLOwned<GCGLExternalImage, &GraphicsContextGL::deleteExternalImage>;
 
 } // namespace WebCore
 

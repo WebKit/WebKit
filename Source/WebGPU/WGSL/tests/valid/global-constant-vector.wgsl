@@ -4,7 +4,7 @@ const b = vec2f(a);
 @compute @workgroup_size(1)
 fn main() {
   // CHECK: vec.* local\d+ = vec<float, 4>\(0., 0., 0., 0.\)
-  // CHECK: \(void\)\(local\d+\[0\]\)
+  // CHECK: \(void\)\(local\d+\[min\(unsigned\(0\), \(4u - 1u\)\)\]\)
   let x = vec4f(b, 0, 0);
   _ = x[0];
 }

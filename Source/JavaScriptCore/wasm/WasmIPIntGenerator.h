@@ -35,9 +35,8 @@ namespace JSC { namespace Wasm {
 class FunctionIPIntMetadataGenerator;
 class TypeDefinition;
 struct ModuleInformation;
-class IPIntGenerator;
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(const uint8_t*, size_t, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
+Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const TypeDefinition&, ModuleInformation&, uint32_t functionIndex);
 
 } } // namespace JSC::Wasm
 

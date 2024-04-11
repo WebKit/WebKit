@@ -579,10 +579,10 @@ private:
     bool m_usesSIMD { false };
 };
 
-Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(const uint8_t* functionStart, size_t functionLength, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
+Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileBytecode(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, uint32_t functionIndex)
 {
     LLIntGenerator llintGenerator(info, functionIndex, signature);
-    FunctionParser<LLIntGenerator> parser(llintGenerator, functionStart, functionLength, signature, info);
+    FunctionParser<LLIntGenerator> parser(llintGenerator, function, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     return llintGenerator.finalize();

@@ -86,7 +86,7 @@ void StringPrintStream::vprintf(const char* format, va_list argList)
 CString StringPrintStream::toCString()
 {
     ASSERT(m_next == strlen(m_buffer));
-    return CString(m_buffer, m_next);
+    return CString({ m_buffer, m_next });
 }
 
 void StringPrintStream::reset()

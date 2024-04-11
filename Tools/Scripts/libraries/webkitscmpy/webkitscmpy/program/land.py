@@ -247,7 +247,7 @@ class Land(Command):
             return 1
 
         if not args.oops:
-            for line in repository.diff_lines(branch_point.hash, source_branch):
+            for line in repository.diff(base=branch_point.hash, head=source_branch):
                 if cls.OOPS_RE.search(line):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1

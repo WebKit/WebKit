@@ -29,7 +29,6 @@
 
 #include <memory>
 #include <wtf/CompletionHandler.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Observer.h>

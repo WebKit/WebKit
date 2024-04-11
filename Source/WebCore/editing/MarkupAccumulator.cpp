@@ -63,21 +63,20 @@ namespace WebCore {
 using namespace HTMLNames;
 
 struct EntityDescription {
-    const char* characters;
-    uint8_t length;
+    ASCIILiteral characters;
     std::optional<EntityMask> mask;
 };
 
-static const EntityDescription entitySubstitutionList[] = {
-    { "", 0, std::nullopt },
-    { "&amp;", 5, EntityMask::Amp },
-    { "&lt;", 4, EntityMask::Lt },
-    { "&gt;", 4, EntityMask::Gt },
-    { "&quot;", 6, EntityMask::Quot },
-    { "&nbsp;", 6, EntityMask::Nbsp },
-    { "&#9;", 4, EntityMask::Tab },
-    { "&#10;", 5, EntityMask::LineFeed },
-    { "&#13;", 5, EntityMask::CarriageReturn },
+constexpr EntityDescription entitySubstitutionList[] = {
+    { ""_s, std::nullopt },
+    { "&amp;"_s, EntityMask::Amp },
+    { "&lt;"_s, EntityMask::Lt },
+    { "&gt;"_s, EntityMask::Gt },
+    { "&quot;"_s, EntityMask::Quot },
+    { "&nbsp;"_s, EntityMask::Nbsp },
+    { "&#9;"_s, EntityMask::Tab },
+    { "&#10;"_s, EntityMask::LineFeed },
+    { "&#13;"_s, EntityMask::CarriageReturn },
 };
 
 namespace EntitySubstitutionIndex {
@@ -174,7 +173,7 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
         uint8_t substitution = character < std::size(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionIndex::Null);
         if (UNLIKELY(substitution != EntitySubstitutionIndex::Null) && entityMask.contains(*entitySubstitutionList[substitution].mask)) {
             result.appendSubstring(source, offset + positionAfterLastEntity, i - positionAfterLastEntity);
-            result.appendCharacters(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
+            result.append(entitySubstitutionList[substitution].characters);
             positionAfterLastEntity = i + 1;
         }
     }

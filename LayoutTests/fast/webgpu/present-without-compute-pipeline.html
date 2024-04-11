@@ -55,7 +55,6 @@ async function imageWithData(width, height, color) {
 }
 
 onload = async () => {
-  try {
 let adapter0 = await navigator.gpu.requestAdapter(
 {
 }
@@ -107,7 +106,7 @@ depthOrArrayLayers: 244,
 mipLevelCount: 3,
 sampleCount: 1,
 dimension: '3d',
-format: 'rgba8unorm',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
 'bgra8unorm',
@@ -125,12 +124,9 @@ let renderBundle0 = device0.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'rgba8unorm-srgb',
-'rgb10a2unorm',
-'rgb10a2uint',
-'bgra8unorm'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'rgba32uint',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 3191352,
 stencilReadOnly: true,
 }
@@ -228,7 +224,7 @@ size: {
 width: 5072,
 },
 mipLevelCount: 12,
-format: 'depth32float',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
 }
 );
@@ -290,8 +286,6 @@ label: 'a',
 requiredFeatures: [
 'depth-clip-control',
 'depth32float-stencil8',
-'texture-compression-etc2',
-'texture-compression-astc',
 'indirect-first-instance',
 'shader-f16',
 'rg11b10ufloat-renderable',
@@ -355,14 +349,10 @@ size: [
 mipLevelCount: 3,
 sampleCount: 0,
 dimension: '3d',
-format: 'astc-4x4-unorm-srgb',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
 viewFormats: [
-'astc-5x4-unorm-srgb',
-'astc-8x6-unorm',
 'rgba32sint',
-'astc-6x6-unorm-srgb',
-'astc-10x8-unorm-srgb'
 ],
 }
 );
@@ -433,7 +423,7 @@ depthOrArrayLayers: 8444,
 },
 mipLevelCount: 8,
 sampleCount: 1,
-format: 'rgba32sint',
+format: 'rgb9e5ufloat',
 usage: 0,
 }
 );
@@ -471,13 +461,9 @@ computePassEncoder2.dispatchWorkgroups(
 let renderBundle1 = device1.createRenderBundleEncoder(
 {
 colorFormats: [
-'rg16float',
-'bgra8unorm',
-'astc-10x10-unorm-srgb',
-'astc-5x4-unorm-srgb',
-'astc-6x5-unorm-srgb'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'eac-r11snorm',
+depthStencilFormat: 'rgb9e5ufloat',
 stencilReadOnly: true,
 }
 ).finish();
@@ -569,8 +555,6 @@ let device2 = await adapter2.requestDevice(
 label: 'a',
 requiredFeatures: [
 'depth32float-stencil8',
-'texture-compression-etc2',
-'texture-compression-astc',
 'indirect-first-instance',
 'shader-f16',
 'rg11b10ufloat-renderable',
@@ -594,7 +578,7 @@ visibility: GPUShaderStage.VERTEX,
 storageTexture: {
 access: 'read-only',
 viewDimension: '2d-array',
-format: 'rgba8unorm',
+format: 'rgb9e5ufloat',
 },
 },
 {
@@ -610,7 +594,7 @@ multisampled: true,
 },
 storageTexture: {
 access: 'read-only',
-format: 'rgb10a2unorm',
+format: 'rgb9e5ufloat',
 viewDimension: '1d',
 },
 externalTexture: {},
@@ -637,7 +621,7 @@ visibility: GPUShaderStage.VERTEX,
 storageTexture: {
 access: 'read-only',
 viewDimension: '3d',
-format: 'rgba32sint',
+format: 'rgb9e5ufloat',
 },
 }
 ],
@@ -707,8 +691,6 @@ let device3 = await adapter3.requestDevice(
 label: 'a',
 requiredFeatures: [
 'depth32float-stencil8',
-'texture-compression-etc2',
-'texture-compression-astc',
 'indirect-first-instance',
 'rg11b10ufloat-renderable'
 ],
@@ -786,7 +768,7 @@ visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
 storageTexture: {
 access: 'write-only',
 viewDimension: '1d',
-format: 'rgba8unorm',
+format: 'rgb9e5ufloat',
 },
 },
 {
@@ -806,7 +788,7 @@ size: [
 
 ],
 sampleCount: 1,
-format: 'rgb10a2unorm',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
 'rgba32float',
@@ -935,11 +917,9 @@ size: [
 mipLevelCount: 13,
 sampleCount: 0,
 dimension: '3d',
-format: 'r32float',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING,
 viewFormats: [
-'astc-6x6-unorm',
-'astc-6x5-unorm-srgb',
 'depth24plus'
 ],
 }
@@ -972,9 +952,9 @@ let renderBundle2 = device2.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'rg16uint',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 6079640,
 depthReadOnly: true,
 stencilReadOnly: true,
@@ -1386,9 +1366,9 @@ let renderBundleEncoder0 = device0.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'stencil8',
+depthStencilFormat: 'rgb9e5ufloat',
 depthReadOnly: true,
 }
 );
@@ -1560,7 +1540,7 @@ multisampled: true,
 },
 storageTexture: {
 access: 'write-only',
-format: 'astc-10x10-unorm-srgb',
+format: 'rgb9e5ufloat',
 viewDimension: '2d',
 },
 externalTexture: {},
@@ -1600,11 +1580,9 @@ size: [
 mipLevelCount: 8,
 sampleCount: 4,
 dimension: '3d',
-format: 'astc-6x5-unorm-srgb',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
-'astc-8x6-unorm',
-'astc-6x5-unorm-srgb',
 'depth32float-stencil8',
 'rgba8snorm'
 ],
@@ -1674,7 +1652,7 @@ size: [
 9657
 ],
 mipLevelCount: 6,
-format: 'rgba16uint',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
 'r8unorm'
@@ -1879,12 +1857,9 @@ let renderBundleEncoder1 = device1.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'astc-12x12-unorm-srgb',
-'astc-10x6-unorm',
-'astc-8x6-unorm-srgb',
-'astc-6x5-unorm-srgb'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'rgb10a2unorm',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 4230936,
 depthReadOnly: true,
 stencilReadOnly: true,
@@ -2069,7 +2044,7 @@ binding: 221,
 visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
 storageTexture: {
 access: 'read-only',
-format: 'r32float',
+format: 'rgb9e5ufloat',
 },
 },
 {
@@ -2092,7 +2067,7 @@ visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
 storageTexture: {
 access: 'read-only',
 viewDimension: '2d',
-format: 'rg32uint',
+format: 'rgb9e5ufloat',
 },
 },
 {
@@ -2110,7 +2085,7 @@ buffer: {
 hasDynamicOffset: true,
 },
 storageTexture: {
-format: 'r16sint',
+format: 'rgb9e5ufloat',
 viewDimension: 'cube-array',
 },
 externalTexture: {},
@@ -2121,7 +2096,7 @@ visibility: GPUShaderStage.VERTEX,
 storageTexture: {
 access: 'read-only',
 viewDimension: '2d',
-format: 'rg32float',
+format: 'rgb9e5ufloat',
 },
 },
 {
@@ -2169,9 +2144,9 @@ let renderBundleEncoder2 = device3.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'r16sint'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'eac-rg11snorm',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 6447000,
 stencilReadOnly: true,
 }
@@ -2253,13 +2228,11 @@ depthOrArrayLayers: 1,
 },
 mipLevelCount: 7,
 sampleCount: 12,
-format: 'eac-r11unorm',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
 'depth16unorm',
-'astc-8x5-unorm',
 'rgb10a2unorm',
-'astc-6x5-unorm',
 'r8snorm',
 'r8snorm'
 ],
@@ -2301,7 +2274,7 @@ size: [
 mipLevelCount: 5,
 sampleCount: 3,
 dimension: '3d',
-format: 'r8sint',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
 }
 );
@@ -2451,7 +2424,7 @@ size: [
 ],
 mipLevelCount: 3,
 sampleCount: 15,
-format: 'rg32uint',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
 }
 );
@@ -2485,7 +2458,6 @@ format: 'bgra8unorm',
 usage: GPUTextureUsage.RENDER_ATTACHMENT,
 viewFormats: [
 'bgra8unorm',
-'astc-6x5-unorm'
 ],
 colorSpace: 'srgb',
 alphaMode: 'premultiplied',
@@ -2981,7 +2953,7 @@ depthOrArrayLayers: 7416,
 mipLevelCount: 8,
 sampleCount: 1,
 dimension: '1d',
-format: 'rg8sint',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
 }
 );
@@ -3074,7 +3046,7 @@ size: [
 9473
 ],
 dimension: '1d',
-format: 'eac-r11unorm',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
 }
 );
@@ -3247,11 +3219,9 @@ let renderBundleEncoder3 = device0.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'rg8unorm',
-'rgb10a2uint',
-'r8sint'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'rgba16float',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 4483064,
 depthReadOnly: true,
 stencilReadOnly: true,
@@ -3329,7 +3299,7 @@ height: 6875,
 },
 mipLevelCount: 14,
 sampleCount: 4,
-format: 'astc-10x6-unorm-srgb',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
 }
 );
@@ -3578,13 +3548,9 @@ format: 'rgba8unorm',
 usage: GPUTextureUsage.COPY_DST,
 viewFormats: [
 'rgb9e5ufloat',
-'astc-6x5-unorm',
 'r16sint',
 'rgba8sint',
-'astc-5x5-unorm-srgb',
-'astc-10x8-unorm-srgb',
-'rg8uint',
-'astc-10x8-unorm'
+'rg8uint'
 ],
 colorSpace: 'srgb',
 alphaMode: 'opaque',
@@ -3717,7 +3683,6 @@ label: 'a',
 requiredFeatures: [
 'depth-clip-control',
 'depth32float-stencil8',
-'texture-compression-astc',
 'indirect-first-instance',
 'shader-f16',
 'rg11b10ufloat-renderable',
@@ -3954,11 +3919,9 @@ let renderBundleEncoder4 = device3.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'rg16sint',
-'depth32float',
-'rg32float'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'rg32uint',
+depthStencilFormat: 'rgb9e5ufloat',
 depthReadOnly: true,
 stencilReadOnly: true,
 }
@@ -4379,7 +4342,7 @@ size: [
 mipLevelCount: 14,
 sampleCount: 15,
 dimension: '1d',
-format: 'r32sint',
+format: 'rgb9e5ufloat',
 usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
 }
 );
@@ -4727,9 +4690,7 @@ device: device3,
 format: 'bgra8unorm',
 viewFormats: [
 'rgba8sint',
-'depth16unorm',
-'etc2-rgb8unorm-srgb',
-'astc-8x6-unorm-srgb'
+'depth16unorm'
 ],
 colorSpace: 'srgb',
 alphaMode: 'opaque',
@@ -4847,15 +4808,11 @@ depthOrArrayLayers: 8741,
 },
 mipLevelCount: 3,
 dimension: '2d',
-format: 'depth32float',
+format: 'rgb9e5ufloat',
 usage: 0,
 viewFormats: [
 'rgb10a2uint',
-'astc-10x10-unorm',
-'astc-6x6-unorm-srgb',
 'rgb10a2uint',
-'astc-5x4-unorm-srgb',
-'astc-4x4-unorm',
 'bgra8unorm',
 'rgba16uint',
 'r8uint'
@@ -4866,13 +4823,9 @@ let renderBundle4 = device1.createRenderBundleEncoder(
 {
 label: 'a',
 colorFormats: [
-'r8unorm',
-'rg16sint',
-'astc-6x5-unorm-srgb',
-'eac-rg11unorm',
-'r32float'
+'rgb9e5ufloat'
 ],
-depthStencilFormat: 'astc-4x4-unorm-srgb',
+depthStencilFormat: 'rgb9e5ufloat',
 sampleCount: 2791232,
 depthReadOnly: true,
 }
@@ -4949,14 +4902,10 @@ device: device2,
 format: 'rgba8unorm',
 usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
 viewFormats: [
-'etc2-rgb8unorm',
 'r16float',
 'bgra8unorm-srgb',
-'etc2-rgba8unorm-srgb',
-'astc-5x5-unorm-srgb',
 'r16float',
 'r8unorm',
-'astc-12x10-unorm-srgb'
 ],
 colorSpace: 'srgb',
 alphaMode: 'premultiplied',
@@ -5113,7 +5062,6 @@ device: device4,
 format: 'rgba16float',
 usage: 0,
 viewFormats: [
-'astc-8x8-unorm-srgb',
 'r16sint',
 'r8unorm',
 'r32sint',
@@ -5145,42 +5093,7 @@ try { videoFrame3.close(); } catch {}
 
 let texture41 = gpuCanvasContext0.getCurrentTexture();
 
-  log('the end')
-  } catch (e) {
-    log('error');
-    log(e);
-    log(e[Symbol.toStringTag]);
-    log(e.stack);
-    if (e instanceof GPUPipelineError) {
-      log(`${e} - ${e.reason}`);
-      
-    } else if (e instanceof DOMException) {
-      if (e.name === 'OperationError') {
-      log(e.message);
-      
-      } else if (e.name === 'InvalidStateError' && (
-e.message === 'xxVideoFrame is detached'
-// || e.message === 'ImageBitmap is detached'
-// || e.message === 'Video element has no video frame' // ???
-// || e.message === ''
-)) {
-      } else {
-        log(e);
-        
-      }
-    } else if (e instanceof GPUValidationError) {
-      log(e);
-      
-    } else if (e instanceof TypeError) {
-      log(e);
-      
-    } else {
-      log('unexpected error type');
-      log(e);
-      
-    }
-  }
-  globalThis.testRunner?.notifyDone();
+globalThis.testRunner?.notifyDone();
 };
 </script>
 This test passes if it does not crash.

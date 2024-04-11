@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/LengthBox.h>
-#include <wtf/EnumTraits.h>
 
 #if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;

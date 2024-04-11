@@ -58,10 +58,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
-#if PLATFORM(COCOA)
-    void CreateAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer) -> (uint64_t handle) Synchronous NotStreamEncodable NotStreamEncodableReply
-    void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
-#endif
 
     void ActiveTexture(uint32_t texture)
     void AttachShader(uint32_t program, uint32_t shader)
@@ -100,7 +96,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DepthFunc(uint32_t func)
     void DepthMask(bool flag)
     void DepthRange(float zNear, float zFar)
-    void DestroyEGLImage(uint64_t handle)
     void DetachShader(uint32_t arg0, uint32_t arg1)
     void Disable(uint32_t cap)
     void DisableVertexAttribArray(uint32_t index)
@@ -328,11 +323,15 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (std::span<const int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void DrawingBufferToPixelBuffer(enum:bool WebCore::GraphicsContextGLFlipY arg0) -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
-    void DestroyEGLSync(uint64_t arg0)
-    void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    void CreateExternalImage(uint32_t externalImage, WebCore::GraphicsContextGL::ExternalImageSource arg0, uint32_t internalFormat, int32_t layer) NotStreamEncodable
+    void DeleteExternalImage(uint32_t handle)
+    void BindExternalImage(uint32_t target, uint32_t arg1)
+    void CreateExternalSync(uint32_t externalSync, WebCore::GraphicsContextGL::ExternalSyncSource arg0) NotStreamEncodable
+    void DeleteExternalSync(uint32_t arg0)
+    void ClientWaitExternalSyncWithFlush(uint32_t arg0, uint64_t timeout) -> (bool returnValue) Synchronous
     void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
-    void CreateFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
-    void EnableFoveation(uint32_t target)
+    void AddFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const float> horizontalSamplesLeft, std::span<const float> verticalSamples, std::span<const float> horizontalSamplesRight) -> (bool returnValue) Synchronous
+    void EnableFoveation(uint32_t arg0)
     void DisableFoveation()
 }
 

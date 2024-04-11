@@ -47,8 +47,8 @@ static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream
         "<html><head>"
         "<title>%s</title>"
         "<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"UTF-8\">"
-        "<style>%s</style>"
-        "<script>%s</script>"
+        "<style>%.*s</style>"
+        "<script>%.*s</script>"
         "</head>"
         "<body>"
         "<table>"
@@ -56,8 +56,10 @@ static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream
         "<th align=\"left\">%s</th><th align=\"right\">%s</th><th align=\"right\">%s</th>"
         "</thead>",
         stream->priv->uri.data(),
-        WebCore::directoryUserAgentStyleSheet,
-        WebCore::directoryJavaScript,
+        static_cast<int>(WebCore::directoryUserAgentStyleSheet.size()),
+        WebCore::directoryUserAgentStyleSheet.data(),
+        static_cast<int>(WebCore::directoryJavaScript.size()),
+        WebCore::directoryJavaScript.data(),
         _("Name"),
         _("Size"),
         _("Date Modified"));

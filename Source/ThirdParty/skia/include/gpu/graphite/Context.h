@@ -147,9 +147,15 @@ public:
     void performDeferredCleanup(std::chrono::milliseconds msNotUsed);
 
     /**
-     * Returns the number of bytes of gpu memory currently budgeted in the Context's cache.
+     * Returns the number of bytes of the Context's gpu memory cache budget that are currently in
+     * use.
      */
     size_t currentBudgetedBytes() const;
+
+    /**
+     * Returns the size of Context's gpu memory cache budget in bytes.
+     */
+    size_t maxBudgetedBytes() const;
 
     /**
      * Enumerates all cached GPU resources owned by the Context and dumps their memory to
@@ -162,6 +168,11 @@ public:
      * (e.g. if we've gotten a VK_ERROR_DEVICE_LOST in the Vulkan backend).
      */
     bool isDeviceLost() const;
+
+    /**
+     * Returns the maximum texture dimension supported by the underlying backend.
+     */
+    int maxTextureSize() const;
 
     /*
      * Does this context support protected content?
@@ -218,6 +229,8 @@ private:
     // Must be called in Make() to handle one-time GPU setup operations that can possibly fail and
     // require Context::Make() to return a nullptr.
     bool finishInitialization();
+
+    void checkForFinishedWork(SyncToCpu);
 
     void asyncRescaleAndReadPixelsYUV420Impl(const SkImage*,
                                              SkYUVColorSpace yuvColorSpace,

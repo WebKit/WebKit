@@ -59,6 +59,10 @@ bool ShouldCombineAttributes(vk::Renderer *renderer,
                              const gl::VertexAttribute &attrib,
                              const gl::VertexBinding &binding)
 {
+    if (!renderer->getFeatures().enableMergeClientAttribBuffer.enabled)
+    {
+        return false;
+    }
     const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
     return !vertexFormat.getVertexLoadRequiresConversion(false) && binding.getDivisor() == 0 &&
            ClientBindingAligned(attrib, binding.getStride(),

@@ -29,6 +29,7 @@ class SkRuntimeEffect;
 
 namespace skgpu::graphite {
 
+class DrawContext;
 class KeyContext;
 class PaintParamsKeyBuilder;
 class PipelineDataGatherer;
@@ -188,14 +189,14 @@ struct YUVImageShaderBlock {
                   SkRect subset);
 
         SkSamplingOptions fSampling;
+        SkSamplingOptions fSamplingUV;
         SkTileMode fTileModes[2];
         SkISize fImgSize;
+        SkISize fImgSizeUV;  // Size of UV planes relative to Y's texel space
         SkRect fSubset;
         SkV4 fChannelSelect[4];
         SkMatrix fYUVtoRGBMatrix;
         SkPoint3 fYUVtoRGBTranslate;
-
-        SkColorSpaceXformSteps fSteps;
 
         // TODO: Currently these are only filled in when we're generating the key from an actual
         // SkImageShader. In the pre-compile case we will need to create Graphite promise
@@ -347,6 +348,7 @@ struct ColorSpaceTransformBlock {
                                 SkAlphaType srcAT,
                                 const SkColorSpace* dst,
                                 SkAlphaType dstAT);
+        ColorSpaceTransformData(const SkColorSpaceXformSteps& steps) { fSteps = steps; }
         SkColorSpaceXformSteps fSteps;
     };
 
@@ -422,6 +424,14 @@ void AddToKey(const KeyContext& keyContext,
               PaintParamsKeyBuilder* builder,
               PipelineDataGatherer* gatherer,
               const SkShader* shader);
+
+// TODO(b/330864257) These visitation functions are redundant with AddToKey, except that they are
+// executed in the Device::drawGeometry() stack frame, whereas the keys are currently deferred until
+// DrawPass::Make. Image use needs to be detected in the draw frame to split tasks to match client
+// actions. Once paint keys are extracted in the draw frame, this can go away entirely.
+void NotifyImagesInUse(Recorder*, DrawContext*, const SkBlender*);
+void NotifyImagesInUse(Recorder*, DrawContext*, const SkColorFilter*);
+void NotifyImagesInUse(Recorder*, DrawContext*, const SkShader*);
 
 } // namespace skgpu::graphite
 

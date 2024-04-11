@@ -897,7 +897,7 @@ void ShadowBlur::blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templa
     if (!layerData)
         return;
 
-    blurLayerImage(layerData->bytes(), layerData->size(), layerData->size().width() * 4);
+    blurLayerImage(layerData->bytes().data(), layerData->size(), layerData->size().width() * 4);
     layerImage.putPixelBuffer(*layerData, blurRect);
 }
 

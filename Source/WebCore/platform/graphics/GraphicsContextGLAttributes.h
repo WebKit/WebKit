@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL)
 #include <optional>
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 

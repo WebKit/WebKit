@@ -6485,11 +6485,11 @@ TextIndicatorStylingEnabled:
   condition: ENABLE(UNIFIED_TEXT_REPLACEMENT)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 TextInteractionEnabled:
   type: bool
@@ -6808,18 +6808,6 @@ UseGPUProcessForWebGLEnabled:
       "ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_WEBGL_BY_DEFAULT)": true
       "USE(GRAPHICS_LAYER_WC)": true
       default: false
-
-UseGeneralDirectoryForStorage:
-  type: bool
-  status: internal
-  category: dom
-  humanReadableName: "Use General Directory For Storage"
-  humanReadableDescription: "Use general storage directory for IndexedDB and LocalStorage"
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: true
 
 UseGiantTiles:
   type: bool

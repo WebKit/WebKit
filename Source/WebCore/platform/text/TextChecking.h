@@ -33,7 +33,6 @@
 
 #include "CharacterRange.h"
 #include "TextCheckingRequestIdentifier.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>

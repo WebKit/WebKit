@@ -1,6 +1,32 @@
 [
   {
     "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-gn"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-gn"
+  },
+  {
+    "cmd": [
+      "python3",
+      "[START_DIR]/cache/work/skia/bin/fetch-ninja"
+    ],
+    "cwd": "[START_DIR]/cache/work/skia",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "fetch-ninja"
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
@@ -46,7 +72,7 @@
       "CC": "[START_DIR]/clang_linux/bin/clang",
       "CHROME_HEADLESS": "1",
       "CXX": "[START_DIR]/clang_linux/bin/clang++",
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cmake_linux/bin",
+      "PATH": "[START_DIR]/cache/work/skia/third_party/ninja:<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cmake_linux/bin",
       "SWIFTSHADER_MSAN_INSTRUMENTED_LIBCXX_PATH": "/totally/phony/path"
     },
     "name": "swiftshader cmake"
@@ -63,23 +89,10 @@
       "CC": "[START_DIR]/clang_linux/bin/clang",
       "CHROME_HEADLESS": "1",
       "CXX": "[START_DIR]/clang_linux/bin/clang++",
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cmake_linux/bin",
+      "PATH": "[START_DIR]/cache/work/skia/third_party/ninja:<PATH>:RECIPE_REPO[depot_tools]:[START_DIR]/cmake_linux/bin",
       "SWIFTSHADER_MSAN_INSTRUMENTED_LIBCXX_PATH": "/totally/phony/path"
     },
     "name": "swiftshader ninja"
-  },
-  {
-    "cmd": [
-      "python3",
-      "[START_DIR]/cache/work/skia/bin/fetch-gn"
-    ],
-    "cwd": "[START_DIR]/cache/work/skia",
-    "env": {
-      "CHROME_HEADLESS": "1",
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "fetch-gn"
   },
   {
     "cmd": [
@@ -117,7 +130,7 @@
   },
   {
     "cmd": [
-      "ninja",
+      "[START_DIR]/cache/work/skia/third_party/ninja/ninja",
       "-C",
       "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-SwiftShader_Graphite/Debug"
     ],
@@ -154,7 +167,7 @@
       "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
       "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-SwiftShader_Graphite/Debug",
       "[START_DIR]/[SWARM_OUT_DIR]/out/Debug",
-      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skottie_tool,lib/*.so,run_testlab"
     ],
     "infra_step": true,
     "name": "copy build products"
@@ -165,7 +178,7 @@
       "RECIPE_MODULE[skia::build]/resources/copy_build_products.py",
       "[START_DIR]/cache/work/skia/out/Build-Debian10-Clang-x86_64-Debug-SwiftShader_Graphite/Debug/swiftshader_out",
       "[START_DIR]/[SWARM_OUT_DIR]/swiftshader_out",
-      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skia_launcher,skottie_tool,lib/*.so,run_testlab"
+      "dm,dm.exe,dm.app,nanobench.app,get_images_from_skps,get_images_from_skps.exe,nanobench,nanobench.exe,skpbench,skpbench.exe,*.so,*.dll,*.dylib,skottie_tool,lib/*.so,run_testlab"
     ],
     "infra_step": true,
     "name": "copy build products (2)"

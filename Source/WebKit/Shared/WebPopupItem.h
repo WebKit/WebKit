@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/WritingMode.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

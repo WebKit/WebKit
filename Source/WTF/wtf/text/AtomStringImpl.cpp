@@ -165,8 +165,7 @@ struct HashAndUTF8CharactersTranslator {
         auto newString = StringImpl::createUninitialized(buffer.utf16Length, target);
 
         bool containsOnlyASCII;
-        const char* source = buffer.characters;
-        if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &containsOnlyASCII))
+        if (!convertUTF8ToUTF16({ reinterpret_cast<const char8_t*>(buffer.characters), buffer.length }, &target, target + buffer.utf16Length, &containsOnlyASCII))
             RELEASE_ASSERT_NOT_REACHED();
 
         if (containsOnlyASCII)
@@ -226,7 +225,7 @@ struct SubstringTranslator8 : SubstringTranslator {
 
     static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
-        return WTF::equal(string.get(), buffer.baseString->characters8() + buffer.start, buffer.length);
+        return WTF::equal(string.get(), buffer.baseString->span8().subspan(buffer.start, buffer.length));
     }
 };
 
@@ -238,7 +237,7 @@ struct SubstringTranslator16 : SubstringTranslator {
 
     static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
-        return WTF::equal(string.get(), buffer.baseString->characters16() + buffer.start, buffer.length);
+        return WTF::equal(string.get(), buffer.baseString->span16().subspan(buffer.start, buffer.length));
     }
 };
 

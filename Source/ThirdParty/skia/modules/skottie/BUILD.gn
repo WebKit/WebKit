@@ -75,6 +75,7 @@ if (skia_enable_skottie) {
           "../..:skia",
           "../..:test",
           "../skshaper",
+          "../skunicode",
         ]
       }
 
@@ -116,6 +117,7 @@ if (skia_enable_skottie) {
           "../..:gpu_tool_utils",
           "../..:skia",
           "../../experimental/ffmpeg:video_encoder",
+          "../skshaper",
         ]
 
         public_deps = [
@@ -138,6 +140,7 @@ if (skia_enable_skottie) {
           "../..:gpu_tool_utils",
           "../..:skia",
           "../../experimental/ffmpeg:video_encoder",
+          "../skshaper",
         ]
 
         public_deps = [
@@ -159,6 +162,7 @@ if (skia_enable_skottie) {
           "../..:gpu_tool_utils",
           "../..:skia",
           "../../experimental/ffmpeg:video_encoder",
+          "../skshaper",
         ]
 
         public_deps = [
@@ -186,6 +190,7 @@ if (skia_enable_skottie) {
           "../..:gpu_tool_utils",
           "../..:skia",
           "../..:tool_utils",
+          "../skshaper",
         ]
       }
     }

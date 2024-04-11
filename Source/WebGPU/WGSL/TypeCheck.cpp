@@ -764,8 +764,8 @@ void TypeChecker::visit(AST::SizeAttribute& attribute)
 
 void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
 {
-    auto* xType = check(attribute.x(), Constraints::ConcreteInteger, Evaluation::Override);
-    if (!xType) {
+    auto* xType = infer(attribute.x(), Evaluation::Override);
+    if (!satisfies(xType, Constraints::ConcreteInteger)) {
         typeError(InferBottom::No, attribute.span(), "@workgroup_size x dimension must be an i32 or u32 value");
         return;
     }
@@ -773,15 +773,15 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
     const Type* yType = nullptr;
     const Type* zType = nullptr;
     if (auto* y = attribute.maybeY()) {
-        yType = check(*y, Constraints::ConcreteInteger, Evaluation::Override);
-        if (!yType) {
+        yType = infer(*y, Evaluation::Override);
+        if (!satisfies(yType, Constraints::ConcreteInteger)) {
             typeError(InferBottom::No, attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value");
             return;
         }
 
         if (auto* z = attribute.maybeZ()) {
-            zType = check(*z, Constraints::ConcreteInteger, Evaluation::Override);
-            if (!zType) {
+            zType = infer(*z, Evaluation::Override);
+            if (!satisfies(zType, Constraints::ConcreteInteger)) {
                 typeError(InferBottom::No, attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value");
                 return;
             }

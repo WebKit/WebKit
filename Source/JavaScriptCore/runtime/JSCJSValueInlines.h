@@ -1434,6 +1434,9 @@ ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* bas
 // See section 7.2.9: https://tc39.github.io/ecma262/#sec-samevalue
 ALWAYS_INLINE bool sameValue(JSGlobalObject* globalObject, JSValue a, JSValue b)
 {
+    if (a == b)
+        return true;
+
     if (!a.isNumber())
         return JSValue::strictEqual(globalObject, a, b);
     if (!b.isNumber())

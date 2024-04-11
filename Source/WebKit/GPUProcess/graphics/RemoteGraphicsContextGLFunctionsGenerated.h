@@ -144,37 +144,43 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createBuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createFramebuffer(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createFramebuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createProgram(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createProgram();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createRenderbuffer(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createRenderbuffer();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createShader(uint32_t name, uint32_t arg0)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createShader(arg0);
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void createTexture(uint32_t name)
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createTexture();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void cullFace(uint32_t mode)
     {
@@ -231,11 +237,6 @@
     {
         assertIsCurrent(workQueue());
         m_context->depthRange(zNear, zFar);
-    }
-    void destroyEGLImage(uint64_t handle)
-    {
-        assertIsCurrent(workQueue());
-        m_context->destroyEGLImage(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)));
     }
     void detachShader(uint32_t arg0, uint32_t arg1)
     {
@@ -881,7 +882,8 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createVertexArray();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteVertexArray(uint32_t arg0)
     {
@@ -1138,7 +1140,8 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createQuery();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteQuery(uint32_t query)
     {
@@ -1184,7 +1187,8 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createSampler();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteSampler(uint32_t sampler)
     {
@@ -1276,7 +1280,8 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createTransformFeedback();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteTransformFeedback(uint32_t id)
     {
@@ -1407,7 +1412,8 @@
     {
         assertIsCurrent(workQueue());
         auto result = m_context->createQueryEXT();
-        m_objectNames.add(name, result);
+        if (result)
+            m_objectNames.add(name, result);
     }
     void deleteQueryEXT(uint32_t query)
     {
@@ -1557,22 +1563,52 @@
         assertIsCurrent(workQueue());
         m_context->setDrawingBufferColorSpace(arg0);
     }
-    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGL::FlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
+    void drawingBufferToPixelBuffer(WebCore::GraphicsContextGLFlipY&& arg0, CompletionHandler<void(RefPtr<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         RefPtr<WebCore::PixelBuffer> returnValue = { };
         returnValue = m_context->drawingBufferToPixelBuffer(arg0);
         completionHandler(WTFMove(returnValue));
     }
-    void destroyEGLSync(uint64_t arg0)
+    void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer)
     {
         assertIsCurrent(workQueue());
-        m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
+        auto result = m_context->createExternalImage(WTFMove(arg0), internalFormat, layer);
+        if (result)
+            m_objectNames.add(name, result);
     }
-    void clientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    void deleteExternalImage(uint32_t handle)
     {
         assertIsCurrent(workQueue());
-        m_context->clientWaitEGLSyncWithFlush(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)), timeout);
+        handle = m_objectNames.take(handle);
+        m_context->deleteExternalImage(handle);
+    }
+    void bindExternalImage(uint32_t target, uint32_t arg1)
+    {
+        assertIsCurrent(workQueue());
+        arg1 = m_objectNames.get(arg1);
+        m_context->bindExternalImage(target, arg1);
+    }
+    void createExternalSync(uint32_t name, WebCore::GraphicsContextGL::ExternalSyncSource&& arg0)
+    {
+        assertIsCurrent(workQueue());
+        auto result = m_context->createExternalSync(WTFMove(arg0));
+        if (result)
+            m_objectNames.add(name, result);
+    }
+    void deleteExternalSync(uint32_t arg0)
+    {
+        assertIsCurrent(workQueue());
+        arg0 = m_objectNames.take(arg0);
+        m_context->deleteExternalSync(arg0);
+    }
+    void clientWaitExternalSyncWithFlush(uint32_t arg0, uint64_t timeout, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        assertIsCurrent(workQueue());
+        bool returnValue = { };
+        arg0 = m_objectNames.get(arg0);
+        returnValue = m_context->clientWaitExternalSyncWithFlush(arg0, timeout);
+        completionHandler(returnValue);
     }
     void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
     {
@@ -1581,17 +1617,17 @@
         returnValue = m_context->enableRequiredWebXRExtensions();
         completionHandler(returnValue);
     }
-    void createFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&& completionHandler)
+    void addFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&& completionHandler)
     {
-        bool returnValue = { };
         assertIsCurrent(workQueue());
-        returnValue = m_context->createFoveation(physicalSizeLeft, physicalSizeRight, screenSize, std::span(reinterpret_cast<const GCGLfloat*>(horizontalSamplesLeft.data()), horizontalSamplesLeft.size()), std::span(reinterpret_cast<const GCGLfloat*>(verticalSamples.data()), verticalSamples.size()), std::span(reinterpret_cast<const GCGLfloat*>(horizontalSamplesRight.data()), horizontalSamplesRight.size()));
+        bool returnValue = { };
+        returnValue = m_context->addFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight);
         completionHandler(returnValue);
     }
-    void enableFoveation(GCGLuint framebuffer)
+    void enableFoveation(uint32_t arg0)
     {
         assertIsCurrent(workQueue());
-        m_context->enableFoveation(framebuffer);
+        m_context->enableFoveation(arg0);
     }
     void disableFoveation()
     {

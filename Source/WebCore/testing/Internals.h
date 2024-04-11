@@ -1459,6 +1459,8 @@ public:
     Vector<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element& pluginElement) const;
     void registerPDFTest(Ref<VoidCallback>&&, Element&);
 
+    const String& defaultSpatialTrackingLabel() const;
+
 private:
     explicit Internals(Document&);
 

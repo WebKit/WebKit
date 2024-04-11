@@ -1,5 +1,4 @@
 
-PASS embed.src assigned via policy (successful ScriptURL transformation)
 PASS script.src assigned via policy (successful ScriptURL transformation)
 PASS iframe.srcdoc assigned via policy (successful HTML transformation)
 PASS script.src assigned via policy (successful script transformation)

@@ -137,7 +137,6 @@
 #include <dom/ScriptDisallowedScope.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>

@@ -36,19 +36,18 @@ using ExternalStringImplFreeFunction = Function<void(void*, void*, unsigned)>;
 
 class ExternalStringImpl final : public StringImpl {
 public:
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const LChar* characters, unsigned length);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const UChar* characters, unsigned length);
-    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(const char* string);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const LChar> characters, void* ctx, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> create(std::span<const UChar> characters, void* ctx, ExternalStringImplFreeFunction&&);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(std::span<const LChar> characters);
+    WTF_EXPORT_PRIVATE static Ref<ExternalStringImpl> createStatic(std::span<const UChar> characters);
 
 private:
     friend class StringImpl;
 
-    ExternalStringImpl(const LChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
-    ExternalStringImpl(const UChar* characters, unsigned length, void* ctx, ExternalStringImplFreeFunction&&);
-    ExternalStringImpl(const UChar* characters, unsigned length);
-    ExternalStringImpl(const LChar* characters, unsigned length);
+    ExternalStringImpl(std::span<const LChar> characters, void* ctx, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(std::span<const UChar> characters, void* ctx, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(std::span<const LChar> characters, ExternalStringImplFreeFunction&&);
+    ExternalStringImpl(std::span<const UChar> characters, ExternalStringImplFreeFunction&&);
 
     ALWAYS_INLINE void freeExternalBuffer(void* buffer, unsigned bufferSize)
     {

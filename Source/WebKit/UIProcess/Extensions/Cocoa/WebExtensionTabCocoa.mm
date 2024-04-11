@@ -254,6 +254,7 @@ bool WebExtensionTab::extensionHasAccess() const
 bool WebExtensionTab::extensionHasPermission() const
 {
     ASSERT(extensionHasAccess());
+
     return extensionContext()->hasPermission(url(), const_cast<WebExtensionTab*>(this));
 }
 

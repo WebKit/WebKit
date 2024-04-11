@@ -141,6 +141,11 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
     if (change.source == ChildChange::Source::Parser)
         return;
 
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr patternRenderer = dynamicDowncast<RenderSVGResourcePattern>(renderer()))
+            patternRenderer->invalidatePattern();
+    }
+
     updateSVGRendererForElementChange();
 }
 

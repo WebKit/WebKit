@@ -41,7 +41,7 @@ static String numericComponent(float value)
     if (std::isnan(value))
         return "none"_s;
     if (std::isfinite(value))
-        return makeString(value);
+        return makeString(FormattedCSSNumber::create(value));
     return makeString(
         "calc("_s,
         FormattedCSSNumber::create(value),

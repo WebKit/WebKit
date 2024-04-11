@@ -94,6 +94,7 @@
 #include <sys/types.h>
 #include <type_traits>
 #include <wtf/CPUTime.h>
+#include <wtf/CommaPrinter.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>

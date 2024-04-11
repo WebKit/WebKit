@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class SecurityPolicyViolationEventDisposition : bool { Enforce, Report };

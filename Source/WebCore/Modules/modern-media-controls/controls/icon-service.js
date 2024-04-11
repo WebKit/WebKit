@@ -74,6 +74,15 @@ const iconService = new class IconService {
     }
 
     // Public
+    get shadowRoot()
+    {
+        return this.shadowRootWeakRef ? this.shadowRootWeakRef.deref() : null;
+    }
+
+    set shadowRoot(shadowRoot)
+    {
+        this.shadowRootWeakRef = new WeakRef(shadowRoot);
+    }
 
     imageForIconAndLayoutTraits(icon, layoutTraits)
     {

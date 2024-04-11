@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.editor {
+    border: 1px solid tomato;
+    width: 300px;
+    height: 150px;
+    font-size: 16px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that pressing the Space key twice replaces a space character after 'Hi' with a period.");
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    editor = document.querySelector(".editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    await UIHelper.callFunctionAndWaitForEvent(async () => {
+        await UIHelper.typeCharacter(" ");
+        await UIHelper.ensurePresentationUpdate();
+    }, editor, "keyup");
+
+    await UIHelper.applyAutocorrection(".", " ");
+    await shouldBecomeEqual("editor.textContent", "'Hi.'");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div contenteditable="true" class="editor">Hi</div>
+</body>
+</html>

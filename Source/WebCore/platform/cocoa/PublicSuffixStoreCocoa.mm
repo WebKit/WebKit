@@ -79,7 +79,7 @@ void PublicSuffixStore::addPublicSuffix(const String& publicSuffix)
     if (!m_publicSuffixCache)
         return;
 
-    if (!m_canAcceptCustomPublicSuffix)
+    if (LIKELY(!m_canAcceptCustomPublicSuffix))
         RELEASE_ASSERT(isPublicSuffixCF(publicSuffix));
 
     if (m_publicSuffixCache)

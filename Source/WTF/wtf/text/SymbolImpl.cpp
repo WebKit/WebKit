@@ -47,8 +47,8 @@ Ref<SymbolImpl> SymbolImpl::create(StringImpl& rep)
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
     ASSERT(ownerRep->bufferOwnership() != BufferSubstring);
     if (rep.is8Bit())
-        return adoptRef(*new SymbolImpl(rep.m_data8, rep.length(), *ownerRep));
-    return adoptRef(*new SymbolImpl(rep.m_data16, rep.length(), *ownerRep));
+        return adoptRef(*new SymbolImpl(rep.span8(), *ownerRep));
+    return adoptRef(*new SymbolImpl(rep.span16(), *ownerRep));
 }
 
 Ref<SymbolImpl> SymbolImpl::createNullSymbol()
@@ -61,8 +61,8 @@ Ref<PrivateSymbolImpl> PrivateSymbolImpl::create(StringImpl& rep)
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
     ASSERT(ownerRep->bufferOwnership() != BufferSubstring);
     if (rep.is8Bit())
-        return adoptRef(*new PrivateSymbolImpl(rep.m_data8, rep.length(), *ownerRep));
-    return adoptRef(*new PrivateSymbolImpl(rep.m_data16, rep.length(), *ownerRep));
+        return adoptRef(*new PrivateSymbolImpl(rep.span8(), *ownerRep));
+    return adoptRef(*new PrivateSymbolImpl(rep.span16(), *ownerRep));
 }
 
 Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::create(StringImpl& rep, SymbolRegistry& symbolRegistry)
@@ -70,8 +70,8 @@ Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::create(StringImpl& rep, SymbolRe
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
     ASSERT(ownerRep->bufferOwnership() != BufferSubstring);
     if (rep.is8Bit())
-        return adoptRef(*new RegisteredSymbolImpl(rep.m_data8, rep.length(), *ownerRep, symbolRegistry));
-    return adoptRef(*new RegisteredSymbolImpl(rep.m_data16, rep.length(), *ownerRep, symbolRegistry));
+        return adoptRef(*new RegisteredSymbolImpl(rep.span8(), *ownerRep, symbolRegistry));
+    return adoptRef(*new RegisteredSymbolImpl(rep.span16(), *ownerRep, symbolRegistry));
 }
 
 Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::createPrivate(StringImpl& rep, SymbolRegistry& symbolRegistry)
@@ -79,8 +79,8 @@ Ref<RegisteredSymbolImpl> RegisteredSymbolImpl::createPrivate(StringImpl& rep, S
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
     ASSERT(ownerRep->bufferOwnership() != BufferSubstring);
     if (rep.is8Bit())
-        return adoptRef(*new RegisteredSymbolImpl(rep.m_data8, rep.length(), *ownerRep, symbolRegistry, s_flagIsRegistered | s_flagIsPrivate));
-    return adoptRef(*new RegisteredSymbolImpl(rep.m_data16, rep.length(), *ownerRep, symbolRegistry, s_flagIsRegistered | s_flagIsPrivate));
+        return adoptRef(*new RegisteredSymbolImpl(rep.span8(), *ownerRep, symbolRegistry, s_flagIsRegistered | s_flagIsPrivate));
+    return adoptRef(*new RegisteredSymbolImpl(rep.span16(), *ownerRep, symbolRegistry, s_flagIsRegistered | s_flagIsPrivate));
 }
 
 } // namespace WTF

@@ -33,7 +33,7 @@ SVGTextLayoutAttributes::SVGTextLayoutAttributes(RenderSVGInlineText& context)
 void SVGTextLayoutAttributes::clear()
 {
     m_characterDataMap.clear();
-    m_textMetricsValues.clear();
+    m_textMetricsValues.resize(0);
 }
 
 float SVGTextLayoutAttributes::emptyValue()

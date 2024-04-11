@@ -38,8 +38,8 @@ private:
     ASCIILiteral renderName() const override { return "RenderQuote"_s; }
     bool isOpen() const;
     void styleDidChange(StyleDifference, const RenderStyle*) override;
-    void insertedIntoTree(IsInternalMove) override;
-    void willBeRemovedFromTree(IsInternalMove) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     String computeText() const;
     void updateTextRenderer(RenderTreeBuilder&);

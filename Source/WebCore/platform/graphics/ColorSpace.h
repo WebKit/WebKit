@@ -27,7 +27,6 @@
 
 #include "ColorTypes.h"
 #include <functional>
-#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

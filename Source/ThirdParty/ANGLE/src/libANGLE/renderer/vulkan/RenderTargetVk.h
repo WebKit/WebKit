@@ -74,6 +74,7 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
                      vk::PackedAttachmentIndex index);
     void onColorResolve(ContextVk *contextVk, uint32_t framebufferLayerCount);
     void onDepthStencilDraw(ContextVk *contextVk, uint32_t framebufferLayerCount);
+    void onDepthStencilResolve(ContextVk *contextVk, uint32_t framebufferLayerCount);
 
     vk::ImageHelper &getImageForRenderPass();
     const vk::ImageHelper &getImageForRenderPass() const;

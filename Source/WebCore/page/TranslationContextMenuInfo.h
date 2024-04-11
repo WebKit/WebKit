@@ -29,7 +29,6 @@
 
 #include "IntPoint.h"
 #include "IntRect.h"
-#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

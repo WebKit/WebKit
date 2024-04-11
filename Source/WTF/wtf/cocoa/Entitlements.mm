@@ -29,12 +29,11 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/WTFString.h>
 
 namespace WTF {
 
-static bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
+bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
 {
     if (!task)
         return false;

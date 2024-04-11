@@ -642,7 +642,7 @@ template <typename CharType>
 static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueID transformType, CSSValueListBuilder& arguments)
 {
     while (expectedCount) {
-        size_t delimiter = find(pos, end - pos, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
@@ -664,7 +664,7 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
 template <typename CharType>
 static RefPtr<CSSValue> parseTransformAngleArgument(CharType*& pos, CharType* end)
 {
-    size_t delimiter = find(pos, end - pos, ')');
+    size_t delimiter = find({ pos, end }, ')');
     if (delimiter == notFound)
         return nullptr;
 
@@ -685,7 +685,7 @@ template <typename CharType>
 static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueListBuilder& arguments)
 {
     while (expectedCount) {
-        size_t delimiter = find(pos, end - pos, expectedCount == 1 ? ')' : ',');
+        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
         if (delimiter == notFound)
             return false;
         unsigned argumentLength = static_cast<unsigned>(delimiter);
@@ -859,7 +859,7 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
         default:
             return false;
         }
-        size_t argumentsEnd = find(chars, length, ')', i);
+        size_t argumentsEnd = find({ chars, length }, ')', i);
         if (argumentsEnd == notFound)
             return false;
         // Advance to the end of the arguments.

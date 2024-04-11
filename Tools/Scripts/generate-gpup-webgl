@@ -102,16 +102,16 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #endif
     void EnsureExtensionEnabled(String extension)
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
-    void DrawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void DrawSurfaceBufferToImageBuffer(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    void SurfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
+    void SurfaceBufferToVideoFrame(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
 #endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
-    void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
+    void SimulateEventForTesting(enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting event)
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebCore::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
@@ -120,10 +120,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
-#if PLATFORM(COCOA)
-    void CreateAndBindEGLImage(GCGLenum target, GCGLenum internalFormat, WebCore::GraphicsContextGL::EGLImageSource source, GCGLint layer) -> (uint64_t handle) Synchronous NotStreamEncodable NotStreamEncodableReply
-    void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
-#endif
 {}
 }}
 
@@ -205,6 +201,9 @@ class cpp_type(object):
         return False
 
     def is_reference(self) -> bool:
+        return False
+
+    def is_rvalue_reference(self):
         return False
 
     def is_const_reference(self) -> bool:
@@ -514,11 +513,15 @@ webkit_ipc_types_converters: Dict[Tuple[cpp_type, cpp_type], CppExprConverter] =
 def webkit_ipc_convert_expr(expr: cpp_expr, type: cpp_type) -> cpp_expr:
     """Converts `expr` of type of `self` to `type`"""
     convert = webkit_ipc_types_converters.get((expr.type, type), None)
-    if not convert:
-        if expr.type == type:
-            return expr
-        convert = cpp_implicit_cast
-    return convert(expr, type)
+    if convert:
+        return convert(expr, type)
+    if expr.type == type:
+        return expr
+    elif expr.type.is_rvalue_reference() and expr.type.get_value_type() == type:
+        return webkit_ipc_move_expr(expr)
+    elif type.is_rvalue_reference() and type.get_value_type() == expr.type:
+        return webkit_ipc_move_expr(expr)
+    return cpp_implicit_cast(expr, type)
 
 
 def webkit_ipc_get_span_transfer_type(type: cpp_type_container) -> cpp_type:
@@ -586,6 +589,20 @@ def get_delete_func_object_name(name: str) -> str:
     return name[len("delete") :]
 
 
+def webkit_ipc_msg_arg_type(cpp_type: cpp_type) -> cpp_type:
+    ipc_type = webkit_ipc_types[cpp_type]
+    # FIXME: the messages.py generator should read the serializers and not need this.
+    if ipc_type == get_cpp_type("WebCore::GraphicsContextGLFlipY"):
+        return get_cpp_type("enum:bool WebCore::GraphicsContextGLFlipY")
+    if ipc_type == get_cpp_type("WebCore::GraphicsContextGLSimulatedEventForTesting"):
+        return get_cpp_type("enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting")
+    return ipc_type
+
+
+# FIXME: these should be removed and IPC should know this.
+non_stream_types = set({"WebCore::GraphicsContextGL::ExternalImageSource&&", "WebCore::GraphicsContextGL::ExternalSyncSource&&"})
+
+
 class webkit_ipc_msg(object):
     name: str
     in_args: cpp_arg_list
@@ -594,7 +611,7 @@ class webkit_ipc_msg(object):
     def __init__(self, func: cpp_func):
         self.name = webkit_ipc_msg_name(func)
         in_args, out_args = func.get_args_categories()
-        ipc_in_args = [cpp_arg(webkit_ipc_types[a.type], a.name) for a in in_args]
+        ipc_in_args = [cpp_arg(webkit_ipc_msg_arg_type(a.type), a.name) for a in in_args]
         ipc_out_args = []
         if is_create_func(func):
             name = get_create_func_object_name(func.name)
@@ -607,11 +624,15 @@ class webkit_ipc_msg(object):
                 ipc_in_args += [cpp_arg(get_cpp_type("size_t"), f"{a.name}Size")]
         self.in_args = cpp_arg_list(ipc_in_args)
         self.out_args = cpp_arg_list(ipc_out_args)
+        self.tags = []
+        if any(arg.type.type_name in non_stream_types for arg in in_args):
+            self.tags += ["NotStreamEncodable"]
 
     def __str__(self):
+        tags = f" {' '.join(self.tags)}" if self.tags else ""
         if len(self.out_args.args):
-            return f"\n    void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous"
-        return f"\n    void {self.name}({str(self.in_args)})"
+            return f"\n    void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous{tags}"
+        return f"\n    void {self.name}({str(self.in_args)}){tags}"
 
 
 class webkit_ipc_cpp_proxy_impl(object):
@@ -656,7 +677,6 @@ class webkit_ipc_cpp_proxy_impl(object):
         else:
             self.call_stmts += ["    return { };"]
         if self.is_create:
-            
             self.call_stmts += [f"auto name = createObjectName();"]
         if is_async:
             self.call_stmts += [
@@ -791,6 +811,9 @@ class context_proxy_cpp_webkit_ipc_generator(object):
         )
 
 
+named_object_types = set(["PlatformGLObject", "GCGLExternalImage", "GCGLExternalSync"])
+
+
 class webkit_ipc_cpp_impl(object):
     name: str
     args: cpp_arg_list
@@ -848,7 +871,7 @@ class webkit_ipc_cpp_impl(object):
     def process_in_arg(self, a: cpp_arg):
         self.args.args += [cpp_arg(webkit_ipc_get_message_forwarder_type(webkit_ipc_types[a.type]), a.name)]
         self.in_exprs += [webkit_ipc_convert_expr(cpp_expr(webkit_ipc_types[a.type], a.name), a.type)]
-        if a.type.type_name == "PlatformGLObject":
+        if a.type.type_name in named_object_types:
             if self.is_create:
                 self.pre_call_stmts += [f"if (UNLIKELY(!{a.name})) {{", f"    ASSERT_IS_TESTING_IPC();", f"    return;", f"}}"]
             if self.is_delete:
@@ -895,7 +918,7 @@ class webkit_ipc_cpp_impl(object):
             self.args.args += [cpp_arg(webkit_ipc_get_message_forwarder_type(ipc_return_type), "name")]
             return_value_expr = cpp_expr(return_type, f"auto result")
             self.return_value_expr = return_value_expr
-            self.post_call_stmts += [f"m_objectNames.add(name, result);"]
+            self.post_call_stmts += [f"if (result)", f"    m_objectNames.add(name, result);"]
             return
         if return_type.is_void():
             return
@@ -1103,6 +1126,8 @@ def main():
                     # webkit_ipc_types_converters[(cpp_type, transfer_type)] = cpp_array_reinterpret_cast_conversion
             else:
                 webkit_ipc_types[cpp_type] = value_type
+        elif cpp_type.is_rvalue_reference():
+            webkit_ipc_types[cpp_type] = cpp_type.get_value_type()
         else:
             webkit_ipc_types[cpp_type] = cpp_type.get_value_type()
     # The input to the generators is list of functions to remote.

@@ -53,7 +53,6 @@ public:
     ~HistoryController();
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
-    void clearScrollPositionAndViewState();
     WEBCORE_EXPORT void restoreScrollPositionAndViewState();
 
     void updateBackForwardListForFragmentScroll();
@@ -108,7 +107,6 @@ private:
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();
     bool itemsAreClones(HistoryItem&, HistoryItem*) const;
-    bool currentFramesMatchItem(HistoryItem&) const;
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
 

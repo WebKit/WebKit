@@ -44,6 +44,7 @@
 
 #else
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <Security/SecBase.h>
 
 #if __has_include(<Security/CSCommon.h>)

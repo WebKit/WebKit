@@ -241,8 +241,6 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 @implementation _WKApplicationManifest
 
-#if ENABLE(APPLICATION_MANIFEST)
-
 - (instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
     if (!(self = [super init]))
@@ -480,93 +478,5 @@ static NSString *nullableNSString(const WTF::String& string)
 {
     return _applicationManifest->applicationManifest().id;
 }
-
-#else // ENABLE(APPLICATION_MANIFEST)
-
-- (instancetype)initWithJSONData:(NSData *)jsonData manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
-{
-    UNUSED_PARAM(jsonData);
-    UNUSED_PARAM(manifestURL);
-    UNUSED_PARAM(documentURL);
-
-    return nil;
-}
-
-+ (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
-{
-    UNUSED_PARAM(json);
-    UNUSED_PARAM(manifestURL);
-    UNUSED_PARAM(documentURL);
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    UNUSED_PARAM(aDecoder);
-    [self release];
-    return nil;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    UNUSED_PARAM(aCoder);
-}
-
-- (NSString *)name
-{
-    return nil;
-}
-
-- (NSString *)shortName
-{
-    return nil;
-}
-
-- (NSString *)applicationDescription
-{
-    return nil;
-}
-
-- (NSURL *)scope
-{
-    return nil;
-}
-
-- (NSURL *)startURL
-{
-    return nil;
-}
-
-- (WebCore::CocoaColor *)backgroundColor
-{
-    return nil;
-}
-
-- (WebCore::CocoaColor *)themeColor
-{
-    return nil;
-}
-
-- (_WKApplicationManifestDisplayMode)displayMode
-{
-    return _WKApplicationManifestDisplayModeBrowser;
-}
-
-- (std::optional<_WKApplicationManifestOrientation>)orientation
-{
-    return std::nullopt;
-}
-
-- (NSArray<_WKApplicationManifestIcon *> *)icons
-{
-    return nil;
-}
-
-- (NSURL *)manifestId
-{
-    return nil;
-}
-
-#endif // ENABLE(APPLICATION_MANIFEST)
 
 @end

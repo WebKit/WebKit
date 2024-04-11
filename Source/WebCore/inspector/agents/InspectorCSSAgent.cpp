@@ -442,6 +442,8 @@ std::optional<Inspector::Protocol::CSS::PseudoId> InspectorCSSAgent::protocolVal
         return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarTrackPiece;
     case PseudoId::WebKitScrollbarCorner:
         return Inspector::Protocol::CSS::PseudoId::WebKitScrollbarCorner;
+    case PseudoId::InternalWritingSuggestions:
+        return { };
 
     default:
         ASSERT_NOT_REACHED();

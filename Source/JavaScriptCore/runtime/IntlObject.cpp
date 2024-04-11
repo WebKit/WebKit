@@ -404,7 +404,7 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
         // This is used to store into static variables that may be shared across JSC execution threads.
         // This must be immortal to make concurrent ref/deref safe.
         if (isImmortal)
-            return StringImpl::createStaticStringImpl(buffer.data(), buffer.size());
+            return StringImpl::createStaticStringImpl(buffer.span());
         return buffer.span();
     };
 
@@ -434,7 +434,7 @@ static void addScriptlessLocaleIfNeeded(LocaleSet& availableLocales, StringView 
     ASSERT(subtags[2].is8Bit() && subtags[2].containsOnlyASCII());
     buffer.append(subtags[2].span8());
 
-    availableLocales.add(StringImpl::createStaticStringImpl(buffer.data(), buffer.size()));
+    availableLocales.add(StringImpl::createStaticStringImpl(buffer.span()));
 }
 
 const LocaleSet& intlAvailableLocales()
@@ -1088,7 +1088,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
             ASSERT(U_SUCCESS(status));
             // Only support algorithmic if it is the default fot the locale, handled below.
             if (!unumsys_isAlgorithmic(numsys))
-                availableNumberingSystems->append(String(StringImpl::createStaticStringImpl(result, resultLength)));
+                availableNumberingSystems->append(String(StringImpl::createStaticStringImpl({ result, static_cast<size_t>(resultLength) })));
             unumsys_close(numsys);
         }
         uenum_close(numberingSystemNames);
@@ -1628,8 +1628,8 @@ const Vector<String>& intlAvailableCalendars()
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
-                return StringImpl::createStaticStringImpl(string.characters8(), string.length());
-            return StringImpl::createStaticStringImpl(string.characters16(), string.length());
+                return StringImpl::createStaticStringImpl(string.span8());
+            return StringImpl::createStaticStringImpl(string.span16());
         };
 
         availableCalendars.construct(count, [&](size_t) {
@@ -1891,8 +1891,8 @@ const Vector<String>& intlAvailableTimeZones()
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
-                return StringImpl::createStaticStringImpl(string.characters8(), string.length());
-            return StringImpl::createStaticStringImpl(string.characters16(), string.length());
+                return StringImpl::createStaticStringImpl(string.span8());
+            return StringImpl::createStaticStringImpl(string.span16());
         };
         availableTimeZones.get() = WTF::map(std::span(temporary.begin(), end), [&](auto&& string) -> String {
             return createImmortalThreadSafeString(WTFMove(string));

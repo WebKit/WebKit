@@ -204,6 +204,11 @@ class FramebufferVk : public FramebufferImpl
     angle::Result resolveColorWithSubpass(ContextVk *contextVk,
                                           const UtilsVk::BlitResolveParameters &params);
 
+    // Resolve depth/stencil with subpass attachment
+    angle::Result resolveDepthStencilWithSubpass(ContextVk *contextVk,
+                                                 const UtilsVk::BlitResolveParameters &params,
+                                                 VkImageAspectFlags aspects);
+
     // Resolve color with vkCmdResolveImage
     angle::Result resolveColorWithCommand(ContextVk *contextVk,
                                           const UtilsVk::BlitResolveParameters &params,

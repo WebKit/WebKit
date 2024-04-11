@@ -533,10 +533,7 @@ angle::Result CLCommandQueueCL::enqueueMigrateMemObjects(const cl::MemoryPtrs &m
 }
 
 angle::Result CLCommandQueueCL::enqueueNDRangeKernel(const cl::Kernel &kernel,
-                                                     cl_uint workDim,
-                                                     const size_t *globalWorkOffset,
-                                                     const size_t *globalWorkSize,
-                                                     const size_t *localWorkSize,
+                                                     const cl::NDRange &ndrange,
                                                      const cl::EventPtrs &waitEvents,
                                                      CLEventImpl::CreateFunc *eventCreateFunc)
 {
@@ -548,8 +545,9 @@ angle::Result CLCommandQueueCL::enqueueNDRangeKernel(const cl::Kernel &kernel,
     cl_event *const nativeEventPtr           = eventCreateFunc != nullptr ? &nativeEvent : nullptr;
 
     ANGLE_CL_TRY(mNative->getDispatch().clEnqueueNDRangeKernel(
-        mNative, nativeKernel, workDim, globalWorkOffset, globalWorkSize, localWorkSize, numEvents,
-        nativeEventsPtr, nativeEventPtr));
+        mNative, nativeKernel, ndrange.workDimensions, ndrange.globalWorkOffset.data(),
+        ndrange.globalWorkSize.data(), ndrange.localWorkSize.data(), numEvents, nativeEventsPtr,
+        nativeEventPtr));
 
     CheckCreateEvent(nativeEvent, eventCreateFunc);
     return angle::Result::Continue;

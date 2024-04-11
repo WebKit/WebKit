@@ -531,7 +531,8 @@ public:
 #endif
     bool isDetachedFromParent() override { return false; }
 
-    AccessibilityChildrenVector selectedChildren() override;
+    bool canHaveSelectedChildren() const;
+    std::optional<AccessibilityChildrenVector> selectedChildren() override;
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     AccessibilityChildrenVector visibleChildren() override { return { }; }
     bool shouldFocusActiveDescendant() const;

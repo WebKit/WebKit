@@ -302,14 +302,14 @@ ASCIILiteral atomCanonicalTextEncodingName(const char* name)
     return textEncodingNameMap->get<HashTranslatorTextEncodingName>(name);
 }
 
-template<typename CharacterType> static ASCIILiteral atomCanonicalTextEncodingName(const CharacterType* characters, size_t length)
+template<typename CharacterType> static ASCIILiteral atomCanonicalTextEncodingName(std::span<const CharacterType> characters)
 {
     char buffer[maxEncodingNameLength + 1];
     size_t j = 0;
-    for (size_t i = 0; i < length; ++i) {
+    for (auto character : characters) {
         if (j == maxEncodingNameLength)
             return { };
-        buffer[j++] = characters[i];
+        buffer[j++] = character;
     }
     buffer[j] = 0;
     return atomCanonicalTextEncodingName(buffer);
@@ -321,9 +321,9 @@ ASCIILiteral atomCanonicalTextEncodingName(StringView alias)
         return { };
 
     if (alias.is8Bit())
-        return atomCanonicalTextEncodingName(alias.characters8(), alias.length());
+        return atomCanonicalTextEncodingName(alias.span8());
 
-    return atomCanonicalTextEncodingName(alias.characters16(), alias.length());
+    return atomCanonicalTextEncodingName(alias.span16());
 }
 
 bool noExtendedTextEncodingNameUsed()

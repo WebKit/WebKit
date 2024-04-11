@@ -51,14 +51,14 @@ constexpr unsigned lastByteMask()
 }
 
 template<typename T>
-inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
+inline bool WARN_UNUSED_RETURN decodeUInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_unsigned_v<T>);
-    if (length <= offset)
+    if (bytes.size() <= offset)
         return false;
     result = 0;
     unsigned shift = 0;
-    size_t last = std::min(maxByteLength<T>(), length - offset) - 1;
+    size_t last = std::min(maxByteLength<T>(), bytes.size() - offset) - 1;
     for (unsigned i = 0; true; ++i) {
         uint8_t byte = bytes[offset++];
         result |= static_cast<T>(byte & 0x7f) << shift;
@@ -73,15 +73,15 @@ inline bool WARN_UNUSED_RETURN decodeUInt(const uint8_t* bytes, size_t length, s
 }
 
 template<typename T>
-inline bool WARN_UNUSED_RETURN decodeInt(const uint8_t* bytes, size_t length, size_t& offset, T& result)
+inline bool WARN_UNUSED_RETURN decodeInt(std::span<const uint8_t> bytes, size_t& offset, T& result)
 {
     static_assert(std::is_signed_v<T>);
-    if (length <= offset)
+    if (bytes.size() <= offset)
         return false;
     using UnsignedT = typename std::make_unsigned<T>::type;
     result = 0;
     unsigned shift = 0;
-    size_t last = std::min(maxByteLength<T>(), length - offset) - 1;
+    size_t last = std::min(maxByteLength<T>(), bytes.size() - offset) - 1;
     uint8_t byte;
     for (unsigned i = 0; true; ++i) {
         byte = bytes[offset++];
@@ -115,24 +115,24 @@ inline bool WARN_UNUSED_RETURN decodeInt(const uint8_t* bytes, size_t length, si
     return true;
 }
 
-inline bool WARN_UNUSED_RETURN decodeUInt32(const uint8_t* bytes, size_t length, size_t& offset, uint32_t& result)
+inline bool WARN_UNUSED_RETURN decodeUInt32(std::span<const uint8_t> bytes, size_t& offset, uint32_t& result)
 {
-    return decodeUInt<uint32_t>(bytes, length, offset, result);
+    return decodeUInt<uint32_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeUInt64(const uint8_t* bytes, size_t length, size_t& offset, uint64_t& result)
+inline bool WARN_UNUSED_RETURN decodeUInt64(std::span<const uint8_t> bytes, size_t& offset, uint64_t& result)
 {
-    return decodeUInt<uint64_t>(bytes, length, offset, result);
+    return decodeUInt<uint64_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeInt32(const uint8_t* bytes, size_t length, size_t& offset, int32_t& result)
+inline bool WARN_UNUSED_RETURN decodeInt32(std::span<const uint8_t> bytes, size_t& offset, int32_t& result)
 {
-    return decodeInt<int32_t>(bytes, length, offset, result);
+    return decodeInt<int32_t>(bytes, offset, result);
 }
 
-inline bool WARN_UNUSED_RETURN decodeInt64(const uint8_t* bytes, size_t length, size_t& offset, int64_t& result)
+inline bool WARN_UNUSED_RETURN decodeInt64(std::span<const uint8_t> bytes, size_t& offset, int64_t& result)
 {
-    return decodeInt<int64_t>(bytes, length, offset, result);
+    return decodeInt<int64_t>(bytes, offset, result);
 }
 
 } } // WTF::LEBDecoder

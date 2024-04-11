@@ -96,7 +96,7 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 }
 
 ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
-    : PixelBuffer(format, size, data->data(), data->byteLength())
+    : PixelBuffer(format, size, data->mutableSpan())
     , m_data(WTFMove(data))
 {
 }

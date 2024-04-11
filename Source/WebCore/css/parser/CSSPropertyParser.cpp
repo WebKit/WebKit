@@ -82,16 +82,16 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
-template<typename CharacterType> static CSSPropertyID cssPropertyID(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static CSSPropertyID cssPropertyID(std::span<const CharacterType> characters)
 {
     char buffer[maxCSSPropertyNameLength];
-    for (unsigned i = 0; i != length; ++i) {
+    for (size_t i = 0; i != characters.size(); ++i) {
         auto character = characters[i];
         if (!character || !isASCII(character))
             return CSSPropertyInvalid;
         buffer[i] = toASCIILower(character);
     }
-    return findCSSProperty(buffer, length);
+    return findCSSProperty(buffer, characters.size());
 }
 
 // FIXME: Remove this mechanism entirely once we can do it without breaking the web.
@@ -103,13 +103,13 @@ static bool isAppleLegacyCSSValueKeyword(const char* characters, unsigned length
         && !hasPrefix(characters + 7, length - 7, "wireless");
 }
 
-template<typename CharacterType> static CSSValueID cssValueKeywordID(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static CSSValueID cssValueKeywordID(std::span<const CharacterType> characters)
 {
-    ASSERT(length > 0); // Otherwise buffer[0] would access uninitialized memory below.
+    ASSERT(!characters.empty()); // Otherwise buffer[0] would access uninitialized memory below.
 
     char buffer[maxCSSValueKeywordLength + 1]; // 1 to turn "apple" into "webkit"
     
-    for (unsigned i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != characters.size(); ++i) {
         auto character = characters[i];
         if (!character || !isASCII(character))
             return CSSValueInvalid;
@@ -117,6 +117,7 @@ template<typename CharacterType> static CSSValueID cssValueKeywordID(const Chara
     }
 
     // In most cases, if the prefix is -apple-, change it to -webkit-. This makes the string one character longer.
+    auto length = characters.size();
     if (buffer[0] == '-' && isAppleLegacyCSSValueKeyword(buffer, length)) {
         memmove(buffer + 7, buffer + 6, length - 6);
         memcpy(buffer + 1, "webkit", 6);
@@ -134,7 +135,7 @@ CSSValueID cssValueKeywordID(StringView string)
     if (length > maxCSSValueKeywordLength)
         return CSSValueInvalid;
     
-    return string.is8Bit() ? cssValueKeywordID(string.characters8(), length) : cssValueKeywordID(string.characters16(), length);
+    return string.is8Bit() ? cssValueKeywordID(string.span8()) : cssValueKeywordID(string.span16());
 }
 
 CSSPropertyID cssPropertyID(StringView string)
@@ -146,7 +147,7 @@ CSSPropertyID cssPropertyID(StringView string)
     if (length > maxCSSPropertyNameLength)
         return CSSPropertyInvalid;
     
-    return string.is8Bit() ? cssPropertyID(string.characters8(), length) : cssPropertyID(string.characters16(), length);
+    return string.is8Bit() ? cssPropertyID(string.span8()) : cssPropertyID(string.span16());
 }
     
 using namespace CSSPropertyParserHelpers;

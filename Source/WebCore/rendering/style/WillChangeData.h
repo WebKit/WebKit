@@ -55,7 +55,7 @@ public:
     bool canTriggerCompositing() const { return m_canTriggerCompositing; }
     bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
 
-    enum Feature {
+    enum class Feature: uint8_t {
         ScrollPosition,
         Contents,
         Property,
@@ -78,17 +78,17 @@ private:
         static const int numCSSPropertyIDBits = 14;
         static_assert(numCSSProperties < (1 << numCSSPropertyIDBits), "CSSPropertyID should fit in 14_bits");
 
-        unsigned m_feature : 2;
+        Feature m_feature { Feature::Property };
         unsigned m_cssPropertyID : numCSSPropertyIDBits;
 
         Feature feature() const
         {
-            return static_cast<Feature>(m_feature);
+            return m_feature;
         }
 
         CSSPropertyID property() const
         {
-            return feature() == Property ? static_cast<CSSPropertyID>(m_cssPropertyID) : CSSPropertyInvalid;
+            return feature() == Feature::Property ? static_cast<CSSPropertyID>(m_cssPropertyID) : CSSPropertyInvalid;
         }
         
         FeaturePropertyPair featurePropertyPair() const
@@ -99,15 +99,15 @@ private:
         AnimatableFeature(Feature willChange, CSSPropertyID willChangeProperty = CSSPropertyInvalid)
         {
             switch (willChange) {
-            case Property:
+            case Feature::Property:
                 ASSERT(willChangeProperty != CSSPropertyInvalid);
                 m_cssPropertyID = willChangeProperty;
                 FALLTHROUGH;
-            case ScrollPosition:
-            case Contents:
-                m_feature = static_cast<unsigned>(willChange);
+            case Feature::ScrollPosition:
+            case Feature::Contents:
+                m_feature = willChange;
                 break;
-            case Invalid:
+            case Feature::Invalid:
                 ASSERT_NOT_REACHED();
                 break;
             }

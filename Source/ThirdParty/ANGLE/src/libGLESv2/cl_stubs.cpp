@@ -1011,9 +1011,9 @@ cl_int EnqueueNDRangeKernel(cl_command_queue command_queue,
                             const cl_event *event_wait_list,
                             cl_event *event)
 {
+    cl::NDRange ndrange(work_dim, global_work_offset, global_work_size, local_work_size);
     CL_RETURN_ERROR(command_queue->cast<CommandQueue>().enqueueNDRangeKernel(
-        kernel, work_dim, global_work_offset, global_work_size, local_work_size,
-        num_events_in_wait_list, event_wait_list, event));
+        kernel, ndrange, num_events_in_wait_list, event_wait_list, event));
 }
 
 cl_int EnqueueNativeKernel(cl_command_queue command_queue,

@@ -1074,6 +1074,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
             WKPreferencesEnableAllExperimentalFeatures(preferences);
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("SiteIsolationEnabled").get());
             WKPreferencesSetExperimentalFeatureForKey(preferences, false, toWK("CFNetworkNetworkLoaderEnabled").get());
+            WKPreferencesSetExperimentalFeatureForKey(preferences, true, toWK("WebGPUEnabled").get());
         }
 
         WKPreferencesResetAllInternalDebugFeatures(preferences);

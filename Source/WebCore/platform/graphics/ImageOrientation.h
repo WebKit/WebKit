@@ -29,7 +29,6 @@
 #include "AffineTransform.h"
 #include "FloatSize.h"
 #include <stdint.h>
-#include <wtf/EnumTraits.h>
 
 // X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
 // As a workaround, we explicitly undef them here.

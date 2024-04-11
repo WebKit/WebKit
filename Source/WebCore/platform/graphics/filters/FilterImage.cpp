@@ -95,10 +95,10 @@ size_t FilterImage::memoryCost() const
         memoryCost += m_imageBuffer->memoryCost();
 
     if (m_unpremultipliedPixelBuffer)
-        memoryCost += m_unpremultipliedPixelBuffer->sizeInBytes();
+        memoryCost += m_unpremultipliedPixelBuffer->bytes().size();
 
     if (m_premultipliedPixelBuffer)
-        memoryCost += m_premultipliedPixelBuffer->sizeInBytes();
+        memoryCost += m_premultipliedPixelBuffer->bytes().size();
 
 #if USE(CORE_IMAGE)
     if (m_ciImage)
@@ -145,8 +145,8 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     if (UNLIKELY(rowBytes.hasOverflowed()))
         return;
 
-    ConstPixelBufferConversionView source { sourcePixelBuffer.format(), rowBytes, sourcePixelBuffer.bytes() };
-    PixelBufferConversionView destination { destinationPixelBuffer.format(), rowBytes, destinationPixelBuffer.bytes() };
+    ConstPixelBufferConversionView source { sourcePixelBuffer.format(), rowBytes, sourcePixelBuffer.bytes().data() };
+    PixelBufferConversionView destination { destinationPixelBuffer.format(), rowBytes, destinationPixelBuffer.bytes().data() };
 
     convertImagePixels(source, destination, destinationSize);
 }
@@ -185,8 +185,8 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     if (UNLIKELY(size.hasOverflowed() || destinationBytesPerRow.hasOverflowed() || sourceBytesPerRow.hasOverflowed() || destinationOffset.hasOverflowed() || sourceOffset.hasOverflowed()))
         return;
 
-    uint8_t* destinationPixel = destinationPixelBuffer.bytes() + destinationOffset.value();
-    const uint8_t* sourcePixel = sourcePixelBuffer.bytes() + sourceOffset.value();
+    uint8_t* destinationPixel = destinationPixelBuffer.bytes().data() + destinationOffset.value();
+    const uint8_t* sourcePixel = sourcePixelBuffer.bytes().data() + sourceOffset.value();
 
     for (int y = 0; y < sourceRectClipped.height(); ++y) {
         memcpy(destinationPixel, sourcePixel, size);
@@ -328,8 +328,8 @@ void FilterImage::correctPremultipliedPixelBuffer()
     if (!m_premultipliedPixelBuffer || m_isValidPremultiplied)
         return;
 
-    uint8_t* pixelBytes = m_premultipliedPixelBuffer->bytes();
-    int pixelByteLength = m_premultipliedPixelBuffer->sizeInBytes();
+    uint8_t* pixelBytes = m_premultipliedPixelBuffer->bytes().data();
+    int pixelByteLength = m_premultipliedPixelBuffer->bytes().size();
 
     // We must have four bytes per pixel, and complete pixels
     ASSERT(!(pixelByteLength % 4));

@@ -2155,6 +2155,12 @@ void GenerateCaps(const FunctionsGL *functions,
     // GL_ANGLE_logic_op
     extensions->logicOpANGLE = functions->isAtLeastGL(gl::Version(2, 0));
 
+    extensions->blendEquationAdvancedKHR =
+        functions->hasGLExtension("GL_NV_blend_equation_advanced") ||
+        functions->hasGLExtension("GL_KHR_blend_equation_advanced") ||
+        functions->isAtLeastGLES(gl::Version(3, 2)) ||
+        functions->hasGLESExtension("GL_KHR_blend_equation_advanced");
+
     // PVRTC1 textures must be squares on Apple platforms.
     if (IsApple())
     {

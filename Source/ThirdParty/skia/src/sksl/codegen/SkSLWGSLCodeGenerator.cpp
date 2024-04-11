@@ -1514,11 +1514,13 @@ void WGSLCodeGenerator::write(std::string_view s) {
     if (s.empty()) {
         return;
     }
+#if defined(SK_DEBUG) || defined(SKSL_STANDALONE)
     if (fAtLineStart) {
         for (int i = 0; i < fIndentation; i++) {
             fOut->writeText("  ");
         }
     }
+#endif
     fOut->writeText(std::string(s).c_str());
     fAtLineStart = false;
 }
@@ -4517,15 +4519,16 @@ static bool validate_wgsl(ErrorReporter& reporter, const std::string& wgsl, std:
     tint::Program program(tint::wgsl::reader::Parse(&srcFile, options));
 
     if (program.Diagnostics().ContainsErrors()) {
-        // The program isn't valid WGSL. In debug, report the error via SkDEBUGFAIL. We also append
-        // the generated program for ease of debugging.
+        // The program isn't valid WGSL.
+#if defined(SKSL_STANDALONE)
+        reporter.error(Position(), std::string("Tint compilation failed.\n\n") + wgsl);
+#else
+        // In debug, report the error via SkDEBUGFAIL. We also append the generated program for
+        // ease of debugging.
         tint::diag::Formatter diagFormatter;
         std::string diagOutput = diagFormatter.Format(program.Diagnostics()).Plain();
         diagOutput += "\n";
         diagOutput += wgsl;
-#if defined(SKSL_STANDALONE)
-        reporter.error(Position(), diagOutput);
-#else
         SkDEBUGFAILF("%s", diagOutput.c_str());
 #endif
         return false;
@@ -4554,9 +4557,7 @@ bool ToWGSL(Program& program, const ShaderCaps* caps, OutputStream& out) {
         std::string warnings;
         result = validate_wgsl(*program.fContext->fErrors, wgslString, &warnings);
         if (!warnings.empty()) {
-            out.writeText("/*\n\n");
-            out.writeString(warnings);
-            out.writeText("*/\n\n");
+            out.writeText("/* Tint reported warnings. */\n\n");
         }
         out.writeString(wgslString);
     }

@@ -1715,13 +1715,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
         return;
     }
 
-    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (!m_visible) {
-        // If the page is not visible, use the AudioSession's STS label.
-        renderer.STSLabel = session.spatialTrackingLabel;
-        return;
-    }
-
     if (renderer) {
         // Let AVSBRS manage setting the spatial tracking label in its video renderer itself.
         renderer.STSLabel = nil;
@@ -1736,6 +1729,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
     // If there is no video renderer, use the default spatial tracking label if available, or
     // the session's spatial tracking label if not, and set the label directly on each audio
     // renderer.
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     auto *defaultLabel = !m_defaultSpatialTrackingLabel.isNull() ? (NSString *)m_defaultSpatialTrackingLabel : session.spatialTrackingLabel;
     for (const auto &key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setSTSLabel:defaultLabel];

@@ -140,9 +140,13 @@ hashless_generators = {
 
 def md5(fname):
     hash_md5 = hashlib.md5()
-    with open(fname, "r") as f:
-        for chunk in iter(lambda: f.read(4096), ""):
-            hash_md5.update(chunk.encode())
+    with open(fname, 'rb') as f:
+        if sys.platform.startswith('win') or sys.platform == 'cygwin':
+            # Beware: Windows crlf + git behavior + unicode in some files
+            hash_md5.update(f.read().replace(b'\r\n', b'\n'))
+        else:
+            for chunk in iter(lambda: f.read(4096), b''):
+                hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
 

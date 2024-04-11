@@ -41,6 +41,8 @@ fast/forms/ios/drag-range-thumb.html [ Pass Timeout Timeout ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-div.html [ Pass ]
+fast/css/appearance-apple-pay-button-input-type-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius-longhands.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-width.html [ Pass ]
@@ -2345,6 +2347,7 @@ accessibility/out-of-bounds-rowspan-orphan-rows.html [ Pass ]
 accessibility/page-reload-deadlock.html [ Pass ]
 accessibility/placeholder.html [ Pass ]
 accessibility/progress-indeterminate-value.html [ Pass ]
+accessibility/range-input-increment-decrement-fires-input-event.html [ Pass ]
 accessibility/shadow-dom-hit-test.html [ Pass ]
 accessibility/slider-with-lost-renderer.html [ Pass ]
 accessibility/slot-default-contents-accname.html [ Pass ]
@@ -3585,11 +3588,7 @@ webkit.org/b/237220 imported/w3c/web-platform-tests/svg/coordinate-systems/abspo
 
 webkit.org/b/237218 fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html [ Pass Failure ]
 
-webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
-
-# rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
-[ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
-fast/canvas/canvas-blending-text.html [ Pass Failure ]
+webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ] 
 
 # webkit.org/b/201982 These are flaky failures on iOS
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
@@ -4068,6 +4067,7 @@ webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-
 
 webkit.org/b/254714 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-calc-x-rendering-2.html [ ImageOnlyFailure ]
 
+fast/webgpu [ Skip ]
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
@@ -4463,6 +4463,7 @@ http/tests/misc/heic-accept-header.html [ Pass ]
 
 webkit.org/b/254044 webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/webxr [ Skip ]
+webkit.org/b/254044 http/tests/webxr [ Skip ]
 webkit.org/b/254044 http/wpt/webxr [ Skip ]
 webkit.org/b/254044 imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html [ Skip ]
 
@@ -5189,7 +5190,6 @@ editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/insert-tab-002.html [ Failure ]
 editing/inserting/insert-tab-004.html [ Failure ]
 editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
-editing/inserting/typing-001.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
 editing/secure-input/password-input-changed-type.html [ Failure ]
 editing/secure-input/password-input-focusing.html [ Failure ]
@@ -7285,11 +7285,6 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-pushsubscri
 
 webkit.org/b/217759 media/now-playing-status-without-media.html [ Pass Failure ]
 
-# rdar://125585822 ([ iOS ] 3x editing/spelling/* (layout-tests) are constant failures (271864))
-editing/spelling/document-markers-remain-after-removing-text.html [ Failure ]
-editing/spelling/grammar-and-spelling-error-styling.html [ ImageOnlyFailure ]
-editing/spelling/spellcheck-attribute-toggle.html [ ImageOnlyFailure ]
-
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
@@ -7324,10 +7319,6 @@ webkit.org/b/254872 webrtc/video-rotation.html [ Pass Timeout ]
 fast/overflow/infiniteRecursion.html [ Failure Pass ]
 tables/mozilla/bugs/bug2479-2.html [ Failure Pass ]
 
-# webkit.org/b/271792 [ MacOS iOS ] 2x fast/url/* (layout-tests) are constant text failures
-fast/url/idna2008.html [ Failure ]
-fast/url/url-hostname-encoding.html [ Failure ]
-
 webkit.org/b/271764 fast/scrolling/ios/video-atop-overflow-scroll.html [ Pass Failure ]
 
 webkit.org/b/271931 [ Debug ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-105.html [ Crash ]
@@ -7338,3 +7329,5 @@ webkit.org/b/271994 imported/w3c/web-platform-tests/css/css-transforms/transform
 fast/forms/switch/click-animation-redundant-checked.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation-redundant-disabled.html [ ImageOnlyFailure ]
 fast/forms/switch/click-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/271969 accessibility/ios-simulator/inline-prediction-attributed-string.html [ Failure ]

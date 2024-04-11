@@ -52,6 +52,12 @@ class SurfaceWgpu : public SurfaceImpl
                                    gl::Framebuffer *framebuffer) override;
     egl::Error detachFromFramebuffer(const gl::Context *context,
                                      gl::Framebuffer *framebuffer) override;
+
+    angle::Result getAttachmentRenderTarget(const gl::Context *context,
+                                            GLenum binding,
+                                            const gl::ImageIndex &imageIndex,
+                                            GLsizei samples,
+                                            FramebufferAttachmentRenderTarget **rtOut) override;
 };
 
 }  // namespace rx

@@ -47,6 +47,40 @@ angle::Result FramebufferWgpu::invalidateSub(const gl::Context *context,
 
 angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask)
 {
+    bool clearColor   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
+    bool clearDepth   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
+    bool clearStencil = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
+    // TODO(anglebug.com/8582): support clearing depth and stencil buffers.
+    ASSERT(!clearDepth && !clearStencil && clearColor);
+
+    ContextWgpu *contextWgpu   = GetImplAs<ContextWgpu>(context);
+    gl::ColorF colorClearValue = context->getState().getColorClearValue();
+
+    std::vector<wgpu::RenderPassColorAttachment> colorAttachments(
+        mState.getEnabledDrawBuffers().count());
+    for (size_t enabledDrawBuffer : mState.getEnabledDrawBuffers())
+    {
+        wgpu::RenderPassColorAttachment colorAttachment;
+        colorAttachment.view =
+            mRenderTargetCache.getColorDraw(mState, enabledDrawBuffer)->getTexture();
+        colorAttachment.depthSlice   = wgpu::kDepthSliceUndefined;
+        colorAttachment.loadOp       = wgpu::LoadOp::Clear;
+        colorAttachment.storeOp      = wgpu::StoreOp::Store;
+        colorAttachment.clearValue.r = colorClearValue.red;
+        colorAttachment.clearValue.g = colorClearValue.green;
+        colorAttachment.clearValue.b = colorClearValue.blue;
+        colorAttachment.clearValue.a = colorClearValue.alpha;
+        colorAttachments.push_back(colorAttachment);
+    }
+
+    wgpu::RenderPassDescriptor renderPassDesc;
+    renderPassDesc.colorAttachmentCount = colorAttachments.size();
+    renderPassDesc.colorAttachments     = colorAttachments.data();
+
+    // TODO(anglebug.com/8582): optimize this implementation.
+    ANGLE_TRY(contextWgpu->ensureRenderPassStarted(renderPassDesc));
+    ANGLE_TRY(contextWgpu->endRenderPass(webgpu::RenderPassClosureReason::NewRenderPass));
+    ANGLE_TRY(contextWgpu->flush());
     return angle::Result::Continue;
 }
 

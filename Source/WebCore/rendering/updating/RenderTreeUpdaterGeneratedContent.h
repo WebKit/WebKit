@@ -42,6 +42,7 @@ public:
     void updatePseudoElement(Element&, const Style::ElementUpdate&, PseudoId);
     void updateRemainingQuotes();
     void updateCounters();
+    void updateWritingSuggestionsRenderer(RenderElement&);
 
     static void removeBeforePseudoElement(Element&, RenderTreeBuilder&);
     static void removeAfterPseudoElement(Element&, RenderTreeBuilder&);

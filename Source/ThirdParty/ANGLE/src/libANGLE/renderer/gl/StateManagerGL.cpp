@@ -1486,20 +1486,40 @@ void StateManagerGL::setBlendEquations(const gl::BlendStateExt &blendStateExt)
             }
             if (found)
             {
-                mFunctions->blendEquationSeparate(
-                    ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
-                        0, commonEquationColor)),
-                    ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
-                        0, commonEquationAlpha)));
+                if (commonEquationColor == commonEquationAlpha)
+                {
+                    mFunctions->blendEquation(
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationColor)));
+                }
+                else
+                {
+                    mFunctions->blendEquationSeparate(
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationColor)),
+                        ToGLenum(gl::BlendStateExt::EquationStorage::GetValueIndexed(
+                            0, commonEquationAlpha)));
+                }
             }
         }
 
         for (size_t drawBufferIndex : diffMask)
         {
-            mFunctions->blendEquationSeparatei(
-                static_cast<GLuint>(drawBufferIndex),
-                ToGLenum(blendStateExt.getEquationColorIndexed(drawBufferIndex)),
-                ToGLenum(blendStateExt.getEquationAlphaIndexed(drawBufferIndex)));
+            gl::BlendEquationType equationColor =
+                blendStateExt.getEquationColorIndexed(drawBufferIndex);
+            gl::BlendEquationType equationAlpha =
+                blendStateExt.getEquationAlphaIndexed(drawBufferIndex);
+            if (equationColor == equationAlpha)
+            {
+                mFunctions->blendEquationi(static_cast<GLuint>(drawBufferIndex),
+                                           ToGLenum(equationColor));
+            }
+            else
+            {
+                mFunctions->blendEquationSeparatei(static_cast<GLuint>(drawBufferIndex),
+                                                   ToGLenum(equationColor),
+                                                   ToGLenum(equationAlpha));
+            }
         }
     }
     mBlendStateExt.setEquationColorBits(blendStateExt.getEquationColorBits());

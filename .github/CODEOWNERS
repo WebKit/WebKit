@@ -39,10 +39,10 @@
 
 /Tools @JonWBedard
 
-/Tools/CISupport @aj062 @JonWBedard @ryanhaddad
+/Tools/CISupport @aj062 @JonWBedard @ryanhaddad @briannafan
 
-/Tools/Scripts/libraries @JonWBedard
-/Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
+/Tools/Scripts/libraries @JonWBedard @briannafan
+/Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard @briannafan
 
 /Tools/TestWebKitAPI
 /Tools/TestWebKitAPI/Tests/WebKitGLib/ @WebKit/glib-reviewers

@@ -436,25 +436,28 @@ uint32_t BindGroupLayout::dynamicBufferCount() const
     return dynamicStorageBuffers() + dynamicUniformBuffers();
 }
 
-bool BindGroupLayout::validateDynamicOffsets(const uint32_t* dynamicOffsets, size_t dynamicOffsetCount, const BindGroup& group) const
+NSString* BindGroupLayout::errorValidatingDynamicOffsets(const uint32_t* dynamicOffsets, size_t dynamicOffsetCount, const BindGroup& group) const
 {
-    if (dynamicOffsetCount != dynamicBufferCount())
-        return false;
+    auto bufferCount = dynamicBufferCount();
+    if (dynamicOffsetCount != bufferCount)
+        return [NSString stringWithFormat:@"dynamicOffsetCount(%zu) in setBindGroupCall does not equal the dynamicBufferCount(%u) in bind group layout", dynamicOffsetCount, bufferCount];
 
     auto minUniformBufferOffsetAlignment = m_device->limits().minUniformBufferOffsetAlignment;
     auto minStorageBufferOffsetAlignment = m_device->limits().minStorageBufferOffsetAlignment;
     for (size_t i = 0; i < dynamicOffsetCount; ++i) {
         uint32_t dynamicOffset = dynamicOffsets[i];
         auto* buffer = group.dynamicBuffer(i);
-        if (!buffer || dynamicOffset + buffer->bindingSize > buffer->bufferSize)
-            return false;
+        if (!buffer)
+            return [NSString stringWithFormat:@"dynamicBuffer(%zu) is nil", i];
+        if (dynamicOffset + buffer->bindingSize > buffer->bufferSize)
+            return [NSString stringWithFormat:@"dynamicBuffer(%zu): dynamicOffset(%u) + buffer->bindingSize(%llu) > buffer->bufferSize(%llu)", i, dynamicOffset, buffer->bindingSize, buffer->bufferSize];
 
         auto alignment = buffer->type == WGPUBufferBindingType_Uniform ? minUniformBufferOffsetAlignment : minStorageBufferOffsetAlignment;
         if (dynamicOffset % alignment)
-            return false;
+            return [NSString stringWithFormat:@"dynamicBuffer(%zu): dynamicOffset(%u) is not divisible by the %s buffer alignment(%u)", i, dynamicOffset, buffer->type == WGPUBufferBindingType_Uniform ? "uniform" : "storage", alignment];
     }
 
-    return true;
+    return nil;
 }
 
 static bool isEqual(const WGPUBufferBindingLayout& entry, const WGPUBufferBindingLayout& otherEntry)

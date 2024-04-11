@@ -118,6 +118,7 @@ enum class SDKAlignedBehavior {
     DoNotLoadStyleSheetIfHTTPStatusIsNotOK,
     ScrollViewSubclassImplementsAddGestureRecognizer,
     ThrowIfCanDeclareGlobalFunctionFails,
+    ThrowOnKVCInstanceVariableAccess,
 
     NumberOfBehaviors
 };

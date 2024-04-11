@@ -34,6 +34,9 @@ public:
     void idChanged();
     void repaintAllClients() const;
 
+    virtual void addReferencingCSSClient(const RenderElement&) { }
+    virtual void removeReferencingCSSClient(const RenderElement&) { }
+
 protected:
     RenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);
 

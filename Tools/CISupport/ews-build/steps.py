@@ -182,10 +182,10 @@ class GitHub(object):
         if prefix in cls._cache:
             return cls._cache[prefix]
 
-        try:
-            passwords = json.load(open('passwords.json'))
-            cls._cache[prefix] = passwords.get(f'{prefix}USERNAME', None), passwords.get(f'{prefix}ACCESS_TOKEN', None)
-        except Exception as e:
+        username, password = load_password(f'{prefix}USERNAME'), load_password(f'{prefix}ACCESS_TOKEN')
+        if username and password:
+            cls._cache[prefix] = username, password
+        else:
             print('Error reading GitHub credentials')
             cls._cache[prefix] = None, None
 
@@ -1062,69 +1062,10 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         defer.returnValue(rc)
 
 
-class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
+class ApplyPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
     name = 'apply-patch'
-    description = ['applying-patch']
+    description = ['apply-patch']
     descriptionDone = ['Applied patch']
-    haltOnFailure = False
-    command = ['perl', 'Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
-
-    def __init__(self, **kwargs):
-        super().__init__(timeout=10 * 60, logEnviron=False, **kwargs)
-
-    def doStepIf(self, step):
-        return self.getProperty('patch_id', False)
-
-    def _get_patch(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
-
-    def start(self):
-        patch = self._get_patch()
-        if not patch:
-            # Forced build, don't have patch_id raw data on the request, need to fech it.
-            patch_id = self.getProperty('patch_id', '')
-            self.command = self.shell_command('curl -L "https://bugs.webkit.org/attachment.cgi?id={}" -o .buildbot-diff && {}'.format(patch_id, ' '.join(self.command)))
-            shell.ShellCommand.start(self)
-            return None
-
-        reviewers_names = self.getProperty('reviewers_full_names', [])
-        if reviewers_names:
-            self.command.extend(['--reviewer', reviewers_names[0]])
-        d = self.downloadFileContentToWorker('.buildbot-diff', patch)
-        d.addCallback(lambda res: shell.ShellCommand.start(self))
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step) or (results == SUCCESS and self.getProperty('sensitive', False))
-
-    def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': "Skipping applying patch since patch_id isn't provided"}
-        if self.results != SUCCESS:
-            return {'step': 'svn-apply failed to apply patch to trunk'}
-        return super().getResultSummary()
-
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
-        patch_id = self.getProperty('patch_id', '')
-        if rc == FAILURE:
-            message = 'Tools/Scripts/svn-apply failed to apply patch {} to trunk'.format(patch_id)
-            if self.getProperty('buildername', '').lower() == 'commit-queue':
-                comment_text = '{}.\nPlease resolve the conflicts and upload a new patch.'.format(message.replace('patch', 'attachment'))
-                self.setProperty('comment_text', comment_text)
-                self.setProperty('build_finish_summary', message)
-                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
-            else:
-                self.build.buildFinished([message], FAILURE)
-        return rc
-
-
-class CommitPatch(steps.ShellSequence, CompositeStepMixin, ShellMixin):
-    name = 'commit-patch'
-    description = ['commit-patch']
-    descriptionDone = ['Created commit from patch']
     haltOnFailure = True
     env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
     FILTER_BRANCH_PROGRAM = '''import re
@@ -1173,6 +1114,8 @@ for l in lines[1:]:
         defer.returnValue(res)
 
     def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': "Skipping applying patch since patch_id isn't provided"}
         if self.results != SUCCESS:
             return {'step': 'git failed to apply patch to trunk'}
         return super().getResultSummary()
@@ -1628,12 +1571,10 @@ class BugzillaMixin(AddToLogMixin):
             print(f'Error in sending email for infrastructure issue: {e}')
 
     def get_bugzilla_api_key(self):
-        try:
-            passwords = json.load(open('passwords.json'))
-            return passwords.get('BUGZILLA_API_KEY', '')
-        except Exception as e:
+        password = load_password('BUGZILLA_API_KEY', default='')
+        if not password:
             print('Error in reading Bugzilla api key')
-            return ''
+        return password
 
     @defer.inlineCallbacks
     def remove_flags_on_patch(self, patch_id):
@@ -5840,7 +5781,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         FetchBranches(),
                         UpdateWorkingDirectory(),
                         ShowIdentifier(),
-                        CommitPatch(),
+                        ApplyPatch(),
                         AddReviewerToCommitMessage(),
                         Canonicalize(),
                         ValidateChange(addURLs=False, verifycqplus=True),

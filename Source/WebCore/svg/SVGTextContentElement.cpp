@@ -187,6 +187,7 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
+        invalidateResourceImageBuffersIfNeeded();
         return;
     }
 

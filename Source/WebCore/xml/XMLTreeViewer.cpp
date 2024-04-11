@@ -55,11 +55,11 @@ XMLTreeViewer::XMLTreeViewer(Document& document)
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    String scriptString = StringImpl::createWithoutCopying(XMLViewer_js, sizeof(XMLViewer_js));
+    String scriptString = StringImpl::createWithoutCopying(XMLViewer_js);
     m_document.frame()->script().evaluateIgnoringException(ScriptSourceCode(scriptString, JSC::SourceTaintedOrigin::Untainted));
     m_document.frame()->script().evaluateIgnoringException(ScriptSourceCode(AtomString("prepareWebKitXMLViewer('This XML file does not appear to have any style information associated with it. The document tree is shown below.');"_s), JSC::SourceTaintedOrigin::Untainted));
 
-    String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
+    String cssString = StringImpl::createWithoutCopying(XMLViewer_css);
     auto text = m_document.createTextNode(WTFMove(cssString));
     m_document.getElementById(String("xml-viewer-style"_s))->appendChild(text);
 }

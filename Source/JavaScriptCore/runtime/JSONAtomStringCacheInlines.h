@@ -32,26 +32,27 @@
 
 namespace JSC {
 
+// FIXME: This should take in a std::span.
 template<typename CharacterType>
-ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(const CharacterType* characters, unsigned length)
+ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(std::span<const CharacterType> characters)
 {
-    if (!length)
+    if (characters.empty())
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
-    auto firstCharacter = characters[0];
-    if (length == 1) {
+    auto firstCharacter = characters.front();
+    if (characters.size() == 1) {
         if (firstCharacter <= maxSingleCharacterString)
             return vm().smallStrings.singleCharacterStringRep(firstCharacter);
-    } else if (UNLIKELY(length > maxStringLengthForCache))
-        return AtomStringImpl::add(std::span { characters, length }).releaseNonNull();
+    } else if (UNLIKELY(characters.size() > maxStringLengthForCache))
+        return AtomStringImpl::add(characters).releaseNonNull();
 
-    auto lastCharacter = characters[length - 1];
-    auto& slot = cacheSlot(firstCharacter, lastCharacter, length);
-    if (UNLIKELY(slot.m_length != length || !equal(slot.m_buffer, characters, length))) {
-        auto result = AtomStringImpl::add(std::span { characters, length });
+    auto lastCharacter = characters.back();
+    auto& slot = cacheSlot(firstCharacter, lastCharacter, characters.size());
+    if (UNLIKELY(slot.m_length != characters.size() || !equal(slot.m_buffer, characters))) {
+        auto result = AtomStringImpl::add(characters);
         slot.m_impl = result;
-        slot.m_length = length;
-        WTF::copyElements(slot.m_buffer, characters, length);
+        slot.m_length = characters.size();
+        WTF::copyElements(slot.m_buffer, characters.data(), characters.size());
         return result.releaseNonNull();
     }
 

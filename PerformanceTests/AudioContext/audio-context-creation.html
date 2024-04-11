@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+    function runTest() {
+        let isDone = false;
+        PerfTestRunner.prepareToMeasureValuesAsync({ done: () => isDone = true, unit: 'ms' });
+
+        async function runIteration() {
+            let startTime = PerfTestRunner.now();
+
+            let audioContexts = [];
+            for (let i = 0; i < 100; ++i) {
+                let context = new AudioContext();
+                audioContexts.push(context);
+                await context.resume();
+            }
+
+            for (let context of audioContexts) {
+                await context.suspend();
+            }
+
+            PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+
+            if (!isDone) {
+                if (window.GCController)
+                    window.GCController.collect();
+
+                setTimeout(runIteration, 0);
+            }
+        }
+
+        runIteration();
+    }
+    window.addEventListener('load', event => {
+        let button = document.body.appendChild(document.createElement('button'));
+        button.innerText = 'Start test';
+        button.addEventListener('click', () => {
+            button.disabled = true;
+            runTest();
+        });
+    })
+    </script>
+</body>
+</html>

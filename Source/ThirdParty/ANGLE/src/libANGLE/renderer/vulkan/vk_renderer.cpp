@@ -568,6 +568,25 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessagesWithoutLoadStoreOpNon
     },
 };
 
+// Messages that are only generated with MSRTT emulation.  Some of these are syncval bugs (discussed
+// in https://gitlab.khronos.org/vulkan/vulkan/-/issues/3840)
+constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessagesWithMSRTTEmulation[] = {
+    // False positive: https://gitlab.khronos.org/vulkan/vulkan/-/issues/3840
+    {
+        "SYNC-HAZARD-READ-AFTER-WRITE",
+        "during depth/stencil resolve read",
+        "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ",
+    },
+    // Unknown whether ANGLE or syncval bug.
+    {
+        "SYNC-HAZARD-WRITE-AFTER-WRITE",
+        "vkCmdBeginRenderPass():  Hazard WRITE_AFTER_WRITE in subpass 0 for attachment",
+        "image layout transition (old_layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, "
+        "new_layout: VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL). Access info (usage: "
+        "SYNC_IMAGE_LAYOUT_TRANSITION",
+    },
+};
+
 enum class DebugMessageReport
 {
     Ignore,
@@ -2176,7 +2195,6 @@ angle::Result Renderer::initializeMemoryAllocator(vk::Context *context)
 // - VK_EXT_custom_border_color:                       customBorderColors (feature)
 //                                                     customBorderColorWithoutFormat (feature)
 // - VK_EXT_depth_clamp_zero_one:                      depthClampZeroOne (feature)
-// - VK_EXT_depth_clip_enable:                         depthClipEnable (feature)
 // - VK_EXT_depth_clip_control:                        depthClipControl (feature)
 // - VK_EXT_primitives_generated_query:                primitivesGeneratedQuery (feature),
 //                                                     primitivesGeneratedQueryWithRasterizerDiscard
@@ -2262,11 +2280,6 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     if (ExtensionFound(VK_EXT_DEPTH_CLAMP_ZERO_ONE_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mDepthClampZeroOneFeatures);
-    }
-
-    if (ExtensionFound(VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME, deviceExtensionNames))
-    {
-        vk::AddToPNextChain(deviceFeatures, &mDepthClipEnableFeatures);
     }
 
     if (ExtensionFound(VK_EXT_DEPTH_CLIP_CONTROL_EXTENSION_NAME, deviceExtensionNames))
@@ -2578,10 +2591,6 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mDepthClampZeroOneFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT;
 
-    mDepthClipEnableFeatures = {};
-    mDepthClipEnableFeatures.sType =
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
-
     mDepthClipControlFeatures = {};
     mDepthClipControlFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT;
@@ -2717,7 +2726,6 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mProtectedMemoryFeatures.pNext                          = nullptr;
     mHostQueryResetFeatures.pNext                           = nullptr;
     mDepthClampZeroOneFeatures.pNext                        = nullptr;
-    mDepthClipEnableFeatures.pNext                          = nullptr;
     mDepthClipControlFeatures.pNext                         = nullptr;
     mPrimitivesGeneratedQueryFeatures.pNext                 = nullptr;
     mPrimitiveTopologyListRestartFeatures.pNext             = nullptr;
@@ -3620,6 +3628,14 @@ void Renderer::initializeValidationMessageSuppressions()
             kSkippedSyncvalMessagesWithoutLoadStoreOpNone +
                 ArraySize(kSkippedSyncvalMessagesWithoutLoadStoreOpNone));
     }
+    if (getFeatures().enableMultisampledRenderToTexture.enabled &&
+        !getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
+    {
+        mSkippedSyncvalMessages.insert(mSkippedSyncvalMessages.end(),
+                                       kSkippedSyncvalMessagesWithMSRTTEmulation,
+                                       kSkippedSyncvalMessagesWithMSRTTEmulation +
+                                           ArraySize(kSkippedSyncvalMessagesWithMSRTTEmulation));
+    }
 }
 
 angle::Result Renderer::checkQueueForSurfacePresent(vk::Context *context,
@@ -4131,9 +4147,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, avoidOpSelectWithMismatchingRelaxedPrecision,
                             isNvidia && (nvidiaVersion.major >= 535 && nvidiaVersion.major <= 551));
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthClipEnable,
-                            mDepthClipEnableFeatures.depthClipEnable == VK_TRUE);
-
     // Vulkan implementations are not required to clamp gl_FragDepth to [0, 1] by default.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthClampZeroOne,
                             mDepthClampZeroOneFeatures.depthClampZeroOne == VK_TRUE);
@@ -4292,6 +4305,16 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthStencilResolve,
                             mFeatures.supportsRenderpass2.enabled &&
                                 mDepthStencilResolveProperties.supportedDepthResolveModes != 0);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthStencilIndependentResolveNone,
+                            mFeatures.supportsDepthStencilResolve.enabled &&
+                                mDepthStencilResolveProperties.independentResolveNone);
+    // Disable optimizing depth/stencil resolve through glBlitFramebuffer for buggy drivers:
+    //
+    // - Nvidia: http://anglebug.com/8658
+    // - Pixel4: http://anglebug.com/8659
+    //
+    ANGLE_FEATURE_CONDITION(&mFeatures, disableDepthStencilResolveThroughAttachment,
+                            isNvidia || isQualcommProprietary);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMultisampledRenderToSingleSampled,
@@ -4473,17 +4496,16 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     //   * OOM: http://crbug.com/1263046
     // - Intel on windows: http://anglebug.com/5032
     // - AMD on windows: http://crbug.com/1132366
+    // - Old ARM drivers on Android fail multiple tests, though newer drivers don't (although they
+    //   support MSRTSS and emulation is unnecessary)
     //
-    const bool supportsIndependentDepthStencilResolve =
-        mFeatures.supportsDepthStencilResolve.enabled &&
-        mDepthStencilResolveProperties.independentResolveNone == VK_TRUE;
     ANGLE_FEATURE_CONDITION(&mFeatures, allowMultisampledRenderToTextureEmulation,
-                            isTileBasedRenderer || isSamsung);
+                            (isTileBasedRenderer && !isARM) || isSamsung);
     ANGLE_FEATURE_CONDITION(
         &mFeatures, enableMultisampledRenderToTexture,
         mFeatures.supportsMultisampledRenderToSingleSampled.enabled ||
             mFeatures.supportsMultisampledRenderToSingleSampledGOOGLEX.enabled ||
-            (supportsIndependentDepthStencilResolve &&
+            (mFeatures.supportsDepthStencilResolve.enabled &&
              mFeatures.allowMultisampledRenderToTextureEmulation.enabled));
 
     // Currently we enable cube map arrays based on the imageCubeArray Vk feature.
@@ -4980,6 +5002,10 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
             mFeatures.logMemoryReportCallbacks.applyOverride(false);
         }
     }
+
+    // Check if VK implementation needs to strip-out non-semantic reflection info from shader module
+    // (Default is to assume not supported)
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderNonSemanticInfo, false);
 }
 
 void Renderer::appBasedFeatureOverrides(const vk::ExtensionNameList &extensions) {}

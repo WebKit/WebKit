@@ -101,10 +101,9 @@ CString LocaleIDBuilder::toCanonical()
 
     auto buffer = canonicalizeLocaleIDWithoutNullTerminator(m_buffer.data());
     if (!buffer)
-        return CString();
+        return { };
 
-    auto result = canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value()));
-    return CString(result.data(), result.size());
+    return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value())).span();
 }
 
 // Because ICU's C API doesn't have set[Language|Script|Region] functions...
@@ -362,7 +361,7 @@ const String& IntlLocale::maximal()
                 return m_maximal;
             }
 
-            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.data(), m_localeID.length(), ULOC_KEYWORD_SEPARATOR);
+            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
             if (endOfLanguageScriptRegionVariant != notFound)
                 maximal.appendRange(m_localeID.data() + endOfLanguageScriptRegionVariant, m_localeID.data() + m_localeID.length());
             maximal.append('\0');
@@ -413,7 +412,7 @@ const String& IntlLocale::minimal()
                 return m_minimal;
             }
 
-            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.data(), m_localeID.length(), ULOC_KEYWORD_SEPARATOR);
+            auto endOfLanguageScriptRegionVariant = WTF::find(m_localeID.span(), ULOC_KEYWORD_SEPARATOR);
             if (endOfLanguageScriptRegionVariant != notFound)
                 minimal.appendRange(m_localeID.data() + endOfLanguageScriptRegionVariant, m_localeID.data() + m_localeID.length());
             minimal.append('\0');

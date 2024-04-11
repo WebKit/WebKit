@@ -1,7 +1,6 @@
 <script>
 if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
 onload = async () => {
-  try {
     let adapter12 = await navigator.gpu.requestAdapter({ });
     let device10 = await adapter12.requestDevice({ label: '\u0678' } );
     let canvas25 = document.createElement('canvas');
@@ -16,8 +15,7 @@ onload = async () => {
     }
     );
     let texture95 = gpuCanvasContext17.getCurrentTexture();
-  } catch (e) { }
-  if (window.testRunner) { testRunner.notifyDone() }
+    if (window.testRunner) { testRunner.notifyDone() }
 };
 </script>
 This test passes if it does not crash.

@@ -59,9 +59,9 @@ private:
             unsigned length = string.length();
             ASSERT(length <= s_capacity);
             if (string.is8Bit())
-                copySmallCharacters(m_characters.data(), string.characters8(), length);
+                copySmallCharacters(m_characters.data(), string.span8());
             else
-                copySmallCharacters(m_characters.data(), string.characters16(), length);
+                copySmallCharacters(m_characters.data(), string.span16());
             m_hashAndLength = WYHash::computeHashAndMaskTop8Bits(std::span<const UChar> { m_characters }.first(s_capacity)) | (length << 24);
         }
 
@@ -80,10 +80,14 @@ private:
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
 
         template<typename CharacterType>
-        ALWAYS_INLINE static void copySmallCharacters(UChar* dest, const CharacterType* source, unsigned length)
+        ALWAYS_INLINE static void copySmallCharacters(UChar* destination, std::span<const CharacterType> source)
         {
-            for (unsigned i = 0; i < length; ++i)
-                dest[i] = source[i];
+            if constexpr (std::is_same_v<CharacterType, UChar>)
+                memcpy(destination, source.data(), source.size_bytes());
+            else {
+                for (auto character : source)
+                    *destination++ = character;
+            }
         }
 
         std::array<UChar, s_capacity> m_characters { };

@@ -10995,8 +10995,12 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        if (m_node->isBinaryUseKind(MiscUse, UntypedUse)
+        if (m_node->isBinaryUseKind(MiscUse)
+            || m_node->isBinaryUseKind(MiscUse, UntypedUse)
             || m_node->isBinaryUseKind(UntypedUse, MiscUse)
+            || m_node->isBinaryUseKind(OtherUse)
+            || m_node->isBinaryUseKind(OtherUse, UntypedUse)
+            || m_node->isBinaryUseKind(UntypedUse, OtherUse)
 #if !USE(BIGINT32)
             || m_node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse)
             || m_node->isBinaryUseKind(NeitherDoubleNorHeapBigIntNorStringUse, NotDoubleUse)) {
@@ -21923,6 +21927,7 @@ IGNORE_CLANG_WARNINGS_END
 
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
+            case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
                 return nullptr;
@@ -21965,6 +21970,7 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock lastNext = m_out.appendTo(checkCase, trueCase);
             switch (arrayMode.arrayClass()) {
             case Array::OriginalArray:
+            case Array::OriginalNonCopyOnWriteArray:
             case Array::OriginalCopyOnWriteArray:
                 DFG_CRASH(m_graph, m_node, "Unexpected original array");
                 return nullptr;

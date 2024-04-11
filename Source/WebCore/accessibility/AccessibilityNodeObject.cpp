@@ -1731,8 +1731,10 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
                 continue;
 
             if (child->isListBox()) {
-                for (const auto& selectedGrandChild : child->selectedChildren())
-                    appendNameToStringBuilder(builder, accessibleNameForNode(*selectedGrandChild->node()));
+                if (auto selectedGrandChildren = child->selectedChildren()) {
+                    for (const auto& selectedGrandChild : *selectedGrandChildren)
+                        appendNameToStringBuilder(builder, accessibleNameForNode(*selectedGrandChild->node()));
+                }
                 continue;
             }
 
@@ -2467,9 +2469,8 @@ String AccessibilityNodeObject::stringValue() const
             if (!child->isListBox())
                 continue;
 
-            auto selection = child->selectedChildren();
-            if (!selection.isEmpty() && selection.first())
-                return selection.first()->stringValue();
+            if (auto selection = child->selectedChildren(); selection && selection->size() && selection->first())
+                return selection->first()->stringValue();
             break;
         }
     }
@@ -2542,7 +2543,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
 
         // The Accname specification states that if the name is being calculated for a combobox
         // or listbox inside a labeling element, return the text alternative of the chosen option.
-        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+        std::optional<AXCoreObject::AccessibilityChildrenVector> selectedChildren;
         if (axObject->isListBox())
             selectedChildren = axObject->selectedChildren();
         else if (axObject->isComboBox()) {
@@ -2556,8 +2557,10 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
 
         StringBuilder builder;
         String childText;
-        for (const auto& child : selectedChildren)
-            appendNameToStringBuilder(builder, accessibleNameForNode(*child->node()));
+        if (selectedChildren) {
+            for (const auto& child : *selectedChildren)
+                appendNameToStringBuilder(builder, accessibleNameForNode(*child->node()));
+        }
 
         childText = builder.toString();
         if (!childText.isEmpty())

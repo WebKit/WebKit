@@ -72,10 +72,10 @@ public:
     virtual void setPlaybackRate(double) = 0;
     virtual void selectAudioMediaOption(uint64_t index) = 0;
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
-    virtual void toggleFullscreen() = 0;
     virtual void togglePictureInPicture() = 0;
     virtual void toggleInWindowFullscreen() = 0;
     virtual void enterFullscreen() = 0;
+    virtual void exitFullscreen() = 0;
     virtual void toggleMuted() = 0;
     virtual void setMuted(bool) = 0;
     virtual void setVolume(double) = 0;

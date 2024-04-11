@@ -162,7 +162,7 @@ void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>
     callbacks.append(WTFMove(callback));
 }
 
-void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
+void Queue::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     ASSERT(m_submittedCommandBufferCount >= m_scheduledCommandBufferCount);
     auto devicePtr = m_device.get();
@@ -209,21 +209,21 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
         auto device = protectedThis->m_device.get();
         if (!device || !device->device())
             return;
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_scheduledCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkScheduledCallbacks.take(protectedThis->m_scheduledCommandBufferCount))
                 callback();
-        }, CompletionHandlerCallThread::AnyThread));
+        });
     }];
     [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
         auto device = protectedThis->m_device.get();
         if (!device || !device->device())
             return;
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+        protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);
-        }, CompletionHandlerCallThread::AnyThread));
+        });
     }];
 
     [commandBuffer commit];
@@ -590,10 +590,29 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
         bytesPerImage = 0;
     }
 
+    switch (textureDimension) {
+    case WGPUTextureDimension_1D:
+        if (!widthForMetal)
+            return;
+        break;
+    case WGPUTextureDimension_2D:
+        if (!widthForMetal || !heightForMetal)
+            return;
+        break;
+    case WGPUTextureDimension_3D:
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+        break;
+    case WGPUTextureDimension_Force32:
+        return;
+    }
+
     Vector<uint8_t> newData;
     const auto newBytesPerRow = blockSize * ((widthForMetal / blockWidth) + ((widthForMetal % blockWidth) ? 1 : 0));
     auto dataLayoutOffset = dataLayout.offset;
-    if (isCompressed && newBytesPerRow != bytesPerRow && (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)) {
+    const bool widthMismatch = newBytesPerRow != bytesPerRow && widthForMetal == logicalSize.width && heightForMetal == logicalSize.height;
+    const bool multipleOfBlockSize = bytesPerRow % blockSize;
+    if (isCompressed && (widthMismatch || multipleOfBlockSize)) {
 
         auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
         auto newBytesPerImage = newBytesPerRow * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
@@ -646,7 +665,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
             {
                 switch (textureDimension) {
                 case WGPUTextureDimension_1D: {
-                    if (!size.width)
+                    if (!widthForMetal)
                         return;
 
                     auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
@@ -664,7 +683,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     break;
                 }
                 case WGPUTextureDimension_2D: {
-                    if (!size.width || !size.height)
+                    if (!widthForMetal || !heightForMetal)
                         return;
 
                     auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, widthForMetal, heightForMetal);
@@ -682,7 +701,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, si
                     break;
                 }
                 case WGPUTextureDimension_3D: {
-                    if (!size.width || !size.height || !size.depthOrArrayLayers)
+                    if (!widthForMetal || !heightForMetal || !depthForMetal)
                         return;
 
                     auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, widthForMetal, heightForMetal, depthForMetal);

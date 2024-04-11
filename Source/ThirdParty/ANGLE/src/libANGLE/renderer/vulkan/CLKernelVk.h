@@ -9,6 +9,7 @@
 #define LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLKernelImpl.h"
@@ -80,6 +81,7 @@ class CLKernelVk : public CLKernelImpl
     const CLKernelArguments &getArgs() { return mArgs; }
     VkDescriptorSet &getDescriptorSet() { return mDescriptorSet; }
     vk::AtomicBindingPointer<vk::PipelineLayout> &getPipelineLayout() { return mPipelineLayout; }
+    vk::DescriptorSetLayoutPointerArray &getDescriptorSetLayouts() { return mDescriptorSetLayouts; }
 
   private:
     CLProgramVk *mProgram;
@@ -89,6 +91,7 @@ class CLKernelVk : public CLKernelImpl
     CLKernelArguments mArgs;
     VkDescriptorSet mDescriptorSet{VK_NULL_HANDLE};
     vk::AtomicBindingPointer<vk::PipelineLayout> mPipelineLayout;
+    vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts{};
 };
 
 }  // namespace rx

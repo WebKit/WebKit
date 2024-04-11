@@ -38,8 +38,10 @@ std::unique_ptr<GLFence> GLFence::create()
         return nullptr;
 
     if (context->version() >= 300 || context->glExtensions().APPLE_sync) {
-        if (auto* sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0))
+        if (auto* sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0)) {
+            glFlush();
             return makeUnique<GLFence>(sync);
+        }
         return nullptr;
     }
 

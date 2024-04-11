@@ -308,4 +308,14 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
 }
 
+TEST(ElementTargeting, ContentInsideShadowRoot)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-4"];
+
+    RetainPtr elements = [webView targetedElementInfoAt:CGPointMake(100, 150)];
+    EXPECT_EQ([elements count], 1U);
+    EXPECT_TRUE([[elements firstObject].selectors containsObject:@"#container"]);
+}
+
 } // namespace TestWebKitAPI

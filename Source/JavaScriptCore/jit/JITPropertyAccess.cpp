@@ -607,7 +607,6 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
-    using BaselineJITRegisters::GetById::scratch1GPR;
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
@@ -615,16 +614,6 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
-
-    if (*ident == vm().propertyNames->length && shouldEmitProfiling()) {
-        load8FromMetadata(bytecode, OpGetById::Metadata::offsetOfModeMetadata() + GetByIdModeMetadata::offsetOfMode(), scratch1GPR);
-        Jump notArrayLengthMode = branch32(NotEqual, TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)), scratch1GPR);
-        emitArrayProfilingSiteWithCell(
-            bytecode,
-            OpGetById::Metadata::offsetOfModeMetadata() + GetByIdModeMetadataArrayLength::offsetOfArrayProfile(),
-            baseJSR.payloadGPR(), scratch1GPR);
-        notArrayLengthMode.link(this);
-    }
 
     JITGetByIdGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
@@ -640,7 +629,52 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
+void JIT::emit_op_get_length(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetLength>();
+    VirtualRegister resultVReg = bytecode.m_dst;
+    VirtualRegister baseVReg = bytecode.m_base;
+    const Identifier* ident = &vm().propertyNames->length;
+
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::resultJSR;
+    using BaselineJITRegisters::GetById::stubInfoGPR;
+    using BaselineJITRegisters::GetById::scratch1GPR;
+
+    emitGetVirtualRegister(baseVReg, baseJSR);
+
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
+
+    emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
+
+    if (shouldEmitProfiling())
+        emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratch1GPR);
+
+    JITGetByIdGenerator gen(
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, stubInfoGPR, AccessType::GetById);
+
+    gen.generateBaselineDataICFastPath(*this);
+    resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+    addSlowCase();
+    m_getByIds.append(gen);
+
+    setFastPathResumePoint();
+    emitValueProfilingSite(bytecode, resultJSR);
+    emitPutVirtualRegister(resultVReg, resultJSR);
+}
+
 void JIT::emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
+{
+    ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
+    JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
+    linkAllSlowCases(iter);
+    gen.reportBaselineDataICSlowPathBegin(label());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
+}
+
+void JIT::emitSlow_op_get_length(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];

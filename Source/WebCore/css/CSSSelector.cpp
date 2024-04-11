@@ -311,6 +311,8 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
         return PseudoId::ViewTransitionOld;
     case PseudoElement::ViewTransitionNew:
         return PseudoId::ViewTransitionNew;
+    case PseudoElement::InternalWritingSuggestions:
+        return PseudoId::InternalWritingSuggestions;
 #if ENABLE(VIDEO)
     case PseudoElement::Cue:
 #endif

@@ -410,6 +410,11 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     {
         return isFeatureEnabled(Feature::SupportsHostImageCopy);
     }
+    bool hasDepthStencilResolveThroughAttachment() const
+    {
+        return isFeatureEnabled(Feature::SupportsDepthStencilResolve) &&
+               !isFeatureEnabled(Feature::DisableDepthStencilResolveThroughAttachment);
+    }
 
     CounterNameToIndexMap mIndexMap;
 };
@@ -1738,6 +1743,83 @@ void main()
     test(GLColor::cyan, GLColor::magenta, Invalidate::AllAtEnd);
 }
 
+// Test resolving the depth/stencil attachment
+TEST_P(VulkanPerformanceCounterTest_ES31, MultisampleDepthStencilResolve)
+{
+    ANGLE_SKIP_TEST_IF(!hasDepthStencilResolveThroughAttachment());
+
+    constexpr int kWidth  = 24;
+    constexpr int kHeight = 12;
+    glViewport(0, 0, kWidth, kHeight);
+
+    GLFramebuffer msaaFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Create two resolve FBOs and textures. Use different texture levels and layers.
+    GLTexture resolveTexture;
+    glBindTexture(GL_TEXTURE_2D, resolveTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_DEPTH24_STENCIL8, kWidth * 4, kHeight * 4);
+
+    GLFramebuffer resolveFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           resolveTexture, 2);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(red, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Red());
+
+    // Resolve attachment should be used and the MSAA attachment should be invalidated.
+    // Only the resolve attachment should have Store.
+    //
+    // Expect rpCount+1, depth(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0),
+    // stencil(Clears+0, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
+    angle::VulkanPerfCounters expected;
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 0, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 0, 0, 1, 0, &expected);
+    expected.depthAttachmentResolves   = getPerfCounters().depthAttachmentResolves + 1;
+    expected.stencilAttachmentResolves = getPerfCounters().stencilAttachmentResolves + 1;
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0x55, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    // Initialize the depth/stencil image
+    glBindFramebuffer(GL_FRAMEBUFFER, msaaFBO);
+    drawQuad(red, essl1_shaders::PositionAttrib(), 0.3f);
+    ASSERT_GL_NO_ERROR();
+
+    // Resolve depth and stencil, then verify the results
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
+                      GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+
+    // Invalidate depth/stencil
+    const GLenum discards[] = {GL_DEPTH_STENCIL_ATTACHMENT};
+    glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards);
+
+    // Break the render pass
+    glFinish();
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    EXPECT_EQ(expected.depthAttachmentResolves, getPerfCounters().depthAttachmentResolves);
+    EXPECT_EQ(expected.stencilAttachmentResolves, getPerfCounters().stencilAttachmentResolves);
+    EXPECT_DEPTH_OP_COUNTERS(getPerfCounters(), expected);
+    EXPECT_STENCIL_OP_COUNTERS(getPerfCounters(), expected);
+
+    ASSERT_GL_NO_ERROR();
+}
 // Ensures a read-only depth-stencil feedback loop works in a single RenderPass.
 TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthStencilFeedbackLoopUsesSingleRenderPass)
 {

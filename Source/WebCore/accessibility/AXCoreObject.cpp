@@ -117,31 +117,6 @@ bool AXCoreObject::isTextControl() const
     }
 }
 
-bool AXCoreObject::canHaveSelectedChildren() const
-{
-    switch (roleValue()) {
-    // These roles are containers whose children support aria-selected:
-    case AccessibilityRole::Grid:
-    case AccessibilityRole::ListBox:
-    case AccessibilityRole::TabList:
-    case AccessibilityRole::Tree:
-    case AccessibilityRole::TreeGrid:
-    case AccessibilityRole::List:
-    // These roles are containers whose children are treated as selected by assistive
-    // technologies. We can get the "selected" item via aria-activedescendant or the
-    // focused element.
-    case AccessibilityRole::Menu:
-    case AccessibilityRole::MenuBar:
-    case AccessibilityRole::ComboBox:
-#if USE(ATSPI)
-    case AccessibilityRole::MenuListPopup:
-#endif
-        return true;
-    default:
-        return false;
-    }
-}
-
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::tabChildren()
 {
     if (roleValue() != AccessibilityRole::TabList)

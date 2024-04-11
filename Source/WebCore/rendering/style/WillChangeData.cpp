@@ -36,7 +36,7 @@ bool WillChangeData::operator==(const WillChangeData& other) const
 bool WillChangeData::containsScrollPosition() const
 {
     for (const auto& feature : m_animatableFeatures) {
-        if (feature.feature() == ScrollPosition)
+        if (feature.feature() == Feature::ScrollPosition)
             return true;
     }
     return false;
@@ -45,7 +45,7 @@ bool WillChangeData::containsScrollPosition() const
 bool WillChangeData::containsContents() const
 {
     for (const auto& feature : m_animatableFeatures) {
-        if (feature.feature() == Contents)
+        if (feature.feature() == Feature::Contents)
             return true;
     }
     return false;
@@ -164,7 +164,7 @@ static bool propertyTriggersCompositingOnBoxesOnly(CSSPropertyID property)
 
 void WillChangeData::addFeature(Feature feature, CSSPropertyID propertyID)
 {
-    ASSERT(feature == Property || propertyID == CSSPropertyInvalid);
+    ASSERT(feature == Feature::Property || propertyID == CSSPropertyInvalid);
     m_animatableFeatures.append(AnimatableFeature(feature, propertyID));
 
     m_canCreateStackingContext |= propertyCreatesStackingContext(propertyID);
@@ -176,7 +176,7 @@ void WillChangeData::addFeature(Feature feature, CSSPropertyID propertyID)
 WillChangeData::FeaturePropertyPair WillChangeData::featureAt(size_t index) const
 {
     if (index >= m_animatableFeatures.size())
-        return FeaturePropertyPair(Invalid, CSSPropertyInvalid);
+        return FeaturePropertyPair(Feature::Invalid, CSSPropertyInvalid);
 
     return m_animatableFeatures[index].featurePropertyPair();
 }
