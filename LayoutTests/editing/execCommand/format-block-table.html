@@ -1,42 +1,70 @@
 <!DOCTYPE html>
-<html>
-<body>
-<script src="../../resources/dump-as-markup.js"></script>
-<div id="test0" contenteditable>
-<table><tr><td>hello</td><td>world</td></tr></table>
-</div>
-<div id="test1" contenteditable>
-<table><tr><td>hello</td><td>world</td></tr></table>
-</div>
-<div id="test2" contenteditable>
-<table><tr><td><p>hello</p><div>world</div></td><td>WebKit</td></tr></table>
-</div>
-<div id="test3" contenteditable>
-<table><tr><td><ul><li>hello</li><li>world</li></ul></td><td>WebKit</td></tr></table>
-</div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/assert-selection.js"></script>
 <script>
+test(() => assert_selection(
+  [
+    '<div contenteditable>',
+      '^<table><tr><td>hello</td><td>world</td></tr></table>|',
+    '</div>',
+  ].join(''),
+  'formatBlock P',
+  [
+    '<div contenteditable>',
+      '<p>^<table><tbody><tr><td>hello</td><td>world</td></tr></tbody></table>|</p>',
+    '</div>',
+  ].join('')), '0 select all children with P');
 
-function testIndentation(containerId, selector, value) {
-    var container = document.getElementById(containerId);
-    selector(container);
-    Markup.dump(container, 'Formatting');
-    document.execCommand('FormatBlock', false, value);
-    Markup.dump(container, 'by ' + value + ' yields');
-}
+test(() => assert_selection(
+  [
+    '<div contenteditable>',
+      '<table><tr><td>^hello|</td><td>world</td></tr></table>',
+    '</div>',
+  ].join(''),
+  'formatBlock P',
+  [
+    '<div contenteditable>',
+      '<table><tbody><tr>',
+        '<td><p>^hello|</p></td><td>world</td>',
+      '</tr></tbody></table>',
+    '</div>',
+  ].join('')), '1 select first cell with BLOCKQUOTE');
 
-function selectAll(container) {
-    window.getSelection().selectAllChildren(container);
-}
+test(() => assert_selection(
+  [
+    '<div contenteditable>',
+      '<table><tr>',
+        '<td>^<p>hello</p>|<div>world</div></td><td>Blink</td>',
+      '</tr></table>',
+    '</div>',
+  ].join(''),
+  'formatBlock BLOCKQUOTE',
+  [
+    '<div contenteditable>',
+      '<table><tbody><tr>',
+        '<td><blockquote>^hello|</blockquote><div>world</div></td><td>Blink</td>',
+      '</tr></tbody></table>',
+    '</div>',
+  ].join('')), '2 select first cell with BLOCKQUOTE');
 
-function selectFirstCell(container) {
-    window.getSelection().selectAllChildren(container.getElementsByTagName('td')[0]);
-}
-
-testIndentation('test0', selectAll, 'p');
-testIndentation('test1', selectFirstCell, 'blockquote');
-testIndentation('test2', selectFirstCell, 'h3');
-testIndentation('test3', selectFirstCell, 'address');
-
+test(() => assert_selection(
+  [
+    '<div contenteditable>',
+      '<table><tr>',
+        '<td>^<ul><li>hello</li><li>world</li></ul>|</td><td>Blink</td>',
+      '</tr></table>',
+    '</div>',
+  ].join(''),
+  'formatBlock ADDRESS',
+  [
+    '<div contenteditable>',
+      '<table><tbody><tr>',
+        '<td><address>',
+          '<ul><li>^hello</li></ul><ul><li>world|</li></ul>',
+        '</address></td>',
+        '<td>Blink</td>',
+      '</tr></tbody></table>',
+    '</div>',
+  ].join('')), '3 select first cell with ADDRESS');
 </script>
-</body>
-</html>
