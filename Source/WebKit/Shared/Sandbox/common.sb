@@ -72,3 +72,4 @@
 (define (webcontent-process-launched)
     (state-flag "local:WebContentProcessLaunched"))
 
+(define (notify-blocking) (require-entitlement "com.apple.developer.web-browser-engine.restrict.notifyd"))
