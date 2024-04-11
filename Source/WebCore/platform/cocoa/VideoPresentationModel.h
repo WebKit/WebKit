@@ -116,7 +116,7 @@ public:
     virtual void didExitPictureInPicture() { }
     virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) { }
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

@@ -224,8 +224,31 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     }
 
     _page->requestActiveNowPlayingSessionInfo([handler = makeBlockPtr(callback)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
-        handler(nowPlayingInfo.allowsNowPlayingControlsVisibility, registeredAsNowPlayingApplication, nowPlayingInfo.title, nowPlayingInfo.duration, nowPlayingInfo.currentTime, nowPlayingInfo.uniqueIdentifier.toUInt64());
+        handler(nowPlayingInfo.allowsNowPlayingControlsVisibility, registeredAsNowPlayingApplication, nowPlayingInfo.metadata.title, nowPlayingInfo.duration, nowPlayingInfo.currentTime, nowPlayingInfo.uniqueIdentifier.toUInt64());
     });
+}
+
+- (void)_setNowPlayingMetadataObserver:(void(^)(_WKNowPlayingMetadata *))observer
+{
+    RefPtr page = _page;
+    if (!page)
+        return;
+
+    if (!observer) {
+        page->setNowPlayingMetadataObserverForTesting(nullptr);
+        return;
+    }
+
+    auto nowPlayingMetadataObserver = makeUnique<WebCore::NowPlayingMetadataObserver>([observer = makeBlockPtr(observer)](auto& metadata) {
+        RetainPtr nowPlayingMetadata = adoptNS([[_WKNowPlayingMetadata alloc] init]);
+        [nowPlayingMetadata setTitle:metadata.title];
+        [nowPlayingMetadata setArtist:metadata.artist];
+        [nowPlayingMetadata setAlbum:metadata.album];
+        [nowPlayingMetadata setSourceApplicationIdentifier:metadata.sourceApplicationIdentifier];
+        observer(nowPlayingMetadata.get());
+    });
+
+    page->setNowPlayingMetadataObserverForTesting(WTFMove(nowPlayingMetadataObserver));
 }
 
 - (BOOL)_scrollingUpdatesDisabledForTesting
@@ -862,3 +885,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 @end
 #endif
+
+@implementation _WKNowPlayingMetadata : NSObject
+@end

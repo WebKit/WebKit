@@ -802,4 +802,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if HAVE(SPATIAL_TRACKING_LABEL)
     SetDefaultSpatialTrackingLabel(String label)
 #endif
+
+    StartObservingNowPlayingMetadata()
+    StopObservingNowPlayingMetadata()
 }

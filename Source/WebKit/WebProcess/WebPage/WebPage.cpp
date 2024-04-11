@@ -1908,6 +1908,8 @@ void WebPage::close()
     m_viewGestureGeometryCollector = nullptr;
 #endif
 
+    stopObservingNowPlayingMetadata();
+
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_identifier);
 
@@ -9479,6 +9481,28 @@ void WebPage::setDefaultSpatialTrackingLabel(const String& label)
         page->setDefaultSpatialTrackingLabel(label);
 }
 #endif
+
+void WebPage::startObservingNowPlayingMetadata()
+{
+    if (m_nowPlayingMetadataObserver)
+        return;
+
+    m_nowPlayingMetadataObserver = makeUnique<NowPlayingMetadataObserver>([weakThis = WeakPtr { *this }](auto& metadata) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->send(Messages::WebPageProxy::NowPlayingMetadataChanged { metadata });
+    });
+
+    WebCore::PlatformMediaSessionManager::sharedManager().addNowPlayingMetadataObserver(*m_nowPlayingMetadataObserver);
+}
+
+void WebPage::stopObservingNowPlayingMetadata()
+{
+    auto nowPlayingMetadataObserver = std::exchange(m_nowPlayingMetadataObserver, nullptr);
+    if (!nowPlayingMetadataObserver)
+        return;
+
+    WebCore::PlatformMediaSessionManager::sharedManager().removeNowPlayingMetadataObserver(*nowPlayingMetadataObserver);
+}
 
 } // namespace WebKit
 

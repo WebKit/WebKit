@@ -29,6 +29,7 @@
 
 #include "PlatformMediaSession.h"
 #include "VideoReceiverEndpoint.h"
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -87,6 +88,9 @@ public:
     virtual const String& spatialTrackingLabel() const { return emptyString(); }
     virtual void setSpatialTrackingLabel(const String&) { }
 #endif
+
+    virtual void addNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) { }
+    virtual void removeNowPlayingMetadataObserver(const WebCore::NowPlayingMetadataObserver&) { }
 
     using ExternalPlaybackTargetType = PlaybackSessionModelExternalPlaybackTargetType;
 

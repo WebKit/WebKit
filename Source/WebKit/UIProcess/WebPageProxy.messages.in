@@ -639,4 +639,6 @@ messages -> WebPageProxy {
     BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, std::span<const uint8_t> dataToken) -> (std::span<const uint8_t> token, int processIdentifier) Synchronous
     UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
     DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
+
+    NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
 }

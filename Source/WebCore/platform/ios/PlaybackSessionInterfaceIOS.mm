@@ -105,6 +105,14 @@ void PlaybackSessionInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerI
     m_playerIdentifier = WTFMove(identifier);
 }
 
+void PlaybackSessionInterfaceIOS::startObservingNowPlayingMetadata()
+{
+}
+
+void PlaybackSessionInterfaceIOS::stopObservingNowPlayingMetadata()
+{
+}
+
 #if !RELEASE_LOG_DISABLED
 const void* PlaybackSessionInterfaceIOS::logIdentifier() const
 {

@@ -39,6 +39,7 @@
 #include "Navigator.h"
 #include "NavigatorAudioSession.h"
 #include "NavigatorMediaSession.h"
+#include "NowPlayingInfo.h"
 #include "PageInlines.h"
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
@@ -542,18 +543,20 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         return { };
 
     NowPlayingInfo nowPlayingInfo {
-        { },
-        { },
-        { },
-        { },
+        {
+            { },
+            { },
+            { },
+            { },
+            { }
+        },
         MediaPlayer::invalidTime(),
         MediaPlayer::invalidTime(),
         1.0,
         false,
         m_currentIdentifier,
         isPlaying(),
-        !page->isVisibleAndActive(),
-        { }
+        !page->isVisibleAndActive()
     };
 
 #if ENABLE(MEDIA_SESSION)
@@ -561,10 +564,10 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
         mediaSession->updateNowPlayingInfo(nowPlayingInfo);
 #endif
 
-    if (nowPlayingInfo.title.isEmpty()) {
+    if (nowPlayingInfo.metadata.title.isEmpty()) {
         RegistrableDomain domain { document->securityOrigin().data() };
         if (!domain.isEmpty())
-            nowPlayingInfo.title = domain.string();
+            nowPlayingInfo.metadata.title = domain.string();
     }
 
     return nowPlayingInfo;

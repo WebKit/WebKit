@@ -6847,11 +6847,17 @@ header: <WebCore/NowPlayingInfo.h>
     RefPtr<WebCore::Image> image;
 }
 
-struct WebCore::NowPlayingInfo {
+header: <WebCore/NowPlayingInfo.h>
+[CustomHeader] struct WebCore::NowPlayingMetadata {
     String title;
     String artist;
     String album;
     String sourceApplicationIdentifier;
+    std::optional<WebCore::NowPlayingInfoArtwork> artwork;
+}
+
+struct WebCore::NowPlayingInfo {
+    WebCore::NowPlayingMetadata metadata;
     double duration;
     double currentTime;
     double rate;
@@ -6859,7 +6865,6 @@ struct WebCore::NowPlayingInfo {
     WebCore::MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
-    std::optional<WebCore::NowPlayingInfoArtwork> artwork;
 }
 
 struct WebCore::VideoConfiguration {

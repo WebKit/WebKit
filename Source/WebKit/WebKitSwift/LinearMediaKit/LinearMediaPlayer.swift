@@ -35,7 +35,6 @@ private class SwiftOnlyData: NSObject {
     @Published var thumbnailMaterial: VideoMaterial?
     @Published var videoMaterial: VideoMaterial?
     @Published var peculiarEntity: PeculiarEntity?
-    @Published var contentMetadata: ContentMetadataContainer?
     
     // FIXME: It should be possible to store these directly on WKSLinearMediaPlayer since they are
     // bridged to NSDate, but a bug prevents that from compiling (rdar://121877511).
@@ -92,6 +91,7 @@ private class SwiftOnlyData: NSObject {
     var currentLegibleTrack: WKSLinearMediaTrack?
     var legibleTracks: [WKSLinearMediaTrack] = []
     var contentType: WKSLinearMediaContentType = .none
+    var contentMetadata: WKSLinearMediaContentMetadata = .init(title: nil, subtitle: nil)
     var transportBarIncludesTitleView = true
     var artwork: Data?
     var isPlayableOffline = false
@@ -394,7 +394,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     }
 
     public var contentMetadataPublisher: AnyPublisher<ContentMetadataContainer, Never> {
-        swiftOnlyData.$contentMetadata.compactMap { $0 }.eraseToAnyPublisher()
+        publisher(for: \.contentMetadata).map { $0.contentMetadata }.eraseToAnyPublisher()
     }
 
     public var transportBarIncludesTitleViewPublisher: AnyPublisher<Bool, Never> {

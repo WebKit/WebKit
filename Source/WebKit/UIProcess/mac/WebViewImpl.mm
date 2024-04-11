@@ -6102,7 +6102,7 @@ void WebViewImpl::nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSStrin
     }
 
     m_page->requestActiveNowPlayingSessionInfo([completionHandler = makeBlockPtr(completionHandler)] (bool registeredAsNowPlayingApplication, WebCore::NowPlayingInfo&& nowPlayingInfo) {
-        completionHandler(nowPlayingInfo.title, nowPlayingInfo.artist);
+        completionHandler(nowPlayingInfo.metadata.title, nowPlayingInfo.metadata.artist);
     });
 #else
     completionHandler(nil, nil);

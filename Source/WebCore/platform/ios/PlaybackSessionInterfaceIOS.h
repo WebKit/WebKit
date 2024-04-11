@@ -81,6 +81,9 @@ public:
     std::optional<MediaPlayerIdentifier> playerIdentifier() const;
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
+    virtual void startObservingNowPlayingMetadata();
+    virtual void stopObservingNowPlayingMetadata();
+
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const;
     const Logger* loggerPtr() const;

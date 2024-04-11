@@ -69,6 +69,7 @@
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
 #include <WebCore/MediaKeySystemRequest.h>
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformLayerIdentifier.h>
@@ -1740,6 +1741,9 @@ public:
     void enableTextIndicatorStyleAfterElementWithID(const String&, const WTF::UUID&);
 #endif
 
+    void startObservingNowPlayingMetadata();
+    void stopObservingNowPlayingMetadata();
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2782,6 +2786,8 @@ private:
     UniqueRef<UnifiedTextReplacementController> m_unifiedTextReplacementController;
     HashMap<WTF::UUID, Ref<WebCore::Range>> m_textIndicatorStyleEnablementRanges;
 #endif
+
+    std::unique_ptr<WebCore::NowPlayingMetadataObserver> m_nowPlayingMetadataObserver;
 
     mutable RefPtr<Logger> m_logger;
 };

@@ -27,7 +27,9 @@
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
+#include <WebCore/NowPlayingMetadataObserver.h>
 #include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <wtf/Observer.h>
 
 OBJC_CLASS WKLinearMediaPlayerDelegate;
 
@@ -56,15 +58,20 @@ public:
     void wirelessVideoPlaybackDisabledChanged(bool) final { }
     void mutedChanged(bool) final;
     void volumeChanged(double) final;
+    void startObservingNowPlayingMetadata() final;
+    void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final;
 #endif
+
+    void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
 private:
     PlaybackSessionInterfaceLMK(PlaybackSessionModel&);
 
     RetainPtr<WKSLinearMediaPlayer> m_player;
     RetainPtr<WKLinearMediaPlayerDelegate> m_playerDelegate;
+    WebCore::NowPlayingMetadataObserver m_nowPlayingMetadataObserver;
 };
 
 } // namespace WebKit

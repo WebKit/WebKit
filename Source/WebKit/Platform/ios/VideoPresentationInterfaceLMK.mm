@@ -78,12 +78,14 @@ void VideoPresentationInterfaceLMK::invalidatePlayerViewController()
 void VideoPresentationInterfaceLMK::presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     [linearMediaPlayer() enterFullscreen];
+    playbackSessionInterface().startObservingNowPlayingMetadata();
     completionHandler(YES, nil);
 }
 
 void VideoPresentationInterfaceLMK::dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&& completionHandler)
 {
     [linearMediaPlayer() exitFullscreen];
+    playbackSessionInterface().stopObservingNowPlayingMetadata();
     completionHandler(YES, nil);
 }
 

@@ -32,6 +32,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class LMPlayableViewController;
+@class WKSLinearMediaContentMetadata;
 @class WKSLinearMediaPlayer;
 @class WKSLinearMediaTimeRange;
 @class WKSLinearMediaTrack;
@@ -136,6 +137,7 @@ API_AVAILABLE(visionos(1.0))
 @property (nonatomic, strong, nullable) WKSLinearMediaTrack *currentLegibleTrack;
 @property (nonatomic, copy) NSArray<WKSLinearMediaTrack *> *legibleTracks;
 @property (nonatomic) WKSLinearMediaContentType contentType;
+@property (nonatomic, strong) WKSLinearMediaContentMetadata *contentMetadata;
 @property (nonatomic) BOOL transportBarIncludesTitleView;
 @property (nonatomic, copy, nullable) NSData *artwork;
 @property (nonatomic) BOOL isPlayableOffline;
