@@ -363,6 +363,11 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         depthStencilAttachmentToClear = nil;
 
     id<MTLDevice> device = m_device->device();
+    if (!device) {
+        endEncoding(existingEncoder);
+        return;
+    }
+
     id<MTLRenderCommandEncoder> clearRenderCommandEncoder = existingEncoder;
     if (!clearRenderCommandEncoder) {
         MTLRenderPassDescriptor* clearDescriptor = [MTLRenderPassDescriptor new];
