@@ -51,3 +51,8 @@ http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ 
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
 
 webkit.org/b/268124 imported/w3c/web-platform-tests/cookie-store/change_eventhandler_for_document_cookie.https.window.html [ Failure ]
+
+# 0.01% image results and missing reference.
+imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]

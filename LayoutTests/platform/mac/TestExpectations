@@ -775,9 +775,6 @@ fast/css/stylesheet-candidate-nodes-crash.xhtml [ Pass Failure ]
 platform/mac/fast/loader/file-url-mimetypes-3.html [ Failure ]
 platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 
-# rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
-imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
 
@@ -1929,7 +1926,6 @@ http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Pass Failure ]
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 
 # webkit.org/b/223223 these two tests fail on Apple Silicon only
-[ Debug arm64 ] imported/w3c/web-platform-tests/svg/import/paths-data-03-f-manual.svg [ Failure ]
 [ Debug arm64 ] svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
 
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
@@ -2482,7 +2478,7 @@ webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 webkit.org/b/265957 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 # SVG Animations Failures on WPT Import
-imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
+imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ Pass Failure ]
 
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
@@ -2503,8 +2499,6 @@ http/tests/media/fairplay/fps-mse-unmuxed-mpts.html [ Skip ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
 
 webkit.org/b/269852 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 

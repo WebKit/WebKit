@@ -7446,7 +7446,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-units-strokewidth-n
 imported/w3c/web-platform-tests/svg/painting/reftests/markers-orient-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ Failure ]
 
 # tests added with webkit.org/b/272414
 webkit.org/b/272415 imported/w3c/web-platform-tests/svg/path/property/marker-path.svg [ ImageOnlyFailure ]
