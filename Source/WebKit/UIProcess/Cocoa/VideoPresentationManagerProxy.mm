@@ -40,6 +40,7 @@
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -1313,8 +1314,17 @@ void VideoPresentationManagerProxy::setVideoLayerGravity(PlaybackSessionContextI
 
 void VideoPresentationManagerProxy::fullscreenModeChanged(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    if (m_page)
-        m_page->send(Messages::VideoPresentationManager::FullscreenModeChanged(contextId, mode));
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    // FIXME: return to element fullscreen when exiting standard fullscreen
+    if (mode == HTMLMediaElementEnums::VideoFullscreenModeStandard && page->fullScreenManager() && page->fullScreenManager()->isFullScreen())
+        m_page->fullScreenManager()->requestExitFullScreen();
+#endif
+
+    page->send(Messages::VideoPresentationManager::FullscreenModeChanged(contextId, mode));
 }
 
 void VideoPresentationManagerProxy::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId)

@@ -45,6 +45,10 @@ private class SwiftOnlyData: NSObject {
     @Published var presentationState: WKSLinearMediaPresentationState = .inline
 }
 
+enum LinearMediaPlayerErrors: Error {
+    case invalidStateError
+}
+
 @_objcImplementation extension WKSLinearMediaPlayer {
     weak var delegate: WKSLinearMediaPlayerDelegate?
 
@@ -117,6 +121,9 @@ private class SwiftOnlyData: NSObject {
         swiftOnlyData.presentationState
     }
 
+    @nonobjc private var enterFullscreenCompletionHandler: ((Bool, Error?) -> Void)?
+    @nonobjc private var exitFullscreenCompletionHandler: ((Bool, Error?) -> Void)?
+
     @nonobjc private var swiftOnlyData: SwiftOnlyData
     @nonobjc private var cancellables: [AnyCancellable] = []
 
@@ -144,23 +151,35 @@ private class SwiftOnlyData: NSObject {
         return viewController
     }
 
-    func enterFullscreen() {
+    func enterFullscreen(completionHandler: @escaping (Bool, Error?) -> Void) {
+        if let enterFullscreenCompletionHandler {
+            enterFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+            self.enterFullscreenCompletionHandler = nil
+        }
+
         switch presentationState {
         case .inline, .enteringFullscreen, .exitingFullscreen:
+            enterFullscreenCompletionHandler = completionHandler
             swiftOnlyData.presentationState = .fullscreen
         case .fullscreen:
-            break
+            completionHandler(true, nil)
         @unknown default:
             fatalError()
         }
     }
 
-    func exitFullscreen() {
+    func exitFullscreen(completionHandler: @escaping (Bool, Error?) -> Void) {
+        if let exitFullscreenCompletionHandler {
+            exitFullscreenCompletionHandler(false, LinearMediaPlayerErrors.invalidStateError)
+            self.exitFullscreenCompletionHandler = nil
+        }
+
         switch presentationState {
         case .exitingFullscreen, .fullscreen, .enteringFullscreen:
+            exitFullscreenCompletionHandler = completionHandler
             swiftOnlyData.presentationState = .inline
         case .inline:
-            break
+            completionHandler(true, nil)
         @unknown default:
             fatalError()
         }
@@ -545,10 +564,12 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     public func didCompleteEnterFullscreen(result: Result<Void, Error>) {
         switch result {
         case .success():
-            delegate?.linearMediaPlayer?(self, didEnterFullscreenWithError: nil)
+            enterFullscreenCompletionHandler?(true, nil)
         case .failure(let error):
-            delegate?.linearMediaPlayer?(self, didEnterFullscreenWithError: error)
+            enterFullscreenCompletionHandler?(false, error)
         }
+
+        enterFullscreenCompletionHandler = nil
     }
 
     public func willExitFullscreen() {
@@ -565,10 +586,12 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     public func didCompleteExitFullscreen(result: Result<Void, Error>) {
         switch result {
         case .success():
-            delegate?.linearMediaPlayer?(self, didExitFullscreenWithError: nil)
+            exitFullscreenCompletionHandler?(true, nil)
         case .failure(let error):
-            delegate?.linearMediaPlayer?(self, didExitFullscreenWithError: error)
+            exitFullscreenCompletionHandler?(false, error)
         }
+
+        exitFullscreenCompletionHandler = nil
     }
 
     public func makeDefaultEntity() -> Entity? {
