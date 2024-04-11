@@ -28,12 +28,14 @@
 #include "ImageFrameWorkQueue.h"
 #include "ImageSource.h"
 #include <wtf/Expected.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class BitmapImage;
 class ImageDecoder;
 class ImageFrameAnimator;
+class ImageObserver;
 
 class BitmapImageSource : public ImageSource {
 public:
@@ -194,6 +196,11 @@ private:
     IntSize frameSizeAtIndex(unsigned index, SubsamplingLevel = SubsamplingLevel::Default) const;
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;
 
+    // BitmapImage metadata
+    RefPtr<ImageObserver> imageObserver() const;
+    String mimeType() const;
+    long long expectedContentLength() const;
+
     // Testing support
     unsigned decodeCountForTesting() const { return m_decodeCountForTesting; }
     void setMinimumDecodingDurationForTesting(Seconds) final;
@@ -204,7 +211,7 @@ private:
     void dump(TextStream&) const final;
 
     // State
-    BitmapImage& m_bitmapImage;
+    WeakPtr<BitmapImage> m_bitmapImage;
     AlphaOption m_alphaOption { AlphaOption::Premultiplied };
     GammaAndColorProfileOption m_gammaAndColorProfileOption { GammaAndColorProfileOption::Applied };
     bool m_allDataReceived { false };
