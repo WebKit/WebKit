@@ -165,6 +165,14 @@ void TextureMapperPlatformLayerProxyDMABuf::pushDMABuf(Ref<DMABufLayer>&& dmabuf
         m_pendingLayer->release();
 
     m_pendingLayer = WTFMove(dmabufLayer);
+
+#if HAVE(DISPLAY_LINK)
+    // WebGL changes will cause a composition request during layerFlush. We cannot request
+    // a new compostion here as well or we may trigger two compositions instead of one.
+    if (contentType() == ContentType::WebGL)
+        return;
+#endif
+
     if (m_compositor)
         m_compositor->onNewBufferAvailable();
 }
