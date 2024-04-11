@@ -219,14 +219,8 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
         return;
     }
 
-    RendererToFloatInfoMap floatMap;
-
-    if (m_floatingObjects) {
-        if (childrenInline())
-            m_floatingObjects->moveAllToFloatInfoMap(floatMap);
-        else
-            m_floatingObjects->clear();
-    }
+    if (m_floatingObjects)
+        m_floatingObjects->clear();
 
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
     // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
@@ -255,51 +249,7 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     if (previousBlock->m_floatingObjects && previousBlock->lowestFloatLogicalBottom() > logicalTopOffset)
         addIntrudingFloats(previousBlock, parentBlock.get(), logicalLeftOffset, logicalTopOffset);
 
-    if (childrenInline()) {
-        LayoutUnit changeLogicalTop = LayoutUnit::max();
-        LayoutUnit changeLogicalBottom = LayoutUnit::min();
-        if (m_floatingObjects) {
-            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-            auto end = floatingObjectSet.end();
-            for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-                const auto& floatingObject = *it->get();
-                std::unique_ptr<FloatingObject> oldFloatingObject = floatMap.take(&floatingObject.renderer());
-                LayoutUnit logicalBottom = logicalBottomForFloat(floatingObject);
-                if (oldFloatingObject) {
-                    LayoutUnit oldLogicalBottom = logicalBottomForFloat(*oldFloatingObject);
-                    if (logicalWidthForFloat(floatingObject) != logicalWidthForFloat(*oldFloatingObject) || logicalLeftForFloat(floatingObject) != logicalLeftForFloat(*oldFloatingObject)) {
-                        changeLogicalTop = 0;
-                        changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalBottom, oldLogicalBottom));
-                    } else {
-                        if (logicalBottom != oldLogicalBottom) {
-                            changeLogicalTop = std::min(changeLogicalTop, std::min(logicalBottom, oldLogicalBottom));
-                            changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalBottom, oldLogicalBottom));
-                        }
-                        LayoutUnit logicalTop = logicalTopForFloat(floatingObject);
-                        LayoutUnit oldLogicalTop = logicalTopForFloat(*oldFloatingObject);
-                        if (logicalTop != oldLogicalTop) {
-                            changeLogicalTop = std::min(changeLogicalTop, std::min(logicalTop, oldLogicalTop));
-                            changeLogicalBottom = std::max(changeLogicalBottom, std::max(logicalTop, oldLogicalTop));
-                        }
-                    }
-                } else {
-                    changeLogicalTop = 0;
-                    changeLogicalBottom = std::max(changeLogicalBottom, logicalBottom);
-                }
-            }
-        }
-
-        auto end = floatMap.end();
-        for (auto it = floatMap.begin(); it != end; ++it) {
-            const auto& floatingObject = *it->value.get();
-            if (!floatingObject.isDescendant()) {
-                changeLogicalTop = 0;
-                changeLogicalBottom = std::max(changeLogicalBottom, logicalBottomForFloat(floatingObject));
-            }
-        }
-
-        markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
-    } else if (!oldIntrudingFloatSet.isEmpty()) {
+    if (!childrenInline() && !oldIntrudingFloatSet.isEmpty()) {
         // If there are previously intruding floats that no longer intrude, then children with floats
         // should also get layout because they might need their floating object lists cleared.
         if (m_floatingObjects->set().size() < oldIntrudingFloatSet.size())
@@ -2663,29 +2613,13 @@ FloatingObject& RenderBlockFlow::insertFloatingObjectForIFC(RenderBox& floatBox)
 
 void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
 {
-    if (m_floatingObjects) {
-        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
-        if (it != floatingObjectSet.end()) {
-            auto& floatingObject = *it->get();
-            if (childrenInline()) {
-                LayoutUnit logicalTop = logicalTopForFloat(floatingObject);
-                LayoutUnit logicalBottom = logicalBottomForFloat(floatingObject);
+    if (!m_floatingObjects)
+        return;
 
-                // Fix for https://bugs.webkit.org/show_bug.cgi?id=54995.
-                if (logicalBottom < 0 || logicalBottom < logicalTop || logicalTop == LayoutUnit::max())
-                    logicalBottom = LayoutUnit::max();
-                else {
-                    // Special-case zero- and less-than-zero-height floats: those don't touch
-                    // the line that they're on, but it still needs to be dirtied. This is
-                    // accomplished by pretending they have a height of 1.
-                    logicalBottom = std::max(logicalBottom, logicalTop + 1);
-                }
-                markLinesDirtyInBlockRange(0, logicalBottom);
-            }
-            m_floatingObjects->remove(&floatingObject);
-        }
-    }
+    auto& floatingObjectSet = m_floatingObjects->set();
+    auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
+    if (it != floatingObjectSet.end())
+        m_floatingObjects->remove(it->get());
 }
 
 void RenderBlockFlow::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logicalOffset)
@@ -3305,30 +3239,6 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
     
     if (legacyLineLayout())
         legacyLineLayout()->addOverflowFromInlineChildren();
-}
-
-void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, LegacyRootInlineBox* highest)
-{
-    if (logicalTop >= logicalBottom)
-        return;
-
-    // Floats currently affect the choice of layout path.
-    if (modernLineLayout()) {
-        invalidateLineLayoutPath();
-        return;
-    }
-
-    LegacyRootInlineBox* lowestDirtyLine = lastRootBox();
-    LegacyRootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->lineBoxBottom() >= logicalBottom && logicalBottom < LayoutUnit::max()) {
-        afterLowest = lowestDirtyLine;
-        lowestDirtyLine = lowestDirtyLine->prevRootBox();
-    }
-
-    while (afterLowest && afterLowest != highest && (afterLowest->lineBoxBottom() >= logicalTop || afterLowest->lineBoxBottom() < 0)) {
-        afterLowest->markDirty();
-        afterLowest = afterLowest->prevRootBox();
-    }
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
