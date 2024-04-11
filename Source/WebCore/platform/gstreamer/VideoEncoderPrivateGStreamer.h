@@ -21,6 +21,8 @@
 #pragma once
 
 #include "GStreamerCommon.h"
+#include "VideoEncoder.h"
+#include <wtf/FastMalloc.h>
 
 #define WEBKIT_TYPE_VIDEO_ENCODER (webkit_video_encoder_get_type())
 #define WEBKIT_VIDEO_ENCODER(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_VIDEO_ENCODER, WebKitVideoEncoder))
@@ -44,6 +46,47 @@ struct _WebKitVideoEncoderClass {
 
 GType webkit_video_encoder_get_type(void);
 
+class WebKitVideoEncoderBitRateAllocation : public RefCounted<WebKitVideoEncoderBitRateAllocation> {
+    WTF_MAKE_NONCOPYABLE(WebKitVideoEncoderBitRateAllocation);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    static Ref<WebKitVideoEncoderBitRateAllocation> create(WebCore::VideoEncoder::ScalabilityMode scalabilityMode)
+    {
+        return adoptRef(*new WebKitVideoEncoderBitRateAllocation(scalabilityMode));
+    }
+
+    static const unsigned MaxSpatialLayers = 5;
+    static const unsigned MaxTemporalLayers = 4;
+
+    void setBitRate(unsigned spatialLayerIndex, unsigned temporalLayerIndex, uint32_t bitRate)
+    {
+        RELEASE_ASSERT(spatialLayerIndex < MaxSpatialLayers);
+        RELEASE_ASSERT(temporalLayerIndex < MaxTemporalLayers);
+        m_bitRates[spatialLayerIndex][temporalLayerIndex].emplace(bitRate);
+    }
+
+    std::optional<uint32_t> getBitRate(unsigned spatialLayerIndex, unsigned temporalLayerIndex) const
+    {
+        if (UNLIKELY(spatialLayerIndex >= MaxSpatialLayers))
+            return std::nullopt;
+        if (UNLIKELY(temporalLayerIndex >= MaxTemporalLayers))
+            return std::nullopt;
+        return m_bitRates[spatialLayerIndex][temporalLayerIndex];
+    }
+
+    WebCore::VideoEncoder::ScalabilityMode scalabilityMode() const { return m_scalabilityMode; }
+
+private:
+    WebKitVideoEncoderBitRateAllocation(WebCore::VideoEncoder::ScalabilityMode scalabilityMode)
+        : m_scalabilityMode(scalabilityMode)
+    { }
+
+    WebCore::VideoEncoder::ScalabilityMode m_scalabilityMode;
+    std::optional<uint32_t> m_bitRates[MaxSpatialLayers][MaxTemporalLayers];
+};
+
 bool videoEncoderSupportsFormat(WebKitVideoEncoder*, const GRefPtr<GstCaps>&);
 bool videoEncoderSetFormat(WebKitVideoEncoder*, GRefPtr<GstCaps>&&, const String& = emptyString());
+void videoEncoderSetBitRateAllocation(WebKitVideoEncoder*, RefPtr<WebKitVideoEncoderBitRateAllocation>&&);
 void teardownVideoEncoderSingleton();

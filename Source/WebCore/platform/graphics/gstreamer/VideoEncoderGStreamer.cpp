@@ -78,6 +78,7 @@ private:
     GUniquePtr<GstVideoConverter> m_colorConvert;
     GRefPtr<GstCaps> m_colorConvertInputCaps;
     GRefPtr<GstCaps> m_colorConvertOutputCaps;
+    bool m_hasMultipleTemporalLayers { false };
 };
 
 void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
@@ -168,6 +169,31 @@ void GStreamerVideoEncoder::close()
     m_internalEncoder->close();
 }
 
+static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& sample)
+{
+#if GST_CHECK_VERSION(1, 20, 0)
+    auto caps = gst_sample_get_caps(sample.get());
+    auto structure = gst_caps_get_structure(caps, 0);
+    auto buffer = gst_sample_get_buffer(sample.get());
+    if (gst_structure_has_name(structure, "video/x-vp8")) {
+        auto meta = gst_buffer_get_custom_meta(buffer, "GstVP8Meta");
+        if (!meta) {
+            GST_TRACE("VP8Meta not found in VP8 sample");
+            return { };
+        }
+
+        GST_TRACE("Looking-up layer id in %" GST_PTR_FORMAT, meta->structure);
+        unsigned temporalLayerId;
+        if (!gst_structure_get_uint(meta->structure, "layer-id", &temporalLayerId))
+            return { };
+
+        return temporalLayerId;
+    }
+    GST_TRACE("Retrieval of temporal index from encoded format %s is not yet supported.", gst_structure_get_name(structure));
+#endif
+    return { };
+}
+
 GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback)
     : m_descriptionCallback(WTFMove(descriptionCallback))
     , m_outputCallback(WTFMove(outputCallback))
@@ -228,11 +254,16 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::Descr
             m_harness->dumpGraph("video-encoder");
         });
 
+        std::optional<unsigned> temporalIndex;
+        if (m_hasMultipleTemporalLayers)
+            temporalIndex = retrieveTemporalIndex(outputSample);
+
         auto outputBuffer = gst_sample_get_buffer(outputSample.get());
         bool isKeyFrame = !GST_BUFFER_FLAG_IS_SET(outputBuffer, GST_BUFFER_FLAG_DELTA_UNIT);
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer encodedImage(outputBuffer, GST_MAP_READ);
-        VideoEncoder::EncodedFrame encodedFrame { encodedImage.createVector(), isKeyFrame, m_timestamp, m_duration, { } };
+
+        VideoEncoder::EncodedFrame encodedFrame { encodedImage.createVector(), isKeyFrame, m_timestamp, m_duration, temporalIndex };
 
         m_postTaskCallback([protectedThis = Ref { *this }, encodedFrame = WTFMove(encodedFrame)]() mutable {
             if (protectedThis->m_isClosed)
@@ -289,6 +320,27 @@ String GStreamerInternalVideoEncoder::initialize(const String& codecName, const 
 
     if (config.bitRate > 1000)
         g_object_set(m_harness->element(), "bitrate", static_cast<uint32_t>(config.bitRate / 1000), nullptr);
+
+    auto bitRateAllocation = WebKitVideoEncoderBitRateAllocation::create(config.scalabilityMode);
+    auto totalBitRate = config.bitRate ? config.bitRate : 3 * config.width * config.height;
+    switch (config.scalabilityMode) {
+    case VideoEncoder::ScalabilityMode::L1T1:
+        bitRateAllocation->setBitRate(0, 0, totalBitRate);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T2:
+        m_hasMultipleTemporalLayers = true;
+        bitRateAllocation->setBitRate(0, 0, totalBitRate * 0.6);
+        bitRateAllocation->setBitRate(0, 1, totalBitRate * 0.4);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T3:
+        m_hasMultipleTemporalLayers = true;
+        bitRateAllocation->setBitRate(0, 0, totalBitRate * 0.5);
+        bitRateAllocation->setBitRate(0, 1, totalBitRate * 0.3);
+        bitRateAllocation->setBitRate(0, 2, totalBitRate * 0.2);
+        break;
+    }
+    videoEncoderSetBitRateAllocation(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(bitRateAllocation));
+
     m_isInitialized = true;
     return emptyString();
 }
