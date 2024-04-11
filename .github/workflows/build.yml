@@ -68,17 +68,17 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP: 1
           HOMEBREW_NO_ANALYTICS_THIS_RUN: 1
         run: |
-          echo "${{matrix.brew_prefix}}/llvm@16/bin" >> $GITHUB_PATH
-          brew install llvm@16 python icu4c ninja -f --overwrite
-          brew link llvm@16 -f --overwrite
+          echo "${{matrix.brew_prefix}}/llvm@17/bin" >> $GITHUB_PATH
+          brew install llvm@17 python icu4c ninja -f --overwrite
+          brew link llvm@17 -f --overwrite
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
           LDFLAGS: "${{env.LDFLAGS}} -L${{matrix.brew_prefix}}/llvm/lib/c++ -Wl,-rpath,${{matrix.brew_prefix}}/llvm/lib/c++"
-          CC: "${{matrix.brew_prefix}}/llvm@16/bin/clang"
-          CXX: "${{matrix.brew_prefix}}/llvm@16/bin/clang++"
-          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@16/bin/clang"
-          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@16/bin/clang++"
+          CC: "${{matrix.brew_prefix}}/llvm@17/bin/clang"
+          CXX: "${{matrix.brew_prefix}}/llvm@17/bin/clang++"
+          CMAKE_C_COMPILER: "${{matrix.brew_prefix}}/llvm@17/bin/clang"
+          CMAKE_CXX_COMPILER: "${{matrix.brew_prefix}}/llvm@17/bin/clang++"
           CMAKE_C_FLAGS: "-fuse-ld=lld -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_CXX_FLAGS: "-fuse-ld=lld -I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_OSX_DEPLOYMENT_TARGET: "12.0"
@@ -166,9 +166,9 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 90
     steps:
-      - uses: KyleMayes/install-llvm-action@1a3da29f56261a1e1f937ec88f0856a9b8321d7e
+      - uses: KyleMayes/install-llvm-action@8b37482c5a2997a3ab5dbf6561f8109e2eaa7d3b
         with:
-          version: 16.0.6
+          version: 17.0.6
       - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
       - run: choco install -y ninja
       - uses: actions/checkout@v4
