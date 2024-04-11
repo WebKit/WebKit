@@ -1744,6 +1744,8 @@ public:
     void startObservingNowPlayingMetadata();
     void stopObservingNowPlayingMetadata();
 
+    void didAdjustVisibilityWithSelectors(Vector<String>&&);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

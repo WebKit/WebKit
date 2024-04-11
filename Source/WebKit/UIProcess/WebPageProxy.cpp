@@ -13993,6 +13993,11 @@ void WebPageProxy::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& 
     });
 }
 
+void WebPageProxy::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+{
+    m_uiClient->didAdjustVisibilityWithSelectors(*this, WTFMove(selectors));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

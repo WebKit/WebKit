@@ -65,6 +65,12 @@
         completionHandler(@"foo");
 }
 
+- (void)_webView:(WKWebView *)webView didAdjustVisibilityWithSelectors:(NSArray<NSString *> *)selectors
+{
+    if (_webViewDidAdjustVisibilityWithSelectors)
+        _webViewDidAdjustVisibilityWithSelectors(webView, selectors);
+}
+
 #if PLATFORM(MAC)
 - (void)_webView:(WKWebView *)webView getContextMenuFromProposedMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element userInfo:(id <NSSecureCoding>)userInfo completionHandler:(void (^)(NSMenu *))completionHandler
 {

@@ -9504,6 +9504,11 @@ void WebPage::stopObservingNowPlayingMetadata()
     WebCore::PlatformMediaSessionManager::sharedManager().removeNowPlayingMetadataObserver(*nowPlayingMetadataObserver);
 }
 
+void WebPage::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+{
+    send(Messages::WebPageProxy::DidAdjustVisibilityWithSelectors(WTFMove(selectors)));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

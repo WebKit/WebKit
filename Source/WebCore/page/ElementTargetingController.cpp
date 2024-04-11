@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ElementTargetingController.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -784,6 +786,10 @@ void ElementTargetingController::adjustVisibilityInRepeatedlyTargetedRegions(Doc
 
 void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document& document)
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     RefPtr loader = document.loader();
     if (!loader)
         return;
@@ -819,9 +825,11 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
         return { { }, VisibilityAdjustment::Subtree };
     };
 
+    document.updateLayoutIgnorePendingStylesheets();
+
     auto viewportArea = m_viewportSizeForVisibilityAdjustment.area();
     Region adjustmentRegion;
-    Vector<String> selectorsToRemove;
+    Vector<String> matchingSelectors;
     for (auto& selectorIncludingPseudo : *m_remainingVisibilityAdjustmentSelectors) {
         auto [selector, adjustment] = resolveSelectorToQuery(selectorIncludingPseudo);
         if (selector.isEmpty()) {
@@ -837,6 +845,13 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
         if (!element)
             continue;
 
+        CheckedPtr renderer = element->renderer();
+        if (!renderer)
+            continue;
+
+        if (computeClientRect(*renderer).isEmpty())
+            continue;
+
         if (adjustment == VisibilityAdjustment::AfterPseudo && !element->afterPseudoElement())
             continue;
 
@@ -845,7 +860,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
 
         auto currentAdjustment = element->visibilityAdjustment();
         if (currentAdjustment.contains(adjustment)) {
-            selectorsToRemove.append(selectorIncludingPseudo);
+            matchingSelectors.append(selectorIncludingPseudo);
             continue;
         }
 
@@ -856,7 +871,7 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
             element->invalidateStyle();
 
         m_adjustedElements.add(*element);
-        selectorsToRemove.append(selectorIncludingPseudo);
+        matchingSelectors.append(selectorIncludingPseudo);
 
         if (auto clientRect = inflatedClientRectForAdjustmentRegionTracking(*element, viewportArea))
             adjustmentRegion.unite(*clientRect);
@@ -865,8 +880,11 @@ void ElementTargetingController::applyVisibilityAdjustmentFromSelectors(Document
     if (!adjustmentRegion.isEmpty())
         m_adjustmentClientRegion.unite(adjustmentRegion);
 
-    for (auto& selector : selectorsToRemove)
+    for (auto& selector : matchingSelectors)
         m_remainingVisibilityAdjustmentSelectors->remove(selector);
+
+    if (!matchingSelectors.isEmpty())
+        page->chrome().client().didAdjustVisibilityWithSelectors(WTFMove(matchingSelectors));
 }
 
 void ElementTargetingController::reset()

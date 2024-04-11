@@ -641,4 +641,6 @@ messages -> WebPageProxy {
     DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
 
     NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
+
+    DidAdjustVisibilityWithSelectors(Vector<String> selectors)
 }

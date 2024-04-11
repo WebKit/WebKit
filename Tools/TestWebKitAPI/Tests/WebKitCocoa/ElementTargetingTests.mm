@@ -27,6 +27,7 @@
 
 #import "CGImagePixelReader.h"
 #import "PlatformUtilities.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -266,6 +267,12 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         , @".absolute.top-right"
         , nil]];
 
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        [adjustedSelectors addObjectsFromArray:selectors];
+    }];
+    [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-2" preferences:preferences.get()];
     [webView waitForNextPresentationUpdate];
     {
@@ -275,6 +282,10 @@ TEST(ElementTargeting, AdjustVisibilityFromSelectors)
         auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
         EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
         EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.top-right"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-right"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".fixed.container"]);
+        EXPECT_TRUE([adjustedSelectors containsObject:@".absolute.bottom-left"]);
     }
 
     [webView resetVisibilityAdjustmentsForTargets:nil];
@@ -297,6 +308,12 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     RetainPtr preferences = adoptNS([WKWebpagePreferences new]);
     auto selectors = [NSSet setWithObjects:@"main::before", @"HTML::AFTER", nil];
     [preferences _setVisibilityAdjustmentSelectors:selectors];
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    RetainPtr adjustedSelectors = adoptNS([NSMutableSet new]);
+    [delegate setWebViewDidAdjustVisibilityWithSelectors:^(WKWebView *, NSArray<NSString *> *selectors) {
+        [adjustedSelectors addObjectsFromArray:selectors];
+    }];
+    [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-3" preferences:preferences.get()];
     [webView waitForNextPresentationUpdate];
 
@@ -306,6 +323,8 @@ TEST(ElementTargeting, AdjustVisibilityFromPseudoSelectors)
     auto y = static_cast<unsigned>(100 * (pixelReader.height() / CGRectGetHeight(webViewFrame)));
     EXPECT_EQ(pixelReader.at(x, y), WebCore::Color::white);
     EXPECT_EQ([webView numberOfVisibilityAdjustmentRects], 1U);
+    EXPECT_TRUE([adjustedSelectors containsObject:@"main::before"]);
+    EXPECT_TRUE([adjustedSelectors containsObject:@"HTML::AFTER"]);
 }
 
 TEST(ElementTargeting, ContentInsideShadowRoot)

@@ -1801,4 +1801,9 @@ bool WebChromeClient::isInStableState() const
 #endif
 }
 
+void WebChromeClient::didAdjustVisibilityWithSelectors(Vector<String>&& selectors)
+{
+    return protectedPage()->didAdjustVisibilityWithSelectors(WTFMove(selectors));
+}
+
 } // namespace WebKit
