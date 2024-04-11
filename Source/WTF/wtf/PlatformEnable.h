@@ -744,6 +744,10 @@
 #define ENABLE_WEBASSEMBLY_BBQJIT 1
 #endif
 
+#if !defined(ENABLE_WEBASSEMBLY) && CPU(ADDRESS64) && PLATFORM(COCOA)
+#define ENABLE_WEBASSEMBLY 1
+#endif
+
 /* The SamplingProfiler is the probabilistic and low-overhead profiler used by
  * JSC to measure where time is spent inside a JavaScript program.
  * In configurations other than Windows and Darwin, because layout of mcontext_t depends on standard libraries (like glibc),

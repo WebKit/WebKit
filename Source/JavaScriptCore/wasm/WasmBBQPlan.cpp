@@ -249,7 +249,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-        auto callee = JSEntrypointCallee::create();
+        auto callee = JSEntrypointJITCallee::create();
         context.jsEntrypointJIT = makeUnique<CCallHelpers>();
         auto jsToWasmInternalFunction = createJSToWasmWrapper(*context.jsEntrypointJIT, callee.get(), nullptr, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
         auto linkBuffer = makeUnique<LinkBuffer>(*context.jsEntrypointJIT, calleePtr, LinkBuffer::Profile::WasmBBQ, JITCompilationCanFail);
@@ -348,14 +348,15 @@ void BBQPlan::initializeCallees(const CalleeInitializer& callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
-        RefPtr<JITCallee> jsEntrypointCallee;
+        RefPtr<JSEntrypointCallee> jsEntrypointCallee;
         RefPtr<BBQCallee> wasmEntrypointCallee = m_callees[internalFunctionIndex];
         {
             auto iter = m_jsToWasmInternalFunctions.find(internalFunctionIndex);
             if (iter != m_jsToWasmInternalFunctions.end()) {
                 const auto& jsToWasmFunction = std::get<2>(iter->value);
                 jsEntrypointCallee = std::get<0>(iter->value);
-                jsEntrypointCallee->setEntrypoint(WTFMove(jsToWasmFunction->entrypoint));
+                if (jsEntrypointCallee->compilationMode() == CompilationMode::JSEntrypointJITMode)
+                    static_cast<JSEntrypointJITCallee*>(jsEntrypointCallee.get())->setEntrypoint(WTFMove(jsToWasmFunction->entrypoint));
             }
         }
 

@@ -113,11 +113,9 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
 
 void LLIntPlan::didCompleteCompilation()
 {
-#if ENABLE(JIT)
     unsigned functionCount = m_wasmInternalFunctions.size();
     if (!m_callees && functionCount) {
-        // LLInt entrypoint thunks generation
-        CCallHelpers jit;
+
         m_calleesVector.resize(functionCount);
 
         for (unsigned i = 0; i < functionCount; ++i) {
@@ -129,6 +127,10 @@ void LLIntPlan::didCompleteCompilation()
             m_calleesVector[i] = LLIntCallee::create(*m_wasmInternalFunctions[i], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
             ASSERT(!m_calleesVector[i]->entrypoint());
         }
+
+#if ENABLE(JIT)
+        // LLInt entrypoint thunks generation
+        CCallHelpers jit;
 
         if (LIKELY(Options::useJIT())) {
             Vector<CCallHelpers::Label> entrypoints(functionCount);
@@ -164,13 +166,14 @@ void LLIntPlan::didCompleteCompilation()
             }
 
             m_entryThunks = FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, nullptr, "Wasm LLInt entry thunks");
-        } else {
+        } else
+#endif
+        {
             for (unsigned i = 0; i < functionCount; ++i)
                 m_calleesVector[i]->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
         }
         m_callees = m_calleesVector.data();
     }
-#endif
 
     if (!m_moduleInformation->clobberingTailCalls().isEmpty())
         computeTransitiveTailCalls();
@@ -181,21 +184,21 @@ void LLIntPlan::didCompleteCompilation()
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
+            if (!LIKELY(Options::useJIT())) {
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                return;
+            }
+
 #if ENABLE(JIT)
+            CCallHelpers jit;
+
             TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
             const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-            CCallHelpers jit;
+
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
 
-            if (!LIKELY(Options::useJIT())) {
-#endif
-                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
-                return;
-#if ENABLE(JIT)
-            }
-
-            Ref<JITCallee> callee = JSEntrypointCallee::create();
+            auto callee = JSEntrypointJITCallee::create();
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), m_callees[functionIndex].ptr(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
