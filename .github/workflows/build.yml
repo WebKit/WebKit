@@ -31,14 +31,14 @@ jobs:
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
             CMAKE_BUILD_TYPE: Debug
-          - runner: macos-12-large
+          - runner: macos-13-large
             lto_flag: -flto='full'
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
             CMAKE_BUILD_TYPE: Release
-          - runner: macos-12-large
+          - runner: macos-13-large
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
