@@ -2162,7 +2162,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
     if (paintInfo.phase == PaintPhase::BlockBackground || paintInfo.phase == PaintPhase::SelfOutline || paintInfo.phase == PaintPhase::Mask)
         return false;
 
-    bool isControlClip = hasControlClip();
+    bool isControlClip = paintInfo.phase != PaintPhase::EventRegion && hasControlClip();
     bool isOverflowClip = hasNonVisibleOverflow() && !layer()->isSelfPaintingLayer();
 
     if (!isControlClip && !isOverflowClip)
