@@ -1403,6 +1403,7 @@ $(PROJECT_DIR)/dom/FocusEvent.idl
 $(PROJECT_DIR)/dom/FocusOptions.idl
 $(PROJECT_DIR)/dom/FormDataEvent.idl
 $(PROJECT_DIR)/dom/FullscreenOptions.idl
+$(PROJECT_DIR)/dom/GetHTMLOptions.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+PointerEvents.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers+Selection.idl
 $(PROJECT_DIR)/dom/GlobalEventHandlers.idl

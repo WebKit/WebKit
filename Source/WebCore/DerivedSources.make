@@ -1098,6 +1098,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/FocusOptions.idl \
     $(WebCore)/dom/FormDataEvent.idl \
     $(WebCore)/dom/FullscreenOptions.idl \
+    $(WebCore)/dom/GetHTMLOptions.idl \
     $(WebCore)/dom/GlobalEventHandlers+PointerEvents.idl \
     $(WebCore)/dom/GlobalEventHandlers+Selection.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \
