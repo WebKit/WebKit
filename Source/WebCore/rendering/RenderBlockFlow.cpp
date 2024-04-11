@@ -2358,7 +2358,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
             return false;
         };
         if (shouldInvalidateLineLayoutPath())
-            invalidateLineLayoutPath();
+            invalidateLineLayoutPath(InvalidationReason::StyleChange);
     }
 
     if (auto* lineLayout = modernLineLayout())
@@ -3843,7 +3843,7 @@ bool RenderBlockFlow::hasLines() const
     return childrenInline() ? lineCount() : false;
 }
 
-void RenderBlockFlow::invalidateLineLayoutPath()
+void RenderBlockFlow::invalidateLineLayoutPath(InvalidationReason invalidationReason)
 {
     switch (lineLayoutPath()) {
     case UndeterminedPath:
@@ -3856,15 +3856,20 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         // FIXME: Implement partial invalidation.
         if (modernLineLayout()) {
             m_previousModernLineLayoutContentBoxLogicalHeight = modernLineLayout()->contentBoxLogicalHeight();
-            // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
-            repaint();
-            for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-                auto& renderer = *walker.current();
-                if (!renderer.everHadLayout())
-                    continue;
-                if (!renderer.isInFlow() && modernLineLayout()->contains(downcast<RenderElement>(renderer)))
-                    renderer.repaint();
-                renderer.setPreferredLogicalWidthsDirty(true);
+            if (invalidationReason != InvalidationReason::InsertionOrRemoval) {
+                auto repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes = [&] {
+                    // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
+                    repaint();
+                    for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
+                        auto& renderer = *walker.current();
+                        if (!renderer.everHadLayout())
+                            continue;
+                        if (!renderer.isInFlow() && modernLineLayout()->contains(downcast<RenderElement>(renderer)))
+                            renderer.repaint();
+                        renderer.setPreferredLogicalWidthsDirty(true);
+                    }
+                };
+                repaintAndSetNeedsLayoutIncludingOutOfFlowBoxes();
             }
         }
         auto path = UndeterminedPath;

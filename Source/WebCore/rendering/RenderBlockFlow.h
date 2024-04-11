@@ -338,7 +338,13 @@ public:
     void setChildrenInline(bool) final;
 
     bool hasLines() const;
-    void invalidateLineLayoutPath();
+
+    enum InvalidationReason : uint8_t {
+        StyleChange,
+        InsertionOrRemoval, // renderer gets constructed/goes away
+        ContentChange       // existing renderer gets changed (text content only atm)
+    };
+    void invalidateLineLayoutPath(InvalidationReason);
     void computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath, ForcedLegacyPath };
