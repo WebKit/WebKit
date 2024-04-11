@@ -1149,18 +1149,16 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void WebProcessPool::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    for (auto process : m_processes)
+    for (Ref process : m_processes)
         process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 
 #if ENABLE(GPU_PROCESS)
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->send(Messages::GPUProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 #endif
     
-    WebsiteDataStore::forEachWebsiteDataStore([domain, key, encodedValue] (WebsiteDataStore& dataStore) {
-        if (auto* networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
-    });
+    if (RefPtr networkProcess = NetworkProcessProxy::defaultNetworkProcess().get())
+        networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 
     if (key == WKLockdownModeEnabledKey)
         lockdownModeStateChanged();
