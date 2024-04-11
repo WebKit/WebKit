@@ -115,21 +115,12 @@ size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSiz
     return failed ? 0 : destination - buffer;
 }
 
+bool JSStringIsEqual(JSStringRef a, JSStringRef b)
+{
+    return OpaqueJSString::equal(a, b);
+}
+
 bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)
 {
     return JSStringIsEqual(a, adoptRef(JSStringCreateWithUTF8CString(b)).get());
 }
-
-
-
-
-// char JSStringMetadata(JSStringRef string)
-// {
-//     if (string->isEmpty()) {
-//         return 0;
-//     }
-
-//     char metadata = (string->isStatic());
-//     metadata |= (string->isExternal()) << 1;
-//     metadata |= (string->is()) << 2;
-// }
