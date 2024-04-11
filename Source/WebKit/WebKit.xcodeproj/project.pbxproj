@@ -6725,6 +6725,7 @@
 		86DD518F28EF28E800DF2A58 /* WebEventModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEventModifier.h; sourceTree = "<group>"; };
 		86E0787B2ACE0ACE00B8FADC /* AccessibilityPreferences.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityPreferences.serialization.in; sourceTree = "<group>"; };
 		86E0787C2ACE0AE400B8FADC /* InsertTextOptions.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InsertTextOptions.serialization.in; sourceTree = "<group>"; };
+		86F07F7C2FCE0FE400BFFFDC /* RemoteObjectInvocation.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteObjectInvocation.serialization.in; sourceTree = "<group>"; };
 		86E67A21190F411800004AB7 /* ProcessThrottler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottler.h; sourceTree = "<group>"; };
 		86E67A22190F411800004AB7 /* ProcessThrottler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessThrottler.cpp; sourceTree = "<group>"; };
 		86E6E357291959C3006C25CA /* SecItemRequestData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecItemRequestData.serialization.in; sourceTree = "<group>"; };
@@ -11819,6 +11820,7 @@
 				376311FA1A3FB38B005A2E51 /* _WKSameDocumentNavigationTypeInternal.h */,
 				1A5704FA1BE1751100874AF1 /* RemoteObjectInvocation.h */,
 				1A5704F91BE1751100874AF1 /* RemoteObjectInvocation.mm */,
+				86F07F7C2FCE0FE400BFFFDC /* RemoteObjectInvocation.serialization.in */,
 				1AC1337E18590AE400F3EC05 /* RemoteObjectRegistry.h */,
 				1AC1338118590B0500F3EC05 /* RemoteObjectRegistry.messages.in */,
 				1AC1337D18590AE400F3EC05 /* RemoteObjectRegistry.mm */,

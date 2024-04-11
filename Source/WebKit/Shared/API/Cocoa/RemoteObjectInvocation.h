@@ -53,11 +53,8 @@ public:
     RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&&);
 
     const String& interfaceIdentifier() const { return m_interfaceIdentifier; }
-    const API::Dictionary* encodedInvocation() const { return m_encodedInvocation.get(); }
-    const ReplyInfo* replyInfo() const { return m_replyInfo.get(); }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteObjectInvocation&);
+    const RefPtr<API::Dictionary>& encodedInvocation() const { return m_encodedInvocation; }
+    const std::unique_ptr<ReplyInfo>& replyInfo() const { return m_replyInfo; }
 
 private:
     String m_interfaceIdentifier;
