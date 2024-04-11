@@ -338,7 +338,7 @@ public:
     void setChildrenInline(bool) final;
 
     bool hasLines() const;
-    void invalidateLineLayoutPath() final;
+    void invalidateLineLayoutPath();
     void computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, ModernPath, LegacyPath, ForcedLegacyPath };
