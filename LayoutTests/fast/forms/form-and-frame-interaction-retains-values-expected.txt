@@ -1,7 +1,7 @@
 
 
 --------
-Frame: '<!--frame4-->'
+Frame: '<!--frame1-->'
 --------
 PASS
 
@@ -13,6 +13,6 @@ In this test the main page is loaded in a frameset, which sets the value of an i
 
 
 --------
-Frame: '<!--frame3-->'
+Frame: '<!--frame2-->'
 --------
 
