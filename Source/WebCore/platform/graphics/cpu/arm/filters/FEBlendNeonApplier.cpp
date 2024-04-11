@@ -176,7 +176,7 @@ bool FEBlendNeonApplier::apply(const Filter&, const FilterImageVector& inputs, F
     if (!destinationPixelBuffer)
         return false;
 
-    auto* destinationPixelArray = destinationPixelBuffer->bytes();
+    auto* destinationPixelArray = destinationPixelBuffer->bytes().data();
 
     auto effectADrawingRect = result.absoluteImageRectRelativeTo(input);
     auto sourcePixelArrayA = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect);
@@ -184,11 +184,11 @@ bool FEBlendNeonApplier::apply(const Filter&, const FilterImageVector& inputs, F
     auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     auto sourcePixelArrayB = input2.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectBDrawingRect);
 
-    unsigned sourcePixelArrayLength = sourcePixelArrayA->sizeInBytes();
-    ASSERT(sourcePixelArrayLength == sourcePixelArrayB->sizeInBytes());
+    unsigned sourcePixelArrayLength = sourcePixelArrayA->bytes().size();
+    ASSERT(sourcePixelArrayLength == sourcePixelArrayB->bytes().size());
 
     if (sourcePixelArrayLength >= 8) {
-        applyPlatform(sourcePixelArrayA->bytes(), sourcePixelArrayB->bytes(), destinationPixelArray, sourcePixelArrayLength);
+        applyPlatform(sourcePixelArrayA->bytes().data(), sourcePixelArrayB->bytes().data(), destinationPixelArray, sourcePixelArrayLength);
         return true;
     }
 
@@ -197,8 +197,8 @@ bool FEBlendNeonApplier::apply(const Filter&, const FilterImageVector& inputs, F
     uint32_t sourceA[2] = { 0, 0 };
     uint32_t sourceBAndDest[2] = { 0, 0 };
 
-    sourceA[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayA->bytes())[0];
-    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayB->bytes())[0];
+    sourceA[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayA->bytes().data())[0];
+    sourceBAndDest[0] = reinterpret_cast<uint32_t*>(sourcePixelArrayB->bytes().data())[0];
     applyPlatform(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
     reinterpret_cast<uint32_t*>(destinationPixelArray)[0] = sourceBAndDest[0];
     return true;
