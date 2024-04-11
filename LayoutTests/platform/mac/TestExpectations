@@ -2599,3 +2599,10 @@ webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
 
 webkit.org/b/272001 media/media-source/media-managedmse-noresumeafterpause.html [ Pass Failure ]
+
+# webkit.org/b/247632 5 WPT Fetch Metadata tests time out on macOS
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Skip ]
