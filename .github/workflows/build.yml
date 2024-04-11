@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: macos-12-large
+          - runner: macos-13-large
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64-debug
