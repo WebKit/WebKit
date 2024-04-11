@@ -56,14 +56,14 @@ PASS Animation between "path("m 20 10 q 12 32 100 2190")" and "path("m 20 10 q 2
 PASS Animation between "path("m 20 10 q 12 32 100 2190")" and "path("m 20 10 q 20 40 180 2990")" at progress 1
 PASS Animation between "path("m 20 10 q 12 32 100 2190")" and "path("m 20 10 q 20 40 180 2990")" at progress 2
 PASS "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" are valid d values
-FAIL Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress -1 assert_equals: expected "path(\"M -100 600 A -30 -20 -10 1 0 -100 610\")" but got "path(\"M -100 600 A 30 20 -10 1 0 -100 610\")"
+PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress -1
 PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress 0
 PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress 0.125
 PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress 0.875
 PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress 1
 PASS Animation between "path("M 100 400 A 10 20 30 1 0 140 450")" and "path("M 300 200 A 50 60 70 0 1 380 290")" at progress 2
 PASS "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" are valid d values
-FAIL Animation between "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" at progress -1 assert_equals: expected "path(\"M -100 600 A -30 -20 -10 1 0 -100 610\")" but got "path(\"M -100 600 A 30 20 -10 1 0 -100 610\")"
+PASS Animation between "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" at progress -1
 PASS Animation between "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" at progress 0
 PASS Animation between "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" at progress 0.125
 PASS Animation between "path("m 100 400 a 10 20 30 1 0 40 50")" and "path("m 300 200 a 50 60 70 0 1 80 90")" at progress 0.875
