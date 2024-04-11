@@ -106,6 +106,12 @@ public:
     virtual uint32_t ptrCount() const = 0;
     virtual void incrementPtrCount() const = 0;
     virtual void decrementPtrCount() const = 0;
+#if CHECKED_POINTER_DEBUG
+    virtual void registerCheckedPtr(const void* pointer) const = 0;
+    virtual void copyCheckedPtr(const void* source, const void* destination) const = 0;
+    virtual void moveCheckedPtr(const void* source, const void* destination) const = 0;
+    virtual void unregisterCheckedPtr(const void* pointer) const = 0;
+#endif // CHECKED_POINTER_DEBUG
 
     virtual void hasVideoChanged(bool) { }
     virtual void videoDimensionsChanged(const FloatSize&) { }
